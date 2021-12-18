@@ -1,0 +1,124 @@
+"INSURE.DIR" : CHIPMUNK DIRECTORY BACKUP
+-------------------------
+
+A problem exists with all CDOS versions 2.4 to 3.11, in that the CHIPMUNK disk's Main Directory is sometimes overwritten during an "F3 Save" from the main menu.
+
+  If a very short file, FIXUM or DISKPP may be able to utilize the nearby backups and restore the loss.  If the file is long enough, the backups and even the Allocation Table may be overwritten (no table prevents even REPAIR.BA from being useful; reconstructing file-by-file with GETUM or DISKPP is then your only recourse). 
+
+  The present method creates an additional backup at the top of the disk, Track 79, where it is unlikely to be overwritten.
+
+  This document file may be cut-and-paste edited to create three BASIC programs:  SAVDIR.BA, RESTOR.BA, and BLOCKA.BA
+	
+		----
+OPERATION:
+
+Initialize each disk with BLOCKA.BA, which reserves the top three clusters in the allocation table (237-239).  Don't run this on a disk which is full or has been full.  If in doubt, use DISKPP.BA to examine your Allocation table (Bytes 237-239 should all contain 0 or 240).  BLOCKA merely changes their contents to 240, reserving them so files don't get stored there too when the disk fills up.  BLOCKA.BA is not needed, once disks are initialized, but SAVDIR.BA and RESTOR.BA will need to remain resident in RAM memory at all times.
+
+Cluster 237 is used, under this system, to save additional backup copies of the main directory (in sectors 1 and 3) and the Allocation table (in sector 5). 
+
+This is achieved by running SAVDIR.BA. but you must run it AFTER EACH TIME that you:
+  1. disk write by F3 "Save" from the main menu, or
+  2. OPEN"0:filenm":CLOSE in a BASIC program, or
+  3. KILL a disk file with F5, or RENAME with F6.
+
+So run SAVDIR.BA immediately upon returning to the MAIN MENU.  This copies the main directory and allocation table to Cluster 237 on Track 79, exercising your Chipmunk in the process.
+
+Should SAVDIR.BA discover that the main directory no longer has CHR$(240) as its first byte, it aborts the copying and bounces you into RESTOR.BA, the program which copies Track 79 backups back into the Main Directory and Allocation Table.  You can run RESTOR independently of SAVDIR should you otherwise discover your main directory overwritten.
+
+No guarantees, as I haven't really debugged this thoroughly.  Should you have not recently updated the Track 79 copy, your restoration may have some oddities (e.g., F5 killing of empty folder names in the main directory gives an EF error that requires removing the disk and reinserting it to restore).
+
+References:  other programs cited may be found in DL4 of M100 SIG (BRO/KEY:CHIPMUNK to locate).
+
+-------------
+
+Cut and paste the following as a new TEXT file BLOCKA.DO, then LOAD it into BASIC and save it.
+
+1 CLS:PRINT"This program reserves Clusters"
+2 PRINT" 237-239 for duplicate"
+3 PRINT" directories and allocation"
+4 PRINT" tables.  DO NOT USE on disk"
+5 PRINT" that is, OR HAS BEEN, full"
+6 INPUT"    =====>  Reserve Clusters";A$:IFA$="Y"ORA$="y"THEN10ELSEMENU
+10 DSKO$0,0,5,1,LEFT$(DSKI$(0,0,5,1),109)+CHR$(240)+CHR$(240)+CHR$(240):MENU
+
+------------
+Cut and paste the following into a file named SAVDIR.DO, load it in BASIC and save it.
+
+5 CLS:IF LEFT$(DSKI$(0,0,1,0),1)=CHR$(240)THEN10ELSELOAD"RESTOR.BA",R
+7 END
+10 CLS:PRINT@80,"  Saving Directory, Allocation Table in Track 79"
+30 DSKO$0,79,1,0,DSKI$(0,0,1,0):DSKO$0,79,1,1,DSKI$(0,0,1,1)
+32 DSKO$0,79,3,0,DSKI$(0,0,3,0):DSKO$0,79,3,1,DSKI$(0,0,3,1)
+34 DSKO$0,79,5,0,DSKI$(0,0,5,0):DSKO$0,79,5,1,DSKI$(0,0,5,1)
+80 CLOSE:PRINT@160,"Saved on Track 79":MENU
+
+--------------------
+Cut and paste the following as RESTOR.DO etc.
+
+10 'Restore overwritten directory and allocation table using Track 79
+15 CLS:PRINT"THIS IS DISK DIRECTORY, copy1"
+16 PRINT DSKI$(0,0,1,0);DSKI$(0,0,1,1)
+20 PRINT@220,"Overwrite Disk Directory and Allocation"
+21 PRINT"   Table with Track 79 Version";:INPUTA$
+30 IF A$="Y"ORA$="y"THEN50 ELSE MENU
+50 DSKO$ 0,0,1,0,DSKI$(0,79,1,0)
+60 DSKO$ 0,0,1,1,DSKI$(0,79,1,1)
+70 DSKO$ 0,0,3,0,DSKI$(0,79,3,0)
+80 DSKO$ 0,0,3,1,DSKI$(0,79,3,1)
+90 DSKO$ 0,0,5,0,DSKI$(0,79,5,0)
+95 DSKO$ 0,0,5,1,DSKI$(0,79,5,1)
+140 CLS:PRINT:BEEP:PRINT"Remove disk from drive, then reinsert"
+141 PRINT" (forces use of new allocation table)":END
+
+----------
+
+HELP HOLMES debug this problem:  if you don't use SAVDIR, at least check your main directory after each disk write with "F3 Save" (the subdirectory will still look OK upon F1, but do a SHIFT-up-arrow and see how the main directory survived).
+  If you crashed, immediately sit down and write a message to Larry Holmes describing the exact sequence of events:
+
+	Was it a "F3 Save" or BASIC file operation?
+
+	Replacing existing file of same name?
+
+	File type (.DO, .BA, .CO)?
+
+	Did examination of directory (display that begins RESTOR.BA) show the beginning of your file, or some intermediate portion instead?
+
+	Any recent error messages?
+
+	Any M/L programs or patches in place that might complicate the issue?
+
+	Include CDOS version, and serial number; also size of your RAM memory.
+
+HELP STAMP OUT disk crashes.  Except for that, it's the best disk operating system I've ever used, an absolute pleasure.
+
+		William Calvin
+		71256,1353
+		24 May 1985
+
+POSTSCRIPT
+My minor revisions of Bill Templeton's GETUM.BA help reconstruct lost files by eliminating CRs from original version, going on to next track as default.
+
+0 'GETUM.CHP - Retrieve Chipmunk Files
+1 'by Bill Templeton [75655,1056]  5/85; minor mods WHCalvin 5/24/85
+2 'prints output to RAM:DISK.DO
+3 CLEAR512:E$=CHR$(27):R$=E$+"p":N$=E$+"q
+4 OPEN"disk"FORAPPENDAS1:T=1:X=1:Y=18'defaults
+5 CLS:PRINT@45,R$" Retrieving Chipmunk Files "N$;"WHC mod"
+6 ONERRORGOTO14
+7 PRINT@93,"Track (0-79):";:INPUTT
+8 PRINT@127,"From Sector (1-18):";:INPUTX
+9 PRINT@169,"To Sector (1-18):";:INPUTY
+10 FORS=XTOY:P$=DSKI$(0,T,S,0):Q$=DSKI$(0,T,S,1)
+11 PRINTP$;Q$;
+12 PRINT#1,P$;Q$;
+13 NEXT:GOTO200
+14 IFERRTHENPRINT@253,"Error ="ERR
+15 BEEP:PRINT#1,"<<Error>>":RESUMENEXT
+20 END
+200 BEEP:T=T+1:X=1:CLS
+205 PRINT "Next Track, Sector: "T;X
+207 INPUT"ENTER to continue next track";XX$:IFXX$<>""THENMENU
+210 PRINT"Going to Track ";T:GOTO10
+
+		###
+

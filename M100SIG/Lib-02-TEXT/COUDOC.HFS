@@ -1,0 +1,36 @@
+In the May 1984 issue of PORTABLE 100 (pages 22 and 25), David Busch published a BASIC program for counting the number of words
+in a Model 100 .DO file.
+
+Unfortunately, this program has a logical flaw. This flaw leads to errors whose magnitude depends on the file structure. In 
+short files or files with short records the error can be greater than 10%.
+
+The flaw in Dave's program is that it does not count words which end with a carriage return. It counts only words ending with a
+space. You can see this by examining line 260 in his program. The word count CU is not incremented unless a space character is 
+preceded by a non-space character. However, words often  terminate with a carriage returns, for example in:
+
+  Paragraph ends.
+
+  Listings (as this one).
+
+  Data files.
+
+  Downloaded text files.
+
+  Programs.
+
+My revision of Dave's program appears in XA4 as COUNT.HFS. This program uses the same line numbers as the original program 
+where the same or a similar line is used for easy reference. 
+
+Line 285 adds words ending with a carriage return to the word counter. This version works with the Radio Shack TRS-80 Disk/
+Video Interface for the Model 100 (line 110) . When entering a DVI filename, be sure to include the disk designation ("0:") and
+the extension, if any. For RAM files, the .DO extension is automatic.
+
+A lively display is added to assure the user that counting is in process (lines 250 and 260). An audio signal sounds  the end 
+of program.
+
+As an author, I could see no reason to output the mean number of characters per word and dropped it. The character counter (
+"CHAR") in the original program gives values that differ significantly from the byte count of the file. In line 260 I reduce 
+this error to within 5%. The .BA file for this program takes 721 bytes with remarks. You can reduce it to 506 bytes by deleting
+lines 10-20.
+
+

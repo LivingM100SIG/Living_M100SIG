@@ -1,0 +1,165 @@
+FLTIBM.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Transfer of files between the Model 100 and other computers is a popular
+topic, since many use the laptops as on-the-go writing tools, and need to
+integrate files on a desktop machine -- and others use the PC as a means of
+archiving M100 files and programs.  On the M100 Forum FLTIBM (DL3) is one of
+the more popular programs for Laptop <--> IBM-PC transfers.  These messages
+chronicle problems a Tandy 200 owner experienced.
+
+Message range: 147573 to 147882
+Dates: 5/9/87 to 5/12/87
+
+
+Fm: Phil Wheeler 71266,125
+To: All
+
+Some one left me an Easyplex message re FLTIBM related to not getting line
+feeds along with CR's on the target computer.  Unfortunately, I deleted it and
+then lost it on my local disk.  And I don't remember who it was.  If you read
+this, please send a message here (where it will not get deleted!).  And provide
+more info: What kind of file you are transferring (is it an M100 TEXT file with
+CR's only at the end of a paragraph, or one with CR's at the end of each
+line?); what computer (at each end)?
+
+Note that if the file is a M100/102/200/NEC text file, each paragraph will go
+out as one long line.  If you load it into Wordstar (for example), the
+beginning of each paragraph will show at the left of the screen -- with the
+remainter extending off-screen to the right. (With other WP's, it maylook
+different).  With Wordstar, you fix this by doing ^B (align) at the beginning
+of each "line" -- or ^QQ^B at the beginning of the file.
+
+
+Fm: David Shaffer 72266,3305
+To: Phil Wheeler 71266,125
+
+The question about FLTIBM and linefeeds came from me. I am transferring
+straight M200 text files, with a single CR at the end of each graph, from my
+M200 via Phil's beautiful FLTIBM program and a null modem cable, to an IBM PC
+and/or Leading Edge Model D. Then going to read file in Microsoft Word. Word
+gets everything fine, wraps lines properly just as WordStar would with ^Q^QB,
+etc., * EXCEPT * that paragraph endings show up as an invisible character
+which, on printout, turns out to be a CR with no LF. The program LFEED.BA from
+the Model 200 DL here eliminates this problem for files transferred via TELCOM
+and Crosstalk (PC end), BUT NOT for files transferred with Phil's FLTIBM, which
+uses the SEND TO:COM: routine rather than using TELCOM. Anybody have any ideas
+about this?
+
+
+Fm: Phil Wheeler 71266,125
+To: David Shaffer 72266,3305
+
+No good answer, David.  I see nothing like that on the IBM, Compaq or Z-150.
+All real CR's on the M100 go thru as total ones on the PC.
+
+One approach would be to run a program on the PC that will add the LF to the
+CR.  There are Bsic programs that will do the job.  Perhaps a message to the
+Sysop on IBMSW Forum will root one out. I think, in fact, there is even a
+machine language program.
+
+Not having had this problem, I'm a bit puzzed re a solution.  Maybe a fellow
+WORD user will jump in.
+
+
+Fm: Phil Wheeler 71266,125
+To: David Shaffer 72266,3305
+
+Well I am really at a loss on this one, David.  I just checked a file uploaded
+from the M100 to my PC clone (Z-150) and each CR is a CRLF pair when looked at
+with DEBUG.COM -- not a function of the WP pgm used.  BTW -I do not use the
+comm linefeed patch; no need for it.
+
+Could be this is some odd "feature" in WORD.  Does it have a mechanism for
+importing ACSII files (a utility feature)?  Some (e.g., Multimate) do.  That
+may be what you need.
+
+Take a look at your file on the PC with DEBUG .  Dump it and see if you have
+both a 0D & 0A at the end of each paragraph -- in that order.  That's what I'm
+looking at, and what should be there.
+
+
+Fm: David Shaffer 72266,3305
+To: Phil Wheeler 71266,125
+
+OK, have used DEBUG as you suggest. At end of each graf is 2E (period?)
+followed by OD followed by 24 (in particular text I was sending, each new graf
+began with a $ for use as a typesetting code). NO OA !!!! By the way, the text
+at the side of the screen in DEBUG showed two periods, not just one.  NOW, your
+note that you do not use any comm linefeed patch when you use FLTIBM makes me
+think that you have that patch built into your program. Well, the patch you use
+might work only on the M100 -- not the M200. I note that your program this SIG
+peeks to memory address 64228 (or 63066; I'm too much of an amateur to follow
+you properly). BUT Jim Irwin's M200 LFEED fixer finds the TELCOM line feed
+patch at address * 61243 *. Apparently the two computers are different in this
+respect. Or am I confused as ever? Thanks your help.
+
+
+Fm: Phil Wheeler 71266,125
+To: David Shaffer 72266,3305
+
+Yes, 100 and 200 are differnt with regard to addresses in LFUTL & LFEED. Should
+not matter in this instance.
+
+Difference could be in the added two chars at the end of the 'save to' string.
+My indication in FLTIBM.DOC is use 88N1ENI.  Is that what you are doing?
+(i.e., 'Save to:COM:88N1ENI').  Try different combos for the last two (NI) --
+or use the NI.  Play with it.  What you see in DEBUG is correct for what you
+are getting -- and there is definitely a difference. NO other M200 users have
+reported this problem (which may not mean diddly!).
+
+Maybe Tony (who has a 200) will pop in with help re NI.  If I had one, I could
+help provide support -- but I don't (sob!).  But wife thinks I have enough
+computers (no sympathy with "support").
+
+
+Fm: Phil Wheeler 71266,125
+To: David Shaffer 72266,3305
+
+David, another way to "fix" it is to go to IBMCOM (DL2) and download ADDLF.EXE
+into your IBM-clone.  You will need a protocol on that machine to do it.  Run
+it and it will add  an LF to each CR.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Unfortunately, the two extra TELCOM parameters only work on incoming data, not
+on outgoing.  The first is a control-character filter, N= normal, I =
+intercept; the second is an "Add a line feed to incoming data after CR's". N =
+No, I = "Insert LF".
+
+So no combination of NN, NI, II, or IN (or any other permutation you can think
+of) will do anything on outgoing data.
+
+So I'm afraid I'd have nothing useful to add.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+OK -- well that info is useful in itself!  Wonder if his problem is
+characteristic of all 200's, or has todo with his DOS machine? May never know!
+
+
+Fm: Phil Wheeler 71266,125
+To: David Shaffer 72266,3305
+
+David, look for PC-LF.BAS & PC-LF.EXE, soon to appear in DL3.  LF adders for
+the PC and your problem (I hope).
+
+
+Fm: David Shaffer 72266,3305
+To: Phil Wheeler 71266,125
+
+Tony, I appreciate your help. Will continue to pursue.
+
+
+Fm: David Shaffer 72266,3305
+To: Phil Wheeler 71266,125
+
+Phil, thanks for that tip and for all your help. Will proceed with ADDLF.EXE.
+Aside: secret to wife issue is to turn her into computer user. Mine is actually
+glad whenever a new machine shows up here. She pa particularly likes the 200.

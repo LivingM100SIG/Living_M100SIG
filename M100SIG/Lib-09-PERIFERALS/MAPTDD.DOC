@@ -1,0 +1,106 @@
+Documentation for MAPPER.TDD
+============================
+joel dinda [75725,1134]
+CHECKSUM: 111,781
+
+
+One of the neat things about Acroatix' Powr-DOS is that DSKO$ permits you to
+study the operation of the drive.  MAPPER uses DSKO$ to extract the file
+control information stored on a TDD disk and write it to a RAM file named
+TDDMAP.DO.  MAPPER actually has little intrinsic value, but could prove useful
+as the basis for a more interesting project.  Please note that Powr-DOS is
+REQUIRED for this program to work.
+
+MAPPER asks you the name of the diskette being mapped, then goes its merry
+way.  The end result is a file (TDDMAP) which maps the file storage system for
+the particular disk at hand.
+
+The process takes somewhat more than three minutes, which is some indication
+of the limitations of the drive:  This is time mainly spent copying diskette
+sectors into a RAM buffer for the purpose of reading one byte per sector.  Most
+applications can do this more efficiently; my purpose here was not speed but
+thoroughness.  This was designed mainly as a demonstration program; it can
+fairly easily be improved in many ways.
+
+
+The information gathered by this program is stored in the following
+variables:
+
+C(x) holds the number of the next sector in the file; "x" is the current
+sector's number.  If C(x) is 0, the sector has not been used.  If C(x) is 255,
+a file ends (ended) in this sector.  If C(x) is another number, that is where
+one should look for the next section of the file.  BE AWARE that if the sector
+is marked "Not Allocated", the next sector may or may not be the actual next
+section of the file.  Range for "x" is 1 to 79, plus 0 and 255.
+
+F!(x,y) stores information about files; if y=0, the value is the length of the
+file (x is the sequence number of the file, in alphabetical order); if y=1, the
+value stored is the sector with the first portion of the file; if y=2, the
+value is the last sector holding the file.  Range for "x" is 0 to 39.
+
+F$(x) is the name of file "x".  Range for "x" is 0 to 39.
+
+S(x) reports sector allocation: 1 if allocated; 0 if not.  Range for "x" is 0
+to 79, but S(0) is always 1 (true).
+
+U stores a count of the number of sectors currently in use.  This count does
+not include Sector 0, which is always in use.
+
+MAPPER is a straightforward program, and should be easy enough to decipher. 
+It uses DSKO$ to copy sectors into a buffer, from which it extracts various
+pieces of information with PEEKs.  Anyone with a bit of courage is welcome to
+adapt it for, say, the purpose of editing the TDD directory....
+
+
+HOW THE TDD FILING SYSTEM WORKS
+TDD is an "intelligent" disk drive:  This means it's got its own software for
+
+
+
+
+
+
+
+
+
+
+
+MAPPER.DOC                                                             10/12/86
+Page 2 
+
+
+the purpose of managing files and sector allotment.  It can store up to 40
+files; which it keeps track of in an always-alphabetical directory on Disk
+Sector 0.
+
+Stored in the directory with each filename is the file's length, and the
+sector addresses where the file starts and ends.
+
+When the TDD software is asked to send a copy of a file to the computer, it
+searches the directory for the file's name.  If it locates the file, TDD jumps
+to the first sector holding the file and sends that along.  The 1281st byte of
+this sector tells TDD where to find the next section of the file; TDD jumps
+there.  This continues until the file ends.
+
+TDD presumably recognizes the end of a file when it finds 255 at the jump
+location in the sector.  It evidently compares this sector number with the
+"End" address in the directory; dunno what happens if they don't match.  Since
+the file's physical end does not appear to be marked in any way, the file
+length information may serve for the purpose of terminating the file transfer
+at the correct point.  (This is a bit speculative, I confess.  I'm not sure how
+important this is.)
+
+Sector allocation is real simple:  TDD writes new files (or extended files) to
+the lowest numbered sector available, which it keeps tracks of fairly
+carefully.  As each sector ends, TDD tags the address of the next sector to the
+tail of the sector being left.  This is simple enough, but not fool-proof. 
+Erasures are from the directory ONLY; the information in the other sectors
+remains intact until overwritten.
+
+These things are addressed in more detail in my SECTR0.TDD, also in DL5.  Once
+again:  If you figure something out about all this, PLEASE share it!
+
+Thanks.
+
+joel
+12oct86

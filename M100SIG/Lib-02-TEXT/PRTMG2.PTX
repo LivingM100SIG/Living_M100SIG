@@ -1,0 +1,69 @@
+.pa
+PRTMG2 03/04/86
+.csPRTEXT FILES
+
+PRTEXT uses four types of files: OUTPUT, DOCUMENT, MERGE and MAIL LIST.
+.pp
+When PRTEXT is running, the OUTPUT file, DOCUMENT file and the MAIL LIST file (if used) are open all the time while MERGE files are opened and reclosed as needed.  Two, three or all four types of files can be used at once and they, with two exceptions, can reside on any legal M100 or M200 device:  all four on the same device or on different devices.  A cassette can only deal with one file at a time in serial fashion and so tedious rewinding would be required to use it for MERGE files although it would be adequate for DOCUMENT and even MAIL LIST files. The PDD has similar restrictions on multiple files open but it could be used to hold a number of MERGE files containing boiler plate material which could be merged into a document in random order or the PDD could hold the segments of a large MAIL LIST file on one or more disks.
+.pp
+If PRTEXT cannot find a specified file, it will pause and request it (with an option to quit the program).  A long mailing list might be on several disks which could be inserted as needed.
+ 
+OUTPUT files - Normally the output file device is LPT: (or P for short--no filename is necessary) for formatted output directly to the printer.  In some instances it may be desired to direct the output to another device and perhaps a specific file.  RAM:OUTFIL.DO, CAS:OUTFIL.DO, 0:OUTFIL.DO, CRT:, LCD:, MDM:7I1E, and COM:88N1D are all acceptable.
+
+DOCUMENT files - These are ASCII files produced by the TEXT program which contain the text to be printed along with formatting DotComs and Psigs.  DOCUMENT files may contain .MG merge DotComs to use information from other ASCII files as needed.
+
+MERGE files - Almost identical to DOCUMENT files but used to contain standard "boilerplate" text or segments of a very long document.  Unlike DOCUMENT files, MERGE files cannot contain .ML or .MG DotComs to call MAIL LIST or other MERGE files.  MERGE files are normally in RAM memory or on disk (see PDD notes).
+
+.nf
+Sample MERGE (.MG) file PRMERG.DO
+
+.in3
+ .pp
+ We are having a special mail order sale for our regular customers.
+ Since the <LAST>'s are so important to us we wanted you to know
+ about it first.
+.IN0
+.rf
+
+MAIL LIST files - ASCII files of names and addresses formatted according to PRTEXT rules.  A MAIL LIST file can be called with a .ML DotCom by a DOCUMENT file or another MAIL LIST file to produce similar, personalized letters to each name on the list.
+.pa
+.PP
+MAIL LIST files may be in RAM memory, on cassette or on disk (see PDD notes).  The file structure is very important:  the first two lines are the ML HEADER and the remaining lines are the ML ADDRESS section containing the name and address records.  For long lists, the ML HEADER can be in a file by itself with its third line being a .ML DotCom to call the first ML ADDRESS file which can have a .ML DotCom as its last line to call the next ML ADDRESS file and so on.
+.pp
+The first ML HEADER line contains the number of fields in each ML ADDRESS record (up to 10).  Each record must have exactly this number, no more and no less, even if some fields in a record are null or empty.
+.pp
+The second ML HEADER line defines field names for use in the document.  The names can be anything desired but it is recommended that they be set off in distinctive characters to prevent confusion with similar words in the text body.  Each field name must separated from the others by a caret ^ symbol.  When a field is empty, the two carets will be adjacent ^^.
+.PP
+The remaining lines (in the same or separate files) contain the ML ADDRESS records to be processed, one record per line.  Fields are listed in the order specified in line two and are separated with a caret ^.
+.nf
+
+Sample MAIL LIST (.ML) File 0:PRADRS.DO   (all in one file)
+.in4
+
+8
+<LAST>^<SUFX>^<FIRST>^<SALUT>^<ADDRESS>^<CITY>^<STATE>^<ZIP>
+Martin^ P.E.^Henry^Mr.^5517 Sturbridge^Houston^TX^77056
+Jones^^Bob^Mr.^1234 Some St.^Pasadena^TX^77000
+Smith^^W. L.^Mr. and Mrs.^P. O. Box 12345^New York^NY^01234
+Brown^, Jr.^George^Dr.^Mellie Esperson Building^Houston^TX^77002
+.in0
+
+Sample MAIL LIST (.ML) using separate files on D/VI or PDD
+
+.IN3
+.CSFile 0:PRADRS.DO   (ML HEADER file)
+ 8
+ <LAST>^<SUFX>^<FIRST>^<SALUT>^<ADDRESS>^<CITY>^<STATE>^<ZIP>
+ .ML 0:PRADR1.DO
+
+.CSFile 0:PRADR1.DO   (ML ADDRESS file)
+
+ Martin^ P.E.^Henry^Mr.^5517 Sturbridge^Houston^TX^77056
+ Jones^^Bob^Mr.^1234 Some St.^Pasadena^TX^77000
+ .ML 0:PRADR2.DO
+
+.CSFile 0:PRADR2.DO   (ML ADDRESS file)
+
+ Smith^^W. L.^Mr. and Mrs.^P. O. Box 12345^New York^NY^01234
+ Brown^, Jr.^George^Dr.^Mellie Esperson Building^Houston^TX^77002
+.in0

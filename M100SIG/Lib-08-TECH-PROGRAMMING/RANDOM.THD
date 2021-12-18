@@ -1,0 +1,116 @@
+RANDOM.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+These messages discuss "a RANDOMizing subroutine to READ F$, that will give a
+different word each time", an interesting programming problem introduced in
+the first message.  The resulting replies give some interesting insights in
+to potential and valid solutions to this interesting problem.
+
+Message range: 173577 to 173603
+Dates: 8/28/88 to 8/28/88
+
+
+Sb: #RANDOMizing routine!
+Fm: Norm Leveillee 72327,1025
+To: Anyone!
+
+TO ANYONE! I need a RANDOMizing subroutine to READ F$, that will give a
+different word each time. I have a routine now, but it repeats some of the
+words at least twice during the looping. Can you help? Merci bien. Norm
+
+
+Fm: Bill Brandon [DPTRAIN] 76701,256
+To: Norm Leveillee 72327,1025
+
+Norm, why don't you either a) delete a word from the universe when it's used,
+or b) have the program test each word as selected: if it's already been used,
+then go back and select another. That's as good as I can do, given the limited
+description of your objective.
+
+By the way, in a truly random selection from a limited population, where
+selection does not remove an item from future consideration, you are very
+likely to see the same item pop up more than once. That's how the folks who
+write programs to improve your chances with state lotteries design their
+programs, isn't it?
+
+
+Fm: Tony Anderson 76703,4062
+To: Norm Leveillee 72327,1025
+
+There is no "randomizing routine" that will not, at some point or other, return
+a number that has previously been used, or repeat a certain group of numbers in
+the same sequence. It has to do with the "random" element, where it is entirely
+possible for a number to repeat, or even a group of numbers to repeat.  The
+classic mathematical example is a pair of dice; given only 11 numbers, but in
+an ideal distribution of 36 possible combinations.  The odds are a little over
+3 to 1 that there will be repeats.  That's why you hear about gamblers making
+several "passes" in a row (winning on the number 7 or 11 when they are thrown
+as the first try in a new "game").  But that may be a little too much for you
+to work with.
+
+They have always had similar problems with other computers, so no routine is
+perfect.  The way they solved it in some of the mainframes, where a
+non-repeating series of numbers was required, was to construct an array giving
+the number of instances you would be using, sort of like a table, and as each
+of the possible numbers was used, to "check it off" in the table.  If a number
+repeated, it was skipped, and the random generator called again.  The bug in
+this approach is that the more numbers that were used from the table, the
+longer it takes to generate a new "unique" number.  The answer to that was to
+select a stop point, and when a certain percentage of the numbers available had
+been used, to stop, and start over.  Selecting 50%, as an example, if you need
+15 unique numbers, then the table would start with 30 numbers, and when 15 had
+been used, stop.  The smaller the percentage selected, the less likely for
+delays based on trying to find a new unique number.
+
+Some card game simulations work by starting with a table of 52 possible
+numbers, representing an entire deck of cards, and as each "card" is used, the
+number is checked off.  When the "deck" is half used, they are "shuffled",
+(table is cleared) and the game starts over with a "fresh deck" (new table).
+
+So, I would think the answer in your case would be to have a pool of words
+available much larger than you actually plan to use, and provide a table to
+indicate when a specific word had been used, allowing you to select another
+word.  Personally, I'd start with a word file three times what I needed... for
+example, if you want to select 20 words, my master word list would be 60 words.
+Although you give no real details of what you're doing, if the project was
+extensive enough, you might consider using the spelling checker dictionary that
+is available in Lib. 9.  It has 20,000 words in alphabetic order, and that
+would make a hell of a selection pool, randomly selected, if you were working
+on a spelling-type program.
+
+I believe there are also 100 and 1500 word lists of the most often used words
+in English.
+
+I assume you know how to construct an array table of x elements, and mark each
+element with a 1 if the matching word is used (the array is set to zeros when
+dimensioned).  A simple BASIC IF statement can test to see if an element has
+been used, in True/False reading of the zero or one.  This might be one method
+of doing it, using a 100 element table, and selecting 20 words from the list.
+
+100 DIM N(100)
+110 DATA Blah, Blah, Blah, etc... (100 words)
+.  (more words)
+.  (more words)
+230 FOR X=1TO20
+240 (Random Generator, Return "Y")
+250 IF N(Y) THEN 240 ELSE N(Y)=1
+260 RESTORE:FOR Z=1TOY
+270 READ F$
+280 NEXT Z
+290 (Use F$ word)
+300 NEXT X
+
+
+Fm: Norm Leveillee 72327,1025
+To: Bill Brandon [DPTRAIN] 76701,256
+
+DEAR BILL, THANKS FOR YOUR HELP. AMITIES, NORM
+
+
+Fm: Norm Leveillee 72327,1025
+To: Tony Anderson 76703,4062
+
+Dear Tony, Your response was very helpful. I will work onyour suggestions.
+Again, merci. Norm

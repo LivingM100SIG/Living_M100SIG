@@ -1,0 +1,30 @@
+1 GOTO90;'Search & Replace  S A French  72275,1622  01/01/85
+10 IFEOF(1)THENCLOSE:KILLDF$:NAME"TEMP$$.DO"ASDF$:MENU ELSEP=1:OS$="":LINEINPUT#1,IS$
+14 M=INSTR(P,IS$,SS$):IFM=0THENOS$=OS$+MID$(IS$,P):GOTO20
+15 M=M-P:OS$=OS$+MID$(IS$,P,M):IFQ=0THENOS$=OS$+RS$ ELSEGOSUB30:IFI<3THEN OS$=OS$+SS$ ELSEIFI<5THENOS$=OS$+RS$ ELSE40
+16 P=P+LEN(SS$)+M:IFP<LEN(IS$)THEN14
+20 PRINT#2,OS$:PRINT@135,"Line";L:L=L+1:GOTO10
+30 CLS:PRINTOS$;CHR$(27)"p";SS$;CHR$(27);"q";MID$(IS$,M+P+LEN(SS$)):PRINT@285,"(R)eplace, (S)kip or (Q)uit ? ";
+32 GOSUB80:I=INSTR(1,"SsRrQq",I$):CLS:RETURN
+40 PRINT#2,OS$+SS$+MID$(IS$,M+P+LEN(SS$))
+42 IFEOF(1)THEN10 ELSELINEINPUT#1,IS$:PRINT#2,IS$:PRINT@137,"Line";L:L=L+1:GOTO42
+80 I$=INKEY$:IFI$=""THEN80 ELSERETURN
+90 CLEAR1000:DEFINTA-Z:CLS:FILES:PRINT:INPUT".DO FILE TO PROCESS";DF$:IFINSTR(1,DF$,".DO")=0THENDF$=DF$+".DO"
+92 PRINT"(A)uto or (Q)uery ? ";:GOSUB80:I=INSTR(1,"AaQq",I$):IFI=0THENPRINT:GOTO92 ELSEIFI>2THENQ=1 ELSEQ=0
+94 CLS:LINEINPUT"SEARCH STRING ";SS$:IFLEN(SS$)=0THENMENU
+96 LINEINPUT"REPLACE STRING ";RS$:OPENDF$FORINPUTAS1:OPEN"TEMP$$.DO"FOROUTPUTAS2:CLS:GOTO10
+100 'This program can be used for global search and replace in a Model 100 .DO file.
+101 'When the program is run,it will show you the directory and ask for a .DO file to process.
+102 '
+103 '(A)uto  - Will search for a string,then replace it. It will
+104 'continue to do this until the end of the file,then exit to the menu.
+106 '(Q)uery - Will search for a string,then display it in context and"
+107 'ask if you want to (R)eplace it,(S)kip to the next one,or (Q)uit
+108 'processing the file. It will continue to do this until the end of the file, then exit to the menu.
+109 '
+110 'You will be asked for the search string (string to be look for), and the replace string (to replace the search string).
+111 '
+112 'A maximum of 255 char strings are allowed in the .DO file.
+113 'A TEMP$$.DO file will be created,then killed during operation.
+114 '1988 Bytes with comments.
+116 ' 729 Bytes in Basic with lines 100-116 removed.

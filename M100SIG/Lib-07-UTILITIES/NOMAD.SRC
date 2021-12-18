@@ -1,0 +1,271 @@
+;NOMAD  (c)1989 Howard Sprow CIS:73625,365
+;Assembled with the Custom Software Assembler
+	ORG	62400
+CSRON	EQU	16969	;turn on cursor
+CSROFF	EQU	16974	;turn off cursor
+SCRLON	EQU	16964	;turn scroll on
+SCRLOF	EQU	16959	;turn scroll off
+REVON	EQU	17001	;turn on reverse video
+REVOF	EQU	17006	;turn off reverse video
+CRLF	EQU	16930	;print CR & LF to LCD
+GETKEY	EQU	29250	;get key press-ASCII for key returned in A
+LCDPOS	EQU	17798	;set HL to row,col; LCD RAM pos returned in HL
+LCDCHR	EQU	17682	;character at cursor position returned in C
+CSRROW	EQU	63033	;current cursor row(1-8)
+CSRCOL	EQU	63034	;current cursor column(1-40)
+CLRLIN	EQU	16989	;clear current line from cursor
+HOME	EQU	16941	;send cursor to upper left
+LOWLFT	EQU	17015	;send cursor to lower left
+;
+;
+START	LHLD	63098	;check for running BA program
+	LXI	DE,65535;not running value
+	RST	3	;compare
+	RNZ	;return to system if program running
+	CALL	SCRLOF
+	CALL	LOWLFT
+	CALL	REVON
+	LXI	HL,MSG	;print NOMAD name
+	CALL	23128
+	CALL	REVOF
+	CALL	HOME
+	CALL	CSRON
+;
+;
+LOOP	CALL	GETKEY
+	JZ	LOOP
+	CPI	28	;cursor right?
+	JZ	RIGHT
+	CPI	29	;cursor left?
+	JZ	LEFT
+	CPI	30	;cursor up?
+	JZ	UP
+	CPI	31	;cursor down?
+	JZ	DOWN
+	CPI	13	;enter?
+	JZ	ENTER
+	CPI	27	;escape?
+	JZ	ESC
+	CPI	8	;backspace?
+	JZ	BKSP
+	CPI	127	;delete?
+	JZ	DEL
+	CALL	INSERT	;insert space
+	RST	4	;then print character
+	JMP	LOOP	;get next key press
+;
+;
+RIGHT	CALL	RTSUB
+	JMP	LOOP	;back to main loop
+RTSUB	LDA	63034	;get cursor col
+  	CPI	40	;is it 40?
+	JZ	CR	;if so, print cr/lf
+	MVI	A,67	;if not, move cursor down
+	CALL	17008
+	RET
+CR	CALL	CRLF	;print CR/LF
+	RET
+;
+;
+LEFT	CALL	LFTSUB
+	JMP	LOOP	;back to main loop
+LFTSUB	LDA	63034	;get cursor col
+	CPI	1	;is it 1?
+	JZ	L1	;if so, go check for row 1
+	MVI	A,68	;if not, move cursor left
+	CALL	17008
+	RET
+L1	LDA	63033	;get cursor row
+	CPI	1	;is it 1?
+	JNZ	L2	;if not, move to end of next line up
+	RET		;if so, return
+L2	LXI	HL,63034
+	MVI	M,40	;set col to 40
+	CALL	UPSUB	;then move cursor up
+	RET
+;
+;
+UP	CALL	UPSUB
+	JMP	LOOP
+UPSUB	MVI	A,65
+	CALL	17008	;move cursor up
+	RET
+;
+;
+DOWN	MVI	A,66
+	CALL	17008	;move cursor down
+	JMP	LOOP
+;
+;
+ESC	CALL	LOWLFT	;move to lower left
+	CALL	CLRLIN	;erase line
+	CALL	UPSUB	;move cursor up
+	CALL	CLRLIN	;erase line
+	CALL	UPSUB	;move cursor up
+	CALL	SCRLON	;restore scroll
+	CALL	CSROFF	;turn off cursor
+	RET		;return to normal BASIC edit mode
+;
+;
+BKSP	CALL	LFTSUB	;move cursor left, then go to DEL
+;
+;
+DEL	LHLD	CSRROW	;get screen row,col
+	SHLD	DATA2	;store them at top of reserved RAM
+	CALL	LCDPOS	;calc position in LCD RAM, load it to HL
+	LXI	DE,65343;is it end of LCD RAM?
+	RST	3
+	JZ	LOOP	;if so, return to main loop
+D1	INX	HL	;increment LCD RAM pointer
+	LXI	DE,65343;check end of LCD RAM
+	RST	3
+	JZ	DELEND	;if so, jump to end routine
+	MOV	A,M	;if not, get character from LCD RAM
+	DCX	HL	;move pointer left
+	MOV	M,A	;put character value there
+	INX	HL	;move pointer up 1
+	JMP	D1	;go back to do next character
+DELEND	DCX	HL	;move pointer back 1
+	MVI	A,32	;put space character in that position
+	MOV	M,A
+	CALL	REFRSH	;reprint screen from cursor position to end
+	LHLD	DATA2	;restore cursor to original position
+	SHLD	CSRROW
+	CALL	CSRON
+	JMP	LOOP	;back to main loop
+;
+;
+INSERT	STA	DATA1	;save key press
+	LHLD	CSRROW	;get current cursor row,col
+	SHLD	DATA2	;save them
+	CALL	LCDPOS	;calc position in LCD RAM, load it to HL
+	LXI	DE,65343;check if cursor already at end
+	RST	3
+	JZ	INSEND	;if so, return
+	XCHG		;otherwise, save RAM pointer for cursor position in DE
+	DCX	DE	;move pointer back 1
+	LXI	HL,65342;point to last RAM position to shift
+I1	MOV	A,M	;get character from LCD RAM
+	INX	HL	;move pointer up 1
+	MOV	M,A	;put character in that RAM position
+	DCX	HL	;move pointer back 2
+	DCX	HL
+	RST	3	;comp to original cursor RAM position in DE
+	JNZ	I1	;if not there yet, go back and move another character
+	INX	HL	;if so, put space charecter at cursor position
+	MVI	M,32
+	CALL	REFRSH	;reprint screen from cursor position to end
+INSEND	LDA	DATA1	;recall original key press
+	LHLD	DATA2	;recall original cursor row,col
+	SHLD	CSRROW
+	RET		;back to main loop to print key press
+;
+;
+REFRSH	CALL	CSROFF
+	LHLD	CSRROW	;get cursor row,col
+	SHLD	DATA2	;save them
+R1	LHLD	CSRROW	;load HL with cursor row,col
+	CALL	LCDPOS	;calc position in LCD RAM, load it to HL
+	LXI	DE,65343;compare to end of LCD RAM
+	RST	3
+	JZ	RFEND	;if so, jump to end routine
+	LHLD	CSRROW	;load HL with cursor row,col
+	PUSH	HL	;hold them on stack
+	CALL	LCDCHR	;get character from LCD RAM
+	POP	HL	;recall HL
+	MOV	A,C	;put character in A
+	RST	4	;print it
+	JMP	R1	;go back for next character
+RFEND	CALL	CSRON	turn cursor back on
+	LHLD	DATA2	;recall original cursor positi5n
+	SHLD	CSRROW	;reset cursor to original position
+	RET		;finished
+;
+;
+ENTER	MVI	A,1	;init counter for legnth of input line
+	STA	DATA1	;
+	STA	CSRCOL	;move to column 1 on current line
+	LHLD	CSRROW	;get cursor row,col
+	CALL	LCDPOS	;calc position in LCD RAM, load it to HL
+	SHLD	DATA2	;save starting LCD RAM address for command
+E1	MOV	A,M	;move byte from LCD RAM to A
+	CPI	32	;is it a space?
+	JZ	TWOSPC	;if so, go check for 2nd space
+	INX	HL	;move LCD RAM pointer up 1
+	PUSH	HL	;hold HL on stack
+	CALL	RTSUB	;move cursor right 1
+	POP	HL	;recall HL from stack
+	LDA	DATA1	;get current counter value
+	INR	A	;increase it by 1
+	STA	DATA1	;save new value
+CHKEND	LXI	DE,65343;load end of LCD RAM value
+	RST	3	;compare it to current pointer value in HL
+	JZ	LINE	;if at end of LCD RAM, go adjust legnth of line
+	JMP	E1	;otherwise, go back to look for space character
+TWOSPC	INX	HL	;increase pointer by 1
+	PUSH	HL	;hold it on stack
+	CALL	RTSUB	;move cursor right 1
+	POP	HL	;recall pointer from stack
+	LDA	DATA1	;get current counter value
+	INR	A	;increase it by 1
+	STA	DATA1	;save new value
+	MOV	A,M	;move byte from LCD RAM to A
+	CPI	32	;is it a 2nd space?
+	JNZ	CHKEND	;if not, go check for end of LCD RAM
+LINE	CALL	GETKEY	;get key press, if any
+	JZ	LINE	;wait for key press
+	CPI	28	;cursor right?
+	JZ	RT
+	CPI	29	;cursor left?
+	JZ	LT
+	CPI	27	;escape?
+	JZ	ES
+	CPI	13	;enter?
+	JZ	TOKENZ
+	JMP	LINE	;back for another key
+RT	CALL	RTSUB	;move cursor right
+	LDA	DATA1	;get current counter value
+	INR	A	;increase it by 1
+	STA	DATA1	;save new value
+	JMP	LINE	;go back
+LT	CALL	LFTSUB	;move cursor left
+	LDA	DATA1	;get current counter value
+	DCR	A	;decrease it by 1
+	STA	DATA1	;save new value
+	JMP	LINE	;go back
+ES	CALL	HOME	;home cursor
+	JMP	LOOP	;back to main loop
+;
+;
+TOKENZ	LXI	HL,65535;set command mode values
+	SHLD	63098
+	LXI	HL,63085
+	SHLD	64411
+	MVI	A,13	;load CR
+	STA	65451	;into keyboard buffer
+	MVI	A,1
+	STA	65450
+	CALL	17988	;initialize tokenize ROM routine from kb buffer
+	PUSA		;save all registers
+	LXI	HL,DATA1
+	MOV	A,M	;put # bytes to move in A
+	DCR	A	;decrease it by 1
+	LHLD	DATA2
+	XCHG		;put address to move characters from in DE
+	LXI	HL,63109;put address to move characters to in HL(input buffer)
+	CALL	23138	;call ROM block move routine
+	MVI	A,0	;put 0 end byte
+	MOV	M,A	;in buffer
+	POPA		;recall all registers
+	MVI	A,74	;clear from cursor to end of screen
+	CALL	17008
+	CALL	SCRLON	;turn scrolling back on
+	CALL	CSROFF	;turn off cursor
+	JMP	1312	;jump to ROM routine to execute command input
+;
+;
+MSG	DM	NOMAD
+	DB	0
+DATA1	NOP
+DATA2	NOP
+	END

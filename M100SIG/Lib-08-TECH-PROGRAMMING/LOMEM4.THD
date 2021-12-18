@@ -1,0 +1,304 @@
+
+LOMEM4.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This is one of a series of THD files relating to adapting James Yi's
+LOMEM.200 for use on the Model 100.  They include general comments on the
+use/value of the program, some intitial attempts to adapt it the the Model
+100, and some more refined approaches provided by Michael Nugent. This
+file continues tha saga, with Mike Nugent's M100 insight coming into play.
+The first in this series is LOMEM.THD.
+
+Message range: 158729 to 158831
+Dates: 10/19/87 to 10/21/87
+
+
+Sb: #158728-#LOMEM.100???
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653 
+
+Hmmmm...wonder it, at warm start up (pwr on or from another bank) the M100 goes
+thru a routine to initialize lomem to 8000h.  That would introduce an
+inconsistency.
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Phil Wheeler 71266,125 
+
+It appears y'all are banging heads with the warm start at 7D33.  On power up or
+reset, 7D61 checks whether the amount of RAM has changed.  It reads FAC1 (msb
+portion of FAC0), then calls 7EE1.  7EE1 finds the lowest *actual* RAM, stores
+its address at FAC0, and returns the msb portion of the address in A.  7D68
+then compares that to what you had at FAC1, hates the results, and boogies off
+to Cold Boot Hill.
+
+Bummer!  But maybe we can lie to it anyway -- not about the actual start of
+RAM, but maybe about the contents of FAC0.  Suppose you grab the TRAP (power
+down) hook at F602.  On the way to power-off, store *your* contents of FAC0
+someplace (not at FCC0!) and replace it with what 7D33 wants.  That gets you
+past the memory check on power up.  Now we gotta swap your stored value back
+into FAC0 before MENU updates the file pointers.
+
+Warm start can go several ways from there, depending on the machine's state at
+power down.  Was a program running?  Were you at the MENU?  Was reset pressed,
+power switch thrown, automatic time-out?  Stuff like that.  You've gotta make
+the swap-back, or MENU will farkle your pointers!
+
+A power up hook at F5F6 (called at either 7D91 or 7DC5, depending on the power
+up route) might provide that opportunity, but I'm not sure it'll always get
+there in time.  The hook at F605 is called sooner (at 7D6C) and looks like a
+better candidate, though you'll need to reroute the code that's already there.
+It could all get a bit sticky, but to me it seems the only way around it so
+far.
+
+Where to put the code that does all this?  Why not include it in the LOMEM area
+and let it protect itself?  The installer program might first use the MAKHOL
+routine at 6B6D to safely move all the files and buffers up the necessary
+amount, install your code at LOMEM, splice into your hooks and set 'em up, call
+2146H to update the file pointers, then do either a warm start (RST 0) or jump
+to MENU.  The installer should probably be a .CO program so the 2146 call won't
+bother HIMEM or it -- a .BA program would barf at that point.
+
+Wish I could play with this in detail, but at least it might help the LOMEMers
+get it happening on the Model 100.  Hope so!  And good luck!
+
+
+Fm: Phil Wheeler 71266,125
+To: Mike Nugent (TMN East) 71426,1201 
+
+Thanks for the info! Looks like we've run afoul of Mother Nature on this one!
+
+
+Fm: Jon Diercks 73327,2353
+To: Phil Wheeler 71266,125 
+
+This SIG never ceases to amaze me! My questions keep getting answered before I
+can ask them! OK, next in line is to come up with the code to perform this
+Memory Miracles. One idea I'd like to add to Nuge's is that the protection code
+to be stashed under LOMEM should probably also include code to remove itself
+cleanly when desired - possibly shifting itself back into the main *real* RAM
+area until it is needed again?  The assembly could be tricky, as one portion of
+the code would be ORG'ed at, say FCC0, while the other would live down in LOMEM
+somewhere . . . can it be done that way?
+
+
+Fm: Phil Wheeler 71266,125
+To: Jon Diercks 73327,2353
+
+Personally, it looks to be a task not worth the effort.  Since I use the PG
+banks, its not only turn on, but also return from other banks that need to be
+accommodated.  And perhaps other conditions as well.
+#: 158765 S8/Tech/Programming
+
+
+Fm: Jon Diercks 73327,2353
+To: Phil Wheeler 71266,125 
+
+  From Nuge's info, I think it CAN be done.  Granted, the nuances of working
+around 0MENU may be a bit over our heads, but I think that the benefits to us
+one-bank users may make it worth the time <plus I'm just plain fascinated with
+the idea of teaching this thing to do something it supposedly can't do!>.  I
+really do want to find a way to stash DSKMGR etc. away so that I don't have to
+have room for two copies of it.  Which do you think would be harder, developing
+this LOMEM trick or crunching DSKMGR into a psuedo-.BA file a la 0MENU?  Is
+there a Custom Software source code available for DSKMGR?
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Phil Wheeler 71266,125 
+
+{Played with it some more and came up with a working version (see next 2
+messages.  And you're not limited to 256-byte chunks -- use whatever you need!
+Here's how:
+
+Assign the lowest RAM (e.g. 8000h for a 32K machine) to the 'lomem' equate in
+INSTAL.SRC.  Assemble at EA60 or thereabouts (arbitrary) to make INSTAL.CO.
+Next, org LOMEM.SRC at that same lomem address (e.g 8000h), and replace
+'myjunk' with your own routine(s) of any length.  Assemble it as LOMEM.CO -- it
+expects that name.  With LOMEM.CO on the menu, run INSTAL.CO.  That's it -done!
+Use your LOMEM.CO assembly listing to determine the call address(es) of your
+routine(s).
+
+INSTAL.CO finds LOMEM.CO and uses its length to calculate where LOMEM.CO will
+be after MAKHOL moves things up.  After MAKHOL, it copies LOMEM.CO's code to
+the lomem area, sets up hooks, adjusts pointers, and goes home.  You can kill
+INSTAL.CO after that.
+
+I used the power up hook at F605 instead of F5F6.  F5F6 goes kablooey on a warm
+start from BASIC's edit mode.  To use F605 instead, I overwrote 3 bytes at F605
+and to compensate, I put the first 4 bytes of F605 in LOMEM.CO's 'pwrup'
+routine.  It then jumps to the unmutilated remainder (starting at F609).  So be
+cautious of anything that uses the F605 power up or F602 power down hooks, but
+as far as I know, most things don't mess with them.
+
+It's bare bones with no provision to recover low RAM; do a cold start for now.
+A slicked-up job could also relocate the code with no need to assemble to a
+specific location.  But I've done my bit for now, and having done so, I'm ready
+for a nap.  You guys play with it for a while, and see whatcha think.
+
+LOMEMing the 100 way...
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Mike Nugent (TMN East) 71426,1201 
+
+{;INSTAL.SRC Installer for LOMEM.CO
+;Copyright 1987 Tri-Mike Network East
+
+        org     ea60h   ;60000d
+lomem:  equ     8000h
+pwrdn:  equ     lomem
+pwrup:  equ     lomem+0bh
+lostor: equ     lomem+0dh
+
+        entry
+instal: lxi     d,fnam  ;find LOMEM.CO in directory
+        mvi     a,namlen
+        call    5aabh   ;hl^dir entry
+        call    5ae3h   ;hl^top of LOMEM.CO
+        inx     h       ;skip load adr
+        inx     h
+        mov     c,m     ;hl^file length
+        inx     h
+        mov     b,m     ;bc<-file length
+        inx     h       ;skip exe adr
+        inx     h
+        inx     h       ;hl^start of LOMEM code
+        dad     b       ;hl^where code will be after MAKHOL
+        push    h       ;save it
+        lhld    fbaeh   ;adjust end_of_.BA pointer
+        dad     b       ;(MAKHOL doesn't do it)
+        shld    fbaeh
+        lxi     h,lomem ;push files/pointers up in RAM
+        push    b       ;(save file length)
+        call    6b6dh   ;MAKHOL (hl preserved if successful)
+        pop     b       ;(restore length)
+        jc      memful  ;insufficient memory -- blow it off!
+        xchg            ;de^lomem
+        pop     h       ;hl^where LOMEM code is now
+        push    b       ;(save length again)
+        call    6bdbh   ;ldir - copy LOMEM code to lomem area
+        pop     b       ;(restore length again)
+setlo:  lxi     h,lomem ;calculate our fac0 value
+        dad     b
+        shld    lostor  ;save it to lomem storage
+        shld    fac0h   ;and to fac0
+do_pd:  lxi     h,pwrdn ;route power down hook to lomem code
+        shld    f603h
+do_pu:  mvi     a,c3h   ;place JMP
+        sta     f605h   ;at power up hook
+        lxi     h,pwrup ;and route it to lomem code
+        shld    f606h
+done:   call    2146h   ;update file pointers
+        jmp     5797h   ;and go to MENU
+
+memful: call    7662h   ;not enough free RAM, so
+        rst     0       ;beep & boogie
+
+fnam:   db      'LOMEM.CO',0
+namlen: equ     $-fnam
+        end
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Mike Nugent (TMN East) 71426,1201 
+
+;LOMEM.SRC Code to install at lomem
+;Copyright 1987 Tri-Mike Network East
+
+        org     8000h
+
+pwrdn:  push    h
+        lxi     h,8000h ;prepare "lie" for warm start
+        shld    fac0h
+        pop     h
+        jmp     1431h   ;where hook normally goes
+
+pwrup:  push    h
+        lxi     h,$-$   ;user's lomem value
+lostor: equ     $-2
+        shld    fac0h   ;protect lomem area
+        pop     h
+        mvi     a,1     ;displaced code from f605 power up hook
+        out     e8h
+        jmp     f609h   ;continue with hook code
+
+myjunk: call    7662h   ;(beep) sample user code
+        ret
+end
+
+
+Fm: Phil Wheeler 71266,125
+To: Jon Diercks 73327,2353 
+
+More power to you, Jon!  Sounds like Nuge may be willing to help, too.  Of
+course, even now, you need not have two copies of DSKMGR aboard (just have it
+resident in high RAM and run it by a call to 60700 or whatever the enty address
+is; that's how I operate X-TEL, XMDPW3, TS-DOS, ASMBLR.CO, TMPC -in different
+banks, of course!).
+
+
+Fm: Phil Wheeler 71266,125
+To: Mike Nugent (TMN East) 71426,1201 
+
+Great, Nuge!  Now if I just get a chance to look at it some more.
+
+
+Fm: James Yi 73327,1653
+To: Mike Nugent (TMN East) 71426,1201 
+
+Well, well..  looks like that'll do it!
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Phil Wheeler 71266,125 
+
+Looks promising, Phil.  A year and a half ago I didn't know as much about the
+OS, so I parked the idea until the interest here drew me back into it a couple
+days ago.  And this time I think I got it!  BTW, please revise the INSTAL.SRC
+'memful' routine:
+
+memful: lhld    fbaeh   ;restore end_of_.BA pointer
+        hlmbc           ;hl=hl-bc
+        shld    fbaeh
+        call    7662h   ;not enough free RAM, so
+        rst     0       ;beep & boogie
+
+If MAKHOL fails, this restores the pointer.  Alternatively, you could modify
+the main code -- do MAKHOL before updating the pointer, so if MAKHOL fails,
+there's no update.  The 'hlmbc' is an undocumented opcode.  If your assembler
+won't support it, use "db 8" instead -- it's a 1-byte opcode, very handy. Also,
+you should revise the first part of LOMEM.SRC:
+
+lomem:  equ     8000h   ;actual lowest RAM
+                org     lomem
+
+pwrdn:  push    h
+        lxi     h,lomem ;prepare "lie" for warm start
+
+Equating 'lomem' to the 'org' value makes errors less likely when org'ing for
+different machines.  You needn't remember to change the lomem value in the
+'pwrdn' routine.  No big deal, just cleaner and safer, I think.
+
+Well, I'm eager to hear what you think.  My mind is buzzing with possibilities,
+and I can't keep it on my work!  Catch ya....
+
+-- Nuge --
+
+P.S. 0MENU and SUPERA would be moved by this code as it is, so you'd have to
+reassemble them to run at a higher address or change this code a bit.  If you
+relocate 0MENU, you'd need to keep it at the same address in each bank to
+avoid crashes.  Otherwise, my guess is it would work.
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: James Yi 73327,1653
+
+Guess we'll have to wait and see.  Sure hope so -- wanted to pull it off for a
+loooong time!  Thanks for getting me fired up to do it!  Now, cross your
+fingers!
+
+-- Nuge --
+

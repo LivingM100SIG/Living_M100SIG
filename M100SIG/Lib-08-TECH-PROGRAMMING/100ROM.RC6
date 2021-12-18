@@ -1,0 +1,239 @@
+
+
+                     ------------------------
+                     | Model 100 System Map |
+                     ------------------------
+ROM: Part VI
+                          Copyright 1985
+                     Revision Date: 09/30/85
+                   Compiled and Researched by:
+                       Robert D. Covington
+            Systems Information Management Consultants
+      [Not associated with The Covington Group, N. Y., N. Y.]
+
+    This document may be duplicated and distributed free of
+charge to any individuals who desire it.  Any duplications of
+this document, however, must inluce all of the information
+contained here-in, with no deletions or changes.
+    The author and distributors of this document make no 
+expressed or implied warrantees as to the validity of the 
+information contained here in.
+
+
+6D3FH -  Send a character to the printer
+         Entry:
+                A - Character to send
+         Exit:
+           C flag - Set if break key interrupt
+
+6D6DH -  Check RS232 queue for pending characters
+         Exit:
+                A - Number of characters pending
+           Z flag - Set if no characters pending
+
+6D7EH -  Get a character from the RS232 receive queue.  If no 
+        character is pending, wait for a character.
+         Exit:
+                A - Character received
+           Z flag - Set if no error
+           C flag - Set if break key interrupt
+
+6DACH -  RST 6.5 (RS232 Interrupt on received character) routine
+
+6E0BH -  Send XON (Control Q) out the RS232 if enabled by FF42H.
+         Exit:
+                A - Destroyed
+
+6E1EH -  Send XOFF (Control S) out the RS232 if enabled by FF42H.
+         Exit:
+                A - Destroyed
+
+6E32H -  Send a charcter out the RS232 (routine waits for character to 
+        be transmitted).
+         Entry:
+                A - Character to send
+        Exit:
+           C flag - Set if shift break pressed
+
+6E75H -  Set the RS232 baud rate
+         Entry:
+                H - Baud rate code (1-9)
+         Exit:
+           A & DE - Destroyed
+
+6E94H -  Start of 18 byte RS232 baud rate timer values.  Each 2 byte 
+        entry corresponds to the baud rates 0-9.   These values are 
+        loaded into the 8155's timer to generate the baud rate for 
+        the UART.
+
+6EA5H -  End of RS232 baud rate timer table.
+
+6EA6H -  Initialize RS232 or modem
+         Entry:
+                H - Baud rate code for RS232 (300 baud assumed for 
+                    modem).
+                L - Configuration code
+                     Bit 0 - Number of stop bits (0=1, 1=2)
+                         1 - Parity (0=odd, 1=even)
+                         2 - Parity enable (0=enable)
+                       3-4 - Word length (01=6, 10=7, 11=8)
+           C flag - Set if RS232, reset if modem
+
+6ECBH -  Deactivate RS232 or Modem
+         Exit:
+                A - Destroyed
+
+6EE5H -  Click sound port if sound is enabled
+
+6EEFH -  Check for carrier detect
+         Exit:
+                A - 0 if carrier detect, 0FFH if no CD
+           Z flag - Set if carrier detect
+
+6F31H -  Enable XON/XOFFs when control Ss and Qs are sent.
+         Exit:
+                A - Destroyed
+
+6F46H -  Write cassette header and sync byte
+               All registers destroyed
+
+6F5BH -  Write a character to cassette without checksum.
+         Entry:
+                A - Character to save
+         Exit:
+               All registers destroyed
+
+6F85H -  Read cassette header and sync byte
+         Exit:
+           C flag -  Set if error, reset if header verified
+               All registers destroyed
+
+6FDBH -  Find the frequency of the cassette port.  This routine 
+        measures the duration from the start to the stop of half of 
+        the wave presented on the cassette port.  The result is the 
+        number of 29 t-state cycles required to find the end of the 
+        wave.  The byte at FF8EH determines if the count will trigger 
+        on a high or low pulse.  For example, a 1200 hz signal, which 
+        would take 416 ms to go through half of the wave, would cause 
+        this routine to exit with a value around 35.  If the sound 
+        option is turned on (see FF44H), this routine will click the 
+        beeper on each call.  Note:  Although this routine analyses 
+        the cassette port in 29 T-state intervals, the actual routine 
+        requires much more time to execute.
+         Exit:
+                C - Number of 29 T-state cycles
+                A - Destroyed
+           C flag - Set if the routine was canceled by a shift break
+
+702AH -  Read a character from cassette without checksum.
+        Exit:
+                D - Character from cassette
+           C flag - Set if the routine was canceled by a shift break
+               All other registers destroyed
+
+71F7H -  POP AF, BC, DE, and HL off stack, enable interrupts and 
+        return.  This routine should only be used with a jump to 
+        assure stack integrety.  This routine makes a good interrupt 
+        routine exit vector.
+
+7242H -  Scan keyboard for a possible character (Note: Shift Break is 
+        converted to Control C)
+         Exit:
+                A - Character from keyboard
+           Z flag - Set if no key is found
+           C flag - Set if special function key
+                       A         Key
+                    -----------------------
+                      0-7       F1-F8
+                        8       LABEL
+                        9       PRINT
+                      0AH       SHIFT-PRINT
+                      0BH       PASTE
+
+726AH -  Enable interrupts as normal (nothing destroyed)
+
+7270H -  Check keyboard queue for pending characters
+         Exit:
+                A - Destroyed
+           Z flag - Set if charcter pending
+           C flag - Set if break is present
+
+7283H -  Check for break (Control C) or wait (Control S)
+         Exit:
+                A - Destroyed
+           C flag - Set if Control C or S
+           Z flag - Set if no control C or S
+
+729FH -  Check to see if SHIFT BREAK is being pressed.
+         Exit:
+                A - Destroyed
+           Z flag - Set if shift break is being pressed
+           C flag - Set if shift break is being pressed
+
+72B1H -  Scan BREAK, CAPS, NUM, CODE, GRAPH, CONTROL, and SHIFT key 
+        column of keyboard.  Reset the bit in the A register that 
+        corresponds the key being pressed
+         Exit:
+                A - Each reset bit coresponds to a key being pressed 
+                    (BREAK=bit 7, CAPS=bit 5, etc.)
+
+72C5H -  Produce a tone through the internal transducer.  The RS232 
+        cannot be used along with this routine.
+         Entry:
+               DE - Frequency
+                B - Duration
+         Exit:
+                A - Destroyed
+
+7329H -  Load the contents of the clock chip registers into the 
+        address pointed to by HL.
+         Entry:
+               HL - Start of receiving buffer for the contents of the 
+                    hardware clock chip
+
+732AH -  Update the clock chip internal registers with the time in the 
+        buffer pointed to by HL
+         Entry:
+               HL - Start of the buffer containing the new values for 
+                    the clock chip
+
+744CH -  Plot point on screen
+         Entry:
+                D - X coordinate
+                E - Y coordinate
+         Exit:
+               All registers destroyed
+744DH -  Reset point on screen
+         Entry:
+                D - X coordinate
+                E - Y coordinate
+         Exit:
+               All registers destroyed
+
+765CH -  Set interrupt to 1DH
+         Exit:
+                A - Destroyed
+
+7662H -  Beep routine (07H)
+         Exit:
+           A & BC - Destroyed
+
+7676H -  Click sound port
+         Exit:
+                A - Destroyed
+
+7711H -  Start of LCD character generator shape table.  Five bytes per 
+        character for the first 128 characters.  6 bytes per 
+        character for characters 128-255.
+
+7BF0H -  End of LCD character generator shape table.
+
+7BF1H -  Start of keyboard conversion matrix.
+
+7D32H -  End of keyboard conversion matrix.
+
+7D33H -  Boot routine
+
+7EACH -  Display the number of free memory bytes on the screen.
+
+7FD6H -  RST 38H RAM vector driver routine (see 38H).

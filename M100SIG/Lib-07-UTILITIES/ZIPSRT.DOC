@@ -1,0 +1,247 @@
+       I.      ZIPSRT.DOC     (c)1989 Wilson Van Alst
+                                 All rights reserved.
+    
+    
+    
+    
+                               CONTENTS
+                               --------
+    
+    
+          I.   Introduction:  a list of ZIPSRT features
+    
+          II.  Getting Started:  how to download and create the program
+    
+          III. Running from MENU:  the "ordinary" way to sort files,
+               sorting by column, and skipping headers
+    
+          IV.  Running from BASIC:  using ZIPSRT from a BASIC CALL, with
+               examples
+    
+          V.   Technical Notes:  memory usage, best and worst-case files,
+               and what the program won't do
+    
+          VI.  Acknowledgements:  because there is a rich legacy here
+    
+          VII. Support:  how to harrass the author
+    
+    
+       I. Introduction
+          A. ZIPSRT is a sorting program for .DO files in the M100/102 and
+             T200 computers.  It features:
+             1. machine language speed
+                a. twice as fast as SORTHI.CO on large random files
+             2. sorting by column
+                a. sorts data tables based on any field
+             3. sorting "in place"
+                a. will handle very large files because it does not
+                   duplicate the file being processed
+             4. sorting lines of any size
+                a. can even resequence entire paragraphs within a .DO file,
+                   if the paragraphs are numbered
+             5. sorting from a specified line
+                a. lets you exclude "headers" from the sort
+             6. easy access from BASIC
+                a. including the column sort feature
+             7. operation in the AltLCD buffer
+                a. no need to CLEAR or change HIMEM
+    
+      II. Getting started
+          A. To create the machine language program ZIPSRT.CO you need to
+             make and run a BASIC "loader" program, ZIPSRT.BA.  There are
+             two versions -- ZIPSRT.100 and ZIPSRT.200 -- depending on
+             which computer you use.
+          B. If you know how to download and run programs from CIS, you can
+             skip ahead to Section III on using ZIPSRT; otherwise the
+             following steps should get you going:
+             1. download the proper file, ZIPSRT.100 or .200, into your
+                computer under the name ZIPSRT.DO
+             2. open the file, look for "garbage" (CIS prompts, mostly) at
+                the top and bottom of the program, and delete the junk
+             3. after this, you can run a checksum program to verify the
+                .DO file against the checksum that's in the library
+                description of ZIPSRT
+                a. this is good practice, but many people routinely ignore
+                   checksums and live to tell about it
+             4. go into BASIC and type the following commands, where
+                <ENTER> means a stroke of the ENTER key:
+                a. NEW <ENTER>
+                b. LOAD "ZIPSRT.DO" <ENTER>
+                c. SAVE "ZIPSRT.BA" <ENTER>
+                   1) make sure you get the 'Ok' prompt here, before taking
+                      the next step
+                d. KILL "ZIPSRT.DO" <ENTER>
+             5. go back to the main MENU, put your cursor over ZIPLDR.BA,
+                and press <ENTER>
+                a. when you see the 'Ok' prompt again, ZIPSRT.CO has been
+                   created on the main MENU
+             6. you can then put ZIPSRT.BA into storage, since the .CO file
+                is all you need for operation
+    
+     III. Running ZIPSRT.CO from the MENU
+          A. Put the cursor over ZIPSRT.CO and press <ENTER>
+          B. The program will display a list of files, and ask you to name
+             the one for sorting
+             1. you may enter the name in upper or lower-case
+             2. you may include a .DO extension, but you don't have to
+             3. if you respond with no file name (i.e., by hitting just the
+                <ENTER> key), you'll return to the main MENU
+             4. if you make a mistake and type in the name of a
+                non-existent file, one of two things will happen:
+                a. if the file name was "legal," you'll return to the MENU
+                   and find that the file has been created -- with nothing
+                   in it
+                   1) this is not a problem for the computer, but you
+                      should KILL the file to get rid of clutter
+                b. if you gave an "illegal" file name (too many characters,
+                   for example), you'll see the BASIC "Ok" prompt
+                   1) you are, in fact, suddenly in BASIC -- but the
+                      function keys will not be working
+                      a) type MENU, followed by the <ENTER> key, and you'll
+                         return to the MENU, with no harm done
+          C. Once you give a valid answer to the file-name prompt, the
+             screen shows the first line of your file, with a "ruler" below
+             it.
+             1. If your first line of text is:
+    
+                     "Last name    First name    State"
+    
+                          you will see:
+    
+                      Last name    First name      State
+                      ^^^^|^^^^|^^^^|^^^^|^^^^|^^^^|^^^^|^^^^|
+                      Col?
+    
+             2. You respond to the "Col?" prompt with a number based on the
+                =screen position= of the column you wish to sort
+                a. to sort from the start of every line, you answer 1
+                b. to produce a sort based on "First name" in the above
+                   example, you would enter 14
+                c. to sort from the start of "State", you would enter 30
+             3. You cannot enter a number that's larger than the longest
+                record in your file
+                a. i.e., it makes no sense to sort on a column that doesn't
+                   exist
+                   1) if you try, you'll return to the main MENU with no
+                      changes made
+             4. If you respond with 0, or just the <ENTER> key, the program
+                will repeat the ruler display -- showing successive lines
+                of text every time you hit <ENTER>
+                a. The actual sorting will begin with the last line of text
+                   on the screen when you specify a valid column number
+                   1) earlier lines in your file will not be sorted
+                   2) this is a useful way to cycle past "headers" in the
+                      file and start the sort in the actual data fields.
+          D. While it's sorting, the program will flash a cursor on the
+             screen to let you know something is going on.
+    
+      IV. Running ZIPSRT.CO from BASIC
+          A. The program was designed to be CALLable from a running BASIC
+             program.
+             1. You don't have to modify the stand-alone ZIPSRT.CO file
+             2. You can include the 'Column sort' feature, up to a maximum
+                column of 255
+             3. By calling the program according to the examples below, you
+                can put your BASIC program in full control of the sort file
+                and sort column -- or you can prompt for user input:
+    
+                a. Full user configuration at run-time (virtually like
+                   running the file from the main MENU):
+    
+                   10 loadm"zipsrt"
+                   20 '... other stuff, as long
+                   30 '...    as you don't loadm something
+                   40 '...       else in the AltLCD buffer ...
+                   50 call 64704 '>>>>the T200 call is: 63574<<<<
+                   60 '... other stuff
+                   70 end
+    
+                b. BASIC program controls sort file; user selects sort
+                   column:
+    
+                   10 loadm"zipsrt"
+                   20 '... other stuff,
+                   30 '...    as above
+                   40 f$="filnam"+chr$(0)
+                   49 v=varptr(f$):v=peek(v+1)+256*peek(v+2)
+                   50 call 64720,0,v  '>>>>the T200 call is: 63590<<<<
+                   60 '... other stuff
+                   70 end
+    
+                c. BASIC program controls sort file and column:
+    
+                   10 loadm"zipsrt"
+                   20 '... other
+                   30 '...    stuff
+                   40 f$="filnam"+chr$(0)
+                   45 c=20   'this sets sort column to 20
+                   49 v=varptr(f$):v=peek(v+1)+256*peek(v+2)
+                   50 call 64720,c,v  '>>>>the T200 call is: 63590<<<<
+                   60 '... other stuff
+                   70 end
+    
+             4. A couple of thoughts to keep in mind, for ZIPSRT or any
+                other m/l routine that needs input from a running BASIC
+                program
+                a. LOADM the m/l file as a part of the BASIC program's
+                   initialization routine, before you define any variables
+                b. in examples 2 and 3, above, it doesn't matter where you
+                   define the 'filnam' string or the value 'c' for use in
+                   the CALL statement (each of these, for example, could be
+                   taken from a user input prompt within BASIC)
+                                   ... BUT!!!! ...
+                   1) you should be careful to calculate the address for f$
+                      (with the varptr routine in Line 49) =immediately=
+                      before the CALL that uses this address
+                      a) the reason: BASIC variables sometimes change
+                         location while a .BA program is running, and the
+                         m/l routine needs the variable's =current= address
+    
+       V. Technical Notes
+          A. Though ZIPSRT works on files "in place," it does need some
+             free memory in the computer for a buffer
+             1. this overhead is established as the length of your file's
+                =longest= string, plus 50 bytes.
+                a. if there's not enough room, you'll return to the MENU
+                   without changing anything
+          B. ZIPSRT's column sort feature  will not work on files where
+             columns are created with TABs instead of spaces
+             1. sorts that start at Col. 1 are not affected by this
+                limitation
+             2. I could not fit the math for "justifying" TAB files into an
+                AltLCD program
+             3. BASIC programmers who want to create text files for column
+                sorts should use the PRINTUSING command, because it aligns
+                columns with spaces instead of TABs.
+          C. Every sorting method has a "worst case" file structure
+             1. for ZIPSRT, this is when a record near the top of the file
+                belongs at the end of the file
+                a. if you are adding data to a large file that's already
+                   sorted, put the new data at the bottom (as the BASIC
+                   APPEND instruction would normally do)
+                   1) ZIPSRT is optimized for this method of adding to a
+                      file.
+    
+      VI. Acknowledgements
+          A. ZIPSRT is dedicated to Rick Perry, a legendary contributor to
+             this forum and one of the pioneers in recognizing the M100 as
+             a true computer.  Several years ago, Rick wrote the machine
+             language sort program that has evolved into the SIG's current
+             'standard,' SORTHI.  Though I did not borrow from Rick's code,
+             he inspired the idea of a fast, small "in place" sort routine,
+             and ZIPSRT is built on that foundation.  Further thanks go to
+             Robert Covington, author of the invaluable ROM maps in Library
+             8, and to James Yi and Phil Wheeler, who have extended
+             Covington's research and documented many additional routines
+             in the M100/T200 ROMs.  In addition, Randy Hess offered
+             helpful suggestions on the way ZIPSRT should "feel" to the
+             user, and Randy's sense of humor was wonderful tonic for the
+             cold-starts and various other frustrations that go along with
+             machine language programming.
+    
+    
+     VII. Support
+          A. If you have trouble with ZIPSRT, or suggestions, or just want
+             to say hello, I can be reached on the CompuServe M100 forum
+             1. Wilson Van Alst [76576,2735]
+    

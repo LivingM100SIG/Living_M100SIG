@@ -1,0 +1,33 @@
+A Programming Caution re the Alternate LCD Buffer
+-------------------------------------------------
+
+There is a lot (well, some!) interest in using the alternate LCD buffer to
+run small M/L programs in.  SORTHI.CO (from SORTHI.100) and TEXT.CO (from
+NOWRAP.100) are two such Model 100/102 programs.  The thinking is that
+there are 320 available bytes up there, starting at FCC0h (64704d).  Well,
+not quite!
+
+If you use the routine at 5AABh to search for a file on the directory, be
+careful!  It uses an area in the alt LCD buffer for temporary storage
+(starting at FDD9h) -- and can overwrite part of you code.
+ 
+I just discovered this -- and that's the primary reason my earlier
+attempts to expand my program SORTHI to do other things (e.g., FILES on
+screen) had failed.  If you use the 5AAB routine at the start of the
+program, you can then use the area it writes to as data buffers (i.e., put
+them right at the end of the source).
+
+I discovered this when my last message came up with the name of the file I
+was processing replacing the end of it.  Quite a puzzling hour.  Earlier,
+it was overwriting my code, with no symptoms other than a trip to
+never-never land.
+ 
+It appears that any program not using this function can be 320 byte in
+length (will show as 326 bytes on the menu).  If you use this function,
+282 bytes (288 bytes on menu) are OK -- and above that the space can be
+used for buffers AFTER the use of the function at 5AABh (find a file in
+the directory).
+
+
+Phil Wheeler -- 71266,125
+2 August 1987

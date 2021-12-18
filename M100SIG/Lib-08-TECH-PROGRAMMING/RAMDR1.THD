@@ -1,0 +1,68 @@
+RAMDR1.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This pair of messages is a supplement to RAMDIR.THD.  The second message
+here gives additional information on interpretation of the RAMDIR output
+data -- specifically, on identification of the file types indicated.
+
+Message range: 153401 to 153406
+Dates: 7/26/87 to 7/26/87
+
+Fm: DICK SPINDLER 76537,1623
+To: Tony Anderson 76703,4062
+
+I have another question fer ya:
+
+In RAMDIR.200, the type and status byte is listed for each program.  Where can
+I learn what the type and status bytes tell me?
+
+Tony, I really appreciate the help you have given me!  I know it's your job,
+but you do it so well and with such good humor and style, that I just thought
+I'd remind you what a good job you are doing.
+
+
+Fm: Tony Anderson 76703,4062
+To: DICK SPINDLER 76537,1623
+
+The "Type and Status" byte is documented in the Model 100 Technical Manual,
+page 88, and is also described in several other books.
+
+Basically, the number, expressed in binary, tells by examination of the binary
+bit structure, what sort of file it is.  The bits are additive, of course, so
+the combination of bits, on or off, add up to some number which becomes the T&S
+byte.
+
+For example, if the file is a valid entry in the directory, the most
+significant bit will be 1, which will add 128 to the T&S number.  BASIC
+programs are indicated by 128.
+
+If it is a .DO file, bit 6 in the number will be 1, effectively adding 64 to
+the 128. 128+64=192.  .DO files = 192
+
+If it is a .CO file bit 5 is 1, and bit 6 is 0, effectively adding 32 to 128.
+128+32=160.  .CO files = 160.
+
+Bits 6 is 0, 4 and 5 are 1 if it is a ROM program file.  Bit 5 = 32, Bit 4 =
+16. 128+32+16=176.  BASIC, TEXT, TELCOM, etc are ROM programs, and their T&S
+number are 176.
+
+Bit 3 may be 0 or 1 with any of the above, adding 8 to the previous bit values,
+and indicating the file is invisible and does not display on the menu.  This
+results in 136 = invisible BASIC program, 200 = Invisible .DO file, 168 =
+invisible .CO file.
+
+Note that the Paste Buffer and the Unnamed Program buffer are invisible files.
+Subtracting 8 from the T&S byte and poking it in where it should be will make
+those files appear on the menu.  It may also lead to menu display and cold
+start problems.
+
+MSPLAN in the Tandy 200 is a special case, with T&S value of 248.  All bits are
+set to 1 with the exception of bits 0, 1 and 2.  Technically, it is a valid
+entry, a BASIC program, a .DO file, a .CO file, a ROM file, and is invisible. I
+think the ROM routine handles that case differently.
+
+A T&S value of 0 means the file was killed, and the directory slot is available
+for reuse.  The data contained in the file may or may not be there, depending
+on what else has happened in the meantime.

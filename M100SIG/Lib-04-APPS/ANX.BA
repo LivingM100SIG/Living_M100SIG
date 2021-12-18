@@ -1,0 +1,226 @@
+0 'ANX.BA  Anxiety Test
+2 'Printer output required
+3 'From a test by an Eastern College
+4 'Test yourself - program is very accurate!
+5 'Asks 85 questions
+6 CLS:LINE(0,0)-(239,63),1,B
+10 LINE(2,2)-(237,61),1,B
+12 LINE(4,4)-(235,59),1,B
+15 E$=CHR$(27):RV$=E$+"p":NV$=E$+"q"
+20 PRINT@82,"This program asks 85 questions about
+30 PRINT@126,"things that make you nervous
+40 PRINT@163,"It prints the results tabulated as
+50 PRINT@207,"ten categories of anxiety
+90 A$=INKEY$:IFA$=""THEN90
+100 CLS:PRINT:PRINT:INPUT" NAME";NN$
+110 FORN=1TO12:SP$=SP$+"    ":NEXTN
+120 DIMAX(10)
+130 FORN=1TO85:READA$,A,B,C
+145 CLS:BEEP:PRINT@14,"Question #";N
+150 PRINTRV$"Do you get at all Tense or Nervous about"NV$
+170 PRINTA$;"?"
+175 PRINTLEFT$(SP$,40-POS(X))
+180 PRINT@168,"1 - not at all
+190 PRINT@208,"2 - slightly
+200 PRINT@248,"3 - more than slightly
+220 A$=INKEY$:IFA$=""THEN220
+221 CLS
+240 V=VAL(A$)-1:IFV<0ORV>2THEN220
+260 FORM=1TO7+V:PRINT:NEXTM
+280 AX(B)=AX(B)+V*A:AX(C)=AX(C)+V*A
+290 FORM=1TO100:NEXTM:NEXTN
+300 CLS:BEEP:PRINT@131,RV$" TURN PRINTER ON "NV$
+302 A$=INKEY$:IFA$=""THEN302
+308 LPRINTSTRING$(80,"-")
+310 LPRINT"ANXIETY PROFILE FOR",NN$,,DATE$
+312 LPRINTSTRING$(80,"-"):LPRINT
+320 FORN=1TO10:READA$:LPRINTA$;":"
+330 LPRINT"    ";:IFAX(N)=0THEN350
+340 FORM=1TOAX(N):LPRINTCHR$(239);:NEXTM
+350 LPRINTTAB(33);INT((AX(N)*10)/3);"%"
+360 NEXTN
+365 LPRINTSTRING$(80,"-")
+370 LPRINTTAB(6),"30% IS AN AVERAGE SCORE - 60% IS HIGH
+380 LPRINTSTRING$(80,"-")
+390 BEEP:CLS:PRINT:INPUT" ANOTHER PROFILE (Y/N)";A$
+400 IFA$="Y"ORA$="y"THEN100ELSEMENU
+800 DATABeing in a strange place
+801 DATA1,4,9
+802 DATAThe noise of vacuum cleaners
+803 DATA2,10,0
+804 DATAThe sight of an open wound
+805 DATA1,2,0
+806 DATABeing alone
+807 DATA3,4,0
+808 DATALoud voices
+809 DATA1,7,0
+810 DATADescriptions of dead people
+811 DATA1,1,0
+812 DATASpeaking in public
+813 DATA1,5,6
+814 DATACrossing busy streets
+815 DATA1,9,10
+816 DATAPeople who seem insane
+817 DATA1,2,0
+818 DATAThe possibility of falling
+819 DATA2,3,0
+820 DATAAutomobiles
+821 DATA2,3,10
+822 DATABeing teased
+823 DATA1,5,7
+824 DATAVisiting the dentist
+825 DATA1,3,7
+826 DATAThunder
+827 DATA1,4,9
+828 DATAPolice or ambulance sirens
+829 DATA1,10,0
+830 DATAFailure
+831 DATA1,6,0
+832 DATAEntering rooms of seated people
+833 DATA1,5,0
+834 DATAHigh places on land
+835 DATA1,4,9
+836 DATAThe view from high buildings
+837 DATA1,3,9
+838 DATAWorms or snakes
+839 DATA1,8,0
+840 DATAImaginary creatures
+841 DATA2,8,0
+842 DATADealing with strangers
+843 DATA1,5,0
+844 DATAReceiving injections
+845 DATA1,2,3
+846 DATABats
+847 DATA1,8,0
+848 DATATravel by train
+849 DATA2,3,10
+850 DATATravel by bus
+851 DATA2,3,10
+852 DATATravel by car
+853 DATA2,3,0
+854 DATAFeeling angry
+855 DATA1,6,7
+856 DATAPeople in authority
+857 DATA1,6,7
+858 DATAFlying insects
+859 DATA1,8,0
+860 DATASudden noises
+861 DATA1,9,0
+862 DATADull dreary weather
+863 DATA1,9,0
+864 DATALarge crowds
+865 DATA1,3,0
+866 DATAWide-open spaces
+867 DATA2,4,0
+868 DATACats
+869 DATA1,8,0
+870 DATAOne person bullying another
+871 DATA1,7,0
+872 DATATough looking people
+873 DATA1,7,0
+874 DATALarge birds
+875 DATA1,8,0
+876 DATABeing near deep water
+877 DATA1,9,0
+878 DATABeing watched while working
+879 DATA1,6,0
+880 DATADead animals
+881 DATA3,1,8
+882 DATAWeapons
+883 DATA2,7,10
+884 DATADirt
+885 DATA1,2,0
+886 DATACrawling insects
+887 DATA1,8,0
+888 DATAThe sight of people fighting
+889 DATA1,7,0
+890 DATAUgly people
+891 DATA1,2,6
+892 DATAFire
+893 DATA1,9,0
+894 DATASick or diseased people
+895 DATA1,2,0
+896 DATACrawling insects
+897 DATA1,8,0
+898 DATABeing criticized
+899 DATA1,5,6
+900 DATASeeing strange shapes
+901 DATA1,9,0
+902 DATARiding in elevators
+903 DATA1,9,10
+904 DATASeeing a surgical operation
+905 DATA1,1,2
+906 DATAAngry people
+907 DATA1,7,0
+908 DATAMice
+909 DATA1,8,0
+910 DATAThe sight of blood
+911 DATA1,2,0
+912 DATAParting from friends
+913 DATA2,4,0
+914 DATAEnclosed places
+915 DATA1,1,9
+916 DATAThe prospect of surgery
+917 DATA1,1,2
+918 DATAFeeling rejected by others
+919 DATA3,4,5
+920 DATARiding in airplanes
+921 DATA1,9,10
+922 DATAMedical odors
+923 DATA1,1,2
+924 DATABeing disapproved by others
+925 DATA1,5,6
+926 DATANonpoisonous snakes
+927 DATA1,8,0
+928 DATAGraveyards
+929 DATA3,1,0
+930 DATABeing ignored
+931 DATA2,4,5
+932 DATADarkness
+933 DATA1,1,9
+934 DATAIrregular heartbeats
+935 DATA1,2,0
+936 DATALightning
+937 DATA1,9,0
+938 DATADoctors
+939 DATA1,2,7
+940 DATAPeople with deformities
+941 DATA1,6,7
+942 DATAMaking mistakes
+943 DATA1,6,0
+944 DATALooking foolish
+945 DATA1,5,0
+946 DATALosing control
+947 DATA1,6,7
+948 DATAFainting
+949 DATA3,1,0
+950 DATABecoming nauseous
+951 DATA1,2,0
+952 DATASpiders
+953 DATA1,8,0
+954 DATATaking responsibility
+955 DATA1,6,0
+956 DATAKnives or other sharp objects
+957 DATA1,2,10
+958 DATAThe idea of going crazy
+959 DATA1,2,3
+960 DATADealing with the opposite sex
+961 DATA1,5,6
+962 DATAA sudden lull in conversation
+963 DATA1,6,0
+964 DATAFeeling different from others
+965 DATA2,5,0
+966 DATABeing touched
+967 DATA1,7,0
+968 DATATaking tests
+969 DATA1,6,0
+971 DATADEATH
+972 DATAILLNESS
+973 DATALOSS OF CONTROL
+974 DATAISOLATION
+975 DATAREJECTION
+976 DATAFAILURE
+977 DATAAUTHORITY FIGURES
+978 DATALIVING THINGS
+979 DATAENVIRONMENTS
+980 DATAINANIMATE OBJECTS

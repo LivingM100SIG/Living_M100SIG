@@ -1,0 +1,321 @@
+10:53:13 AM EST Sunday, December 28, 1986
+
+
+(Leonard E) I have a request for an 'exaample' of how to use ATFIX to fix a
+ busted FAT. Gonna be *real* fun coming up with that.
+(Sysop Tony) Hmmmm.... shouldn't that sort of thing be in the DOC file?
+ if at all? Oh, I see what you mean.....
+(Leonard E) Well, I thought that I had enough  info but obviously not.
+(Sysop Tony) Yeah....Kind of like....
+ "Tell me all about the Model 100... in 400 words or less...."  
+(Leonard E) right...
+(Sysop Tony) We have literally gotten messages like that!
+(Leonard E) I think I'll tell him how to change FATPRT to write to a RAM file
+ and have him send it to me then I can tell him how to fix it.
+(Sysop Tony) "How does the D/VI work?"  "How can I write a DBMS program?"  etc.
+(Leonard E) FM!
+(Sysop Tony) Why not just tell them to run a magnet across the disk first?
+ (heh heh)
+
+(Larry L) [What's with Dave?]
+(Sysop Tony) Dave's fingers are not working well. He's sitting this one out.
+(Larry L) [We have to get him a voice activated M100]
+(.^Dave^.) [flew bugh tu.]
+
+(Larry L) I was looking over the M100 schematics and noticed that the modem
+ chip has a option that lets you use CCITT frequencies. These are the
+ frequencies used in Europe. Is this common knowledge? I have seen nothing on
+ this subject.
+(Sysop Tony) Yes, it's common knowledge among folks who understand schematics
+ and there has been discussion here before on it. In fact, in the hardware
+ section DL 13, there is a .PRD file on a company that makes conversion kits
+ available, including a switch that makes it switchable.  Both Rowlfe Getsla
+ and I traced the circuit down once.
+
+(Larry L) I have been trying to save programs on cassette tape.  I bought a
+ standard tape recorder; it will properly load Tandy programs but will not load
+ progs that I have saved. Is ther something I am doing wrong?
+(Sysop Tony) While many cassette recorders CAN be used to save and load
+ programs, it often requires considerable fiddling around with the volume
+ and/or tone controls on those recorders not specifically designed for computer
+ use. Most folks find the $29 Radio Shack CCR-82 which is designed for computer
+ use, to be the best buy.
+(Phil F.) Most standard tape recorders cannot handle the frequency of most
+ computers. I got an ad from Radio Shack that the Tandy Disk Drive is on sale
+ for 129. That's what I am going to get only 2 weeks after getting the CCR-82.
+(Leonard E) believe it or not, there are some BRANDS of tape that don't work
+ for computer use! I've got a few "Intermagnetics" cassettes that seem to
+ record fine, but the computer can't read the data!!!! (don't ask me what the
+ problem is)
+(Larry L) I cant believe that a standard tape recorder could'nt handle the
+ freq. required. I think the TONE has much more to do with it.  I have a
+ circuit that converts sine waves to square waves. I think this may solve the
+ problem. I think, though, that I will buy the TDD.
+(Sysop Tony) Larry.... actually, the main problem is that the computer data IS
+ square wave, and many tape recorders, particularly cheap ones, won't handle
+ the conversion to sine wave well.
+(Leonard E) first, if your recorder has AGC, it is useless for computer use.
+ AGC is also known as automatic level control.
+ Second, for God only knows what reason, the frequencies used in the cassette
+ interface are harmonically related. This means that distortion (or a tone
+ adjustment) can change a 1 to a 0 thus scrambling data. And I must repeat my
+ comment re brand of tape. I have no idea WHY but some don't work.
+(Sysop Tony) I'd guess that some brands of tape simply won't handle the
+ frequency requirements, particularly cheap brands. As I recall, Intermagnetics
+ is made by Certon (Assembled in Mexico) , and is one of the cheapest.
+ However, folks even have trouble with the Radio Shack "Computer Cassettes",
+ so who's to know.  Personally, I think cassette use except in rare
+ emergencies, or in the case of buying new software (where it can't be avoided)
+ should be AVOIDED with great regularity!
+(Larry L) I tend to think of my m100 as a standalone unit. I have the expanded
+ Ram so I tend to keep programs in the comp. I only use the cassette for
+ archiveing programs.
+(Sysop Tony) Yes, but cassette is the least reliable of the storage methods.
+(Leonard E) Larry, silly question, but how are the jacks on the recorder
+ labeled & which ones do you have the two gray plugs plugged into (black plugs
+ is obviously correct).
+(Larry L) As best as I can remember...Black goes to EAR...Large grey goes to
+ MIC and small grey goes to REMOTE.
+(Leonard E) [AHA!] Larry, large gray must go to AUX! You are overloading the
+ MIC input!
+(Larry L) ???
+(Leonard E) M100 output is LINE level much stronger than a mike signal.
+(Sysop Tony) Yes, that's correct. There are several files in DL 9 which relate
+ to that.  The computer output is a "line level" output. Bill Templeton wrote
+ an article for Portable 100 on the subject, and even designed an adapter for
+ the problem.  See the files in DL 9. Use the command BRO/KEY RECORDER or
+ similar to find them.
+(.^Dave^.) micrec.100, micrec.wht, micrem,100; micro-recorders; DL 9
+(Sysop Tony) Bill also used micro-recorders, those with the teeny-tiny
+ cassettes, successfully, when using the adapters.
+
+
+(Leonard E) Any comments/questions on my current DVI utilities?
+ Or requests for additional ones? I've got plans, but would be nice to know
+ "the public" wants/needs.
+(Sysop Tony) I haven't seen any.  And don't have any. As many of us have
+ found, if it works, you'll never hear about it. but if it doesn't, you'll get
+ a million messages. otherwise, no one even says "Thanks".
+ (By the way.... Thanks!)
+(Leonard E) Would you consider trying out my BILLS program on a TDD? I'd like
+ to know which OS's it will won't work with.
+(Sysop Tony) If it uses disk access then it will work with ALL the TDD access
+ programs. And if the syntax is the same as the DVI syntax, the Chipmunk, too.
+(Leonard E) It *requires* the ability to read/write strings containing
+ ALL 256 chars (^@,^Z & DEL).
+(Sysop Tony) Well, the problem there might be with the null character.
+ However, all the DOS's will read most anything with a LINEINPUT statement,
+ or an INPUT(1.1) type of statement.  With the exception, maybe, of TS-RANDOM,
+ which I don't have, nor have we seen. I'd suspect the ^@ character would
+ create problems for you somewhere.
+(Leonard E) I used INPUT$(1,1) for just that reason. Line INPUT drops all ctrl
+ chars. I know that DVI will read anything with INPUT$(1,1). 
+(Sysop Tony) And, (reviewing your comment) the ^Z is a forbidden character in
+ a file since it is the EOF marker on disk files.  I can see that you'd be
+ anxious to have someone try it on the other disk drives.
+(Leonard E) Believe it or not, The DVI ignores ^Z unless it is in the sector
+ marked in the FAT as being the last one!!!!
+(Sysop Tony) Huh! I'd think that using INPUT(1,1), you could read right past
+ the end of the file into the next, or old, or bad data.
+(Leonard E) Haven't had that happen, but it is possible to 'modify' the FAT to
+ point back to the same cluster and get an 'infinite length' file
+(Sysop Tony) There you go fooling with the allocation table again. (grin)
+(Leonard E) [but it's FUN]
+(Sysop Tony) So how do you test for EOF?
+(Leonard E) I don't, the system seems to know where it is (so I just keep my
+ fingers crossed!). Been using it for a year with no trouble.
+(Sysop Tony) Oh gawd!  Talk about "seat of the pants programming"! That's one
+ of the FIRST things users will have trouble with!
+(Leonard E) [sorry, I do use EOF(1)]
+(Sysop Tony) How do you combine INPUT(1,1) with an EOF test?
+(Leonard E) Easy; I do an EOF(1) at the start of the loop that inputs the
+ record.
+(Sysop Tony) So your file may have SEVERAL ^Z's in it, then?
+(Leonard E) Sure. Remember, I'm saving numeric values in the 100's *internal*
+ format, thus 50% of the occurences of the hmmmmm... no it won't!
+ 1A is hex for ^Z and that can't occur in a number! But some of the other data
+ might cause a ^Z, YEAH! Any time person#1 has a BILL#10 you'd get a ^Z (or is
+ it the other way round)?
+(Sysop Tony) And what is the overall purpose of the program?  To keep track of
+ your bills? or payments?
+(Leonard E) At one point there were SIX(!) of us to split the bills among, and
+ some bills (phone) are not even splits! And it keeps track of the odd
+ fractions of a cent ($10 split six ways is $1.6666666666667).
+ And to save me the trouble of figuring bills by hand!
+(Sysop Tony) Oh, yes... that one. I am reminded of the scene in the film
+ "It's a MAD (4!) World" where they are discussing how to divvy up the loot.
+ One share for being in a car...
+ one share for being a person in the car....
+ one share for going down to the body...
+(Leonard E) well that's about it, but it may be worth people's while to
+ read thru the program for 'unusual' programming tricks.
+
+
+(Phil F.) F4 in TEXT is unused, is it possible to use this key, and if so how?
+(Sysop Tony) There is a way, but it has to do with writing a machine language
+ patch that grabs the interrupt vectors, and reroutes the OS through your
+ special routine.  Beyond the grasp of most users, and most programmers.
+ Otherwise, the answer is "No, not generally".
+(Phil F.) Is there something in the D/L that might give me some clues as far as
+ the memory locations and types of patches. if not how about a book on the
+ subject. I would like to learn alot more about M/L programing.
+(Sysop Tony) The memory locations, yes. I can point you towards that, but as
+ for patches, no, you'd have to write your own.  There is a file in DL3,
+ either TELKEY or TELTIP which is a good place to start. it discusses the
+ vector jump table, and how it works with the TELCOM keys.   Then the file
+ HOOKS.100 in DL8 should give you some more info. For info on assembly language
+ programming, TUTORA.ASM through TUTORD.ASM is a good start. probably also in
+ DL8. No specific book on machine language programming for the Model 100 family
+ although it's said to be similar to the Z-80 code, so probably a book on that
+ would be useful. OK? (Or was that 8085 code?)
+(.^Dave^.) Leventhal's book is the standard reference.
+(Sysop Tony) Title?
+(.^Dave^.) nope
+(Eric S.) The title of the Leventhal book is "8080A-8085 Assembly Language
+ Programming by Lance A. Leventhal". 
+
+
+(Eric S.) Just purchased the PDD and was looking for an alternate O/S for it.
+ Any suggests.
+(Sysop Tony) See the file DISKOS.INF in DL 9 for that information, in depth.
+(.^Dave^.) Eric, start with DSKMGR.100 and .DOC in DL 9.
+(Sysop Tony) Yes, that's here. DSKMGR is here, but it's not as useful as a
+ commercial OS for the drive. it's an improved version of FLOPPY.CO, though.
+ The TDD is just going on sale.  If you paid more than $129 for it you may be
+ entitled to a refund.  Check the back of your sales receipt and query the
+ store where you bought it.  General Radio Shack policy allows you to return
+ anything in 30 days, and buy it again at the reduced price.
+(.^Dave^.) Source says that $80 refund is to be expected for folks that paid
+ $199.99 in December without having to return first.
+(Sysop Tony) Good policy, but figures don't match. Buy it for $199, then get an
+ $80 refund means you got it for $119.  ????  Any clarification on that?
+(.^Dave^.) didn't query source. 
+
+(Eric S.) Back on the O/S for the PDD.  Any one that will allow d/l to disk?
+(Sysop Tony) No.  None of them have that capability. But it's not their fault!
+ The computer has only one communications chip, and when used for modem you
+ can't access the RS-232 port without disconnecting.  So DL to disk is not
+ possible.  You can "simulate" the function using an external modem, either to
+ communicate, or to hold the line while you do a disk access.
+ See the files DSKTRM.* in DL 3.
+
+
+(Rich W) 1st ,regarding superrom (if anyone here can answer). Can a thought
+ file be printed from 1 PGSG rom bank to another?
+(Sysop Tony) Mike Anders, who is the PCSG rep, was here earlier and could have
+ given you a definitive answer on that one. My guess is that you can transfer
+ files between banks. PCSG supports file transfer between banks.
+ so probably yes.
+(Rich W) 2nd question...is Port 100 definitely fini. and is JD's new mag going
+ to fly?
+(Sysop Tony) No... they are trying to get a January issue out but who knows
+ "where" from there?
+  The question about JD's new magazine is verrrry premature.  No one knows
+ yet whether it is even viable.  He has to round up 50,000 subscribers to make
+ it work as a free magazine, deriving his income only from the advertisers.
+ If ANYONE can make it work, JD can.  He's well experienced, both in editing,
+ and the publishing field.
+
+
+(David S.) Thanks-- I just tuned in, so I'm guessing what it's all about,
+ but about Portable 100, I got a _subscription_ issue in the mail a few weeks
+ ago, so I know they're trying.
+ my question may have been covered earlier but does anybody here know yet
+ whether there will be software support for the new Tandy portable drive
+ equivalent to the old drive and whether there's any degree of compatibility
+ between the old and the new?
+(Sysop Tony) first, on the Portable 100 comment.
+ All the subscribers received the latest issue in the last few weeks
+ so that's nothing new.  However, that issue was 4 months late and had been
+ sitting around in a warehouse for that time.  It was available on news stands
+ in August.  The June issue was never mailed; it's still sitting in the
+ warehouse.  So they haven't yet cleaned up their act. also they ARE in
+ Chapter 11 bankruptcy, so they have some protection from creditors while they
+ try to get it all back together.  We will have to wait and see.
+ Yes, there will be support for the TND (Tandy's New Drive) here; how much is
+ going to depend on what sort of support is needed and forthcoming.  We can't
+ be very specific now, as no one has seen, nor bought the new one.  All we have
+ is "leaked" information.  It may be 200 K, it may be 360K.... it may be single
+ sided, or double sided. it may be a giraffe, or a rhinocerous. get the idea? 
+ We don't know what it is, so we can't say how much support is going to develop
+ for it.  But we WILL support it.
+(.^Dave^.) [200K guaranteed, $199.95]
+(David S.) --just the comment re the magazine, that pulling together the
+ capital for a subscription mailing, however late, is not a trivial commitment
+ on their part.
+(Sysop Tony) However, when you don't have to pay any bills for four months,
+ while continuing to take subscriptions, .....
+(Rich W) The reasaon I had brought it up in the 1st place is that the mag
+ vendor in the World Trade Center (NYC) who carries P100, told me that it had
+ been cancelled by his supplier. A bad sign.
+(Sysop Tony) They have had a "dicey" relationship with several distributors. 
+ I'd not worry about that.
+(.^Dave^.) Suppliers in my area cancelled two years ago.
+(Sysop Tony) I think they'll try hard to get out a January issue which,
+ incidently, was originally promised as a December issue but their future is
+ still very "iffy". they laid off almost all their staff, so whatever they
+ do they are doing with a skeleton crew.
+
+
+(Phil F.) This dosen't have much to do with the M100SIG directly, but sometimes
+ when I am using the DL or the message board or somewhere else on CIS, I get
+ "hung-up". The phone line is still on, but everything freezes. I have
+ contacted FEEDBACK and they gave me all the standard stuff like CTRL Q,
+ CTRL C, etc. but nothing works.  Does anyone know why?
+(Sysop Tony) Well, there are a couple of possibilities. One is that somehow,
+ possibly line noise, a CTRL-S has been sent stopping transmission.  CTRL-Q may
+ restart you. Also, there are a number of small "waits" that occur, depending
+ on how many users on the system, exactly what is happening etc. but they
+ generally are no more than 10-15 seconds. There is a major stoppage, called a
+ "Files busy" although we are seeing less of them around here lately.
+ Then there are network problems, especially if you connect to CompuServe by
+ any of the other services, such as Tymnet or Telenet. And then, there's the
+ phase of the moon....
+(David S.) OK-- you (and FEEDBACK) already mentioned ^Q, which is my only
+ technical cure other than supreme patience.  "You mean you don't appreciate
+ those pauses?" especially when you're in the middle of composing a long piece
+ of EMAIL or an on-line reply to a SIG message?   
+(Leonard E) Well, ^Q won't help if you've recieved a ^S as the 100 won't let
+ you SEND until the ^S is cleared. SHIFT-PAUSE (BREAK) will clear it in TELCOM.
+ In other terminal programs, you're on your own. As for System loading, I've
+ seen pauses of over a minute on a *HEAVILY* loaded CIS node (6pm on Fri is a
+ lousy time to call!)
+(Sysop Tony) True, but generally the ^S goes to the host, which CAN be cleared
+ with ^Q. If it comes to your computer, you see the word "Wait" over the [6] at
+ the bottom of your screen.  Bottom line is that we are all subject to delays
+ because the hardware is not perfect!  Imagine, dumping ME just a half hour
+ or so ago; right in the middle of a conference!
+
+
+(Sysop Tony) OK.... CO is ended, but stick around and talk if you like....
+ Revert to Yak-yak mode.
+ Bye.
+
+
+1:03:19 PM EST Sunday, December 28, 1986
+
+  User ID   Nod Handle
+----------- --- ------------
+70250,211   LTR PETER
+70465,203   POR Leonard E
+72157,1264  NRK Rich W
+72256,2551  TOC Gary D.
+72307,1701  SLM Eric S.
+72407,3224  SYR Marty T
+72407,3343  MLW Bob Anthony
+72667,14    VAN Joe Stodgel
+72737,625   QEI CURTIS MOHOMMED
+73007,2774  DCI STEPHEN M
+73117,1035  QFM Phil F.
+73125,151   NYJ David S.
+73126,672   PNX Denny T
+73537,1343  BUF TOM HALVORSON
+73765,605   NYJ Larry L
+75176,1333  SCS STAN
+75515,1757  FWY Rob D
+75715,100   ATJ RICH L 
+75755,1312  QAM Jeff S
+75765,1124  DCQ Mike A.
+76576,2713  HVT Jon Payne
+76703,4062  REN Sysop Tony
+76703,446   BMD .^Dave^.

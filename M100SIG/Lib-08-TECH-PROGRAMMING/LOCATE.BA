@@ -1,0 +1,37 @@
+0 REM Prog just intended to give conversions
+1 REM use to your specifications
+2 REM Conversion to GWBASIC = Med Graf Resol/40 columns
+3 REM Modes 1 or 4 on Tandy 1000
+4 REM Conversion to M100 or M200 from GWBASIC -
+5 REM M100 LCD PRINT@ 319 is the last position at lower rt corner
+6 REM M200 LCD PRINT@ 639 is the last position at lower rt corner
+7 REM Adjust accordingly (CLS:PRINT@ 0)
+8 REM Or just let screen 'scroll' (just use 'PRINT' statement)
+9 REM Some BASIC statements not used w/GWBASIC-
+10 REM TIME$,DATE$,DAY$,HIMEN,MAXFILES,MAXRAM
+11 REM Check before using: CALL,COM ON/OFF,CSRLIN,ERR,ERROR,FILES,INP,KEY ON/OFF,KEY(N)
+12 REM LINE,OPEN,PEEK,POKE,POS,PRESET,PRINT#,PRINT#USING
+13 REM PSET,SOUND,SOUND ON/OFF
+20 CLS
+22 PRINT@42,"Value to input is from what?
+24 PRINT@122,"(A) PRINT@ Statement
+26 PRINT@162,"(B) LOCATE Statement
+28 A$=INKEY$:IFA$=""THEN28
+30 IFA$="A"ORA$="a"THEN36
+32 IFA$="B"ORA$="b"THEN48
+34 GOTO28
+36 CLS:PRINT:INPUT" Enter < PRINT@ > Value";P
+38 R=INT(P/40)+1
+40 CC=P/40-INT(P/40)
+42 C=INT(40*CC)
+44 CLS:PRINT@41,"PRINT@"P"= LOCATE"R","C
+46 GOTO56
+48 CLS:PRINT@42,"Enter LOCATE Value with Comma (X,Y)
+50 PRINT:INPUT" LOCATE X,Y";R,C
+52 P=(R-1)*40+C
+54 CLS:PRINT:PRINT" LOCATE"R","C" =  PRINT@"P
+56 PRINT:PRINT" HIT < X > to do another
+58 PRINT:PRINT" HIT any key to quit
+60 A$=INKEY$:IFA$=""THEN60
+62 IFA$="X"THEN64ELSEMENU
+64 GOTO20

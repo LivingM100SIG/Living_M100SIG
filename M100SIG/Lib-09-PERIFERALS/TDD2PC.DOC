@@ -1,0 +1,95 @@
+INSTRUCTIONS FOR TDD2PC.2DR (TDD2PC.BA)
+
+
+Howard Sprow  73625,365  1/14/89
+
+
+TDD2PC.2DR (TDD2PC.BA) is a M100/102 disk file copy program for use with POWR-DOS and a 2
+drive interface using a TDD and a PC running Traveling Software's Booster-Link
+(or a similar program) to emulate a second TDD. It could also be used with 2
+TDD's. See 2DRIVE.TDD on building a 2 drive interface in this SIG.
+
+The program allows you to copy files from either drive to the other and to
+select the files to be copied by using the MS-DOS wildcard characters, * and ?.
+
+
+SETTING UP:
+
+Connect your 2 drive interface with a TDD on one port and a PC on the other (or
+a 2nd TDD). I usually have the TDD on the MOTOROFF side but it doesn't really
+matter. What I call the MOTOROFF side is the port on your interface which is
+connected when the relay(s) are idle, when the M100 is in the MOTOROFF
+condition.
+
+Activate POWR-DOS on your M100.
+
+On the PC, run Booster-Link in the subdirectory you wish to copy files to/from.
+This is explained in the Booster-Link manual. The TDD/PC configuration is
+especially useful for backing up your TDD disks onto PC 5 1/4" disks.
+Booster-Link allows subdirectories, so you can establish 3 subdirectories on a
+PC disk and use it as the backup for 3 TDD 100K disks.
+
+
+RUNNING THE PROGRAM:
+
+Make sure there are no active machine language programs in high memory. It is
+best to have only the minimum number of programs in your M100 since TDD2PC.BA
+clears all available RAM for use in the copy process. It can only copy files
+which can fit in this free RAM area in high memory. For maximum copy space, try
+to have only active POWR-DOS and TDD2PC.BA in memory when you are copying.
+
+When run, TDD2PC.BA first asks you to select the drive to copy files from, the
+source drive. Enter A or B. A is the MOTOROFF drive and B the MOTORON drive. If
+you press ENTER with no input, the program will reset HIMEM to MAXRAM and stop.
+You can then return to the main menu if you wish.
+
+Next, the destination drive is checked to see if any files are present. If so,
+you can choose whether to delete all of them or not. If you choose not to
+delete them, files you select from the source drive will be copied to the
+destination drive. Any with the same names will overwrite the ones on the
+destination disk and the others will be added.
+
+The source disk is then checked and you are told the number of files on it. You
+are then asked to enter a global file name. Anyone familiar with MS-DOS will be
+at home with this concept, if not, here's a brief explanation.
+
+The global file name allows you to select which files to copy. In other words,
+you set up a filter to allow the copying of only those files whose names have
+characters which match your global file name.
+
+* and ? are used as wildcard characters. You construct a global name in the
+standard M100 format, a 6 character name, a period and a 2 character extension.
+A ? in any position will match any character in that position in the source
+file name. The * on either side of the period allows any sequence of characters
+to match on that side of the period.
+
+Let's say you enter:  PWR???.BA
+Any file starting with PWR and having a BA extension will be copied.
+
+If you enter:  PWR???.*
+
+Any file starting with PWR and having any extension will be copied.
+
+The global name, *.*, is really the same as ??????.??. Use *.* to copy all
+files. Or, just press ENTER at the prompt, *.* will be assumed and all files
+will be copied.
+
+If you enter less that 6 characters to the left of the period the trailing
+characters will be assumed to be spaces. You should enter either 2 characters
+or * to the right of the period since spaces are not technically legal in M100
+extensions.
+
+Now you have selected the source drive and the files to be copied and TDD2PC.BA
+proceeds with the copy operation. Each file name is shown as the file is copied
+and the OK prompt returns when the operation is complete. HIMEM is set to
+MAXRAM, a MOTOROFF command is issued and MAXFILES is set to 0.
+
+The program include basic remarks to make it easier to follow its flow and make
+modifications to suit your needs. These REM's can be removed to save some RAM.
+No GOTO's or GOSUB's land on them.
+
+In operation, the program reserves as much high RAM as possible by lowering
+HIMEM. It copies each file from the source disk to this area using the POWR-DOS
+calls to MAXRAMC+offset and then copies it to the source disk. By not copying
+files to low RAM you avoid the problem of program execution stopping when a
+BASIC program is loaded into RAM.

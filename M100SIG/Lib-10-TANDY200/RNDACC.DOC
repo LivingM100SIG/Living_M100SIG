@@ -1,0 +1,316 @@
+RNDACC.DOC
+Copyright (C) Apr. 7, 1989
+James Yi 73327,1653
+Documentation for RNDACC.200 in DL10 and RNDACC.100 in DL7
+Source code for the program is RNDACC.ASM in DL10
+
+    The program lets you read, insert, delete, replace, or append records
+ in a text file.
+A record is defined as a block of text ending with an EOR(End-Of-Record).
+An EOR can be any one or more of the following:
+  EOL(appears as small triangle, consisting of CR and LF characters), space,
+ tab, comma, or period.
+Unlike BASIC's sequential file functions(OPEN,INPUT,PRINT,etc.) records can be
+ selected at random, that is, any record at any place in any file can be
+ accessed at any time.
+
+
+
+    To convert RNDACC.DO into an executable .CO file, use HXFER.
+As default, 200 version loads at 63574(AltLcd), 100 version at 62489.
+Both 100 and 200 versions can be relocated using HXFER - enter the relocation
+ address at the 'Load at?' prompt.
+Both versions are 472 bytes in length.
+
+
+
+    Two successive CALLs to the program are required to do the following operations:
+
+0 - open file
+1 - read
+2 - insert/add
+3 - delete
+4 - replace
+5 - append
+6 - delete all empty records
+7 - check status
+
+
+    This is the _first_ CALL format:
+
+	CALL A,S,VARPTR(S$)
+
+A  is the address of the program in memory where it's LOADMed.
+  So the first thing your BASIC application software should do is
+ LOADM "RNDACC" into memory, and assign some variable, like A, with the address
+ of the first byte of the program, and use that variable when
+ CALLing the program.
+
+S  specifies what characters should be used as EOR:
+
+	 1 - EOL(CR+LF pair)
+	 2 - space
+	 4 - tab
+	 8 - comma
+	16 - period
+
+   If you want more than one of these to be EOR at the same time, just add the
+ numbers together.  For example, to make both SPACE and EOL as EOR, let S equal
+ 3(1+2).  If you want to include the comma also, add 8 to 3 = 11.
+
+   The above specification is for read operation only, for program to RECOGNIZE
+ the end of a record.  When the program has to WRITE records, add these numbers
+ to S:
+
+	  0 - EOL
+	 32 - space
+	 64 - tab
+	 96 - comma
+	128 - period
+
+   So, for example, if you want the program to recognize EOL and SPACE as EOR,
+ and attach EOL to end of each record as EOR when writing, the value for
+ S should be:
+	1+2+0 = 3
+
+   Or if you want to write records with comma as EOR:
+	1+2+96 = 99
+
+   S should always be >0.
+  If not, ?MO error will be reported when the second CALL is executed.
+
+
+A$ is the string that you want to pass to or from the file.
+  When operation is 0(select file), A$ is the name of a file, like "NOTES".
+  For operations 1,2,4,5 it is the record to be passed to or from the file.
+  For 3,6,7 it is not used, but you do need to specify it.
+
+
+    This is the _second_ CALL format:
+
+	CALL A+3,O,RN
+
+   If you did not execute the _first_ CALL, ?MO error will result.
+
+A is again the location of the program in memory, only this time there is
+ +3 to it.
+
+O is the operation number 0 to 7.  If you try >7, ?FC error will result.
+
+RN is the record number.
+  It can range from 1 to 65535, although there isn't enough to memory to hold
+ that many.  The numbers correspond to the physical order of the records,
+ meaning, if you insert #5, previous #5 becomes #6, #6 becomes #7, and so on.
+  If you try to read(1), delete(3), replace(4), or append(5) a record that
+ does not exist, ?BS error will be reported.
+  For operation 2(insert), if RN is 0 or greater than max, A$ is added as the
+ last record in the file.
+  For operation 0 and 6, RN is not needed.
+
+  Operation 7 reports back the the following information at the
+ corresponding PEEK() locations:
+
+   -1    :  0 if no error, 255 if RN was greater than max or 0
+   -2    :  7 (operation code)
+   -4,-3 :  how many records there are in the file (valid only if RN was 0)
+   -6,-5 :  size of record RN (>255 possible, though max string size that can be transfered is 255.
+   -8,-7 :  memory location of record RN (if RN not there, it is end of file)
+
+   After any operation, -2 contains the code of that operation.  Maybe useful
+ for debugging or something - to find out which operation caused an error,
+ etc.
+
+
+
+   What the error messages mean:
+
+ FC( 5) - Illegal operation(variable O(0-7) or invalid EOR chr(var S) to write.
+  Or the string variable in VARPTR(A$) was not declared.
+  LET A$="" if that happens.
+  
+ OM( 7) - Memory full(No big surprise).
+ BS( 9) - Record not found.
+ OS(14) - Not enough string buffer space.
+  Use CLEAR xxxx statement to clear more memory.
+ MO(22) - CALLs not called in proper order, or var S was 0 at first CALL.
+ EF(54) - There is CHR$(127) or CHR$(26) in the string.  26(EOF) is an illegal text file character, and 127 can
+ sometimes cause trouble.
+ NM(55) - Bad file name.
+
+
+
+  Some CALLing examples:
+
+  Let S=1 (EOL only EOR for both read(1) and write operations(0) : 1+0=1)
+  Let A=63574 (for Tandy 200)
+
+0) Open file.
+
+	A$="MYFILE"	:'File is created if it does not exist.
+	O=0
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O     :'RN not necess.
+
+1) Read a record
+
+	A$=""
+	O=1
+	RN=1	:'First record
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O,RN
+
+2) Insert/Add record
+
+	A$="Hello"
+	O=2
+	RN=0	:'Add as last
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O,RN
+
+	A$="Third line"
+	RN=3	:'Add as #3
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O,RN
+
+3) Delete record
+
+	O=3
+	RN=6	:'Delete #6
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O,RN
+
+4) Replace record
+
+	A$="Short"
+	O=4
+	RN=12	:'Replace #12
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O,RN
+
+5) Append to record
+
+	A$="ing"
+	O=5
+	RN=12	:'Short -> Shorting
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O,RN
+
+6) Delete all empty records (Since S=1(EOL only), this would be like stripping
+ all extra CR+LFs, or blank lines)
+
+	O=6
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O
+
+7) Check status
+
+ REM Get number of records in file/last record number
+	O=7
+	RN=0
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O,RN
+	LR=PEEK(-4)+PEEK(-3)*256
+
+ REM Get length/location of record #2
+	O=7
+	RN=2
+	CALL A,S,VARPTR(A$)
+	CALL A+3,O,RN
+	IF PEEK(-1) THEN #2 not found
+	LE=PEEK(-6)+PEEK(-5)*256
+	LO=PEEK(-8)+PEEK(-7)*256
+
+
+
+   Some things to watch for:
+
+ Make sure you've got the loaded address of the program correctly.
+
+ Be sure to select a file before you do any read/write operations.
+  If you try to write to a file without first selecting it, it could be
+disastrous.
+
+ Do not use BASIC file write function(PRINT#) or KILL files while running in
+ Basic, or type direct commands that can modify files or their contents.
+  If you do any of the above, the file accessed by RNDACC must be reselected.
+  Just reading files with INPUT or LINEINPUT is ok, but PRINT# and other
+ commands like OPEN FOR APPEND/OUTPUT, KILL, and EDIT modify and therefore
+ cause files to be shifted in memory, causing RNDACC to lose track of its file
+ and write at wrong locations, which can also be disatrous.
+ If files must be modified, be sure to immediately readjust the file
+ pointer by reselecting the file.
+
+ Read/write only to string variables, not numeric.
+
+
+
+    The following is a sample demo program.
+  It's a line editor that lets you edit any line in a text file.
+  All commands are one keystroke.  Press ENTER to see the list of commands.
+
+
+10 REM LINEDT.BA  Line Editor
+15 REM Runs on both 100 and 200
+20 REM Run, and press ENTER to see a list of commands.
+50 LOADM"RNDACC"
+55 REM ** Get location of RNDACC.CO **
+60 V=(PEEK(1)=171):V=62715*-V+64206*(V+1):A=PEEK(V)+PEEK(V+1)*256
+70 S=1:'Let each record be a line ending with CR+LF
+72 REM * Input file *
+75 FILES:INPUT"File";F$:S$=F$:O=0:GOSUB 800
+77 REM *** Get max number of records ***
+85 O=7:RN=0:GOSUB 800:MR=PEEK(-4)+PEEK(-3)*256
+87 PRINT MR;"records in file"
+88 REM *** Print record number ***
+90 IFRN=0THENRN=1
+91 RN$=STR$(RN):PRINTRIGHT$(RN$,LEN(RN$)-1);":";
+92 REM *** Print current record ***
+95 EF=(RN>MR):IFEFTHENPRINT"*":S$="":ELSEO=1:GOSUB 800:PRINT S$
+97 REM *** Input command ***
+100 C$=INPUT$(1):C=ASC(C$):IFC$=>"a"ANDC$=<"z"THENC=CAND223:C$=CHR$(C)
+105 REM *** Execute command ***
+110 IFC=31THEN200 ELSE IFC=30THEN210 ELSE IFC=23THEN220 ELSE IFC=26THEN230
+120 IF C$="C" THEN 300
+125 IF C$="A" THEN 350
+130 IF C$="D" THEN 400
+140 IF C$="I" OR C$=" " THEN 500
+150 IF C$="G" THEN 600
+160 IF C$="Q" THEN MENU
+165 IF C$="S" THEN 70
+167 REM ** Invalid command **
+170 PRINT:PRINT "Commands:"
+175 PRINT "Up/Down arrows - Prv/Next record."
+177 PRINT "CTRL + Up/Down arrows - Goto top/end."
+180 PRINT "   I)nsert(or SPACE)  C)hange  A)ppend  D)elete  G)oto  S)elect file  Q)uit"
+190 PRINT:GOTO 90
+195 REM ** Up one **
+200 IFRN=<MRTHENRN=RN+1:GOTO90ELSE90
+205 REM ** Down one **
+210 IFRN>1THENRN=RN-1:GOTO90ELSE90
+215 REM ** Goto beginning **
+220 RN=1:GOTO90
+225 REM ** Goto end **
+230 RN=MR:GOTO90
+295 REM ** Change record **
+300 IFEFTHENO=2ELSEO=4
+310 GOSUB 700
+320 IFEFTHENMR=MR+1:GOTO90ELSE90
+345 REM ** Append to record **
+350 IFEFTHENO=2ELSEO=5
+355 PRINT">";S$;:GOSUB 750:GOTO320
+395 REM ** Delete record **
+400 IFEFTHENBEEP:GOTO90ELSEO=3:GOSUB 800:MR=MR-1:GOTO90
+495 REM ** Insert record **
+500 O=2:GOSUB 700:RN=RN+1:MR=MR+1:GOTO 90
+595 REM ** Goto a record **
+600 IFMR=0THENGOTO90ELSEINPUTRN:IFRN=0ORRN>MRTHENBEEP:GOTO600
+610 GOTO90
+695 REM * Input record *
+700 PRINT">";
+750 LINEINPUT S$
+795 REM *** Call subroutine ***
+800 CALLA,S,VARPTR(S$):CALLA+3,O,RN:RETURN
+
+
+
+		END

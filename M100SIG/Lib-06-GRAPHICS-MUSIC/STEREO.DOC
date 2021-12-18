@@ -1,0 +1,73 @@
+              STEREO.100
+
+    Random-dot stereograms, invented by Bela Julesz (Bell Labs), consist of two
+ squares filled with random pixels. The right square is identical to the left, 
+except that some of the dots are shifted one or more pixels left or right. A 
+viewer looks at the left square with one eye and the right with the other. When 
+the two images 'fuse' the offset dots will appear to be higher or lower than 
+the background. If the offset dots are arranged in a small square, as in 
+STEREO.100, the viewer will see the square floating above the field, even 
+though neither image alone contains any explicit image of a square.
+    STEREO.100 contains three more 'grams, arranged in order of difficulty 
+(of viewing). If you compile and run the program, it produces the floating 
+square-- the easiest image for a beginner to 'fuse'. Be patient-- it 
+takes about two minutes to compute the display arrays (which take up 16K of 
+memory). Three other 'grams show a stepped pyramid, a descending ramp, and 
+a hemispherical dome (as viewed cross-eyed: see below).
+    Line 25 (GOSUB 1000) controls which 'gram is presented. To see the other 
+three grams, change this line to read "GOSUB" 2000, 3000 or 4000. The 'gram is
+ displayed until you press the BREAK key.
+
+          VIEWING STEREOGRAMS
+
+    The first (and simplest) way is with a stereogram viewer -- a small 
+binocular magnifier. STEREO.100 produces the correct spacing between image pairs
+ to let you use a viewer.
+    You can also view the pairs either by crossing your eyes until the two 
+images fuse or by 'wall-eyeing' them. To wall-eye a pair, center your head over 
+the border between the two squares, and let your eyes drift out of focus to 
+infinity. Images of each square will drift towards the center and eventually 
+overlap. The trick is then to bring the two images back into sharp focus without
+ losing the new convergence. Some people (like me) find it easier to cross eyes;
+ others prefer to wall-eye. If you are nearsighted, you can refocus wall-eyed 
+images much more easily by removing your glasses.
+    Fusing images may take practice. It helps to first fuse a black edge, near a
+ corner. Direct your attention inward, maintaining background fusion, until you
+ start to see the 'subject' of the 'gram above or below the background
+
+         GROWING YOUR OWN
+
+    STEREO.100 uses two display arrays. "P" contains the values of each pixel's 
+'height'. 0 is ground level, negative values will appear at lower levels (with
+ cross-eyed viewing-- they'll look higher with the other two methods), and 
+positive ones will be higher. The program zeroes P automatically-- the 
+subroutines at lines 1000, 2000, 3000 and 4000 change some of the values in P.
+    To create your own stereo image, decide which picture elements you want 
+at what height, write a short subroutine to put the appropriate values into the 
+appropriate locations of P, and change line 25 to GOSUB to your routine. 
+Routine 1000 -- the floating square-- should give you the idea. Routine 3000 
+introduces negative numbers (sunken images) as well as the use of random 
+numbers to 'soften' the step between levels. Routine 4000 computes the points
+ on an oblate spherical surface: Z = SQR(R^2-X^2-Y^2)/4. It looks more 
+complicated because of various limit and symmetry tricks I used to reduce the 
+computation time. It also includes a random smoothing factor.
+    "Q" is computed automatically from "P" to tell it how to display 'edges'. A
+ stereogram is inherently ambiguous at the point where the height changes, 
+because the same information cannot exist in both images. Don't worry about 
+Q, but you should understand that if you want to produce good 'grams:
+    For example, if you plot a horizontal line 1 level up, there will 
+be 1 pixel at each end whose height is 'undefined' so far as your eyes are 
+concerned. For extended objects, your brain will ignore this and assign the 
+pixel to either the upper or lower level, for continuity's sake. But, if 
+you were to try and plot a vertical line one level up, it would disappear in the
+ noise of undefined lines of pixels, to either side of it. If you plot a 
+vertical bar four pixels wide, only the two center pixel lines will 
+unambiguously appear at the desired height. A good rule of thumb is that 
+your image should be 4N pixels wide for a change in height of N.
+    Random number smoothing introduces more edges, so it also introduces more 
+undefined pixels. Use it with caution-- if you "smooth" too much, you'll lose 
+the image in noise and be unable to fuse the 'gram at all.
+    Have fun!
+
+               Alan Stein [71246,216]
+

@@ -1,0 +1,43 @@
+0 REM MATCH.TIP (c) 1990 by P.Globman
+10 LINEINPUT"TARGET$ ";T$
+20 LINEINPUT"MATCH$  ";M$
+30 GOSUB100:PRINT:PRINT"Match ";
+40 IF NOT FOUND THEN PRINT"not ";
+50 PRINT"found!":PRINT:PRINT
+60 GOTO10
+100 REM----------------- MATCH ROUTINE
+101 REM match string (M$) and target
+102 REM string (T$) defined before 
+103 REM this GOSUB.  Upon return from
+104 REM here, variable FOUND (FO) is
+105 REM true (-1) if match exists, and
+106 REM false (0) otherwise.
+107 REM 
+108 REM Within M$, "!" will match any
+109 REM upper or lower case letter, "#"
+110 REM will match any digit (0-9), and
+111 REM "?" will match any character.
+112 REM
+115 FOUND=0:P0=LEN(T$)-LEN(M$)+1:P1=1
+120 IFP0<1THENRETURN
+125 FOUND=-1:FORP2=1TOLEN(M$)
+130 P3=ASC(MID$(M$,P2,1))
+135 P4=ASC(MID$(T$,P2+P1-1,1))
+140 IF P3=63 THEN 175
+145 IF P3<>35 THEN 155
+150 IF(P4>47)AND(P4<58)THEN175
+155 IF P3<>33 THEN 170
+160 IF(P4>64)AND(P4<91)THEN175
+165 IF(P4>96)AND(P4<123)THEN175
+170 IF P3<>P4 THEN FOUND=0:GOTO180
+175 NEXT:RETURN
+180 P1=P1+1:IFP1>P0THENRETURNELSE125
+
+Variables P0 thru P4 are use so as not 
+to conflict with variables used in 
+elsewhere in the program.  Make changes
+as necessary but use caution.
+
+The routine is NOT case insensitve for
+exact letter matches, but could be made
+so.

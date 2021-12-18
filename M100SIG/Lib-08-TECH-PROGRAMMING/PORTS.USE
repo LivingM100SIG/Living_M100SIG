@@ -1,0 +1,106 @@
+
+ James Yi 73327,1653/ Feb. 20, 1987
+
+Here are some of known INP,OUT ports:
+Their values V can be read by:          
+   V=INP(port)AND(b)   where b=2^bit#
+  and outted by OUT(port),x statement
+
+
+<Input ports>:
+
+  INP(187):
+
+ bit 2- Printer port BUSY(pin #25) line status/ 1=not busy/ 0=busy
+
+ bit 3- Barcode reader data(pin #2 of BCD port)/ 1=not grounded/ 0=grounded
+
+ bit 5- 0 if Carrier(or data)* present on the phone line/ 1 if not.
+*The computer must first be CONNected to the phone line to detect it.
+(See ROM.200 to do this)
+
+
+
+<Out ports/ *=its status can be read>:
+
+  OUT185,x:
+
+ bits 0-7- Data byte for printer
+
+  OUT184,195: reset frequency of tone generator.
+
+  *OUT186,x
+
+ bit 4- power off
+
+ bit 5- buzzer toggle./ 1= enable tone generator.
+
+ bit 7- send a pulse to phone line
+
+ OUT188,a/OUT189,b - send frequency value tone generator.
+
+Note: to use the tone generator- OUT186,32:OUT188,a:OUT189,b:OUT184,195
+The value of a is 0-255, b is from 64 to 128
+ To turn it off, OUT186,47.
+
+
+  OUT232,x:
+
+ bit 0- ACK signal of the printer port. / 1=low/ 0=high
+ To send a character to the printer, strobe an ACK signal through this port 
+after a character is latched to the port 185 , as mentioned above.
+
+ bit 1- 1=MOTORON/ 0=MOTOROFF
+
+ bit 2- 1=TELCOM's relay on/ 0=off
+
+  OUT184,x: [Reset button will reset these]
+
+ bit 1- disable all keys accept for BREAK and PAUSE.
+
+ bit 2- freeze the computer.
+
+ bits 1&2- power off and then resume when turned back on.
+
+
+
+
+<Using the printer port to interface to the real world>:
+
+The BUSY line of the printer port and Barcode reader port can detect a
+low/high signal. By combining these two inputs with the data lines of the 
+printer port, 16 independent inputs are possible.
+That can be done by having the data lines 'select' which inputs are to be 
+read by the port.
+Since each data lines can have either 1 or 0, depending on what value was sent 
+to port 185, they can be tied to Busy signal (pin#25) and give different 
+inputs.
+For example, if data line 0 is connected to Busy line, sending a value of 
+254(1xor255), which pulls bit0 low and others high, will give a 
+not busy signal, and sending 255 will give a busy signal.
+This way, the status of a switch connected between the data line and 
+Busy line can be read.  And 8 switches can be connected to one input line and 
+read one at a time.
+
+To demonstrate this, run the following:
+
+10 CLEAR512:X$=SPACE$(255):X=-65536+PEEK(VARPTR(X$)+1)+PEEK(VARPTR(X$)+2)*256:M=X-1
+11 M=M+1:READK:IFK<>-8THENPOKEM,ABS(K):IFK<0THENREADK:K=K+X:POKEM+1,(K-INT(K/256)*256)MOD256:POKEM+2,256+INT(K/256):M=M+2:GOTO11ELSE11
+100 DATA 14,127,121,211,185,219,187,230,4,15,15,15,122,63,23,87,121,15,79,-218,3,35,126,35,102,111,114,201,-8
+200 J$=SPACE$(1):CLS:PRINT@0,"Bits :"
+220 CALLX,,VARPTR(J$)
+230 J=ASC(J$)
+
+240 FORL=7TO0STEP-1
+250 V=2^L:IFJ-V>=0THENJ=J-V:PRINTCHR$(27)+"p"
+260 PRINT@(7-L)*2+10,CHR$(L+48);:PRINTCHR$(27)+"q"
+270 NEXT
+280 GOTO220
+
+After running it, if a wire jumper is placed between Busy line and data lines,
+ the corresponding bit will show in inverse graphics.
+
+ML is used to read the port.  It can be done it Basic, but the value latched 
+onto port 185 somehow drifts, and only ML can read values before it is erased.
+Note also that ML is stored in a character string, so it is safe to run 
+on either 100 or 200.

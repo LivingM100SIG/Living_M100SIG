@@ -1,0 +1,229 @@
+BARCD1.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The convenience of use and availability of the barcode "wand" for the
+100/102/200 has resulted in many of us buying one [something ELSE I never
+use!].  Although the promise of the wand has never been fully realized, it
+does have application.  These messages discuss a bug fix in the Tandy
+software for the Model 100/102, software availability for the 200, printing
+barcodes, and a potential software development project.
+  **Updated with Bill's "Final Word" -- 8/3/87**
+
+Message range: 153318 to 153991
+Dates: 7/25/87 to 8/3/87
+
+
+Sb: #Barcode problem...
+Fm: Seth Miller 70340,256
+To: ALL
+
+Is anyone aware of a bug in the B3OF9.CO program included with the Model 100
+barcode wand?  When I decode 3 OF 9 barcodes, any "." characters come out as a
+"!" character.  I have tried 3 different versions of barcode generating
+software and the problem persists, so it must be the B3OF9.CO decoder program
+that is interpreting the "." as a "!".  Any info on this problem would be
+graetly appreciated.....     -- Seth Miller  70340,256
+
+
+Fm: Tony Anderson 76703,4062
+To: Seth Miller 70340,256
+
+I don't have any access to barcode stuff other than the test samples in the
+manual, so can't confirm your problem.  But if you say it's happening, I'd say
+that was probably a bug.  You can add a statement in your BASIC program that
+gets the data, to change any "!" into a ".".  That may be the best approach, if
+you know you'll not be running across any "!" marks in the data. Otherwise...
+
+An example line might be:
+
+nnn FOR A = 1 TO LEN(A$)
+   : IF MID$(A$,A,1)="!" THEN MID$(A$,A,1)="."
+   : NEXT
+
+
+Fm: Bill Templeton 75655,1056
+To: Tony Anderson 76703,4062
+
+In the early version of the '3OF9.CO' program supplied with the Tandy Bar Code
+Wand, there was a bug... and you had to POKE a number into one address to
+correct the problem...  do believe this POKE can be found somewhere in the DL's
+here, but have no idea where it is...
+
+If you can't find it... let me know and I will search my files and pass this
+POKE on to you!
+
+
+Fm: Tony Anderson 76703,4062
+To: Bill Templeton 75655,1056
+
+I don't recall such a poke being documented.  As you know, there is very little
+barcode information available.  However, I will take a look. Thanks for
+remembering... you must actually USE the barcode reader. (grin)
+
+
+Fm: Bill Templeton 75655,1056
+To: Tony Anderson 76703,4062
+
+Here's what my notes say about fixing the bug in the early version of
+Tandy's 'B3OF9.CO' BCR program that came on tape with the wand...
+
+ CLEAR110,61788
+ CLOADM"B3OF9.CO"
+ ?PEEK(62608)
+
+This should be 46 (in the early version it was 33). If not 46 then...
+
+ POKE62608,46
+ SAVEM"B3OF9",61788,62611,61824
+
+If you need to save to tape, then...
+
+CSAVEM"B3OF9",61788,62611,61824
+
+I still have a copy of Bill Walters reply on this SIG dated 26-Feb-84:
+
+"Bill, Yes, there is an error with the decoding, believe that it decodes a
+period (46) as an exclamation point (33), or something like that.  I'm on
+vacation this week and don't have the info here at home.  Call your local
+store or Computer Customer Services, as a 'patch' has been issued in a
+'merchandising update' memo that comes out every two weeks."
+
+I also remember that I called the above Tandy locations and they didn't know
+anything about the 'B3OF9.CO' patch... but someone on this SIG did and gave
+me the above patch...
+
+Hope this helps... Bill
+
+ps:  We have several members who use a Tandy wand to read BCR listings in PCM
+Magazine.  Tandy has just reduced the price of their BCR from $99 to $39, so
+interest is picking up on how to print programs in 'Tandycode' to exchange at
+our meetings.  My TCODE file in DL13 will hopefully tell folks how to do it...
+
+
+Fm: Tony Anderson 76703,4062
+To: Bill Templeton 75655,1056
+
+Guess who's message is gonna be imortalized as a barcode tip file???
+
+(grin!)
+
+Thanks for looking this up, Bill... While I have a barcode wand, etc., it's
+apparently a later version which does not show the bug.  Appreciate your
+followup on this one.
+
+
+Fm: Bill Templeton 75655,1056
+To: Tony Anderson 76703,4062
+
+If others are interested in printing Tandycode, I strongly suggest they use a
+24-pin dot matrix printer like Tandy's DMP-2100 series or a Toshiba P320 series
+or an NEC P-6, as the results are consistently readable...  only the Toshiba
+series requires my Tandycode patch in DL13 (TCODE in DL13)...
+I have printed many of the programs (.BA and .CO) on Club 100 in Tandycode,
+using my Toshiba P-321, and these printouts are easier to read than even the
+latest Bar Code listings in PCM Magazine, providing I use a slightly used
+cartridge ribbon... a new ribbon lays down too much ink, even on paper with 25%
+cotton fibre... but an older ribbon works every time on paper with some cotton
+fibre in it...
+
+Glad to be of help... Bill
+
+
+Sb: #bar code software
+Fm: Joshua Notowitz 72217,541
+To: All
+
+     A couple of days ago I bought a Radio Shack bar code wand, labeled for
+use with the Model 100, since it was on sale for $39.95 (marked down from
+$99.95) and I might be able to use it at work.  Even though I have a
+Model 200, I figured that I could use it, since most Radio Shack peripherals
+work without too much trouble on both machines.  However, when I got home
+and tried it out, I found that half the routines on the accompanying tape are
+in machine code.  The specific machine code routines deal with decoding
+UPC-A, Plessey, and 3-of-9 bar codes as they are being read in or printed out
+by the Basic programs that are also on the tape.  Are there any bar code
+routines available for use with the Model 200 (in particular for 3-of-9
+coding)?  Does Tandy have a different model of wand for working with the
+200?  Does anyone know of any fixes that Tandy provides for fools such as I?
+     I would not mind trying to set up my own machine code routine to
+translate the codes, if I got an explanation of how that works.  However
+I am not a hardware wizard and would prefer to buy equipment rather than
+scrounge out old fountain pens and Christmas lights to build my own
+bar code reader.
+     I am going back tomorrow to the RS Computer Center from which I bought
+this to discuss it with the salespeople.  I haven't got much expectation of
+help from that quarter, since I get the impression that most RS sales staff
+know little about laptop computers and their users.
+     Any help from anyone on this matter is greatly appreciated.  Thanks,
+
+
+Fm: Tony Anderson 76703,4062
+To: Joshua Notowitz 72217,541
+
+There is indeed software to use the bar code reader wand on the Tandy 200, and
+it's available right back at the store where you bought the wand.  They
+probably don't have it in stock, since it's a special order item. (The wand
+package does say "For Model 100" rather prominently on the front of the book)
+
+Ask your store manager to order part #700-3407 for you.  It's priced at $5.00
+and should take a week to ten days to get from the warehouse.
+
+The cassette includes the software for B30F9 and PLESY.  If you need UPC, then
+you also need the software package "Bar Code Drivers/Tandy 200" Catalog #
+26-3896, which gives you UPC long and short standards; EAN long and short which
+are European UPC codes; and 2OF5, another standard.
+
+
+Fm: Joshua Notowitz 72217,541
+To: Tony Anderson 76703,4062
+
+Thanks very much!!  Though it says "for Model 100," I figured that it would
+save me the trouble of constructing my own hardware.  And with the resources
+of this SIG, I believed substitute software could be found.  Saving about
+50% in cost and more in terms of my time was also a consideration.
+
+
+Sb: PCM barcode format
+Fm: Martin Zimmerman 72757,3076
+To: Bill Templeton
+
+I'm not fully sure of how many of you out there ever buy PCM magazine. I got
+frustrated with thier barcode decoder program so I sat down for about 5 hours
+on night, figured it out, and wrote my own.  I now know the format that PCM
+uses to barcode a program.  With a little work, I should be able to create a
+program to convert a program stored as a .DO file into a .DO file ready for
+Tandy's barcode printer program (the one that does 3of9)  I will try to get my
+notes together and make a data file out of PCM's format so that perhaps someone
+(like you Bill) could write the program.  I might not have the time right away,
+so if there is much interest then at least the info for someone else would be
+there.
+
+What do you think Bill?
+
+
+Fm: Bill Templeton 75655,1056
+To: Martin Zimmerman 72757,3076
+
+Several members of our group have all the issues of the PCM magazines that
+contained the Bar Code program listings.  In the April, '85 issue,
+Danny Humphries, then the technical editor of PCM, told us all about the
+advantages of 'Tandycode' and said they were going to begin printing their
+BCR listings in this code to eliminate the conversion from .DO to .BA and .CO
+type files.
+
+But Danny left PCM before his plan could be implemented, so our group
+started playing around with Tandycode to see what dot-matrix printers would
+give us the best results.  We quickly determined that the 24-pin matrix
+printers gave us the results we were looking for (see my TCODE in DL13).
+
+Your frustration with PCM's barcode decoder program (Humphries wrote
+several versions) were experienced by our group also, until we rewrote 3
+versions (BAREAD 1.0, BAREAD 1.1 and BAREAD 2.4) which would correctly
+decode all the programs listed in PCM.
+
+In my opinion, Tandycode is the way to go, because you can easily print all
+three type files (.DO/.BA/.CO) in Bar Code format, and if done according to
+the guidelines in DL13's TCODE, they are easily readable with a Tandy
+Digital Wand (26-1183 or -1183A).

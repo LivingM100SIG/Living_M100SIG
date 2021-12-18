@@ -1,0 +1,77 @@
+1 'Documented version of PrintDir.BA
+2 'Copyright 1984 Don Corbitt
+3 'For non commercial use only
+5 CLEAR 2000:OPEN "LCD:" FOR OUTPUT AS 1
+6 'clear string space: output to any file (including "LPT:" for printer)
+10 DIM L(30),C(30),L$(10):DS=18:AT$=DSKI$(0,0,5,0)+LEFT$(DSKI$(0,0,5,1),127)
+11 'L() - level of each folder. L(0) is the number of folders left to print
+12 'C() - cluster address of each folder
+13 'L$() - pathname for each level.  L$(0) is disk name, L$(1) is
+14 '	first level folder, etc.
+15 'DS is directory entry size
+16 'AT$ is disk space allocation table
+20 GOSUB 100:IF L(0)=0 THEN END
+21 'print main directory (cluster 0, level 0).  If no more folders, then quit
+30 CC=C(L(0)):CL=L(L(0)):L(0)=L(0)-1:GOTO 20
+31 'current cluster = cluster(next folder).
+32 'current level = level(next folder).  one less folder to print.
+100 T=CC\3:S=(CC MOD 3)*6+1:FOR X=0 TO 3 STEP 2
+101 DR$=DSKI$(0,T,S+X,0)+LEFT$(DSKI$(0,T,S+X,1),127):IF X THEN 110
+102 'track = current cluster / 3. 
+103 'sector = (current cluster mod 3) * cluster size +1
+104 'print first half of directory, then second half (x=0,x=2)
+105 L$(CL)=MID$(DR$,2,9):PRINT #1,"0";:FOR X=0 TO CL:PRINT#1,":"L$(X);
+106 NEXT:PRINT#1,:PRINT#1,SPACE$(3*CL)"--Name----Created--Modified-Length-"
+107 'if x=0 then print heading
+110 FOR Y=1*DS+1 TO 12*DS+1 STEP DS
+111 ' check each of 12 directory entries for a valid file byte
+120 IF MID$(DR$,Y,1)=CHR$(0) THEN 200
+121 'if first byte of entry is 0, then not a valid file.
+130 PRINT#1,SPACE$(CL*3);MID$(DR$,Y+1,9)" ";:D$=MID$(DR$,Y+12,2):GOSUB 300
+131 D$=MID$(DR$,Y+14,2):GOSUB 300
+132 'print tab, file name, date created and date modified
+140 IF MID$(DR$,Y,1)<>CHR$(240) THEN 150
+141 L(0)=L(0)+1:C(L(0))=ASC(MID$(DR$,Y+11,1)):L(L(0))=CL+1:PRINT#1,:GOTO 200
+142 ' if file type is folder (240) then save level and location on "stack" to
+143 ' be printed out later
+150 U=ASC(MID$(DR$,Y+11,1)):FL=ASC(MID$(DR$,Y+10,1))
+151 'otherwise, find the file length and print it out
+160 U=ASC(MID$(AT$,U+1,1))
+161 IF U<240 THEN FL=FL+6*256:GOTO 160 ELSE FL=FL+(U-241)*256:PRINT#1,FL+1
+162 'compute file length
+200 NEXT Y,X:RETURN
+300 A=ASC(LEFT$(D$,1))+ASC(RIGHT$(D$,1))*256
+301 PRINT #1,USING"##/##/## ";INT(A/2^12),INT(A/2^7)AND31,(A-INT(A/2^8)*2^8)AND127;:RETURN
+302 'compute the date using the date field
+400 'Dictionary
+410 'allocation table - a table 240 bytes long, each byte corresponds to a
+411 '	disk cluster, with the following meaning -
+412 '	0	= cluster is empty and may be used
+413 '	1-239	= cluster is full and file continues with cluster number given
+414 '	240	= cluster is a folder
+415 '	241-246	= partially filled cluster
+416 '	254	= bad cluster, didn't format correctly and should not be used
+417 '	all others = reserved for future use.
+420 'cluster - a unit of disk storage, each cluster is 6 sectors long, or a
+421 '	third of a track.  Track 0 holds clusters 0, 1 and 2.  Track 79 holdes
+422 '	clusters 237, 238 and 239, etc
+430 'directory - the directory is stored in cluster 0, along with the
+431 '	allocation table.  It is like the root of the tree, all other parts of
+432 '	the file structure descend from the directory.
+440 'directory (folder) entry - 18 bytes long, with following meanings
+441 '	0	= file type (same as M100, with 240=folder)
+442 '	1-9	= file name
+443 '	10	= starting cluster of file
+444 '	11	= bytes in last sector of file
+445 '	12,13	= date file created (see line 300 above to decode)
+446 '	14,15	= date last modified
+447 '	16,17	= reserved, for future use
+450 'folder - a sub-directory, uses one cluster (1.5K) of disk space, can hold
+451 '	as many as 24 file or folder entries.  Two copies of the first 12
+452 '	files are stored in sectors 1 and 2 of the cluster, with the second 12
+453 '	files in sectors 3 and 4.  The main directory stores the allocation
+454 '	table in sectors 5 and 6.
+460 'sector - each sector is 256 bytes long, and can be individually written
+461 '	or read.
+470 'track - each disk has 80 tracks, each track holds 4.5K of information, or
+471 '	3 clusters, or 18 sectors, or 4608 bytes.

@@ -1,0 +1,44 @@
+If you are real anxious to get figFORTH running on a new system you may be in 
+luck IF:
+	1) Your system has 16K of RAM open between 41216 (A100) and 57344 (E000
+) and somehow you can get FIG4TH.CO
+ loaded into that area of RAM.
+	2) You can run a short BASIC program or a few of direct mode BASIC 
+commands without messing up FIG4TH.
+	3) You can save the RAM occupied by FIG4TH back to tape or disk after 
+you've modified it.
+	4) Your system has the same ROM routines as the Radio Shack Mod 100 to:
+
+		a) Check the keyboard queue for a key (KEYX 29296 7270H).  No 
+entry conditions.  Returns Z set for empty queue, reset if keys pending and 
+carry set for BREAK key.
+		b) Wait for and get a character from the keyboard (CHGET 4811 
+12CBH).  No entry conditions.  Returns ASCII char code in A, C set if special 
+char, reset normal char.
+		c) Print (with expanded tabs - no big deal) a char on printer (
+PRTTAB 19285 4B55H).  Enter with char in A.  No exit conditions.
+		d) Display a char on the LCD screen at the current cursor 
+location (LCD 19268 4B44H).  Enter with char in A.  No exit conditions.
+	e) Return to the main MENU (MENU 22423 5797H).  No entry conditions.  
+Exits to main MENU.
+
+Note that these routines just have to exist, we didn't say where.  If you were 
+real desperate you could write them yourself!
+
+I'd be willing to bet that the NEC 8201, the KYOCERA, and the Tandy 200 all 
+have these routines and could be modified.  It will be awful tight in the 200 
+tho.  The 200 doesn't have enough room for FIG4TH to exist as a .CO file so it 
+will have to come directly in from tape or disk with the help of a fancy DOS.  
+I'm not sure if there's enough room to run the modification program but you can
+check and poke using direct commands.
+
+Want to try it?  Here goes....
+1) Determine the location of those five routines in your computer's ROM.  Check
+around on the SIG, they probably are there.  Might not hurt to write 'em down, 
+you'll need them.
+2) Get FIG4TH loaded into RAM and return to BASIC.
+3) Load MODFIG.OTR and enter your ROM routine addresses into the last data 
+statement.  Check them.  RUN.  You should wind up in FORTH!
+4) Type BYE to get back to the MENU.  SAVE the figFORTH system as instructed in
+the DOCS.
+

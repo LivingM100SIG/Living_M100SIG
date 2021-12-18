@@ -1,0 +1,132 @@
+            XRUNCO.200 & MKXRUN.200
+            -----------------------
+
+	These two programs operate together to give the T200/XOS-C.200 user an 
+easily accessible "pull-down" menu for Bank-3 .CO files: XRUNCO.200 is the 
+small menu program (655 bytes empty, 850 full); MKXRUN.200 is the 652 byte 
+program which makes XRUNCO: use it to create XRUNCO's menu.
+	ONLY XRUNCO needs to be kept in Bank 3. MKXRUN.200 can be kept 
+elsewhere and needs to be run in Bank 3 only when you need to change the data 
+in XRUNCO. XOS-C must be loaded and active in all three banks, of course, but 
+no other programs are required to run XRUNCO.
+
+	XRUNCO was written to permit XOS-C users to automatically load and run 
+as many as 26, Bank-3 .CO programs in Bank 1 or 2 with a single key-press. It 
+eliminates the need for separate cross-bank "loader" programs (about 80 bytes 
+each) AND it automatically checks for memory conflicts, clears the correct 
+HIMEM for the chosen program and runs it.
+	On the other hand: if you don't use programs that alter MAXRAM or if 
+you only have a few .CO files that you run cross-bank or if you don't mind 
+typing the name of the "loaders" then you may not need XRUNCO.200 at all.
+
+	SET-UP
+	------
+
+	Download this file and XRUNCO.200 and remove any garbage.  Checksum 
+XRUNCO.200 and save a copy somewhere.  The file XRUNCO.200 contains TWO 
+programs: XRUNCO and MKXRUN. Use TEXT to SPLIT the file into two short 
+programs, LOAD and SAVE each program as named in their top lines: XRUNCO.BA and
+MKXRUN.BA. Copy both programs to Bank 3.
+
+	*** NOTE: Although XRUNCO can be used with any name it MUST be named as
+XRUNCO.BA and on BANK 3's menu whenever you run MKXRUN.BA! ***
+
+	 Cursor select MKXRUN.BA from the Bank 3 menu with at least 1500 bytes 
+free ram. If you have at least one .CO file in RAM, the "first" .CO file's name
+and TOP/END addresses will display near the bottom of the screen below all your
+other files. Press "Y" or "y" if you want the file included in XRUNCO; any 
+other keypress will move to the "next" .CO file.
+	After you have made a choice for each .CO file, MKXRUN will clear the 
+screen, MERGE the new data into XRUNCO and return to the menu. You can review 
+the files included in XRUNCO by simply cursor selecting it from the menu. (
+Press ENTER to return to the MAIN menu after you've reviewed XRUNCO's menu.) 
+	If you want to make any changes simply re-run MKXRUN. When you're 
+satisfied with your choices you can kill MKXRUN. Rename XRUNCO as CMD>.BA if 
+desired. Since MKXRUN.BA re-creates XRUNCO's data statements each time it runs 
+you must re-select each .CO file to be included in XRUNCO.
+
+
+	OPERATION
+	---------
+
+	XRUNCO is VERY simple to use. With the cursor over the BASIC program 
+slot in either Bank 1 or Bank 2 and the XOS-C "Cmd>" prompt displayed over F3, 
+just press F3:
+		If you've chosen to rename XRUNCO as CMD>.BA then having CAPS 
+LOCK on will automatically run XRUNCO/CMD>.BA
+		If you prefer to keep XRUNCO.BA as a separate .BA file (named 
+as CO.BA for example) then leave CAPS LOCK off and type in it's name.
+
+	In either case you'll see the T200 menu clear, quickly redisplay and 
+then reclear to present XRUNCO's previously created menu of Bank-3 .CO files. 
+At the "?" prompt press the letter (UPPER/lower case OK) that corresponds to 
+your desired file and it will be copied into the correct memory area from bank 
+3 and run: otherwise press ENTER to return to the Bank's menu.
+	That's all there is to it!
+
+	Hint: Since XRUNCO clears all buffers and sets HIMEM=MAXRAM each time 
+it runs, it can be used as a quick memory clearing routine by simply running it
+from the Cmd> prompt and pressing ENTER to return to the menu. 
+
+
+	ERRORS
+	------
+
+	XRUNCO first clears HIMEM to equal MAXRAM. If you keep a HIMEM program 
+loaded in Banks 1 & 2 at all times then you can change the command "MAXRAM" in 
+line 2 of XRUNCO to that program's "TOP" value: be certain that any .CO 
+programs you run using XRUNCO are written to work "under" this value (or above 
+61104) or they'll overwrite your himem program.
+ 	XRUNCO then checks to see that your chosen program's END address isn't 
+between current MAXRAM and 61104. If it finds a MAXRAM conflict it BEEPs twice 
+and ends after printing "CAN'T". Re-run and try again if you chose the wrong 
+file, otherwise correct the MAXRAM conflict: either by removing the program 
+which lowered MAXRAM or using a version of your .CO file designed to run BELOW 
+the MAXRAM value.
+	If there is some other problem XRUNCO will double-BEEP and print the 
+error code. If the code is 17 then chances are the .CO file isn't in Bank 3 or 
+there's not enough memory left in the "home" bank. Other errors are rare: send 
+me an E-PLEX if they re-occur.
+
+
+	MKXRUN and MAXRAM checking
+	--------------------------
+
+	When MKXRUN creates the line of data in XRUNCO that stores your Bank-3 
+file info (LINE 50) it makes certain assumptions.  It assumes that the ONLY two
+different MAXRAM values T200 users will encounter are 56672 (FLOPPY with the 
+TDD2) and 58960 (POWR-DISK). If you're not sure about YOUR MAXRAM then simply 
+go into basic and type ?MAXRAM.
+	If you use ANY other programs which lower MAXRAM to some value other 
+than 56672 or 58960 and intend to run additional .CO programs WITH THE 
+DIFFERENT MAXRAMs LOADED then use extreme caution to prevent corrupting the 
+first program!
+	Users of RAM based TS-DOS should be aware that the "resident" portions 
+of various versions ARE different than FLOPPY and POWR-DISK. I would strongly 
+advise you to switch to POWR-DISK. It's FREE for the download time in DL9 (bro 
+key: PDSK*) and really a better DOS all around!
+	(If there is some reason you NEED to use some program that lowers 
+MAXRAM to a different value then let me know and I'll work with you to see what
+can be done.)
+	Programs which have been created (or "re-assembled") to run BELOW these
+values are coded as such by MKXRUN and will run OK via XRUNCO.  Any ALT/LCD 
+program can easily be run with XRUNCO although many of the "new" generation XOS
+-C programs require a .DO (TEXT) file under the cursor when selected at the 
+main menu so using XRUNCO to run them defeats their original purpose.
+
+-------------------------------------
+
+	CREDITS:
+		Wilson Van Alst wouldn't let me quit until I had this down to 
+under 850 bytes (full menu) so you can thank him for your extra RAM!
+		Paul Globman's outstanding XOS-C is what let's us keep all our 
+"indispensable" files in a separate bank for use anywhere!
+
+	Please send problems and comments to me.
+
+Randy Hess
+July, 1989
+[73267,552]
+Omaha, Nebraska
+
+

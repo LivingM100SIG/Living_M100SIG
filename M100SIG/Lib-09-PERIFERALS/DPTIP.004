@@ -1,0 +1,100 @@
+                                  DLTIP.004
+
+   Thanks to Richard Eckerlin of Ultrasoft Innovations Inc., Montreal, Quebec,
+Canada, here is the information about a patch for DiskPower which enables it to
+run with SUPERA VERSION 3.0, by David P. Sumner. This information concerns the
+100K version of the Tandy Disk Drive or the TDD1, and is the same for the 100
+or 102. Apparently the 200k version, or TDD2 is able to handle the program with
+no problem, although Richard Eckerlin states there will soon be a new version of SUPERA V 3.0 for the TDD2 which will make it a little easier for it to do
+so.
+
+   DiskPower loads each new BA program right above its own address in memory,
+pushing each preceeding program one notch higher in the process. The
+instructions with SUPERA VERSION 3.0, page 4, state:
+
+     "Before loading SUPERA, you must first clear out all BASIC programs
+   from memory. So save all BASIC programs to tape or diskette, and
+   reload them back in after you have successfully loaded SUPERA."
+
+   However, because of the above mentioned characteristic of DiskPower, this
+results in a cold start. The problem lies in the fact that SUPERA VERSION 3.0,
+looks to the Model 100 like a BASIC program. But it is, in reality, a machine
+language program. Changing its location after loading is what causes the cold
+start.
+
+   I will give you four pokes. The first two tell DiskPower to load any
+subsequent BA program above SUPERA's resident address. If the user later wishes
+to kill SUPERA and use that memory space, the third and fourth pokes change
+everything back. At the end of this tip is a short program I have written which
+does this for me and reminds me of what I need to do. There are no restrictions
+to the use of this information or the program except that proper credit should
+be given if posted elsewhere or given to anyone.
+
+      Here are the pokes:
+
+      After loading SUPERA Version 3.0---
+      Enter BASIC and type:
+            Poke 35495,233 <ENTER>
+            Poke 35496,157 <ENTER>
+
+      After turning SUPERA off--
+      Enter BASIC and type:
+            Poke 35495,82  <ENTER>
+            Poke 35496,139 <ENTER>
+
+   I have tried this patch under varying conditions, loading, unloading,
+killing programs, etc., with no problems. After turning off SUPERA, I entered
+the second set of pokes and then killed SUPERA. My former status and memory
+were returned.
+
+   To use Patch, separate it from this information into a DO file of its own.
+Enter BASIC and type LOAD"Patch (or whatever name you have given it). Then type
+SAVE"Patch (or whatever). Save the BA program to disk or cassette. Before
+loading SUPERA, follow the instructions on page 4 of SUPERA's booklet with one
+exception, do not kill "Patch." Then load SUPERA. Run "Patch" and follow the
+prompts. "Patch" MUST be in RAM before loading SUPERA. If you decide later to
+kill SUPERA, first turn it off. Then run "Patch." Then kill SUPERA.
+
+   The following program contains 1,866 bytes. Its checksum is 121,053. Before
+loading as a BASIC program you will need to go through it and edit out all the
+unecessary <CR>'s which are the result of uploading this in document form,
+rather than in program format.
+
+0 'DISK POWER/SUPERA VERSION 3.0 PATCH
+1 'This program is based on information from Richard Eckerlin, Ultrasoft
+Innovations Inc.
+2 '2209 Hingston Ave, Suite 201, Montreal, Quebec, Canada, H9X 3R9
+3 'It may be reproduced and used by anyone as long as proper credit is given.
+4 CLEAR256:E$=CHR$(27):P$=E$+"p":Q$=E$+"q"
+5 CLS:GOSUB20:PRINT@40*3+2,"DISK POWER/SUPERA VERSION 3.0 PATCH":PRINT@40*5+
+13,P$;" BY GEORGE!! "Q$:GOSUB13
+6 CLS:GOSUB20:PRINT@40+7,"THIS PROGRAM SHOULD BE RUN":PRINT@40*2+
+16,"BEFORE":PRINT@40*4+10,P$;" SUPERA VERSION 3.0 "Q$:PRINT@40*6+14,"IS TURNED 
+ON":GOSUB13
+7 CLS:GOSUB20:PRINT@40+9,"IT SHOULD BE RUN AGAIN":PRINT@40*3+13,"BEFORE 
+KILLING":PRINT@40*5+11,P$;" SUPERA VERSION 3.0 "Q$:GOSUB13:GOTO14
+8 GOSUB18:POKE35495,233:POKE35496,157:CLS:GOSUB20:PRINT@40*3+10,"YOU MAY NOW 
+TURN ON":PRINT@40*5+10,P$;" SUPERA VERSION 3.0 "Q$
+9 FORN=1TO990:NEXT:CLS:BEEP:MENU
+10 GOSUB18:POKE35495,82:POKE35496,139:GOSUB20:CLS:PRINT@40*3+11,P$;"SUPERA 
+VERSION 3.0"Q$:PRINT@40*5+11,"MAY NOW BE REMOVED"
+11 FORN=1TO990:NEXT:BEEP:MENU
+12 FORN=1TO3:CLS:BEEP:PRINT@40*4+5,">>TURN SUPERA VERSION 3.0 OFF<<
+":FORX=1TO110:NEXT:NEXT:MENU
+13 FORN=1TO990:NEXT:RETURN
+14 CLS:GOSUB20:PRINT@40+14,"I PLAN TO:--":PRINT@40*4+5,"<R>UN SUPERA":PRINT@40*
+4+25,"<K>ILL SUPERA";:A$=INPUT$(1):A$=CHR$(ASC(A$)AND223):IFINSTR("RK",A$)THEN15ELSE14
+15 IFA$="K"THEN10
+16 CLS:PRINT@40*3,"IS SUPERA VERSION 3.0 IN RESIDENCE?";:A$=INPUT$(1)
+:PRINTA$:A$=CHR$(ASC(A$)AND223):IFINSTR("YN",A$)THEN17ELSEBEEP:GOTO16
+17 IFA$="Y"THEN8ELSE21
+18 PRINT@40*6,"IS SUPERA TURNED OFF?";:A$=INPUT$(1):PRINTA$:A$=CHR$(ASC(A$)
+AND223):IFINSTR("YN",A$)THEN19ELSEBEEP:GOTO18
+19 IFA$="N"THEN12ELSERETURN
+20 SOUND(1108+(VAL(RIGHT$(TIME$,1))/2*400)),1:RETURN
+21 FORN=1TO3:CLS:BEEP:PRINT@40*3+5,"PLEASE LOAD SUPERA VERSION 3.0":PRINT@40*5+
+6,"THEN RUN THIS PROGRAM AGAIN":FORX=1TO110:NEXT:NEXT:MENU
+
+
+
+GEORGE SHERMAN 72300,3203

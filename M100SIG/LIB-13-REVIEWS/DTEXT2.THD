@@ -1,0 +1,123 @@
+DTEXT2.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+An earlier THD file (DTEXT.THD) discusses problems with the Powr-Dos D-TEXT
+editing utility, and (it was thought) the fixes to that problem.  Alas, it
+seems to still be around.  Here are more messages on the topic -- and some
+discussion of Model 100 support and Model 100 "stockpiling" recommendations!
+
+Message range: 152780 to 152930
+Dates: 7/17/87 to 7/19/87
+
+Sb: #more Powr-DOS woes
+Fm: Don Zeikel 75775,1430
+To: Al Pound 75715,1077
+
+     I have been using D-TEXT (the Powr-DOS utility that allows editing of
+files longer than available RAM) more extensively lately, and have been
+starting to have problems again.  As we discussed this in a thread some time
+ago (which is in DL13 as DTEXT.THD), I thought I would check with you to see if
+you are also having problems.
+     I have tried EVERYTHING discussed previously:  using FORMAT.BA to format
+the disks, turning off SuperRom and Supera, and I even added disabling DIRACC,
+which has hooks into TEXT.
+     What it appears to do is trash the reading of free sectors on the disk in
+the directory.  This eventually leads to it making the file far longer than it
+should be, with repetitions of the end of the file.
+     As a simple test, I several times entered a long file, picked out a couple
+of sectors, and told the program to save the changes (although I had made no
+changes).  Each time it came back with fewer free sectors available.
+     As I am actually editing, eventually the "too few" sectors becomes "too
+many," and I suddenly have over 200 sectors free (with perhaps 300,000 bytes
+showing up as free on the D-Text menu).
+     When it indicates that my file has suddenly become very long, I can
+recover JUST the file, cleanly and in the correct length, with RECOVR.BA.
+Additionally, when the free sector number is wrong, but the file length is
+correct, I can use COPY.BA and end up with a disk with the file and the correct
+number of free sectors.
+     I have version 2.1.  Anyone out there have a higher version, or the same
+problem?
+
+
+Fm: Al Pound 75715,1077
+To: Don Zeikel 75775,1430
+
+I had a similar experience.  I attempted to delete a section of text that was
+larger than one sector and it appears that a sector of that what I deleted got
+attached to the end twice.  Each time I tried to delete the extra text, I got
+another extra without deleting the first.  I also ended up with over 300,000
+bytes free and COPY.BA'ed the disk getting back to the right available storage.
+I handled the extra long file differently.  It ended up being about 18K long so
+I removed some files and loaded the whole thing with all the extra's into RAM
+and used TEXT to delete all the extra sections of text which were all
+identical.  I'm guessing that the problem occurrs because the directory lists
+the beginning and size of a file but the information as to where the file is
+stored (other than the start) on the disk is serialized. The beginning sector
+points to the 2nd with the 2nd points to the 3rd, etc.
+
+When I had removed large sections of text from the end of the files, no
+problems had occurred with files on disks formatted with FORMAT.BA.  I can see
+that removing a section of text which includes all of one sector plus a part of
+one or two others from inside a file would be a more complicated problem which
+D-TEXT apparently doesn't handle.
+
+Since using disks formated with FORMAT.BA, adding and changing data has been
+reliable and faster.  No problems occurred until I tried removing the large
+section of text from inside a file.
+
+It's interesting that you used RECOVR.BA, and got the correct length file. I'll
+try that if I have the problem again.  DMENU loaded all the extra repeated
+text.
+
+
+Fm: Don Zeikel 75775,1430
+To: Al Pound 75715,1077
+
+     Unfortunately, I am using D-TEXT to write assembly language, requires (at
+least the way I am doing it, which includes a lot of trial-and-error) much
+editing within the program.
+     I wish Ed Giese were around here more.  Also, whatever happened to his
+special cable for using the TDD on line?
+     I know you don't have an answer.  Just speculating that somebody reading
+this might know.
+
+
+Fm: Denny Thomas 76701,40
+To: Don Zeikel 75775,1430
+
+  I talked to Ed a couple of weeks ago and the sad fact is that he is not
+actively working on anything in the M100 area. Due to the death of P100, his
+only real means of advertising was shot down, hence very disapointing sales of
+POWR-DOS forced him to concentrate on other types of contract work.
+
+
+Fm: Don Zeikel 75775,1430
+To: Denny Thomas 76701,40
+
+     That IS sad.
+     Since Radio Shack is no longer supporting the 100, 102, or 200 in any
+appreciable way with software (their original offerings were dumped "where is
+as as" a while back), it is strictly the third-party vendors who can make the
+continued sale of these units live or die.
+     While there is a wealth of software in this SIG, and much on BBS's and
+other SIGs, I suspect that only a small fraction of laptop owners are either
+regular SIG users or even occasional downloaders.  Most of the 100's are likely
+used as electronic notepads and address books (I have no statistics to back me
+up, so I am guessing...but that WAS the basis on which the unit was advertised
+by Tandy).
+     Those of us who have found the portables capable of far more than even we
+would have expected a few years ago may find ourselves joining the Timex
+Sinclair and TI 99/44a owners who write and share clever programs as their
+irreplaceable hardware deteriorates.  And that would be a shame, because the
+100/102 is SO small and SO portable and SO convenient.
+
+
+Fm: Tony Anderson 76703,4062
+To: Don Zeikel 75775,1430
+
+So, you'd better buy up a few used M100's, store them away, and drag them out,
+one by one, as your current model falls apart.  Some of us are, and I'm
+planning on having one available in the year 2000. (Unless something _really_
+better comes along. ... In which case, wanna buy my virtually unused M100's???)

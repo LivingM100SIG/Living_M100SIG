@@ -1,0 +1,136 @@
+
+
+
+                             SUPER ROM TIP 13
+
+                              by Mark Lutton
+
+                        Importing Data into Lucid
+
+
+
+
+        The version of Lucid in Portable Computer Support Group's Super
+ROM has an advantage over the old Lucid ROM in that you can paste data
+from any application program into a Lucid worksheet.  Previously you could
+only paste data which you had cut from another worksheet.  Once you
+understand how the new feature works, you can take advantage of it to save
+time when setting up a worksheet.
+
+        The Model 100 has always had a "paste buffer" which is actually an
+invisible file named "Hayas.hi".  When you use the text editor and cut or
+copy a region of text, that region is copied into this file.  The
+difference between "cut" and "copy" is that when you "cut", that text is
+also deleted from the file you are editing.
+
+        (Try this experiment:  edit a test file and hit F7 followed by F6.
+This makes the paste buffer empty.  Go to the main menu and see how much
+free space is left.  Let's say you have 11368 bytes.  Go into text, select
+a 10-character word and copy it with F5.  Exit to the main menu and you
+have 11358 bytes left, because those 10 characters are in the paste buffer
+and in the file.  Go back to the file and cut those 10 characters; now you
+have 11368 left because the file is 10 characters shorter.)
+
+        Lucid uses this paste buffer but it also sets up another buffer in
+another invisible file called "4 PCS.G".  (Invisible files don't show up
+in the main menu, but you can find them with the program CHANGE.BA.)
+Whenever you cut or paste an area of a worksheet, a printable version of
+the contents goes into the text paste buffer (for pasting into documents)
+and a formula version goes into the Lucid paste buffer (for pasting into
+spreadsheets).  The version in the text paste buffer will not contain
+formulas but will contain whatever values are visible in the cells.  The
+columns will be exactly as wide as you have set them in the spreadsheet,
+and the appearance will be the same as when you look at the spreadsheet.
+The Lucid paste buffer will contain not the values but the underlying
+formulas.  When you paste it back into a spreadsheet, all cell references
+not preceded by a dollar sign will be relocated and all the ones with a
+dollar sign will stay the same.
+
+        For example, suppose you have the following formula in cell B5:
+"+A6+$C7".  You cut this and then paste it into cell C8 (in either the
+same spreadsheet or a different one).  It will be pasted in as "+B9+$C7".
+
+        When you paste into Lucid you have the choice of pasting from
+either buffer.  F1, labeled "Fmla", pastes from the Lucid buffer and F2,
+labeled "Text", pastes from the text buffer.  If you cut a range from a
+worksheet and paste it back in from the text buffer, you won't get the
+same result, because the format Lucid uses to copy into the buffer is
+different from the format for reading from the buffer.
+
+        The "paste from text" feature is useful for doing data entry into
+Lucid.  Suppose you have a large table (like an income tax table) to put
+into Lucid.  You can quickly key the values in using the text editor and
+then copy it and paste it into Lucid.  A comma, tab, or two spaces makes
+Lucid go to the next column (like hitting Enter and right-arrow when
+typing into Lucid) and a carriage return makes it go to the next row.  You
+can type in any literal data that doesn't contain commas and you can
+precede this with a single quote, double quote or ^ to left justify, right
+justify or center.  I have not found any way to get anything containing
+commas to work; you can't quote them.  They are always taken as
+delimiters.
+
+You can type in any formula that doesn't contain commas; just precede it
+with a plus sign to mark it as a formula.  A formula containing commas
+(for instance, one that uses the TBL function) won't work right; the part
+up to the first comma will be taken as an incomplete formula and thrown
+out leaving the cell blank; what follows the comma will be put into the
+next cells.  Cell references will never be relocated whether you used a
+dollar sign or not.
+
+Here is an example:
+
+,1,2,3
+15,3,4,5
+20,a,"b,^c
++sum(a1:$a2),"Hello, Roy," he said.
+Input goes here,15,b2,+b2
+The answer is,+tbl(B5,C5,A1:C3)
+
+If you paste this into A1 you will see this:
+
+             1.00     2.00     3.00
+   15.00     3.00     4.00     5.00
+   20.00 a                b    c
+   15.00     HelloRoy       he said.
+Input goe   15.00 b2           3.00
+The answer is     C5       A1:C3)
+
+Note that the SUM formula is OK but the TBL formula is all wrong because
+of the commas.  Also note that the contents of the fields may be wider
+than they appear; if you move the cursor to cell A5 and hit the LABEL key
+you will see that the cell contains "Input goes here".
+
+If you paste the same stuff into cell A2 of an empty spreadsheet you will
+see this:
+
+ 
+             1.00     2.00     3.00
+   15.00     3.00     4.00     5.00
+   20.00 a                b    c
+    0.00     HelloRoy       he said.
+Input goe   15.00 b2           1.00
+The answer is     C5       A1:C3)
+
+The formulas with cell references have different results now.
+
+        If you then cut that from the spreadsheet and paste it back into
+the spreadsheet from the text buffer, you will get the following:
+
+ 
+    1.00     2.00     3.00
+   15.00     3.00     4.00     5.00
+         b        c
+    0.00 HelloRoy he said.
+Input goe             1.00
+The answeC5       A1:C3)
+
+This illustrates that cutting to the text buffer and then pasting from it
+doesn't always give you what you originally started with!
+
+        When selecting a range to paste into, you can select multiple rows
+and columns.  The effect will be the same as if you pasted into the first
+cell, then the next, and so on through the range.  In this way you can
+replicate rows or colums; however, copying a rectangle into a rectangle
+may give you results you didn't intend.
+
+        END OF SUPERROM TIP 13

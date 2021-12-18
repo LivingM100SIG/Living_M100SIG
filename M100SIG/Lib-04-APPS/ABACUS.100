@@ -1,0 +1,44 @@
+
+0  'ABACUS.100 by Dave Mack [71256,44]       A 7-function calculator with memory     and print-out capability.
+2  ' ABACUS = 1389 bytes with lines 0        thru 8 removed. Program works           independently of CAPS LOCK.
+3  'DOCUMENTATION:
+4  ' If using printer, place printer on-     line and enter Y at prompt.             Enter 1st number at # prompt.
+5  'Functions:
+6  '"+"or"ENTER" = add;  "-" = subtract	    "x"or"*" = multiply; "/" = divide
+7  '"S"=square root;     "^" = square	    "%"=percent of a number
+8  '"P"adds TOTAL to memory;"M" minuses	    TOTAL from memory; "C" cancels mem.     "N" = New calc.; "E" = End.
+10 CLEAR:CLS:M=0:P$=CHR$(27)+"p":Q$=CHR$(27)+"q"
+11 T$=" TOTAL =":M$=" memory=":ONERRORGOTO100
+12 PRINTP$" ABACUS "Q$" to Printer:Y/N?";:R$=INPUT$(1):GOSUB70
+13 IFR$="Y"ORR$="y"THENR=1:PRINT"(PRINTER ON-LINE)":GOSUB99
+14 LINEINPUT" Enter # ";B$:IFB$="M"ORB$="m"THEN B=MELSEB=VAL(B$)
+15 F$=" ":X=B:T=B:GOSUB70:GOSUB98
+16 PRINT"Function:":PRINT" <+><-><X></> <S><^><%>  <N>EW <E>ND"
+17 PRINTP$" memory   <P>LUS <M>INUS <C>ANCEL   "Q$
+18 F$=INKEY$:PRINT@240,"Select:< >":IFF$=""THEN18
+20 IFF$="P"ORF$="p"THENM=M+T:GOTO60ELSEIFF$="M"ORF$="m"THENM=M-T:GOTO60
+22 IFF$="C"ORF$="c"THENM=0:GOTO60ELSEIFF$="N"ORF$="n"THEN80
+26 IFF$="E"ORF$="e"THENMENUELSEIFF$="%"ORF$="5"THEN90
+30 IFF$="S"ORF$="s"THEN94ELSEIFF$="^"ORF$="6"THEN96
+34 IFF$="X"ORF$="x"ORF$="*"ORF$="8"THENF$="x":GOTO40
+36 IFF$="/"ORF$="-"THEN40
+38 IFF$="+"ORF$="="ORF$=CHR$(13)THENF$="+":GOTO40ELSEGOSUB70:GOTO16
+40 GOSUB70:PRINT@248,"Enter # or M (";F$P$" memory "Q$")":PRINT@88,F$;:LINEINPUTB$
+41 IFB$="M"ORB$="m"THENB=MELSEB=VAL(B$)
+42 GOSUB98:IFF$="x"THENT=X*B
+44 IFF$="/"THENIFB=0THEN60ELSEIFX=BTHENT=1ELSET=X/B
+46 IFF$="-"THENT=X-BELSEIFF$="+"THENT=X+B
+60 GOSUB70:GOSUB99:GOTO16
+70 CLS:X=T:PRINTP$M$Q$;M:PRINTT$;T:RETURN
+80 GOSUB70:GOSUB99:PRINT" <NEW>  Save ";P$"memory"Q$":Y/N?";:K$=INPUT$(1):PRINTK$:T=0
+82 IFK$="N"ORK$="n"THEN10ELSE12
+90 CLS:X=T:B=0:GOSUB70:PRINT T"%";:INPUT" of what #";B:Q=T:T=(T/100)*B:IFB=0THENT=X
+91 IFR=1THENLPRINTQ"% OF";B;"=";T:GOSUB70:GOTO16ELSE60
+94 B=T:T=SQR(T):GOSUB70:PRINT@87,"(SQ. ROOT OF";B;")"
+95 IFR=1THENLPRINTT;"= SQ. ROOT OF";B:GOSUB99:GOTO16ELSE16
+96 B=T:T=T*T:GOSUB70:PRINT@87,"(SQUARE OF";B;")"
+97 IFR=1THENLPRINTT;"= SQUARE OF";B:GOSUB99:GOTO16ELSE16
+98 IFR=1THENLPRINT"   ";F$;B:RETURN
+99 IFR=1THENLPRINT"TOT=";T;" MEM=";M:RETURNELSERETURN
+100 CLS:PRINT@137,"OVERFLOW":SOUND1500,100:GOTO10
+

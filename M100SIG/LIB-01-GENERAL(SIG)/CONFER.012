@@ -1,0 +1,306 @@
+
+10:59:39 AM EST Sunday, January 12, 1986
+
+(Sysop .^Dave^.) But t'is time as the walrus said so we can get this show on
+  the road with the TOPIC of Tandy disk drive operating system from Acroatix
+  and the TMPC program from same source; our Special Guest is Ed Giese who
+  really IS Acroatix. Questions on the Tandy disk drive new operating system
+  from Acroatix and/or the TMPC time planning program are the order of business
+  this morning.
+
+(Thom) Just wondering why* I should need another operating system for casual
+ use of the TDD?
+(Ed G.) It really depends on how casual your use is.  POWR-DISK offers two main
+ advantages:  1) it takes up less room, and 2) it supports the Tdd as a device,
+ instead of a simple storage box. The first part is not enough, perhaps, to
+ justify buying POWR-DISK, now that there are improved utilities right here on
+ the SIG.  However, the device part has its advantages.  You can access the TDD
+ right from TEXT, for instance, and, more importantly, you can load CO files
+ straight from the TDD to where they run in HIMEM.
+ The Model 100 version occupies 2110 bytes while active, and about 1950 in a
+ CO file.  200 Version available soon, but the numbers won't be finalized until
+ it's done.  Looks now like it will be the same or perhaps a little shorter.
+(Thom) Is it going to be available in ROM?  TMPC for 200?  Maybe in same ROM?
+(Ed G.) We will consider working on a ROM version once we know better how
+ people are going to react to POWR-DISK in RAM. It doesn't take up THAT much
+ memory, but it would be nice to be able to have it there after a coldstart.
+ TMPC is another issue.  I can't comment on TMPC availability for the 200 now.
+ TMPC - $49.95  POWR-DISK $39.95 both have $3 shipping.  As for now, we are
+ only accepting M100 orders.
+
+(STEVE CROUCH) Ed won't the tmpc utility allow me to use the tdd with TMPC?
+(Ed G.) Yes, you can use TMPC with FLOPPY.CO by using FUTIL.BA, or FLPML
+ (I think) As written by Joel Dinda on this Sig.
+(Sysop .^Dave^.) [FLIPML.099]
+(Ed G.) However, none of these are even nearly as convenient as POWR-DISK,
+ which can relocate itself and load in TMPC from the disk in a single
+ keystroke, once you set up a small BASIC program to do it.
+(STEVE CROUCH) where does the tdd reside in men? 
+(Ed G.) I gess you mean POWR-DISK software.  With POWR-DISK active, MAXRAM has
+ a value of 60850 on the M100.  This is 2110 bytes lower than the default 62960
+ value.  It resides in "high memory," just where most other m/l programs
+ reside, e.g. FLOPPY.CO, which starts at 59400. POWR-DISK lowers MAXRAM, and
+ leaves HIMEM wherever it is set when you activate it.  FLOPPY.CO needs to have
+ HIMEM set at 59400 or lower or it won't work.  Different values for the M200,
+ of course, but the M100 values are etched in my brain.
+
+(Maddi) Ed- I caught Woods Martin's MOST complimentary message to you re: your
+ product, services & yourself. ANYTHING Woods is up to is worth sharing: being
+ interested in DVI applications, etc. could you share his doings with us?
+(Ed G.) All I got from Woods that I know of was a confirmation that he got the
+ copy of POWR-DISK we sent him.  I really don't know what else he is doing
+ with it.  Sorry.
+(Maddi) Evidently he is using the DVI & TDD together, with your software,
+ or plans to. Please keep us posted on their compatibilities.
+
+(Bill S) Is there a long description of P-D in the DL's? ashamed to; say havent
+ read the messages in awhile.
+(Ed G.) See POWR-D.PRD in DL 6. 
+
+(rowlfe) on tmpc, is it possible to have an item repeat after a number of days,
+ rather than based on the day of the week? such as after every 6 days or every
+ 90 days, etc.
+(Ed G.) Sorry, but that is the ONE common repeating pattern in business that
+ TMPC cannot handle.  I have gotten more than one request for it, especially
+ for those people who do things bi-weekly.  I'll have to consider it when
+ working on TMPC II, whenever that is.
+
+(rowlfe) back to maxram, sure you don't have maxram and himem mixed??? thought
+ maxram was fixed and himem was moveable.
+(Ed G.) The DVI and the Chipmunk both lower MAXRAM to protect themselve from
+ BASIC programs with the statement, CLEAR 100, MAXRAM. POWR-DISK does this
+ also.  With the DVI, once MAXRAM has been lowered, it is not so easy to reset
+ it, but with CDOS and POWR-DISK, the command LFILES OFF resets MAXRAM to its
+ default value.  So, MAXRAM is "semi-moveable," I guess. 
+
+(Sysop Tony) Ed, seems like a MAXRAM resetter would be a good utility to
+ have. One could load all his non conflicting ML programs, then move MAXRAM
+ down to permanently protect them. Will you sell it as a separate program??
+ or contribute the instruction code to the database?
+(Ed G.) I may give out that code for free.  As it is, POWR-DISK has a very
+ convenient behavior in this regard.  You can relocate it, then MAXRAM moves to
+ the beginning address of the new POWR-DISK. The area ABOVE where POWR-DISK
+ resides is, in effect, protected by MAXRAM; further, The CLEAR command will
+ allow you to specify values ABOVE POWR-DISK, and BELOW the "default" maxram
+ (e.g. 62960 for the M100).  This allows software like the Interactive
+ solutions chip to co-exist with POWR-DISK without any modifications at all.
+(Sysop Tony) Yes, but not all folks who could use the code, have a TDD.
+(Ed G.) I may provide the MAXRAM-lowering information on the sig. Watch for it.
+
+(John R) Ed, did you get help from Tandy's Third-Party Support people in
+ developing PD or did you have to disect FLOPPY.CO and the TDD ROM yourselves?
+(Ed G.) I don't even know how to begin asking Tandy for help.  I am happy
+ enough that they don't get mad at me for coming up with alternate system s/w.
+ I took very close care not to duplicate any of what I learned from FLOPPY.CO
+ in POWR-DISK, except the communications codes for the TDD.
+(John R) Maybe tana can comment on how to get in touch with the 3rd Party
+ People later.
+(Sysop .^Dave^.) she left a message up a few days ago to sumbaudee ... thought
+ it was you John. Mebbe get it in DL 6 for regular reference.
+
+(BOB R) ON THE SUBJECT OF TANDY SUPPORT, IS THERE SOMEWHERE THAT WE HACKERS CAN
+ GET INFO ON THE FLOPPY.CO CODE SO THAT EVERYONE WON'T HAVE TO DISASSEMBLE IT
+ TO LEARN ABOUT IT? SORT OF LIKE INVENTING THE WHEEL OVER AGAIN, YOU KNOW.
+(Ed G.) I hate to be too much of a salesman, but POWR-DISK comes with a map of
+ the POWR-DISK code.  It makes things a lot easier.  It IS just a map, so there
+ is still plenty of fun.
+(BOB R) BY THE WAY, WHERE AND HOW DO I ORDER IT.
+(Ed G.) See POWR-D.PRD in DL-6 or call 1-800-225-5800 
+
+(Matt S.) Floppy.Co conflicted with PGs 64K Ram Module OS
+ Does Power-Disk DOS also?
+(Ed G.) POWR-DISK behaves, with respect to BASIC programs, exactly like the
+ cassette.  Ergo, no problem.
+(Matt S.) Have you tried your Power-Disk with PGs Module OS.
+(Ed G.) No, I haven't.  Although we have a PG card in-house, we never got sent
+ the MENU program.  However, I DID try it with SUPERA, which uses the same
+ scheme for program access and storage, with no problems at all.  The only
+ conflict I see is that the Access utility we provide with POWR-DISK, named
+ MENU.BA, obviously shares its name with PG's utility.  That, however, is
+ pretty easily fixed.
+
+(Sysop .^Dave^.) Ed, did you get a chance to read the A & J message inre TMPC
+  that I beeped you about?? Look ok??
+(Ed G.) Yes I did.  Looks mighty interesting.  A&J's O/S seems to share many
+ features with POWR-DISK, and thus can behave similarly. That's the same
+ technique a TMPC user would use with POWR-DISK, except that no phone call is
+ necessary.
+(Sysop .^Dave^.) reason I asked is that Jerry also placed the info in DL 5
+  so I wanted to check with you.
+
+(rowlfe) back on tmpc.... is there a way to get the LPT of todays items to add
+ a linefeed? I have started a disassembly to look for the routines and was
+ wondering if there might be a simpler way.
+(Ed G.) The code to print out today's appts and to-do's was written at a lower
+ level than the device driver.  So, (groan) the LF patches available here and
+ elsewhere will have no effect.  You have a right to bug me about it.  If you
+ call me during the week I can point you to the routine without having to
+ disassemble the whole program. (not that I disapprove, but I'm embarassed
+ to have too many people see how I code!)
+(rowlfe) oops.... phone number?
+(Ed G.) Rowlfe ... 1-617-658-5550
+
+(Maddi) So it will appear in this CO's DL file, could you give us your
+ company's address?
+(Ed G.) Acroatix Inc/ P.O. Box 273 OR 10 Upton Dr / Wilmington, MA 01887.
+
+(JOE BARK) When Powr-disk due for 200?
+(Ed G.) Sorry, I WILL not announce anything until the software is finished.
+ In this case, since the manual is already done, that means we ship as soon as
+ we announce.
+
+(Sysop .^Dave^.) Quickee for you tana. Since the POWR-DISK is useless without a
+ Tandy portable disk drive can you confirm PICO magazine's message to the
+ effect that Ed Juge says no more drives until late spring?? Due slow shipping?
+(tana) Actually, pico verified what i had said on the sig a week or so ago.
+ we moved up shipments and are filling backorders. The next shipment is due
+ in April (mid). Call that late spring if you want to. If possible, it may
+ be moved up. Does take time on a ship.
+
+(<@GRAY@>) Is the TMPC under development for 200 near completion?
+(Ed G.) If I ever said that it was in development, I must have been referring
+ to functional specs.  TMPC depends heavily on the M100's screen at the DESIGN
+ level, so that a 200 version has to be thought out almost from scratch before
+ coding can even begin. I'll be frank.  Although TMPC is very well received by
+ those who have bought it, nearly every buyer is very skeptical, and sales have
+ been disappointing.  I have thought about this at length, and although I have
+ some theories, I have no solutions.  So, unfortunately, although I love the
+ program personally, we just can't afford to spend any more development time on
+ it right now. 
+(<@GRAY@>) With a real need for a good schedule program and the good things
+ I have heard about TMPC by model 100 owners on the SIG.  I was hoping that you
+ would develop one for the Tandy 200.
+
+(rowlfe) in my endeavors to find the LPT routines I ran across the places to
+ change the diary file name to something else, mind if I upload the info for
+ others who, as I was, wanted to use something other that "diary.do" as
+ the history file?
+(Ed G.) My policy is, that as long as you don't upload a copy of TMPC to the
+ SIG, you can do whatever you want in that regard.  Shoot, we must have lost
+ more sales by people giving copies to their friends than would ever be lost by
+ some one developing a "free" TMPC from your uploaded info.  BTW, since I see
+ that Mike Anders is here, I wanted to bounce a rumor off you. I heard that
+ some one is working on a "RAM ROM" that ...
+(Sysop .^Dave^.) [Anders gawn]
+(Ed G.) Aw, shucks.  Well I'll finish anyway. This RAM ROM will allow users to
+ copy ROMS into disk et.al., then load them back into the "RAM ROM."  This is
+ ostensibly to allow convenient access to more than one ROM, but it sure does
+ a number on the "copy-proof" distribution medium!
+
+(rowlfe) heard a while back that there were two versions of tmpc floating
+ around, the first one would cause a cold-start under some obscure condition.
+ any way to tell If I have the newer version? I would NOT want to test it by
+ forcing the bug or whatever to cold start my M100!
+(Ed G.) There ARE two versions.  You can check the numbers in TMPC.BA to tell
+ which; however, dogonnit, I can't remember offhand which numbers go with which
+ version.  You can also test a relatively harmless bug which I fixed on the
+ newer version.  On the old version, consecutive holidays showed up as
+ "deadlines," but on the new version, you never get a "0 Bdays" warning.
+ I think I will upload a small file on how to tell the difference, and allow
+ people to get a new tape for a very nominal fee if they have an older version.
+ I kept thinking that a good excuse for announcing this was "just around the
+ corner," but I guess the time is now. Watch for my message on details.
+
+
+(Ed G.) Dave, I just want to re-iterate that the PRD file in DL 6 for POWR-DISK
+ does not mention the relocator, but there IS one included with the product.
+ It really makes the difference between a "nice utility" and a real work-saver
+ out of POWR-DISK.
+(rowlfe) does it only work with POWR, or will it relocate other ML as well?
+(Ed G.) The program itself is a general-purpose relocator, but it needs a DO
+ file specific to the machine-language program to be relocated.  That, in
+ general can only come from the manufacturer of the sofware.  We did develop a
+ utility to make the DO file from two different copies of any CO file running
+ from two different locations.  But, unfortunately, a relocator for general
+ programs is impossible.
+
+(rowlfe) any word for us that have tmpc about other utilities such as CALC
+ shown in the book? (where the screen now says NONE)?
+(Ed G.) I wrote the manual, and put the CALC in the box; at the time, I had
+ some vague notion of more software that could use a floor-plan interface.
+ However, two things happened:  TMPC grew larger than I really wanted, and
+ sales proved pretty slow.  I guess I'm a naive businessman, and expected that
+ people would line up to buy it if it were top-flight.  Well, many compliments
+ and few sales later, I've had to reconsider plans to work on it more.  Not to
+ say that the M100 market is no good, just that it may be tough to get people
+ to pay for mail-order time-management software.  Did I answer your question
+ somewhere in that rambling dissertation?
+(rowlfe) sort of, I get it that there are no other programs presently being
+ worked on. If so, is there a way I might be able to use that section to add my
+ own, in one form or another?
+(Ed G.) Sure!  It's not That difficult to use it.  In fact, I could give you
+ the format for the screen-draw generator table, and you could even make up
+ your own screens.  It is a pretty facile interface from a programming
+ point of view.
+(rowlfe) I would be interested in trying something like that. it irks me
+ somewhat to have a deadend there.
+(Ed G.) You and me, too.  Give me a call some time during bus. hours during the
+ week if possible.  That's when I'm most reliably in my office.
+
+
+(Sysop .^Dave^.) Folks; Phil Wheeler will be our Special Guest on 26th to halp
+  with xfer problems betwee bitty compooters and biggee compyouters.
+
+(Lan Y.) Where's my POWR-Disk???
+(Ed G.) It's in the mail.  I put a $3 check in your package to refund the
+ shipping since I missed my promised date.  The printers took off quite a few
+ days around Christmas, and I got backordered on diskettes.  However, all are
+ in the mail.
+(Maddi) [Woods got his, AND his $3.00 refund!]
+
+(Sysop .^Dave^.) Many thanks for your guesting today Ed ....
+  CO is ended ....  All go to Yak-yak mode ...
+  Thanks to all!! [Listeners too.]
+
+(Ed G.) Thanks for having me Dave!  bye!
+
+1:00:33 PM EST Sunday, January 12, 1986
+
+
+  User ID   Nod Handle
+----------- --- ------------
+70007,1176  ATJ Thom
+70007,2000  QCA Andy R.>
+70025,1356  CNC Jim Crabtree
+70126,1131  QFI MYKUS
+70126,231   BTM EILEEN TARCAY
+70136,30    DCI H. Hoffman
+70250,211   LTR PETER
+70466,1511  BTM Maddi
+70506,1261  SIE Sysop Tony
+71266,125   LBC Phil W.
+71436,323   DCE Bruce Drake
+72116,2765  PMA JIM LEWIS
+72146,2632  DCE Mike A.
+72206,2413  ALL Kevin MacLean
+72207,3402  MAD John
+72227,2507  NAS GRAY
+72237,344   CAP ROMAN KROITOR
+72276,3505  ANA john k
+72326,3271  HVT Bill S
+72407,3224  SYR Marty T
+72457,3343  BOU Ed G. (Acroatix Inc.)
+72467,331   DCI Lan Y.
+72507,1063  QKA Mark H
+72517,1077  CAP doug m
+72527,1246  LEX Joe B!
+72667,445   NAS DAVID ROGERS
+72737,2662  HAM Bill Chan
+72737,3431  RAL BOB R
+72746,1014  OKC John R
+72747,2241  DCE Matt S.
+73176,1625  QCA RossR
+73765,605   NYJ larry l
+74216,73    PLS Jerry Tappa
+74405,1177  SDC rowlfe
+74766,3553  QAI Randy Kays
+75655,646   POR STEVE CROUCH
+75715,100   ATJ RICH L
+75725,1130  CVK Curtis G.
+75725,1134  LSM joel
+75725,1204  CVK DAVE SCHNEIDER
+76012,1364  MLW Marc Hanlan
+76576,2177  SDE WAYNE E. HAVILAND
+76576,611   CVK RON BAXTER
+76703,2041  FTW tana
+76703,446   BMD Sysop .^Dave^.

@@ -1,0 +1,70 @@
+10  '*************  EXPNS.LST by R. Scott Truesdell,  70506,553,  1984  ****
+20 ON ERROR GOTO 800                ' enable error trapping
+30  DEFSTR A-I
+40  E=CHR$(27):ER=E+"p":EN=E+"q": H=CHR$(243): G=CHR$(241) ' oft-used variables
+50  GOSUB 700                        ' display .DO files, get account name
+100 GOSUB 500                        ' display main menu, get choice
+105 IF I="2" THEN 200                ' review expenses
+107 '*************  ADD  more items to expense account  *********************
+110 CLS: IT="": PRINT: INPUT "What for"; IT     ' get item description
+115   IF IT="" THEN CLOSE: GOTO 100            ' quit adding?
+120   INPUT "How much"; P                       ' get cost
+130   PRINT #1, USING"\                   \";IT ' write description to file
+140   PRINT #1, USING"#####.##"; P              ' write cost to file
+170 GOTO 110                                    ' loop back for more
+195 '*************  REVIEW  expense items  **********************************
+200 CLS: S=1:                        ' initialize item number
+205 PRINT: FOR J=1 TO 6              ' show six items at a time on screen
+210   LINE INPUT #1, A: INPUT #1, P  ' get information from current account
+220   PRINT "Item"S;CHR$(8)":"TAB(9);' display item number
+225   PRINT A; TAB(30);              ' display description
+230   PRINT USING "$$####.##"; P     ' display cost
+240   IF EOF(1) THEN 270             ' test for End Of File
+250   S=S+1: NEXT: SS=FRE("")        ' incr item #,  force garbage collection
+255   PRINT ER" Press <ENTER> to continue..." EN;  ' prompt for next screen
+260 IF INKEY$="" THEN 260 ELSE CLS: GOTO 205
+270 PRINT ER" * * *   That was the last one   * * * " EN;
+280 IF INKEY$="" THEN 280            ' signal End Of File & wait for keypress
+290 CLOSE 1: GOTO 100                ' return to main menu
+295 '*************  SUM expense costs ***************************************
+300 CLS: PRINT: PRINT " Adding Expense Items...": S=1
+310 IF EOF(1) THEN 330 ELSE INPUT #1, A, P       ' start loop, get 1 cost
+320 PRINT @135, "Item" S: S=S+1: T=T+P: GOTO 310 ' incr item #, add in new cost
+330 CLOSE: PRINT STRING$(40,G);                  ' close the file, draw a line
+335 PRINT " Total = ";: PRINT USING "$$####.##"; T;: T=0 ' display total
+350 IF INKEY$="" THEN 350 ELSE GOTO 100          ' return pending keypress
+490 '*************  MAIN MENU  **********************************************
+500 CLS: PRINT @43, ER; TAB(8); CHR$(34); F; CHR$(34) TAB(19) "EXPENSE  MENU";
+510 PRINT TAB(37); EN: PRINT @83, ER"   "EN;  TAB(34) ER"   "EN
+520 PRINT @123, ER" 1 "EN"  ADD new expenses."      TAB(34) ER"   "EN
+530 PRINT @163, ER" 2 "EN"  REVIEW expense items."  TAB(34) ER"   "EN
+540 PRINT @203, ER" 3 "EN"  SUM of Total expenses." TAB(34) ER"   "EN
+550 PRINT @243, ER" 4 "EN"  CHANGE accounts."       TAB(34) ER"   "EN
+560 PRINT @283, ER"     Choose which function?"     TAB(37) EN;
+595 '*************  Get Menu Selection  *************************************
+600 PRINT @284, E"P";                            ' locate & display the cursor 
+605 I=INKEY$: IF I="" THEN 605 ELSE PRINT E"Q";
+610   IF I="q" OR I="Q" THEN CLOSE: MENU         ' "Q" ends the program
+620   IF I= E  THEN CLOSE: POWEROFF, RESUME      ' Escape key turns off M100
+630   IF I="1" THEN OPEN F FOR APPEND AS#1:RETURN' ADD more items to account
+640   IF I="2" THEN OPEN F FOR INPUT  AS#1:RETURN' REVIEW expenses
+650   IF I="3" THEN OPEN F FOR INPUT  AS#1:GOTO 300 ' SUM up the expenses
+660   IF I="4" THEN RUN                          ' CHANGE accounts
+670 GOTO 600
+695 '*************  Sign-on, Display .DO files, get account name  ***********
+700 CLS: PRINT ER; SPACE$(12) "EXPENSE  TRACKER" SPACE$(12);
+710 PRINT " ver 2.0   by R. Scott Truesdell,  1984 "EN;
+712 FORX=1TO5:PRINTSPACE$(7);CHR$(245);:NEXT
+720 FOR X=63930 TO 64141 STEP 11     ' these are the user file attribute bytes
+725   ' If files is a current .DO file, display it in the screen.
+730   IFPEEK(X)>191ANDPEEK(X)<255THEND="":FORY=X+3TOX+8:D=D+CHR$(PEEK(Y)):NEXT:PRINTD" "CHR$(245);
+740 NEXT: PRINT @280, ER; E"V  Which Account shall we use "EN; 
+750 INPUT F: F=LEFT$(F,6)            ' get file name, truncate to 6 characters
+752 FOR J=1 TO LEN(F)                ' convert to upper case
+760    F%=ASC(MID$(F,J,1)): IF F%>96 THEN MID$(F,J,1)=CHR$(F%-32)
+770 NEXT: RETURN
+795 '*************  ERROR TRAPPING  *****************************************
+800 IF ERR=52 THEN RUN               ' attempt to read from nonexistant file
+810 IF ERR=5 AND ERL=760 THEN MENU   ' quit if no account
+820 CLS:PRINT:PRINT"Error "ERR" in line "ERL:END
+

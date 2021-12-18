@@ -1,0 +1,37 @@
+        LINE.NEC is a short (1006 bytes  with REM lines and the demo removed)    program that enables the hidden LINE
+ function in the NEC PC-8201.  After
+ LINE.NEC is loaded and run, the PC-8201 will respond to LINE commands in
+ exactly the same syntax as the Model    100. Thus, LINE(x1,y1)-(x2,y2) draws a  line between those points
+ (x max=239, y max = 63; exceeding       either limit gives a FC Error.) If you
+ add  ,0 after the close of the second
+ parenthesis, you get a line "undrawn"   between the two points (i.e., a string
+ of blanked pixels.)  If you add  ,1,B   as a suffix, you get an outline box
+ whose corners are  x1,y1 upper left,    x2,y2 lower right.  Suffix  ,0,B
+ "undraws" the same outline box.
+  Suffix  1,BF draws a solid box, and    0,BF undraws one.
+
+        Lines 45 and 46 of the program are a simple demo that the program has
+done its thing.  They aren't needed for any other purpose.
+
+        Once loaded and run, the LINE    syntax remains enabled even if you KILL the program; at least, it remains
+ until something else gets POKE'd into
+ any memory location from 62139 to       62335.
+
+        For real compactness, you can create a machine language version of
+ the program that's only 202 bytes long. After loading and running LINE.NEC, and seeing the demo work, go into BASIC
+and type:
+
+        BSAVE "LINE", 62139!,197
+
+Your directory will now show LINE.CO as a file.  In order to be sure it runs
+ correctly, you need to POKE 4 values
+(or use LINE.LDR in this section; see       below), thus: 
+        POKE 65215,207: POKE 65216,240:         POKE 64082,187: POKE 64083,242
+Now, placing the cursor over LINE.CO and ENTERing will blank the screen for a
+ few seconds, after which the menu will be restored, but you will have re-enabled the LINE function.
+
+If you download LINE.LDR, which is another 81 bytes, you can leave that
+ and LINE.CO in memory; together they consume less than 300 bytes.
+
+                Robinson Markel
+                72456,3604

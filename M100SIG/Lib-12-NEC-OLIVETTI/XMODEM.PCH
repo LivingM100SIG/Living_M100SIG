@@ -1,0 +1,18 @@
+The following patch will alleviate having to reset your STAT setting after
+ an XMODEM transfer.  STAT setting will automatically return to its value prior
+ to execution of the program
+
+A. Using TEXT features, Cut program lines (290, 300, and 375) out of this
+ file and Paste to a new file named PATCH.DO
+B. RUN, then STOP XMODEM.BA (use STOP key)
+C. type RENUM  (renumbers program lines in increments of 10),
+D. type MERGE"PATCH.DO"
+E. type RENUM 1,,1 (renumbers program lines to increments of 1)
+
+
+PATCH.DO
+========
+
+290 CLOSE1:ST$="COM:"+ST$:OPENST$FOROUTPUTAS1:POKE63912!,6:POKE63913!,95:EXEC24028:EXEC27895:PRINT"Term":EXEC21380
+300 CLOSE1:OPEN"COM:"+ST$FOROUTPUTAS1:POKE63912!,6:POKE63913!,95:EXEC24028:EXEC27895:MENU
+375 ST$="":FORY=62470!TO62475!:ST$=ST$+CHR$(PEEK(Y)):NEXT

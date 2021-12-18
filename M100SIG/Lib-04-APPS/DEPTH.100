@@ -1,0 +1,208 @@
+10 REM depth of field calculator
+20 REM copyright 1983,1984,1985
+30 REM by Glenn Neufeld - Not For Sale - Copy And Distribute Freely
+40 REM all rights reserved
+50 CLS
+60 PRINT @88, "Depth of Field Calculator"
+70 PRINT @128,"   Copyright (C) 1985"
+80 PRINT@168,"     by Glenn Neufeld"
+100 REM main program
+110 KEY 1,"cc/?"
+120 KEY 2,"mm/?"
+130 KEY 3,"f/ ?"
+140 KEY 4,"D/ ?"
+150 KEY 5,"DF
+160 KEY 6,"f/
+170 KEY 7,"Help"
+180 KEY 8,"Quit"
+200 ON KEY GOSUB 1000,2000,3000,4000,			 5000,6000,7000,8000
+300 REM initial constants
+310 CC=.0025		'circ of conf
+320 MM=50		'focal length
+330 FS=2		'f stop
+340 FD=10		'focus dist
+350 IM=25.4		'inches to mm
+500 REM main program entry
+510 KEY ON
+520 SCREEN 0,1
+530 KEY ON
+540 IF A%=112 THEN A%=113 ELSE A%=112
+550 PRINT@251,CHR$(27);CHR$(A%);" Select function: ";CHR$(27);CHR$(113);
+560 FOR X%=1 TO 117:NEXT X%
+570 GOTO 520
+1000 REM set circ of conf
+1100 KEY STOP
+1105 SCREEN 0,0
+1110 CLS
+1120 PRINT "The accepted circle of confusion values"
+1130 PRINT "    are 1/1000 inch for 16mm (.0010)"
+1140 PRINT "    and  1/500 inch for 35mm (.0020)"
+1150 PRINT
+1160 PRINT "    The current c-c setting is";
+1165 PRINT USING " .####";CC
+1170 PRINT
+1180 PRINT TAB(12);"Enter c-c: ";
+1190 LINE INPUT A$
+1200 IF A$="" THEN 1500
+1210 IF VAL(A$)>0 THEN CC=VAL(A$):GOTO 1500
+1220 CLS
+1230 PRINT@124,"Illegal c-c value has been entered"
+1240 PRINT "   Press ENTER when ready to try again"
+1260 BEEP
+1270 BEEP
+1280 BEEP
+1290 LINE INPUT Z$
+1300 GOTO 1000
+1500 CLS
+1510 RETURN
+2000 REM set focal length
+2100 KEY STOP
+2105 SCREEN 0,0
+2110 CLS
+2120 PRINT@83,"The current Focal Length setting is"
+2130 PRINT
+2140 PRINT TAB(18-LEN(STR$(MM))/2);MM;"mm"
+2150 PRINT
+2160 PRINT "        Enter Focal Length: ";
+2170 LINE INPUT A$
+2180 IF A$="" THEN 2500
+2190 IF VAL(A$)>0 THEN MM=VAL(A$):GOTO 2500
+2220 CLS
+2230 PRINT@122,"Illegal Focal Length has been entered"
+2240 PRINT "   Press ENTER when ready to try again"
+2260 BEEP
+2270 BEEP
+2280 BEEP
+2290 LINE INPUT Z$
+2300 GOTO 2000
+2500 CLS
+2510 RETURN
+3000 REM set f stop
+3100 KEY STOP
+3105 SCREEN 0,0
+3110 CLS
+3120 PRINT@80,"  The current f Stop setting is f/";
+3140 PRINT STR$(FS)
+3150 PRINT
+3160 PRINT "          Enter f Stop: ";
+3170 LINE INPUT A$
+3180 IF A$="" THEN 3500
+3190 IF VAL(A$)>0 THEN FS=VAL(A$):GOTO 3500
+3220 CLS
+3230 PRINT@125,"Illegal F Stop has been entered"
+3240 PRINT "   Press ENTER when ready to try again"
+3260 BEEP
+3270 BEEP
+3280 BEEP
+3290 LINE INPUT Z$
+3300 GOTO 3000
+3500 CLS
+3510 RETURN
+4000 REM set focus dist
+4100 KEY STOP
+4105 SCREEN 0,0
+4110 CLS
+4120 PRINT@80," The current Focus Distance setting is"
+4130 PRINT
+4140 PRINT TAB(17-LEN(STR$(FD))/2);
+4145 IF FD>=100*MM THEN PRINT "    Infinity" ELSE PRINT FD;"feet"
+4150 PRINT
+4160 PRINT "   Enter Focus Distance (%=inf): ";
+4170 LINE INPUT A$
+4180 IF A$="" THEN 4500
+4185 IF A$="%" THEN FD=100*MM:GOTO 4500
+4190 IF VAL(A$)>0 THEN FD=VAL(A$):GOTO 4500
+4220 CLS
+4230 PRINT@120,"Illegal Focus Distance has been entered"
+4240 PRINT "   Press ENTER when ready to try again"
+4260 BEEP
+4270 BEEP
+4280 BEEP
+4290 LINE INPUT Z$
+4300 GOTO 4000
+4500 CLS
+4510 RETURN
+5000 REM compute depth of field
+5010 KEY STOP
+5020 CLS
+5030 SCREEN 0,0
+5100 REM h is hyperfocal distance
+5110 H=(MM/IM)^2/(FS*CC)
+5120 REM dn is near, df is far
+5130 N=(H*(FD*12))/(H+((FD*12)-(MM/IM)))
+5140 F=(H*(FD*12))/(H-((FD*12)-(MM/IM)))
+5150 PRINT TAB(12-LEN(STR$(MM))/2);"Using a";MM;"mm lens"
+5160 IF FD>=100*MM THEN PRINT TAB(10);"focused at infinity":GOTO 5210
+5200 PRINT TAB(12-LEN(STR$(INT(FD)))/2);
+5201 PRINT "focused at";
+5202 PRINT INT(FD);"'";
+5204 PRINT INT((FD-INT(FD))*12);CHR$(34)
+5210 PRINT TAB(10-LEN(STR$(FS))/2);"stopped down to f/";FS
+5220 PRINT TAB(7);"the focus range would be"
+5230 PRINT TAB(9-(LEN(STR$(INT(N/12)))+LEN(STR$(INT(F/12)))/2));
+5240 PRINT INT(N/12);"'";
+5250 PRINT INT(((N/12)-INT(N/12))*12);CHR$(34);
+5260 PRINT " <------> ";
+5270 IF F<0 OR F>=100*MM THEN PRINT "infinity":GOTO 5300
+5280 PRINT INT(F/12);"'";
+5290 PRINT INT(((F/12)-INT(F/12))*12);CHR$(34)
+5300 REM say hyperfocal distance
+5320 PRINT TAB(5-LEN(STR$(INT(F/12)))/2);"[Hyperfocal distance =";
+5325 IF H/12>=100*MM THEN PRINT " Infinity";:GOTO 5350
+5330 PRINT INT(H/12);"'";
+5340 PRINT INT(((H/12)-INT(H/12))*12);CHR$(34);
+5350 PRINT "]";
+5400 RETURN
+6000 REM use focus info to compute
+6010 REM f stop and focus distance
+6020 KEY STOP
+6030 SCREEN 0,0
+6040 CLS
+6050 INPUT "Desired near focus point";N
+6060 INPUT "Desired far focus point";F
+6070 N=N*12:F=F*12
+6080 MN=10000
+6090 PRINT "     Approximating - please wait.."
+6095 C1=MM/IM:C2=N*CC:C3=F*CC:C4=N*C1^2:C5=F*C1^2
+6100 FOR FS=1 TO 64
+6110 REM
+6120 M1=C4/((C1)^2-C2*FS)
+6130 M2=C5/((C1)^2+C3*FS)
+6140 IF ABS(M2-M1)>=MN THEN 6180
+6150 MN=ABS(M2-M1)
+6160 W=FS
+6170 FD=(M1+M2)/24
+6180 NEXT FS
+6200 FOR FS=W-1 TO W+1 STEP .1
+6210 REM
+6220 M1=C4/((C1)^2-C2*FS)
+6230 M2=C5/((C1)^2+C2*FS)
+6240 IF ABS(M2-M1)>=MN THEN 6280
+6250 MN=ABS(M2-M1)
+6260 W=FS
+6270 FD=(M1+M2)/24
+6280 NEXT FS
+6290 FS=W
+6300 CLS
+6310 GOTO 5110
+7000 REM show help
+7010 KEY STOP
+7020 CLS
+7100 PRINT "cc/?:	Set Circle of Confusion"
+7110 PRINT "mm/?:	Set Focal Length"
+7120 PRINT "f/ ?:	Set f Stop"
+7130 PRINT "D/ ?:	Set Focus Distance (%=inf)"
+7140 PRINT "DF	Compute Depth of Field"
+7170 PRINT "f/	Compute f-Stop & Focus"
+7200 KEY ON
+7210 RETURN
+8000 REM return to main menu
+8010 SCREEN 0,0
+8020 CALL 23164,0,23366
+8030 CALL 27795
+8040 REM funny noise
+8050 FOR X%=12000 TO 300 STEP -500
+8060 SOUND X%,1
+8070 NEXT X%
+8080 MENU
+

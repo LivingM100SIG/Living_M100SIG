@@ -1,0 +1,225 @@
+POWR-DISK Owner's Manual
+
+The information has the following significance:
+
+Src:  The source of the files on the display. If Src is RAM, then you are
+      examining your computer's memory; if Src is TDD, you are examining the
+      disk contents.
+
+Type: The type extension of the files displayed. MENU.BA shows .DO files
+      separately from .CO and .BA files. (This is why the file names appear
+      without extensions -- they are all the same type.)  If you have files
+      with odd extensions, like .DA or .CA, they will appear with .DO or .CO
+      files respectively, but they will retain their correct extensions.
+
+Free: The number of bytes free (RAM) or the number of SECTORS free (TDD).
+
+Len:  The length of the file that the cursor bar is placed over, in bytes. You
+      can see the length of any file simply by moving the cursor bar over the
+      filename.
+
+								Manual Page 4
+								-------------
+
+The arrow keys move the wide cursor bar over the displayed file names similar
+to the computer's main menu.  In addition, there are eight functions available
+through the function keys:
+
+[F1]  Change source.  If "Src" is RAM, [F1] changes it to TDD, and vice versa.
+
+[F2]  Load or Save.  If "Src" is RAM, [F2] SAVES a file to the TDD; if "Src"
+      is TDD, [F2] LOADS a file into RAM.
+
+[F3]  Select.  It is possible to request most file operations for more than one
+      file.  [F3] will cause a file to stay selected even after you move the
+      cursor elsewhere.  Pressing [F3] twice in succession clears any previous
+      selects; pressing [F3] three times in succession selects EVERY file.
+      [Load ALL or Save ALL effect - ed.]
+
+[F4]  Change extension type.  MENU.BA shows DO, BA, or CO files separately;
+      pressing [F4] displays files with another type of extension, depending on
+      what is currently displayed.
+
+[F5]  Kill.  Kills selected file(s) from TDD or RAM.  [Be careful with the [F3]
+      "tagging" option in conjunction with this! - ed.]
+
+[F6]  Info.  Display information about the selected file.  For DO and BA files,
+      you see the first 40 characters in the file.  (For BASIC programs, the
+      results will look unfamiliar because of the "tokenized" keywords.)  For
+      CO files, you see the TOP, END, and EXE values.
+
+[F7]  Page.  This key is active only when there are more files of the selected
+      type than will fit on the screen.  Then, [F7] moves to an alternate page
+      to show the remaining files.
+
+[F8]  Menu.  Exit from MENU.BA to the computer's main menu.
+
+Prompts:  Whenever a Load, Save or Kill operation will remove or change a file,
+either in RAM or on the TDD, MENU.BA will "prompt" you to confirm the command.
+POWR-DISK Owner's Manual
+								Manual Page 5
+								-------------
+
+For example, if you press [F5] with "MEMO" selected, MENU.BA will prompt,
+
+	"Kill MEMO  .DO?"
+
+The prompt protects you against accidental keystrokes.  Remember that Load and
+Save operations will only prompt you if you are overwriting an existing file.
+
+Selecting Multiple Files:
+
+One convenience of MENU.BA is your ability to Load, Save, or Kill more than one
+file at a time.  The [F3] key allows you to select more than one file; all
+selected files are then affected by [F2] or [F5].  For example, consider the
+LCD screen previously shown.  If the wide cursor bar is over the EPS file, and
+you press [F3] to select it, then right arrow, the wide cursor bar will then
+cover two file names, EPS and ADRS.  If you press [F2] to Load or Save those
+files, you will receive the prompt:
+
+	"Do all (y/n/q)?"
+
+If you press Y or N, MENU.BA will use that response for any prompts that appear
+during the combined operation.  If you press Q, MENU.BA will stop at each
+subsequent prompt for your response.
+
+								Manual Page 6
+								-------------
+
+			     Section Three
+		    Using POWR-DISK without MENU.BA
+
+Although MENU.BA is adequate for most file storage and retrieval, there are two
+reasons to access the disk without it: convenience and memory.  When you leave
+MENU.BA in RAM, you have 3.5K less RAM to work with.
+
+
+Convenient Access from TEXT
+
+When editing a file with the TEXT program, you can save a copy to the TDD
+simply by pressing [F3].  When you do, the prompt:
+
+	"Save to:"
+
+will appear.  Respond with the name for the TDD file, preceded by a colon
+(":").  You need not add the ".DO" extension, POWR-DISK will add it.  There are
+two things to keep in mind:
+
+1.  If there is a file already on the disk with the same name, you will get NO
+    INDICATION; POWR-DISK will simply overwrite the old copy. [useful for fast
+    saves of a progressing document, or saving the same file with updated
+    information after editing - ed.]
+
+2.  You can save a file under a different name on the disk than the file you
+    are editing.  For example, if you are editing a file called "A.DO", and
+POWR-DISK Owner's Manual
+
+    you respond ":B" to the "Save to:" prompt, the file will be saved to a new
+    file named "B.DO".  Similarly, if you are editing "PART1.DO", you can save
+    the updated file as ":PART2", or whatever name you may choose.
+
+WARNING:  Disk access from TEXT is convenient, but dangerous!  If you work on
+one file (e.g., "REPO.DO") for a long time, you can get into the habit of
+pressing [F3] :REPO <ENTER>.  You may realize too late that you have just over-
+written your prize report with a totally different file.
+
+Similarly, you can press [F2] to load TDD files into TEXT.  The computer will
+give a "Load from:" prompt.  Respond with the file name preceded by a colon.
+Once again, the ".DO" extension is not necessary.  [In TEXT, ".DO" is assumed.
+In BASIC, ".BA" is assumed - ed.]
+
+On files you load into TEXT from the TDD, POWR-DISK will INSERT the text at
+the cursor location, just as if the disk file's contents had been typed from
+the keyboard.  For example, consider a text file with a single sentence:
+
+								Manual Page 7
+								-------------
+
+	"The Rain in Spain falls on the plain."
+
+Suppose further, that the cursor is blinking over the "o" in the word "on"; and
+further suppose that you have a file on disk called MAINLY.DO which contains a
+single word, "mainly" followed by a space, and without a carriage return.  If
+you press [F2] and type  :MAINLY <ENTER>, POWR-DISK will load the contents of
+the disk file at the cursor location, and the screen display will become:
+
+	"The Rain in Spain falls mainly on the plain."
+
+(Think you got it?)  This "insert" feature is useful for concatenating files
+and inserting repetitive material into documents. [similar to a disk-based
+paste buffer which can be loaded into any portion of a document - ed.]
+
+
+Convenient Access from BASIC
+
+BASIC programmers are familiar with the SAVE command, which allows them to name
+a program on the main menu.  Putting a colon (":") in front of a file name
+allows you to save programs to the TDD.  The procedure resembles that for
+accessing DO files from TEXT, as described above.
+
+If you want to load in a BASIC program from the TDD without using MENU.BA, the
+simplest procedure is to use LOAD to retrieve the program from the TDD, then
+SAVE to give it a name in RAM.  For example, to load CHART.BA from the disk,
+use the following sequence:
+
+	Load ":CHART <ENTER>
+	Ok
+	Save "CHART <ENTER>
+	Ok
+
+[In all BASIC commands, a space between parts of the command is optional - ed.]
+POWR-DISK Owner's Manual 
+
+Normally, the BASIC function keys are set so that you can type the following:
+
+	[F2] :CHART <ENTER>
+	[F3] CHART <ENTER>
+
+Note that you may easily name a file differently in RAM, than on the TDD when
+loading in this manner.  If you are going to run a program only once, you can
+load it, and run it, in one step:
+
+								Manual Page 8
+								-------------
+
+	RUN ":CHART <ENTER>
+
+However, after running it, it may be necessary to use the BASIC NEW command to
+clear out the memory in the BASIC "unnamed program" buffer.
+
+								Manual Page 9
+								-------------
+
+			     Section Four
+		       BASIC Command Extensions
+
+POWR-DISK enhances 12 different BASIC commands.  Some commands work exactly as
+they do without POWR-DISK, except that TDD files may be accessed by putting the
+extension ":" or "0:" in front of the file name.
+
+	LOAD "0:fname"			MERGE "0:fname"
+	SAVE "0:fname"			CLOSE #n  (When #n is a disk file)
+	KILL "0:fname"			INPUT #n (When #n is a disk file)
+	RUN "0:fname"			PRINT #n (When #n is a disk file)
+	RUNM "0:fname"
+
+Other commands require more explanation.  Either they have entirely new
+functions, or new options related to the TDD.
+
+
+LFILES
+
+The LFILES command provides information about files on the TDD to the screen.
+Each file name appears on its own line with the length of the file in bytes.
+[LFILES displays the disk directory with files listed in alphabetic order - ed]
+
+You may note that BA and DO files are slightly larger in RAM than on disk.  DO
+files by one byte, and BA files by 2 bytes.  This is normal; it's the END OF
+FILE markers that are added to the file when it's loaded into RAM.
+
+LFILES also tells you the number of free sectors on the disk.  The number of
+free sectors is more meaningful than the number of bytes, because all files, no
+matter how small they may be in RAM, require at least one disk sector.  (See
+the discussion of sectors in Appendix A.)  An empty disk has 79 free sectors.
+[The disk directory also uses 1 sector; there are actually 80 sectors on the
+disk. Each sector holds 1280 bytes. - ed.]

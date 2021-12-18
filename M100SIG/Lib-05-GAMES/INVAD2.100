@@ -1,0 +1,119 @@
+1 REM ***SPACE INVADERS GAME*** for the
+2 REM #####TRS-80 Model 100####
+3 REM >>>REVISED and SUBMITTED 10/16/83
+4 REM To correct Maxfiles problem and an error in the score recording section.
+5 REM Enhanced version of program by    John J. Anderson, Creative Computing
+6 REM Magazine Aug.1983. Revisions and  additions by Skip Sebak [74035,433]
+7 OPEN "maxfil.do" FOR OUTPUT AS 1
+8 PRINT#1,MAXFILES:CLOSE 1
+9 MAXFILES = 2
+10 DEFINT A-Z
+20 FOR X=1 TO 10:I$=INKEY$:NEXT
+30 CLS:PRINT:PRINT"LCD-Fender (apologies to Space Invaders)"
+40 GOSUB 670
+50 CLS:SC=0:PRINT:PRINT:PRINT" Press [P] to Play :":PRINT:PRINT" Press [I] for Instructions & Rules"
+60 PRINT:PRINT" Press [Q] to QUIT."
+70 I$=INKEY$:IF I$="P" OR I$="p" THEN 110
+80 IF I$="Q" OR I$="q" THEN 950
+90 IF I$="I" OR I$="i" THEN 610
+100 GOTO 70
+110 M=20:SCREEN 0,0:CLS:T=350
+120 R=0:X=RND(1)*35+1
+130 T=T-1:PRINT@X+R,"/\"+CHR$(144)+"/\"
+140 I$=INKEY$
+150 IF I$="."THEN M=M+1
+160 IF I$=","THEN M=M-1
+170 IF I$=" "THEN GOSUB 310
+180 IF T<0 THEN 560
+190 IF M<0 THEN M=39:PRINT@6*40,"     ";
+200 IF M>39 THEN M=0:PRINT@39+(6*40),"     ";
+210 PRINT@M-1+(6*40)," "+CHR$(133)+" ";
+220 PRINT@(7*40),T;"   hi-score:";HS;
+230 PRINT@27+(7*40),"score:";SC;
+240 P=RND(1)*4-1:S=RND(1)*2
+250 IF S=1 THEN P=-P
+260 PRINT@X+R,"      ":X=X+P
+270 IF X<1 THEN X=1
+280 IF X>35 THEN X=35
+290 IF T<50 THEN SOUND 4000,1
+300 GOTO 130
+310 REM subroutine
+320 FOR Y=5 TO 0 STEP -1
+330 PRINT@M+(Y*40),CHR$(152)
+340 SOUND Y*1000,1
+350 PRINT@M+(Y*40)," "
+360 NEXT
+370 IF M=X+1 OR M=X+3 THEN SC=SC+50 :BEEP:GOSUB 430:GOTO 120
+380 IF M=X+2 THEN 490
+390 PRINT@X+R-1,"      ":R=R+40:SC=SC-5
+400 IF R>200 THEN SC=SC-10: GOTO 120
+410 RETURN
+420 REM assorted subroutines
+430 FOR I=0 TO 10
+440 PRINT@X+R,"BLORK!"
+450 FOR J=0 TO 20:NEXT:PRINT@X+R,"      "
+460 SOUND 16000,2:NEXT
+470 GOTO 120
+480 REM
+490 SC=SC+100:SOUND 440,10
+500 FOR I=0 TO 10
+510 PRINT@X+R,"WAAGH!"
+520 SOUND 1760,1
+530 NEXT I
+540 PRINT@X+R,"      "
+550 GOTO 120
+560 IF SC>HS THEN HS=SC
+570 PRINT@175,"GAME OVER":LINE (0,0)-(239,63),1,BF
+580 PRINT@125," score:";SC;"hi-score:";HS;
+600 FOR X=1 TO 8000:NEXT:GOTO 50
+610 CLS:PRINT" Use < to move left, > to move right,":PRINT" and the spacebar to FIRE."
+620 PRINT:PRINT" Direct HIT(WAAGH!)=100 Wing(BLORK!)=50"
+630 PRINT" Penalties for letting aliens descend."
+640 PRINT:PRINT" Good Luck !  Hit [SPACEBAR] to begin:"
+650 I$=INKEY$:IF I$=" "THEN 110
+660 GOTO 650
+670 'Subroutine for High Scores
+680 PRINT"For Previous High Score Retrieval-"
+690 INPUT"What is your name ";N$
+700 OPEN"recsc.do"FORINPUTAS1
+705 OPEN"tempsc.do"FORAPPENDAS2
+710 IF EOF(1) THEN IF RS<>1 THEN 744 ELSE 760
+720 INPUT #1,N1$,H1,D1$
+730 IF LEFT$(N$,3)=LEFT$(N1$,3)THEN 750
+735 PRINT#2,USING"\      \,#### , \   \";N1$,H1,D1$
+740 GOTO 710
+744 PRINT"Can't find your score"
+746 GOTO 760
+750 H3=H1:PRINTN$;"'s Record Score";H3;D1$
+755 D3$=D1$:RS=1:GOTO 710
+760 INPUT"Would you like others ";O$
+770 IF O$="N"ORO$="n"ORO$="NO"ORO$="no"ORO$="No"THEN HS=H3:CLS:RETURN
+780 INPUT"HI for Highest,ALL for list ";S$
+790 IF S$="ALL"ORS$="all"ORS$="All"THEN S=1
+800 CLOSE 1,2
+810 OPEN"tempsc.do"FORINPUTAS2
+820 IF EOF(2)THEN900
+830 INPUT#2,N2$,H2,D2$
+840 IF H2>H1 THEN 850 ELSE 880
+850 N1$=N2$:H1=H2:D1$=D2$
+880 IF S=1 THEN PRINTN2$;H2;D2$
+890 GOTO 820
+900 PRINT"All-time Record:";N1$;H1;D1$
+910 PRINT:INPUT"What score for your target ";TS
+920 HS=TS:CLOSE 2:RETURN
+950 'Subroutine to store high score
+960 CLOSE2:OPEN"tempsc.do"FOR APPENDAS2
+970 IF HS<=H3 THEN 995
+980 PRINT#2,USING"\      \,#### , \   \";N$;HS;LEFT$(DATE$,5)
+990 CLS:PRINT:PRINT" Your New High Score ";HS:PRINT" recorded for future games"
+992 GOTO 1000
+995 PRINT#2,USING"\      \,#### , \   \";N$;H3;D3$
+997 CLS:PRINT:PRINT" Your record score retained  ";H3
+1000 PRINT:K$=" /\"+CHR$(144)+"/\  " :PRINT:PRINT K$;K$;K$;K$;K$
+1005 CLOSE2:FOR W=1 TO 1000:NEXT
+1010 KILL"recsc.do"
+1020 NAME"tempsc.do"AS"recsc.do"
+1030 OPEN "maxfil.do" FOR INPUT AS 1
+1040 INPUT#1,MF:CLOSE 1:KILL"maxfil.do"
+1050 MAXFILES = MF
+1060 MENU

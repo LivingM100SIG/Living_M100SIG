@@ -1,0 +1,156 @@
+  This program is menu driven and need
+  no additional documentation with the
+  exception of two notes: a) you will
+  get a bug when you use the Modem Stat
+  option, as I haven't found a way to
+  get basic to transfer the new Stat
+  and; b) use the file attributes
+  option with care as extensive
+  modifications to a file can cause a
+  crash. Finally, this program should
+  be cassette based for you PDD owners
+  as the program can IPL FLOPPY.CO
+100 '**********************************
+110 '*                                *
+120 '*   A Cold Start Reset Program   *
+130 '*      By Leonard B. Smith       *
+140 '*                                *
+150 '**********************************
+160 '
+200 '** Reset Regular Configuration
+210 '
+220 CLS:CLEAR:POWER CONT:ON ERR GOTO430
+230 SOUND OFF:SCREEN 0,0
+300 '
+310 '** Set all Program Variables
+320 '
+330 TI$=TIME$:DA$=DATE$:DY$=DAY$
+340 BH$=CHR$(27)+"p":EH$=CHR$(27)+"q"
+350 LS$=CHR$(32):PO$="CONT":SO$="OFF"
+400 '
+410 '** Set and Display Menu One
+420 '
+430 PRINT@120,BH$;"  A Cold Start Reinitilization Program  
+";EH$:FORA=1TO400:NEXTA
+500 CLS:TI$=TIME$:DT$=DATE$:DY$=DAY$
+505 PRINT@0,BH$;"Cold Start Initilization ";EH$;:PRINT@31,BH$;" Page 
+One";EH$:PRINT@80,"  1. Time: "TI$;:PRINT@101,"4. Power: "PO$;:PRINT@120,"  2. 
+Date: "DT$;
+506 PRINT@141,"5. Sound: "SO$;:PRINT@160,"  3. Day:  "DY$;:PRINT@181,"6. Model 
+100 Menu";
+510 PRINT@281,BH$;" ENTER SELECTION OR SPACEBAR FOR MORE ";EH$;
+520 GOSUB10000:A%=INSTR("123456"+CHR$(32),A$):IFA%=0 THEN 520 ELSE ON A% GOTO 
+600,700,800,900,1000,20000,2000
+600 PRINT@91,BH$;"__:__:__";EH$;:PRINT@91,"";:LINEINPUT"";TI$:IFTI$=""THEN 
+TI$=TIME$ELSETIME$=TI$:BEEP:GOTO500
+700 PRINT@131,BH$;"__/__/
+__";EH$;:PRINT@131,"";:LINEINPUT"";DT$:IFDT$=""THENDT$=DATE$ELSEDATE$=DT$:BEEP:G
+OTO500
+800 
+PRINT@171,BH$;"___";EH$;:PRINT@171,"";:LINEINPUT"";DY$:IFDY$=""THENDY$=DAY$ELSED
+AY$=DY$:BEEP:GOTO500
+900 GOSUB920:PRINT@111,BH$;"____";EH$;:PRINT@111,"";:LINEINPUT"";PO$:IFPO$=""OR 
+PO$="CONT"THEN 905 ELSE 910
+905 PO$="CONT":BEEP:GOTO500
+910 PO%=VAL(PO$):POWER PO%:PO$=STR$(PO%):BEEP:GOTO500
+920 PRINT@280,"Use a range 10 - 255 or Enter for CONT.";:RETURN
+1000 IFSO$="OFF"THEN 1010 ELSE 1020
+1010 SO$="ON ":SOUND ON:BEEP:GOTO506
+1020 SO$="OFF":SOUND OFF:BEEP:GOTO506
+1030 '
+1040 '** Set and Display Menu Two
+1050 '
+2000 CLS:PRINT@0,BH$;"Cold Start Initilization ";EH$;:PRINT@31,BH$;" Page 
+Two";EH$;:PF$="  1. Option  PF - OFF":DF$="  2. Default PF - OFF"
+2005 PRINT@79,PF$;:PRINT@101,"4. Modem Stat";:PRINT@119,DF$;:PRINT@141,"5. Call 
+Option Rom";:PRINT@159,"  3. Load DOS";:PRINT@181,"6. File Attributes";
+2010 PRINT@281,BH$;" ENTER SELECTION OR SPACEBAR FOR BACK ";EH$;
+2020 GOSUB10000:A%=INSTR("123456"+CHR$(32),A$):IFA%=0 THEN 2020 ELSE ON A% GOTO 
+2600,2900,2800,2700,3000,6000,500
+2600 KEY 1,"Edit"
+2610 KEY 2,"List"
+2620 KEY 3,"Cls"+CHR$(13)
+2630 KEY 4,"Call 63012"+CHR$(13)
+2640 KEY 5,"Kill "+CHR$(34)
+2650 KEY 6,"Load "+CHR$(34)
+2660 KEY 7,"Save "+CHR$(34)
+2670 KEY 8,"Menu "+CHR$(13)
+2680 PF$="  1. Option  PF - ON ":DF$="  2. Default PF - OFF":GOTO 2005
+2690 '
+2695 '** Modem Stat Menu
+2697 '
+2700 CLS:PRINT@0,BH$;" Cold Start Initilization ";EH$;:PRINT@28,BH$;" Modem Stat
+";EH$;:PRINT@302,BH$;" ENTER TO EXIT ";EH$;
+2710 PRINT@85,"w) Word";:PRINT@125,"p) Parity";:PRINT@165,"s) Stop 
+Bits";:PRINT@205,"s) XON/XOFF";
+2720 PRINT@102,"Enter Stat Below";:PRINT@182,BH$;"wpbs";EH$;+
+",20pps";:PRINT@182,"";:LINEINPUT"";MO$
+2725 IF MO$="" GOTO 2000 ELSE GOTO 2727
+2727 MD$=CHR$(34)+"MDM:"+MO$+CHR$(34):OPEN MD$ FOR INPUT AS 1:CLOSE:GOTO2000
+2730 GOSUB 1000:A%=INSTR(CHR$(32),A$):IFA%=0THEN2730ELSEONA%GOTO500
+2800 PRINT@241,BH$;" DOS LOAD RETURNS YOU TO MOD 100 MENU ";EH$;
+2810 PRINT@281,BH$;" 'Y' TO CONTINUE OR SPACEBAR FOR MENU ";EH$;
+2820 GOSUB10000:A%=INSTR("Y"+CHR$(32),A$):IF 
+A%=0THENGOTO2820ELSEONA%GOTO2830,2000
+2830 CLEAR:CLS:OPEN"COM:88N1DNN"FOROUTPUTAS#1
+2840 PRINT#1,"S10985157C00AD7EF08B3AS901FE"
+2850 LOAD"COM:88N1ENN",R
+2900 CALL23164,0,23366:CALL27795:DF$="  2. Default PF - ON ":PF$="  1. Option  
+PF - OFF":GOTO2005
+3000 PRINT@241,BH$;" ROM CALL RETURNS YOU TO OPT ROM MENU ";EH$;
+3010 PRINT@281,BH$;" 'Y' TO CONTINUE OR SPACEBAR FOR MENU ";EH$;
+3020 GOSUB10000:A%=INSTR("Y"+CHR$(32),A$):IF A%=0 THEN GOTO 3020 ELSE ON A% GOTO
+3030,2000
+3030 CLEAR256,MAXRAM:CALL63012:MENU
+3850 LOAD"COM:88N1ENN",R
+5000 '*********************************
+6000 '*   Model 100 Directory Editor  *
+6010 '*        By Phillip Wherry      *
+6020 '*           70007,567           *
+6030 '*********************************
+6040 CLS:DEFINTA-Z:BA=-1694:RV$=CHR$(27)+"p":NR$=CHR$(27)+"q":A=0
+6050 BB=BA+A*11
+6060 NF$="":FORB=3TO10:NF$=NF$+CHR$(PEEK(BB+B)):NEXTB
+6070 PRINTCHR$(27);"H[F] - Filename:     ";RV$;:PRINTUSING" \     \.\\ ";LEFT$(
+NF$,6);MID$(NF$,7);:PRINTNR$
+6080 PRINT"[S] - Status:       ";RV$;" ";:IF PEEK(BB)AND128THENPRINT"Valid   
+"ELSEPRINT"Invalid "
+6090 PRINTNR$;"[A] - ASCII:        ";RV$;" ";:IFPEEK(BB)AND64THENPRINT"Yes 
+";NR$ELSEPRINT"No  ";NR$
+6100 PRINT"[M] - Machine code: ";RV$;" ";:IFPEEK(BB)AND32THENPRINT"Yes 
+";NR$ELSEPRINT"No  ";NR$
+6110 PRINT"[R] - ROM file:     ";RV$;" ";:IFPEEK(BB)AND16THENPRINT"Yes 
+";NR$;ELSEPRINT"No  ";NR$;
+6115 PRINT"    [E]-exit"
+6120 PRINT"[I] - Invisible:    ";RV$;" ";:IFPEEK(BB)AND8THENPRINT"Yes 
+";NR$;ELSEPRINT"No  ";NR$;
+6125 PRINT"    Cmd: _";:CP=CSRLIN*40+POS(0)-1:PRINT
+6130 PRINT
+6140 IF A<26 THEN PRINT"[+] - next file";ELSEPRINT"                ";
+6150 IF A>0 THEN PRINTTAB(20);"[-] - previous file";ELSEPRINTCHR$(27);"K";
+6160 A$=INKEY$:IFA$=""THEN6160
+6165 IFA$>" "THENPRINT@CP,A$;
+6170 ONINSTR("FfSsMmAaRrIi+=-QqEe",A$) GOTO 
+6190,6190,6280,6280,6280,6280,6280,6280,6280,6280,6280,6280,6300,6300,6310,6320,
+6320,6320,6320
+6180 BEEP:GOTO 6160
+6190 PRINT@240,"New filename: ";:LINEINPUTL$
+6200 PRINT@240,CHR$(27);"K";:IFLEN(L$)>9THENBEEP:GOTO6190
+6205 IF L$="" THEN 6160
+6210 X=INSTR(L$,"."):IFX=0ANDLEN(L$)>6THENBEEP:GOTO6190
+6215 IFX=0THENL$=L$+".  ":GOTO6210
+6220 L1$=LEFT$(L$,X-1):L2$=MID$(L$,X+1)
+6230 IFL1$=""ORL2$=""ORINSTR(L1$,".")ORINSTR(L2$,".")THENBEEP:GOTO6190
+6240 IFLEN(L1$)>6ORLEN(L2$)>2THENBEEP:GOTO6190
+6250 L1$=L1$+SPACE$(6-LEN(L1$))
+6260 IFLEN(L2$)=1THENL2$=L2$+" "
+6270 L$=L1$+L2$:FORZ=3TO10:POKEBB+Z,ASC(MID$(L$,Z-2,1)):NEXTZ:GOTO6070
+6280 IFA$>="a"THENA$=CHR$(ASC(A$)-32)
+6285 X=2^(INSTR("IRMAS",A$)+2)
+6290 POKE BB,PEEK(BB)XORX:GOTO6060
+6300 A=A-(A<26):GOTO6050
+6310 A=A+(A>0):GOTO6050
+6320 GOTO2000
+10000 A$=INKEY$:IF A$="" THEN 10000 ELSE RETURN
+20000 MENU
+

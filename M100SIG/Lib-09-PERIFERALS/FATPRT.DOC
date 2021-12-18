@@ -1,0 +1,110 @@
+
+This is a printout of a disk directory produced by FATPRT.DVI. All comments in
+parentheses have been added for explanatory purposes.
+
+ADRS  BBS  ASCII  39	 1 0 0
+SPOKANBBS  ASCII  42	 1 0 1
+CHANGEBBS  ASCII  43	 1 0 2
+BBS   NUM  ASCII  36	 1 0 3
+BBS        ASCII  38	 1 0 4
+BBSORTBAS  BASIC  34	 1 0 5
+XM         BASIC  33	 1 0 6
+OREGONBBS  ASCII  31	 1 0 7
+ASC-MORSE  BASIC  67	 1 1 0
+AREA  COD  ASCII  30	 1 1 2
+IPL        BASIC  28	 1 1 3
+ATPRT      BASIC  66	 1 1 4
+BAUDOT     BASIC  26	 1 1 5
+DATE       BASIC  24	 1 1 7
+WARGAM     BASIC  56	 2 0 0
+BLACKLIST  ASCII  23	 2 0 1
+BWXM       BASIC  63	 2 0 2
+BWEDIT     BASIC  20	 2 0 3
+ALOG  SRC  ASCII  21	 2 0 4
+REMUPL     BASIC  64	 2 0 5
+ATFIX      BASIC  65	 2 0 6
+MORSE DOC  ASCII  11	 2 0 7
+UPLMSGCO   COM    25	 2 1 0
+SPLIT      BASIC  78	 2 1 1
+FORMAT     BASIC  15	 2 1 2
+BACKUP     BASIC  48	 2 1 3
+PHONE COD  ASCII  49	 2 1 4
+DPEDIT     BASIC  13	 2 1 5
+COPY       BASIC  62	 2 1 6
+CHANGE85   ASCII  27	 2 1 7
+NOTES      ASCII   9	 3 0 0
+MKLPRC     BASIC  16	 3 0 1
+APPEND     BASIC   8	 3 0 2
+ADRS       ASCII  54	 3 0 3
+TABFIX     BASIC   6	 3 0 4
+UPLMSGLDR  BASIC  29	 3 0 5
+AUTO       BASIC  58	 3 0 6
+L5         BASIC  71	 3 0 7
+CHATFIX    BASIC  74	 3 1 0
+DOWNCKWM3  BASIC  77	 3 1 1
+BACKUP     BASIC  48	 3 1 3
+PHONE COD  ASCII  17	 3 1 4
+JUNK       ASCII  11	 3 1 5
+OMEG5-15   ASCII  10	 3 1 6
+254 254 254 254  60  -1  -3   4  -2  -1 	(clusters 0-9)
+
+  7  -3  10  -1  -2  -7  -2  -3  17  18 	(clusters 10-19)
+
+ -3  -6  -1  22  -3  -2  -5  12  -1   5 	(clusters 20-29)
+
+ -8  -8  -9  32  -6  -6  35  44  37  47 	(clusters 30-39)
+
+254 254  -3  59  45  46  68  51  57  50 	(clusters 40-49)
+
+ 19  52  53  70  75  54  -7  -2  -5  69 	(clusters 50-59)
+
+ 61  79  -2  14  -1  -3  -4  -5  72  73 	(clusters 60-69)
+
+ -2  -8  -6  76  -2  -3  -7  -4  -2  -6 	(clusters 70-79)
+
+As is easily seen, the printout is of two very different areas. The first is
+the actual directory entries. The second is the FAT (File Allocation Table).
+Both are explained on pages 49-53 of the DVI manual.
+
+Directory listing format:
+The first 9 characters are the filename and extension as stored in the
+directory. Note that spaces are added to fill the name out to six characters
+and to fill the extension out to three. Also note that the period is omitted.
+(In fact, you can type a command such as LOAD"0:SPOKANBBS" and the file will
+load!)
+The next item is the file type byte expanded out to be readable. ASCII, BASIC,
+and COM are the defined types. Any undefined value is printed as a hexidecimal
+number bracketed in quotes. Thus if the file type byte was 48 (30 hex) it would
+be printed as *30*.
+Next is the starting cluster number. This is the number of the cluster where
+the file starts. It is printed in decimal (because it's easier to work with).
+Finally, we have three digits indicating just *where* in the directory this
+entry is. First digit is the sector, second is the 0 or 1 required by DSKI$ and
+DSKO$ for specifying which half of the sector to read/write. The third digit
+indicates which of the 8 entries in the string. (multiply it by 16 to get the proper value to use in MID$)
+
+Thus to work on PHONE.COD:
+
+PHONE COD  ASCII  17	 3 1 4
+
+you'd do the following:
+
+A$=DISKI$(drive number,20,3,1)
+B$=MID$(A$,16*3,16)
+
+B$ now contains the directory entry for PHONE.COD.
+
+
+Cluster table:
+The cluster table merely prints out the values from the cluster table:
+255 		FFh	cluster is unused.
+254 		FEh	cluster is unavailable (system use or bad sectors)
+0-79		00-4Fh	cluster is in use by a file. The number points to the
+			next cluster of the file.
+-1 to -9	C1-C9h	cluster is last cluster of file, the 1 thru 9 indicates
+			how many sectors of the cluster are used.
+
+The Hex numbers are translated to - numbers for easy of comprehension (you try
+to figure out how many sectors 195 means at 3 am!)(3, if you were wondering).
+C0 is not written by Disk BASIC, but is usable.
+

@@ -1,0 +1,22 @@
+0 CLS:GOSUB10:KEY(8)ON:ONKEYGOSUB,,,,,,,17
+1 IFDT$=DATE$THEN5ELSEDT$=DATE$
+2 L=60*60:K=L*24:J=366*K:I$=LEFT$(DATE$,2):H$=MID$(DATE$,4,2):RESTORE:TD=0
+4 READMO$:IFMO$<>I$THENREADDA:TD=TD+DA:GOTO4ELSETD=TD+VAL(H$)-1
+5 GOSUB15:DS=TD*K:HS=L*VAL(LEFT$(TIME$,2)):MS=60*VAL(MID$(TIME$,4,2)):SS=VAL(RIGHT$(TIME$,2)):SX=DS+MS+HS+SS
+6 TL=100*(SX/J):PRINT@92,USING"###.#####";TL;:TE=100-TL:PRINT@131,USING"###.#####";TE;
+7 P=235785943+((TL/100)*2320279):PRINT@185,USING"##########,";FIX(P);
+8 PRINT@223,USING"############,";(FIX(4819E6+(TL/100)*1E8));
+9 PRINT@258,USING"$$###############,";FIX(5.761*P)*1E3;:GOTO1
+10 PRINT@1,CHR$(27)"p";" To George Orwell, wherever you are...";:FORX=40 TO240STEP40:PRINT@X," ";
+11 PRINT@X+1,CHR$(234);:PRINT@X+38,CHR$(233);:PRINT@X+39," ";:NEXT:FORX=281TO 318:PRINT@X," ";:NEXT:PRINTCHR$(27)"q";
+13 GOSUB15:PRINT@85,"1984 is";:PRINT@ 101," percent gone,";:PRINT@127, "with";:PRINT@140," percent left";
+14 PRINT@165,"U.S. population:";: PRINT@204,"World population:";: PRINT@243,"National debt:";:RETURN
+15 PRINT@48,"On ";DATE$;" at ";TIME$;",":RETURN
+16 DATA01,31,02,29,03,31,04,30,05,31,06, 30,07,31,08,31,09,30,10,31,11,30,12,31
+17 MENU
+100 'ORWELL.84A provides a running count of statistics for the truly paranoid.
+101 'Since it is based on World Almanac figures, extrapolated for 1984,
+102 'author Howard Benner, 70235,1337, will not be responsible for lost bar bets.
+103 'More current information on these stats, and other comments, appreciated.
+104 'RAM space with REM's stripped= <1K
+

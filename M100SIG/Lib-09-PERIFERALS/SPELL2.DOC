@@ -1,0 +1,52 @@
+SPELL2.DOC
+  SPELL2.HEX is a hex file containing a machine language spelling checker 
+program written for the Model 100 running the Tandy portable disk drive #2 and 
+utilizing FLOPY2, the operating system that comes with the drive.  This program
+will check a file in under half the time it takes for SPLCHK.BA to check the 
+same file, and there is no extra DOS to buy.  As an example, I checked this 
+file when it was 3542 bytes long with 638 words.  SPELL2.CO checked it in under
+six minutes, while SPLCHK.BA took over 14 minutes to check the same file.  Both
+found 41 words that were not in the dictionary, eight of which were misspelled.
+
+  To convert SPELL2.HEX to a machine language file you must use CHANGE.BA or 
+CHGHEX.BA in the Utilities DL.
+  When you are done writing your file save a copy to the disk, load SPELL2.CO 
+and place the dictionary disk in the drive.  Go into basic and CLEAR128,57200, 
+return to the MENU. Place the cursor over SPELL2.CO and press ENTER.
+  The first thing the program does is prepare the file with a built in version 
+of the machine language program DCPREP.  (DCPREP by David W. Willman, 75775,202
+3/23/86 Copyright 1986).  This will strip the words, throws out duplicate words
+& sort the word list.  You might want to read DCPREP.DOC before you run 
+SPELL2.CO.  When DCPREP is finished it will call the spelling checker part of 
+SPELL2.CO.
+  It will verify that FLOPPY is active and check that the dictionary disk is in
+the drive.  You will only get one chance to do it right, otherwise, the program
+will have to be started over again.
+  The program will tell you which dictionary file it is currently checking.  
+Any words in the file that are not found in the dictionary will be left in the 
+ram file and the file will be renamed to SUSPEC.DO for later review.  (It is 
+best not to have another file named SUSPEC.DO in RAM, if there is you will end 
+up with two files with the same name.)  When all the words have been checked 
+the program will return to the computer's main menu with a beep. 
+
+Dictionary Preparation:
+
+  The disk dictionary files must be on one disk and must be set-up as follows:
+ 1.  The first 26 files on the disk must be dictionary files and they must be 
+sequential and only in Bank #1.
+ 2.  The four letters of the first file must be 'DICT'.  It is best to name the
+files DICT-A.DO thru DICT-Z.DO with only words starting with that letter within
+the file.
+ 3.  The words within the files must be in alphabetical order, all letters must
+be lower-case, word must be on separate lines, with no blank lines and must not
+contain spaces but may contain a hyphen or appostrophe as long as they are not 
+the first character of the word.
+
+ Notes:
+  SPELL2 was written in basic and compiled with TCOMP.  It was written for 
+Power-Dos but the DSKO$ command (CALL MACRAMC+24, SEC, ADR) doesn't work with 
+the TDD2.  I can convert the program to work with the Tandy 200 if I knew the 
+calls for inserting and deleting characters from RAM files.  On the Model 100, 
+CALL 27489, CHR, ADR  will insert a character and CALL 27551, , ADR  will 
+delete the number of characters in C&D registers.  TD2TIP.005 documents the 
+CALL I used for the TDD#2.

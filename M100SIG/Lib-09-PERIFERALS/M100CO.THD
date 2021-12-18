@@ -1,0 +1,222 @@
+M100CO.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+M100CO.EXE (DL9) is an IBM-PC program which makes the IBM and compatible
+computers emulate a Tandy portable disk drive (TDD).  This makes it possible
+to archive Model 100/102/200 programs on the PC disk by using a file manager
+on the laptop and a null modem cable to connect the machines via their
+serial ports.  These messages relate to difficulties in using M100CO with
+certain Model 100 software (Powr-DOS) and solutions to the problems.
+ **Updated: 4/23/88**
+
+Message range: 166720 to 167989
+Dates: 3/29/88 to 4/23/88
+
+
+Sb: #M100COM
+Fm: Len Tucker 71555,1002
+To: Al Pound 75715,1077
+
+ There is a patch you can make to POWR-DISK that would let you run at 9600
+baud. In the version that I have (1.2 I think) the UART setup string is located
+at the program start plus 441 bytes. Normally this would be 60850 + 441 =
+61291. If you do a peek at that location you should find a 57 or the ASCII code
+for '9'. Simply poke a 56 in that location and your POWR-DISK is setup for 9600
+baud. If you then do a LFILES command you should be all set to communicate at
+the slower baud rate.
+
+
+Fm: Al Pound 75715,1077
+To: Len Tucker 71555,1002
+
+Denny Thomas helped me find the commands for Powr-DOS.  In case you need them,
+they are:
+
+     LFILES S 9600
+     LFILES S 19200
+
+I've imbedded these commands in DMENU for TDD access and MENUJR for M100COM
+use.  I have a data switch allowing me to select between connecting my M100 to
+the TDD or the T1K.
+
+I've tried backing up my TDD disks to the T1K using COPY.BA which is a disk
+backup utility that came with Powr-DOS.  Hasn't worked.  Everything was set up
+for 9600 and the first set of files got transferred but the second set
+generated a Communications error.  It appears to me that the problem may be
+related to part of a file being saved with the first set and the rest of the
+file being transferred with the second set and appended.
+
+It could be that what I'm trying to do is not technically possible without
+program changes but I've experienced another problem which may be related.
+Occasionally, the transfer stops acting like everybody waiting on everybody
+else.  F10 exits M100COM but "BREAK" is needed on the M100.
+
+This stoppage is not a big deal since I can restart the programs but being able
+to back up a TDD disk to the T1K by flipping the data switch and hitting
+<ENTER> would be real convenient.
+
+Any comments, questions or suggestions?
+
+
+Fm: Len Tucker 71555,1002
+To: Al Pound 75715,1077
+
+ Most of the problems that can arise are because of the PC computer and the
+amount of DOS overhead required to catch the data stream. If you have any other
+devices in your system that may be interrupting the serial IO with a lower
+priority (eg. less than the IRQ 3 or 4) or any background processing going on
+then it may cause problems. Do you know what your buffers are set to in the
+config.sys file and how much memory you have? Let me know how your system is
+configured and I may be able to recreate your setup.
+ I have never tested the program with POWR-DOS, only POWR-DISK and TS-DOS. I do
+have a copy however and I will install it to see if there is anything different
+about the way it communicates.
+
+
+Fm: Len Tucker 71555,1002
+To: Al Pound 75715,1007
+
+ I've tried Powr-Dos without any problem on a plain vanilla PC at 4.77 mhz. I
+even ran through the COPY.BA program be switching the plug.  The problem must
+be something about your configuration or in the switching device you are using.
+Can you give me some mor information about them? Have you tried running the
+program without the switch by manually changing the plug?
+ Let me know what you you find I'd really like to find the source of the
+problem
+
+
+Fm: Al Pound 75715,1077
+To: Len Tucker 71555,1002
+
+Buffers!  Buffers, you say.  What are buffers? <Grin>.  I'm still operating
+with the 2 per default.  I'll configure 20 and let you know the results.
+
+
+Fm: Al Pound 75715,1077
+To: Len Tucker 71555,1002
+
+Configuring BUFFERS=20 improved the operation but the transfer still hung up
+during the third swap of COPY.BA.
+
+Rebooted without GREYNUM, SMWCLOCK S, DESKTEAM (on screen clock), Webster's New
+World Combo, BURNOUT and LUCID 3D.  Backed up two disks (4 swaps each) using
+COPY.BA without a hitch.  I suspect that DESKTEAM's on screen clock is the
+problem.  BURNOUT blanked the screen during the WRITE phase of Swap 2 and
+M100COM continued to function into the WRITE phase of Swap 3.  I just
+remembered that I can turn the DESKTEAM clock off.  I'll try that later and let
+you know.
+
+By the way, my drives seem to be running less and saving (or loading) more.
+
+You've been a BIG help.
+
+Thanks!
+
+
+Fm: Al Pound 75715,1077
+To: Len Tucker 71555,1002
+
+I booted up my system tonight with my regular boot disk which loads all the
+programs that I listed before and turned off the On Screen Clock in Deskteam.
+The result was that I was able to back up 5 TDD disks using COPY.BA without a
+hitch.  I left several files in my M100 so only 16K of RAM was available so it
+took 6 Swaps for two of the Disks.  In all cases, BURNOUT turned off the screen
+long before the backup was completed.
+
+Apparently, the clock was the problem magnified by having only two buffers.
+ Thank you for an excellent program and on target help.
+
+
+Fm: Al Pound 75715,1077
+To: Len Tucker 71555,1002
+
+Something happened.  I used your M100COM and PowrDOS's COPY.BA to backup 5 PDD
+disks on the same T1K disk as the program in drive A.  I then used M100COM and
+COPY.BA to backup 6 PDD disks on the Drive B disk with the program in drive A.
+Now no matter what I do I get:
+
+"Path not found in line 780 of M100COMI at address OD5A:1485
+
+Hit any key to return to system."
+
+The first four characters of the address vary somewhat (0D5A ; 0D54 ; etc.) but
+last four (1485) haven't changed.  I've rebooted without TSR programs, used a
+different copy of the program, changed to another M100 RAM bank, changed T1K
+drives, checked connections and some other things.  I've been able to SAVE
+single text files from the file using "Save to::filename".
+
+Any suggestions will be appreciated.
+
+
+Fm: Len Tucker 71555,1002
+To: Al Pound 75715,1077
+
+  In order for the program to handle lfiles requests it is necessary for me to
+setup a couple of temporary files on the default directory. You mave have
+noticed them. They are PDD_DIR.DAT and PDD_DIR.BAK. They are setup by SHELLing
+out of basic and doing a DIR command during the initialization of the program.
+Because of this there are a couple of requirements that must be satisfied.
+First there must be a copy of COMMAND.COM on the boot disk, and secondly there
+must be enough room on the default drive to hold the temporary files. Check to
+see if you think there is enough room on the disk in drive A and let me know.
+
+ Also, since you are using floppies you should know that if you change disks
+you should re-log onto the drive just as if you were changing the drive and
+directory (F9 key). Also the sectors free is not updated for additions and
+deletions after you log on to the drive.
+
+
+Fm: Len Tucker 71555,1002
+To: Al Pound 75715,1077
+
+  What ever happened to your problem with m100com program? I'd like to see if
+it can be fixed if it is a bug in the program.
+
+
+Fm: Al Pound 75715,1077
+To: Len Tucker 71555,1002
+
+I've been traveling so I haven't had a chance to log onto CIS to comment after
+your last message.  I erased all the PDD_DIR files on both disks and started
+M100COM just like it was new.  I still got the
+
+  "Path not found in line 780 of M100COMI at address OD5A:1485
+
+error.  I read the PDD_DIR files and saw that they were partial listings of the
+disk directory.  How does M100COM decide which files to list.  I thought maybe
+my disk directory in drive A may include too many files but haven't had a
+chance to try running the program from an almost empty disk.
+
+
+Fm: Len Tucker 71555,1002
+To: Al Pound 75715,1077
+
+The program SHELL's out of Basic and does a DIR ??????.* > PDD_DIR.BAK which
+stores all files with 6 characters or less. The program further edits the
+listing to a format easier to work with and then stores the result in
+PDD_DIR.DAT. In a later version of the program I go ahead and delete the BAK
+file since it is not needed after startup.
+
+You should not need much space to work with on the disk. Only enough to hold
+the two PDD_DIR files and handle any temporary file it might create when it
+makes a new copy. How much space do you show on the disk in question? Also does
+the time and date stamp on the two files correspond with when the program was
+run?
+
+
+Fm: Al Pound 75715,1077
+To: Len Tucker 71555,1002
+
+Problem resolved.  It was caused by characters in the filenames.  I'm sure you
+and probably any other MSDOS programmer would have figured it out right away
+had you been able to look over my shoulder.  Apparently MSDOS doesn't accept
+all the same characters in file names as does the M100.  The first file read on
+the disk that wouldn't copy was S/CMRY.  Changing the "/" to a "_" enabled
+COPY.BA to to back up the entire TDD disk to the T1K.
+
+I've happily backed up several disks this afternoon after changing "/'s", "+'s"
+and other things to "_".
+
+Again, thanks for your help and for sharing M100COM.

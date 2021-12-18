@@ -1,0 +1,24 @@
+10 REM LCDPRT.200
+15 REM Copyright (c)1988 by James Yi 73327,1653
+17 REM Screen dumps 240x128 LCD to Epson compatible printer, producing a 6"x3.5" image.
+20 REM This is a BASIC loader that creates LCDPRT.CO, which runs in altLCD.
+30 REM To use it, LOADM LCDPRT.CO from Basic, then
+40 REM CALL 63574,M,H+L.
+50 REM M can be from 0 to 127.  It is number of blank pixels to be inserted as left margin.
+52 REM Use the right for value for M to center the picture on 8"x11" paper.
+53 REM  I used M=40, but each may need a slightly different value.
+54 REM H=16 for normal screen.  H is for number of lines.  H greater than 16 prints lines below the screen, where it is not seen.
+56 REM L is for linefeeds.  If the printer needs linefeeds, L=256, else L=0 for no linefeeds.
+60 REM Press SHIFT+BREAK to stop printing.
+80 READS:IFS>MAXRAMTHENCLEAR200ELSECLEAR256,S
+85 RESTORE:READS,E,F$:PRINT"Loading  "F$:PRINT"Please Wait.. ";
+90 FORA=STOE:READB:POKEA,B:NEXT:SAVEMF$,S,E,S
+95 PRINT"Done!":PRINT"See LINES 0-70 for instructions."
+100 DATA 63574,63820,LCDPRT.CO,34,71,249,71,230,127,95,184,62,32,33,208,2,202,107,248,62,128,33,0,3,50,70,249,34,75,249,22,0
+110 DATA 107,98,183,24,25,34,73,249,205,109,79,62,27,205,144,21,62,51,205,144,21,62,24,205,144,21,46,0,205,105,139,216,44,229
+120 DATA 205,47,249,225,38,1,229,62,27,205,144,21,62,76,205,144,21,42,73,249,235,42,75,249,25,125,205,144,21,124,205,144,21
+130 DATA 122,179,202,195,248,27,175,205,144,21,195,182,248,225,229,14,40,37,33,96,253,202,209,248,33,0,254,6,1,229,30,192,22
+140 DATA 0,126,160,202,224,248,122,179,87,123,15,15,95,213,17,40,0,25,209,7,210,216,248,197,122,205,144,21,205,144,21,205,144
+150 DATA 21,193,225,120,7,71,58,70,249,7,184,194,211,248,35,13,194,209,248,62,13,205,144,21,58,72,249,183,62,10,196,144,21
+160 DATA 225,37,202,155,248,58,71,249,189,194,143,248,62,27,205,144,21,62,50,195,144,21,125,1,64,1,33,192,254,9,61,194,54,249
+170 DATA 205,179,142,33,96,253,62,13,195,139,142,0,0,0,0,0,0,0

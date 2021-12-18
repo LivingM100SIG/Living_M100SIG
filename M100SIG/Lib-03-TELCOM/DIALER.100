@@ -1,0 +1,55 @@
+10 REM --------------------------------
+20 REM Dial.100 Automatic Phone Dialer
+30 REM Copyright (c) 1984
+40 REM All commercial rights reserved
+50 REM Program assembled by Jerry Kohl
+60 REM (Carrier detect by Dick Cassidy)
+70 REM (with help from larry gensch)
+80 REM --------------------------------
+100 CLEAR500:   REM Clear string space
+110 DEFINTA-Z:  REM Default to integers
+120 DIM ML(3):  REM Holds M/L code
+130 CLS:PRINT"Phone Dialer  Copyright 1984 ":PRINT"Written by Dick Cassidy & larry gensch"
+135 PRINT"All commercial rights reserved":PRINT
+140 PM$="7I1E"+CHR$(0):REM RS-232 Parameters
+145 PRINT"RS-232 Setting: M"PM$:PRINT
+150 LINEINPUT"Enter Phone Number: ";PH$
+155 IF LEN(PH$)=0 THEN MENU
+160 PH$=PH$+CHR$(0):REM Delimit phone #
+165 V=VARPTR(PM$):REM   Point to UART Setting
+170 AD!=PEEK(V+1)+PEEK(V+2)*256
+180 CALL 6118,0,AD!:REM Set UART Parms
+190 FOR N=0 TO -1 STEP -1:REM Loop to load M/L Routine
+200 READ A,B:REM Get 2 bytes of routine
+210 A!=A+B*256:REM Convert to LSB,MSB
+220 ML(X)=A!+65536*(A!>32767):X=X+1
+230 N=(B=0):NEXT:REM Loop till routine loaded
+240 V=VARPTR(PH$):REM   Point to Phone # string
+250 AD!=PEEK(V+1)+PEEK(V+2)*256:REM AD! Points to phone #
+255 PRINT:PRINT"Dialing...";
+256 CALL 21200:REM Disconnect line
+260 CALL 21293,0,AD!:REM Dial phone
+270 CALL 21172:REM      Keep off hook
+300 X=0:CD=0:  REM Init carrier status
+310 FOR N=1 TO 1000:REM Suitable delay
+320 V=VARPTR(ML(0)):REM Point to M/L routine
+325 Y=VARPTR(X):REM Point to X
+330 CALL V,0,Y:REM  Get carrier status
+340 CD=(X=0):REM    Set CD flag
+350 IF CD THEN N=1000:REM Exit early if carrier
+360 NEXT:REM Loop till carrier or time out
+370 PRINT:IF CD THEN 460:REM Skip if carrier
+380 PRINT"No carrier":REM Display msg
+390 CALL 21179:REM Disconnect
+400 PRINT"Try again? ";
+410 A=INSTR("YyNn",INPUT$(1)):REM Get input
+420 ON A+1 GOTO 430,440,440,450,450
+430 BEEP:GOTO410:REM Bad input
+440 PRINT"Y":RUN:       REM "Y" Entered
+450 PRINT"N":MENU:      REM "N" Entered
+460 REM --- Connected ---
+470 PRINT"Connected":PRINT
+480 PRINT"Entering TERMINAL Mode..."
+490 CALL 21589: REM Enter TERM Pgm
+500 DATA 205,239,110,119,201,0:REM M/L ?Routine
+

@@ -1,0 +1,80 @@
+Captured message thread describing keyboard slowdown and documented "Date
+Bug" causes.
+
+#: 142392 S1/General/Help
+    05-Mar-87  17:28:42
+Sb: #102 problem
+Fm: Randall Ashley 73337,3056
+To: All
+
+        Had an unusual problem with a Model 102 recently, and thought I'd see
+if anyone had any ideas on its cause/effect. The machine suddenly started
+dropping characters in TEXT, BASIC and TELCOM (I never use the other ROM
+programs), and the cursor started to blink about two or three times more
+slowly than normal. RAM was about 4K, and there were four or five open file
+slots. No "low battery" indicator came on, and the machine works fine now.
+There are no programs in HIMEM or any machine-language programs that should
+conflict. And I have not heard of these symptoms before, anyway. It saved to
+the PDD (using DSKMGR) just fine, and shortly after saving everything, it was
+back to normal. But for a while, I could easily out-type it. ... Any ideas
+appreciated!
+        Randall Ashley
+
+
+Fm: Tony Anderson 76703,4062
+
+That is an occasional problem that occurs while the computer's operating
+system is "garbage collecting"... clearing ram space, inserting new text in
+it's proper place, moving other stuff around to accomodate what you're working
+on at the present time.  It's infrequent, but not unheard of.
+
+Unless it becomes chronic, and happens all the time, ignore it, it will go
+away.
+
+
+Fm: Al Pound 75715,1077
+
+That has been an occasional problem with the 100.  Thought they would have
+fixed it with the 102.  Was never a problem for me.  Just turned it off and
+back on and all back to normal.
+
+
+Fm: Randall Ashley 73337,3056
+
+Thanks for the help! Had never had the problem with a 100, so was a bit
+worried. Thanks much...R
+
+
+Fm: Phil Wheeler 71266,125
+
+Randall,
+
+That was reported occasionally by Model 100 owners in the early days.  Sounds
+like the software compatibility captured that problem, too!  Fortunately, it
+happens seldom and always goes away.
+
+
+Fm: Bob Andersen 70526,1233
+
+Dear Randall:
+
+You are probably familiar with the famous Model 100 date bug.   The problem
+you are having is probably from the same root cause.  The problem can also be
+induced by doing a " CALL 29571,4 " and can be cured by doing a " CALL 29571,5
+".   An interesting variation on theme can be induced by doing a " CALL
+29571,6 ".   The datebug occurs because port A on the 81C55 is used for both
+the date/ timer chip (uPD1990AC) and the keyboard (to check for the
+shift/break condition ).  Though it has a very low probality of occuring, a
+received character interrupt can disrupt the port A data being strobed to the
+date/timer chip. 29571 is the location of the subroutine that normally loads
+control status to the date/timer.  CALL 29571,4 simulates bashing port A data.
+The timer is set to a frequency of 64 Hz.  Cursor blink occurs once per four
+seconds instead of once per second.  Keys are also scanned at 1/4 speed so you
+become able to beat the keyboard.  CALL 29571,5 set the frequency back to the
+normal 256 Hz rate. CALL 29571,6 sets it to 2048 Hz.  See if you can beat that
+one!
+
+Regards,
+
+Bob Andersen
+

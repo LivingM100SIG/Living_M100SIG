@@ -1,0 +1,50 @@
+0 'EXTRA.NODE by Carmen Paone [72677,42]No rights reserved (Program will only work with Node ROM and Models 100 and 102)
+1 'Keep this version of EXTRA in your Node Datapac and use the CALL 63013,20, VARPTR (S$) command to acess DO files
+2 'which must be stored in the NODE. There are prvisions for a MEMO.DO and a HELP.DO files.
+3 'These also must be stored in the NODE. You could use the MEMO file to keep track of appointments, etc. The HELP file
+4 'could be used for boilerplate material, such as names and addresses, which could be copied and moved to your story file.
+5 'Press F1 to create your story file and name it anything you like. The Len function will measure your story in terms of the 12.2 pica column width.
+6 'The By function will automatically put your byline into your story. Change the byline information in Line 370 or else folks will be calling you Red Smith.
+7 'The Move function will move your story into RAM for transmission to your publishing house
+8 'Program Note: Goto Line 570 and place and place the Graph 9 symbol before MENU to clear the RAMDSK file in RAM.
+10 MAXFILES=1
+15 CLS:LINE(1,8)-(238,54),1,B:LINE(8,16)-(231,51),1,B:PRINT@40,STRING$(40,239);:PRINT@240,STRING$(40,239);
+20 PRINT@122,"EXTRA!   EXTRA!   EXTRA!   EXTRA!":PRINT@165,"EXTRA!   EXTRA!   EXTRA!   EXTRA!"
+30 KEYON:PRINT@280,"File Memo Len  Move  By  Help      MENU";:ONKEYGOSUB200,230,70,300,340,510,,500
+40 PRINT@1,DAY$,DATE$:PRINT@30,TIME$:FORA=0TO1:NEXT
+50 IFINKEY$=""THEN40
+60 GOTO40
+70 MAXFILES=1:CLS:INPUT"FILE";F$:OPENF$FORINPUTAS1
+80 N=0
+90 CLS:PRINT@132,"WORKING ...."
+100 A$=INPUT$(9,1)
+110 ONERRORGOTO130
+120 N=N+9:GOTO100
+130 IFERR<>54THENRESUME
+140 CLS:PRINT@166,"LENGTH  ":PRINT@179,"INCHES
+150 N=N+16:PRINT@173,(INT(10*(N/29*10.25/72)))/10
+160 CLOSE1
+170 FORT=1TO999:NEXT:RUN10
+200 CLS:INPUT"FILE:";S$
+210 CALL63013,20,VARPTR(S$)
+220 RUN10
+230 S$="memo.do"
+240 CALL63013,20,VARPTR(S$)
+250 RUN10
+300 CLS:INPUT"FILE:";S$
+310 CALL63013,13,VARPTR(S$)
+320 CALL63013,23,VARPTR(S$)
+330 RUN10
+340 CLS:INPUT"FILE:";S$
+350 CALL63013,13,VARPTR(S$)
+360 CALL63013,23,VARPTR(S$)
+370 A$="By Red Smith New York Times"
+380 OPENS$FORAPPENDAS1:PRINT#1,A$:CLOSE:GOTO400
+400 CLS:INPUT"FILE:";S$
+410 CALL63013,13,VARPTR(S$)
+420 CALL63013,24,VARPTR(S$)
+430 KILLS$:RUN10
+500 CLEAR0,MAXRAM:MENU
+510 S$="help.do"
+520 CALL63013,20,VARPTR(S$)
+530 RUN10

@@ -1,0 +1,62 @@
+10 REM Alpha.100 by larry gensch, ESQ
+20 REM Copyright (c) 1984
+30 REM All rights reserved
+40 REM --------------------------------
+50 REM Alpha.100 creates a 36-byte .CO
+60 REM file in RAM on the Model 100.
+70 REM This routine will capitalize a
+80 REM BASIC string.  It will work on
+90 REM any string and only affect lower
+100 REM case letters and not affect
+110 REM punctuation, control characters
+120 REM or graphics characters.
+130 REM -------------------------------
+140 REM The routine resides at decimal
+150 REM 62862 to 62892 and will not
+160 REM conflict with SUBLIB.CO.
+170 REM HIMEM will have to be set at
+180 REM 62861 or lower.  This can be
+190 REM done by the statement:
+200 REM 	CLEAR256,62861
+210 REM
+220 REM Once the routine is loaded into
+230 REM protected memory, it can be
+240 REM called as follows:
+250 REM      CALL 62862, 0, VARPTR(A$)
+260 REM Where A$ is the variable to be
+270 REM capitalized.
+280 REM
+290 REM WARNING:
+300 REM Make sure that the variable
+310 REM to be converted exists in
+320 REM string memory (as opposed to
+330 REM program memory).  For instance,
+340 REM when the BASIC statement:
+350 REM 	A$="Text"
+360 REM the variable will point to the
+370 REM "Text" in the program line.
+380 REM Performing any operation on
+390 REM such a string:
+400 REM 	A$=A$+""
+410 REM will copy it into string memory.
+420 REM if the string is pointing into
+430 REM program memory, the actual
+440 REM program statement will be
+450 REM modified.
+460 REM
+470 REM Permission is granted for any
+480 REM use of this routine.
+490 REM
+500 REM This routine is REQUIRED by
+510 REM Diary.300 (version 3.0)
+1000 IF HIMEM>62861 THEN CLEAR 0,62861
+1010 FOR AD=62862 TO 62892
+1020 READ VL
+1030 POKE AD,VL
+1040 NEXT AD
+1050 SAVEM "ALPHA",62862,62892,0
+1060 MENU
+1070 DATA 70,35,94,35,86,235,43,62,223
+1080 DATA 79,35,120,183,200,5,126,254
+1090 DATA 97,218,152,245,254,122,210
+1100 DATA 152,245,161,119,195,152,245

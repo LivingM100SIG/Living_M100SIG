@@ -1,0 +1,18 @@
+                 HOW TO BYPASS THE 80 CHARACTER LIMIT ON LPT1:
+                          IN TANDY 600 HANDHELD BASIC
+ 
+                         Steve Ringley [CIS 73727,1202]
+      The LPT1: device in Handheld Basic will automatically add a carriage
+ return and a line feed after every eighty characters whether we want it to or
+ not.  The GW-Basic WIDTH command was not implemented in HH-Basic.  This
+ prevents HH-Basic from printing the full width of "wide carriage" printers, or
+ the full width in compressed mode.  It also prevents the proper printing of
+ bit image graphics, due to the two "extra bytes of data" being added every
+ eigthy bytes.
+      Fortunately, the solution is not terribly complex.  Open a disk or memory
+ file for output as 1.  Then replace LPRINT with PRINT#1, placing the "printed"
+ output in that file.  When all of the "printed" material is in the file, exit
+ to the System Manager.  Use the Copy command to copy the file to PRN.  It
+ should print to the width that you wanted.  As a final note...any file can be
+ printed by copying it to the printer.
+                                                     

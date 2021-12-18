@@ -1,0 +1,25 @@
+ERROR.TIP  by Paul Globman [72227,1661]
+           Copyright (c) 1990
+
+Some BASIC interpreters will not only inform you of a syntax error in the
+program, but will automatically go into the EDIT mode for the offending line.
+
+You can make the M100 do the same thing By putting the following code into 
+your program...
+
+ 10 ON ERROR GOTO 1000
+ .
+ .
+ .
+ 1000 BEEP:PRINT"Error"ERR"in line"ERL
+ 1001 IFERR=2THEN EDIT. ELSE LIST.
+
+
+The dot (.) after EDIT or LIST means "current line" and this is not altered
+by the ON ERROR statement, so it can be used as a BASIC debugging tool.
+
+Be sure the ON ERROR statement is not followed by a CLEAR statement.  Use
+this code for debugging and remove when program is debugged.  Syntax errors
+will invoke the editor for the offending line, and all other errors will
+simply cause the program to list the offending line for you to review.
+

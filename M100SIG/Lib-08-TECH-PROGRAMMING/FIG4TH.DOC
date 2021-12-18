@@ -1,0 +1,133 @@
+
+
+
+                FIG-FORTH RELEASE 1.1
+ 
+        THIS PUBLICATION HAS BEEN MADE AVAILABLE BY THE
+                FORTH INTEREST GROUP
+                PO BOX 1105
+                SAN CARLOS, CA  94070
+ 
+        IMPLEMENTATION BY JOHN CASSADY
+        MODIFIED BY KIM HARRIS
+ 
+        THIS VERSION FOR THE RADIO SHACK MODEL 100 BY:
+ 
+                DAVID O ROWELL
+                3961 CHERRY VLY TPK
+                MARIETTA, NY 13110
+ 
+        The file FIG4TH.100 is the basic nucleus of a figFORTH
+        system.  It will run on a 32k Mod 100 as is.  (NEC ?? It
+        should at this point.)  Since the system is only allowed
+        (this configuration) to use 16k it probably can be made
+        to work on a 24k system too.  The origin is set at A100H
+        (41216 decimal) for two reasons: first to give some room
+        below it for TEXT or BASIC to work with and secondly to
+        conform to the figFORTH listing for CP/M which ORG's at
+        100H.  This way I didn't have to make, and debug, a fat
+        listing of the figFORTH source.  I've allowed 16K above
+        that for figFORTH, LIMIT= E000H (57344), to use and I
+        use another 3k+ above that for an in memory storage of 3
+        screens.  This gives enough room for DISKMANAGER to be
+        resident at all times. (Don't know what I'd do without
+        that program!!)
+        ++
+        OK, to get started download FIG4TH.100 as a TEXT file,
+        clean it of any download garbage and verify the checksum
+        of 741,760.  SAVE the TEXT file to tape (sorry 'bout
+        that!).  Now CLEAR 256,41216 and run CHANGE.BA to load
+        the TEXT file into memory as a binary file.  At this
+        point you have figFORTH installed in memory and can run
+        it.  But first why not SAVE it so you don't need to do
+        that again?  Clean out all the junk below 41216 and
+        SAVEM"FIG4TH",41216,47753,41216, you'll just have room.
+        Now SAVE it to disk or tape as a .CO file.
+        I've uploaded this version half finished but useable
+        since I don't have the time right now to finish up the
+        disk interface.  As it stands the TDD can be used even
+        tho' its awkward.  If some kind soul wants to finish it
+        I can upload a lot more information to help them, just
+        send me a note on EASYPLEX.  As it stands its a very
+        nice figFORTH and is highly useful in learning.  There
+        is some potiential as a control language even with this
+        version.  THERE IS NO BETTER LANGUAGE TO LEARN ABOUT THE
+        M100'S GUTS THAN FORTH - the ULTIMATE hacker's
+        language.
+        This figFORTH has two entry points, 41216 for a COLD
+
+
+
+
+
+
+
+
+
+
+
+
+        start and 41219 for a WARM restart.  ->figFORTH IS CASE
+        SENSITIVE SO PRESS THE SHIFT LOCK AND LEAVE IT THERE!<-
+        Cold start it (CALL 41216) and you will see the initial
+        greeting "8085 FIG FORTH 1.1".  Type "-8 OFFSET !" and
+        ENTER to set up the in memory "SCREENS" properly.  Type
+        "HEX E000 C00 ERASE (ENTER)".  How's that for speed in
+        0'ing 3K of memory?  Type "EMPTY-BUFFERS (ENTER)" to
+        clean up fig's internal text buffers and you're all set
+        to learn FORTH!
+        Screens can be stored on disk and brought back and forth
+        (heh heh) at will, just remember that in memory screen 1
+        is located between 57344 (E000) and 58367 (E3FF), screen
+        2 between 58368 (E400) and 59391 (E7FF) and screen 3
+        between 59392 (E800) and 60416 (EBFF).  Just SAVEM any
+        screens you want to save and push 'em off to disk.  To
+        reload 'em put the MENU cursor over the name and press
+        return, restart figFORTH and the screen is available.
+        You can use CMOVE to transfer directly to and from a
+        text file if you are carefull and understand what you're
+        up to!
+        How do you learn FORTH?  We're very fortunate in having
+        a number of excellent books to help.  Without
+        qualification I'd recommend "STARTING FORTH" by Leo
+        Brodie, Forth Inc., published by Prentice-Hall.  The
+        second edition is to be preferred but the first will do
+        just fine.  When I get time I'll upload my "Brodie to
+        figFORTH translator" which will help with the first
+        edition.  Join FIG, the address is up front.  They have
+        a great "FORTH HANDY REFERENCE" card for fig.  But buy
+        Brodie - you'll never regret it!
+        OK, what's different about this implementation of fig?
+        I've implemented the in memory R/W from the installation
+        manual in low level forth.  Its buried down with the
+        rest of the I/O section.  To keep with the memory
+        adresses of the source listing I've left a big chunk of
+        0's to fill to TICK.  For readability COUT is 7 bit
+        only.  I've written a word CALL for use with the ROM
+        routines.  Stack effect is ( HL DE BC PSW ADR -- HL DE
+        BC PSW ).  The fig IP is buffered on the way in and
+        restored coming out.  It works fine!  ^P toggles the
+        printer on and off.  The screen print routine works.
+        Next weekend I'll upload the EDITOR that is used in
+        STARTING FORTH and some utilities to get you started.
+        ENJOY - David O. Rowell
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

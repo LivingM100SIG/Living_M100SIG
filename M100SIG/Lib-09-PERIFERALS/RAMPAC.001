@@ -1,0 +1,92 @@
+COLD-START WARNING!
+ 
+The new Node Rampac will likely become a popular RAMdisk storage device for
+the Tandy portables.  It's unique size and form factor lend itself to easily
+removing it from one computer and plugging it into another, thus moving the
+contents of the Rampac from one machine to another - or easily swapping several
+Rampac's in the same machine, each dedicated to some specific set of files and
+programs.  However, there's a slight problem...
+
+Removing a Node Rampac from the computer while the computer's power is on, can
+lead to a cold start in the computer, and worse, a loss of data in the Rampac!
+Once removed, and connected to a different computer, or the same one, the first
+time you attempt to access the Rampac with the RAMDSK.CO software, it will ask
+if you want to reformat the Rampac, and you can't get away from that prompt
+without answering it. (at least, I couldn't!)  Reformatting, of course, cleans
+out the directory sector, making all of the storage space available, in effect,
+cold-starting the Rampac!
+
+If you do that, and you have no backup for the RAMDSK.CO program that is sent
+to you already installed in the Rampac, then you're out of luck - the Rampac
+will be brain-dead until you get a replacement program, either from Node or
+from Paul Globman, the author.
+
+So if a loss of data AND the operating software would put a crimp in your
+plans, I suggest you make some provisions to deal with it before it happens,
+and AVOID, AVOID, AVOID removing or installing the Rampac from the computer
+while the computer's power is on.
+
+Let me suggest that early on, as soon as possible after receiving the Node
+Rampac with the RAMDSK.CO software, you "Load" RAMDSK.CO into RAM as a file,
+and save it to your alternate file storage device, whether that's a TDD, a PC,
+a cassette drive, or whatever.  At least if you DO suffer a mandatory reformat,
+you can reload the software and make the Rampac operational again.
+
+Read carefully the section of the instructions labelled "Program Backup", and
+heed the advice.  Backup the program as soon as possible!  Don't wait until you
+get around to it, do it right away!
+
+Let me repeat that:  DO IT RIGHT AWAY!  You'll be sorry if you don't!
+
+
+(from Tony Anderson, 76703,4062)
+
+
+
+Here is some additional followup information from Paul Globman, author of the
+RAMDSK.CO program, the RAM-based operating software for the Node RAMpac and
+Node Datapac.
+
+
+7/27/90
+
+If the laptop became cold-started as a result of plugging the RAMPAC in with
+power on, the "boot" program should extract RAMDSK.CO from the RAMPAC without
+any problem.  With RAMDSK.CO in memory you now can restore your RAM files (if
+they were backed up to the RAMPAC).
+
+In a cold started unit, a disk backup of RAMDSK.CO may not be easily reckoned
+with.  From a cold started laptop, it may be easier to recover RAMDSK.CO, and
+load DOS into RAM from RAMPAC, than to cold boot the disk to get a disk backup
+of RAMDSK.CO.
+
+If the RAMPAC appears unformatted, you should be able to get away from the
+"Format, Are you sure?" prompt by pressing the "N" key.  That will return you
+to the menu without formatting the RAMPAC.
+
+The sector latch is volatile so when plugging the unit in with power on,
+sector 0/byte 0 is probably the only byte "at risk".  Unfortunately that is
+the flag byte for the format status.
+
+If you go to BASIC and enter...
+
+  OUT129,0:OUT131,64:OUT131,4<cr>
+
+That will set the "format" flag, and if the remainder of sector 0 is intact
+then you should be able to run RAMDSK.CO and continue as if nothing ever
+happened.
+
+While it is advisable to save RAMDSK.CO to a backup media, it is MOST
+important that RAMDSK.CO be the very first file saved in the RAMPAC (for the
+"boot" program to work).  So if you must reformat the RAMPAC, save RAMDSK.CO
+first, before doing anything else. Having RAMDSK.CO saved FIRST in the RAMPAC
+is the key to cold start recovery using the 8 line loader program that is
+provided.
+
+Your warnings in the RAMPAC.001 file are not without merit, but the "disaster"
+you warn about can often be easily recovered from.
+
+BTW, using the first byte of sector 0 as a format flag would not have been my
+first choice, but that is what the ROM uses.  ROM compatability was THE
+primary priority in writing the ROM replacement software.
+

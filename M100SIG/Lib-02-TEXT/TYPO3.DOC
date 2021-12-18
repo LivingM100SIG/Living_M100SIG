@@ -1,0 +1,152 @@
+	I. Introduction
+	
+	TYPO3.MAL is a typo finder/spelling checker that takes about 30% of the
+time and slightly less memory than TYPO2C.
+	TYPO3 is subject to some limits (explained in more detail below):
+.	-Do not use on a document longer than about 1400 words (6000 bytes). If
+your document is longer, split it up and check each part separately.
+.	-The program requires free memory of between about 4k and 5.5k 
+depending on the document's length.
+.	-For about 10% of the documents the program will return either a Bad 
+Subscript (Error=9), Out of String (Error=14) or Out of Memory (Error=7) during
+execution. Why, and what to do, are described below.
+	TYPO3 looks for two kinds of typos.
+	First, it produces a list of words found once in the document that 
+appear nowhere else in memory. The theory is that typos (e.g., transpositional 
+errors) will occur only once, but good words are likely to appear more than 
+once. Some of the words on the list will be fine, but your job in reviewing the
+document will be simplified --- typically to reviewing about 1/3 of the words 
+in the document. (The list will have the front and back of any word hyphenated 
+at the end of a line).
+	Second, the program will display a list of doubled words ("Paris in the
+the spring").
+	Here's a sense of what it takes to run the program:
+	
+.		FILE 1	FILE 2	FILE 3
+.	
+.Bytes long	2330	5009	3885
+.Words long	 383	1280	1083
+.Distinct words	 194	 285	 238
+.	FRE(0) (holding 2500 in TYPO2C and 3000 in TYPO3 for non-string)
+.TYPO2C		1247	 497	 442
+.TYPO3		1569	 744	 689
+.	Time to review document being proofed
+.TYPO2C(MIN:SEC) 5:19	20:36	12:39
+.TYPO3		 3:00	 7:31	 5:16
+.	TOTAL TIME UNTIL DISPLAY OF RESULTS
+.TYPO2C		49:27	65:04	53:45
+.TYPO3		15:11	18:23	16:14
+.	
+	Your mileage may vary. Use for comparision only. (Done with little else
+in memory and version just this.)
+
+	II. Runtime.
+	
+	The program displays a copyright/liability notice. Then it displays a 
+list of files and asks "Which file to check?" You can answer in upper or lower 
+case and with or without the ".DO" extension--the program will convert the 
+title to upper, and add ".DO" if it's missing.
+	If you enter an illegal file name, the program will crash-- it has no 
+error correction.  Because of the way the program allocates memory, if it 
+crashes here OR FOR ANY REASON, after fixing the problem do *NOT* simply hit F4
+[RUN]. Go back to the menu and reeneter from the menu.
+	Assuming you've entered a legal name, the screen will clear and numbers
+will flash near the left margin on the second line of the display. These 
+numbers represent the number of spaces in the document -- a rough estimate of 
+the number of words in the document. The starting time will appear near the 
+bottom of the screen.
+	The program will create arrays based on a formula using this number to 
+hold the different words and count their frequency.  If you get an error 
+message for "ERROR= 7" (out of memory) or "ERROR=14" (out of string space) here
+you have a couple of choices. If you get an Out of Memory error you can 
+increase the "3000" in line 1. If you get an Out of String error either 
+increase your free memory by killing a file in memory or decreasing "3000" in 
+line 1.  If these don't help, cut the document in two with CUT and PASTE.  
+Remember to restart after making any of these changes by running from the main 
+menu and to empty the paste buffer before running.
+	If you don't get an error, the word "WAIT" will switch back and forth 
+between normal and reverse video on the line beneath the count described above.
+Beneath "WAIT" a new count (of the number of different words) will appear.
+	When the program has finished the file to be checked and is moving on 
+to search other files, the name of the file being searched will appear on the 
+line below the second counter described above and a new time will be printed to
+the right of the time already there.  If instead you get "ERROR=9" (Bad 
+Subscript), change the "150" in line 5 to "180" or "200" and rerun from the 
+menu. If you are checking a file with a name that is the first part of name of 
+another file (i.e., "Memo" and "Memo1"), the second file will not be used to 
+look for common words. (But "Memo1" will be checked against "Memo2").
+	After the last document file is checked, "SEARCHING ROM" will appear in
+place of a file name.
+	The screen will clear, then say "STANDBY FOR RESULTS", list the ending 
+time, and begin to display "unique" words--all in lower case regardless of how 
+they appear in the document.  Every seven lines the screen will say "HIT ANY 
+KEY TO CONTINUE" and wait for a key.  When finished the screen may say (if 
+applicable) "The following words appear to be doubled:" and print a list of 
+doubled words. The screen will then say "*****ALL DONE*****", "Break in 29", 
+"Ok".  If you want to see the word list again, type "GOTO 26".
+	As the program displays unique words, you should write down any that 
+are typos. When the program is finished, enter the document from the menu, use 
+the F1 [FIND] function, type in the unique typo, and hit enter.  Then fix the 
+typo!	
+	
+	III. The program.
+	
+	This section is intended only for people who want to understand the 
+approach of the program or fiddle with (and not just use) the program.
+	Line 0 prints a copyright and liability notice.
+	Line 1 allocates all but 3000 free bytes to string use, defines all 
+variables through "T" as integers, the rest as strings. It clears the screen, 
+displays FILES, assigns the file to be checked to U and X, U's length to M. If 
+not in all caps, the program changes the file name to all caps.
+	Line 2 adds "DO" to the file name, if needed. Lines 3 and 4 do the 
+space (word) count.
+	Line 5 uses the space count to guesstimate the number of different 
+words in the file. It then divides this number by 10, and creates two arrays 
+with 11 rows (don't forget 0) and a number of columns equal to one-tenth the 
+estimated number of words. (One array is for words, the other frequencies.)
+	ASIDE: This two-dimension array is the key to TYPO3's speed. I am 
+indebted to my colleague, Howard Smith, for the idea of using it. The basic 
+notion was this - the first thing one does in a real dictionary is go to the 
+section based on the first letter. This looks like a 26 row array. (Sorting the
+words within each row would be very time consuming, but picking a row isn't.) 
+But the array would need to have as many columns as the most frequent first 
+letter -- a gross waste of columns in rows for infrequent first letters. TYPO3 
+uses ten rows, each with one or more first letters. Based on frequency each row
+should be about the same length. There is a general spill over row.
+	Back to the program by lines.
+	Line 6 opens the file. Line 7 takes the ASCII value of the next 
+character in the document and checks it. If a control code it takes another 
+character; if a space or carriage return it declares the end of a word and goes
+to 9; if not it makes sure all characters are lower case and then goes to line 
+8, which adds the character to the word and goes back to 7. (ASCII values 
+instead of letters are used where posible to avoid garbage collection).
+	Line 9 strips punctuation from the right of a word, line 10 from the 
+left.
+	Line 11 checks this word against the last, and if the same adds it to 
+the doubled word array, U. 
+	Line 12 computes which of the ten main rows of the array contains words
+that start with the same letter as the new test word.
+	Line 13 checks to see if this word is already in that row of the array.
+If so, the frequency is upped; if not and the file being processed (see below) 
+is the one to be checked, the word is added to the list and the screen count 
+upped by line 18. (If the end of the row is reached, words are added to the 
+general overflow row (0) which thereafter is also checked before line 18 is 
+reached.) 
+	 Line 19 alternates the "WAIT". Line 20 checks to make sure its a file,
+not rom, being processed; if so it goes to get the next word.
+	Line 21 is reached on an End of File situation. It sets the file flag 
+from 0 to 1 on the first pass through; else it returns to the calling 
+subroutine.
+	Lines 22-23 (borrowed from "FILEN" on this SIG)  find other ".DO" files
+to use in cross checking. They also make sure the file to be corrected (X) is 
+not rechecked.
+	Lines 24-25 search rom words. The other file and ROM lines call the 
+main word checking part of the program as a subroutine.
+	Lines 26-27 print out the unique words. Lines 28-29 print out the 
+doubled words.
+	Lines 40-42 are the on error routine. Once a minute they sound 7 beeps 
+until interrupted by hitting any key, as well as printing the error number (see
+your manual) and line.
+	
+	Good luck!
+		&mike&

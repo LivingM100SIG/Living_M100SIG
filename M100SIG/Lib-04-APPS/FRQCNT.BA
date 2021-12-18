@@ -1,0 +1,18 @@
+1 'This program can decently measure frequency upto about 16 KHz.
+2 'The signal is inputted through the ear jack of cassette port.
+3 'It can be recalibrated if neccesary by varying T of line 200.
+4 'The set value of T should give 60 Hz when you touch the tip of the earjack with your finger.
+5 'You may find other uses of it, but the program was originally developed for the sole purpose of
+6 'recalibrating a cassette playback speed that had been altered by tempering.
+7 'If you want to fine-tune your recorder, note the frequency of a tone played by another recorder known to be well calibrated.
+8 ' Then play the same tone on your recorder that is off key and fix its motor speed so that it gives the same value.
+10 X$=SPACE$(63):X=-65536+PEEK(VARPTR(X$)+1)+PEEK(VARPTR(X$)+2)*256:M=X-1
+11 M=M+1:READK:IFK=-8THEN200elsePOKEM,ABS(K):IFK<0THENREADK:K=K+X:POKEM+1,(K-INT(K/256)*256)MOD256:POKEM+2,256+INT(K/256):M=M+2
+12 GOTO11
+100 DATA -34,37,243,33,0,0,1,255,255,32,7,-218,21,121,176,11,-194,10,1,255,255,32,7,-218,35,121,176,11,-194,24,84,1,116
+102 DATA 66,32,7,170,230,1,95,170,22,0,25,87,121,176,11,-194,39,251,-34,61,201,32,32,-8
+200 T=17012
+210 CALLX,,T
+220 F=PEEK(X+61)+PEEK(X+62)*256:
+230 IFFTHENPRINTFELSEPRINT"No signal"
+240 GOTO200

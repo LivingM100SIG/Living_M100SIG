@@ -1,0 +1,113 @@
+
+MOUSE.TXT
+James Yi 73327,1653
+Sep. 23, 1988
+
+
+This file describes how to connect  the LogiTech serial mouse on a M100/T200.
+
+It's a box shaped mouse with 3 buttons, and was the editor's choice in a review
+ that appeared in the PC Magazine a while back.
+LogiTech is Microsoft compatible, so the Microsoft mouse or any other compatible
+ could be used instead.  But I have not  verified this.
+Microsoft mouse is well recommended by another reviewer, but I don't know if
+ it will work with the demo program presented in this file.
+  Let us know if it does.
+
+  Beside the mouse, you need a serial port adapter, in order to make the
+ connection to the serial port.
+  It's an ordinary serial cable that has male connectors at both ends.
+You don't need a seperate power supply for the mouse or anything else,
+ just the adaptor cable.
+
+  The LogiTech is a programmable mouse, running in several modes.
+  It supports the Microsoft emulation, which is used in the demo program.
+
+The following is the description of the Microsoft format.
+
+The serial mouse communicates through the RS-232 serial port, and the
+ STAT parameter is 57N1DNN.  (1200 baud, no parity, one stop bit)
+
+  The mouse sends 3 bytes to the serial port each time it moves.
+  Byte 1 is the sync byte, and its bit 6 is on to indicate it.
+  Byte 1 contains the following:
+
+	bit 6	on
+	bit 5	Left button
+	bit 4	Right button
+	bit 3,2	Two most significant
+		bits for Y movement
+	bit 1,0 Two most significant
+		bits for X movement
+
+  Each movement is represented by 8 bit, signed number.
+  The rest of the bits 5-0 for each movement are in the next two bytes.
+
+  Byte 2 contains bits 5-0 for X movement:
+	bit 6	off
+	bit 5-0	Next 5 significant
+		bits for X movement
+
+  Byte 3 contains bits 5-0 for Y movement:
+	bit 6	off
+	bit 5-0	Next 5 significant
+		bits for Y movement
+
+
+  To test the mouse, run the following Basic program.
+  It will let you move the cursor around the screen, and plot a small black box
+ by clicking the left button, and unplot with the right button.
+The center button is unused.
+
+  Direction:
+Cut out the program listing inside the dotted line.
+Goto BASIC, type: NEW <ENTER>
+ and then PASTE in the program.
+With the mouse connected, Run it.
+If at first there's no response, disconnect the mouse for
+ a few seconds and try again.
+If it still doesn't work, turn off the power for few more seconds and then try again.
+
+Use SHIFT&BREAK to exit the program.
+
+  Notes:
+Lines 100-180 sets up for mouse communication.
+Lines 190-250 is the loop that reads the mouse and does the screen display.
+Lines 60000-60120 is the subroutine that reads the mouse.
+---------------------------------------
+
+90 REM ====== Initial Setup ===========
+100 CLS:MAXFILES=2:CLEAR 512:DEFINTA-Z
+110 PRINT CHR$(27)+"P";:'Cursor on
+115 M1=-(PEEK(1)<>171):M2=M1XOR1:'Model 100 or 200?
+120 XM=320:YM=64*M1+128*M2:'Margins
+130 XX=XM/2:YY=YM/2:'Initial coordinate
+140 ONERRORGOTO250:'Setup ?EF error trap
+150 CLOSE
+160 OPEN "COM:57N1DNN" FOR INPUT AS 1
+170 OPEN "COM:57N1DNN" FOR OUTPUT AS 2:PRINT#2,"VJ";:'Program the mouse for Microsoft emulation
+180 REM ===========Main Loop===========
+190 X=XX/8:Y=YY/8:'Scale down to 40 x 16
+200 PRINT @X+Y*40,"";:'Move cursor to X,Y
+210 GOSUB 60000:'Read mouse
+220 IF B1 THEN PRINT "X"; ELSE IF B2 THEN PRINT " ";:'Plot
+230 GOTO 190:'Continue
+250 RESUME 150
+300 REM ==== Read Mouse Routine =======
+60000 REM *** Mouse Subroutine ***
+60010 I1=ASC(INPUT$(1,1)):'Read Sync byte
+60020 IF I1<64 THEN PRINT#2,"VJ";:GOTO 60010:'Reset mouse if first byte is not sync byte.
+60030 I2=ASC(INPUT$(1,1)):IFI2>63THEN60010:'Get X bits 5-0
+60040 I3=ASC(INPUT$(1,1)):IFI3>63THEN60010:'Get Y bits 5-0
+60050 XD=(I1AND3)*64+I2:YD=(I1AND12)*16+I3
+60060 IFXD>127THENXD=XD-256:'Get X displacement
+60070 IFYD>127THENYD=YD-256:'Get Y displacement
+60080 XX=XX+XD:YY=YY+YD:'Update coordinate
+60090 IFXX<0THENXX=0ELSEIFXX>=XMTHENXX=XM-1:'Check margin overflow
+60100 IFYY<0THENYY=0ELSEIFYY>=YMTHENYY=YM-1:'Check margin overflow
+60110 B1=I1AND32:B2=I1AND16:'Get button status
+60120 RETURN
+
+---------------------------------------
+
+		-END-

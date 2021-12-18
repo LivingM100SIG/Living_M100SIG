@@ -1,0 +1,54 @@
+DOSTIP.010/Some Patches for RECOVR
+==================================
+joel dinda
+[75725,1134]
+
+I've said before that RECOVR is worth the price of admission for Powr-DOS; I'm
+certainly not going to retract the claim now that the program's "free". 
+Nonetheless, RECOVR has some irritating quirks.  The patch enclosed in this
+file fixes some of them:
+
+      I've rewritten the setup routine so RECOVR doesn't trash files above
+      HIMEM.  RECOVR *still* runs best if you've emptied RAM, but this version
+      gives you the option of leaving something installed below MAXRAM.
+      
+      I've added a "Done" function key to the program's menu.
+      
+      I've modified the display routine when you ask to view a document; my
+      version's both quicker and more readable.
+      
+      And I've modified the routine that checks for BASIC line numbers and
+      displays them for you; I figure nine samples are enough.  Faster,
+      usually, too.
+      
+RECOVR's a terrific program; when it first arrived in my mail I cheered.  But
+these little things always irritated me....
+
+My changes mostly show in the patch as lowercase, if you want to look.
+
+Instructions for Installing this Patch
+======================================
+Probably some of you have never MERGEd a patch file:
+
+*NEVER* PATCH YOUR ONLY COPY OF ANYTHING!
+
+Use CUT & PASTE to move everything below this paragraph to another file; call
+that file PATCH.DO.  [YES!  Save the patch as a DOCUMENT.]  Run a checksum
+on that file; checksum should be 88,367.  Retrieve RECOVR from diskette.  Go to
+BASIC; type LOAD "RECOVR"<Enter>.  Type MERGE "PATCH"<Enter>.  Wait while the
+display flashes.  Go to MENU.  Save your patched version of RECOVR to diskette.
+
+
+0 REM:Data Recovery Prg. (c)1986 Acroatix/patches (c)1988 Joel Dinda
+2 cls:lfilesv:iffre(0)<7000thenbeep:?"No Room":end
+3 MAXFILES=1:openchr$(157)foroutputas1:?#1,himem-65536:CLEAR500,MAXRAM-FRE(0)+2000:openchr$(157)forinputas1:input#1,o%:close:killchr$(157)+".do"
+4 DEFSTRA-F:DEFINTI-S:DIMS(79):E=CHR$(27):XR=MAXRAMC
+13 ONKEYGOSUB15,18,19,22,23,,,43:KEYON:IC=0:PRINT@301,"GO"tab(35)"Done"
+15 KEYOFF:IT=1:CLS:PRINT"BAsic File Line Numbers in Sector 1:":DSKO$0,JS,HIMEM:Y=HIMEM+2:i%=1
+16 Z=PEEK(Y)+256*PEEK(Y+1):PRINTZ;:Y=Y+2:i%=i%+1
+17 IFY-HIMEM>1275ori%>9THEN69ELSEIFPEEK(Y)=0THENY=Y+3:GOTO16ELSEY=Y+1:GOTO17
+18 KEYOFF:CLS:PRINT"First sector of DOcument:":IT=2:DSKO$0,JS,HIMEM:FORY=HIMEMTOHIMEM+243:ifpeek(y)<32orpeek(y)=127then?e"p"chr$(157)e"q";:next:goto69elsePRINTCHR$(PEEK(Y));:NEXT:GOTO69
+41 XL=XL-1280:YP=YP+1280:II=PEEK(YP):IFYP>o%-1293THENGOSUB48:GOSUB50:GOSUB52:GOSUB47:M=2:YP=HIMEM:XP=YP
+44 CLEAR0,o%:LFILESMENU
+46 PRINTERL"ERROR!  Can't Continue ... Press Key":A=INPUT$(1):CLEAR0,o%:LFILESMENU
+63 CLS:LINE(3,4)-(236,20),1,B:PRINT@45,"POWR-DOS Data Recovery Program";:PRINT@121,"Sectors         File Length Range:":PRINT:PRINT"    Choose Type:":LINE(3,37)-(117,63),1,B:LINE(3,53)-(116,53),1:LINE(4,63)-(116,63),0:PRINT@301,"GO"tab(35)"Done";

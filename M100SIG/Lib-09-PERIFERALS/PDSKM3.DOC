@@ -1,0 +1,287 @@
+POWR-DISK Owner's Manual
+
+								Manual Page 10
+								--------------
+
+Example:
+
+	LFILES <ENTER>
+	JRF   .DO   1124
+	SAVALL.CO   3322
+	TEST1 .BA    119
+	   74 Sectors Free
+	Press space bar to continue
+	<space>
+	Ok
+
+In this example, JRF.DO would require 1125 bytes in RAM, and TEST1.BA would
+require 121 bytes in RAM.  LFILES stops the listing after each 15 lines and at
+the end, to give you time to examine the listing.  At the prompt, "Press space
+bar to continue", simply press the space bar to continue the listing or to
+terminate it at the end. You can also escape the listing mode or terminate it
+by pressing "Shift-Break" (pressing the SHIFT key and the Break/Pause button at
+the same time).  This always reports an "I/O error".
+
+
+LFILES TO "fname"
+
+You can send the LFILES listing to the printer, or to a RAM file, with the TO
+option.  If "fname" is "LPT:" the listing will go to the printer.  If "fname"
+is a file name, that file will be created and the listing will be sent to it.
+Any previous contents of an existing RAM file will be lost; there is no report
+that you are about to overwrite an existing RAM file.  The .DO extension is not
+required as part of "fname", .DO is assumed.  Any other extension will be
+changed to ".DO".
+
+The LFILES output sent to LPT: or a RAM file is identical to that on the screen
+except that the computer will not prompt for "Press space bar to continue"; the
+entire list is sent to the destination.
+
+
+LFILES OFF
+
+This command removes POWR-DISK system commands and resets MAXRAM to its default
+value.  However, it does not change HIMEM (see the discussion in Appendix B),
+so you can save the POWR-DISK code to a .CO file with the SAVEM command in
+BASIC, or with MENU.BA.
+
+Once you have entered LFILES OFF, none of the POWR-DISK features will work
+until you turn on POWR-DISK again, using the instructions in "Getting Started".
+Further, if you have any other RAM hooks in place (the Bar-Code reader, for
+example), the LFILES OFF command will also deactivate them.
+
+								Manual Page 11
+								--------------
+
+LFILES MENU
+
+Using any of the TDD features in POWR-DISK changes TELCOM status to 98N1DNN.
+POWR-DISK Owner's Manual
+
+However, if you return to the main menu from BASIC with LFILES MENU, your
+original TELCOM status will be restored to its previous setting.
+
+
+LOADM ":fname"
+
+LOADM works just as the standard LOADM command except that it accepts the
+extensions ":" and "0:" to access TDD files.
+
+WARNING:  Although LOADM will not load a file that has a START below HIMEM,
+there is no guarantee that it will not overwrite POWR-DISK or the system
+memory.  Therefore, BE CAREFUL, or you may coldstart your computer and lose all
+your files.
+
+Example:
+
+	LOADM "0:GLUG" <ENTER>
+	TOP: 56000
+	END: 58000
+	EXE: 56000
+	Ok
+
+The command loads a file called GLUG.CO from the TDD into it's executing
+location.
+
+
+LOADM ":fname.xx",F
+
+Adding the extension ",F" to the end of a LOADM command allows you to load any
+files directly from the TDD disk to RAM.  LOADM creates RAM files with the same
+names [and extensions] that they have on disk.
+
+[Note that a filename extension ("xx" above) is mandatory, and can be either
+.BA, .DO, or .CO.  The file matching the filename and extension is loaded into
+RAM in the form specified by the extension.  See below examples -ed.]
+
+Examples:
+
+	LOADM":B",F <ENTER>
+	?FF Error
+	Ok
+
+								Manual Page 12
+								--------------
+
+You must specify an extension; there is no default filename extension in this
+type of load.
+
+	LOADM":B.DO",F <ENTER>
+	?AE Error
+	Ok
+
+You cannot overwrite a file that already exists in RAM.  "AE" stands for
+"Already Exists".  [You can kill a RAM file, and reload it from disk with the
+following command sequence:]
+POWR-DISK Owner's Manual
+
+	KILL "B.DO" : LOADM ":B.DO",F <ENTER>
+	Ok
+
+This sequence of commands [kills the copy of B.DO in RAM, then] reloads a new
+copy from the TDD into RAM.  If B.DO did not exist in RAM, the KILL command
+would not have been necessary.
+
+[This feature is useful for loading a "skeleton copy" of a form into RAM,
+editing the form, adding or changing data, printing or saving the resulting
+changes, then reloading a fresh copy of the form to repeat the process with new
+or different data. - ed.]
+
+
+OPEN ":fname" FOR (INPUT/OUTPUT/APPEND) AS n
+
+This command works exactly as the OPEN command without POWR-DISK, except that
+you may specify TDD files for sequential access from BASIC.
+
+WARNING:  Once a TDD file has been opened, you cannot open another TDD file,
+nor should you use other POWR-DISK commands until you close the opened file.
+There is no protection against your doing so, but the opened file (if for
+output or append) will not be successfully modified.  A file opened for input
+will be inaccessible if you use other POWR-DISK commands [that do not relate to
+input from, or output to, the open file.]
+
+
+SAVEM ":fname",START, END (,EXE)
+SAVEM ":fname.xx"
+
+The SAVEM command works exactly as it does without POWR-DISK, except that you
+can also use it to save RAM images of other file types directly to the TDD.
+
+When you enter a SAVEM command without the START, END, or EXE addresses, the
+command saves existing [non-CO] files in RAM directly to the TDD.  The filename
+must include the extension, and the file cannot already exist on the TDD disk
+or an AE error will result.  (Note that this command performs the opposite
+function of the LOADM":fname.xx",F command.
+
+								Manual Page 13
+								--------------
+
+Examples:  [first three supplied by editor]
+
+	SAVEM":RIP",58085,58960,58085 <ENTER>
+	Ok
+
+Creates a .CO file named RIP.CO on disk, and saves the RAM image from 58085 to
+58960, along with the TOP, END, and EXE addresses to the file.
+
+	SAVEM":TAM.DO" <ENTER>
+	Ok
+
+Creates TAM.DO on disk, and saves the RAM file with the same name to the disk.
+
+	SAVEM":REPORT.BA" <ENTER>
+	Ok
+POWR-DISK Owner's Manual
+
+Creates REPORT.BA on disk, and saves the program of the same name to the disk.
+
+
+	SAVEM":B.DO" <ENTER>
+	?AE Error
+	Ok
+
+Indicates the file already exists on the disk, and you cannot overwrite it. You
+may kill the file from disk first, then save it:
+
+	KILL":B.DO" : SAVEM":B.DO" <ENTER>
+	Ok
+
+
+Running BASIC programs with POWR-DISK commands
+
+Several BASIC commands have side effects when a program executes them.  As a
+rule, the Tandy manuals almost totally ignore these side effects, leaving the
+curious programmer to discover them by accident and aggravation.  In general,
+there are two types of side effects:
+
+1.  Some commands reset all variables, DEF designations, and DIMensions.  An
+    example is CLEAR (which is documented to do so).  Other examples are LOADM
+    and RUNM, (which are not documented to clear variables).  These commands
+    have another side effect: they reset all FOR/NEXT loops and all GOSUB
+    return addresses [the stack].  In other words, these commands cannot appear
+    in subroutines or in FOR/NEXT loops without resulting in errors.
+
+2.  Other commands halt program execution.  Examples are EDIT, LOAD, and SAVE.
+    Normally, these commands also reset all the variables as well, but at least
+    one command (SAVEM) halts the program WITHOUT resetting the variables.
+
+Nearly every file-related command stops program execution.  The Tandy laptop
+designers obviously thought that users would only use LOAD, SAVE, etc., as
+direct commands from the BASIC "Ok" prompt.  However, there are powerful
+incentives to automate some of these functions, especially with the TDD.
+
+								Manual Page 14
+								--------------
+
+In general, POWR-DISK extensions do not change the behavior of the file-related
+commands.  However, because the Tandy manuals do not concisely document their
+effects, here is a summary:
+
+Command	  Effect
+
+LOAD	  Stops execution and clears all variables
+
+LOADM	  Clears all variables
+
+SAVE	  Stops program execution. Saving to BA files clears all variables;
+	  saving to DO files (ASCII saves) does not clear variables
+
+SAVEM	  Stops program execution, but does not clear variables
+POWR-DISK Owner's Manual
+
+POWR-DISK extensions are designed to provide the minimum possible disruption to
+a running program.  The LOADM command with the ",F" extension does not stop
+program execution or reset variables unless a BASIC file is loaded, in which
+case program execution stops and all variables are reset.  However in any case,
+LOADM with the ",F" extension always resets FOR/NEXT loops and the GOSUB stack.
+
+SAVEM by file to the TDD neither stops execution nor clears variable values.
+
+[There may be differences in LOADM and SAVEM effects between the 100 and 200
+versions of POWR-DISK - ed.]
+
+
+Machine-language CALLS to POWR-DISK
+
+There are two types of calls that BASIC programs or machine language programs
+can make to POWR-DISK:
+
+1.  There are five [six] supported calls, as described further below.  These
+calls will always be available regardless of POWR-DISK revisions; they will be
+at constant locations relative to POWR-DISK regardless of relocations.
+
+2.  There are a number of unsupported calls available, primarily for machine
+language applications.  These could change entirely, with another revision of
+
+								Manual Page 15
+								--------------
+
+POWR-DISK.  For the intrepid and curious, a program map is available [See the
+file PDSK15.200 - ed.] on the utility disk.  This map also documents the subset
+of TDD abilities used by POWR-DISK.
+
+The supported calls allow a BASIC or machine language program to access TDD
+files beyond the capabilities of OPEN, PRINT#, and INPUT#. In the documentation
+below, each call appears as it would be accessed from BASIC; refer to the Tandy
+CALL documentation to see an equivalence to machine language.
+
+CALL MAXRAM
+
+Resets the POWR-DISK functions assuming the program has not been overwritten or
+corrupted.  This call should not be necessary unless the RAM hooks have been
+changed, which should never happen in normal operation. [If LFILES OFF was used
+to disconnect the hooks, CALL MAXRAM cannot restore them; CALL HIMEM will, if
+done immediately before any other conflicting actions are taken. - ed.]
+
+CALL MAXRAM+3, mode, address
+
+Opens the file, whose name is pointed to by "address".  Legal values for "mode"
+are 1 (output - new files only), 2 (append to existing file), and 3 (input from
+an existing file).  If you try to open a file with an impossible mode (i.e.,
+output to an existing file, or input from a non-existing file), an ?HT Error
+will occur.
+
+The filename pointed to by "address" should be in the RAM directory format,
+[six alpha-numeric characters, left justified, and two characters, right
+justified, which specify the file type. Filenames with less than six characters
+must be padded with spaces,] as in the following examples:

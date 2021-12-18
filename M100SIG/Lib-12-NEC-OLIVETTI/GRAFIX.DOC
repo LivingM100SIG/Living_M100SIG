@@ -1,0 +1,46 @@
+GRAFIX.ASC is a utility program written for the NEC PC8201A
+portable computer.  Its purpose when active, is to intercept
+outputs to the printer and check for characters which have been
+defined as graphics characters using the CHRDEF utility.  It
+prints these out as defined.  The program uses the commands
+for 480 dots/ line required by my EPSON RX-80 printer, namely
+"ESC K n1 n2" (HEX 1B 4B n1 n2).  where:
+n1 = (number of data) mod 256;
+n2 = int(number of data/256).
+If your printer uses a different sequence, the routine can be
+modified easily.  If you have downloadable fonts you probab-
+ly don't need this utility.
+In operation the utility resides at hex F000, so before accessing
+it, a CLEAR,61439! must be executed from BASIC.  The loader
+does this for you initially, but it will have to be entered after
+any cold starts or running of programs that have CLEAR statements
+higher that 61,439.  If you hear a beep when attempting to enter the
+program from the menu, do the CLEAR statement.
+To get the program running, download it and the loader program.
+The loader will convert the ASCII into machine code at F000,
+and BSAVE it to a .CO file in RAM.
+When you run the program, you will see the main menu.  Your
+options are:
+1. Stop intercepting and exit
+2. Begin intercepting and exit
+3. Exit with no action taken
+With the intercept active, graphics characters(>HEX 82 = decimal
+130) cause the intercept routine to check for a graphics font
+address at HEX FEBF.  If the address is zero nothing happens.
+Otherwise the characters are saved in an decimal 80 character
+buffer located above the program.  A non-graphics character will
+cause the graphics buffer to be printed out, and then will itself
+be printed.  Graphics characters beyond 80 characters will be
+ignored, but continuous graphics can be achieved by printing a
+carriage return-line feed pair between graphics lines(LPRINT after
+80 chrs).
+You can easily change graphics fonts between lines by BLOADing
+previously defined character sets.
+CAUTION!!!  If you don't exercise option 1, and load another
+program to the area above 61,439, then try to LPRINT; the new
+routine will be entered with unpredictable results.
+You can excercise option 1 from BASIC by entering:
+POKE 63960,219:POKE 63961,127
+
+Have fun!
+                                                  -Ray

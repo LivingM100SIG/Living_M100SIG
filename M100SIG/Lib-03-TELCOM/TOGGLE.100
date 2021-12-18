@@ -1,0 +1,34 @@
+TOGGLE.100 by Paul Globmam [72227,1661]
+               Copyright (c) 1990
+---------------------------------------
+The following program will turn
+TELCOM's F6 into a scroll on/off
+toggle.  The machine language code for
+the toggle is...
+
+		org 63551
+		lda 63038
+		xri 1
+		jmp 17473
+
+
+
+The eight bytes of code are "hidden"
+behind BASIC's F4(Run) function key.
+If that key definition is ever altered
+then run this program before using the
+TELCOM scroll toggle.  Once installed,
+the toggle feature will remain the F6
+function until another program changes
+it, the BASIC F4(Run) is altered, or a
+cold start.  Two pokes will make
+TELCOM's F6 call this code.
+
+Whenever you enter Term, scroll is on.
+
+
+0 REM TOGGLE.100 (c) 1990 by P.Globman
+1 POKE64268,63:POKE64269,248
+2 FORI=0TO7:READX:POKE63551+I,X:NEXT
+3 DATA 58,62,246,238,1,195,65,68
+

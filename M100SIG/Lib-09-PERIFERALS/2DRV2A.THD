@@ -1,0 +1,249 @@
+2DRIV2.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The file 2DRIVE.TDD in Lib 9 discusses developing a dual-TDD system for the
+Tandy computers.  This is the second THD of messages discusses the
+implementation of such a system, and results from the first users.  These
+messages focus on software utilities to support the dual-TDD system.
+  ** Uploaded as two pieces: 2DRV2A.THD & 2DRV2B.THD **
+
+Message range: 175594 to 175804
+Dates: 10/16/88 to 10/19/88
+
+
+Sb: Two Drives Online!
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+Well, my dual-drive setup is up and running.  Very neat.  Now to get the copy
+program for the 200 working.
+
+
+Fm: bob scott 73125,1437
+To: Tony Anderson 76703,4062
+
+Uhhh....don't have a copy handy, but basically I just replaced all the INPUT
+Something$ statements following the "Insert source" and "Insert Destination.."
+prompts.  As I recall it was only in two or three lines. Then I added a MOTOR
+OFF right before the call to MENU just to tidy up. Since I din't do any major
+surgery (yet) I still get the "Insert.." prompts (with beep) but the dealy that
+mess causes is just enough time for the relay to settle.  If you take out the
+"BEEP" I wouldn't be suprised to find that a delay was needed.  One was under
+TS_DOS doing
+DO file copies. Lantern Battery is a good idea also.  THAT would keep the box
+fromsliding around on the desk. New idea:  What do you think of running two
+jumpers in the M100 from the cassette port motor leads to a couple of unused
+pins on the DB-25 RS-232 connector?  That would save Yet Another cable coming
+out of the 100. Regards, Bob
+
+
+Fm: bob scott 73125,1437
+To: Tony Anderson 76703,4062
+
+AWWWRIGHT!  welcome to the cutting edge of serial disk drive technology!
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+Yeah, the interconnection between cassette relay and RS-232 socket is a good
+idea, if you don't mind doing the hardware modification.  It might make the
+hardware very "computer-specific", though... Your dual-drive copier wouldn't
+work unless you used your modified computer.  You couldn't take it over to a
+friends house for a disk-copying party.
+
+The 200 situation, using Power-Disk is a bit more difficult.  The program
+copies .DO files flawlessly.  But lacking sector access to the disk, it uses
+the LOADM,F and SAVEM commands to copy .BA and .CO files into RAM, then save
+them back to the second disk.  Unfortunately, a LOADM,F of a .BA file also
+clears the variables of the copying program and halts execution....
+
+Gonna tackle it a different way by stuffing the keyboard with the required
+restart commands, and see if that works.
+
+Since I have a 100, too, I'll look at the Power-DOS COPY program, and see if I
+can get that running today.  I'm anxious to copy my first COMPLETE disk.
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+There is apparently a bug in line 25 of the COPY.PWR program.  You'd best take
+a close look at it.  I've asked for clarification on this; will let you know.
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+Well, I found at least 12 changes that need to be made in the program (I
+think). In addition to that line 25 bug.  It would help if I knew what changes
+you made, so I can compare them with what I've marked on my paper listing of
+the program.  Can you Email me a copy of the program you are using for
+comparision.
+
+BTW, I have the 200 version working perfectly.  I want to polish it up with a
+couple of improvements before making it available, though.
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+FYI: On the 200 version, I'm getting a file transfer rate of 7 minutes for 59K
+of files.  That works out to about 8.5K per minute, or about 11.5 minutes for a
+full disk backup (101K).
+
+These figures rely on the premise that there is sufficient empty RAM space to
+load each file on the disk into RAM completely, then copy it out to the second
+disk.  Power-Disk (200) in the "file copy mode" is acting similarly to
+Power-DOS's "sector copy mode", in that respect.
+
+I haven't yet tried to copy a disk with .DO files larger than can fit in RAM.
+That will be a "read some-save some" technique, and I'm not yet happy with that
+section of the code.  It'll slow down the process considerable, and involve
+more "switches".
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+Bob... an amazing discovery!  You can have two disk files open at one time...
+providing it's one disk file on each of two disk drives.  Try the below listed
+program to confirm my results.  What it does, is to read two lines out of a
+file on disk one; switches drives and saves the two lines out to the second
+drive (while still holding the file open on the first drive).  Then goes back
+and prints the next five lines from the file on disk #1, to prove it's still
+open and the pointers are correct.
+
+ 0 ' nutest  See if you can have two files open at one time on different drives
+ 1 ' Copyright 1988 Tony B. Anderson  All Rights Reserved
+ 10 MOTOROFF:MAXFILES=3
+ 20 OPEN":file1.do"FORINPUTAS1
+ 30 OPEN"hold"FOROUTPUTAS2
+ 40 LINEINPUT#1,A$:PRINT#2,A$
+ 50 LINEINPUT#1,A$:PRINT#2,A$
+ 60 CLOSE2
+ 70 MOTORON:CALL25112
+ 80 OPEN"hold"FORINPUTAS2
+ 90 OPEN":test"FOROUTPUTAS3
+ 100 LINEINPUT#2,A$:PRINT#3,A$
+ 110 LINEINPUT#2,A$:PRINT#3,A$
+ 120 CLOSE2:CLOSE3
+ 130 MOTOROFF:CALL25112
+ 140 FORA=1TO5:LINEINPUT#1,A$:PRINTA$:NEXT
+
+How about that!
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062
+
+   That goes in the two-keystroke 'LFiles' category: perfectly logical, but I
+dunno if I'da thought of it.  Nice work: you have solved the .DO file-bigger-
+than-RAM problem.
+   Now the question is, how to use the routine efficiently.  Seems like the
+switching delays would make a line-for-line file transfer take forever.  But
+you could try a string array for buffering:
+
+ 10 motoroff:MAXFILES=2:CLEAR3000
+ 20 open":file1.do"forinputas1
+ 30 fori=1to10
+ 40 ifeof(1)then70
+ 50 lineinput#1,A$(i)
+ 60 next
+ 70 motoron:call25112
+ 80 open":test"forAPPENDas2
+ 90 forj=1toi-1
+100 iflen(a$(j))=255thenprint#2,A$(j);elseprint#2,A$(j)
+110 next
+120 IFEOF(1)thenmaxfiles=1:menu
+130 close#2:motoroff:call25112:goto30
+
+   Of course the array could be larger if you DIM it properly and CLEAR enough
+string space at the top.
+   BTW, you may want to warn Bob that the CALL address is for the T200.  The
+M100 equivalent is 21274, I believe.
+
+   Looks like I'm gonna have to buy myself a couple of relays!
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+Actually, the program was only to demonstrate that it works.  What I've been
+doing is opening the file on one disk, writing to a file in RAM, up to a
+specified size that is something less than FRE(0), then switching drives and
+copying that file out to the second disk.  Kill the file, switch back to the
+first disk, and pick up reading right where you left off, filling the RAM
+buffer file again.  That way I can cut down on the relay switches, and transfer
+a file larger than RAM in the fewest "swaps" possible.
+
+Disk copy is fastest if all the files on the source disk will fit into the
+available RAM space.  (one file at a time, naturally)  That way, it beomes one
+"switch" per file.  Well, two, really.  Once to switch to drive 2, and once
+more to switch back for each file.  About 12 minutes for an almost full disk.
+
+I tried writing into an array, but since the array was not a fixed size, it
+required many more switches than the above technique, and I needed to keep as
+much RAM free as possible to move the files that did not have to be copied a
+few lines at a time.  Clearing 3000 means there are 3000 less bytes to fit a
+whole file into in the "file copy mode".  Besides that, you can't use the
+LINEINPUT technique when you're actually copying the files because of the way
+it works getting data, and how it works in printing data to the new disk. I'll
+discuss that further if you want to duplicate my efforts along that line... no
+disk swapping necessary, it can be demonstrated in RAM.
+
+Bob is aware that I'm developing on the 200... he's working with the 100.  I'm
+running into some other problems, but working on them.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Your two drive open is indeed interesting!  Means you can do some fun thengs.
+
+I guess the limitation is in the ROM in the TDD --> therefore, with two TDD's
+you can have two files!
+
+BTW -- re an ealier message on xmodem pgmns for 200: Main advantage of XMDPW5
+over the others is speed at all above 300 baud; bells and whistles are nice,
+but were never the point of having a CO xmodem pgm.
+
+Tired -- first sentense should say "Two file open discovery is...".
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062
+
+   Clearly the file-at-a-time swap is better than line-at-a-time; but I thought
+your discovery was aimed specifically at TDD files that were too large for RAM
+-- perhaps as an error-trapped 'fallback'.  Seems like it would work for that,
+and I can't readily think of any other solution.
+   I'm intrigued by your mention of problems with LINEINPUT.  I've been using
+it (successfully, I thought) to copy files for quite some time.  Would
+appreciate your insight on situations where it doesn't work.
+   Meantime, I played a bit with the routine in my last message (as best I can
+with no switching apparatus).  It would seem you could OPEN both files -- for
+INPUT on drive A and APPEND on drive B -- just once at the top of the routine;
+then do your reading, switching, and writing; and finally CLOSE the files on
+exit.  Otherwise, if you OPEN the drive B file for APPEND then CLOSE it every
+time you switch, there's an unnecessary delay while the TDD adjusts the
+directory and sector allocation table.
+   This point is probably moot, however, if LINEINPUT has the problems you
+allude to.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Yes, it raises all sorts of possibilities... the first one that springs to mind
+is a disk-based sorthing program for files larger than can be moved into RAM.
+Disk-based sorts are much slower, of course, but at one time, were THE standard
+way of sorting files.  (In the dayes when data was stored on disk instead of in
+RAM files, and when string manipulation was limited to what you could load into
+a dimensioned arrary.)  (I've still GOT one of those computers. grin)
+
+So... obviously the limitation is in the TDD's internal software, not in the
+communications programs we commonly call the "DOS".
+

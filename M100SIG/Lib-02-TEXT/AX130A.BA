@@ -1,0 +1,19 @@
+10 'Program AX130A.BA accesses and pro-     grams the Tandy DMP130A dot matrix      printer.
+20 'Copyright 1987 R.L. Banks
+40 DIMP$(16),O(16):P=160:Z$=CHR$(27):C$=SPACE$(39)
+50 FORX=1TO16:READP$(X):NEXTX
+55 FORX=1TO16:READO(X):NEXTX:GOTO300
+80 S=S+1:PRINT@120,C$:PRINT@P-(20+LEN(P$(S))/2),P$(S):IFS<=16THENGOSUB200
+90 IFS=16THENS=0:GOTO80ELSE80
+200 PRINT@247,"<S>elect  <M>ore or <Q>uit "
+210 I$=INKEY$:IFI$=""THEN210
+220 IF(I$="M")OR(I$="m")THENRETURNELSEIF(I$="S")OR(I$="s")THEN250
+230 IF(I$="Q")OR(I$="q")THENMENU
+240 PRINT@287,"   INVALID ENTRY...RETRY   "+CHR$(7):FORG=1TO500:NEXTG:GOTO200
+250 I=S:IF(I=7)OR(I=9)THENLPRINTZ$+CHR$(O(I))+CHR$(1):GOTO300
+255 IF(I=8)OR(I=10)THENLPRINTZ$+CHR$(O(I))+CHR$(0):GOTO300
+260 LPRINTZ$+CHR$(O(I))
+300 CLS:PRINT@10,"DMP 130A  Programmer":GOTO90
+310 DATA Normal (10cpi),Compressed (12cpi),Condensed (17cpi),Porportionally Spaced, Correspondence Normal (10cpi),Correspondence Compressed (12cpi),Start Italics
+370 DATA End Italics,Start Subscript,Start Superscript,End Sub-Superscript ,Microfont,Start Elongation,End Elongation,Start Bold  ,End Bold  
+375 DATA 19,23,20,17,18,29,66,66,83,83,88,77,14,15,31,32

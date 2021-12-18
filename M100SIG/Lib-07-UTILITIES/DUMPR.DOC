@@ -1,0 +1,50 @@
+DUMPR.BA is a program that simplifies dumping of all .DO files resident in a 
+Model 100 to another file or device. Function keys are set up to select output:
+
+1. Through the RS232 at one of four baud rates; 2. To cassette; 3. To a 
+printer; 4. To a file or device of your choice; e.g., LCD:, RAM:, another COM: 
+protocol.
+Before dumping, check that the BASIC programs are save in ASCII with the
+  SAVE"Filespec",A
+command. I use it to dump my .DO files every other day or so -- just in case.
+Each file in the DUMP file starts with "{" which is character string (123) and 
+not an overly common 7-bit character. It can be generated on the Model 100 
+keyboard with GRPH/9.
+.
+Here's how it works with a CP/M machine:
+1. Connect the RS-232s of the two machines with a null modem cable and set the 
+CP/M machine to 1200 baud, 7 bits, even  parity and 1 stop bit.
+2. Check your Model 100 MENU to make sure all the BASIC files you want to save 
+appear there with a .DO extension. If not, go to BASIC, load the file, and save
+it with the ,A option.
+3. Type:
+PIP DUMPDATE=RDR:[E]
+on the CP/M machine and press <Return>.
+4. Select function key F2 [1200] on the opening screen.
+5. The Model 100 will dump all ASCII files and include a header at the 
+beginning of each file. The DUMPR program sends a Control-Z when it is finished
+and the CP/M machine writes the file to disk.
+6. To reload the files into the Model 100, go into TEXT and select F2 Load. 
+Answer "Load from" with COM:57E1E and press <ENTER>. On the CP/M machine type
+PIP PUN:=DUMPDATE[E]
+and press <Return>.
+7. After the file is back in the Model 100, go to the beginning of the file.
+8. Press F7 (Select) and then F1 (Find) and then GRPH/9. This marks all of the 
+first file. Press F6 (Cut) and the file is in the PASTE buffer.
+9. Exit to the MENU and open a new TEXT file with the name of the file selected
+above.
+10. Press PASTE. Delete the header and your file is back to its original state.
+
+11. If the file you selected is a BASIC file, go into BASIC and push PASTE. 
+Then SAVE the file under its original name.
+12. Go back to the DUMP file until you've moved out all the important files. 
+Then you can kill the DUMP file.
+.
+To dump to other machines use a terminal program if they don't support 
+transfers through the operating system.
+I've used the program on the Nelma Personna, Hyperion and TRS-80 Model III.
+.
+.
+Milton van der Veen
+[72135,1430]
+

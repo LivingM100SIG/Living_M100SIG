@@ -1,0 +1,264 @@
+                              Q H A Y E S . 1 0 0
+                              Q T O U C H . 1 0 0
+
+                              X H A Y E S . 1 0 0
+                              X T O U C H . 1 0 0
+
+
+                                By Denny Thomas
+
+
+                Software For The M100/T102 And An External Modem
+
+  QHAYES = TELCOM for Hayes compatible modems.
+  QTOUCH = TELCOM for the Touchbase Travelcomm modem.
+
+  XHAYES = X-TEL interface for Hayes compatible modems.
+  XTOUCH = X-TEL interface for the Touchbase Travelcomm modem.
+
+  For those of you who have an external modem and find the lack of support a
+real pain, here are two sets of programs that will make your life a lot easier.
+
+  The first set of programs (Q) is a bread-and-butter auto-dialer - redialer -
+auto-logon program that will jump to TELCOM as soon as the logon sequence is
+complete.
+
+  The second, (X) is an interface to X-TEL V2.1 and V2.2 which does the same
+functions but with different procedures tailored to the way X-TEL works.
+
+                           ---->VERY IMPORTANT!<----
+
+          Before attempting to run any of the "X" type programs,
+          PLEASE read the section on them!  I do not check to see if
+          X-TEL has been relocated.  If you run a relocated version
+          of X-TEL with the X-series, THE PROGRAM WILL BOMB.  Change
+          the variable "D" in line 2 to indicate the TOP (or HIMEM)
+          address of your version of X-TEL.  Also, the program
+          assumes that you use the standard basic loader that is
+          supplied with X-TEL (X-TEL.BA).  If you do not use that
+          program name for your loader, change line 4 to reflect the
+          new name that you have given the loader program.
+
+
+  All of the programs use the ADRS.DO file to store phone numbers and
+auto-logon strings.  The ADRS file can be in RAM or on the Chipmunk, DVI, or
+Tandy Disk Drive (if an alternate operating system is installed); the program
+will find it wherever it is.  If you already have your ADRS file set up, fine,
+you are ready to start using the program.  If not, create one using the
+procedures listed in the M100 User Manual, pages 89-92.  These programs use
+EXACTLY the same syntax as the TELCOM program in the M100/T102 with one
+exception: you cannot have any characters past the [ > ] in the auto logon
+section.
+
+                    ----------------------------------------
+                              Running the Program
+                    ----------------------------------------
+
+                                   Commands:
+
+                   [CR]........Find first/next phone number.
+                   [ESC].......Go back to Find: prompt.     
+                   [BKSP]......Go to top of program.        
+                   [F8]........Menu or X-TEL.               
+                   [DIAL]......Go to TELCOM for manual dial.
+                   [any key]...Dial last number listed.     
+
+  Anything that is inside of brackets - [] - is to be typed in.  Do not type
+the brackets
+                            ------------------------
+                                 Specifics for:
+                                   QHAYES.100
+                                   QTOUCH.100
+                            ------------------------
+
+  To run the program, make sure you have a copy of your ADRS file in RAM or on
+disk (for the TDD, you must have a DOS that supports BASIC to access from
+disk).
+
+  Upon entering the program, you will be able to make two decisions: each time
+you depress [1], you will toggle the baud rate between 1200, 300 baud, and the
+internal modem.
+
+If you depress any other key, you should see the Find: prompt.  At this time
+the above commands become active.  You can now type in the string you wish to
+search for.  The program is designed to keep the keystrokes to a minimum, so if
+you have your primary logon string as the first number in your ADRS file, all
+you should have to do is hit [CR] and then any other key to start the autodial
+process.  If you have the wrong number up on the screen, you can hit the [ESC]
+key to get the find prompt back, or keep hitting [CR] to cycle through the ADRS
+file.  If you hit the [BKSP] key, you will return to the top of the program to
+allow selection of a different baud rate. Once you have found the number you
+wish to call and hit a key, the rest of the process is automatic.  If not using
+the internal modem, the program will check for or use the following Hayes
+commands:
+
+                                  ATDT        
+                                  A/          
+                                  CONNECT     
+                                  CONNECT 1200
+                                  NO CARRIER  
+                                  BUSY        
+                                  NO DIALTONE 
+
+  The only commands that are critical are ATDT, CONNECT, A/, and NO CARRIER.
+The rest will be ignored if your modem doesn't support them.  If you have
+problems with these commands, please let me know, I'd be glad to make the
+changes.
+
+  If, while the program is redialing, you wish to go back to try another
+number, (Find:) hit any key. If the program doesn't respond immediately, be
+patient, it might take one more redial to recognize your keystroke. With the
+internal modem, you may go back after the first time number is dialed as well
+as after redials.
+
+  *NOTE* There is no capability for redial with the Travelcomm modem. If you
+wish to try the number again, you must press [SHIFT + BREAK] and then [F4]
+(run) to try the program again.
+
+  As you entered the program, you might have noticed the two function key
+defintions.  (F6 & F7) The M100/T102 screen has a problem with 1200 baud
+operation in that it will not scroll the screen at any thing over 600 baud.
+This takes away the advantage of high speed operation on services such as
+CompuServe that charge extra for 1200 baud.  But you can "beat the system" by
+turning off the screen scroll during downloads.  The M100 will then receive at
+any baud rate.  The only trade-off is that you will have to read what you have
+downloaded offline.
+
+  The two keys are to be used while online.  When you get to a point where you
+want to download, hit the [F7] key.  At this point the screen will stop
+scrolling and start printing on one line only.  You will still be able to see
+prompts and do normal commands, but it will just be a bit more confusing until
+you get used to it.  When finished with high speed downloads, hit the [F6] key
+to return to normal operation.
+                            ------------------------
+                                 Specifics for:
+                                   XHAYES.100
+                                   XTOUCH.100
+                                    XLINK.100
+                            ------------------------
+
+  [All references to XHAYES apply to all "X" programs]
+
+  Due to the nature of X-TEL, it will be necessary to make a small change to
+XHAYES in order to make it run with a relocated version of X-TEL.  If you just
+use the standard non-relocated version, this program is ready to run and you
+can skip to the section on running XHAYES.
+
+                              -------------------
+                              Modifing XHAYES.100
+                              -------------------
+
+  To modify XHAYES, first you need to find out the number that you will insert
+into the program.  That number is the TOP address of X-TEL.  To find it, you
+can go into basic and type [LOADM"X-TEL].  Three numbers will print out, the
+first of which is the TOP address that you are looking for.
+
+  Another method would be to go into X-TEL, set your STAT for 57I1E, press
+[F4], press and hold the [CODE & SHIFT] while pressing [F7].  This will get you
+into X-TEL basic.  At this point, type [KEY LIST].  This will list the function
+key definitions.  The definition for key 8 will be a CALL nnnnn.  That is the
+number you will want to write down for XHAYES modification.
+
+  After you get the number, go into basic, load XHAYES.DO, and enter [EDIT2].
+You can then edit the number that is associated with the variable "D".  After
+finishing, save the program.
+
+                               ------------------
+                               Running XHAYES.100
+                               ------------------
+
+  Since you need to access XHAYES while online, I have found that there are
+several ways to load and run the program depending on how many keystrokes you
+can tolerate.  I will assume in the following discussion that you have set
+function key 7 to: RUN"XHAYES" 
+
+Below is a line that can be merged into XHAYES to set function key 7.
+
+3 KEY7,"Run " + CHR$(34) + CHR$(88) + CHR$(72) + CHR$(65) + CHR$(89) + CHR$(69)
++ CHR$(83) + CHR$(34) + CHR$(13)
+
+  Run XHAYES from the main menu.  It will look for the loader program
+(X-TEL.BA) and excecute it.  Once inside X-TEL, at the Telcom: prompt, press
+[F4] (Term).  Next, go into X-TEL basic by pressing and holding [CODE + SHIFT]
+while hitting the [F7] key.  Press the [F7] key again to excecute XHAYES again.
+This time you will see the XHAYES menu.  The menu should be self explanitory.
+When you select option 1 or 2, the program will toggle and update the screen
+with the new status.  Once you press [CR], the program will start working
+exactly like QHAYES.  The only exception is the method for disabling and
+enabling screen scroll.  You have to go back into X-TEL basic every time you
+want to toggle that option.
+
+                    ----------------------------------------
+                                    CREDITS
+                    ----------------------------------------
+
+  First I'd like to thank Rich Young, Rick Perry, and Dan Drasin from whom I
+pilfered mercilessly and Bill Templeton for excellent beta testing. But mostly
+I'd like to thank Leonard Erickson whose fine bit of detective work finding the
+entry point for the Telcom auto-logon routine really made the program possible.
+                                  Denny Thomas
+                                  [73126,672]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

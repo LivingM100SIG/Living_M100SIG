@@ -1,0 +1,182 @@
+          Chapter 5              Disk-Based TEXT              Page 35
+
+
+                     ----------------------------------------
+                    |; code for POWR-DISK                    |
+                    |        org     60850                   |
+                    |start:                                  |
+                    |        jmp     psu:    ;pointer setup  |
+                    |        jmp     xopn:   ;special open   |
+                    |        jmp     xrd:    ;special read   |
+                    |        jmp     xwr                     |
+                    |<Key> for More, <ENTER> to START        |
+                     ----------------------------------------
+
+
+          The text at the top of the screen shows where the edit
+          portion will start.  When you see this screen, you must
+          decide from the text presented whether this is an appropriate
+          place to "Start" the edit portion.  If it is, press [ENTER];
+          if not, press any other key, in which case D-TEXT will show
+          you the next possible place to "Start" the edit portion.
+
+          Similarly, if you have opted to "set" the stop point for the
+          edit portion, a screen similar to the following will appear:
+
+
+                     ----------------------------------------
+                    |                                        |
+                    |        sta     scr3:                   |
+                    |        call    tod:    ;set up         |
+                    |        mvi     a,1                     |
+                    |        sta     scr2:                   |
+                    |        call    4bb8h   ;new ln if nec. |
+                    |        mvi     m,scr1  ;next 8 files   |
+                    |<Key> for More, <ENTER> to END          |
+                     ----------------------------------------
+
+
+          In this case, the text shows the last characters that will
+          appear in the edit portion.  If they are an appropriate place
+          to stop, press [ENTER]; otherwise, press any other key. 
+          D-TEXT will continue showing you more possible places to stop
+          the edit portion until you either press [ENTER], reach the
+          end of the file, or reach the limit of the RAM.
+
+          After you have selected the limits, D-TEXT automatically puts
+          you into TEXT.  When you are done editing the edit portion,
+          press [F8] to leave TEXT.  D-TEXT will ask you "Save Changes
+          (y/n)?"  If you answer "n", you will return immediately to
+          the D-TEXT menu; if you answer "y", D-TEXT will update the
+          disk file with the contents of the edit portion.  This
+          process can take a while for a large file, so be patient.
+          Chapter 5              Disk-Based TEXT              Page 36
+
+
+          Important Note: The D-TEXT program chooses the Start and Stop
+          points arbitrarily.  In many cases you will see words split;
+          on occasion, you may even see Control-J or Control-M as the
+          first or last charter in an edit portion.  Do not try to
+          "fix" these breaks!  When D-TEXT puts the edit portion back
+          into the disk file, it will restore any breaks automatically. 
+          If you "fix" them while in TEXT, whey will not go together
+          properly.
+
+
+                                Notes and Options
+
+
+                            Adding New Print Formats
+
+          It is possible to add new print formats to D-TEXT.  Each
+          format is in a data statement; you can add as many additional
+          data statements as necessary.  The DATA statement contains a
+          wide variety of information.  In order to simplify the
+          creation of a new DATA statement, we provide a small program
+          called PRFORM.BA, which asks the following questions:
+
+
+             * The number of formats already available in D-TEXT.  If
+               you are not sure, use [F1] to count the different
+               formats.  It is important to correctly answer this
+               question; if you answer with less than the correct
+               number, PRFORM will replace one of the old formats with
+               the new one.  (You can use this behavior to replace or
+               modify existing formats if you wish).
+
+             * The name of this new format.  Use 10 charters or less.
+
+             * The left margin.  How many characters from the left
+               should the printout start?
+
+             * The width of text.  How many characters wide should a
+               printed line be, maximum?
+
+             * Printed Lines per Page.  How many lines of text should
+               be in the body, which excludes top and bottom margins?
+
+             * Spacing.  Answer 1 for single spacing, 2 for double
+               spacing, etc.
+
+             * Print a header?  THe header always consists of the date,
+               time, file name, and page number.  If you answer yes,
+               you can specify the starting page number.  Often, page 2
+               is the first header page.
+          Chapter 5              Disk-Based TEXT              Page 37
+
+
+             * CRLF Pairs?  If your printer requires an additional line
+               feed with a carriage return, answer "yes".  Answer "no"
+               for Radio Shack Printers.
+
+             * Lines at top of page.  How many blank lines will be at
+               the tip of each page.  Note that this number is
+               independent of single spacing or double spacing.
+
+             * Does the printer accept form feed? if not, how may blank
+               lines at the end of the page?
+
+             * Page Pause?  Does the printing process need to pause at
+               the end of each page?
+
+
+          Once you have answered all of these questions, PRFORM will
+          ask you to confirm that you like your responses.  If you do,
+          it will automatically modify D-TEXT to add the new printer
+          format.
+
+
+                                 Editing Options
+
+          The file status screen gives you several options when editing
+          the text file.  Wrap lets you turn the "word-wrap" feature of
+          TEXT off for a given editing session.  Normally, you almost
+          always will want word wrap on, but for some data and program
+          files, it is nicer to work without it.  Buffer allows you to
+          reserve a minimum amount of RAM for adding to a files.  This
+          feature can come in handy if you are dealing with large files
+          and you want to "reserve" room for an anticipated addition. 
+          Finally, the "Top" and "End" settings can be changed for any
+          file, not just large files.  Using this feature, you can
+          exercise considerable control over your DOcument files.
+
+
+                           Accessing the Disk in TEXT
+
+          One highly convenient feature of D-TEXT is your access to
+          disk files from within the TEXT program itself.  [F2] and
+          [F3] can access disk files as described in Chapter 2.  This
+          may seem a minor convenience, but it has many interesting
+          applications.  Two examples:
+          Chapter 5              Disk-Based TEXT              Page 38
+
+
+             * You can use D-TEXT to concatenate large files.  Simply
+               use D-TEXT to "Append" onto one disk file, then loading
+               a second disk file onto the end using [F2].
+
+             * You can CUT and PASTE very large file segments, larger
+               than you could manage in RAM, by saving them to
+               temporary files from within TEXT.
+
+
+                               Errors and Recovery
+
+          D-TEXT handles errors in a very similar fashion to the "menu"
+          phase of DMENU.  The error will be displayed on the message
+          line, and you must press a key to continue the program.  The
+          only difference is that for some errors, you will return
+          automatically to DMENU (or to your computer's menu) after the
+          error.
+
+          D-TEXT must access the disk many times when it reads and
+          updates files.  If an error occurs before you enter the TEXT
+          program, no change will have occurred to the disk, so it is
+          best to start D-TEXT over.  If the error persists, perhaps
+          the file has gotten an error in it.  If an error occurs while
+          you are "saving changes" to a files, there are several
+          possibilities.  Part of the DOcument files may be in RAM, and
+          the DOcument file on disk may contain some or all of the
+          original data.  Also, RECOVR (see Chapter 6) may be able to
+          find additional data on the disk.
+

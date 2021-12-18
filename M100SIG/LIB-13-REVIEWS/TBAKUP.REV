@@ -1,0 +1,78 @@
+Review of T-BACKUP for the Model 100
+
+   I recently bought T-BACKUP from Traveling Software, Inc. and thought
+you might be interested in a review of it.  Even if you already have a
+Chipmunk disk drive or other non-cassette mass storage capability, this
+program can be very useful -- always a good idea to have multiple
+backups, and cassette is last resort in any case.
+
+   The program is written in BASIC but uses some machine code
+temporarily poked from DATA statements into the LCD RAM buffer
+(65024-65343) to do the dirty work.  This M/L code will not interfere at
+all with any other .CO files or M/L you may have on the machine.  It
+allows the program to make an exact cassette copy of the RAM image from
+the start of RAM up to address 64992.  The backup copy then includes ALL
+files and directory information including CA, CO, DO, BA, invisible,
+etc., BASIC, TEXT & Lucid buffers, code between HIMEM & MAXRAM, and the
+RST-7 vector areas.
+
+   Of course I've disassembled, analyzed, printed, and totally revealed
+the program's secrets for myself -- that's the only benefit I usually
+derive from programs I buy or download -- but in this case I plan to
+actually USE the program and keep it loaded on my M100 almost all the
+time.
+
+   It takes about 4 minutes to create a cassette backup file for a 32K
+M100, plus another 4 mins to verify the save.  The program works well
+and is fairly well written and compact (2.2K as .BA).
+
+   For example, my machine may be loaded with some files I plan to
+upload, plus some SIG messages, Xmodem, and a few other files.  I'll
+save everything using T-BACKUP, then if CIS phone is busy (or I get too
+drunk to operate) I can KILL everything, do other work, and restore the
+stuff later very easily without having to do it file by file which
+consumes much more time.
+
+   Another use for me will be to make a backup with machine loaded with
+all my game programs.  Then when my niece comes over, I can quickly load
+up the machine for her to play with.
+
+   Seems like this concept is similiar to the 'folders' in Chipmunk. 
+But even when I get the darned Chipy, I'll still use this program for
+failsafe security in backups.  It's unusual for me to find a program
+useful, even the ones I write myself, but this one is exceptional; too
+bad I didn't figure out how to do it myself, but it's only approx $20,
+so it's worth it.
+
+   I only have four minor complaints about T-BACKUP:
+
+1) The verification function operates by reading through the cassette
+backup file and computing an 8-bit checksum which it then compares with
+the checksum read from end of backup file.  My complaint is that an
+8-bit checksum does not give great assurance that the backup is correct
+-- using more bits or even a CRC would have been better.
+
+2) The program allows a comment field of only up to 28 characters to be
+written in the header to the backup file.  I find the 28 char limit
+restrictive sometimes and would have preferred a longer comment field. 
+However the creative user could modify that part of the program if
+desired (since it's in BASIC).
+
+3) There are not enough bells and whistles, i.e. SOUND!  I would have
+liked the program to BEEP at me after verifying or loading a backup (so I
+could hear it from the next room and know when it's done) and emit nasty
+buzzing sounds if a verify failed.  Instead it just prints a dull message.
+
+4) Multiple cautions in the manual remind the user not to press BREAK
+during a backup save or load; instead you must press the Reset button. 
+This is necessary because the machine stack pointer is temporarily set
+inside the LCD image area by the M/L part of the program, and if it
+stopped in this state, scrolling of screen lines would blow away the
+stack and lead to certain cold-start.  At least on the M100, the stack
+could have been positioned in a safer area (like the COM: buffer).
+
+   On the plus side, I found the manual clear, easy to read and understand;
+but the Traveling Professor's spiel, on reverse side of tape, is rather dull,
+essentially read from the manual, with no humor.
+
+...Rick Perry [75665,1045]

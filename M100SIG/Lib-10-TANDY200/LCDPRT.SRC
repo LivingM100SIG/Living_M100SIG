@@ -1,0 +1,174 @@
+;LCDPRT.SRC
+;Copyright 1988 by James Yi 73327,1653
+;Source code for LCDPRT.200
+;Oct. 21, 1988
+;
+
+	org	63574
+
+CSROFF	EQU	4F6DH
+BREAK	EQU	8B69H
+inlcd	equ	8e8bh
+SETLCD	EQU	8EB3H
+OUTLPT	EQU	1590H
+lcdbfr	equ	fd60h
+
+	SHLD	lncnt
+;calculate according
+;dots per line and margin
+	mov	b,a
+	ani	$7f
+	mov	e,a
+	cmp	b
+	mvi	a,32	;6 pixels per byte
+	lxi	h,240*3	;240 pixels
+	jz	isp
+	mvi	a,128	;8 pixels per byte
+	lxi	h,256*3	;256 pixels
+isp	sta	bytwid
+	shld	hpix
+;mult E by 3 = margin size
+	mvi	d,0
+	mov	l,e
+	mov	h,d
+	ora	a	;clear carry
+	rdl
+	dad	d
+	shld	margin
+
+	call	csroff	;turn flashing off, so that lcdbfr will not be overwritten
+;start printing
+;set line spacing
+	MVI	A,27
+	CALL	outlpt
+	MVI	A,'3'
+	CALL	outlpt
+	MVI	A,24	;24/216"
+	CALL	outlpt
+	MVI	L,00H	;line 1
+nextline:
+	call	break
+	rc
+	INR	L
+;get LCD data for this line
+	push	h
+	CALL	readline
+	pop	h
+	MVI	H,01H
+;print line in top and bottom halves- 4 pixels each, for double height image
+nexthalf:
+	PUSH	H
+;set double density grph mode
+;and data count
+	MVI	A,27
+	CALL	outlpt
+	MVI	A,'L'
+	CALL	outlpt
+	lhld	margin
+	xchg
+	lhld	hpix
+	dad	d
+	mov	a,l
+	CALL	outlpt
+	mov	a,h
+	CALL	outlpt
+;draw left margin
+clm	mov	a,d
+	ora	e
+	jz	cnvdat
+	dcx	d
+	xra	a
+	call	outlpt
+	jmp	clm
+
+;convert LCD data to printer data
+cnvdat:	POP	H
+	PUSH	H
+	MVI	C,40	;screen is 40 bytes wide
+	DCR	H	;top or bottom 4 pixels?
+;LCD data is in lcdbfr
+	LXI	H,lcdbfr
+	JZ	nx8col	;top 4 rows
+	LXI	H,lcdbfr+160
+nx8col:	MVI	B,01H
+nxcol:	PUSH	H
+	MVI	E,C0H
+	MVI	D,00H
+nxrow:	MOV	A,M
+	ANA	B
+	JZ	pixoff
+	MOV	A,D
+	ORA	E
+	MOV	D,A
+pixoff	MOV	A,E
+	RRC	
+	RRC	
+	MOV	E,A
+	PUSH	D
+	LXI	D,40
+	DAD	D
+	POP	D
+	RLC	
+	JNC	nxrow
+	PUSH	B
+;one LCD pixel = 3 printer pixel
+	MOV	A,D
+	CALL	outlpt
+	CALL	outlpt
+	CALL	outlpt
+
+	POP	B
+	POP	H
+	MOV	A,B
+	RLC	
+	MOV	B,A
+	LDA	bytwid
+	RLC	
+	CMP	B
+	JNZ	nxcol
+	INX	H
+	DCR	C
+	JNZ	nx8col
+
+;send carriage return and/or linefeed
+	MVI	A,0DH
+	CALL	outlpt
+	LDA	lfeed
+	ora	a
+	mvi	a,10
+	Cnz	outlpt
+
+	POP	H
+	DCR	H
+	JZ	nexthalf
+
+	LDA	lncnt
+	CMP	L
+	JNZ	nextline
+
+;done. restore line space setting for text: 6 lines per inch
+	mvi	a,27
+	call	outlpt
+	mvi	a,'2'
+	jmp	outlpt	;and exit
+
+;read 40x8 rows of pixel data(one line of text) into the lcd buffer
+readline:
+	MOV	A,L	;get line#
+;calculate 320xline#
+	LXI	B,320
+	LXI	H,-320
+mul320	DAD	B
+	DCR	A
+	JNZ	mul320
+;read lcd data
+	CALL	setlcd	;locate LCD data
+	LXI	H,lcdbfr
+	MVI	A,0DH
+	JMP	inlcd	;read 320 bytes from lcd into lcdbfr, in HL
+
+bytwid	db	0
+lncnt	db	0
+lfeed	db	0
+margin	dw	0
+hpix	dw	0

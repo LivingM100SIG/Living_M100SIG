@@ -1,0 +1,72 @@
+Captured messages:
+
+
+#: 156513 S11/Tandy 600
+    10-Sep-87  01:21:50
+Sb: Getting 600 into 8 bit
+Fm: Joe Holland 73720,1605
+To: John Malooly 73270,2624
+
+   Here is how I get into 8 bit with the 600.
+
+1. Go Terminal and change only the Parity from EVEN to ZERO.  As soon as you
+hit ENTER after this choice, your Compuserve settings will change, so that now
+most letters will be preceded by one or more of these symbols ~~~ ( produced by
+CTRL+= while off line ,in Edit.) This will still be legible, and CIS will still
+respond to your keyboard.
+
+2. Now press CTRL+C enough times to stop this abnormal display.
+
+3. Press SHIFT + ESC, M, to get to your settings.
+
+4. TAB 3 times to word length 7 and press SPACE to go to 8.
+
+5. TAB once to go to Parity EVEN. Space twice to change EVEN to NONE.
+
+6. Press ENTER to return to Telcom menu.
+
+7. Press C to resume connection.
+
+8. Make whatever choice needed to resume the flow after the CTRL C interupt. If
+you used CTRL S to stop the flow, you may need to use CTRL Q to resume.
+
+   CIS will now continue but will be legible and normal looking. If you now
+sign off or continue, Compuserve, before continuing, will ask you if you wish
+to keep these settings or have them apply only to this one time use of
+Compuserve.
+
+   You are now in 8 bit. This will enable you to read/download 8 bit material
+in the library, although you will not be able to use it unless you have the
+facilities. So far as I know, you cannot upload pre-prepared messages in 8 bit.
+
+   If you leave your CIS Terminal at ZERO and your Modify settings at 8N, the
+next time you log on to Compuserve, you will get something like:
+
+Ho<taNa0e:   U<eraD:
+
+It's the usual sign on, in disguise. This is because Compuserve always signs on
+in 7E. But it will accept your responses in 8 bit, and as soon as it receives
+your ID number it will switch to 8 bit. Then everything will be normal except a
+line feed may lost at the instant of switchover, so the password request may
+continue on the same line.
+
+   You can write a script that starts in 7E and changes to 8N, by entering a
+second line of Modify settings after your I.D number, these for 8N.
+
+   To get out of 8 bit, reverse the process. Go terminal and change ZERO to
+EVEN. Stop the symbols that follow as in steps 2 and 3 while you change Modify
+to 7E.
+
+   The technical reason that you see this garbage when your computer is at 8
+and the host is at 7, is that your computer reads the first seven bits
+correctly as either 0 or 1, as they are transmitted. Then it is still waiting
+for bit number 8, while the host, having delivered 7, goes on to the next
+character.  Your computer will then misread something as the bit number 8 it is
+waiting for. If it sees something it interprets as 0, then the character is
+unchanged. But if it adds a 1 to the 7 bits it already has, it changes the
+symbol into one higher on the list by a count of 128. (Manual pages 257 - 264).
+
+   The other way, when your computer is in 7 and the host is in 8, your
+computer sometimes interprets the extra information that it is not set up to
+receive as an extra character, which it reads as Decimal #126 on the list (page
+260).

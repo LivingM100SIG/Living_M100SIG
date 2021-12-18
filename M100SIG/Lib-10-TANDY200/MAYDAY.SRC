@@ -1,0 +1,39 @@
+;MAYDAY.200
+;cold-start file recovery for the T200
+;	(c)1989 Wilson Van Alst
+;		  76576,2735
+;
+opendo	equ	11635	;ROM routine
+found	equ	28443	;'found',0
+makhol	equ	33448	;ROM routine
+marker	equ	16724	;xri128/mov m,a
+altbuf	equ	63574	;AltLCD bufr
+
+	org	altbuf	;pgm runs here
+
+;create FOUND.DO and "enlarge" it:
+
+	LXI	H,found	;HL->'found'
+	CALL	opendo	;open DO file
+			; HL->start
+	LXI	B,19400 ;BC=hole size
+	CALL	makhol	;move pointers
+	RC		;ret if no room
+			; (protect from
+			;  accidental
+			;  pgm use)
+
+;get rid of "illegal" chrs:
+
+mochr	MOV	A,M	;A=chr
+	CPI	26	;eof marker?
+	CZ	marker	;yes:change it
+	cpi	127	;illegal chr?
+	cz	marker	;yes:change it
+	INX	H	;adjust pointer
+	RST	3	;HL<DE?
+	JC	mochr	;yes:go again
+;
+	rst	0	;back to menu
+;
+	end

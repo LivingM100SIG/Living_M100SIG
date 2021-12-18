@@ -1,0 +1,344 @@
+        PALETT.200
+        A graphics program for the T200
+        -------------------------------
+
+
+        PALETT.200 is a powerful, comprehensive and EASY TO USE graphics 
+package which integrates the abilities and concepts of some outstanding SIG 
+programs: CANVAS.BA by Seth Kaplan, and OVAL.200, LCDSAV.200, SHPDRW.200 and 
+LCDPRT.200 by James Yi. 
+
+        PALETT 200:
+
+        -DRAWS lines, boxes, triangles, frames, circles, letters and stored 
+shapes automatically anywhere on the entire screen.(CANVAS/OVAL/SHPDRW)
+
+        -SAVES instantly and storably ALL 30720 pixel "plots" in 3840 byte .CO 
+files which can be converted into 7812 byte .DO HEX files suitable for 
+uploading or exchange . (LCDSAV/HXFER)
+
+        -PRINTS out current or saved graphics in under a minute using James 
+Yi's LCDPRT.200.
+
+        Please read ALL these instructions before you use PALETT. They're not 
+complicated and they are logical but PALETT is a comprehensive program and 
+you'll be lost if you don't know how the various features interact. Refer to 
+these instructions often.
+
+     SETUP:
+     ------
+        To use the program you'll need the following files from Library 10:
+
+        PAL200.DOC This file.
+        PALETT.200 
+        OVAL.200
+        LCDSAV.200
+        SHPDRW.200
+        SHPMKR.200 Use this to create SHPTBL.CO
+        LCDPRT.200 (dtd. 21Oct88)
+        HXFER.200  Use with up/download of graphics files.
+
+        Download the files and edit all the garbage. Checksum them as .DO files
+using the checksums in the files' DES. SAVE a .BA version of PALETT. 
+        OVAL.CO, LCDSAV.CO, SHPDRW.CO, & LCDPRT.CO will be created by their 
+respective "loaders" and will run in the ALT/LCD buffer so they should not 
+conflict with anything (other than displacing another ALT/LCD program).
+        A shape storage file, created with SHPMKR.200, MUST be either loaded 
+already or at least have had the appropriate HIMEM space cleared BEFORE running
+the CTRL D, DRAW routine in PALETT. (All other routines are independent of 
+shape-tables.) The *RAM* copy of any shape-table file being used MUST be named 
+SHPTBL.CO when running PALETT although it can, of course, be stored elsewhere 
+under any name.
+        PALETT saves on-screen artwork DIRECTLY to .CO files WITHOUT using any 
+HIMEM. All stored graphics files use a "[", left square bracket, as the last 
+character of the file name and ONLY those files will display in the directory 
+of loadable files when you run PALETT.
+        Be sure and have at LEAST OVAL.CO, SHPDRW.CO and LCDSAV.CO in RAM when 
+using PALETT. PALETT will manage the loading/unloading of all these files but 
+will save your work and END if it needs one you forgot to load. To print your 
+graphic you'll also need LCDPRT. (See below.)
+
+
+     Using PALETT:
+     -------------
+
+        The only files which PALETT.200 will process are visible .CO files 
+whose 6th name character is a "[", left bracket, and which have a TOP address 
+of 57260. If you wish to use downloaded PALETT.200 HEX .DO graphics files then 
+first "un-HEX" them using HXFER.200 (select "default address") and re-name them
+as above. You can also create PALETT.200 files from other graphics formats by 
+adding the following code (with LCDSAV.CO in RAM) to the end of any program 
+that draws a graphic:
+
+            1000 LOADM"LCDSAV"
+            1100 F$="IMAGE[.CO' any name including "[" as the right char.
+            1200 CALL63580,1,VARPTR(F$)
+            1300 END
+
+        When you run PALETT you will first come to it's main menu: ONLY files 
+meeting the criteria outlined above will display. If you have enough RAM 
+available to create a new file you will also see "New file" as a selection. Use
+the spacebar to move the cursor. Press ENTER to display an existing file or to 
+choose the "New file" routine.
+        If you chose "New file" then type it's name (1-5 letters) and press 
+ENTER. You will arrive at a blank screen and the "pixel locater" will flash at 
+X=123, Y=63. (ESC returns to main menu.)
+        Your graphic is always saved prior to any on-screen prompted routine 
+and anytime by pressing CTRL K. Pressing "?" will display a help screen 
+anytime. Any key press will then return you to your graphic.
+
+
+     You can DRAW three ways:
+
+        Keys W E R, S D, Z X C draw "lines" one pixel long and brush width wide
+in "normal-speed" mode.
+        Press SHIFT or CAPS LOCK to qwik-draw lines with an increment you set 
+by pressing the +/= or -/_ keys: plus or minus 5 pixels with each press with a 
+minimum of 5
+        Choose one of the available shape routines.
+
+
+     You can MOVE the drawing pixel to a new location three ways:
+
+        -"Dribble" it across the screen with the drawing letter keys in the 
+"background" color by first switching color with TAB.
+        -"Hop" it around using the arrow keys; 10 pixels per hop: >> GRPH/ARROW
+= 1 pixel per hop. <<
+        -"Jump" directly to coordinates by pressing O and entering the new X,Y 
+co-Ordinates in the form n/n. (INCLUDE the "/".)
+
+
+        THE MOUSE: at this writing James Yi is working to integrate operation 
+of a serial-port "mouse" with the 200. This should permit use of a mouse to 
+both move AND draw. Pressing M when running PALETT will take you to line 340 
+which will contain the mouse code when it is finalized. For the time being line
+340 will simply return to the other routines.
+
+
+     Calling PALETT functions:
+     ------------------------
+
+        (NOTE: keys shown with a (t) in front of the description are TOGGLES; 
+just press the key again to turn the attribute on or off.)
+        You can use UPPER or lower-case letters for all sequences and ANY 
+character with an ASCII value from 32 to 255 when in PALETT's TEXT mode. If you
+try to do something that won't work PALETT will flash "OUT OF RANGE!" and 
+resume or, for FF errors etc, will save your graphic and END with the error 
+message: re-run after figuring out what's wrong. I suppose it is possible to 
+frustrate the error routine and if that happens simply re-run.
+        ALL shape routines (Line, Box, Frame, Triangle, Hole, and Text) require
+a "Y" response to the "chirping" audio reminder to save your new shape. An "N" 
+keypress will restore your screen to it's condition prior to the request. 
+PALETT needs a few seconds after each shape routine to store your graphic; be 
+patient.
+
+    (t) TAB - Changes pixel "color"; works on all routines. If you press TAB 
+BEFORE you leave a desired design it will erase that pixel. (This is useful 
+when "jumping" from a location where you DON'T want to leave a dot behind.)
+        Creative use of pixel color and shapes will let you do all kinds of 
+overlays and effects; black circles inside white shapes, white letters on black
+designs etc. Use your imagination!
+
+        NUMBER KEYS control the size of your "pixel brush". The number pressed 
+will become the number of pixels added to each side of your drawing pixel: 
+pressing 5, for example, gives you a "brush" 11 pixels wide. This routine sets 
+your current location to the new value when pressed. You can combine a wide 
+brush with speed-drawing and reverse pixels to "erase" large areas of the 
+screen.
+        When using the diagonal pixel movement keys, W R Z C, a widened brush 
+will be oriented in the last direction of vertical or horizontal movement. 
+Brush width will remain at the chosen thickness when using the Border, Frame, 
+Line and Hole routines; the center line of the pixel brush is the coordinate 
+used by the drawing routines. Triangles are one pixel wide; manually thicken 
+them to taste.
+
+        SHIFT or CAPS/LOCK - Engage the QWKDRW attribute when drawing with the 
+letter keys. The - or = keys set the increment.
+
+        -/=  Each press adds 5 (=) or deletes 5 (-) to the number of times your
+pixel brush paints with each drawing letter keypress when either SHIFT or CAPS/
+LOCK is depressed.
+
+        ARROW KEYS - These will "hop" your drawing pixel around the screen in 
+10 pixel hops without leaving "dots" at each move EXCEPT at the departure 
+location. (Press GRPH while you use these keys and you'll hop ONE pixel.)
+        You can use this routine to move around the screen "eating" stray dots!
+
+
+        P - will show you where the drawing pixel is at any time by flashing 
+circles at your last pixel location and displaying it's coordinates.
+
+    (t) ? - will display a mini help screen to remind you of key functions. 
+Press any key to return to your graphic.
+
+        O - Use to jump directly to a new location. (Pixel locations use X/Y 
+format from 0/0 which is the upper left corner to 239/127 at the lower right.) 
+At the X prompt enter the "X" value, a slash, and the "Y" value. Press ENTER 
+and the pixel locater will flash at your new loaction.
+
+        Note: When drawing Lines, Boxes and Frames a reminder of the routine 
+you're using will display on the left side of your screen and "dribbles", 
+although they show your path to the other coordinate if you don't "jump" 
+directly, will not be recorded. Remember that Lines and Frames will be drawn 
+with your selected brush width.
+
+        L - Press L when at one end of a desired LINE. Dribble or jump to the 
+other end, press L and there's your line. You'll then HEAR a reminder to press 
+Y (yes) or N (no) about keeping what you just drew.
+
+        B - To draw a solid box locate one corner, press B, move to the 
+opposite corner, press B, and behold; a box. Respond Y or N and continue.
+
+        F - Frame is drawn the same way: locate a corner, press F, locate the 
+other corner, press F, then Y or N.
+
+        T or K - Press to draw an open (T) or closed (K) triangle. Choose the 
+location for the center and press T or K. You'll be prompted for a size: enter 
+digits from 1 to 127 pixels high (at Y=63); then press Y or N.
+
+    (t) I - Reverses all pixels and switches pixel color.
+
+        M - This will permit use of a serial mouse for moving and drawing when 
+that module is finished. Code will be uploaded later for merging.
+
+        H - This will draw curved shapes and/or fill them in. Answer the Xr/Yr?
+in one of two ways: if you enter ONE number and press ENTER, you will draw a 
+circle. If you enter TWO values separated by a slash you will draw a shape with
+the X value defining it's horizontal radius and the Y value defining it's 
+vertical radius.
+        In either case you will then be asked "Fill Y/N". A "Y" response will 
+draw a filled shape; any other keypress will simply draw the shape. Remember 
+that the thickness of your shape will correspond to your brush width.
+
+    (t) CTRL T - You can enter text and ANY graphics characters directly on 
+your graphic at a location centered on your drawing pixel. Choose pixel color, 
+verify the location, and press CTRL T. 
+        You will then be prompted for an interval value. 6 is the "normal" 
+value but you can specify any value from 0 to 9. This will set two routines: 
+the horizontal pixel location will automatically shift right by that value (v) 
+after each entry; and the increments of the arrow keys will be changed to X=v, 
+Y=v+2. (Pressing GRPH will increment the arrow keys ONE pixel at a time while 
+pressed.)
+        This will let you quickly enter characters with a minimum of guessing 
+about where they will print. Save your work by pressing CTRL T again and 
+responding "Y" to the audible prompt. (You can then, of course, re-enter Text 
+and add additional characters wherever you wish.)
+        Only DEL and SPACEBAR are supported in the Text entry mode. DEL prints 
+a CHR$(239) in "background" color at the drawing pixel.
+        If you want to print a double size piece of text somewhere you can use 
+PALETT's TEXT routine to create a "graphic" of text, then print it in "graphic"
+size.
+
+        NOTE: The Border and Guide routines described below can work together 
+but they set their pixel colors independently. Keep toggling them until you 
+achieve the desired effect.
+
+    (t) CTRL B - This will place a solid Border around the screen as wide as 
+your pixel brush. Keep in mind that graphics along the edges will be lost if 
+you toggle in and out of the border.
+
+    (t) CTRL G - This will display a reference Guide beginning at 0,10 / 10,0 
+and at 10 pixel intervals to X250,Y120. When used with Border described above 
+you can serrate a solid border. Guide will also eat graphics on the screen 
+edges.
+
+        CTRL D - This takes you to one of PALETT.200's most powerful features: 
+the ability to enter "pre-drawn" graphics directly onto the screen via James 
+Yi's SHPDRW. To use this routine you MUST first create a Shape-table .CO file 
+using SHPMKR.200 (DL10). Follow James' instructions and make a record of the 
+shapes, table reference numbers and it's address. These are HIMEM .CO files 
+with a DIFFERENT TOP address for each file! (You can store up to 255 shapes in 
+each table!)
+        These shape files can be named and stored as desired but, when using 
+one of them with PALETT, the file MUST be stored in RAM as SHPTBL.CO and YOU 
+MUST have cleared the correct HIMEM for that shape-table file BEFORE you run 
+PALETT. Although PALETT does not use HIMEM (all modules use ALT/LCD) it WILL 
+try to LOADM SHPTBL.CO into HIMEM.  (PALETT will save your graphic and error 
+out if it can't load SHPTBL.)
+        When you created a shape-table you saved each shape by pressing "1" at 
+the upper-left co-ordinate of the shape and "2" at the lower right. Visualize 
+the shape as being contained within this imaginary "box". When using shapes 
+from SHPTBL the upper-left corner of the shape's "box" will be placed on your 
+screen at the co-ordinates of the drawing pixel when you press CTRL D.
+        The prompt for your shape # will show how many shapes are in the loaded
+SHPTBL file: enter the desired # and press ENTER. The shape will be drawn and 
+you will be audibly prompted for approval. If OK then press "Y"; otherwise "N" 
+will re-display your screen and you can try again.
+        You can erase a graphic you thought you liked by pressing TAB and, with
+the cursor at the SAME position as the "bad" graphic was loaded, re-run the 
+drawing routine.
+
+
+        CTRL K - This will SAVE your graphic to a 3840 byte .CO file for future
+use and chirp to indicate its done. USE THIS OFTEN! Although PALETT's shape 
+routines save your graphic after each operation, pixel drawing with the letter 
+keys is NOT saved until YOU do it with CTRL K.
+        [.CO files created with PALETT.200 can be stored as .CO files or 
+converted to 7812 byte HEX .DO files (using HXFER.200 DL10) and exchanged or 
+uploaded.
+
+        CTRL X - This takes you directly to PALETT's main menu AFTER saving 
+your graphic.
+
+        CTRL P - This uses LCDPRT.200 (loaded in RAM) and requires an Epson 
+compatable printer to operate correctly as written. You will be prompted for a 
+left margin value in inches. Enter a value between 0 and 3.175: this will tell 
+LCDPRT how much space to leave between any exising left margin and the left 
+edge of your graphic. With careful drawing and good pre-planning you can insert
+graphics in text by pre-printing the text and leaving space for artwork; then 
+re-positioning the paper and running PALETT.
+        The printer routine operates INDEPENDENTLY of the LCD routine so you 
+can draw with PALETT right away while working out your printer settings. If 
+attempts to print graphics on YOUR printer result in gibberish don't despair!. 
+Try sending your printer's graphic set-up code yourself from BASIC and re-
+running PALETT/LCDPRT. If that produces a recognizable picture but is not 
+completely correct you may find that you must also pre-set Line feed interval 
+etc. before printing; or perhaps a slightly different code is needed somewhere 
+in LCDPRT. (James Yi provides outstanding support and assistance to users of 
+his programs so drop him a note describing your problems.) 
+        If you need to add code to PALETT to correctly set-up your printer, add
+it at line 202 BETWEEN the LOADM"LCDPRT" and CALL63574,LM,16 commands. PALETT 
+sets LCDPRT to send NO linefeeds to your printer. If you need linefeeds then 
+change the "16" in that CALL63574,LM,16 to "272". 
+       Verify edge of screen attributes (Border or Guide) BEFORE you print. 
+What you see is what you print!
+
+
+
+                          KEY MOVES
+                          ---------
+                            <E> up
+                    <W> up/L     <R> up/R
+               <S> Left               <D> Right
+                    <Z> dn/L     <C> dn/R
+                            <X> down
+
+
+                         Control Keys
+                         ------------
+ARROWs - 10 pixel hops    -/= QWKDRW increment          SHIFT/LOCK - QWKDRW
+TAB - Pixel color         #keys - Brush width           P - Pixel loc.
+O - Pixel jump            ? - Query/help                L - Line
+B - Box                   F - Frame                     T/K - Triangle
+I - Inverse               H - Circle                    CTRL T - Text
+CTRL B - Border           CTRL G - Guide                CTRL K - KEEP
+CTRL X - PALETT Menu      CTRL P - Print                CTRL D - SHPDRW
+CTRL M - Mouse
+                ------------------------------------------------
+
+CREDITS:
+        Seth Kaplan wrote the original CANVAS.BA in 1985 and I've heavily 
+modified it for PALETT and added MANY bells and whistles. James Yi's LCDSAV.CO 
+is what makes PALETT fun and I've made extensive use of other of his programs 
+and advice. Paul Globman has suggested some neat cursor routines. Any credit 
+goes to them. THANK YOU!
+        Send comments and problems to me at 73267,552. HAVE FUN!
+
+Randy Hess
+73267,552
+10/88
+Omaha, Ne.
+DAY: 800-228-3309
+HOME: 402-556-421
+
+/EX

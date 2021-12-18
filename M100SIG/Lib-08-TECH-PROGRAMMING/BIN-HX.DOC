@@ -1,0 +1,51 @@
+
+Jame Yi 73327,1653  11/13/87
+
+Bin-Hx.Ba is a utility program that lets you convert ML programs in Hex format 
+back into ML, or convert ML programs into hex format for Ascii file transfer.
+It also gives you option to load the hex into a different address.
+
+
+To convert hex file into a .Co file, press 'L'.
+
+Be sure you cleared the memory where you want to load the hex file into, with a
+CLEAR 200,address.
+
+You will get a 'Data Top? ' prompt.  This is for an area in the ML program
+ that is not a runnable code, but just data.
+  When relocating, as the program encounters a JMP code, it will give it a new 
+value to make it runnable in the new address, but if the JMP code is not really
+a code, but just plain numeric data, it shouldn't be changed, and specifying a 
+data field will protect the data.  If needed, it should be supplied by the prog
+rammer.
+
+If no data field is to be specified, just press ENTER for both 'Data Top?' and'
+Data End?'.
+
+
+When finished loading, enter the file name to save the ML code under.
+  If you enter blank, it wil not be saved.
+
+
+
+To convert a .CO file to hex, press 'S'.
+If you just enter for the 'CO file?' prompt, it is assumed that the ML program 
+is not in the file listing, but is in the memory somewhere, and asks you to spe
+cify the Top, End, and Exe addresses.
+
+
+
+Error messages:
+
+If you get an FF error, the file name you entered does not exist.
+
+EF error either means that the hex file is not in correct format for Bin-Hx, an
+d you have to use different converting program that is specifically for that he
+x file, or it means that the hex file is chopped off.
+
+OS error means that not enough variable space is cleared.  In that case, type C
+LEAR 200 and run it again.
+
+OM error means that there's not enough memory to create a hex file.
+
+

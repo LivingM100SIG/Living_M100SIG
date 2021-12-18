@@ -1,0 +1,42 @@
+FILL1.RLC is a compiled (using TCOMP) subroutine to fill a shape drawn with 
+Model 100/102 graphics.  It can be loaded into memory using RLCLDR.BA in DL7.  
+It should be loaded no higher than MAXRAM-1638-1 (or HIMEM-1638-1 if you want 
+to keep an existing file).
+ 
+To use the routine, do the following:  Draw the outline of the shape using PSET
+or LINE commands.  Make sure the shape is completely enclosed.  Locate a point 
+("seed point") in the middle of the shape with a PRESET(x,y).  CALL the 
+routine.  (Address will be the start address assigned in RLCLDR.)
+ 
+NOTES:
+    There is nothing to trap the fill from going off the edge of the screen.  
+If your seed point is outside your shape strange results may occur.  If your 
+seed point is ON the outline, the fill will occur both inside any out.  If you 
+are unsure of where your seed point is, you'd be best to draw a line around the
+screen: LINE(0,0)-(239,63),1,B
+    Most any shape should be filled correctly, but there is an upper limit to 
+shape complexity.  The routine will only work in 18 places at once.  Anything 
+beyond this will have areas unfilled.
+ 
+Example program: (Be sure to change line 30 to the address you started loading 
+at)
+ 
+5 LOADM"FILL1"
+10 CLS:LINE(16,16)-(47,47):LINE-(26,47):LINE-(21,30):LINE-(24,50)
+15 LINE-(21,50):LINE-(16,16)
+20 PRESET(22,32)
+30 CALL59000
+ 
+Paste the following into previous example for an example of an overly complex 
+shape:
+10 CLS:LINE(10,10)-(10,22):LINE(200,20)-(200,32)
+15 Y=10:PSET(10,Y):FORX=10TO200STEP20:LINE-(X,Y):LINE-(X+10,Y+10):NEXT
+17 Y=22:PSET(10,Y):FORX=10TO200STEP20:LINE-(X,Y):LINE-(X+10,Y+10):NEXT
+20 PRESET(11,12)
+ 
+    I'm hoping to write a shorter and probably faster routine, but that's 
+something for another time.
+ 
+Comments or questions to Neil Wick [71056,613].  Thanks to my brother, Dale, 
+who originally wrote the routine
+

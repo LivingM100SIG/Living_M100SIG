@@ -1,0 +1,88 @@
+               TRANSFERING FILES BETWEEN THE M100 AND THE IBM PC
+ 
+When I purchased my M100 a week ago, the RS salesman assured me that I could 
+easily transfer text files directly from the M100 to my IBM PC, provided I had 
+a serial port on the PC, a null modem and cable, and communications software 
+for the PC.  This turned out to be only partly true, but with much help from 
+folks on the SIGs, I can report three ways of accomplishing such transfers.
+ 
+First, hardware requirements.  You will need a serial port on your PC or clone; 
+it can be either COM1: or COM2:.  You can get a null modem for $29.95 from RS, 
+although I am told it is possible to use 70 cents' worth of wire and alligator 
+clips to provide the connection instead.  I leave that to hackers.  The cable 
+you will need should be a "standard 9-line EIA extension cable," with DB25 
+connectors on either end.  Since the PC's serial port is "male," and the M100's 
+is "female," the cable should be male on one end and female on the other.  You 
+should attach the null modem directly to the PC's serial port, then use the 
+cable to connect the null modem to the M100's RS232 port.
+ 
+ 
+                        COMMUNICATIONS SOFTWARE METHOD
+ 
+The simplest method of transfer is to use the communications software that you 
+already use on your PC, provided it has a "terminal" mode.  Unfortunately, I 
+have been using SmartCom, which does not have such a mode--it will only work 
+with a telephone connection.  Other programs, such as Crosstalk and PCTB 
+(available for downloading on PCS-131) do have such a mode.  I have tried this 
+using PCTB.  You must go to the "program defaults" screen <altF> to set the 
+baud rate, parity, data bits, and stop bits you want to use, and also the 
+communications port (COM1: or COM2:).  Since you are using a hard-wired 
+connection, there is no reason not to use 9600 baud.  A setting of 9600, even 
+parity, 7 data bits, and 1 stop bit corresponds to the M100's "stat" setting of 
+87E1E.  Your next step is to put the M100 in Telcom, set the "stat"s to 
+correspond with the communications parameters that you've set on the PC (see 
+page 86 of the manual for help with this), then enter "terminal" mode.  Back to 
+the PC, you need merely issue the command for "receive file" (<altR> or <PgDn> 
+in PCTB) and answer the prompt for file name; then back to the M100, issue 
+"upload" <F3>, and poof, it's done.  When the "up" symbol returns to regular 
+display, the transfer is complete.  You can then exit from PCTB (or similar 
+program) and view your file.
+ 
+ 
+                              USING DOS COMMANDS
+ 
+Various of my advisors seemed to think it was possible to use DOS commands to 
+effect a simple text file transfer from the M100 to the PC.  In the end, the 
+DOS solution seemed to work only in transferring *from* the PC to the M100.  
+The way to do this is:  first, you must initialize your com port with DOS's 
+MODE command.  Syntax is MODE [port][baud rate],[parity],[data bits],[stop 
+bits].  Usual would be:  MODE COM1:9600,E,7,1 (again, same as 87E1E on the 
+M100).  Set the M100 to download, then issue the DOS command:  COPY 
+filename.ext COM1: (or AUX).  I got pretty good transfers this way, though I 
+did tend to lose the final character from my files.  This procedure does not 
+work in the other direction; i.e., COPY COM1: filename.ext will give you an 
+error message.  Something to do with the timing, I am told.
+ 
+ 
+                             A SMALL BASIC PROGRAM
+ 
+Several folks offered me short, simple BASIC programs to effect the transfer 
+from the M100 without needing fancy communications software on the PC.  The 
+most workable solution--a five line program--came from Fred Foss (ppn 
+70107,1326).  This program is to run on the PC; the M100 works just fine in its 
+terminal mode.  Again, you will need to set the "stat"s to correspond with the 
+communications parameters sent to the PC's serial port in the first line of the 
+program; the sample below uses 1200 baud, equivalent to 57E1E on the M100.
+ 
+10 OPEN "COM1:1200,E,7,1,RS,CS,DS,CD" AS #1
+20 OPEN "FILENAME.EXT" FOR OUTPUT AS #2
+30 INPUT#1, A$
+40 PRINT#2, A$
+50 GOTO 30
+ 
+This program is a closed loop.  Run it from the PC, then issue the upload from 
+the M100.  When the transfer is complete (as indicated by the M100's "UP" 
+returning to normal display), you will need to issue <Ctrl-Break> on the PC to 
+break out of the loop.  You should then issue CLOSE <ret>, to be sure to 
+capture whatever might have been left in the buffer.  This program works just 
+fine; the output will be strangely formatted, rather like concrete poetry, but 
+it will all be there.  If you are handly with BASIC, you should be able to 
+substitute line 20 with a prompt for a variable filename.
+ 
+I hope this information is useful to others, who like me, use the M100 as an 
+auxiliary to a desk computer.  Please let me know if I have been unclear in 
+places; will be glad to try to help.
+ 
+Joan Friedman (75106,3014)
+ 
+ 

@@ -1,0 +1,375 @@
+STACK.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Machine language programmers are vitally concerned about the condition of
+the "stack", an area of memory used for temporary storage of register
+contents, return addresses for subroutines being called and the like.
+Someone had to ask it: Where is the stack?  And, though I'm not certain why
+that info has any value, here is the stack of messages which resulted.
+
+Message range: 153917 to 154301
+Dates: 8/2/87 to 8/7/87
+
+
+Sb: #M100 Stack
+Fm: David Sommer 73127,2630
+To: all
+
+Scanning through the RAM maps around, I didn't see any mention of where the
+M100 stack is located.  Does anyone know what range of RAM is allocated to the
+stack and what the nominal SPreg value should be ( e.g. SP value at a .CO file
+call)?
+
+
+Fm: Paul Papanek Stork 75515,1651
+To: David Sommer 73127,2630
+
+I don't know for sure, because I've never checked it out, but at the very top
+of memory, say FFF0 to FFFF, is an area that doesn't seem to I suspect that
+this is where the stack is kept, I'll run a little something and check and get
+back to you in a day or two. PAUL
+
+
+Fm: David Sommer 73127,2630
+To: Paul Papanek Stork 75515,1651
+
+I answered part of my own question with a little ML program I wrote up
+quick.  I used the two instructions:
+        lxi     HL,0    ;clear HLreg
+        dad     SP      ;add SP to HL
+to find out what is in the SPreg.
+Now this is probably trivial to some but a big break thru for me.  I
+was discouraged several months ago because I didn't see an 8085
+instruction that directly accesses the SP reg.  But today it came to
+me:  register pair instructions (like DAD) may do it!  So I checked
+the Intel manual--ought to work.
+So, I put in the following quick'n'dirty program to see if the idea
+would work:             org     $E000
+sp_0    dw      0
+sp_10   dw      0
+begin   lxi     HL,0
+        dad     SP
+        shld    sp_0
+        call    one
+        ret
+one     call    two
+        ret
+two     call    three
+        ret
+three   call    four
+        ret
+four    call    five
+        ret
+five    call    six
+        ret
+six     call    seven
+        ret
+seven   call    eight
+        ret
+eight   call    nine
+        ret
+nine    call    ten
+        ret
+ten     lxi     HL,0
+        dad     SP
+        shld    sp_10
+        ret
+        ent     begin
+        end
+If it works, "sp_0" (at E000) should have the origninal SPreg value
+and "sp_10" (at E002) should have the original value decreased by 20
+bytes.
+Well, it compiled and ran.  With a monitor, I checked those locations:
+
+E000: B1
+E001: D3        ==> address $D3B1
+E002: 9D
+E003: D3        ==> address $D39D.
+And they do differ by 20 bytes!
+Conclusion: the Stack pointer is at $D3B1 at the beginning of a
+program.
+Now if I could find out how much RAM is allocated to the stack (before
+overwriting other variables) I'd be happy.
+
+
+Fm: Phil Wheeler 71266,125
+To: David Sommer 73127,2630
+
+Don't use that info too quickly!  My guess is that the stack is in user RAM
+(the address you found is) and depends on a number of things; also that the
+allocation is not fixed, but is subject to general OM issue.  I do not think
+that it always starts at any value.  So D3B1 is what it was for your program,
+and it could be somethin differet for another case, or a run with other stuff
+on the menu, or with ORG changed, etc.
+
+
+Fm: Marlin Bially 74240,126
+To: David Sommer 73127,2630
+
+        The M100 monitor on cold restart sets the stack to $FCC0. I don't know
+how much room is available. By the way all RAM allocated for Mon. use is
+located between $F5F0-$FFFF.  Things like the HiRam setting,Directory,and
+telcom settings are all in their. Always look in there for this kind of stuff.
+If your really worried about it though you can set the stack any where you want
+by using LXI  SP,addr I always throw that in the front of all my M/L prgms.
+None of the monitor calls I've ever used care where the stack is. If you need
+more details let me know
+
+
+Fm: Phil Wheeler 71266,125
+To: Marlin Bially 74240,126
+
+If the stack starts there, it sure won't stay for long; that is the first
+address in the alternate LCD buffer -- used by TELCOM, and also used by some
+programs for run area (e.g., SORTHI.CO, TEXT.C& UC2MIX.CO, all available in
+Basic loader format in DL7).
+
+I'm still not convinced that the stack is above MAXRAM (F5F0h).  But it may go
+into the same place where the Basic variable are held (starts at FBB0, or
+thereabouts).  Hmmmm..could it be you meant that instead of FCC0?
+
+Also, I'm not sure why one needs to know where the stack is, in absolute memory
+terms!  Puzzling!
+
+
+Fm: Marlin Bially 74240,126
+To: Phil Wheeler 71266,125
+
+        I am also puzzeled.  I came up with $FCC0 by looking at a disassembly
+of the Mon. ROM.  First two iinstructions were  DI   :  LXI SP,$0FCC0H. Could
+be that's temporary until cold start is over. I'll have to look further.
+
+        The reason I like to know were my stack is is because the more I use it
+the bigger it gets. I have written several M/L prgms with multiple subrtns with
+in subrtns that use up as much as 117 bytes of stack. If you don't leave room
+for it it can eat up your program.  But like you I don't understand the need
+for an absolute value unless you are trying to interrupt the normal Mon. flow.
+If you knew the locations in stack for a certian call return you could
+substitute your own values and have the Mon. return into your prgm before cont.
+with it's own. It's tricky but I've seen it done for background tasking.
+
+        I'm going to see if I can find the "real" stack in my listing
+
+
+Fm: Tony Anderson 76703,4062
+To: Marlin Bially 74240,126
+
+There is a section on how the stack operates in the book "Inside the Model 100"
+by Carl Oppedahl.  He does not indicate where it is located, but does say the
+stack grows downwards in RAM. I'd suspect it's located below the normal
+variable storage area, under HIMEM.  If it were located in the Reserved RAM
+area, it could not possibly "grow downwards in RAM" without wiping out some of
+the reserved data, or running into your ML program.  Most likely it floats, and
+there is a pointer above MAXRAM that tells where it is.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Agree with you on the stack, Tony.  It likely does float, for the reasons you
+stated, and where you say -- below HIMEM.
+
+
+Fm: Tony Anderson 76703,4062
+To: Marlin Bially 74240,126
+
+Additional information...
+
+The 80C85 CPU chip has a register identified as the SP (Stack Pointer)
+register, which contains the floating address of the stack.
+
+There is an address in reserved RAM (64190 in M100, 62700 in T200) which is
+identified as holding the Stack Pointer after power off., and is described as
+"Holds stack pointer when power off occurs", and "Storage for stack pointer on
+power up/down for continued program execution after a power down".
+
+I would assume that means 64190-91 in LSB/MSB convention. (62700-01 in the
+T200).
+
+Also, $FB9D (64413 in the M100) is described as "Stack pointer value used by
+BASIC to reinitialize the stack. This memory pointer is updated after each
+instruction by the routine at $0804."
+
+
+Fm: Denny Thomas 76701,40
+To: Phil Wheeler 71266,125
+
+From a passage in "The 8085A Microprocessor" by Barry Brey:
+
+"The microprocessor does not know where the stack memory is located when power
+is first applied to the system; it must be told. This is normally accomplished
+by loading the SP (stack pointer) register with an address in the memory.
+(Loading the stack pointer at the beginning of a program is essential if any of
+the stack operations are used!) The programmer decides what portion of the
+read/write memory is to function as a stack and then loads the SP with the top
+location plus one. The stack pointer always points to the current exit point."
+
+In our case, the programmer is the M100 ROM.
+
+
+Fm: David Sommer 73127,2630
+To: Phil Wheeler 71266,125
+
+Thanks Phil.
+
+A stack changing around--something to keep in mind.  It would be nice to know
+what the rules are for predicting this behavior.  Maybe I'll check the stack
+pointer once in a while and see what it does. Boy, by the looks of this message
+"tree" this may have started something.
+
+
+Fm: David Sommer 73127,2630
+To: Marlin Bially 74240,126
+
+Thanks Marlin for the reply.  It looks like quite a message "tree" "sprouted"
+from this subject.
+
+P.S. You may be interested in reading my reply to Phil's message (to you)
+#154006.
+
+
+Fm: David Sommer 73127,2630
+To: Phil Wheeler 71266,125
+
+I first assumed that the stack would be above MAXRAM to avoid the constant
+moving around (of files) in unprotected RAM.  I figured a fixed amount was set
+aside up there somewhere (say 256 bytes or less).
+
+I can buy a stack below MAXRAM if the operation system keeps away from it
+during file maintainence.  But wait!: What about user routines between HIMEM &
+MAXRAM? If they get too close, won't they run the risk of being "bombed"? Oh, I
+am curious about where the stack is--not for knowing where--but, for being able
+to save it.  For multitasking, each process must have a separate stack savable
+between context switching.  [Can you guess what tricks I want my M100 to do?
+<grin>]
+
+
+Fm: Phil Wheeler 71266,125
+To: David Sommer 73127,2630
+
+David, I'm sure that if it is under MAXRAM, it's also below HIMEM.  So, just
+like files on the menu, it can move around dynamically (e.g., if you ooen a new
+text file from a BA pgm, everything on the menu moves as you add things to that
+open DO file).  Not a big deal to Microsoft!!
+
+
+Fm: David Sommer 73127,2630
+To: Phil Wheeler 71266,125
+
+I thought I'd do an experiment to see what the stack pointer is doing.  First, I
+needed to display the stack.  So I wrote the following ML routine to get the
+stack pointer value and print it on my printer:
+
+        org     62000
+PRINTR  equ     $6D3F   ;ROM print routine
+CR      equ     13      ;carrage return
+;
+Begin   lxi     HL,0
+        dad     SP      ;get SPreg
+        mov     A,H
+        call    PHexHi
+        mov     A,H
+        call    PHexLo
+        mov     A,L
+        call    PHexHi
+        mov     A,L
+        call    PHexLo
+        mvi     A,CR
+        call    PRINTR
+        ret
+;
+PHexHi  rrc
+        rrc
+        rrc
+        rrc
+PHexLo  ani     $0F
+        ori     '0'
+        cpi     '9'
+        jz      Pr_Out
+        jm      Pr_Out
+        adi     7
+Pr_Out  call    PRINTR
+        ret
+;
+        ent     Begin
+        end
+
+Then I ran it under various conditions of HIMEM, MAXFILES, from BASIC or menu, 
+FRE("") and etc.  I tried to make sure only one variable was changed at a time 
+between "samples".  The following table shows the results in the order taken:
+
+<data> <----------Conditions------------------------->  <---Analysis------>
+
+SPreg                                                   SPreg HIMEM-  SPreg
+sample HIMEM MAXFILES from: fre("")     other           (dec)  SPreg change
+====== ===== ======== ===== ======= ==================  ===== ====== ======
+$EB21  61000     2     menu                             60193    807
+$EA1D  61000     2    BASIC   256                       59933   1067   -260
+$EB28  61000     1    BASIC   256                       60200    800    267
+$EC2C  61000     1     menu                             60460    540    260
+$EB28  61000     1    BASIC   256                       60200    800   -260
+$EC28  61000     1    BASIC     0                       60456    544    256
+$D4BC  55000     1     menu                             54460    540   5996
+$D3B8  55000     1    BASIC   256                       54200    800   -260
+$D2AD  55000     2    BASIC   256                       53933   1067   -267
+$D3B1  55000     2     menu                             54193    807    260
+$D2AD  55000     2    BASIC   256                       54933     67   -740
+$D3B8  55000     1    BASIC   256                       54200    800   -733
+$D4BC  55000     1     menu                             54460    540    260
+$D3B8  55000     1    BASIC   256                       54200    800   -260
+$D4B8  55000     1    BASIC     0                       54456    544    256
+$D4BC  55000     1     menu                             54460    540      4
+$D3B8  55000     1    BASIC   256                       54200    800   -260
+$D3B8  55000     1    BASIC   256  LET A=3.14           54200    800      0
+$D4BC  55000     1     menu                             54460    540    260
+$D4BC  55000     1     menu        power down/up first  54460    540      0
+
+The "Analysis" columns convert the HEX Stack Pointer to decimal, then subtract
+this from HIMEM to see how much stuff is in between.  The change column is the
+bytes change in the stack pointer since previous sample.
+
+It looks to me like the stack is placed below HIMEM consistantly.  The BASIC
+string space and the I/O buffers (MAXFILES) seem to be the only thing bewteen
+the stack and HIMEM.  Allocating a BASIC number variable (a=3.14) didn't seem
+to change the stack so I guess they are much lower in unused RAM than the stack
+(probably right above the files). Probably the amount of RAM available to the
+stack is the unused RAM below strings&buffers and above the files&BASIC
+variables (alot in many cases).  So get too big of stack and BASIC variable
+"bomb" then CO files, DO files and BA files, etc.  "Pop" too much off the stack
+and get string data and I/O buffer garbage, etc.
+
+Well, for what it's worth, there's my two cents.  What'ya think?  [If you got
+this far, it must be ok].  I'll leave it to you "gurus" out there to go any
+further.
+
+
+Fm: David Sommer 73127,2630
+To: Marlin Bially 74240,126
+
+You may also be interested in messages #154249, #154250, and #154251.  This is
+a long message I left for Phil (split into 3 parts) concerning an experiment I
+did on the stack.
+
+
+Fm: Phil Wheeler 71266,125
+To: David Sommer 73127,2630
+
+Good bit of sleuthing, David.  This all will make a very nice thread for me to
+post this weekend.  Ummmm... does anyone have any closing comments on this one?
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Is it _REALLY_ important to know where the stack is located???
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Well, doubt if it's even really important (vs. REALLY!).  But then, there are
+lots of little tidbits stashed away that become useful in the future to
+someone.  Who knows?  Someone must want to know, 'cuz the question was asked
+somewhere up the line.

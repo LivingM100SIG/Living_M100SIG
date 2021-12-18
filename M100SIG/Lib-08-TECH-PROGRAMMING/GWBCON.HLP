@@ -1,0 +1,42 @@
+0 ' GWBCON.HLP     GWBASIC CONVERSION HELPER
+1 '
+2 ' Copyright 1990 Tony B. Anderson, All Rights Reserved
+3 '
+4 ' This program will search through an ascii text file version of a Model 100
+5 ' BASIC program, and will print a list of lines which may need to be adjusted
+6 ' or reworked in order to work under GW-BASIC. List output is to the printer.
+7 ' Use a program like EXPAND.100 in Library 8 to add spaces between keywords
+8 ' in your conversion process.
+9 '
+10 ' Note that there may be some false reports, since some keywords may appear
+11 ' in the list, which are actually part of other keywords. ERR, INP, and OUT,
+12 ' are examples, which are also part of other keywords, such as ERROR, INPUT,
+13 ' LINEINPUT, or OUTPUT.  As an example: if a line contains the keyword
+14 ' ERROR, it will be reported as having both ERR and ERROR.  A line which
+15 ' contains the keyword LINEINPUT will be reported as having both LINE and
+16 ' INP in it.
+17 '
+18 ' After the possible problem list is printed, use it as a guide to the lines
+19 ' that need to be reviewed, and possibly reworked, in order to convert the
+20 ' program to GW-BASIC.
+21 '
+100 DATACALL,CLEAR,COM,CSRLIN,DAY$,ERR,ERROR,FILES,HIMEM,INP,KEY,LINE,MAXFILES
+101 DATAMAXRAM,MDM,MENU,MOTOR,OPEN,OUT,PEEK,POKE,POS,PRESET,PRINT#,PRINT@,PSET,SOUND
+105 MAXFILES=1:CLEAR500:F=1:L=0:CLS
+110 PRINT@45,"ASCII File Search for GW-BASIC          conversion problem keywords.":PRINT
+115 LINEINPUT" Name of file to search: ";F$:IFF$=""THENMENU
+120 FORA=1TOLEN(F$):IFASC(MID$(F$,A,1))>64THENMID$(F$,A,1)=CHR$(ASC(MID$(F$,A,1))AND223)
+125 NEXT:IFINSTR(F$,".DO")THEN130ELSEF$=F$+".DO"
+130 PRINT@160,CHR$(27)"J Working..."
+135 LPRINT"GWBASIC Conversion Helper from Tony Anderson"TAB(60)"FILE: "F$
+140 LPRINTSTRING$(75,"="):LPRINT
+145 OPENF$FORINPUTAS1
+150 IFEOF(1)THEN185
+155 IFLTHENL=0:LPRINT
+160 A$="":LINEINPUT#1,A$
+165 P=INSTR(1,A$," "):B$=LEFT$(A$,P)
+170 RESTORE:FORA=1TO27:READX$
+175 IFINSTR(A$,X$)THENLPRINT"Line # "B$"contains keyword: "X$:F=0:L=1
+180 NEXT:GOTO150
+185 IFFTHENLPRINT"No problem keywords in file"
+190 LPRINTCHR$(12):MENU

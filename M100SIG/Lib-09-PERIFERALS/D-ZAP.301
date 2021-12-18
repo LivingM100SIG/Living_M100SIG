@@ -1,0 +1,96 @@
+0 DATA 22,8,229,205,107,227,62,9,231,225,205,78,227,205,184,75,21,122,200,195
+1 DATA 58,227,14,16,126,205,91,227,35,13,121,200,195,80,227,254,32,218,103,227
+2 DATA 254,127,202,103,227,231,201,62,46,231,201,14,16,126,205,123,227,62,32
+3 DATA 231,35,13,121,200,195,109,227,71,15,15,15,15,205,138,227,231,120,205
+4 DATA 138,227,231,201,246,240,238,240,198,48,254,58,216,198,7,201,-1
+5 CLEAR 256,58168:O=HIMEM:SCREEN1,0:WIDTH80:CLS
+6 READ D:IFD>1THENPOKEO,D:O=O+1:GOTO6ELSECLEAR 1024
+7 M(0)=58168'Display 128 bytes in HEX and ASCII. usage: CALL M(0),,Address
+8 M(1)=58203'Display one byte in ASCII.		 usage: CALL M(1),Byte
+9 M(2)=58235'Display one byte in HEX.		 usage: CALL M(2),Byte
+10 T=20:S=16:D=0:EF=1:ONERRORGOTO670
+11 POKE 63056,64:PRINTCHR$(27)"Q";
+12 PRINT@1920,"F8 - Exits";
+40 GOSUB500
+50 ONERRORGOTO0:ONERRORGOTO640
+60 IFEFTHENGOSUB760
+70 EF=0:GOTO200ELEGOTO200
+90 END' This program is written by Camz (C. Arthur Martin Zimmerman). Feel free         to 'distribute' this file, JUST LEAVE THESE LINES IN! If you think that         the program is worth it, then you could send me $10.00 for my effort
+95'     and to support me in University. If you find any bugs, or want to make          any suggestions for improvements, send them to me!
+96'     CIS:72757,3076   iNet 2000/Envoy 100:M.ZIMMERMAN                                My address is:
+97'                        36 Midglen Road SE
+98'                        Calrgary, Alberta
+99'                        CANADA    T2X 1H2
+100 PRINT@0,"The Disk-Zapper!      /_    /_     Written by:Camz. 1987"
+110 PRINT"                        |    /                       _____"
+120 PRINT"Track :";:CALLM(2),T:PRINT"               |   / __  _   _     _            /      _    _"
+130 PRINT"Sector:";:CALLM(2),S:PRINT"               |  / |_  |_| |_  | | | |\ |     /_     / \    |"
+140 PRINTUSING"Disk  :#";D;:PRINT"                | /  |__ |\____| | |_| | \|       )   (   )   |"
+150 PRINT"                        |/                           ____/  o  \_/   _|_"
+160 PRINT:CALLM(0),,A(0):CALLM(0),,A(1):RETURN
+170 PRINTCHR$(27)"p";:GOSUB180:PRINTCHR$(27)"q":RETURN
+180 PRINT@560+(O*3)MOD48+80*(O\16),;:CALLM(2),OO:PRINT@616+OMOD16+80*(O\16),;:CALLM(1),OO:RETURN
+190 AD=(A(0)+OMOD128)*-(O<128)+(A(1)+OMOD128)*-(O>127):OO=PEEK(AD):RETURN
+200 GOSUB190:GOSUB170
+210 I$=INKEY$:IFI$=""THEN210
+215 IFI$=CHR$(255)THENPOKE 63056,0:CLS:END
+220 GOSUB180
+230 IFI$=CHR$(29)THENO=O-1:IFO=-1THENO=255
+240 IFI$=CHR$(28)THENO=(O+1)MOD256ELSEIFI$=CHR$(30)THENO=O-16:IFO<0THENO=256+O
+250 IFI$=CHR$(31)THEN O=(O+16)MOD256ELSEIFI$="_"THENT=T-1:IFT=-1THENT=39:GOSUB500ELSEGOSUB500
+260 IFI$="-"THENS=S-1:IFS=0THENS=18:T=T-1:IFT=-1THENT=39
+270 IFI$="+"THENT=(T+1)MOD40:GOSUB500ELSEIFI$="="THENS=S+1:IFS=19THENS=1:T=(T+1)MOD40
+280 IFI$="-"ORI$="="THENGOSUB500
+290 IFI$="t"THENGOSUB170:GOSUB520
+300 IFI$="h"THENGOSUB590
+310 IFI$="r"THENGOSUB600:GOSUB500
+320 IFI$="w"THENGOSUB600:GOSUB620:GOSUB510
+330 IFI$="d"THENGOSUB690
+340 IFI$="b"THENGOSUB720
+350 IFI$=" "THENGOSUB760
+490 GOTO 200
+500 D$(0)=DSKI$(D,T,S,0):D$(1)=DSKI$(D,T,S,1):GOSUB505:GOTO100
+505 A=VARPTR(D$(0))+1:A(0)=PEEK(A)+256*PEEK(A+1):A=VARPTR(D$(1))+1:A(1)=PEEK(A)+256*PEEK(A+1):RETURN
+510 DSKO$ D,T,S,0,D$(0):DSKO$ D,T,S,1,D$(1):RETURN
+520 I$=INKEY$:IFI$=""THEN520ELSEIFI$=CHR$(13)THENRETURN
+530 GOSUB190:POKEAD,ASC(I$):GOSUB190:GOSUB180:O=(O+1)MOD256:GOSUB190:GOSUB170:GOTO 520
+540 PRINTCHR$(27)"P__"CHR$(8)CHR$(8);:B=0
+550 GOSUB560:B=B+16*I:CALLM(2),B:PRINTCHR$(8)"_"CHR$(8);:GOSUB560:B=B+I:PRINTCHR$(8);:CALLM(2),B:PRINTCHR$(27)"Q";:GOTO505
+560 I$=INKEY$:IFI$=""THEN560ELSEI=INSTR("0123456789ABCDEFabcdef",I$):IFI=0THENBEEP:GOTO560
+570 IF I>16THENI=I-6
+580 I=I-1:RETURN
+590 PRINT@560+(O*3)MOD48+80*(O\16),;:GOSUB540:POKEAD,B:GOTO180
+600 PRINT@167,;:GOSUB540:IFB>39THENBEEP:GOTO600ELSET=B
+610 PRINT@247,;:GOSUB540:IFB>18ORB<1THENBEEP:GOTO610ELSES=B:RETURN
+620 PRINT@400,"Correct? ";:J$=INPUT$(1):PRINTJ$;:PRINT@400,SPACE$(10);
+630 IFJ$<>"y"ANDJ$<>"Y"THENGOSUB600:GOTO620ELSERETURN
+640 IF ERR=18ANDERL=500THENM$="Bad Sector Unable to read."
+645 IF ERR=60 THEN M$="Drive not ready.":D=ABS(D-1)
+650 IF ERR=18ANDERL=510THENM$="Bad Sector Unable to write."
+660 PRINT@1920,M$"  Press any key to continue. ";:J$=INPUT$(1):PRINT@1920,"F8 - Exits";SPACE$(LEN(M$)+19);:GOSUB100:RESUME50
+670 IFERR=18THEN PRINT@0,"Please insert Disk in drive 0"
+680 RESUME40
+690 PRINT@327,"_"CHR$(8);
+700 I$=INPUT$(1):PRINTI$;:IFI$<"0"ORI$>"1"THENBEEP:GOTO690
+710 D=VAL(I$):GOSUB500:RETURN
+720 PRINT@400,"Blank.  You Sure? ";
+730 J$=INPUT$(1):PRINTJ$;:PRINT@400,SPACE$(19);
+740 IFJ$<>"y"ANDI$<>"Y"THENRETURN
+750 D$(0)=STRING$(128,0):D$(1)=D$(0):GOSUB505:GOSUB100:RETURN
+760 PRINT@560,"----------------------The Disk-Zapper Help Screen-----------------------"
+770 PRINT"-+--------------------------------------------------------------------+-"
+780 PRINT"-|                 All commands are in LOWER CASE!!                   |-"
+790 PRINT"-|                                                                    |-"
+800 PRINT"-| h - HEX Input mode.  Enter a valid hex byte.                       |-"
+810 PRINT"-| t - TEXT Input mode. Enter text, exit by hitting <ENTER>           |-"
+820 PRINT"-| r - READ Sector.  You will be prompted for Track and Sector Info.  |-"
+830 PRINT"-| w - WRITE Sector.  You will be prompted for Track and Sector Info. |-"
+840 PRINT"-|     Then you will be asked if the info. is correct.                |-"
+850 PRINT"-| b - BLANK Buffer.  Fills buffer with zeros.  You will be asked     |-"
+860 PRINT"-|     'Are you Sure?' before it actually does.                       |-"
+870 PRINT"-|                                                                    |-"
+880 PRINT"-| Cursor keys move you in the buffer.  The +- keys move forward or   |-"
+890 PRINT"-| back one sector.  When shifted the increment is an entire track.   |-"
+900 PRINT"-+--------------------------------------------------------------------+-"
+910 PRINT"----------------<SPACE> - Help  Press Any Key to continue---------------"
+920 J$=INKEY$:IFJ$=""THEN920ELSEGOSUB100:RETURN

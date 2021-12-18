@@ -1,0 +1,83 @@
+
+            STOCK REPORT
+    (C) D&R ROWLAND - 72277,1433
+
+The programs, STOCKS.100 and STOCKS.NEC, are a fairly simple and 
+straightforward means of keeping a record of past and current performance of a 
+group of stocks, complete with a graphical representation of past performance. 
+They don't call up Compuserve to download the information; you have to do the 
+updating yourself.  They can account for dividend changes and stock splits, and
+compute individual stock and total dividend returns, as well as chart changes 
+in total holdings.
+
+The programs are set up to work with a sample stock file called STOCKS.XMP.  
+Save the STOCKS.XMP file as "STKFL.DO".  Then simply RUN "STOCKS" and enter the
+data as it is requested.  Make up stock prices for each example as you go 
+along.  If the stock price is unchanged from the prior quote, just hit "ENTER",
+and the same value is used.  After viewing the updated graph, hit ENTER again 
+to move on to the next stock.  If you enter a price greater or less than the 
+range on the graph, it will not plot, but the data is saved for the next time 
+the program is run.  Affirmative responses can be made with a simple "ENTER" or
+with "Y" or "y" followed with an "ENTER".  After the "ASSET TOTAL" page is run,
+"STKFL" is updated, and the computer returns to the main menu.
+
+One minor peculiarity occurs when it comes to the page "CASH RESERVES".  The 
+data has to be entered as decimal thousands; i.e. $12500 is typed in as "12.5",
+in effect entering the number of thousands, or "G's", not the actual value. (
+You see, us big money boys only think in thousands; the rest is small change.) 
+<GRIN>
+
+To customize the program for your own use, break the program and enter "EDIT 
+2000- .  Then delete data lines 2010 to 2070 and enter your own stocks, one to 
+a data line in the form...
+
+DATA "American Teepee & Igloe Co."(Limit 39 chars),150(No. of shares), 0.50 (
+Yearly Dividend)
+
+There is no limit to the number of companies, but if you have a great many 
+lines, it may be necessary to put a "CLEAR" statement at the beginning of line 
+10 (line 1000 on the NEC);  Try "CLEAR 500" for starters, if an error statement
+interrupts operation.  It is now set up to hold 20 sets of quotes for each 
+stock; to increase this, change the value of D() in the DIM statement on line 
+240 for the 100, and line 1180 for the NEC version.
+
+Once all are in, count the total no. of data statements, including the two on 
+lines 2500 and 2510, setting the value of "Q" on line 20 in STOCKS.100, line 
+1010 in STOCKS. NEC, equal to this number.
+
+Now, "RUN" the program.  No graphs are drawn the first time the program runs, 
+so this time through it is a bit dull, but persevere, it gets better with each 
+run.
+
+
+To make changes in the stock listings, simply edit the appropriate data 
+statement.  This can handle name, dividend changes and stock splits with no 
+problem.  Additional stock purchases or partial sales can also be handled, but 
+the historical data is corrupted to some degree, depending on the extent of the
+change.  New holdings, and sales of all shares of a company requires that you 
+either kill "STKFL" and start over, or go through an arduous job of modifying 
+STKFL, deleting from the file all entries for the particular stock, or entering
+zeros in the slot where the new entry will go.  Not worth the work, believe me.
+  When you start STKFL over again with a changed list, don't forget to modify 
+line 20 (1010 for NEC) as needed.
+
+I do not know if STOCKS.100 will run as it stands on 102s, Ollys or 200s, as 
+they have a somewhat different ROM.
+To use the program on these machines, try running the following program:
+
+5 CLS
+10 FORN=1TO32000
+15 IFCHR$(PEEK(N))+CHR$(PEEK(N+1))+CHR$(PEEK(N+2))="Jan"THENPRINTN:STOP
+30 NEXT
+
+The value that is printed out, if one shwos up, should be the proper PEEK value
+in line 200.  I do not know if the DATE$ is formatted the same way as on the 
+100, however, so it may still give you gibberish.  But not harmful gibberish, 
+however.  Should anyone try this, let me know how you make out.
+
+STOCKS.NEC works the same as the 100 version, except for the following:
+
+1. You enter your own date, when requested.
+2. You have an option allowing you to review the data without making entries.
+
+

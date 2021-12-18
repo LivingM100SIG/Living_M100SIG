@@ -1,0 +1,155 @@
+NOMAD
+
+An Full Screen LCD Editor For Model 100/102 BASIC
+
+Copyright 1989 Howard Sprow CIS:73625,365
+
+
+
+
+NOMAD.CO is a machine language enhancement to the M100/102 BASIC interpreter 
+which allows you to move anywhere on the LCD screen to adjust a previous 
+command and re-enter it. The lack of this feature has long been a frustration 
+to M100/102 users. You mistype a long command. It's there just above your 
+cursor but you can't move up to correct it so you have to retype the whole 
+command.
+
+With NOMAD, just press F6 to move the cursor up on the screen to correct 
+and re-enter the command. For a quick change to a program line, LIST the 
+line and use NOMAD to make corrections without waiting for the BASIC edit 
+mode to load.
+
+
+NOMAD FILES
+
+The program consists of the following files:
+
+    NOMAD.LDR - BASIC loader program which creates NOMAD.CO. Store in 
+your M100/102 as NMDLDR.BA.
+
+    NOMAD.BA - BASIC starter program to initialize NOMAD
+
+    NOMAD.SRC - assembly language source code for NOMAD.CO. This will 
+be of interest to ML programmers but is not necessary to run NOMAD. NOMAD 
+was assembled with the Custom Software Assembler.
+
+    NOMAD.DOC - this documentation file
+
+
+INSTALLING THE PROGRAM
+
+Run NMDLDR.BA (NOMAD.LDR) from BASIC to create NOMAD.CO and place it on 
+the main menu. Then, run NOMAD.BA. This loads a copy of NOMAD.CO into 
+high memory at address 62400 and define the F6 key as CALL62400+[ENTER]. 
+F6 is then used to activate NOMAD from BASIC with only one key stroke. 
+You can enter BASIC each time by running NOMAD.BA but this is not absolutely 
+necessary if you always leave a copy of NOMAD.CO at 62400. As long as 
+HIMEM is not reset from 62400 (i.e., with a CLEAR command from the BASIC 
+command line or from within a program) NOMAD will remain in high memory.
+
+NOMAD.BA does not simply clear memory and load NOMAD.CO each time it is 
+run. If HIMEM is already set at 62400, NOMAD.BA verifies that the NOMAD.CO 
+code is present starting at 62400. If it is, NOMAD.CO is not reloaded 
+from its menu position. This allows you to leave NOMAD in high memory 
+at 62400 and remove it from the main menu to free up additional RAM.
+
+
+USING NOMAD
+
+With NOMAD loaded at 62400, whenever you need to edit a previous command 
+which is still visible on the LCD screen, simply press F6. The NOMAD name 
+will be displayed on the bottom line and the cursor will be positioned 
+in the upper left corner. Use the cursor keys to move anywhere on the 
+screen.
+
+NOMAD provides a simple screen editor. Insert mode is always active. The 
+DEL/BKSP key is used to remove characters just as in TEXT. No word wrap 
+is provided.
+
+Once you have adjusted the line so it is ready for entry, there are two 
+rules which must be followed.
+
+1)Place the cursor anywhere on the first screen line of the entry.
+
+2)Press ENTER once and the cursor will jump to what NOMAD thinks is the 
+end of the entry. NOMAD identifies the end by looking for the first two 
+adjacent blank spaces. If this is the correct ending position, press ENTER 
+a second time and the entry will be processed and the M100 will return 
+to normal BASIC. If this is not the intended end, move the cursor left 
+or right so that it is one position to the right of the last character 
+and then press ENTER a second time.
+
+Most direct BASIC commands will have no internal double spaces, so a quick 
+double press of the ENTER key will accept the entry. Program lines often 
+will contain double spaces, so check the end position before pressing 
+ENTER the second time.
+
+After the first press of ENTER, you are in NOMAD's "enter mode". Pressing 
+ESC once aborts this enter mode and moves the cursor to the upper left 
+of the screen. At this point, NOMAD is still active in the "edit mode". 
+Pressing ESC again will deactivate NOMAD and return you to normal BASIC.
+
+
+EDITING PROGRAM LINES
+
+With NOMAD you are not limited to changing and re-entering only BASIC 
+commands. NOMAD is also a quick way to fix program lines without going 
+into the BASIC editor. Just LIST the appropriate line, activate NOMAD 
+with F6 and make your changes. Press ENTER twice as described above to 
+accept the revised line.
+
+
+USING ANOTHER FUNCTION KEY TO ACTIVATE NOMAD
+
+NOMAD has been set up to be activated with F6. To use another function 
+key, change the value of the variable, FK, in line 3 of NOMAD.BA from 
+"6" to another function key number. Then, save a copy of your modified 
+version of NOMAD.BA on disk or tape.
+
+
+COMPATIBILITY WITH OTHER ML PROGRAMS
+
+NOMAD was designed as a standard machine language program which is stored 
+in a normal low memory, "menu" position and is run from a high memory 
+location. It is started with a standard CALL command and does not use 
+any RAM hooks. This approach permits the greatest compatibility with other 
+ML utility and DOS programs many of which use RAM hooks and/or a low memory 
+operating position.
+
+If you use another machine language program which must run from the top 
+RAM position, you can reactivate NOMAD each time by running NOMAD.BA or 
+you can relocate NOMAD.CO to a lower operating RAM position under your 
+other ML program.
+
+One of the ML program relocators, such as RELOC.BA in Library 8, is a 
+simple way to move NOMAD to a another operating position. NOMAD requires 
+at least 541 bytes and does not include any data tables. It does use two 
+RAM positions for temporary data storage but these are included as part 
+of the program code, within the 541 byte requirement.
+
+If you relocate the machine language portion of NOMAD, you must change 
+the NOMAD.BA program to show the new start address. Do this by changing 
+the value of the variable, TP, in line 1 and save a copy to disk or tape.
+
+Using the standard CALL command to activating NOMAD as compared to using 
+RAM hooks has one disadvantage but it insures compatibility with other 
+ML programs which use RAM hooks, specifically the various DOS programs. 
+If you press F6 to activate NOMAD with the cursor on the bottom screen 
+line, the screen will scroll up one line, thereby losing any characters 
+on the top line. Keep this in mind when you edit.
+
+
+MISC.
+
+With only one exception, NOMAD can accept all types of entries from the 
+LCD in the same format as would be used from the normal BASIC command 
+input line. When setting the system variables, TIME$, DATE$, DAY$, when 
+in NOMAD you must include a double quote at the end of the string or the 
+entry will result in a "?SN" error. Even though a closing quote is proper 
+syntax, entering these variables without it does not generate this error 
+in normal BASIC.
+
+Once F6 has been defined as CALL 62400+[ENTER], NOMAD does not automatically 
+deactivate this definition when you leave BASIC. Therefore, it is important 
+ that you remember not to press F6 if NOMAD has been removed from high 
+memory or a cold start could result.

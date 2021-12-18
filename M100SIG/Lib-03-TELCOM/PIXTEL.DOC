@@ -1,0 +1,69 @@
+
+
+	------------------------
+	Documentation for PIXTEL
+	------------------------
+
+   Now the M100 has a terminal program that displays CompuServe's radar maps, 
+CB pictures, and FBI Ten-Most-Wanted posters, live, on-line.   It's free in the
+M100 SIG.  It's PIXTEL.
+   The program piggy-backs on TELCOM, the M100's built-in telecommunications 
+program.
+   PIXTEL behaves just like TELCOM, allowing auto log-on and uploading and 
+downloading.  But it also looks to CompuServe's computers like a VIDTEX program
+with high and medium resolution graphics capabilities and cursor control.   So 
+CompuServe sends the graphics without the annoying "Your terminal won't handle 
+this" messages.  The images are displayed on the screen as they come in, and 
+may be simultaneously saved in a file for later printing or re-display.
+   Since you don't have to download the data and then display it with a special
+display program, you don't need a lot of storage.  PIXTEL takes up less than 
+400 bytes.
+   PIXTEL.CO is loaded into your M100 when you run PIXTEL.BA, a BASIC program, 
+and PIXTEL.BA is the program you should download from this SIG.  After 
+PIXTEL.BA has been run once, you don't need it any more as long as PIXTEL.CO 
+remains in memory.
+   When PIXTEL receives a high-resolution or medium-resolution graphic, the 
+display scrolls up from the bottom of the screen, a line at a time.  The effect
+is kind of like a photograph being pulled slowly under a window the size of 
+your M100 screen.  Use control-S to pause, and control-Q to resume.
+   If you are technically-minded and want to know more about how it works, you 
+might want to check out the file PIXTEL.ASM, the assembly source for PIXTEL.CO.
+
+
+   If you want to look at a file containing encoded graphics that has
+already been downloaded, use this BASIC routine:
+
+  10 CLEAR 256,62560:LOADM "PIXTEL.CO":POKE 62579,201:CALL 62560:REM Hello
+  20 INPUT "File to display";FI$
+  30 OPEN FI$ FOR INPUT AS 1
+  40 C$=INPUT$(1,1):PRINT C$;
+  50 IF NOT EOF(1) GOTO 40
+  60 POKE 64200,255:REM Goodbye PIXTEL!
+
+   PIXTEL will lurk in BASIC until you POKE it goodbye, or until you go to the
+menu.  It doesn't interfere with BASIC, but it doesn't work with TEXT, so it's
+a good idea to POKE it goodbye until you need it again if you use it from
+within a BASIC program.
+
+--------
+Trouble?
+--------
+   If you try to run PIXTEL.CO after running another program, and the screen 
+clears, the computer beeps, and the menu returns, don't fret.  That happens if
+the space where PIXTEL.CO normally runs has been reclaimed.  Got into BASIC, 
+enter CLEAR 256,62560, and try running PIXTEL.CO again from the menu and it 
+should work.
+   PIXTEL usually can keep up at 300 baud, but if you get images that are 
+skewed or scrambled, make sure XON-XOFF protocol is enabled.  That causes 
+CompuServe to wait for your M100 when it gets behind.  Enable XON-XOFF protocol
+by setting STAT:xxxxE, where the x's are replaced by appropriate letters and 
+numbers.  For example, STAT:M7I1E works fine, as does STAT:M8N1E.  This is set 
+once at the first prompt in TELCOM or PIXTEL.
+   PIXTEL was developed on a bare 24K M100, so I don't know whether it runs on 
+any modified hardware or with other software.  It hooks into TELCOM through the
+screen output hook, and preserves any existing hook, so just maybe it can co-
+exist with the rest of the world.  I would like to hear from users if it does 
+and if it doesn't.
+   Wally Hubbard, 70346,1716
+
+

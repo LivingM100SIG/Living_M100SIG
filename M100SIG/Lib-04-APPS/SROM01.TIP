@@ -1,0 +1,179 @@
+
+
+
+I am finding the SuperRom manuals very hard to follow.  I understand other 
+people are having the same experience. At Al Goldman's suggestion, in hopes of 
+saving other people some time and frustration, here are my notes on the Lucid 
+and Lucid Database manuals to date.
+
+(NOTE: this does NOT include anything about the Report Specifier Blocks, so if 
+you're looking for information about that, it's not here.)
+
+I'm preparing a simpler description of Lucid's +TBL function than found in the 
+Lucid manual, and hope to upload that soon.
+
+GATHER TOGETHER ALL THE UPDATES:
+====== ======== === === =======
+Before trying to understand  the material, or going through the tutorials, 
+browse through all the manuals, quick reference sheets, etc. to get an overall 
+idea of what information is where. Make special note of UPDATES.  I found it 
+helpful to make a list of topics covered in the updates, keeping it handy while
+working with the manuals.  If something doesn't work as expected, check what 
+you've done AND refer to your list of updates.
+
+This is especially important if you have the 1984 version of the Lucid manual 
+and the 1986 version of the Superrom manual.  (The copyright date is on the 
+first page).  The way the manuals are written, it makes more sense to go 
+through most of the Lucid manual before going on to Lucid Database.  The 
+version of Lucid on Superrom, however, is different than that described in the 
+1984 manual.  
+
+Here's a list of topics and updatesto the Lucid manual that's accurate for the 
+SUPEROM package I got in July, 1986 (version 1.8 of Superrom, 1986 Superrom 
+manual, 1984 Lucid manual): 
+
+  topic             updates
+  -----             -------
+cursor movement     S3-3, S3-4
+find                S3-4, S3-9
+sort                S3-4, S3-10 to 20
+accessing Text      S3-5
+cut and paste       S3-6, S3-7
+global formatting   S3-7a,S3-7b
+sort                v.1.8 update(a single sheet of paper in the front pocket of
+the SROM manual.)
+
+
+AMBIGUITIES IN LUCID DATABASE MANUAL.
+=========== == ===== ======== ======
+
+Database tutorial:Page D 1-3 - A Simple Mailing List
+
+When creating the view screen, enter blank spaces by using the space bar only! 
+DO NOT USE TAB!!  (If TAB is used, it will count as only one space in the entry
+screen, and you'll wonder what's wrong.)
+
+
+Database tutorial: Page D2-3  Tutorial - An Easier Mailing List.
+
+The "CODE-O" referred to in the manual is actually CODE-0 (the numeral zero, 
+not the letter "capital-O").  The symbol that you get when holding down code, 
+pressing 0, and releasing both together looks like the top of a Greek column.  
+Look on pg. 214 of your model 100 manual at the symbol shown for decimal 175 to
+see what it should look like.
+
+
+SOME ELUCIDATIONS OF THE LUCID MANUAL:
+==== ============ == ================
+
+These are attempts to clarify some of the incorrect and more confusing sections
+of the Lucid manual. 
+
+FORMATTING CELLS:
+---------- -----
+Read the section in the Lucid manual on formatting (pp.19-29), but ignore the 
+references to "select range of A1:DV254" or"A1:DV253" in making global format 
+changes for present and future entries.  The information is wrong for the 
+Superrom version of Lucid.  User-accessible cells only go down as far as #250 
+in this version.
+
+To change the display format of ALL present entries, specify range as A1:DV249.
+  Here are the specific steps:
+
+1.  Press F7(Sel)
+2.  Screen will show "Range C#:C#"[column letter, row number:column letter, row
+number]
+3.  Hit F1 (Edit) (this allows you to edit the range specification)
+4.  Hit <del/bksp> key five times to erase "C#:C#"
+5.  Type in A1:DV249
+6.  Hit <ENTER>
+7.  Function key labels will show what you can do with these cells:
+     Disp: selects display options
+     Wdth: selects width options (4-35)
+     Ptct: entries can't be edited or typed into
+     Unpt: allows input into protected cells
+     Copy, cut: as in text
+8.  Hitting F1 (Disp) allows you to select how numbers entered are formatted(
+pp. 25-26, ignoring list on top of p.25, which is incorrect) 
+
+NOTE that changing the display format by specifying Range A1:DV249 will affect 
+ONLY already-existing entries.  It will NOT affect FUTURE entries.
+
+
+
+To set the format of FUTURE entries in AN ENTIRE COLUMN, go to cell 250 of that
+column as described in the manual.  Make a "dummy entry," e.g., 0. (The number,
+not the letter.) It will show as 0.00 .  THEN choose your display format: (this
+is described on pp. S3-7a, S3-7b of the Superrom manual)
+
+1.  Press F7(select).
+2.  Screen will show Range [column letter]250:[column letter]250
+3.  Press <ENTER>.
+4.  Screen will show labels as on p.22 of the Lucid manual.  Hit F1 (Disp)
+5.  Follow instructions on pp. 25, 26 (ignoring the list on the top of p.25, 
+which is wrong) to select the display format you want, or follow instructions 
+on pp. S3-7a, S3-7b of the Superrom manual).
+6.  NOTE that it HAS to be done in that order, dummy entry, then display 
+formatting.  Formatting first, then making an entry will have NO EFFECT.
+7.  NOTE also that this does NOT change EXISTING entries in that column.  It 
+will affect ONLY FUTURE ENTRIES.
+
+
+Cells can also be individually formatted.  Formatting an individual cell will 
+ALWAYS change the existing entry.  The 1984 Lucid manual says that formatting 
+an individual cell affects only the present entry in that cell.  I've found 
+that sometimes it affects future entries to that cell, and sometimes doesn't. I
+haven't yet been able to detect a pattern of formatting steps that determines 
+whether or not it affects future entries.  It seems to be  random.  (This may 
+be a problem with my chip or a bug in the program.)  
+
+ACCESSING TEXT FROM LUCID.
+--------- ---- ---- -----
+You can get into a TEXT.DO file from a spreadsheet by typing in the FILENM.DO 
+in a blank cell.  Press F6(Data), then F6(Text).  You'll be in the .DO file, 
+ready to edit.  Pressing F8 (Exit) while you're still in that .DO file will 
+take you back to the cell in the spreadsheet that contains the FILENM.DO.
+
+Pretty handy!  (I typed in the name of this text file in my TEST.CA spreadsheet
+to be able to go back and forth more easily.)
+
+
+THE SORT FUNCTION.
+--- ---- --------
+
+The description of the SORT function on pp. S3-10 to SR3-20 of the Superrom 
+manual is fairly decent, as long as you remember that version 1.8 of Superrom 
+also has a Ky2 function key choice for a secondary sort.
+
+Here's a simple example of how that can be used:
+
+Let's say a spreadsheet is used to record invoice information as invoices are 
+sent out:
+
+   A        B      C       D      E
+client    inv#  inv.date  amt.  pd.date
+
+Sorting using E1 as the key cell reference (or any other cell in the E column -
+it doesn't matter) would bring unpaid invoices, which have blanks in the 
+pd.date column, to the top of the list. This is because a blank is considered 
+as coming before any number.
+
+Sorting using E1 as the key cell reference and A1 as the key 2 cell reference 
+would bring unpaid invoices to the top, and would further alphabetize clients 
+within each payment date.  Since every blank cell in the paid date column is 
+treated as one payment date, doing these two sorts together using the key and 
+ky2 function keys would bring together at the top of the list all unpaid 
+invoices, with all the unpaid invoices of each client together.
+
+(This example assumes use of the default choices in the sort function of 
+sorting ROW [rearranging the rows] in an ASC[ending order]. See SR3-10 to SR3-
+20 for information about other options.)
+
+If this is unclear to you, just enter a lot of names and numbers into a 
+spreadsheet similar to the one above, write down the original order, and try 
+various primary and secondary sorts.  It will become clear to you.
+
+
+Try it!  Experiment!
+
+ 

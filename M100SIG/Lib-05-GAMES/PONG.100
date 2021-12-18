@@ -1,0 +1,64 @@
+10'PONG.100[75665,1045] by Rick Perry, Villanova University, EE Dept.
+11'Villanova, Pa. 19085 Ph-215-645-4970
+12'
+13'In reply to the "Ready ?" prompt, hit ENTER to continue.
+14'You control the paddle using the following keys:
+15' KEY   PADDLE RESPONSE
+16'-----  ---------------
+17' ESC      far left
+18'SPACE      middle
+19' BKSP     far right
+20'  1    between middle and far left
+21'  =    between middle and far right
+22'  2    incremental move left
+23'  -    incremental move right
+24'
+25'Each time you successfully hit the ball with the paddle
+26'the top wall moves down by one line and you receive a number
+27'of points proportional to the size of the top wall.
+28'If you are able to continue until the top wall reaches
+29'the bottom, you get a bonus of 1,000 points.
+30'Players 1 and 2 alternate. You need 10,000 points to win.
+31'
+32DEFINTA-Z:S1=0:S2=0:P=2:C$=CHR$(27)+"12 -="+CHR$(8):PRINT"Wait..."
+33FORI=1TOVAL(RIGHT$(TIME$,2))+VAL(MID$(TIME$,5,1))*60:D#=RND(1):NEXTI
+34IFP=2AND(S1>9999ORS2>9999)THEN66
+35IFP=2THENP=1ELSEP=2
+36PRINT@240," Player #";P;" Ready ? ";:PRINT@259,"";
+37A=ASC(INPUT$(1)):IFA<>13THEN37
+38CLS:Y1=-1:D=19:W=1:LINE(59,60)-(59,D):LINE(177,D)-(177,60):LINE(59,D)-(177,0),1,BF
+39PRINT@41,"PLAYER";:PRINT@83,"#1";:PRINT@71,"PLAYER";:PRINT@113,"#2";
+40PRINT@161,S1;:PRINT@191,S2;
+41Z=114:LINE(Z,60)-(Z+8,60):GOSUB73
+42X=60+115*RND(1):Y=D+3:GOSUB70:LINE(X,Y)-(X+2,Y-2),1,BF:
+43GOSUB55:IFW=0THEN34
+44A$=INKEY$:IFA$=""THEN43ELSEONINSTR(C$,A$)GOTO46,47,48,49,50,51,52
+45GOTO43
+46Z1=60-Z:GOTO53
+47Z1=87-Z:GOTO53
+48IFZ>62THENZ1=-3:GOTO53ELSE43
+49Z1=114-Z:GOTO53
+50IFZ<168THENZ1=3:GOTO53ELSE43
+51Z1=141-Z:GOTO53
+52Z1=168-Z
+53LINE(Z,60)-(Z+8,60),0:Z=Z+Z1:LINE(Z,60)-(Z+8,60),1
+54GOTO43
+55IFY=59AND(X>Z+8ORX+2<Z)THENSOUND9394,15:W=0:GOSUB73:RETURN
+56IFY=59ORY=D+3THENY1=-Y1
+57IFY=59THEND=D+1:LINE(59,D)-(177,D):GOSUB70:GOSUB63:IFW=0THENRETURN
+58IFX=174THENX1=-1ELSEIFX=60THENX1=1
+59LINE(X+X1,Y+Y1)-(X+X1+2,Y+Y1-2),1,BF:LINE(X,Y-1-Y1)-(X+2,Y-1-Y1),0
+60IFX1>0THENLINE(X,Y)-(X,Y-2),0ELSEIFX1<0THENLINE(X+2,Y)-(X+2,Y-2),0
+61X=X+X1:Y=Y+Y1
+62RETURN
+63IFD=53THEND=1053:W=0:BEEP:GOSUB73
+64IFP=1THENS1=S1+D:PRINT@161,S1;ELSES2=S2+D:PRINT@191,S2;
+65RETURN
+66IFS1=S2THENPRINT@241,"Tie game!";
+67IFS1>S2THENPRINT@241,"Player #1 wins!";
+68IFS2>S1THENPRINT@241,"Player #2 wins!";
+69END
+70X1=INT(7*RND(1))
+71IFX1=3THENX1=0ELSEIFX1>3THENX1=1ELSEX1=-1
+72RETURN
+73FORJ=1TO1000:NEXTJ:RETURN

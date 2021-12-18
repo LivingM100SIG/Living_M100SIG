@@ -1,0 +1,202 @@
+
+
+Copyright (c)1989 by James Yi [73327,1653]  2/17/90
+
+TEXT+ adds these features to TEXT:
+
+1. word wrap disable.
+2. overwriting character.
+3. appending copied or cut text to the paste buffer.
+4. backward text search.
+5. search and replace, locally possible.
+6. emptying paste buffer - when you don't have enough memory to paste as 
+normally.
+7. display cursor's coordinate and offset from beginning of file.
+8. placing markers - mark a location and later quickly jump to it.
+9. delete selected block of text.
+
+* Note to Ultimate Rom II users: TEXTP is not compatible with UR-2.  There 
+will be problems if you use TEXTP and UR-2 together.
+
+To get started, download TEXTP.100 from DL7, or TEXTP.200 from DL10.
+
+TEXTP.100 and TEXTP.200 are Basic program listings.  Convert them to runnable 
+Basic program by going to BASIC, then LOAD"TEXTP".  If there isn't enough 
+memory to do this, you can either first save TEXTP.DO to disk or cassette, 
+then "LOAD" from there, or use DO2BA.  DO2BA.200 is in DL10, DO2BA.100 in DL7.
+
+
+Run the converted Basic program.  It will create two CO files, TXPDAT.CO and 
+TXPINS.CO.  Before it creates TXPINS.CO, it asks for its "END" location.  Just
+pressing ENTER at this prompt will set execution location for TXPINS.CO to 
+right below current HIMEM.  If you are not sure of what value to specify as 
+the "END" location, just press ENTER and it will run safely.
+
+Then set up the configuration file, which is at the end of this DOC file.   
+Initially, it is set up so that all features will be installed.  You can omit 
+the features that you do not need(save memory) by changing the information in 
+the configuration file.  If you don't use the configuration file during 
+installation, all features will be installed and defaults set up in a standard
+way.
+
+Then run TXPINS.CO to install TEXT+.
+If you run it and it just gives you a beep or ?OM error, you will need to 
+change the HIMEM setting.  To do that, go to BASIC, LOADM"TXPINS", and see 
+what the "Top:" value is.  Set HIMEM to this value by typing CLEAR 0,Top, 
+whatever value "Top:" is.
+
+  The first time TXPINS.CO is ran, if all is well, it will display the 
+progress messages for each function installed.  "Size:" indicates how many 
+bytes a function takes up.  When finished, it asks "Clean up?".  Press Y to 
+delete the files TXPINS.CO, TXPDAT.CO, TXPCFG.DO.  Press N if you don't want 
+them deleted automatically.
+If all is not well, there are 3 possible ways it could have gone wrong:
+
+1. not enough memory - needs about 2K free to install all features.
+2. file directory full - there are too many files in the file directory to 
+hold TEXT+.  Delete some files and try again.
+3. Basic programs need to be removed - Because TEXT+ is a machine language 
+program, it needs to reside at a fixed location.  The installer will try to 
+bury it in the lowest location possible in memory, so that changes to other 
+files will not affect its memory location.  Having Basic programs present 
+during installation prevents it from doing this, so that if you edit later on 
+one of these Basic programs located below TEXT+ location of TEXT+ will be 
+affected and something horrible will happen.  Its location will also be 
+affected when you change the LOMEM value.  Be aware of programs that put 
+things in LOMEM.  Problem with LOMEM can be avoided if you install the 
+programs that reside in LOMEM, before installing any programs such as TEXT+, 
+which is a pseudo Basic file, occupied by machine language codes.  If you 
+already have TEXT+ installed and want to install a LOMEM program, remove TEXT+
+, install the LOMEM program, then reinstall TEXT+.
+
+  When installed successfully, the "TEXT" will be changed to "TEXT+".
+
+  TEXT+ can be removed by running TXPINS.CO again.  If while trying to remove 
+it, it says something like "vector $xxxx is used.." it means some other 
+program has changed information at that memory location after TEXT+ was 
+installed.  TEXT+ cannot be removed unless that vector is restored with the 
+value that the installer put in.  If it says "Above files need to be 
+removed.." it means other pseudo Basic files were installed after TEXT+.  In 
+that case, they need to be removed first, before TEXT+ can be removed safely.
+
+
+To create the configuration file, cut the information below the dotted line 
+and paste it into a new file and name it TXPCFG.DO.  You don't have to use the
+configuration file if you want all the features installed and are happy with 
+the defaults as are.  Configuration file allows you to omit unneeded features 
+, change the default settings, and select different keys to control the 
+settings while in use.  Specify your specifications in the "configuration 
+boxes": [].  There are two boxes for each function, one to indicate whether or
+not the function is to be installed/omitted, and another to specify its 
+default parameter.  In the "Install" box, put Y to install, N to omit.  In the
+"Parameter" box, there may be one, two, or zero parameters to set.  [-] 
+indicates there are no parameters to set.  [B] in the function #4, for 
+example, indicates that <ESC>,<B> will be used to do a backward search.  You 
+could change it to [F], for example, if you prefer <ESC>,<F>.  In function #1,
+[1,W] indicates that <ESC>,<W> will be used to toggle word wrapping on/off, 
+and number 1 indicates that the word wrapping will initially be enabled.
+  Most functions are toggled with the escape sequence(pressing <ESC> and then 
+another key) the bottom line indicating with up/down arrow whether it's been 
+turned on or off.  Undefined escape sequence results in the key after <ESC> 
+typed.
+  The configuration file data is about 4K but can be reduced to 1K if you 
+delete all the explanations, etc.  Just be sure to leave in the ">Install.. " 
+and ">Param.. " lines.
+
+
+Cut here and paste into TXPCFG.DO:
+---------------------------------------
+
+1. Word wrap: <ESC>,<?>
+
+>Install: [Y]
+>Parameters: [1,W] -- 0=disable, 1=enable
+
+
+2. Character overwrite: <ESC>,<?>
+
+  While in overwrite mode, pressing <SHIFT> with <SPACEBAR> lets you insert a 
+space.
+
+>Install: [Y]
+>Parameters: [0,O] -- 0=Insert, 1=Overwrite
+
+
+3. Paste buffer append: <ESC>,<?>
+
+   Holding down <SHIFT> when you press <F5>(Copy) or <F6>(Cut) temporarily 
+reverses the default setting.  So if the default is "normal", pressing <SHIFT>
++<F5> appends selected text to the paste buffer.
+
+>Install: [Y]
+>Parameters: [0,A] -- 0=Normal, 1=Append
+
+4. Backward Search: <ESC>,<?>
+
+>Install: [Y]
+>Parameters: [B]
+
+
+5. Search & Replace: <ESC>,<?>
+  Can be done on the whole file, or on a selected portion.  Use <F7> to select
+the portion that you want to do "local" search & replace on.  If no text is 
+selected, it will be done on all text after the cursor.  If you want to abort 
+it when it asks for "Pause?" and "Case?", press <CTRL>+<C>.  If you want to 
+abort it when it's in the process of doing automatic search and replace 
+without pause, press <SHIFT>+<BREAK>.
+
+>Install: [Y]
+>Parameters: [S]
+
+
+6. Unload paste buffer: <SHIFT>+<PASTE>
+
+   Pressing <SHIFT>+<PASTE> empties the paste buffer content to the file, for 
+the situation in which there isn't enough memory to paste as normally.  You 
+could use this function another way, to insert text at the beginning of the 
+current paste buffer content; move cursor to end of text to insert, do <SHIFT>
++<PASTE>, extend highlighting, and cut.
+
+>Install: [Y]
+>Parameters: [-]
+
+
+7. Show cursor position: <ESC>,<?>
+   Turn on the LABEL by pressing <LABEL> and you'll see the cursor's 
+coordinate on the screen, and the offset from begin of the file of the text 
+it's pointing to.  Cursor movement becomes sluggish when it's being shown, so 
+you may want to turn LABEL off most of the time and turn it on only when 
+neccessary.
+
+>Install: [Y]
+>Parameters: [1,C] -- 1=on, 0=off
+
+
+8. Marking: <ESC>, [<TAB>], <0 to 9>
+
+  To place a marker at the cursor, press <ESC>,<TAB>, and a number from <0> to
+<9>.  <0> is special in that it redistributes the markers 1-9 at evenly spaced
+intervals throughout the file.  To get back to the location where you placed 
+the marker, press <ESC> and then <0> to <9>.  <0> is special; it takes you to 
+the previous cursor location just before last event, like Pasting, Finding, 
+CTRL-Z(Down Arrow), and exit, reenter and immediately doing <ESC>,<0> takes 
+you to the location just before the previous exit.
+
+>Install: [Y]
+>Parameters: [1,T] -- Cursor tracking: 1=on/0=off. <ESC>,<T> turns cursor 
+tracking on/off.  You may want to turn it off if the cursor movement feels 
+sluggish.  Tracking allows automatic adjusting of markers as you edit the 
+file.  If it's off, markers shift and lose their position as you insert and 
+delete text preceding them.
+
+
+9. Block delete.
+  To delete a chunk of text, select it using <F7>, and press <SHIFT>+<DEL>.  
+It's like cut operation using <F6>, except that the text cut is not stored in 
+the paste buffer.  Handy if you want to delete a large block of text but don't
+want to affect the data holding in the paste buffer.
+
+>Install: [Y]
+>Parameters: [-]
+
+

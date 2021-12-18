@@ -1,0 +1,178 @@
+=================================================================
+
+    DISK CATALOG SYSTEM FOR THE TANDY PDD
+
+=================================================================
+
+    A disk cataloging system for the Portable Disk Drive, which allows
+you to keep track of a number of disks, what files on are on the 
+disks, and what the files are.
+
+    The program creates/updates a .DO file containing a listing of the
+disk names, (1-10 characters), all files on that disk with their 
+lengths (see Note 4), and a description of what the file contains, (1-
+30 characters). When updating a disks information, the old file 
+descriptions are used automatically, descriptions from identically 
+named files on other disks can be used with a single key stroke, or 
+automatically.
+
+    This release of the program differs greatly from earlier releases,
+DIRLST files from earlier programs need to be converted by running the
+program DSKCNV.PDD.
+
+    In addition to the main program DSKL.BA, there is a printer 
+listing program DSKLP.BA.
+
+    The programs are fully Basic, no assembly or machine calls are 
+used, useable on either Model 100's or 200's.
+
+=================================================================
+ 
+Program Usage:
+
+   When you first enter the program, you get a blurb, then a message 
+that it is reading the DIRLST file. If there is no DIRLST file, you 
+start off with a clean file. (See Note 1). The program then gives you 
+the following choices:
+
+     (L)og disk         (O)ptions
+     (D)irectory        (F)ree
+     (W)rite            (V)iew
+     (E)xit
+
+    Whenever the program is doing something which takes time (reading,
+writing, etc., "Disky" will appear on the right side of the screen and
+jump up and down. It may pause for a second or two, but should be 
+animated at least that fast. No activity for 9/10 seconds means your 
+stuck.
+
+    Each option is described below:
+
+(L)og disk:
+
+    This is how you enter a disk into the file. The PDD must be on and
+connected. This program does no error checking. If you hit BREAK in 
+the middle of this program, it may hang the PDD. Just turn it off/on 
+to clear it. You will be asked for a name for the disk. This name can 
+be from 1 to 10 characters, and is case sensitive. (DISK and disk are 
+not the same). If you hit ENTER at this point, you will return to the 
+start of the program. A message about reading the disk will appear, 
+and you will then be prompted for a description for each new file on 
+the disk. If there are no new files, you will simply get a message 
+"Updating old disk", and it will return to the program start. If you 
+are logging a new disk, or you have a new file on an old disk, a check
+is made for any files with the same name on other disks. If there are,
+the description for that file is listed, and by hitting ENTER will be 
+used for the current file. (Note, if the auto name option is used, the
+name is used automatically). If the file name is new for all disks, 
+the program will just ask for a description. Hitting ENTER at this 
+point will assign the description "*" to the file.
+
+(D)irectory:
+
+    This will list out the directory for the current disk, in case you
+aren't sure what is on it, and need to take a look. The file names are
+listed to the screen, and the program then waits for any key to be hit
+to continue.
+
+(W)rite:
+
+    This option writes out the DIRLST file. If you are not using the 
+Auto write option, this allows you to easily write the file out every 
+once in a while.
+
+(E)xit:
+
+    This writes out the new DIRLST file, and goes back to the main 
+menu.
+
+(O)ptions:
+
+    This takes you to a menu with the user settable options on it. 
+Hitting a 0 will return to the top menu of the program, (not the Main 
+Menu), while hitting the number of an option will toggle that option 
+from yes/no to no/yes. Each option is listed below.
+
+    1)  Auto write
+
+    When this option is on, after each disk log, the DIRLST file is 
+written out. This is the same as using the (W)rite option after each 
+disk log.
+
+    2)  Auto old name
+
+    When this option is on, if the file name matches a name on another
+disk, the description is used automatically. This is most often used 
+when transfering a number of files to a different disk, such as 
+archiving files.
+
+
+(F)ree:
+
+    This will list out the current number of disks and files you have,
+and the amount of free space left. The program doesn't give you an 
+error if you start to run out of space, you just hit an OM error when 
+trying to log a disk. Error checking is done however on the number of 
+disks, both when logging in a disk, and reading in a file. (See Note 2
+).
+
+(V)iew:
+
+    This lists out the current disk names, the update dates, and the 
+number of files on each. Just a useful way to be able to check if you 
+have updated a disk without exiting and coming back in the program.
+
+=================================================================
+
+Note 1:
+
+    When first running this program, if there is no DIRLST file, the 
+program counters just reset to zero. A file will not be created until 
+you exit using the (E) option.
+
+Note 2:
+
+    When reading in a file, if for some reason you are using a 
+different version of the program which has a different number of Max 
+disks, or you enter some into the file by hand (See Note 3), the file 
+will be truncated when read in. If you then save the file out, data 
+from the first file will be lost. (Note file output is alphabetical by
+disk name).
+
+Note 3:
+
+File structure:
+
+    The file structure of the file is as follows, "<", followed by the
+disk name, (ten characters), plus the last updated date, followed by 
+the free disk space. Then each file name, a one character separator, 
+the file size, a one character descriptor and the description. (The 
+separator is ignored, and can be changed if desired, it is SP$ in the 
+program [must be 1 character]). This continues until the EOF. If you 
+alter this file in any way, the file names must be maintained in 
+alphabetical order.
+
+Note 4:
+
+    This version of the program tracks file sizes, and in most cases 
+will work. However, since it is in basic, whenever a file size is such
+that when it is broken into two bytes, one of them is a decimal 26, 
+the file size is not returned. ie., file lengths of 26,282,538..., and
+6656-6911. (Decimal 26 is an EOF, and you can't read it in BASIC). 
+When this occurs, a file size of -1 will be assigned. This will not 
+cause any problems other than being wrong for this file, and 
+increasing the disk free space accordingly. Sorry about that, but it's
+not too severe a limitation as it only happens once in a while. 
+Earlier versions did not even track file size, but it seemed people 
+wanted it, so it is included.
+
+=================================================================
+
+    Any comments/suggestions/etc. would be appreciated.
+
+     Richard Haw
+     [71706,334]
+
+=================================================================
+
+

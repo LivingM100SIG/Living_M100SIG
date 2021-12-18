@@ -1,0 +1,91 @@
+SROM05.TIP
+by Algis Kaupas [73327,3157]
+September 9, 1986
+
+This is the documentataion for SROM04.TIP, an overtime calculator that uses the
+TBL function in Lucid.  
+
+SROM04.TIP requires Lucid on Superrom and CHANGE.BA from DL4.  (If you're 
+downloading CHANGE.BA for the first time, be sure to also download CHANGE.DOC.)
+
+
+INSTRUCTIONS ON CHANGING THE HEX FILE TO  .CA FORM:
+
+1.  Go to the end of the HEX file SROM04.TIP.  Delete extra carriage returns 
+and DL2! prompt.
+2.  Last line of file should read:
+ 184870 
+3.  Go to the start of the file.  The first line of the file we want is:
+ 56450 57966 0 
+Delete anything before this.
+4.  To partially verify that the file didn't get garbled in transmission, use 
+DOWNCK.WM3 from DL4.  The checksum should be 163,117.
+4.  Using CHANGE.BA:
+   a.  As a precaution, save the HEX file to tape or disk, and backup whatever 
+RAM files you wouldn't want to lose.
+   b.  <ENTER> CHANGE.BA from the main menu.  You'll see a menu of the files in
+RAM, and labels above the cursor keys.
+   c.  Using the arrow keys, put cursor over SROM04.DO (or whatever you called 
+the file when downloading it).
+   d.  Press F2, which is labelled >BIN.  This will change the HEX file to 
+binary (machine language) format.
+   e.  The following prompt will appear on your screen:
+".CO output file:"
+   f.  Type in the name you want the file to have. (I used OTCALC.)  Press <
+ENTER>.
+   g.  The screen will change to:
+".CO output file: OTCALC
+Working..."
+   h.  After about two minutes, your M100 will beep, and you'll be prompted 
+"Kill hex input file (Y/N)?"   Since you already have the hex file on tape or 
+disk, answer Y to save memory.
+   i.  Put the cursor over the OTCALC.CO (or whatever you called it)file name 
+and press F3, labelled >CA, to change the .CO file to a .CA file usable by 
+Lucid.  
+   j.  The new name will instantly appear inside the widebar cursor.  If Super 
+is already on the menu, with the cursor still over OTCALC.CA (or whatever name 
+you used),  press <ENTER>.
+   k.  If Super is not on the main menu, use F8 to exit to main MENU and access
+Super and then Lucid in the usual way (call 63012 in Basic, hit F1 to get into 
+Lucid).  When you see the prompt: Lucid file? , type in OTCALC (or whatever 
+name you used), press <ENTER> and you're there!
+
+USING THE OVERTIME CALCULATOR:
+
+Type in number of hours worked in B5, press <ENTER>.
+Type in day rate (rate for an 8-hour day) in B6, press <ENTER>.
+Press F2 (Cal).
+That's it!
+
+DESCRIPTION OF OTCALC (NABET overtime calculator):
+
+The overtime structure is based on the commercials contract for the National 
+Association of Broadcast Engineers and Technicians Local 15. (Minimum charge of
+8 hrs, time-and-a half for work above 8 hrs but not beyond 12, double time for 
+work above 12 hrs but not beyond 16, triple time for work above 16 hours.)
+
+It can be adapted to other overtime structures, and could, I imagine, become  
+part of an invoicing system.
+
+A1:D6 are the combined input and result screen.  (Note: cells D1:D6 are 
+protected against entry.  To play around with the formulas there, they must be 
+unprotected first.)
+
+F3:J9 contains Table 1, which is set up to work out the charges for the various
+overtime categories based on the inputs in B5 and B6.
+
+L1:N7 contains Table 2, which works out totals, average $ per working hour, and
+returns the message "RENEGOTIATE!" for input hours above 20, which is my 
+opinion of insanely long days.
+
+This is probably not the ideal structure for the calculator, since the order of
+calculation jumps back and forth a bit, but it works.
+
+I could upload a fuller description of how this template works, and thoughts on
+how to change it to fit other overtime structures, if anyone would like.
+
+Happy o.t.'ing!
+
+Algis Kaupas [73327,3157]
+Sept. 9, 1986
+

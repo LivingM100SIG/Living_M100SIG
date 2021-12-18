@@ -1,0 +1,133 @@
+GLDOC.100              By Jon Kaplan
+
+Revised Feb. 7, 1987, incorporating changes and suggestions from James
+Bott [71706,551].
+
+        GL100 is a series of small programs designed for the Model 100
+for simple bookkeeping and home finance applications.
+
+It consists of four programs plus one utility program. They have been 
+kept separate in the interest of memory conservation since they rarely
+are needed at the same time. The four main programs follow the 
+bookkeeping process as outlined below.
+
+GLCHEK is the program for entering checks, deposits and other journal 
+entries.
+
+GLPOST is to "post" or sort the different entries to their correct 
+categories in the Working Trial Balance and to print out the Working 
+Trial Balance.
+
+GL100 is the final report printing program that generates an Income 
+Statement and Balance Sheet.
+
+The utility program is GLWTB. GLWTB is for entering a chart of 
+accounts in the format required by the programs. The earlier version 
+of GL100 also had GLCHKR as a safety program that would check your 
+journal entries against the chart of accounts to insure that all have 
+valid categories. That function is now built into GLCHEK.
+
+Each of the programs is described in detail in its own doc file.
+
+     GENERAL PROCEDURES
+
+GLCHECK is used for recording checks and deposits. The file it 
+generates, CJ.DO, should be periodically cut off and filed on tape for
+reference, to keep the overall size from getting out of hand. When 
+cutting off, make sure all the checks in the cut off section have 
+cleared or the bank reconciliation won't work right. 
+
+You must also have a chart of accounts called WTB.DO. Use GLWTB.BAS to
+write your chart of accounts. Once you've written a WTB.DO, the format
+will be apparent to you and you may prefer to make any future 
+additions and changes just using the M100 text editor.
+
+If you aren't running a business, and want to use GL100 as an expense 
+sorter (Single Entry Bookkeeping), that's basically all you have to 
+do. Take your CJ.DO and post it with GLPOST and print an Income 
+Statement with GL100.  Print detailed listings with GLDGER. Make all 
+your accounts income (500) or expense(800) accounts. Don't bother 
+printing the Working Trial Balance in GLPOST - it will be out of 
+balance. And don't make a balance sheet with GL100, it will be blank. 
+But you'll have a nice little income statement. and sorted check list.
+
+
+For double entry bookkeeping you have to make your second or 
+offsetting entry. Cut off the section of the CJ.DO file you are using 
+for the period you are closing (like this month). You should remove 
+the starting balance, but the program will ignore it anyway.
+
+From here on, keep your working check files separate from your book 
+files. As you close each month, you are dealing with a list of checks 
+and deposits which may not match those you use for bank 
+reconciliations because you have older outstanding checks. Use 
+separate cassettes and don't mix them up. File each month's journal 
+under it's month's name, separate from your working check records.
+
+When you have a CJ.DO file that represents this month's transactions 
+on your computer, call it up from GLCHEK.BAS  and check the Balance. 
+Write down the Total for Checks and the Total for deposits. Now go to 
+the input part of the program and make your "Summary Entries". Enter a
+Credit (Deposit) for the Total of the Checks. And enter a Debit (Check
+) for the total of the Deposits. For description enter something like:
+Jan. Cash Summary, and for Date use the last date of the period. Now 
+check the balance to make sure the Check (Debit) Total, and Deposit (
+Credit) Total are equal, and the starting and ending balance will be 
+0.
+
+If you need any General Journal Entries, just make them now with the 
+GLCHEK input program. A general journal entry is usually a non-cash 
+transaction that needs to be on your books. For example, you bought a 
+machine on time:
+
+   Debit 160 Machinery 5000.00
+       Credit 210 Loans Payable 5000.00
+
+Enter your Debits as Checks and your Credits as Deposits and check the
+balance to be sure they are equal.
+
+Now you can close your books for the period.
+ 
+First print out a General Ledger using GLDGR.BAS. Post with GLPOST and
+print a working trial balance with GLPOST. If an outside accountant 
+does your taxes, he needs the general ledger and wtb. Later he will 
+give you adjusting entries that you enter as general journal entries 
+like above.
+
+Once you are posted you can print an Income Statement and Balance 
+Sheet with 
+GL100.
+
+Now I recommend you make a record of the CJ.DO WTB.DO and LASTMO.DO 
+and keep it for posterity. Kill everything except WTB.DO and move on. 
+Remember you still have a continuous CJ.DO on the tape with you check 
+records.
+
+At the end of the year you might want to run a Cumulative General 
+Ledger for the year. This means to glue each months CJ.DO together and
+print one big GL printout. Your accountant will love you for it. The 
+only question is if it will fit in memory. If not-----C'est La Vie, 
+make the guy work a little.
+
+When cutting and pasting CJ.DO's using the M100 text program, be 
+careful of the format of the file. Particularly line returns, 
+including the last line return in the file that leaves a little arrow 
+hanging over at the end. If you mess anything up, the program won't 
+run. But that isn't too hard to do right.
+
+Also a note on memory size. The reconciliation part of GLCHEK copies 
+the entire CJ.DO file to a temp file while it is running. This means 
+you must have spare memory in RAM at least equal to the size of the 
+CJ.DO file or the program stops with an OM message. Unless you're 
+running an awful lot of checks, a little judicious memory management 
+should keep you running clean.
+
+Let me know how it goes and what upgrades you need.
+
+And thanks to James Bott for his suggestions, some of which are 
+implemented in the Revisions of Feb. 7, 1987, and others of which will
+follow soon.
+
+Jon Kaplan
+73337,1414
+

@@ -1,0 +1,330 @@
+
+
+              FORMAT.BA, a PD text formatter for the NEC PC-8201A
+                               by Henrique Veludo
+          
+      ====================================================================
+      
+                FORMAT.BA and GRPHCS.BA are SHAREWARE programs.
+      
+                If  you  like  them, and  if you find  yourself
+                   using them regularly, please send $10 to:
+      
+                               MAIL MACHINE, Ltd.
+                         145 West 55th Street, Suite 2C
+                               New York, NY 10019
+      
+      ====================================================================
+      
+      FORMAT.BA instructions:
+      =======================
+      
+      
+      The set of commands:
+      --------------------
+      
+              This program for the NEC  PC-8201A  will format a  TEXT file
+      with embedded  graphics characters  which  will send commands to the
+      EPSON FX-80 (and compatibles) to print special characters and fonts.
+      E.g., an inverse video  'B'   (for BOLD On) and a  backwards inverse
+      video 'B' (for BOLD Off),  the former  inserted just before the text
+      to    be output in boldface, the latter just after such text,  would
+      send the proper command to the Epson.
+      There   is a  separate program,   GRPHCS.BA,    that will set up the
+      graphics characters for you.
+      The    graphics  characters that   FORMAT.BA recognizes, obtained by
+      pressing the [GRPH key + an alpha key], are as follows:
+      
+       GRPH + c  = Center text line
+        "   + p  = Paragraph indent
+        "   + b  = Bold ON  (Dbl Strike On)
+        "   + n  = Bold OFF (Dbl Strike Off)
+        "   + i  = Italics ON
+        "   + o  = Italics OFF
+        "   + u  = Underline ON
+        "   + y  = Underline OFF
+        "   + e  = Expanded (dbl-wide) ON
+        "   + w  = Expanded OFF
+        "   + q  = NLQ ON
+        "   + t  = NLQ OFF
+        "   + s  = Superscript ON
+        "   + a  = Subscript ON
+        "   + d  = Scripts OFF
+        "   + @  = US CH-Set (default) (0)
+        "   + \  = French  CH-Set (1)
+        "   + ,  = German  CH-Set (2)
+        "   + .  = English CH-Set (3)
+        "   + /  = Italian CH-Set (6)
+        "   + ]  = Spanish CH-Set (7)
+        "   + lx = change left  margin to x
+        "   + rx = change right margin to x
+        "   + h  = backspace
+        "   + f  = page break (form feed)
+      
+
+                                     -  1  -
+
+
+
+      Changing the default parameters:
+      --------------------------------
+      
+              Save both FORMAT and GRPHCS as .BA files.  First RUN GRPHCS.
+      BA to set up the graphics  characters in memory. You may then delete
+      it (after saving it to cas: or disk),  since the graphics characters
+      will stay in memory until you  do a  cold start or  another  program
+      changes the character definitions. Then  RUN  FORMAT.BA and you will
+      be asked which text file you want to format (you can  also format  a
+      file from the cassette, by specifying "CAS:fname", or the DEV:  name
+      for the disk   drive, as the filename at this point: this allows for
+      formatting a file that would not fit -or is   not- in  memory). Then
+      you have the option of printing the file to Memory    (RAM:,  CAS: ,
+      etc.),    Printer (parallel)    or  the   RS232 (serial, COM:3E71XN)
+      interface. If Memory is  chosen,  you  will need to enter the output
+      filename. Here you may specify a 'DEV:' name if you wish: CAS:, RAM:
+      , COM:<CPBSXS> or a disk drive device & filename. If  you  chose the
+      printer, you are asked to  make sure that the printer is on line and
+      the  Top-Of-Form  is   at the proper place. Then you are prompted to
+      change the default parameters  (margins,  single  or   double spaced
+      lines, etc.) as follows:
+      
+       1.PITCH # : will set the printer to print in the given font.
+      
+       Pitch #           Font          Width
+       -------    ------------------   -----
+          0     = Single Strike Pica     80
+         16     = Double   "      "      80
+         32     = S.S. Expanded   "      40
+         48     = D.S.     "      "      40
+          8     = S.S. Emphasised "      80
+         24     = D.S.     "      "      80
+         40     = S.S. Exp. Emp.  "      40
+         56     = D.S.  "    "    "      40
+       -------------------------------------
+          1     = Single Strike Elite    96
+         17     = Double   "      "      96
+         33     = S.S. Expanded   "      48
+         49     = D.S.    "       "      48
+       -------------------------------------
+          4     = S.S. Compressed       132
+         20     = D.S.      "           132
+         36     = S.S. Exp. "            66
+         52     = D.S.  "   "            66
+       -------------------------------------
+      
+              The Bold,    Italics,  Underline and Scripts commands can be
+      intermixed within the same  Pitch. To  print a   draft copy,  use  a
+      pitch # of  0 (or even 4 for compressed) ; for the  final  copy, use
+      one of the emphasised fonts (8,24) or the NLQ font.
+      
+              Note: If you print to RAM or the RS232 interface  the  pitch
+      # will have no effect,  nor will any of the printer commands, except
+      TAB, left/right margins and centering.
+      
+
+
+
+
+
+
+
+                                     -  2  -
+
+
+
+      2.PITCH WIDTH : Number of columns on the printer for a given pitch,
+      i.e.:
+      
+           PICA=80
+           ELITE=96
+           Compressed=132
+           Expanded=PITCH WIDTH/2
+      
+      Make sure you use the proper width with the corresponding pitch #!
+      
+       3.LEFT MARGIN : Number of blank  columns  on the left. You can have
+      indented paragraphs  by   changing the left  margin with GRPH+l'x  '
+      where 'x' is the new  margin (e.g., "[GRPH+l]12 "  will set the left
+      margin at column 12). MAKE SURE YOU FOLLOW THE NUMBER WITH A SPACE!
+      
+       4.RIGHT MARGIN  : number of  blank columns  on the right  (from the
+      RIGHT edge of the paper,   NOT THE LEFT EDGE!:  e.g., a right margin
+      of 10 will be at column 70 in a pica pitch). Also  "[GRPH+r]x ". See
+      above.
+      
+              Note:   you  can  have  positive    or  negative   paragraph
+      indentation  by just   changing the left and/or right margins before
+      the  paragraph,   and resetting them   after.  E.g.: with  a default
+      margin of 6, you  could set the left and right margins at  3 to have
+      a negative indent of 3 in both the left and right.
+      
+       5.TOP MARGIN : number of blank lines at the top of the page.
+      
+       6.BOTTOM MARGIN : ditto for bottom.
+      
+       7.NUMBER    OF LINES PER PAGE:  normaly an  8&1/2"x11" sheet has 66
+      lines; you can change this number to  print labels, envelopes,  etc.
+      Change this number to  a large  one  (e.g., 999)  in order to  print
+      continuously, without page breaks or page numbers.
+      
+           8.LINE  SPACING :    for single  or double  spaced (or more...)
+      print-outs. Default is single.
+      
+       9.HEADER MARGIN :  the space between the header and the body of the
+      text. Default is 4 lines. Set to 0 if not using a header.
+      
+      10.FOOTER MARGIN : the space between  the  body of  the text and the
+      page number. Set this to 0 if not using page numbers.
+      
+      11.PAGE NUMBERING :  if  (N)o,  no page  numbers will be printed; if
+      (Y)es, the page numbering  will start at page 1. If you are printing
+      to RAM or  to the RS232 interface,  you  should probably set this to
+      "N" if "paged" text is not necessary.
+      
+      12.HEADER : if (Y)es,  you will be prompted for a  header (make sure
+      the length does not exceed the  pitch  width) and wether you want it
+      centered or left or right justified.
+      
+      13.PAGE WAIT : (N)o for continuous paper, (Y)es for single sheets.
+      
+      14.JUSTIFY :  (Y)es if  you  want the text right  justified, (N)o  =
+      ragged.
+      
+      
+
+
+
+                                     -  3  -
+
+
+
+      Foreign character sets:
+      -----------------------
+      
+              To use the foreign character sets of the  EPSON FX-80  refer
+      to the charts in  the  printer  manual,  pages 72-73,   then use the
+      following keys: #,$,@,[,],\,^,`,{,},|,~.
+      E.g., if you need to print the german 'u umlaut', do the following:
+        1)press [GRPH+,](to set the printer to print german characters)
+        2)press "}" to print the 'u umlaut'.
+      So you would type   "}ben"  (Ger.:to  exercise)  and "uben" would be
+      printed  (with  the  two periods over the first  u).   What could be
+      simpler?  To get  back  to the US set, press  [GRPH+@] . Then if you
+      type "}" it will be printed as "}"!  The graphics characters are the
+      FX-80 numbers which represent the foreign countries' character sets:
+      0=US, 1=FR, 2=DL, 3=GB, 6=IT, 7=SP.
+      
+      
+      Tabs:
+      -----
+      
+              True tabs   are  supported,  at every  ninth column position
+      from the left margin, as in the NEC's TEXT mode.  They can be  mixed
+      with  bold,  italics,  etc. But be   aware  that if  you  use  right
+      justification, the filling of the line with added spaces  may  shift
+      the tabs out of position.
+      
+      
+      Page breaks:
+      ------------
+      
+              You may insert a  page break ( [GRPH+f] )  whenever you need
+      a paragraph to start  on a new page, to prevent it from being  split
+      between two pages.
+      
+      
+      Backspace (overstrike):
+      -----------------------
+      
+              By pressing [GRPH+h] you  can  generate   a backspace;  this
+      enables you to    overstrike a letter:    e.g.,   the FX-80's french
+      character set does not  contain  an "a" with  an "^" accent; you can
+      print it with  the  following sequence:  type "a", press  [GRPH+h] ,
+      type   "^". In  this    fashion   you can overstrike  any  number of
+      characters. This  feature  only works if you are sending the text to
+      the printer, NOT to Memory or RS232.
+      
+      
+      Paragraph:
+      ----------
+      
+              Pressing  [GRPH+p]   will   generate an  indentation  of   8
+      characters on  the  first  line of a  paragraph (same  as a TAB) but
+      will work with the right justification function.
+
+
+
+
+
+
+
+
+
+                                     -  4  -
+
+
+
+      Conclusion:
+      -----------
+      
+              A  compromise had to be made between efficiency, compactness
+      and the number of   features. I  think  FORMAT.BA  includes the most
+      needed   features in  a    formatter. The use of graphics characters
+      embedded in the text makes  for  efficient and clean  looking  text,
+      and it is easy to see where a command begins and/or ends.
+      
+               Please send  any  comments, suggestions, or report any bugs
+      to:
+      
+                  CompuServe....70210,221
+                  Delphi........Henrique
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     -  5  -
+

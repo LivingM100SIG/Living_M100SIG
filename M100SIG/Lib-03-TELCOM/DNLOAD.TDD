@@ -1,0 +1,154 @@
+
+
+
+                              DOWNLOADING TO THE TDD
+       
+       Using a little known feature of POWR-DOS, a file which is too large
+       for available RAM in the Model 100 can easily be downloaded from
+       the host system to the TDD.  (Somewhere I read that the maximum
+       size file that the TDD can store is 64K.)  This feature was
+       described in the Acroatix "POWR Newsletter Number 2 dated September
+       12, 1986.  The first part of this article describes the process for
+       downloading a file to the TDD.  The second part is the original
+       article from the POWR Newsletter entered here without being changed
+       or updated.  Keep in mind that Acroatix, due to unfortunate
+       circumstances, left the Model 100/200 world shortly after writing
+       this article and never developed POWR-DOS for the Model 200 and
+       never developed the special cable discussed in the article.
+       
+                            HOW TO DOWNLOAD TO THE TDD
+       
+       The process is actually quite simple except the the acoustic
+       coupler MUST be used and an XMODEM program (I used XMODEM 2.6) is
+       required.  The steps are:
+       
+           1) Prepare the Model 100 to download a file using the acoustic
+              coupler and XMODEM protocol.
+              
+           2) POWR-DOS must be installed and the TDD must be connected and
+              turned on with a formatted disk inserted.  The disk doesn't
+              need to be empty.  Just make sure it has enough room for the
+              file to be downloaded.
+              
+           3) Enter BASIC and type
+              
+                                     LFILES C<ENTER>
+              
+           4) Log on to the HOST system using the acoustic coupler and
+              XMODEM and proceed to download a file.  When asked for the
+              filename to be received, insert a colon ":" in front of the
+              filename and proceed normally.  When the download is
+              complete, the file will be on disk instead of in RAM.
+              
+           5) After you log off, enter BASIC and type
+              
+                                     LFILES D<ENTER>
+              
+       I ran into one minor difference and one major problem.  The minor
+       difference occurred when I typed in ":filename<ENTER>.  There was a
+       slight delay as the file was opened on the disk.  If you are
+       slightly paranoid like I am, you'll think the program has locked
+       up.
+       
+       The major problem occurred when I first ran the program in Bank #3
+       of my extra RAM.  It appears that the LFILES C command messes up
+       the programs error trapping routines.  I made a mistake and ended
+       up with NR, RW and CN errors as I tried various things but the only
+       way out was a cold start.  I loaded XMODEM 2.6 into Bank #1 (The
+       one that came with my M100 new out of the box) and started again.
+       This time I caused another error with the same NR etc. errors but I
+       was able to get out of the program and back to the main menu using
+       the reset button.
+       
+          CAUTION :  If you have extra RAM banks, make sure you are NOT in
+       one of them when downloading to the TDD.
+
+
+
+
+                                   THE ARTICLE
+       
+                                Disk-Based TELCOM
+                                   by ACROATIX
+       
+       Perhaps the most common questions we hear are about accessing the
+       disk while in TELCOM.  POWR-DISK had no features related to TELCOM,
+       but POWR-DOS has a few special commands related to TELCOM.
+       
+       Part of the problem with disk-based TELCOM is the relationship
+       between the COM port (where the disk connects) and the modem.  Both
+       use the same chip (called a UART), which complicates software to
+       use them together.  By itself, it is not an insurmountable problem,
+       but there is an additional difficulty:  the internal modem "hangs
+       up" the telephone whenever the UART accesses the disk drive.  This
+       behavior comes from the hardware, not the software, so nothing can
+       be done.
+       
+       There are two ways around the problem.  If you use acoustic cups,
+       you can access the disk and keep the phone "off hook;" we are
+       investigating a special cable to use the direct connecting modem.
+       If you are interested in such a cable, let us know, since it will
+       give us the incentive to complete the project.  Incidentally, the
+       Model 200 does not seem to have this problem at all.
+       
+       There are two basic ways to access your disk while in TELCOM.  Both
+       involve extra utilities.  First, you can use a utility available on
+       CompuServe called DIRACC.  (To find out more about DIRACC, access
+       Data Library 1 on the Model 100 SIG and give the command BRO
+       DIRACC.*)  This utility allows you to move from TERM mode in TELCOM
+       directly to BASIC.  Once you do this, you can load and save files
+       using POWR-DOS commands.  REMEMBER:  with the Model 100, you must
+       use a special cable or acoustic cups, or you will lose your phone
+       connection.  When you are done, give the following command:
+       
+                  LFILES D <ENTER>
+       
+       Then return to TELCOM using DIRACC.  You should be able to resume
+       normal operation.
+       
+       The second method of disk-based TELCOM involves using a special
+       program.  There are two we know of: the XMODEM program by Rick
+       Perry, available in Data Library 1 of CompuServe's Model 100 SIG,
+       and X-TEL from SIGEA systems.  Both programs support XMODEM as well
+       as "normal" uploading and downloading of files.  Using these
+       programs, you can upload and download directly to and from disk
+       files.
+       
+       
+       The command that makes these programs work is a special POWR-DOS
+       command:
+       
+                    LFILES C <ENTER>
+
+
+
+
+       Once you have given this command, POWR-DOS will automatically reset
+       the COM setting after each disk access when using OPEN, PRINT#,
+       INPUT#, etc. (Special POWR-DOS commands, like LFILES, still leave
+       the COM to 98N1D or 88N1D.  You must use LFILES C after them to
+       restore the COM settings).  This sounds complicated, but it means
+       that programs like XMODEM and X-TEL can access the disk and the
+       modem at the same time.
+       
+       The one disadvantage of LFILES C is that it really slows down file
+       access.  Unless you are using XMODEM, X-TEL, or something else, you
+       will want to deactivate the "automatic reset" feature.  Use either
+       the LFILES D command or LFILES MENU."
+       
+       End of Article
+       
+                                     COMMENTS
+       
+       Since the LFILES C command enables XMODEM programs to download to
+       disk it should be possible to write a program that would enable no
+       protocol ascii downloads to disk thus saving the extra time ($'s)
+       needed for XMODEM.
+       
+       DIRACC and various XMODEM programs are now in LIB 3.
+       
+                             A. Alan Pound 75715,1077
+                                     10-25-88
+       
+
+

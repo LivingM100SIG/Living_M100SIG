@@ -1,0 +1,44 @@
+             TANDY Portable Disk Drive Tips 10/18/85 By Richard Logan, 
+         75715,100
+              "SAMBo" SysOp  (404)-766-7639
+              "INDEX" SigOp  (404)-997-6238
+           Could you use another 3.5K of memory with the Tandy Disk 
+         Drive Operating System in memory?
+           The DOS takes around 7K when loaded into a Mod-100 or a Tandy 
+         200.  You can cut this in half when not actually using the 
+         FLOPPY.CO program.
+           There is two(2) ways of doing this.
+         
+         1). By using two short basic programs "CLEAR.BA" AND "DISK.BA". 
+         When you want to use the disk, run DISK.BA.
+           It will run FLOPPY.CO after clearing memory properly. When 
+         finished run CLEAR.BA. This will give you 3.5K of memory to use 
+         until you need to use the disk again.
+          
+           DISK.BA Program:
+          
+         10 CLEAR256,59400'(57500 for Tandy 200)
+         20 RUNM"FLOPPY.CO"
+          
+           CLEAR.BA Program
+         10 CLEAR0,MAXRAM
+          
+          
+         2). The second way is to use the FUNCTION KEYS [F6] & [F7].
+           To do this you must have the above DISK.BA program installed.
+           CLEAR.BA is NOT needed. In BASIC type in the following:
+          
+         KEY6,"CLEAR0,MAXRAM"+CHR$(13)
+          
+         KEY7,"RUN"+CHR$(34)+"DISK.BA"+CHR$(13)
+          
+           This allows you to use [F7] to use the Disk and [F6] to 
+         regain memory when finished. A good idea with the Mod-100 is to 
+         get the TELKEY.BA program and change the [F] KEY statements to 
+         read as the above.
+         
+           You don't have to worry about the Disk Drive being on. It 
+         will not 'Bomb' the computer if it's not.
+                        -END-
+
+

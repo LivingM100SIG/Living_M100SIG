@@ -1,0 +1,70 @@
+          DATNOD.200 (c) 1990
+          Copyright by Paul Globman
+
+
+DATNOD.BA is BASIC version of DATFIL that only allows the display function,
+and accesses data files stored in the Node RAMPAC/Datapac.
+ 
+The program provided below requires XOS to be installed and N-READ.CO to be stored in bank #3.
+ 
+The program runs like DATFIL with data files in RAMPAC.  Enter data file name
+at the "Enter Filename" prompt, or type "END" to exit to the Tandy 200 menu.
+ 
+Like DATFIL, the search string is case sensitive.  After each record is 
+displayed the program stops and waits for input.  Any key to continue search
+or "N" to discontinue, as in DATFIL.
+ 
+To link one file to another, use DATFIL to add one final record.  The first
+data field (in the last record) must be "//filnam".
+ 
+If the last record contains "//vendor" in the first field, then when DATNOD
+finishes searching current file it will continue the search in VENDOR.DO (also
+stored in RAMPAC), using the same search string.  The two data files need not
+have the same format or number of fields.
+ 
+NON XOS USAGE
+-------------
+If you are not using XOS, and have DATFIL data files stored in Node and 
+N-READ.CO in the current RAM bank, then delete line 70 and change line 80 to:
+
+ 80 LOADM"N-READ":X$=""
+
+Note:
+-----
+This program does not require RAMDSK.CO and will work with Datapac's using the
+option ROM.  It does require N-READ.CO.  The program can be further modified to
+bring N-READ into RAM from the Datapac and can be made to create a new DATFIL
+data file, of selected data records that match the search string.  There is a
+lot of potential for a variety of applications, including mailing lists
+and information management, based on large databases (by linking several
+smaller files).  I leave the development of such applications to the individual
+users.
+------------------------------------------------------------------------------
+
+0 REM DATNOD.XOS (C) 1990 BY P.GLOBMAN
+10 NR=63600
+20 CLS:PRINT@45,"Enter Filename: "F$
+30 PRINT@61,"";:LINEINPUT F1$
+40 S$="":IFF1$=""THEN60ELSEF$=F1$
+50 IFINSTR(1,"ENDend",F1$)>0THENMENU
+60 PRINT@85,"";:INPUT"Search string";S$
+70 IPL"":CALL41179:X$="3:N-READ.CO"
+80 CALLNR,8,VARPTR(X$)
+90 CALLNR,1,VARPTR(F$)
+100 GOSUB250:NF=VAL(X$)
+110 FORI=1TONF:GOSUB250:FN$(I)=X$
+120 GOSUB250:PA(I)=VAL(X$):NEXT
+130 FORI=1TONF:GOSUB250
+140 IFPEEK(NR+3)<>1THENBEEP:GOTO20
+150 FD$(I)=X$:NEXT:IFS$=""THEN220
+160 IFLEFT$(FD$(1),2)<>"//"THEN190
+170 F$=RIGHT$(FD$(1),LEN(FD$(1))-2)
+180 GOTO70
+190 FORI=1TONF
+200 IFINSTR(1,FD$(I),S$)<>0THEN220
+210 NEXT:GOTO130
+220 CLS:FORI=1TONF:PRINT@PA(I),FD$(I)
+230 NEXT:PRINT@0,"";:AN$=INPUT$(1)
+240 IFINSTR(1,"Nn",AN$)THEN20ELSE130
+250 CALLNR,2,VARPTR(X$):RETURN
+ 

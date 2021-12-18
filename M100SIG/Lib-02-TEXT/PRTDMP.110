@@ -1,0 +1,49 @@
+0 'PRINTER SETUP PROGRAM V1.1  2/12/84
+1 '  by Allan Trick  [71256,757]
+2 '
+3 'Utility to aid in selecting various
+4 'typestyles and print modes on R.S.
+5 'DMP-110 printer.  Menu-driven.
+6 'About 1400 Bytes w/remarks stripped.
+7 'Please refer comments/questions to
+8 'above or phone (617) 262-2300 x3298.
+9 '
+10 LINE(48,11)-(196,35),1,B
+20 PRINT@91,"RADIO SHACK DMP-110
+30 PRINT@130,"PRINTER SETUP UTILITY"
+40 PRINT@241,"Printer must be attached and on to run  this program.  Is it on?  <Y>es <N>o";
+50 Q$=INKEY$:IFQ$=""THEN50
+60 IFQ$="Y"ORQ$="y"THEN90
+70 IFQ$="N"ORQ$="n"ORQ$=CHR$(13)THENMENU
+80 GOTO50
+90 DIMT%(8),M%(6):T(1)=19:T(2)=18:T(3)=23:T(4)=29:T(5)=17:T(6)=66:T(7)=20:T(8)=77:M(1)=15:M(2)=14:M(3)=31:M(4)=14:M(5)=15:M(6)=32
+100 CLS:PRINTCHR$(27)"p";"* PRINTER SETUP PROGRAM (for DMP-110) *":PRINTCHR$(27)"q";
+110 PRINT:PRINT" <1> 10-pitch Std.    <5> Proportional"
+120 PRINT" <2> 10-pitch Corr.   <6> Italics"
+130 PRINT" <3> 12-pitch Std.    <7> Condensed"
+140 PRINT" <4> 12-pitch Corr.   <8> Microfont"
+150 PRINT:PRINT" Your choice (or ENTER for next scrn)?";
+160 A$=INKEY$:IFA$=""THEN160
+170 IFA$=CHR$(13)THEN200
+180 A=ASC(A$):A=A-48:IF A<1ORA>8THEN160
+190 LPRINTCHR$(27)CHR$(T(A));
+200 CLS:PRINT@12,"** Print Modes **"
+210 PRINT:PRINT"   Underline      <1> ON    <4> OFF"
+220 PRINT"   Elongate       <2> ON    <5> OFF"
+230 PRINT"   Bold           <3> ON    <6> OFF"
+240 PRINT:PRINT"   Your choice (ENTER for next scrn)?";
+250 B$=INKEY$:IFB$=""THEN250
+260 IFB$=CHR$(13)THEN350
+270 B=ASC(B$):B=B-48:IF B<1ORB>6THEN250
+280 IFB<>1ANDB<>4THEN310
+290 LPRINTCHR$(M(B));
+300 GOTO320
+310 LPRINTCHR$(27)CHR$(M(B));
+320 PRINT"      Press ESC for another mode change";
+330 C$=INKEY$:IFC$=""THEN330
+340 IFC$=CHR$(27)THEN200
+350 CLS:PRINT:PRINT"    Settings have been made.  Press":PRINT"    ENTER to return to Menu, or to"
+360 PRINT"    see how new settings look type":PRINT"    a test sentence and press ENTER: ":PRINT
+370 LINEINPUTZ$
+380 IFZ$=""THENMENU
+390 LPRINTZ$:LPRINT:MENU

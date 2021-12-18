@@ -1,0 +1,220 @@
+POWR-DISK Owner's Manual
+
+The Model 100 and Tandy 200 have different values for MAXRAM.  Diagrammatically,
+it helps to visualize RAM memory in "neighborhoods".
+
+								Manual Page 29
+								--------------
+
+	 ================  Top Address = 65535
+	|                |
+	|    Reserved    |
+	|     System     |
+	|     Memory     |
+	|                |
+	|================| MAXRAM  100 = 62960
+	|                |         200 = 61104
+	|  User Memory   |
+	| (Files, etc.)  |
+	|                |
+	 ================  Lowest RAM address 100/24K = 40960
+					      100/32K = 32768
+					      200/24K = 40960
+
+A much more detailed chart could also show the relative locations of BA, DO,
+and CO files; the location of the PASTE buffer, etc.  Everything changeable
+that the computer "knows", resides somewhere in system memory or user memory.
+
+
+Machine Language Memory Usage
+
+Machine-language programs for the Model 100/200 must always run from the same
+addresses.  In other words, it is insufficient to specify that they reside
+"somewhere" in user memory.  The designers of the 100/200 operating systems
+made provision for fixed locations: "high memory".  There is a boundary pointer
+called HIMEM, that is equal to, or lower than MAXRAM.  No files, variables, or
+data will reside there, since it is reserved for machine language programs.
+Unless you (or a program) changes HIMEM, it is set the same as MAXRAM.  The
+CLEAR command can change the HIMEM value [allowing for programs of different
+sizes to run in this reserved area, and to "kill" such programs.]
+
+Because the Model 100/200's RAM is scarce nearly every machine language program
+uses the exact same locations, those directly below MAXRAM, for their "running
+position" in memory.  It is possible to design two or more specific machine
+language programs to share the reserved memory area, but it is impossible to do
+this in general.  As a result if you want to run more than one machine language
+program, [unless you can relocate one or the other,] you are out of luck.
+
+Diagrammatically, HIMEM appears as follows:
+
+								Manual Page 30
+								--------------
+
+
+[Chart on following page... - ed.]
+POWR-DISK Owner's Manual
+
+	 ================  Top Address = 65535
+	|                |
+	|    Reserved    |
+	|     System     |
+	|     Memory     |
+	|                |
+	|================| MAXRAM  100 = 62960
+	|                |         200 = 61104
+	|    Reserved    |
+	|     Memory     |
+	|                |
+	|================  Value of HIMEM set by CLEAR statement
+	|                |
+	|      User      |
+	|     Memory     |
+	|  (Files, etc.) |
+	|                |
+	 ================  Lowest RAM address
+
+
+CO Files
+
+[There are various interpretations of the meaning of "CO".  Some writers say
+this is an acronym for "Command", some say it stands for "Compiled".  The POWR-
+DISK manual uses "Command", which is unsatisfactory to the editor, so I changed
+it! - ed.]
+
+The Model 100/200's designers anticipated the clashing of machine language
+programs.  They created .CO files.  A CO file exists in user memory with other
+files and never clashes, but it cannot be "run" like a BASIC program.  Instead
+it is like a "snapshot" of the reserved memory area, containing a non-executing
+image (copy) of a runnable machine language program.  When you select a CO file
+on the main menu and press <ENTER>, the computer (1) copies the "snapshot" into
+the reserved memory area, and (2) begins execution of that copy.
+
+[The "snapshot" image is not required while the program is executing. - ed.]
+
+On the Tandy 200, spreadsheet files are also CO files.  This confuses the issue
+because they are not "programs".  This appendix does not discuss the makeup of
+the spreadsheet CO files used by MSPLAN.
+
+There are some implications to CO files:
+								Manual Page 31
+								--------------
+
+- HIMEM must be set low enough to load the CO file into reserved memory before
+running it.  If it is not, the computer will just beep at you, and return to
+the main menu.
+
+- In order to run a CO file from the menu, you must have enough memory to store
+it TWICE: once in the CO file, and once in the reserved memory area.  [A 2500
+byte CO file will use 5000 bytes while it is actually loaded and running. ...
+FLOPPY.CO at slightly over 3500 bytes, actually uses up more than 7000 bytes of
+RAM space when executing, if it is also left stored in the image file, where it
+appears on the menu. - ed.]
+POWR-DISK Owner's Manual
+
+- Once a CO file has been copied into the reserved memory area, it is often
+possible to remove the CO file image that appears on the menu, and still
+execute the program.
+
+[POWR-D.CO, once loaded and operational with the START.BA program, can be
+removed from RAM with the Kill command, and in fact, the abbreviated version of
+START.BA in PDSK03.200 does just that; removing both POWR-D.CO and START.BA
+after POWR-DISK is loaded and operational. -ed.]
+
+
+Enter POWR-DISK
+
+In some respects, POWR-DISK confuses the RAM management issue even further,
+because it lowers MAXRAM when it is active to protect itself, so that the CLEAR
+command in BASIC cannot wipe it out.  Diagrammatically, the memory with POWR-
+DISK installed, looks like this:
+
+	 ================  Top Address = 65535
+	|                |
+	|    Reserved    |
+	|     System     |
+	|     Memory     |
+	|                |
+	|================| Default MAXRAM  100 = 62960
+	|                |         	   200 = 61104
+	|   POWR-DISK    |
+	|                |
+	|================| NEW MAXRAM
+	|                |
+	|    Reserved    |
+	|     Memory     |
+	|                |
+	|================| HIMEM
+	|                |
+	|      User      |
+	|     Memory     |
+	|  (Files, etc.) |
+	|                |
+	 ================  Lowest RAM address
+
+For dealing with most BASIC program, lowering MAXRAM is a good technique.  How-
+ever, machine language programs cannot recognize a different MAXRAM or run in
+other locations.  Thus, it becomes necessary to relocate either the other m/l
+program, or, when this is not possible, relocate POWR-DISK.
+
+								Manual Page 32
+								--------------
+
+Relocation actually changes a machine language program to run in different
+addresses.  A program so relocated can reside in the reserved memory area in
+the diagram above.  The CO file does not need to sit in RAM, since POWR-DISK
+can copy it directly from the TDD into reserved memory -- a feat beyond the
+capabilities of FLOPPY.CO.
+
+Further, when dealing with machine language programs that cannot be relocated,
+POWR-DISK Owner's Manual
+
+POWR-DISK itself can be relocated.  Diagrammatically, the memory then looks as
+follows:
+
+	 ================  Top Address = 65535
+	|                |
+	|    Reserved    |
+	|     System     |
+	|     Memory     |
+	|                |
+	|================| Default MAXRAM  100 = 62960
+	|                |         200 = 61104
+	|    Machine     |
+	|    Language    | <-- POWR-DISK was here
+	|    Program     |       |
+	|                |       |
+	|================|       |
+	|                |       |
+	|   POWR-DISK    | <-- Relocated to here
+	|                |
+	|================| New (Relocated) MAXRAM
+	|                |
+	|      User      |
+	|     Memory     |
+	|      Area      |
+	|                |
+	 ================  Lowest RAM address
+
+Note that the HIMEM address is usually the same as MAXRAM when POWR-DISK has
+been relocated, so there is no reserved memory area visible -- but there still
+could be.  The machine language program sitting above POWR-DISK does not "know"
+that MAXRAM has been moved lower; it runs thinking that it is in the reserved
+memory area.
+
+This subject is complex; if you are lost, don't worry.  If you have difficulty
+accommodating a machine language program for use with POWR-DISK, ask a knowled-
+geable friend or [leave a message on the Model 100 Forum message board].
+
+
+
+			   [End of POWR-DISK Manual.]
+
+[Acroatix also sent out a newsletter to registered owners of the POWR-DISK
+program, which offered tips and general ideas on use of the program, as well as
+advising customers of updates, update policy, and discussing new software that
+was available.  As far as I know, only one issue of the newsletter was ever
+produced.
+
+Significant comments from the Newsletter will be found in the next file in this
+series. - ed.]
+

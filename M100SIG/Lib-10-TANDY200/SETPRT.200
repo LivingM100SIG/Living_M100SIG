@@ -1,0 +1,46 @@
+Copyright 1987 Henry W. Modglin 76672,265
+
+10 'Program:  SETPRT
+20 'Written by:  Henry W. Modglin
+30 'This program is to set printer to any print type(or "types" if allowed).
+40 MA=16
+50 DIMA$(MA)
+60 CLS:PRINT"SETPRT"
+70 PRINT"Program to Set Printer":PRINT:PRINT"OPTIONS AVAILABLE:":PRINT
+80 PRINT"<NO>NORMAL(10CPI)      <CP>COMPRESSED(12CPI)      <CD>CONDENSED(17CPI)"
+90 PRINT"<PR>PROPORTIONAL       <CN>CORRESPONDENCE/NORMAL  <CC>CORRESPONDENCE/COMPRESSED"
+100 PRINT"<SI>START ITALICS      <EI>END ITALICS            <SU>START SUBSCRIPT"
+110 PRINT"<SS>START SUPERSCRIPT  <ES>END SUB/SUPERSCRIPT    <MI>MICROFONT"
+120 PRINT"<SE>START ELONGATION   <EE>END ELONGATION         <SB>START BOLD"
+130 PRINT"<EB>END BOLD":PRINT:PRINT
+140 PRINT"Enter Desired Codes":LINEINPUT"(each code followed by a slash):  ";S$
+150 IFS$=""GOTO440
+160 I=LEN(S$)
+170 FORZ=1TOISTEP3:B$=MID$(S$,Z,2):FORA=1TOMA:READC$,C1,C2,C3:IFMID$(B$,1,2)=MID$(C$,1,2)GOTO200
+180 NEXTA
+190 GOTO350
+200 A$(A)="1"
+210 RESTORE
+220 NEXTZ
+230 FORA=1TOMA:READC$,C1,C2,C3:IFA$(A)<>"1"GOTO270
+240 IFC3=99GOTO260
+250 LPRINTCHR$(C1);CHR$(C2);CHR$(C3);:GOTO270
+260 LPRINTCHR$(C1);CHR$(C2);
+270 NEXTA
+280 'Ask to see if test of type(s) is desired.
+290 'If so, ask for input then print it.
+300 CLS:PRINT"SETPRT":PRINT"Program to Set Printer To Print Type(s) Desired":PRINT:PRINT:PRINT
+310 LINEINPUT"Do you want to test the print type(s) selected(Y or N)? ";Y$
+320 IFY$<>"Y"GOTO440
+330 LINEINPUT"Enter output desired: ";O$:LPRINTO$
+340 GOTO440
+350 'Subroutine to Print Error Message
+360 PRINT:BEEP:PRINTCHR$(27);"pOption <";LEFT$(B$,2);"> Not Available";CHR$(27);"q"
+370 LINEINPUT"Hit <ENTER> to Continue:  ";E$
+380 RESTORE:PRINTCHR$(27);"Y,!";CHR$(27);"J":GOTO140
+390 'Data statements to hold codes and control codes to set printer to corresponding print types.
+400 DATA"NO",27,19,99,"CP",27,23,99,"CD",27,20,99,"PR",27,17,99,"CN",27,18,99
+410 DATA"CC",27,29,99,"SI",27,66,1,"EI",27,66,0,"SU",27,83,1,"SS",27,83,0
+420 DATA"ES",27,88,99,"MI",27,77,99,"SE",27,14,99,"EE",27,15,99,"SB",27,31,99
+430 DATA"EB",27,32,99
+440 END

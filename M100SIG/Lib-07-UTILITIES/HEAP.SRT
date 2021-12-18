@@ -1,0 +1,118 @@
+0 ' Heapsort demo
+2 ' Tim Ekdom 72575,1473 8/85
+10 CLS:DEFINTA-Z:DIMA(10):SF=1
+12 PRINT"Enter numbers to sort:"
+20 FORN=1TO10:PRINTN;:INPUTA(N):NEXTN
+30 CLS:P$=CHR$(27)+"p":Q$=CHR$(27)+"q":F2$="\\##":PRINT@73,"Paused";
+40 N=10
+1010 LN=1010:GOSUB2000
+1020 M=10:LN=1020:GOSUB2000
+1030 FORL=5TO1STEP-1:LN=1030:GOSUB2000
+1040 B=A(L):LN=1040:GOSUB2000
+1050 LN=1050:GOSUB2000:GOSUB1150
+1060 NEXTL:LN=1060:GOSUB2000
+1070 LN=1070:GOSUB2000
+1080 L=1:LN=1080:GOSUB2000
+1090 FORM=N-1TO1STEP-1:LN=1090:GOSUB2000
+1100 B=A(M+1):LN=1100:GOSUB2000
+1110 A(M+1)=A(1):LN=1110:GOSUB2000
+1120 LN=1120:GOSUB2000:GOSUB1150
+1130 LN=1130:GOSUB2000:NEXTM
+1140 LN=1140:GOSUB2000
+1145 A$=INKEY$:IFA$=""THEN1145ELSECLS:END
+1150 LN=1150:GOSUB2000
+1160 I=L:LN=1160:GOSUB2000
+1170 J=I+I:LN=1170:GOSUB2000
+1180 LN=1180:GOSUB2000:IFJ>MTHENGOTO1250
+1190 LN=1190:GOSUB2000:IFJ=MTHENGOTO1210
+1200 LN=1200:GOSUB2000:IFA(J+1)>A(J)THENJ=J+1
+1210 LN=1210:GOSUB2000:IFB>=A(J)THENGOTO1250
+1220 A(I)=A(J):LN=1220:GOSUB2000
+1230 I=J:LN=1230:GOSUB2000
+1240 LN=1240:GOSUB2000:GOTO1170
+1250 A(I)=B:LN=1250:GOSUB2000
+1260 LN=1260:GOSUB2000:RETURN
+2000 PRINT@281,"Line";LN;:PRINTCHR$(27)+CHR$(75);:GOSUB3000
+2005 C$=P$+"1"+Q$:A$=STR$(A(1)):PRINT@59,C$;RIGHT$(A$,LEN(A$)-1);" ";
+2010 PRINT@41,USINGF2$;"B=",B;
+2020 C$=P$+"2"+Q$:A$=STR$(A(2)):PRINT@95,C$;RIGHT$(A$,LEN(A$)-1);" ";:C$=P$+"3"+Q$:A$=STR$(A(3)):PRINT@102,C$;RIGHT$(A$,LEN(A$)-1);" ";
+2030 PRINT@81,USINGF2$;"I=",I;
+2035 C$=P$+"4"+Q$:A$=STR$(A(4)):PRINT@133,C$;RIGHT$(A$,LEN(A$)-1);" ";:C$=P$+"5"+Q$:A$=STR$(A(5)):PRINT@137,C$;RIGHT$(A$,LEN(A$)-1);" ";
+2040 C$=P$+"6"+Q$:A$=STR$(A(6)):PRINT@141,C$;RIGHT$(A$,LEN(A$)-1);" ";:C$=P$+"7"+Q$:A$=STR$(A(7)):PRINT@145,C$;RIGHT$(A$,LEN(A$)-1);" ";
+2050 PRINT@121,USINGF2$;"J=",J;
+2060 C$=P$+"8"+Q$:A$=STR$(A(8)):PRINT@170,C$;RIGHT$(A$,LEN(A$)-1);" ";:C$=P$+"9"+Q$:A$=STR$(A(9)):PRINT@174,C$;RIGHT$(A$,LEN(A$)-1);" ";
+2070 C$=P$+"10"+Q$:A$=STR$(A(10)):PRINT@178,C$;RIGHT$(A$,LEN(A$)-1);" ";
+2080 PRINT@161,USINGF2$;"L=";L;
+2090 PRINT@201,USINGF2$;"M=";M;
+2100 A$=INKEY$:IFA$=" "THENSF=1
+2106 IFA$=CHR$(13)THENSF=0
+2110 IFSF=1THENPRINT@73,"Paused";
+2120 IFSF=0THENPRINT@73,"      ";
+2130 IFSF=0THENGOTO2200
+2140 A$=INKEY$:IFA$=""THEN2140
+2150 IFA$=CHR$(13)THENSF=0:RETURN
+2160 RETURN
+2200 FORW=1TO1000:NEXTW
+2210 RETURN
+3000 RESTORE5000:ONERRORGOTO3100
+3010 READLI,DA$
+3020 IFLI=LNTHENPRINTDA$;:RETURN
+3030 GOTO3010
+3100 ONERRORGOTO0:RETURN
+5000 DATA1010,"' PHASE 1"
+5005 DATA1020,"M=N"
+5010 DATA1030,"FOR L=INT(N/2) TO 1 STEP -1"
+5020 DATA1040,"B=A(L)"
+5030 DATA1050,"GOSUB 1150"
+5040 DATA1060,"NEXT L"
+5050 DATA1070,"' PHASE 2"
+5060 DATA1080,"L=1"
+5070 DATA1090,"FOR M=N-1 TO 1 STEP -1"
+5080 DATA1100,"B=A(M+1)"
+5090 DATA1110,"A(M+1)=A(1)"
+5100 DATA1120,"GOSUB 1150"
+5110 DATA1130,"NEXT M"
+5120 DATA1140,"END"
+5130 DATA1150,"' TOHEAP SUBROUTINE"
+5140 DATA1160,"I=L"
+5150 DATA1170,"J=I+I"
+5160 DATA1180,"IF J>M THEN 1250"
+5170 DATA1190,"IF J=M THEN 1210"
+5180 DATA1200,"IF A(J+1)>A(J) THEN J=J+1"
+5190 DATA1210,"IF B>=A(J) THEN 1250"
+5200 DATA1220,"A(I)=A(J)"
+5210 DATA1230,"I=J"
+5220 DATA1240,"GOTO 1170"
+5230 DATA1250,"A(I)=B"
+5240 DATA1260,"RETURN"
+6000 ' Instructions:
+6010 ' 1. Enter 10 numbers (no more than 2 digits apiece).
+6020 ' 2. The contents of the array, the values of each variable, and the
+6030 '    current line of sort code are displayed.
+6040 ' 3. Press the Enter key to make it run continuously, with a short pause
+6050 '    at each line.
+6060 ' 4. Press the Space Bar to make it pause and wait for a keypress.
+6070 '
+6080 ' The Heapsort code can be seen in the Data lines 5000ff.
+6090 '
+6100 ' The Heap:
+6110 '                (1)
+6120 '             /       \
+6130 '        (2)            (3)
+6140 '       /   \           /   \
+6150 '    (4)     (5)     (6)     (7)
+6160 '    / \     /
+6170 '  (8) (9) (10)
+6180 '
+6190 ' Brief description of a Heapsort:
+6200 '   A heap exists when any element A(i) in a list of A(n) elements is
+6210 ' greater than the elements at A(2i) and A(2i+1). Phase one makes heaps
+6220 ' out of all elements by starting at n/2 and checking to see if each
+6230 ' is a heap and making exchanges if not. If an exchange is made, the
+6240 ' element traded with now has to be checked because its value has changed.
+6250 ' At the end of phase 1, the largest value in the list is in A(1).
+6260 ' In phase 2, the value in A(1) is put at the end of the list, and again
+6270 ' all elements except the last are made into heaps, thus the next to
+6280 ' last ends up in A(1). It's put in the next to the last, and the end
+6290 ' of the list is decremented again, and the whole thing repeated, and so
+6300 ' on until the list is in order.

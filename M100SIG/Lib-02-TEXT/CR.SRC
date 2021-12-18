@@ -1,0 +1,273 @@
+;
+;
+; CR.100 v1.0	c1987   Jon Diercks
+;			[73327,2353]
+;	--Carriage Return utility
+;	Strips CR's from text file
+;	or adds them with word wrap
+;	<see CR.DOC>
+;
+;
+;
+	org	62400	;will relocate
+;
+;rom/ram adresses
+;
+chkf	equ	$5aab	;ck file name in directory
+faddr	equ	$5ae3	;get file address
+beep	equ	$7662	;make a beep
+files	equ	$1f42	;list RAM: dir
+dnewln	equ	$5791	;disp <hl> on newline
+upcase	equ	$0fe9	;convert a to uppercase
+chget	equ	$12cb	;get char to a
+upget	equ	$5d64	;get upcase chr(chget+upcase)
+insrta	equ	$6b61	;insert A to file
+makhol	equ	$6b6d	;insert BC 0's
+masdel	equ	$6b9f	;delete BC chr's
+linput	equ	$4644	;line input
+;	<text placed at $f685
+;	 hl=$f684
+;	 c flag set if ^C abort>
+dinput	equ	$6603	;input w/default
+;	<entry:hl^prompt,de^default
+;	 prompt on line 8
+;	 exit:inputb has input or null>
+inputb	equ	$f685	;input buffer
+menu	equ	$5797
+;
+;
+;program starts here
+;
+;
+start	disp	welcom
+	ent	start
+;
+finput	call	files
+	mvi	a,8
+	sta	$f639	;row 8
+finp1	lxi	hl,file?
+	call	input
+	lxi	hl,inputb
+	dcx	hl
+;
+lp1	inx	hl	;ensure .do
+	mov	a,m
+	cpi	'.'
+	jz	do
+	ora	a
+	jnz	lp1
+;
+do	lxi	d,dotyp	;put in .DO extension
+	mvi	b,4
+	call	$3469	;ldir
+;
+	lxi	de,inputb
+	mvi	a,10
+	call	chkf	;file in dir?
+	jnz	finp2	;get it
+;
+	call	beep	;file not found
+	jmp	finp1	;try again
+;
+finp2	call	faddr	;hl=file start
+	shld	filept
+	jmp	minput
+;
+input	call	dnewln	;print prompt
+	disp	crexit
+	call	linput
+	jc	menu	;^C abort
+	rst	2
+	jz	menu	;null input
+;
+	lxi	hl,inputb
+;
+makeup	mov	a,m	;switch <hl>-null to upper case
+	ana	a	;done?
+	rz
+	call	upcase
+	mov	m,a	;put upcase back where you got lc
+	inx	hl
+	jmp	makeup
+;
+minput	disp	s/w?
+minp1	call	upget
+	cpi	'S'
+	jnz	minp2
+	rst	4	;print S
+	jmp	strip
+minp2	cpi	'W'
+	jnz	minp1	;not s/w - try again
+	rst	4	;print W
+;
+wrap	lxi	hl,width?
+	lxi	de,widthd	;width default
+	call	dinput
+	rst	2
+	xra	a
+	cmp	m
+	jz	finp1	;null input
+	sta	inputb+3	;only use 3 digits
+	call	$112e	;evaluate <hl> into A
+	cpi	10	;<10?
+	jc	wgoof	;error
+	cpi	133	;>132?
+	jnc	wgoof	;error
+	sta	width
+	lxi	de,widthd
+	lxi	hl,inputb
+	call	$65c3	;copy new width to default
+	disp	work
+	lhld	filept	;file pointer
+w1	sub	a	;a=0
+	mov	b,a	;b=0--position in line
+	mov	c,a	;c=0--position of last space
+wloop	call	eof?
+	cpi	13	;cr?
+	jnz	w2	;no
+	inx	hl	;yes,
+	mvi	a,10
+	cmp	m	;lf after cr?
+	jz	w10	;yes
+	call	addlf	;no, add one
+	jmp	w1	;next line
+w10	inx	hl
+	jmp	w1
+w2	cpi	32	;space?
+	jz	w3	;yes
+	cpi	'-'	;hyphen?
+	jnz	w4	;no
+w3	mov	c,b	;c=last space
+w4	inr	b
+	inx	hl	;move fwd in file
+	lda	width
+	cmp	b
+	jnz	wloop
+	xra	a
+	cmp	c	;if no space
+	jz	w5	;cr anyway
+	mov	a,b	; line width
+	sub	c	;-last space
+wloop2	dcx	hl	;=number of places to move back
+	dcr	a
+	jnz	wloop2
+	inx	hl	;+1
+w5	call	addcr	;insert cr
+	jmp	w1	;next line
+;
+eof?	mov	a,m	;get char from file
+	cpi	26	;eof?
+	rnz		;no
+	pop	hl	;maintain stack integrity
+	jmp	finp1
+;
+wgoof	call	beep
+	jmp	wrap
+;
+addcr	mvi	a,13
+	call	insrta
+	jc	omerr
+addlf	mvi	a,10
+adda	call	insrta
+	rnc
+omerr	disp	memful
+	pop	hl	;maintain stack integrity
+	jmp	finp1
+;
+;
+strip	disp	work
+	lhld	filept
+sloop	call	eof?	;new paragraph
+	cpi	'.'	;dot command?
+	jz	skipit	;yes, skip
+sl1	inx	hl	;continue scan
+	call	eof?
+	cpi	13	;cr?
+	jnz	sl1	;no
+	inx	hl	;yes,
+	mvi	a,10
+	cmp	m	;lf?
+	jz	sl2	;yes
+	call	addlf	;no, add one
+	jmp	sl3
+sl2	inx	hl
+sl3	call	eof?
+	cpi	32	;space?
+	jz	sloop	;yes, new para
+	cpi	'.'	;dot command?
+	jz	skipit	;yes, skip
+	cpi	13	;another cr?
+	jz	sk2	;ck lf & go back
+	dcx	hl
+	dcx	hl
+	lxi	bc,2
+	call	masdel	;delete crlf
+	dcx	hl
+	mvi	a,32
+	cmp	m	;space before cr?
+	jz	sl1	;yes, keep it
+	mov	a,m
+	cpi	'-'	;hypen?
+	jz	sl1	;yes, keep it
+	inx	hl	;else
+	mvi	a,32	;add space
+	call	adda
+	jmp	sl1	;and continue
+;
+skipit	inx	hl
+	call	eof?
+	cpi	13	;cr?
+	jnz	skipit	;no
+sk2	inx	hl	;yes,
+	mvi	a,10
+	cmp	m	;lf?
+	jz	sk3	;yes
+	call	addlf	;no, add one
+	jmp	sloop
+sk3	inx	hl
+	jmp	sloop	;next para
+;
+;
+;
+;
+;string constants
+;
+welcom	db	12	;^L = cls
+	db	27	;esc
+	db	'V'	;lock scroll
+	db	27
+	dm	pCR.100 - v1.0
+	db	27
+	dm	q
+	db	13
+	db	10
+	db	0
+file?	dm	Filename
+	db	0
+crexit	dm	<ENTER to quit>:
+	db	27
+	db	'K'	;eraeol
+	db	0
+s/w?	dm	<S>trip/<W>rap:
+	db	27
+	db	'K'	;eraeol
+	db	0
+width?	equ	$670c	;"Width:"
+widthd	equ	$f64a	;width default<ascii>
+work	db	13
+	db	10
+	dm	Working...
+	db	27
+	db	'K'	;eraeol
+	db	0
+memful	equ	$60b1	;"Memory full^G"
+dotyp	dm	.DO
+	db	0
+;
+;
+;variable space
+;
+width	ds	1
+filept	ds	2	;store hl - file pointer
+;
+	end

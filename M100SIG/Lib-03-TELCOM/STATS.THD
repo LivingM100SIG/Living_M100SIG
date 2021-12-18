@@ -1,0 +1,173 @@
+This series of captured messages started out as a request for information on
+the recommended TELCOM parameters, the "stat" setting, and developed into
+an instructive discussion on data flow control and parity.
+
+
+#: 186333 S1/General/Help
+    15-Aug-89  16:45:18
+Sb: #STATS FOR COMPUSERVE
+Fm: Michael Warren 76136,145
+To: SYSOP
+
+I NEED SOME HELP. WHAT SHOULD THE STATS BE SET TO ON THE MODEL 100 WHEN I LOG
+ON TO COMPUSERVE. I CHANGED THEM FOR EUROPE AND CAN'T REMEMBER WHAT THEY WERE
+ORIGINALLY SET ON. ANY HELP WOULD BE APPRECIATED SINCE I'M IN A HOTEL IN
+DENVER USING A K-PRO TEMPORARILY. THANKS AGAIN
+     MIKE WARREN
+
+
+Fm: Tony Anderson 76703,4062
+To: Michael Warren 76136,145
+
+The standard recommendation is M7I1E. But it depends on how you have your
+profile setup, allowing 8-bit or 7-bit characters.  "M7" is more or less a
+standard, general purpose setting.
+
+
+Fm: Gene Nestro 73727,1015
+To: Tony Anderson 76703,4062
+
+I USE M7I1"E" & YOU ALSO recommend it.  CompuServe recommends M7I1"D" why do
+suggest Even "E"?
+
+
+Fm: Tony Anderson 76703,4062
+To: Gene Nestro 73727,1015
+
+"E" does not = "Even" as in Odd or Even Parity.  It stands for "Enable", which
+turns on (enables) the X-on/X-off data flow control so that if the host
+computer is sending faster than the portable can receive, the portable can say
+"shut up for a minute while I digest this", and the other computer will do so,
+without losing any charcters in the transmission.  Likewise, if the host
+computer needs you to slow down, or wait a minute while it is doing something
+else, it can send a "stop message" to you, and the portable will wait until it
+gets the "all clear" to start sending again.  "X-on" and "X-off" are
+equivalent to the start and stop signals.  Technically, they are the control
+characters ^Q and ^S, and are the same as what you can send manually from the
+keyboard by pressing the CTRL key and the S or Q at the same time.
+
+If you select "D", (D = Disable) you disable this automatic feature in the
+portable, and it will not send a stop message to a host if the hst is sending
+too fast, and you can lose characters in the transmission; or it will not
+respond when a host computer sends a stop message, and the host will lose
+characters while it is off doing something else and your computer keeps
+sending.
+
+I would never recommend using "D" except in special applications where it
+would be superceeded in the software application.  M7I1E has been recommended
+here from the earliest days, and is still current in the file DEFALT.HLP in
+Library 1.
+
+
+Fm: RANDY HESS 73267,552
+To: Tony Anderson 76703,4062
+
+Tony,
+ Why do we prefer "I"gnore parity insted of "E"ven parity?
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+"Parity" is a sort-of checksum figure for each character that is transferred
+from one computer to another.  It is part of the character "word", the group
+of binary bits that is actually sent, which represent the character.  You
+never actually see it, but it's use can indicate to a receiving computer
+whether any of the bits in the data word have been altered by the
+transmission.  As a matter of theoretical interest, it has only about a 50%
+confidence level of accuracy, since it can indicate if any one signle bit has
+been changed (corrupted), but if two bits are changed, then the parity
+checksum could be correct again, and the character would be something
+completely different.  So it is not "absolute".
+
+Anyway, there are three common forms of parity checking, known as Odd, Even,
+and None (or "Mark", or "Zero", depending on the technical level of those
+discussing it). In odd or even parity, the sum of the binary digits is added
+up and a binary 1 or binary 0 is added so the checksum bit is odd or even. 
+Obviously, this takes some computer time to perform the necessary operations. 
+Similarly, in the receiving computer, selecting odd or even parity requires
+some processing time to verify the checksum figure on each individual
+character as it is received.  In "None", "Mark", or No parity, a transmitting
+computer sets the checksum bit to one regardless of the true case on all
+outgoing characters, and ignores the checksum bit on incoming characters. 
+Theoretically this reduces the processing time by 50%. -- I'm not quite sure
+exactly how the portables, handle "None", having never disassembled and
+explored the code.
+
+In "Ignore" parity, the receiving computer doesn't even go through the
+routines that deal with parity, thus saving more time.  Ignore is also the
+best choice when you may be communicating with several host computers (various
+services or BBS's) and don't know what their parity choice is; whether they
+are sending with odd or even parity.
+
+Additionally, our convention of recommending M7I1E is based on the comment in
+the Model 100 manual that TELCOM has predefined communication parameters, and
+indicates the Start-up parameter to be M7I1E.  (page 34)  Additionally, a
+cold-start will reset the stats to M7I1E, therefore it is the normal machine
+default.  It is also the setting illustrated in the manual on pages 79 through
+95.  Empirically, it works with almost everything.
+
+Should you select Even parity, and the host computer is sending in odd, or
+Mark parity, you will receive "garbage", lots of graphics characters or
+repeated parity error indications (CHR$(255)).  Should you select Odd parity,
+and the host computer is sending in Even, again, you will receive garbage or
+parity error characters.  If you select None, and the host computer is sending
+Even .... well, you get the idea... the safest, "all purpose" parity setting
+is "Ignore".  Especially since you generally don't know what a host computer
+will be sending when you first sign on to it.  CompuServe starts out by
+sending the logon messages in 7-bit, Even parity, then switches to 8-bit, No
+Parity (also called Zero Parity, here) if your profile indicates that's what
+you need or want, after it has your ID number and can look up your preferred
+settings.  It caused considerable problems for the 600 crowd until they
+learned what the problem was, because they tried to sign on in 8-bit mode,
+which is required for Xmodem downloading into the 600, (and all programs here
+for the 600 are 8-bit binary files) and the differences created "unreadable
+garbage".
+
+
+Fm: Alan Rowberg 76703,4421
+To: Tony Anderson 76703,4062 
+
+Is parity really handled in software?  I would have thought the UART would
+take care of that, both incoming and outgoing.
+
+
+Fm: Tony Anderson 76703,4062
+To: Alan Rowberg 76703,4421
+
+Perhaps it does, although I doubt it.  The Uart is a hardware device, and it's
+difficult for me to envision a mathematical process occurring in a hardware
+device without some form of instruction and evaluation, like it's own
+mini-CPU. My computer sci books discuss parity as if it were a software
+process, but they do not indicate where that software might be located.
+
+
+Fm: Steve Ringley 73727,1202
+To: Tony Anderson 76703,4062
+
+Parity is actually a hardware process, where the output word is run through a
+series of gates to get the additional bit.
+
+
+Fm: Tony Anderson 76703,4062
+To: Steve Ringley 73727,1202
+
+Whatever.
+
+
+Fm: RANDY HESS 73267,552
+To: Tony Anderson 76703,4062
+
+Thanks Tony! That's the best discussion of "parity" I've read and answered all
+my questions. If it isn't a "Tip" file it should
+ be!
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552
+
+Actually, it's probably not too acurate, since it has already been pointed out
+that parity checking is a hardware process, rather than a software process.
+And other than setting it as a parameter, there isn't much we can do with it,
+or about it.
+

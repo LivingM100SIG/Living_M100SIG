@@ -1,0 +1,96 @@
+;***************************
+;*          XRAMBO         *
+;*    Copyright (c) 1989   *
+;*      by Paul Globman    *
+;***************************
+;
+;For use with RAMBO (by EME Systems).
+;
+;Save, Load, or Exchange complete
+;RAM environments with the following
+;commands.
+;
+;S=SAVE  L=LOAD  X=EXCHANGE
+;
+;RAMBO must be initialized with the 
+;SAVE command before the LOAD or 
+;EXCHANGE command can be used.  FAILURE
+;to initialize RAMBO with the SAVE
+;command can result in a loss of files.
+;
+;This source file is setup for the 
+;Tandy 200 with XOS.  Change 6 EQU's
+;and modify/delete 3 statements in
+;source code for M100 use.
+;
+;           T200         M100
+;
+ALTBUF: EQU 63572	;64704
+BNKPRT:	EQU D8H		;E8H
+GETINP:	EQU 12F7H	;12CBH
+MAKUPR:	EQU 1014H	;0FE9H
+PRINT:	EQU 11CCH	;11A2H
+RAMST:	EQU A300H	;8000H
+;RAMST:	EQU A000H for T200 without XOS
+;
+	org altbuf
+	entry
+;
+	lxi h,msg	;offer option
+	call print	;print it
+	call getinp	;get response
+	call makupr	;make upper
+	rst 4		;echo response
+	cpi 'S'
+	jz saver	;this is save
+	cpi 'L'
+	jz loadr	;this is load
+	cpi 'X'
+	rnz
+;
+swapr:	call swbnk  ;switch to RAMBO
+swap:	mov b,m		;ram in b
+	ldax d		;rambo in a
+	xchg
+	mov m,b
+	stax d
+	xchg
+	call next
+	jmp swap
+;
+loadr:	call swbnk  ;switch to RAMBO
+load:	ldax d
+	mov m,a
+	call next
+	jmp load
+;
+saver:	call swbnk  ;switch to RAMBO
+save:	mov a,m
+	stax d
+	call next
+	jmp save
+;
+next:	inx h
+	inx d
+	mov a,h
+	ora l
+	rnz
+;
+exit:	XRA A
+	out bnkprt
+	rst 0
+;
+swbnk:	di		;switch to
+	pop b		;RAMBO
+	lxi sp,ffffh
+	push b
+	in bnkprt   ;not used for M100
+	ani 0ch     ;not used for M100
+	ori 2       ;MVI A,1  for M100
+	out bnkprt
+	lxi h,ramst
+	lxi d,0000h
+	ret
+;
+msg:	db 'S/L/X:',27,75,0
+	end

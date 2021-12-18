@@ -1,0 +1,57 @@
+Example of position independent code on the 8085 for the Model 100:
+converting strings to uppercase:
+
+entry   mov     a,m     ; check length of string
+        ora     a       ; if zero
+        rz              ;  then return
+
+        mov     c,a     ; save length in counter C
+        inx     h       ; get string address
+        mov     a,m     ; that's the low byte
+        inx     h
+        mov     h,m     ; that's the high byte
+        mov     l,a     ; HL --> string
+
+        lxi     d,2     ; here comes the tricky part
+        call    12777   ; in ROM there is XTHL, PCHL
+$PC     dad     d       ; now HL = loop
+        pop     d       ; and DE --> string
+
+loop    ldax    d       ; A = char from string
+        call    0FE9H   ; let ROM convert to uppercase
+        stax    d       ; restore converted char
+        inx     d       ; point to next char
+        dcr     c       ; decrement counter
+        rz              ; done when counter = 0
+        pchl            ; otherwise jump to loop
+
+   This routine is used in my LOGON.100 program in XA1 to convert
+strings to uppercase. In LOGON it's stored in the integer array M(3)
+to M(15) so the entry point is 6+VARPTR(M(0)). In general, it is
+called from BASIC as:
+CALL entry,0,VARPTR(A$).
+   The use of position independent code on the M100 hinges on the
+instructions XTHL, PCHL located at 12777 in ROM. In this routine,
+after the call to 12777, HL will contain the run-time value of $PC.
+After adding 2 to HL, a position independent jump to LOOP can be done
+by PCHL
+
+Following is a BASIC program containing the assembled code shown
+above. This program will just read strings, convert them to uppercase,
+and print out the result:
+
+10 DEFINTA-Z:DIMML(12):FORN=0TO12:READML(N):NEXT
+20 LINEINPUT"? ";A$:CALLVARPTR(ML(0)),0,VARPTR(A$)
+25 PRINT"  "A$:IFA$>""THEN20ELSEEND
+30 DATA-18562,20424,32291,26147,4463,2
+35 DATA-5683,6449,6865,-5683,4623,3347,-5688
+
+The info in this program can be combined with various BASIC
+application programs that may need to convert strings to uppercase. It
+executes a lot faster than equivalent BASIC code.
+
+In general, position independent code is very useful for including
+short machine code routines within a BASIC program.
+The trick is the call to 12777 in ROM. On return, HL will contain the
+present PC and the previous HL will be on the stack.
+...Rick Perry [75665,1045] 3/30/84

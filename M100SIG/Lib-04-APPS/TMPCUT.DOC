@@ -1,0 +1,81 @@
+TMPCUT.DOC (CORRECTED DOCUMENTATION)
+
+Five TMPC Handy Utility Programs for Advanced Users
+
+by Jean-Luc Crevier, CIS [73720,2456]
+
+1) FDTODO.MPC    Checksum:  62,077
+2) APPTR1.MPC    Checksum:  86,088
+3) APPTR2.MPC    Checksum:  70,947
+4) DECODE.MPC    Checksum: 104,698
+5) ENCODE.MPC    Checksum:  77,278
+
+
+
+
+
+After one year of absence on the M100SIG, I downloaded during a recent weekend
+(October 29,30 1988) the entire array of files concerning TMPC by Acroatix.
+
+In my job (television producer-director), I am preoccupied with schedules and
+to-do lists [see my last year's upload PROCAL.BAS (same as PROCAL.100) in DL4
+with associated files].
+
+I was happy to find this professionnal package made available to
+MODEL 100/TANDY 102 users. But after a week of experimentation on the job,
+I found that some needed (elementary) features were lacking such as being able
+to locate an appointement by a simple string search. (Since then I located a
+program called SEARCH.MPC written by Acroatix in DL4 that solves this problem.)
+
+In TMPC itself, you can only select dates for inspection. So unless you
+remember the correct date, you must scan the entire calendar...
+
+I wrote 5 short utility programs to 'somehow' supplement some TMPC minor
+deficiencies.
+
+The first one 'TODOFD.MPC' was adapted from PTODO and is similar in design
+to 'SEARCH.MPC' - but is case sensitive. Each todo I add to my task file is in
+the following format:
+
+         Subject: description
+
+When I want to locate all the to-dos relating to a subject or project, I use
+this utility. It can also in a way replace PTODO by entering ALL as the search
+string. Priority and stress are ignored though. By sorting this complete list
+(except to-dos selected in daily list), I get all my to-dos grouped by subject.
+
+The second and third one 'APPTR1.MPC' and 'APPTR2.MPC' prints an
+appointment/memo report by temporarily fooling TMPC...  By cheating today
+(DATE$) and setting it very far ahead, TMPC can output in DIARY.DO the entire
+list of appointments (up to this future date) in a readable date format. But
+unless you previously saved your task file to ram, disk or tape and even if you
+can re-append the diary back to the purged task file with the APPT program, you
+would still have a problem with the last activation date. 
+
+'APPTR1.MPC' and 'APPTR2.MPC' streamline the file manipulation required to use
+this approach in appointment/memo reporting.
+
+'APPTR1.MPC' first makes a ram backup of your task file, writes today's date
+and task filename in TODAY.DO before cheating DATE$ and calling TMPC itself
+which creates DIARY.DO as your report. You leave TMPC as soon you enter it to
+run 'APPTR2.MPC'. This is part two of the process.
+
+'APPTR2.MPC' resets the real today's date, kills the purged task file and
+replaces it back with the safety task file, sorts the report (TMPC limitations)
+and outputs it to any legal device.
+
+The fourth one 'DECODE.MPC' deciphers the date encoded in an appointment that
+you can locate with the Find option in Text - but can't figure out the date!
+That's the crude way I found to extract (copy not cut) the data directly from
+the task file itself - potential hazard unless you know what you are doing!
+
+The fifth one 'ENCODE.MPC' converts a normal date into a coded string
+compatible with the machine language format of TMPC - so I can fix the date at
+the beginning of a task file if I need to. ENCODE.MPC comes handy to help fix
+potential corrupted task file problems!
+
+
+All programs contain enough rems to document themselves.
+
+
+Jean-Luc Crevier [73720,2456]

@@ -1,0 +1,92 @@
+1 ' LINEAR REGRESSION PROG
+2 '
+3 ' COPYRIGHT 1985 BY DAVID O. ROWELL
+4 ' 3961 Cherry Valley Turnpike, Marietta, NY  13110 - CIS 70406,445
+5 '
+6 ' Permission is granted to members of CompuServe's Radio Shack MOD 100 SIG
+7 ' to use the program.  Sale of the program is forbidden without the written
+8 ' permission of the copyright holder.  The copyright notice must be retained
+9 ' in all copies.
+10 '
+12 ' Regression analysis is a method used to determine statistical relations
+14 ' between variables.  By far the most common relationship is the linear
+16 ' function.  Regression analysis deals with paired observations of the
+18 ' data, determining the constants of the straight line of best fit to that
+20 ' data.  If X is the independent variable and Y the dependent variable then
+22 ' regression analysis will determine the coefficients a and b of the
+24 ' equation Y=a + bX.  The program also determines the correlation
+26 ' coefficient and F-ratio of the analysis.  These are measures of how well
+28 ' the regression equation fits the data.  In general, the closer the
+30 ' correlation coefficient is to 1 the better the fit.  The higher the F
+32 ' ratio the better the fit.  The F ratio should be compared to published
+34 ' tables to determine a more quantitative measure.
+36 '
+38 ' Your data is entered as data statements.  The first datum MUST be the
+40 ' number of data points (pairs) that will be entered.  The data points are
+42 ' then entered in additional data statements.  Those data must be entered
+44 ' as X1,Y1,X2,Y2 ... Xn,Yn.  You may use line numbers from 100 to 900 for
+46 ' your data.  For example:
+48 ' 100 DATA 14
+50 ' 110 DATA 10,21.2,10,19.9,11,22.5,11,23.7,12,25,15,30.3,17,36.1
+52 ' 120 DATA 19,38.6,20,41.5,20,42.7,23,45,25,50,27,53.9,30,62.1
+54 ' gives the DATA statements for 14 observations whose independent variable,
+56 ' dependent variable data pairs are contained in the remaining DATA
+58 ' statements.  The data given could be used to demonstrate the operation
+60 ' of the program by simply removing the line number and tic mark leaving
+62 ' DATA statements 100 to 120 as real data.
+64 '
+99 GOTO 1000
+1000 SX=0:SY=0:XY=0:X2=0:ST=0:SR=0:SE=0
+1010 READ N
+1020 DIM X(N),Y(N),YH(N)
+1030 FOR I=1 TO N
+1040 READ X(I),Y(I)
+1050 SX=SX+X(I) : SY=SY+Y(I)
+1060 X2=X2+X(I)*X(I)
+1070 XY=XY+X(I)*Y(I)
+1080 NEXT I
+3000 XB=SX/N : YB=SY/N
+3010 BH=(N*XY-SX*SY)/(N*X2-SX*SX)
+3020 AH=YB-BH*XB
+3030 FOR I=1 TO N
+3040 YH(I)=AH+BH*X(I)
+3050 SR=SR+(YH(I)-YB)^2
+3060 SE=SE+(Y(I)-YH(I))^2
+3070 ST=ST+(Y(I)-YB)^2
+3100 NEXT I
+3110 ID=1-SE/ST
+3120 CC=SGN(BH)*SQR(ID)
+3130 ME=SE/(N-2)
+3140 MT=ST/(N-1)
+3150 MR=SR
+3160 F=MR/ME
+5000 CLS:PRINT:PRINT   "CURVE TYPE        A          B"
+5010 PRINT USING "Y=A+[B*X]     ####.##### ####.#####";AH;BH
+5020 PRINT:PRINT USING "CORREL. COEF.  .#####   F-RATIO ####.##";CC;F
+5030 GOSUB 10000
+5040 CLS:PRINT:PRINT "SOURCE OF  D.F.     SUM OF     MEAN"
+5050 PRINT "VARIATION           SQUARES   SQUARE"
+5060 PRINT "---------  ----    --------  --------
+5070 PRINT USING "total      ###    #####.##   ####.###";N-1;ST;MT
+5080 PRINT USING "regression   1    #####.##   #####.##";SR;MR
+5090 PRINT USING "error      ###    ###.####   ##.#####";N-2;SE;ME
+5100 GOSUB 10000
+5200 FOR I=1 TO N STEP 5
+5210 CLS:PRINT "X-ACTUAL  Y-ACTUAL  Y-CALC   PCT-DIFR"
+5220 FOR J=I TO I+4
+5230 PRINT X(J);TAB(9);Y(J);TAB(19);INT(10000*YH(J)+.5)/10000;TAB(29);INT(10000*(Y(J)-YH(J))/Y(J)+.5)/100
+5240 IF J=N THEN J=I+4
+5250 NEXT J
+5260 GOSUB 10000
+5270 NEXT I
+5275 CLS
+5280 PRINT:INPUT"WANT PREDICTED VALUES";A$
+5290 IF INSTR("Yy",A$) THEN 5300 ELSE 6000
+5300 CLS:INPUT"VALUE FOR 'X' (INDEP VAR)";XP
+5310 YP=AH+BH*XP
+5320 PRINT USING"THE VALUE OF 'Y' IS ####.####";YP
+5330 GOTO 5280
+6000 END
+10000 PRINT@290,"ANY KEY TO CONTINUE";
+10010 Z$=INKEY$:IFZ$=""THEN10010
+10020 PRINT:RETURN

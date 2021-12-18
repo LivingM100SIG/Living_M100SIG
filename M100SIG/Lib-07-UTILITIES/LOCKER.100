@@ -1,0 +1,21 @@
+1 ' 100-LOCKER by Mark L. Kushinsky
+2 '          [70136,1317]
+3 '    (c) 1984  Moshe Software
+4 '
+5 ' To use this program position
+6 ' cursor over "LOCKER" and <ENTER>.
+7 ' The password (PW$) *is* case
+8 ' dependent.
+9 '
+10 IPL"LOCKER.BA"
+20 POWER OFF,RESUME:POKE 63056,128:CLS
+30 A=0
+40 PW$="PASSWORD":L=8:C$="********"
+50 PRINT:PRINT"Please Enter Password: "
+60 GOSUB110:IF C$<>PW$ THEN80ELSE70
+70 CLS:POKE63056,0:MENU
+80 PRINT:PRINT"Incorrect Password!":BEEP:BEEP:BEEP:BEEP
+90 FOR I= 1 TO 50:NEXT I
+100 CLS:GOTO20
+110 A$=INKEY$:IF A$="" THEN110
+120 A=A+1:MID$(C$,A)=A$:IF A=L THEN RETURN ELSE110

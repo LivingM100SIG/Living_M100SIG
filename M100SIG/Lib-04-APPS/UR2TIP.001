@@ -1,0 +1,132 @@
+UR2TIP.001 by Phil Wheeler [71266,125]
+
+
+This is the first tip file for Ultimate ROM II.  No promise of
+more to come, but you never know.  Topics are miscellaneous.  My
+experience is with the Model 100 version; I assume it can be
+extrapolated to the others, but you never know until it's been
+tried.
+
+This is not a review; if it was I would have much good to say
+about T-WORD, some good to say about IDEA!, and nothing to say
+about T-BASE (haven't used it).  Because technical issues and
+hints are the scope of this file, it may seem negative.  For all
+of that, I prefer Ultimate ROM II to Super ROM for my current
+needs -- primarily due to the power of T-WORD (I write a lot!) and
+the TS-DOS key in its main menu (see below).
+
+1. Function Key Reset Problem
+
+Parts of UR-2 zap your function keys while running (reasonable)
+and do not restore them upon exit (deplorable).  So if you have
+your function keys set up the way you want in Basic, they will be
+back to the cold-start settings when you leave UR2.
+
+Example: the Key 8 definition in LFUTL.PW1 (and FIXLF.HF1) gets
+zapped, leaving you with no linefeed when you exit.  So you really
+need to use another linefeed utility if you have UR2 installed.
+Jim Irwin has created such a patch for the M100.  I have
+integrated the M100 version into an integrated multi-function
+utility (see UT-LF2.100 in DL4).  This utility does cost you a
+menu slot (usually OK); and for that reason FILEN.100 needs a
+patch (incorporated into UT-LF2.100).
+
+I deal with the F-key reset issue by incorporating my standard
+F-key set-up routines into my standard on-board utility.  I always
+run it upon exiting UR2.
+
+So, if you use IDEA! and T-BASE (T-WORD seems to respect the
+keys), do not use LFUTL.PW1 and its cousins.  A cold start can
+result!
+
+2. Using IDEA!
+
+Compared to Thought in Super ROM, IDEA! is slow .  But it will get
+the job done, and is pretty easy to use once you get used to it.
+
+IDEA! does have some advantages.  It allows embedding of "Notes"
+(Text) under headings as part of the file; Thought appears to
+require a menu slot for each such note, since they are separate DO
+files.  I'm finding this to be a useful feature.  And IDEA! (it is
+said) will exchange files with Think Tank.  And, of course, you
+can deal with the files because they are ASCII ; well, almost --
+each one ends with a "checker board" (255 decimal).
+
+The main clue to using IDEA! is to use the function keys as little
+as possible.  The UR2 version has "quick" keys; for example, SPACE
+does preview, / does a quick select, > does move and ? does copy.
+Much faster once you get use to it.
+
+3. The TS-DOS Function
+
+If you have UR-2 but have not bought TS-DOS, you probably find
+that menu function pretty useless.  You shouldn't!  It turns out
+that hitting that key will boot ANY file named DOS100.CO on the
+disk you have in the TDD.  For example, you can download DSKMGR
+from DL5, rename it as DOS100.CO on all disks, and then auto-run
+it from UR2 by hitting the TS-DOS key.  And, yes, it does work
+with FLOPPY.CO renamed as DOS100.CO!
+
+Note that if you want the OS to remain on the menu, use it to load
+itself once you have booted up.
+
+This is the easiest way to boot the TDD for a wiped M100 -- no
+"DIP Switch Maneuver" required!  Of course, if you have TS-DOS you
+already know this (probably).
+
+4. T-WORD
+
+Generally the T-WORD manual is excellent.  I have found a couple
+of problems.
+
+There is a slight bit of confusion in the superscript and
+subscript functions as defined.  On page 4-30/31, ^S is a
+superscript and ^T a subscript in the headings.  But the text at
+the bottom of the pages seems to have been transposed between the
+two pages.  No big deal, this!  Oh, yes -- the summary in the
+"Installation Guide and Quick Reference" has the same
+transposition.
+
+One thing not stated in the manual (at least I have not found it)
+is that the printer configuration file codes in CONFIG.DO must
+always begin with ^B0 and end with ^Y0, even if you do not define
+code sequences for these print commands.  I discovered
+(unintentionally!) that omitting these will lead to disaster
+(e.g., corrupted files or cold start).
+
+5. Compatibility
+
+Ultimate ROM II, like many of our add-ons does have a few
+compatibility problems.  I suspect that some are related to lack
+of consideration of this factor during design (like the F-key
+issue noted above) and others are unavoidable.
+
+One example: With Disk Power 100 loaded , I tried to save a DO
+file via 'Save to:0:FILE.DO' from within T-WORD.  The file got
+safely to the disk, but disappeared on my menu -- and another 500
+byte file grew to 17000 bytes (all garbage).  I seem to remember
+having a similar problem with POWR-DISK.  The message is: Use
+add-on DOS-type functions from within UR2 at your peril.
+In the same vein, I recall having some difficulties when running
+SXM.100 from within UR-2.  Generally, running programs of any kind
+from within UR-2 is not recommended -- and really unecessary!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

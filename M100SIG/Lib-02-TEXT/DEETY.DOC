@@ -1,0 +1,193 @@
+Deety.100 User Documentation
+============================
+
+This program is based on Moe.100, which
+was written by Larry Gensch (75665,1405).
+It may help to look at MoeDoc.100 for
+further information.  But briefly, it
+"animates your Model 100.  By that, I
+mean it allows it to seem to understand
+english commands and respond with random
+responses.  It is based on the character
+"Gay Deciever" in Robert Heinlein's
+"Number of the Beast".
+
+This program adds flexability and removes
+the need for SUBLIB.CO from Moe.100.
+To accomplish this goal, I rewrote Moe
+from scratch.  This is the result as it
+currently stands.  As with most programs
+I write, it is an on going project, and
+will probably never be "done".
+
+A Typical Session:
+
+Hiya Boss!
+
+Hello, Deety.
+
+Hello good looking!
+
+What time is it, please?
+
+Isn't your watch working?
+My clock says '2:33 pm'.
+
+Thanks.  What is your name?
+
+Deety, but you can call me SweetHeart.
+
+Okay SweetHeart.  My name is Jim Straus.
+Glad to meet you Jim
+
+Glad to meet you too.  Please list note.do
+
+(note.do will be printed now until it is ended or a key is it)
+That's all of it!
+
+Finally, could you please run fixup
+(and off we go to FIXUP)
+
+
+As you can see, many commands have been
+implemented, and arguments are allowed
+for the commands.
+
+Programming Notes:
+
+Lines           Description
+=====           ===========
+10-40           Variable definitions
+100-140         Variable initialization
+900-920         Opening remark
+1000-1560       Main loop
+  1000-1020       Loop initialization
+  1100-1170       Get input and clean up
+  1200-1310       Get next search word
+  1400-1560       Check for match and
+                  Build up argument list
+1700-1750       Gets argument
+1900-1910       Handles no matches
+2000-2530       Builds response
+  2000-2250       Picks random response
+  2300-2370       Finds commands
+  2380-2400       Executes command and
+                  inserts returned value
+  2500-2530       Prints response line
+3000-3220       Gets input line
+3500-3550       Converts string to U/C
+3700-3990       Handles arguments to commands
+4000-6999       Code for the commands
+9000-9030       Handler for personality errors
+9500-9540       Handler for command errors
+9900-9940       Catches program errors
+
+
+Personality File Format:
+
+Line 1: Default responses, if no keyword was found
+Line 2: Key words 1
+Line 3: Responses 1
+Line 4: Key words 2
+Line 5: Responses 2
+  .
+  .
+  .
+The first line is the set of possible
+responses if no key words were found in
+the input line.  Each pair of lines from
+there go together.  The first is a set
+of keywords to be matched.  They should
+all be in UPPER CASE separated by |'s
+(GRPH+SHIFT+"-").  If you need two
+keywords separated by some arbitrary
+text, seperate them by &'s. (for example
+FILE&INTO
+would match "file this into test.do")
+The second line are the possible responses
+to select from.  They are also separated
+by |'s.  Commands within the selected
+response are acted upon, and if they
+return text, it is inserted into response.
+
+
+The Commands:
+
+The commands currently implemented are:
+
+Command         Does
+=======         ====
+%TI%            Returns the time in AM/PM format
+%DA%            Returns the current day
+%DT%            Returns the current date
+%NL%            NewLine.  a CR, LF pair
+%CS%            Clears the screen
+%CL%(<address>) ML calls the address
+%RN%(<name>)    Runs the named program
+%FL%            Returns the directory of files
+%OF%            Turns off the power and resumes on power up
+%P%             Returns a %
+%FI%(<name>,<text>)  Adds text to named file
+%0%-%9%         Returns first-tenth input argument
+%ME%            Goes to the main menu
+%LI%(<name>)    Lists the named file
+%SE%(<name>,<text>,<default response>)  Searches named file for a line containing specified text
+
+The arguments to the commands that need
+them can be other commands or literal
+text.  For example, to make a response
+to WHO IS, I used
+   Don't you know %SE%(ADRS,%1%,anyone I know)?
+In this case, %SE% needs three inputs.
+The first is the name of the file to
+search (ADRS in this case).  The second
+is the text to look for.  In this case,
+it is the word after the WHO IS in the
+input line.  The final input is what to
+return if the text couldn't be found in
+the file.
+
+The arguments from the input line are
+numbered 0 to 9.  0 is from the text
+before the searched for word.  1 is from
+after the first searched for word.  It
+continues for the rest of the searched
+for words.  In the text, only the first
+word is taken as an argument, unless the
+text is enclosed in quotes (").  For
+example, in the text
+Jim Straus
+Jim would be stored as the argument, but
+"Jim Straus"
+would store Jim Straus.
+
+
+
+The program can easily be extended.  The
+commands are kept in the string CO separated
+by |'s again.  Corresponding numbers to
+say which routine to run.  Finally, lines
+2380 and 3980 need to be extended if you
+want more than 20 commands.  The routines
+should return values in the string ZO.
+If they use arguments, gosub 3700.  It
+will put the number of arguments in MP
+and the text for them in the array ZP()
+The text in ZP will have been expanded
+already if it contained commands.
+
+
+Limitaions:
+
+Mostly that the program got slower in the
+expansion.  Right now, it takes approximately
+8 seconds to search the personality file
+from end to end (determined by giving Deety
+an unrecognized command).  Maybe someone
+can speed it up.  Other things to be done
+are to add more commands and extend the
+personality file.
+
+
+Good luck!
+                   Jim Straus [70116,667]

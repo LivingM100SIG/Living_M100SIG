@@ -1,0 +1,271 @@
+XMDPW5.DOC -- DOCUMENTATION FOR XMDPW5.100/200/CO
+-------------------------------------------------
+
+XMDPW5.CO is a full-featured machine-language communications 
+program for Tandy/Kyocera laptop computers.  It is created by 
+running the appropriate Basic loader program (XMDPW5.100 for the
+100 and 102, XMDPW5.200 for the 200) on your Tandy laptop 
+computer.  The resulting program includes:
+
+     o Online access to Basic and Text (based on Hugo Ferreyra's 
+       DIRACC code)
+
+     o Split screen while in online conferences (based on code 
+       developed by James Yi)
+
+     o Scroll lock (as suggested by Wilson Van Alst) to reduce 
+       speed constraints associated with the LCD -- useful in the
+       capture mode.
+
+     o Macros (code by Jon Diercks) for use while on line
+
+     o Xmodem protocol file transfers, either CRC or Checksum.
+
+The Xmodem features, and most of the core aspects of the program, 
+are derived from XMD100, a program developed in 1985 by J. R. 
+Chenoweth.
+
+
+1. Creating XMDPW5.CO
+
+The first step is to download either XMDPW5.100 or XMDPW5.200 into 
+your laptop as XMDPW5.DO.  Then convert the file to a BA file.  
+This is straight-forward with a Model 100 or Tandy 102 with full 
+memory, but less so with a Tandy 200 (or with less than full
+memory in your 100/102).  For the 200, try one of the following
+approaches (fortunately, you only need to do it once, so long as
+you immediately save the result to disk or cassette).
+
+0. Use DO2BA.200 (Lib 10)
+
+ This is the approach of choice.  Get James Yi's DO2BA.200 and use it to
+ create DO2BA.CO in your 200.  Download XMDPW5.200 as XMDPW5.DO, and back it
+ up (e.g., to another bank).  Then run DO2BA to convert XMDPW5.DO to
+ XMDPW5.BA.  Then -- after doing CLEAR 256,MAXRAM -- run XMDPW5.BA to create
+ XMDPW5.CO. Afterward, save everything to a mass storage device (e.g., TDD).
+
+A. Use a Cassette
+
+ If you have (and don't mind using!) a cassette, try the following 
+ procedure (which I have verified):
+
+  1) Download XMDPW5.200 into your 200 as XMDPW5.DO, edit any 
+     garbage if done with R)ead, verify the checksum (a must!),
+     and save to a blank cassette from Text as XMDPW5. 
+
+  2) Empty your 200, or at least the bank in which you will create
+     XMDPW5.CO.  You will need almost a whole bank to proceed. Do 
+     CLEAR 256,MAXRAM in Basic to recover any RAM reserved by
+     machine language programs. 
+
+  3) With the tape rewound, and the recorder in play, go to Basic
+     and type RUN"CAS: <ENTER>.  You should get a message that
+     XMDPW5 has been found.
+
+  4) At the end of the tape run, the program will run.  Hit ENTER 
+     in response to the question. 
+
+ B. Use of Multiple RAM Banks in the 200 
+
+ I haven't tried this, but it should work. 
+
+  1) Download XMDPW5 as above.  Then go into Text and break it
+     into two or more roughly equal pieces. 
+
+  2) Leave the first chunk in your working bank, and move the rest
+     to another bank.  Clear out memory as above, except for the 
+     first chunk of the DO file. 
+
+  3) Go to Basic and load the first chunk, and SAVE the resulting 
+     BA program.  Kill the first chunk, and go get the second one,
+     and repeat, using the MERGE command in Basic.  Repeat until 
+     you have the entire BA program. 
+
+  4) Then, with only XMDPW5.BA on the menu, run it.  Hit ENTER in 
+     response to the question. 
+
+Once you have created XMDPW5.BA, run it from the menu.  It will
+create XMDPW5.CO, giving you the option of loading it below the
+current HIMEM value (do CLEAR 256,MAXRAM before running to put at
+the top of user RAM) or at a specified location; running under
+MAXRAM (top of user RAM) is typically best.
+
+
+2. Use of Primary Program Features
+
+This section is adapted from the original documentation by J.R.
+Chenoweth.
+
+2.1 Summary of Menu Items (Function Key Assignments)
+
+On entry to the program from your computers menu you will be in
+the Command Mode.  The function keys will have the following
+assignments:
+
+   <F1> Find: search ADRS.DO for a number (see 'TELCOM' section of
+        model 100 operating manual) 
+   <F2> Call: dial a selected number, just as in TELCOM 
+   <F3> Stat: display or alter the serial port status 
+   <F4> File: displays the filename directory, as in BASIC 
+   <F5> Free: displays free RAM remaining, as in the MENU display 
+   <F6> (unused)
+   <F7> Term: switches to normal terminal emulation mode (below)
+   <F8> Menu: returns to the MENU
+
+Note that STAT must be set with I)gnore parity when using XMDPW5.
+E)ven parity can give erratic results following an Xmodem
+download.
+
+Pressing <F7> in the Command Menu takes you to the Normal Terminal 
+Menu, with the function keys defined as follows:
+
+   <F1> Prev: displays the previous 8 lines (also Xoff's the
+        reception, if enabled) until <F1> is pressed again 
+   <F2> Down: downloads just like "TELCOM" (ASCII capture)
+   <F3> Up  : uploads just like "TELCOM" 
+   <F4> Full or Half: toggles between full and half duplex  
+        (remains in effect in XMODEM terminal mode; see model 100 
+        operating manual) 
+
+   <F5> Echo (or blank): toggles the printer echoing on and off 
+        (remains in effect in XMODEM terminal mode) 
+   <F6> Scroll Lock Toggle: says 'Wait' when reception has been 
+        stopped by the host (see Model 100 operating manual)
+   <F7> Xmod: switches to XMODEM terminal mode (see below) 
+   <F8> Bye : returns to command mode, 'Y' to confirm 
+
+As noted, pressing <F7> will take you to the Xmodem Menu, with the 
+keys defined as shown here:
+
+   <F1> Prev: displays the previous 8 lines (also Xoff's the
+        reception, if enabled) until <F1> is pressed again 
+   <F2> Send: sends a .DO file to the host, using XMODEM protocol, 
+        beginning by prompting for a filename (.DO ext may be left 
+        off)
+   <F3> Recv: receives a .DO file from the host, using XMODEM 
+        protocol, beginning by prompting for a filename(.DO ext 
+        may be left off) 
+   <F4> File: displays the filename directory, as in BASIC 
+   <F5> Free: displays free RAM remaining, as in the MENU display 
+   <F6> Scroll Lock Toggle: says 'Wait' when reception has been 
+        stopped by the host (see Model 100 operating manual)
+   <F7> CRC or CkSm: toggles between CRC (cyclic redundancy check: 
+        a polynomial-generated 16-bit checksum) and regular 
+        checksum mode...overridden by host request when sending 
+        XMODEM.
+   <F8> Norm: returns to normal terminal emulation mode 
+
+2.2  Xmodem File Transfers
+
+To send or receive with XMODEM protocol you must enter the XMODEM 
+terminal mode by pressing F7 (Xmod).  Now you will see  "Send" 
+(F2) and "Recv" (F3).  Before proceeding, the host (computer being
+Sent to or Received from) must be at the point of waiting for the 
+XMODEM transfer to begin.  It will either be awaiting a CRC or 
+checksum request, or repeatedly sending same.  Pressing either F2 
+or F3 will prompt for a filename (must be an ASCII file, i.e.,
+.DO).  In the case of receiving, the file must not already exist.  
+If it does, you will be asked if you want to erase it (this is 
+different from the built-in ROM Download routine, which will 
+erase your file without asking).  After this filename is entered, 
+Send or Receive will automatically go on to completion or error, 
+either of which beeps the buzzer.  In the case of error, it 
+displays the cause of error and retry number (up to 10 times).
+After a successful transfer it returns to XMODEM terminal mode. 
+
+The Xmodem transfer can be used with any baud rate, word length, 
+parity, number of stop bits, and flow control (Xon/Xoff enabled or
+not) since it forces the setting to "x8N1D"(where 'x' is the baud 
+rate <1-9 or M> you have set) during the transfer, then restores 
+your previous settings when finished or aborted.  However, if the 
+"RESET" button on the back of the model 100 is pressed during the 
+transfer, the settings remain at "x8N1D". 
+
+
+3. Use of Program Enhancements
+
+3.1  Access to Text and BAsic while Online
+
+Access to Text is by hitting SHIFT-F7 and SHIFT-F6 takes you to 
+Basic.  To return from Text, use F8.  To return from Basic, do 
+CALL HIMEM+19 -- assuming that XMDPW5.CO is the lowest (or only) 
+CO program loaded in memory.  This can be facilitated by defining 
+a function key in Basic as follows: 
+
+        KEY6,"Term"+CHR$(24)+"CallXXXXX"+CHR$(13)
+
+where XXXXX = TOP+19, top being the low address of the XMDPW5.CO. 
+
+One caution: If you use a function key to return to Term from
+Basic, make sure you zero the definition if XMDPW5.CO is removed 
+from use.  Otherwise, hitting this key could be unfriendly!! 
+
+3.2  Splitscreen Operation during Conferences
+
+This program also includes James Yi's original split screen code 
+developed for the Tandy 200.  It is very nice in online
+conferences.  To toggle it, hit SHIFT-F1.  In Compuserve 
+conferences, it also necessary to send the CIS command /NOECHO 
+while in the COnference.  No similar command is needed on GEnie.
+
+To toggle on the splitscreen mode, the label line MUST be on. To 
+use a label line function, first do SHIFT-F1 to toggle SS to off, 
+then do your thing, then use SHIFT-F1 to get SS back.  Other 
+approaches work, but confuse. 
+
+3.3  Macros
+
+This program includes a macro routine.  To use it, go to TEXT and 
+create a macro file named XMDMAC.DO.  The following is shows how 
+to construct XMDMAC.DO.
+
+           <1>This is the first macro to be sent.
+           <2>This is the second macro, and is a 
+           typical long and complex macro.  It can 
+           include carriage returns, blank lines,
+                      *************
+                      *           *
+                       *  O   O  *
+                       *    ^    *
+                       *   / \   *
+                        *  ___  *
+                         *     *
+                          *   *
+                           ***
+           and can be used to send bizarre graphics 
+           creations, so long as they have all ASCII 
+           characters with ASCII value less than 128.
+           <3>This is the third macro, another short 
+           one.
+
+Each macro must be started by a keystroke (denoted <1>, <2> and 
+<3> above) with its ASCII value above 127; examples are CODE-D, 
+CODE-d and GRPH-c -- each made by pressing the letter key while
+holding down the corresponding special key (CODE or GRPH in the 
+above).  The macro will continue until another such 
+character is reached. 
+
+To send a macro while on line, just hit the CODE or GRPH  key
+(e.g., GRPH held while hitting the selected key). In fact, by
+using XMDPW5 TEXT access, you can even edit your XMDMAC file while
+on line!
+
+3.4  Scroll Lock
+
+By pressing F6 while in either the Xmodem Menu or the Normal Menu, 
+the LCD scroll can be toggled.  Eliminating scroll will give 
+faster operation, particularly for the Model 100 and Tandy 102.  
+This mode is of limited benefit, since the screen is a mite 
+difficult to read!  But it can be used in dumping messages (BBS) 
+to a fast printer, or in capturing files to RAM.
+
+
+4.  Conclusion
+
+The XMDPW5 project has been a joint endeavor contributed to by a
+number of programmers -- first and foremost J.R. Chenoweth who 
+wrote the core program.
+
+Phil Wheeler
+Torrance, CA
+Rev. B, 16 July 1988

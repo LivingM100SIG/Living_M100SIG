@@ -1,0 +1,86 @@
+
+	(c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Bob Pigford
+To: all
+
+I am trying to rewrite one of my M100 Assembly programs to run on my T200.
+With the M100, I can pass the cursor over the LCD screen one character
+position at a time.  While there (and before the cursor blinks), I can examine
+the 6 bytes beginning at 65516 (FFECh) to collect the 6 rows of pixels which
+are illuminated.  After flipping them "right side up", I can print or save,
+etc.
+
+With the T200, I haven't found the same to be true (yet).  Some of the DL10
+source codes refer to the use of bytes beginning at 64864 (FD60h), but they
+come out sort of "sideways."  I suspect that the bytes placed in this LCD
+"buffer" are not particularly lined up with the normal character values (6
+pixels wide x 8 pixels tall).  I have seen others use a CALL to 36468 (8E74h)
+prior to looking at the 240 bytes starting at 64864 or a CALL to 36531 (
+8EB3h) then a look beginning at 64864 for about 320 bytes.
+
+I really hope to find a way to get the Cursor Byte values just like I can in
+the M100 as this will fit my needs well.
+
+Will someone please identify a T200 equivalent of the M100's CURSOR bytes at
+65516 or explain the interractions of T200 CALLs and 64864 noted above?
+
+I would greatly appreciate any suggestions anyone would offer.
+
+		- 0 -
+
+Fm: Tony Anderson
+To: Bob Pigford
+
+James Yi (73327,1653) left you a message on Thursday, which was wiped out by a
+message board crash Friday morning.  Here's the text of the message:
+
+ The difference in how a byte on the LCD screen (is) arranged is as follows.
+On the 100, one byte is arranged vertically, all 8 bits representing a pixel.
+On the 200, one byte is shown horizontally, and only the least 6 bits appear
+on the screen, bit #0 at left most.  The pixel to right of bit #5 is bit #0 of
+the next byte. There are 40 bytes per pixel line, and the 41st byte wraps
+around to the next line, for 128 lines. When you flash a cursor over a
+character, the pixel info there is storead at 64864 (fd60h), the byte
+containing the 1st row of 6 pixels is at 64864, the byte for the 2nd row at
+64865, etc. To flash a cursor, do this:
+
+        lxi     h,(col-1)*256+(row-1)
+        shld    $fea2   ;text row,col
+        call    $8cf5   ;show cursor
+        call    $8cf5   ;unshow
+
+ and the 8 bytes for 8 rows of 6 pixels that the cursor flashed over will be
+stored at fd60h.
+
+ A call to 8e74h either reads or writes 320 bytes of pixel information, which
+amounts to 1 line of text. Before calling the routine, L register has the row
+number, 1..16, and the Z flag is set to write pixels, cleared to read. The
+pixel info is stored at 64864.
+
+ You can use 8eb3h to access individual byte of pixel info instead of 320 of
+them at a time.
+
+ But after calling 8eb3h, you have to send i/o commands to the LCD driver
+directly to read and write.  See LCDIO.TXT.
+
+		- 0 -
+
+Fm: Bob Pigford
+To: Tony Anderson
+
+Thank you for rescuing the lost reply to me from James Yi.  I am now happily
+on my way to enjoy applying this GREAT piece of information.  I am most
+appreciative.
+
+                - 0 -
+
+
+Starting message #: 31315   Starting date: 10-Nov-90  20:37:07
+ Participants:
+Bob Pigford 70431,153
+James Yi 73327,1653
+Tony Anderson 76703,4062
+

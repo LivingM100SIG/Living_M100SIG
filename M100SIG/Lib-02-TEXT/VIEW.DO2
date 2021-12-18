@@ -1,0 +1,48 @@
+ View.Do2.
+ Read View.Doc first! Convert with Change.Ba in DL4.
+ View # 2 will now show you where your page breaks are with page No's. This 
+should make it a little nicer to use.
+ Now when your at the End Of File. pressing any key will take to the Menu.
+ Also the Carrage Return has been changed to a single dot. This was done so 
+that if a CR was the 61st character it could remain on the same line. It was 
+either this or not show it at all. Now you can format your text to ram at 60 
+characters per line. Why didn't I think of this in the first place? These new 
+modds add 200 bytes to the program, the new start is 61408 and the end is now 
+62949
+ View also needs a new driver:
+ 
+10 CLEAR56,61408
+20 CALL7994:INPUT"File Name";A$:IFLEN(A$)>6THEN20
+30 IFA$=""THEN60
+40 A$=A$+SPACE$(6-LEN(A$))+"DO":FORX=1TO8
+45 F=ASC(MID$(A$,X,1)):IFF>96THENF=F-32
+50 POKE62950+X,F:NEXT
+60 INPUT"Word Wrap";I
+70 IFI<10ORI>60THENI=60
+80 POKE62959,I*4-1
+90 INPUT"Page Break";J
+100 IFJ=0THENJ=54
+110 POKE62950,J
+120 RUNM"view
+ 
+ Lines added are 90 thru 110. If you whould like you can change the '54' in 
+Line 100 to your favorite setting, as long as you DON'T change it to '0'. That 
+way you can just press ENTER at the Page Break promt.
+ When you get to a page break, View will now show a dashed line and the page 
+number on the right of the line. If you have more then nine pages, not to 
+likly, page ten will show as '0', eleven '1', ect.
+ Since I first uploaded View I've gotten a lot of E-Mail asking for the Tcomp 
+source code. So if you are intrested upload VIEW.SRC. The orignal program is 
+only about 1.3K, but I have commented each line and included the program that 
+creates the data I used. Let me be a litte more clear here. View.Src has TWO 
+programs in it. You do not need View.Src unless you want to make some changes, 
+or you whould like add some of my ideas to your own program.
+ Feel free to use these programs any way you what, even if you Come up with 
+Super-View and want to sell it. Have at it, you could be nice and send me a 
+copy.
+ If you have any problems send me E-mail as you should know by now I'm a 
+travler and am not always here. But see what a month at home can do.
+ 
+ Fred Edelkamp
+  [70506,223]
+

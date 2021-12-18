@@ -1,0 +1,45 @@
+
+              SPLCHK.CHP
+          Chipmunk  Version
+
+ by David W. Willman, 75775,202 3/23/86
+
+    Copyright 1986 David W. Willman
+ Licensed for use only, Compuserve M100  Forum members.
+
+This program compares the word list in a specified RAM file to the word lists
+in dictionary disk files DIC-AB.DO thru DIC-YZ.DO . Any words in the specified
+file that do not appear in the dictionary files is stored in the RAM file
+SUSPEC.DO for later review.
+
+The word list in the specified RAM file should have been prepared by the m/l
+program loaded by DCPREP (version depending on your machine), in DL5 and the
+disk dictionary files should be formatted with the words in alphabetical order,
+in small letters & each word on a seperate line with no blank lines between
+words.
+
+WARNING: The first thing this program does is copy the RAM file to be checked
+to the disk in order to insure room for the SUSPEC.DO file, and backup the
+original file.  It then kills the original RAM file! Your original RAM file
+must not have the same name as any file on the disk or the disk file will be
+overwritten.
+
+             SPLCHK.BA
+
+0'SPLCHK.CHP Copyright 1986 David W. Willman
+10 CLEAR256:MAXFILES=3:CLS:PRINT:PRINT"Place Dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):ONERRORGOTO110:PRINT:OPEN"0:DIC-AB.DO"FORINPUTAS1:CLOSE
+20 CLS:PRINT:FILES:LINEINPUT"What file to check: ";A$:IFA$=""THENMAXFILES=1:MENUELSEIFRIGHT$(A$,3)<>".DO"THENA$=A$+".DO"
+30 F$="0:"+A$:ONERRORGOTO130:OPENA$FORINPUTAS2:ONERRORGOTO160:OPENF$FOROUTPUTAS1
+40 IFNOTEOF(2)THENINPUT#2,B$:PRINT#1,B$:GOTO40
+50 CLOSE:KILLA$:OPEN"SUSPEC.DO"FOROUTPUTAS1:OPENF$FORINPUTAS2:C$="00":D$=C$
+60 IFEOF(2)THENCLOSE:KILLF$:MAXFILES=1:GOTO100ELSELINEINPUT#2,B$:IFB$<D$THENPRINT#1,B$:GOTO60ELSEIFB$=D$THEN60ELSEB=ASC(LEFT$(B$,1))-32:IFB<>ASC(RIGHT$(C$,1))ANDB<>ASC(LEFT$(C$,1))THEN80
+70 IFEOF(3)THENPRINT#1,B$:GOTO60ELSELINEINPUT#3,D$:IFD$<B$THEN70ELSEIFD$=B$THEN60ELSEPRINT#1,B$:GOTO60
+80 IFBAND1THENC$=CHR$(B)+CHR$(B+1)ELSEC$=CHR$(B-1)+CHR$(B)
+90 H$="0:DIC-"+C$+".DO":CLOSE3:CLS:PRINT@80,"Checking file "H$:OPENH$FORINPUTAS3:GOTO70
+100 OPEN"SUSPEC.DO"FORINPUTAS1:IFNOTEOF(1)THENCLOSE:MENUELSECLS:PRINT:PRINT"All spelling checks.":CLOSE:KILL"SUSPEC.DO":PRINT"Hit any key to return to menu.";:A$=INPUT$(1):MENU
+110 IFERR=52THENPRINT"Dictionary disk not in drive."ELSEPRINT"Error #"ERR" in line #"ERL
+120 PRINT"Hit any key to continue.";:A$=INPUT$(1):IFERR<>52THEN150ELSERESUME10
+130 IFERR=52THENPRINTA$" file was not found."ELSEPRINT"Error #"ERR" in line #"ERL
+140 PRINT"Hit any key to continue.";:A$=INPUT$(1):IFERR<>52THEN150ELSECLOSE:RESUME20
+150 CLOSE:MAXFILES=1:MENU
+160 PRINT:PRINT"Error #"ERR" in line #"ERL:PRINT" Hit any key to return to menu.";:A$=INPUT$(1):MENU

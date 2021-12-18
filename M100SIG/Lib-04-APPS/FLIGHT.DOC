@@ -1,0 +1,200 @@
+
+
+
+
+
+                                   FLIGHT.DO
+
+            FLIGHT.BA and  the  companion  modules  were  written  using
+       admittedly inaccurate  assumptions and  approximations,  some  of
+       which are  discussed below.   I  make no  warranties of any kind,
+       including warranties of merchantability and fitness for a partic-
+       ular purpose.   These programs were written for my own entertain-
+       ment.  Since I cannot prevent their change by some unknown person
+       before they get to you, since I know that they rely upon approxi-
+       mations which  are not  totally accurate,  and since,  in fact, I
+       cannot even  be sure  that garbage  won't sneak in from the phone
+       lines as  you download  them, I cannot know if they will work for
+       you, but would be willing to bet that they won't.
+
+            FLIGHT.BA and its modules were written for the TRS Model 100
+       to take  the place  of the  slide rule  type  flight  "computer".
+       Actually, these  are a  rewrite of  FLTCMP.BA,  which  I  earlier
+       uploaded to  Compuserve.   The most  obvious difference  is  that
+       FLTCMP.BA was  a single  program incorporating  all 8 of the pro-
+       grams included  in FLIGHT.BA  and its  modules.    As  a  result,
+       FLTCMP.BA was  huge.  FLIGHT.BA is a menu program which loads and
+       runs various  modules depending  upon the choices you make in the
+       menu.   I wanted  these programs to do everything the E6B can do,
+       plus a few things it can't, like weight & balance.
+
+            Another major change in FLIGHT.BA is a change in the naviga-
+       tion calculations.   I  had used  rhumb line  formulas I  got off
+       AVSIG, and  found that  if I plotted a course of either 90 or 270
+       true, the did not work.  As the course approached either of those
+       figures, the distance went off the scale.  I gave up on trying to
+       get this  correct, and  have assumed that the earth is flat.  The
+       course and  distance are calculated using simple plane trigonome-
+       try and a constant of 60.1 nm per degree of latitude.  This seems
+       to get  close enough  for light plane VFR flying, within a few nm
+       over 400  nm and  within a few degrees of the charted course.  It
+       may not  be exact, but it seems to work.  However, I am not about
+       to take off, leave my charts at home, and simply fly the headings
+       the program gives me.  This is only intended to be an aid, and in
+       no way  can substitute  for either  good flight  planning or good
+       piloting.
+
+            There are  a total  of 8  programs included  in this  group.
+       FLIGHT.BA (checksum  85054) is  the main menu program.  FLITE1.BA
+       (checksum 171559)  converts from  one measure  to another  (e.g.,
+       Fahrenheit to  Celsius, Knots to Mph, etc.).  FLITE2.BA (checksum
+       67256) is a simple standard math calculator.  FLITE3.BA (checksum
+       197223) is  the Time/Speed/Distance  module.  FLITE4.BA (checksum
+       167609) is the Altitude and Airspeed module.  FLITE5.BA (checksum
+       173379) is  the Wind  and  Drift  module.    FLITE6.BA  (checksum
+       133228) is  the Weight  and Balance  module.  FLITE7.BA (checksum
+       425416) is  the Navigation  module.   Note that if you do not use
+       these names for the program modules, the menus won't work.
+       
+
+
+
+
+
+            FLIGHT pretty  much runs itself.  You move through the menus
+       using the  up and  down arrow  keys.  The data for ident to ident
+       navigation should  be stored in NAVAID.DO, an example of which is
+       included at  the end  of this documentation.  The data fields are
+       Ident, Description, Latitude North, Longitude West, Compass Vari-
+       ation.   Latitude and longitude data are included in NAVAID.DO as
+       decimal numbers,  but the  number to  the right of the decimal is
+       not fractional  degrees, but  rather  the  minutes  of  latitude.
+       Thus, 35  deg. 30 min. latitude would be included in NAVAID.DO as
+       "35.30", and  not as  "35.50".   Compass variation,  on the other
+       hand, is  in degrees  and fractional  degrees.   Thus, 10 deg. 45
+       min. east  variation would  be stored  as "-10.75", and not as "-
+       10.45", if  you want  to get that exact with the variations.  The
+       program will  append new idents to your NAVAID.DO, so you can add
+       idents that  way.  I have found it convenient to put the lat. and
+       long. for  enroute checkpoints and other locations for which I do
+       not have  an ident  into NAVAID.DO using an ident of XXXX.  Note,
+       however, that  XXXX is  the only  ident that the program does not
+       expect to  be unique.   For  that reason, for VORs which have the
+       same ident  as an  airport, but which are not located at the same
+       lat. and  long., I  add "v"  at the  end of  the ident (e.g., LAX
+       would be  the airport,  and LAXv  would be the VOR).  The program
+       does not  require you  to use  "v", and  you can develop your own
+       method of dealing with similar idents.  Use the up and down arrow
+       keys to scan through your NAVAID.DO idents.
+
+            Each program  is relatively large for its functions, because
+       of all  the screen  printing and menus.  All of them together are
+       huge, and  therefore they are not something you would likely want
+       to leave  stored in  RAM on  a permanent basis.  However, none of
+       the programs are so large that you can't download them to a M100.
+       The versions  described here  (with their  checksums) are  packed
+       versions, which  helps some  on the  RAM usage,  but I  have  not
+       really tried  to optimize  the code to reduce their size.  I have
+       also unpacked versions if anyone wants to try to make the changes
+       suggested below  or wants  to modify  these for an IBM compatible
+       (such as a Toshiba he says, with lust in his voice).  If you want
+       me to  upload the unpacked versions for direct download, leave me
+       a message  and maybe I will do so.  I have not renumbered each of
+       the program  modules to  the lowest  possible line  numbers  (and
+       therefore the  lowest possible RAM requirements in ASCII) so that
+       anyone who  wants to  merge them  all can see how everything fits
+       together into one program.  However, I have made numerous changes
+       in each  of  the  programs  since  I  broke  them  apart  out  of
+       FLTCMP.BA, and  therefore a  straight merge  may  overwrite  some
+       important coding.   You  might want to look at the Tandy 600 ver-
+       sion I have written and uploaded to the Tandy 600 data library in
+       this forum.
+       
+
+
+
+
+
+            If you  like this  program, or have suggestions on modifying
+       it, let  me know  by leaving  me a message in either the AVSIG or
+       the M100SIG  on Compuserve.   My  Compuserve ID is 73337,2600.  I
+       may or  may not  acknowledge your message, as I get on Compuserve
+       irregularly.  And, I may or may not make modifications based upon
+       suggestions I  receive.   And, if  I do make the modifications, I
+       may or  may not  upload the  modified version.   In  fact, if you
+       think of  good modifications,  please make  them and upload a new
+       version of this.  Suggestions for improvement:
+
+       1.   Code actual  formulas for  pressure  and  density  altitude,
+            instead of approximations derived from charts.
+
+       2.   Combine the navigation and wind triangle functions to give a
+            screen more  like the standard Pilot's Navigation Log/Flight
+            Plan form (I did this on the Tandy 600 version).
+
+       3.   Rewrite the  weight and  balance portion to use data for the
+            plane you fly, or even several planes from which you choose,
+            stored in a .DO file, rather than having to be keyed in each
+            time.
+
+            The formulas  for the  following quantities  were derived as
+       linear  algebraic  (and  not  differential)  equations  from  the
+       answers to  problems in  either the Private Pilot Test or the E6B
+       instruction manual.   For  that reason,  the answers this program
+       gives for  many of  these values  are only approximate.  At least
+       some of these values are not linear.  For example, pressure alti-
+       tude does not decrease at exactly 1000' (or even 910') per 1" Hg.
+       The decrease changes as the pressure changes, and as a result the
+       difference between  the correction factors for 28.0" Hg and 29.0"
+       Hg is  greater than the difference between the correction factors
+       for 30.0" Hg and 31.0" Hg.  Note lines 970-1020 of FLITE4.BA give
+       six different formulas for calculating the approximate correction
+       factor, depending upon the altimeter setting.
+
+            The formulas  I have  derived are  those for  the  following
+       unknowns:
+
+       1.   Pressure Altitude-see  lines 970-1020  in FLITE4.BA.   PA  =
+            Altitude +  ((29.92 - Altimeter Setting) x 910) + 46.8 + (60
+            x (28.5  - Altimeter  Setting)) if Altimeter Setting is less
+            than 28.5.
+
+       2.   Density Altitude-see  line 1080 in FLITE4.BA.  Density Alti-
+            tude = (Pressure Altitude x 0.9075) + (66 x Outside Tempera-
+            ture - Standard Temperature)) + 256
+
+       3.   Standard Temperature - see line 1080 in FLITE4.BA.  Standard
+            Temperature = 59 - ((Pressure Altitude x 3.5)/1000).
+
+       If someone  has more  accurate formulas for these values, I would
+       appreciate getting  them.   Please leave them in a message to me,
+       along with where you got them.
+       
+
+
+
+
+
+            Although I  have never  tried it, I assume that the programs
+       will run  on a  M200.   The only calls included in these programs
+       are to  turn the  cursor on  and off  for esthetic  purposes, and
+       could be deleted for compatibility's sake.
+
+            Of course,  any values which depend upon these numbers (such
+       as True  Airspeed which  depends upon  Density Altitude, which in
+       turn depends  upon Pressure  Altitude and  Standard  Temperature)
+       will also  be only  approximations.   And since some of the vari-
+       ables used  to compute  the values in these derived equations are
+       themselves computed using derived equations, the inaccuracies may
+       very well  compound each  other.  What does this all mean?  IF IT
+       IS CRITICAL,  CHECK IT  USING A METHOD OF KNOWN ACCURACY.  If you
+       don't, you will be courting disaster.
+
+                               NAVAID.DO Example
+
+       ABQ,ALBUQUERQUE NM,35.03,106.36,-11.34
+       AUS,AUSTIN TX,30.18,97.42,-7.1
+       FLG,FLAGSTAFF AZ,35.09,111.40,-12.87
+       PHX,PHOENIX SKY HARBOR,33.26,112,-12.41
+       XXXX,DEL RIO TX,29.22,100.55,-8.43
+       

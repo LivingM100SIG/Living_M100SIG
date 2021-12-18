@@ -1,0 +1,63 @@
+PGMTIP.015  by James A. McGreevy  70206,1115
+
+Public Domain
+
+Just found a trick with the M100 function keys which might prove useful.  For
+quite some time when programming I've been reserving line 65529 for reversing
+any Escape codes (which you can't use directly in an Fkey) which may be set
+when I hit SHIFT/BREAK, such as
+
+  65529 PRINTCHR$(27)"q"CHR$(27)"Q"CHR$(27)"W":CLS
+
+[ CHR$(27)"q" turns off the reverse mode set by PRINTing CHR$(27)"p",
+CHR$(27)"Q" turns off the visible blinking cursor set by CHR$(27)"P", and
+CHR$(27)"W" unlocks the screen which is locked - to preserve graphic displays -
+with CHR$(27)"V".  See CTRESC.100 or ESCAPE.TXT in DL8 for further info on
+Escape codes. ]
+
+I then set Function Key 7 as follows:
+
+  KEY7,"goto65529"+CHR$(13)
+
+Playing around, I tried putting the ENTER in mid-line:
+
+  KEY7,"goto65529"+CHR$(13)+"list
+
+and it worked!  Returns just like a GOSUB.  I can then enter the lines I'm
+interested in and press ENTER.  Saves some time when debugging or trying
+variations.  You could just as easily use
+
+  KEY7,"goto65529"+CHR$(13)+"?a;b"+CHR$(13)
+
+so that variables you're following will be immediately printed; or
+
+  KEY7,"goto65529"+CHR$(13)+"edit
+
+and enter the lines you wish to edit.  [ When you Edit some lines, the Escape
+codes are reset upon leaving Edit; but you will find your M100 behaving
+strangely (akin to low-battery behavior) during Editing if you don't first
+"normalize" the escape codes, especially with very long programs. ]
+
+You can use up to 15 characters in a function key definition, with characters
+such as "?" (for PRINT) or CHR$(13) (for ENTER) counting as one character.
+The only reason I use line 65529 is because that is the highest possible line
+number and when I'm writing programs I leave gaps of several hundred line
+numbers between lines to allow me to re-arrange the order of the program
+easily.  Any line number can be used, for instance 999 (to save 2 bytes in the
+Fkey definition).
+
+Budding programming geniuses out there might even find that you can define the
+function keys within a program in this manner to do all sorts of odd tricks!
+But if you do and your program's for public consumption, PLEASE program the
+Fkeys back to their normal functions as part of your exit routine.  In most
+applications ONKEYGOSUB would be preferable, as that doesn't disrupt the manner
+in which the computer owner has defined his Fkeys.
+
+The main utility of the technique detailed above is for use during programming
+and debugging.  You could define your function keys as part of the
+initialization routine of your program-to-be and UN-define them as part of your
+exit routine.  In this way you can individualize the Fkeys for each program
+you're writing.  When the program's completed they can be removed.
+
+
+--jam

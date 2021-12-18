@@ -1,0 +1,20 @@
+0 'NAMES.100 by Bill Templeton - 3/3/86 - Danville Tigers - CIS:[75655,1056]
+1 CLEAR:MAXFILES=1:M$=CHR$(27):R$=M$+"p":N$=M$+"q":N=1
+2 CLS:OPEN"names"FORAPPENDAS1
+3 PRINT#1,:PRINT#1,"Date: "DATE$" ("DAY$") "LEFT$(TIME$,5)"PST
+4 PRINT@13,R$"       Name & Address      ";
+5 PRINT@40,R$"       name: "N$;:INPUTA$
+6 PRINT@80,R$"    company: "N$;:INPUTB$
+7 PRINT@120,R$"     street: "N$;:INPUTC$
+8 PRINT@160,R$" city,state: "N$;:INPUTD$,E$
+9 PRINT@200,R$"        zip: "N$;:INPUTF$
+10 PRINT@240,R$"      phone: "N$;:INPUTG$
+11 PRINT@293,R$"      Is this correct?    "N$;:X$=INPUT$(1):IFINSTR("Yy",X$)THEN12ELSE4
+12 PRINT#1,:PRINT#1,USING"####";N;:PRINT#1," "A$:PRINT#1,"     "B$:PRINT#1,"     "C$:PRINT#1,"     "D$", "E$" "F$:PRINT#1,"     "G$
+13 PRINT@293,R$"       Another Input?     "N$;:Z$=INPUT$(1)
+14 IFINSTR("Yy",Z$)THENCLS:N=N+1:A$="":B$="":C$="":D$="":E$="":F$="":GOTO4ELSEMENU
+
+15 'simple 1,2,3 instructions are:
+16 "   (1) Don't use commas except between City and State.
+17 '   (2) Press <ENTER> if the info is correct on the line being reviewed.
+18 '   (3) Retype the entire line when making a correction.

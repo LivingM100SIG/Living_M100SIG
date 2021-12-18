@@ -1,0 +1,199 @@
+
+
+                         LAPWORD AND T-WORD COMPARISON
+                          By Rob Drummond 75515,1757
+                                September 1987
+
+BACKGROUND
+
+Both Lapword and SARDINE (with T-WORD) have received enthusiastic support on
+the M100 SIG.  Current Lapword users may wonder what advantages T-WORD offers
+over Lapword.  What follows is a comparison of the two products, the RAM
+version of Lapword and the ROM version of T-WORD, as part of SARDINE (Vers.
+1.3).  A detailed product description of SARDINE can be found elsewhere in the
+DL's.
+
+PRODUCT DESCRIPTIONS
+
+Lapword is a program to format text which is available from the Covington
+Group.  The program comes on cassette with a short manual.
+
+T-WORD is available with SARDINE from Traveling Software in both a ROM/Disk
+and a RAM/Disk version.  The SARDINE ROM version contains a 7,000 word spell
+checking program on ROM and the T-WORD text formatting program.  A disk that
+contains over 33,000 words for more complete spell checking accompanies the
+ROM chip.  Two professionally prepared manuals and a Random House pocket
+dictionary are included with the software.
+
+Both Lapword and T-WORD were written by Jim Irwin.  Their common heritage is
+evident.
+
+GENERAL FEATURES
+
+In short, SARDINE/T-WORD is a portable word processing system whereas Lapword
+is a program to format printed text only.  Lapword sells for considerably less
+than SARDINE/T-WORD.
+
+In addition to spell checking, SARDINE provides the following enhancements to
+the built-in TEXT word processing capability of the Model 100:
+
+ - Overstrike capability by pressing <CTRL><O>.  This function works
+   intelligently by switching to insert mode when the cursor reaches a
+   paragraph marker.
+
+ - Search & Replace capability by pressing <CTRL><L>
+
+ - Byte, Word and Paragraph count by pressing <CTRL><J>
+
+Users of Lapword will find that T-WORD is very similar to working with
+Lapword.  Entry to the T-WORD program is:
+
+ - Logo Screen
+ - File Screen
+ - Print Format Screen
+
+LOGO SCREEN
+
+T-WORD greets users with a logo screen that takes about 3 seconds to clear.
+Lapword skips this screen entirely.  The T-WORD identification appears again
+on the file and format screens.
+
+FILE SCREEN
+
+The file screen of T-WORD is similar to Lapword, listing all .DO files and
+their byte sizes, but T-WORD adds the ability to open new files, kill files,
+
+
+
+
+directly edit files and access files on the Tandy disk drive (for printing,
+not editing).
+
+PRINT FORMAT SCREEN
+
+The main screen of T-WORD to format files has three columns rather than two.
+Both Lapword and T-WORD give format control over:
+
+ - Margins (Left,Right,Top,Bottom)
+ - Page Length
+ - Left/Right Justification
+ - Wait Between Pages
+ - Font Code Selection (Based on Custom Printer Table)
+ - Page Number Start
+ - Linefeeds On/Off
+
+Additional formatting features of T-WORD are Quick Page Numbering (centered at
+bottom), # of Copies, Last Page # to Print, and the spacing prompt is for # of
+lines rather than Y/N for double spacing.  Omitted from the T-WORD format
+screen is the ability to control which page the header starts on.  This is
+controlled in T-WORD by the placement of the header in the file.
+
+Standard functions of both programs are pixel plot of page, display of
+document (line by line), display of page breaks, parallel/serial printer
+select, edit document, print document, return to file screen, and exit
+program.
+
+Additional functions of T-WORD are:
+
+1. the ability to print to file.  This is handy to format documents that will
+   be sent via telecommunications, such as telexes and this document.
+
+2. ability to jump from the graph mode directly to the middle of the page
+   being displayed.
+
+3. ability to save the printer settings with the document by pressing
+   <GRPH><S> at the format screen.  This writes a one-line string as the first
+   line of the file to record every setting of the format screen.
+
+FORMATTING CODES
+
+Files that were created with Lapword will format properly with T-WORD because
+the same control character system is used to identify headers (^H), footers
+(^F), centering (^C), hanging indents (^X) and page numbering (##).  These
+simple codes are hard to improve upon, especially global hanging indents which
+require only a properly placed ^X to initiate.  Also, left and right margins
+can be reset within text files by the proper placement of ^L or ^R.
+
+T-WORD has the additional ability to set tabs by inserting a non-printing,
+one-line entry.  For example, an entry to set 5 tabs at every 4th character
+would read as follows:
+
+^A^T4,8,12,16,20
+
+T-WORD also has Date and Time stamping of files by inserting ^Q^D and ^Q^T.
+
+PRINTER SETTINGS
+
+Both Lapword & T-WORD allow considerable flexibility to adapt to a wide
+variety of printers.  A separate program accompanies Lapword to build custom
+printer setups from .DO files which can be saved as 185 byte .CO files.  For
+example, I maintain 4 separate .CO files in RAM which contain setups for an
+
+
+
+
+IBM Proprinter, an Epson FX-286, an HP Laserjet+ to access both the built-in
+fixed-pitch fonts and add-in cartridge fonts, and a separate Laserjet+ setup
+to access proportional downloadable soft fonts.  Each file is limited to 30
+ASCII codes in total.  This sharply limits the number of features that can be
+accessed on the HP because the laser requires long setup strings.  In both
+programs the typestyles are activated by the Font setting in the Format screen
+or by embedded control characters within the text file.  Common embedded
+characters used to toggle print features on and off within files are boldface
+(^B), underlining (^U), and wide type (^W).
+
+The ROM version of T-WORD simply reads a CONFIG.DO file for the printer
+settings.  My CONFIG.DO file contains all 4 printer set-ups and the printer
+sets are accessed by placing a ^P3 (for set-up #3 for example) as the very
+first character in the file.  T-WORD can accommodate 99 sets of commands.  No
+real limits here, folks.
+
+T-WORD has an undocumented requirement of the CONFIG.DO printer file.  The
+first special character has to be ^B and the last ^Y even if there aren't any
+assignments to these characters.  Failure to do this, trashes the RAM files
+with 0's and control characters.
+
+MERGING
+
+T-WORD has the same approach to merging text using ^Q as Lapword.  T-WORD
+improves upon Lapword by allowing files to be chained together.  For example,
+one file can reference three files in the following manner and act much like a
+batch file:
+
+   ^Q[file1.DO]
+   ^Q[file2.DO]
+   ^Q[file3.DO]
+
+SPELL CHECKING
+
+Spell checking is what makes the SARDINE/T-WORD package worth its price.
+Pressing <GRPH><W> while on a word invokes the spell checker for that
+particular word.  Pressing <GRPH><F> invokes spell checking for the entire
+file.  In either case you can select ROM based spell checking or the more
+complete Disk based spell checking.  For more information refer to the spell
+checker review, "Sardine: A Review of Operation", by Denny Thomas elsewhere in
+the DL's.
+
+SUMMARY
+
+There are still more features of both programs that I have not mentioned.  I
+just pressed <CTRL><J> and T-WORD told me I have typed 7171 bytes, 1183 words
+and 99 returns!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

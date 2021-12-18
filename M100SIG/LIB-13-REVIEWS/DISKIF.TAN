@@ -1,0 +1,106 @@
+.   There have been questions on the
+price of Tandy's Mod 100 disk I/F.  We
+squeezed hard, but the functionality
+just couldn't be had for less.
+.
+.   It's really more than just a disk:
+.
+.   1) Z-80A CPU
+.   2) 1K ROM
+.   3) 4K System + 4K Video RAM
+.   4) Character Generator
+.   5) Monitor output - 80X25 and 40X25
+.   6) RF Modulator - 40X25 - TV Ch 3/4
+.   7) Floppy Disk Controller
+.   8) One 2D,  184K 5-1/4" FDD
+.      (40 tracks of 18, 256-byte sect)
+.   9) Space for a second drive
+.  10) Disk BASIC Language
+.
+.   It's ALMOST a complete computer!
+.
+.   A special ZIF ("zero insertion
+force") connector permanently plugs
+into the bus socket.  A new compartment
+door holds the connector in, and allows
+ribbon cable plug in. Transfer is FAST!
+All current I/O connectors are still
+useable.
+.
+.   A 16K M100 is req'd.  Disk BASIC
+occupies 4.5K RAM, but NOT a menu slot.
+Once loaded, only a 'cold start' can
+kill it.  You need NOT dump memory to load.
+.
+.   Video use is optional.  Until 'SCREEN1' is executed, output is to LCD
+.
+.       Command comparisons:
+.
+Memory      Disk    Comments
+======      ======  ===================
+DIR         LFILES
+SAVE"name"  SAVE"0:name"
+LOAD"name"  LOAD"0:name"
+.
+. (NOTE: .DO files  SAVE/LOAD via <f2>
+.  <f3>, as with cassette, plus 0:
+.  or 1: drivespec.  Most commands
+.  specify memory vs. disk files by
+.  use of drivespec)
+.
+PRINT#      PRINT#  Sequential write
+.           DSKI$   See below
+INPUT#      INPUT#  Sequential input
+PSET        (N/A)
+PRESET      (N/A)
+.           DSKO$   See below
+.           LOC     Gets current rec #
+.           LOF     Returns no. of last
+.                   record in file
+.           BACKUP  (Supports 1 & 2-
+.           FORMAT  (drive systems
+.
+.   Filename extensions can be ANY 3
+characters, not just ".DO" and ".BA".
+.
+.   DSKO$ & DSKI$ format as follows:
+.
+.   DSKO$[drive],[trk],[sect],[sw]
+.
+.   The example writes the string to
+the specified sector and track, on the
+specified drive.  When  [sw]itch =0, 
+the first half of the sector is
+accessed; when [sw]=1, the latter half 
+is accessed.
+.
+.   The minimum "access unit" is a
+"cluster" of 9 sectors.
+.
+Memory Map:
+.
+.  FFFFH ----------    FFFFH ----------
+.        BASIC work          BASIC work
+.          area                area
+.  F5FOH ----------          ----------
+.        Strings,            Disk BASIC
+.        Stack area
+.        ----------    E397H ----------
+.                            Strings,
+.                            Stack Area
+.                            ----------
+.        User Area           User Area
+.
+.
+.   8000H----------    8000H ----------
+.
+.   I know of one other disk-only unit
+being developed.  Price $699-799.  It
+will use slower RS-232 via TELCOM (the
+commands may not be as convenient),
+and BACKUP and other capabilities are
+unknown.  Sorry, confidentiality pro-
+hibits more info.  Anyway, hope you'll
+look before judging price/performance
+ratio.
+.                        ...ej

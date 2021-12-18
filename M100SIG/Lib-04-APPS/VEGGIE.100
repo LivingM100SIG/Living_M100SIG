@@ -1,0 +1,171 @@
+20 REM   GARDEN PLANNING PROGRAM
+40 REM    written by Ted Batutis 
+50 REM            for  The Good Earth SIG
+80 REM  Copyright 1982 by Ted Batutis
+90 REM  ALL COMMERCIAL RIGHTS RESERVED
+100 REM      Feel free to distribute this program
+110 GOSUB 1520 
+120 CLS
+130 PRINT"***************************"
+140 PRINT"  Garden Planning Program  "
+150 PRINT"***************************"
+160 PRINT:PRINT
+170 PRINT"Do you want directions";
+180 INPUT A$
+190 IF A$="Y" OR A$="y" OR A$="YES" OR A$="yes" THEN GOSUB 710
+200 REM start of program
+210 CLS:A=0
+220 PRINT"Data for the following crops available:"
+240 PRINT" 1 Snap beans      2 Pole beans"
+250 PRINT" 3 Lima beans      4 Beets"
+260 PRINT" 5 Broccoli        6 Cabbage"
+261 PRINT"Choose a number or press <ENTER> for":PRINT "more choices."
+262 INPUT A: A=INT(A): IF A=0 GOTO 270 ELSE GOTO 380
+270 CLS:PRINT:PRINT" 7 Carrots         8 Corn"
+280 PRINT" 9 Cucumbers       10 Eggppant"
+290 PRINT" 11 Lettuce        12 Muskmelons"
+291 PRINT "Choose a number or press <ENTER> for":PRINT"more choices."
+292 INPUT A: A=INT(A): IF A=0 GOTO 300 ELSE GOTO 380
+300 CLS:PRINT:PRINT" 13 Onions         14 Peas"
+310 PRINT" 15 Peppers        16 Potatoes"
+320 PRINT" 17 Pumpkins       18 Radishes"
+321 PRINT" Choose a number or press <ENTER> for":PRINT"more choices."
+322 INPUT A: A= INT(A): IF A=0 GOTO 330 ELSE GOTO 380
+330 CLS:PRINT:PRINT" 19 Spinach         20 Summer Squash"
+340 PRINT" 21 Winter Squash   22 Tomatoes"
+350 PRINT" 23 Watermelon      24 >>EXIT PROGRAM"
+360 PRINT "Enter a number or press <ENTER>":PRINT"to return to top"
+370 INPUT A:A=INT(A):IF A= 0 THEN GOTO 210
+371 IF A=24 THEN PRINT" Good Gardening!":PRINT:END
+380 IF A<1 OR A>23 THEN PRINT"Invalid choice":GOTO 210
+390 CLS:PRINT:PRINT
+400 PRINT"You have chosen ";C$(A)
+410 PRINT"How many feet of row might you"
+420 PRINT"plant";
+430 INPUT F
+440 CLS
+460 PRINT F;" feet of "C$(A)
+470 F=F/10
+480 PRINT "Approximate yield is ";
+490 Y2=INT(Y(A)*F+.5):PRINT Y2;:PRINT " ";U$(A)
+500 PRINT "SPACE: ";S$(A);" inches between plants."
+520 IF A=16 THEN PRINT"You will need ";INT((O(16)*F)/16):PRINT" lbs. of potato seed pieces.":GOTO 640
+530 O2=O(A)*F
+540 IF O2<.015625 THEN O2$="less than 1/64":GOTO 630
+550 IF O2>=.015625 AND O2<.03125 THEN O2$="between 1/64 and 1/32":GOTO 630
+560 IF O2>=.03125 AND O2<.0625 THEN O2$="between 1/32 and 1/16":GOTO 630
+570 IF O2>=.0625 AND O2<.125 THEN O2$="between 1/16 and 1/8":GOTO 630
+580 IF O2>=.125 AND O2<.25 THEN O2$="between 1/8 and 1/4":GOTO 630
+590 IF O2>=.25 AND O2<.5 THEN O2$="between 1/4 AND 1/2":GOTO 630
+600 IF O2>=.5 AND O2<1.01 THEN O2$="between 1/2 AND 1":GOTO 630
+610 O2=INT(O2+.5):PRINT"You will need about ";O2;" ounces "
+620 IF A=13 THEN PRINT "of onion sets.":GOTO 640 ELSE PRINT "of seed.":GOTO 640
+630 PRINT"You will need ";O2$:PRINT" ounces of";:IF A=13 THEN PRINT" onion sets." ELSE PRINT " seeds."
+640 PRINT "Press <ENTER> for Fertilizer rates":INPUT A:CLS
+650 PRINT:PRINT "::Manure (approximate):";
+660 F3=INT(F1(A)*F+.5):PRINT F3;:PRINT "lbs."
+670 PRINT "::Chemical (10-10-10):";
+680 F4=INT((F2(A)*F)*10+.5):F4=F4/10:PRINT F4;:PRINT "cups."
+690 PRINT"(PRESS <ENTER>";:INPUT A$:GOTO 210
+700 END
+710 REM INSTRUCTIONS
+720 CLS
+740 PRINT:PRINT"This program is designed to help you"
+750 PRINT"in planning and planting your garden. "
+760 PRINT"You will be shown a list of crops."
+770 PRINT"Pick one of them by number."
+771 PRINT "(PLEASE PRESS <ENTER>)":INPUT A:CLS 
+789 PRINT:PRINT "You will"
+790 PRINT"then be asked how many feet of"
+800 PRINT"row that you might be planning"
+810 PRINT"to plant of that crop.
+811 PRINT"(PLEASE PRESS <ENTER>":INPUT A:CLS
+819 PRINT" The program"
+820 PRINT"will then tell you how much yield "
+830 PRINT"you can expect, how much seed to"
+840 PRINT"buy and about how much fertilizer"
+850 PRINT"to use.
+851 PRINT "(PLEASE PRESS <ENTER>":INPUT A: CLS
+859 PRINT:PRINT" Fertilizer rates will  be given"
+900 PRINT"in terms of pounds of manure per row"
+910 PRINT"and cups of 10-10-10 (a common garden "
+930 PRINT"chemical fertilizer mixture)."
+931 PRINT "(PLEASE PRESS <ENTER>":INPUT A: CLS
+940 PRINT:PRINT"One word of warning:"
+950 PRINT"Different soils need different"
+960 PRINT"amounts of fertilizer to give the best"
+970 PRINT" yield."
+971 PRINT "(PLEASE PRESS <ENTER>":INPUT A: CLS
+972 PRINT:PRINT "For instance,"
+980 PRINT"sandy soils require more fertil-"
+990 PRINT"izer than clayey soils with "
+1000 PRINT"silty soils in between."
+1001 PRINT"(PLEASE PRESS <ENTER>":INPUT A:CLS
+1010 PRINT:PRINT"The rates given will be for the av-"
+1020 PRINT"erage type of soil.  You should"
+1030 PRINT"judge on your own how much more "
+1070 PRINT"or less  you should use."
+1080 PRINT "(PLEASE PRESS <ENTER>":INPUT A: CLS
+1090 PRINT:PRINT"Also, the fertilizer value of "
+1100 PRINT"manure varies widely depending"
+1110 PRINT"on source and how it has been"
+1120 PRINT"handled.  "
+1121 PRINT"(PLEASE PRESS <ENTER>
+1122 INPUT A:CLS
+1130 PRINT:PRINT"Experience is the very "
+1140 PRINT"best teacher in these regards."
+1150 PRINT"Good gardening!":
+1160 PRINT" Ted Batutis and Dave Peyton"
+1170 PRINT"(PLEASE PRESS <ENTER>"
+1180 INPUT A$
+1190 RETURN
+1200 REM data section
+1280 DATA "SNAP BEANS","POLE BEANS","LIMA BEANS","BEETS","BROCCOLI","CABBAGE","CARROTS"
+1290 DATA "CORN","CUCUMBERS","EGGPLANT","LETTUCE","MUSKMELONS","ONIONS","PEAS","PEPPERS"
+1300 DATA "POTATOES","PUMPKINS","RADISHES","SPINACH","SUMMER SQUASH","WINTER SQUASH"
+1310 DATA "TOMATOES","WATERMELONS"
+1320 REM  Next comes the data for wt of seed required per 10 feet of row in oz.
+1330 REM   the assumption is that you plant 3X recommended density then thin
+1340 DATA 1.6,1.0,4,.16,.02,.006,.0072,.264,.027,.006,.005,.01286,10,4
+1350 DATA .006,35,.0343,.144,.048,.018,.27,.005,.06
+1380 DATA "2-4","4-6","4-6","2-3","18-24","12-18","1-3","10-12","12-15","18-24"
+1390 DATA "12","36-48","2-4"
+1400 DATA "2-3","18-24","8-10","60-90","1","2-4","18-24","36-48","18-24","60-90"
+1410 REM   next are the data for yield per 10 foot of row
+1420 DATA 12,15,4,15,10,15,10,12,12,10,9,11,10,1.5,6,25,15,3.5,4.5,15,15,25,8
+1430 REM  Next are the data for the units of the above
+1440 DATA "LBS.","LBS.","LBS.","LBS.","LBS.","LBS.","LBS.","EARS"," LBS.","LBS.","HEADS","FRUITS"
+1450 DATA "LBS.","PINTS","LBS.","LBS.","LBS.","LBS.","LBS.","LBS.","LBS.","LBS.","FRUIT"
+1460 REM  Here are the fertilizer rates for a ten foot row in terms of manure
+1470 REM   in lbs.
+1480 DATA 04,04,04,15,12,12,10,15,10,10,10,10,15,05,12,20,10,10,15,10,10,10,10
+1490 REM  Here are the fertilizer rates for a 10-10-10 chemical fertilizer
+1500 REM     formulation (for a ten foot row as well) in cups
+1510 DATA .25,.25,.25,.5,.5,.5,.5,.5,.5,.5,.5,.5,.5,.25,.5,.5,.5,.5,.3,.5,.5,.5,.5
+1520 REM  INITIALIZATION
+1530 DIM C$(23),O(23),S$(23),Y(23),U$(23),F1(23),F2(23)
+1540 REM  The variables are CROP, OUNCES,SPACING,YIELD, UNITS, FERTILIZER RATE
+1550 REM    for MANURE (1) and 10-15-10 (2)
+1560 FOR I=1 TO 23
+1570 READ C$(I)
+1580 NEXT I
+1590 FOR I=1 TO 23
+1600 READ O(I)
+1610 NEXT I
+1620 FOR I=1 TO 23
+1630 READ S$(I)
+1640 NEXT I
+1650 FOR I=1 TO 23
+1660 READ Y(I)
+1670 NEXT I
+1680 FOR I=1 TO 23
+1690 READ U$(I)
+1700 NEXT I
+1710 FOR I=1 TO 23
+1720 READ F1(I)
+1730 NEXT I
+1740 FOR I=1 TO 23
+1750 READ F2(I)
+1760 NEXT I
+1770 RETURN
+

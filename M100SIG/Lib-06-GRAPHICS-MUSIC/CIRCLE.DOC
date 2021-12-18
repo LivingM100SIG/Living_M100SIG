@@ -1,0 +1,61 @@
+CIRCLE.DOC
+
+Documentation for CIRCLE.CO
+
+ Machine Language Circle routine
+   v2.0 12/10/87
+   c1987 Jon Diercks [73327,2353]
+ based on an algorithm published
+   by Mike Higgins
+ as modified for M100
+   by Jay Holovacs [74756,413]
+   and Neil Wick   [71056,613]
+
+  CIRCLE.CO is a very small (228 bytes), very fast (clocked at 30 times faster 
+than its BASIC counterpart) machine language routine to allow BASIC programmers
+to draw circles on the M100's LCD, in either "black" or "white" mode.
+  I developed CIRCLE.CO from the BASIC subroutine CIRCLE.BAS by Jay Holovacs 
+and Neil Wick, which they developed from an algorithm by Mike Higgins.  Many 
+thanks to these three for their contributions to this project.
+  CIRCLE.CO resides comfortably in the ALT LCD buffer at 64704 and must be 
+LOADMed there by any BASIC program that uses it.  It should be noted that 
+CIRCLE.CO is M100 SPECIFIC!  It has not been tested on the the 102 but it 
+should work.  With a few minor modifications, it should also work on the T200 (
+see CIRCLE.SRC for CS format assembler code).
+  Getting it going:
+  Download and run CIRCLE.LDR.  CIRCLE.CO should now appear on your menu.  The 
+LDR can be KILLed as it will no longer be used.  For a demonstration of how the
+routine is used from within a BASIC program, download CIRCLE.DEM and run it 
+with CIRCLE.CO in memory.  This demo consists of three little ditties I made up
+to test out the circle routine.
+  A quick look at a listing of CIRCLE.DEM should show you how to use CIRCLE.CO 
+from BASIC.  As long as you're not using any other routines that run in or 
+affect the ALT LCD buffer, you can LOADM"CIRCLE" at the start of the program 
+and leave it there.  Now, whenever you want to draw a circle, get the 
+coordinates of the center (X,Y), and the radius (R), and do this:
+  CALL64704,R,256*X+Y
+  Rules:  X, Y and R must each be >= 0 and <= 255.  Note that this means you 
+can specify centers which are not on the screen, as well as radii that will put
+part or all of the circle off of the screen.  This is OK, because CIRCLE.CO 
+will "clip" points that are beyond the screen boundary.  You can NOT specify 
+negative values for X, Y, or R;  this means that you can only get "off screen" 
+centers to the right and down.  Another limitation:  you can not draw partial 
+circles (arcs) with this routine.  (you couldn't do it with the BASIC routine 
+either, though)
+  Another benefit:  you CAN draw circles in "black" or "white" mode (which you 
+couldn't do with the BASIC version).  The default mode on initial LOADM is 
+black.  The toggle byte is at 64705.  To enable white or "erase" mode, 
+POKE64705,0.  To re-enable black or "draw" mode, POKE64705,1.  Simple enough?
+  Tip:  You will notice that the "paranoia" dittie in CIRCLE.DEM uses 
+concentric circles.  In order to fill all the space using concentric circles, I
+had to actually draw TWO circles for each radius - one with the center offset 
+one pixel from the other.  Without this doubling, some pixels would be missed. 
+Of course, sometimes it may be desirable to miss a few, as in the "pulsar" 
+demo, which leaves those dots there for a kind of starry effect.
+  ML programmers will want to see CIRCLE.SRC, the CS format source code, but it
+is not necessary for operation.  If anyone successfully revises the SRC for the
+T200, please share it with us.
+  As always, send me all your comments, problems, etc.  Most of all, enjoy!
+  Doing it the ML way...(flying CIRCLES around the rest...)
+  Jon Diercks [73327,2353]
+

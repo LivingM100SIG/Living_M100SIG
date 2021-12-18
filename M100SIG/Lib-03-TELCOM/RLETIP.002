@@ -1,0 +1,40 @@
+RLETIP:  Files containing CHR$(127)
+ 
+   A problem exists with some RLE picture files in that they contain a DELete 
+character (CHR$(127)).  A Model 100 text file cannot contain DEL characters, so 
+they are not put into the computer's files during downloading.  The resulting 
+file looks mainly like gibberish when the computer tries to redisplay the 
+picture, even if it looked good online using PIXTEL.  There is a way to restore 
+most of the DELs in a file by replacing them with an equivalent character 
+sequence such as "4 k".  Since 99% of DELs appear just before a space, the 
+following program will correct most, if not all, of the errors in these files:
+ 
+5 MAXFILES=2:FILES:INPUT"Filename to process";FI$
+10 OPENFI$FORINPUTAS1:OPENLEFT$(FI$,5)+"2"FOROUTPUTAS2
+30 A$=INPUT$(1,1):IFA$=" "THENPRINT#2,"4 k";:PRINT"+";
+40 PRINT#2,A$;:IFNOTEOF(1)THEN30ELSEBEEP:PRINT"Done":CLOSE
+ 
+In a file to be corrected, spaces would normally all be preceded by a DEL except
+in one case.  If the pixel in the top left corner is white, a space should 
+appear directly after the ^[GH or ^[GM at the beginning of the file.  If this is
+the case, remove the first "4 k" in TEXT mode so that the space which follows 
+appears directly after the H or M.  You'll be able to recognize such a file 
+because it will display reversed (negative) and the right half will appear on 
+the left and vice versa.
+   The one case in 95 where there should be a DEL in the file not followed by a 
+space is where there are exactly 95 pixels of the same colour in a row (which 
+may wrap around to the next line).  The problem is that this can occur several 
+times in a file.  I think there is a way that many of these files can be 
+salvaged too, but I'll have to work on that a bit.  Meanwhile try the above 
+routine on some files (just copy and paste into Basic) and let me know the 
+results.
+   The following bad files I have successfully corrected using the short 
+routine: GARF02, SKUNK, TAJMAH, CKECLS.  The following will need further 
+processing: GARF01, COKE, SBRACE.  All of these are available in the PICS forum.
+
+   Send the results of your tests to Neil Wick [71056,613].  Give the name of 
+the file and what the results were.  Thank-you.
+   P.S. It seems that Commodore 64s are one of the main sources for these self-
+corrupting files, but I believe some ColorComputer files may also have the 
+problem.  Weather maps are always okay.
+

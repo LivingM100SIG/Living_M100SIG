@@ -1,0 +1,288 @@
+110 CLEAR:CLS:RV$=CHR$(27)+"p":NR$=CHR$(27)+"q"
+150 DEFINTI,J,T:DIMLO(41,6),LO$(41),CO$(24),O1$(45),OB$(45),IT(45),IS(41)
+190 LINE(52,6)-(186,48),1,B
+200 PRINT@49,"The";:PRINT@90,"Nuclear";:PRINT@131,"Submarine";:PRINT@172,"Adventure";:PRINT@213,"by Steven Neighorn";:GOTO290
+240 FORI=1TO45:IFVE$=OB$(I)AND(IT(I)=LORIT(I)=-1)THENJH=1:RETURN
+250 NEXT:PRINT"That's not here.":JH=2:RETURN
+290 FORI=1TO24:READCO$(I):NEXT
+300 FORI=1TO45:READO1$(I),OB$(I),IT(I):NEXT
+310 FORI=1TO41:READLO$(I):FORJ=1TO6:READLO(I,J):NEXTJ,I
+320 FORI=1TO41:READIS(I):NEXT
+360 L=1:C1$=" which you are wearing":JY=1:BK$=SPACE$(40)
+400 FORI=1TO3:RN=60:GOSUB65510:SF$(I)=STR$(RN):NEXT
+410 SF$(1)="R"+SF$(1)
+420 SF$(2)="L"+SF$(2)
+430 SF$(3)="R"+SF$(3)
+440 FOR I=0 TO VAL(RIGHT$(TIME$,2)):RN=RND(1):NEXT 'initialize rnd
+450 RN=7:GOSUB65510:T1=RN+1:CLS
+520 T=T+1
+530 IFT=T1THENBEEP:PRINT"Something has hit the ship!!!  You feel a sinking feeling.":FORJ1=0TO1000:NEXTJ1:RN=300:GOSUB65510:J1=RN+100
+570 IFT>100ANDJ7=0THENJL=1ELSEJL=0
+610 GOSUB4570:CLS
+650 IFJC=1ANDL<>1ANDL<>13ANDL<>14ANDL<>37ANDL<>41THENIT(26)=L:IS(L)=IS(L)+1
+690 PRINT@0,RV$;"You are:";NR$;" ";LO$(L);"."
+730 IFJL=1THENPRINT"The batteries have run down and thelights have gone out!!!":GOTO950
+770 PRINTRV$;"You see:";NR$;" ";
+780 IFIS(L)=0THENPRINT"Nothing of interest.":GOTO850
+790 FORI=1TO45
+800 IFIT(I)=LTHENIFPOS(0)+LEN(O1$(I))>35THENPRINT:PRINTO1$(I);". ";ELSEPRINTO1$(I);". ";
+810 NEXT
+850 PRINT:PRINT"(";
+860 IFLO(L,1)<>0THENPRINT"Fore ";
+870 IFLO(L,2)<>0THENPRINT"Aft ";
+880 IFLO(L,3)<>0THENPRINT"Port ";
+890 IFLO(L,4)<>0THENPRINT"Starboard ";
+900 IFLO(L,5)<>0THENPRINT"Up ";
+910 IFLO(L,6)<>0THENPRINT"Down ";
+950 IFJC=1ANDIT(26)=LTHENIS(L)=IS(L)-1
+990 PRINT")":PRINTSTRING$(40,241);
+1030 IFT>350ANDJ1<>0THENGOSUB4570:PRINT"You didn't make it to the surfacequickly enough!!! You die, of course. ":GOTO4070
+1050 IFT>115ANDJ0<>2THENGOSUB4570:PRINT"You can't make it any further withoutfood... You starve to death. ":GOTO4070
+1070 IFJ0<>2ANDT>95THENPRINT;SPACES$(5);" You're awfully hungry!":PRINT
+1090 IFJ5=0ANDT>75THENGOSUB4570:PRINT"The hot reactor has a MELT-DOWN...Youdie, of course.":GOTO4070ELSEIFJ5=0ANDT>50THENPRINT;SPACE$(15);" *** You hear the <REACTOR WARNING>claxon. ***":BEEP
+1110 IFL=14ANDJZ<>1THENGOSUB4570:PRINT"You forgot to wear the Anti-Radiation suit...you die, of course.":GOTO4070
+1130 IFL=23THENGOSUB4570:GOTO4200
+1170 L1=L
+1210 A$="":INPUT"What do you want to do now";A$:IFA$=""THEN520
+1220 IFLEN(A$)=1THENGOSUB3960
+1230 VE$="":CO$=LEFT$(A$,3)
+1240 FORI=3TOLEN(A$)
+1250 IFMID$(A$,I,1)=" "THENVE$=MID$(A$,I+1,3):GOTO1270
+1260 NEXT
+1270 FORI=1TO24:IFCO$=CO$(I)THEN1330
+1280 NEXT
+1290 PRINT"You don't know how to ";CHR$(34);A$;".";CHR$(34):GOTO520
+1330 ONIGOTO1370,1550,1690,1770,2140,2270,2670,2840,2890,2950,3010,3060,3140,3230,3440,3370,4070,3500,3600,3550,3730,3830,1550,1690
+1370 IFJL=1THENPRINT"It's dangerous to move in the dark!"
+1390 L1=L
+1410 IFVE$="FOR"ANDLO(L,1)<>0THENL=LO(L,1):GOTO520
+1420 IFVE$="AFT"ANDLO(L,2)<>0THENL=LO(L,2):GOTO520
+1430 IFVE$="POR"ANDLO(L,3)<>0THENL=LO(L,3):GOTO520
+1440 IFVE$="STA"ANDLO(L,4)<>0THENL=LO(L,4):GOTO520
+1450 IFVE$="UP"ANDLO(L,5)<>0AND(L=1ORL=37)THENL=LO(L,5):PRINT"You climb out of the bunk. ":GOTO520
+1460 IFVE$="DOW"ANDLO(L,6)<>0AND(L=2ORL=36)THENL=LO(L,6):PRINT"You climb into the nearest bunk. ":GOTO520
+1470 IFVE$="UP"ANDLO(L,5)<>0THENL=LO(L,5):GOTO520
+1480 IFVE$="DOW"ANDLO(L,6)<>0THENL=LO(L,6):GOTO520
+1490 PRINT"You can't go in that direction."
+1500 IFJL=1THENGOSUB4570:PRINT"You fall and break your neck! ":GOTO4070
+1510 GOTO520
+1550 GOSUB240:IFJH=2THEN520
+1560 IFIT(I)<>LANDIT(I)<>-1THENPRINT"That's not here. ":GOTO520
+1570 IFI<29ORI=31ORI=43THENPRINT"You can't pick that up! ":GOTO520
+1580 IFIT(I)=-1THENPRINT"You already have it. ":GOTO520
+1590 IFI=41THENPRINT"You can lift it up but not get it. ":GOTO520
+1600 IFIN>=5THENPRINT"You can't carry anymore. ":GOTO520
+1610 IN=IN+1:IT(I)=-1:IS(L)=IS(L)-1:PRINT"Taken..."
+1620 IFI=42THENJP=0:GOTO520
+1630 IFI=44THENJT=0:GOTO520
+1640 IFI=45THENJD=0:GOTO520
+1650 GOTO520
+1690 GOSUB240:IFJH=2THEN520
+1700 IFIT(I)<>-1THENPRINT"You aren't carrying it.":GOTO520
+1710 IFIS(L)=5THENPRINT"There is no more room to drop anythinghere.":GOTO520
+1720 IFI=30THENO1$(30)=LEFT$(O1$(30),21):JU=0ELSEIFI=37THENO1$(37)=LEFT$(O1$(37),24):JZ=0
+1730 IT(I)=L:IN=IN-1:IS(L)=IS(L)+1:PRINT"Dropped...":GOTO520
+1770 GOSUB240:IFJH=2THEN520
+1780 IFI=1ORI=2ORI=3THENPRINT"The water-tight door is ";:IFJ(I)=0THENPRINT"closed.":GOTO520ELSEPRINT"open.":GOTO520
+1790 IFI=4ORI=5ORI=6THENPRINT"The locker is ";:IFJ(I)=0THENPRINT"closed and locked.":GOTO520ELSEPRINT"open.":GOTO520ELSEIFI=7ORI=8ORI=9THENPRINT"The hatch is ";:IFJ(I)=0THENPRINT"closed.":GOTO520ELSEPRINT"open.":GOTO520
+1800 IFI=10ANDIT(32)=0ANDL=2THENPRINT"You see a key!":IT(32)=2:IS(2)=IS(2)+1:GOTO520
+1810 IFI=10ORI=11THENPRINT"The bunks look comfy.":GOTO520
+1820 IFI=12THENPRINT"The torpedo is ready to fire.":GOTO520
+1830 IFI=13THENPRINT"The tube is empty.":GOTO520
+1840 IFI=14THENPRINT"The depth gauge reads <";J1;"> fathoms.":GOTO520
+1850 IFI=15THENPRINT"The push-button ballast control is setfor ";RV$;:IFJ2=0THENPRINT"DIVE";NR$;:GOTO520ELSEPRINT"SURFACE";NR$:GOTO520
+1860 IFI=16THENPRINT"The player ";:IFJP=0THENPRINT"is empty.":GOTO520ELSEPRINT"has a tape in it.":GOTO520ELSEIFI=17ORI=29ORI=36THENPRINT"It has writing on it.":GOTO520ELSEIFI<>18THEN1950ELSEONJ4+1GOTO1870,1890,1930
+1870 PRINT"The radio is broken."
+1880 GOTO520
+1890 PRINT"The radio is in working order, and thereis ";
+1900 IFJD=1THENPRINT"a decoder plugged into it.":GOTO520
+1910 PRINT"an empty plug in it."
+1920 GOTO520
+1930 PRINT"The radio is broken beyond repair."
+1940 GOTO520
+1950 IFI=19THENPRINT"The panels read ";:PRINTRV$;"<MISSLE READY>";NR$;" STATUS.":GOTO520
+1960 IFI=20THENPRINT"The push-button control regulates thereactor.":GOTO520
+1970 IFI=21THENPRINT"The reactor is running ";RV$;:IFJ5=0THENPRINT"HOT";NR$;:GOTO520ELSEPRINT"NORMAL";NR$;:GOTO520
+1980 IFI=22THENPRINT"The engine is turning normally, ";:IFJ7=0THENPRINT"butsomething is wrong.":GOTO520ELSEPRINT"andeverything is in working order.":GOTO520
+1990 IFI=23THENPRINT"The generator normally meets the ship's electrical needs, ":IFJ7=0THENPRINT"but now the ship isrunning on batteries.":GOTO520ELSEPRINT"and it is runningproperly.":GOTO520
+2000 IFI=26THENPRINT"They are the remainder of the skeletoncrew.":GOTO520
+2010 IFI=27THENPRINT"The drive train connects the engine tothe generator, ";:IFJ7=0THENPRINT"but it is broken.":GOTO520ELSEPRINT"and it is workingproperly.":GOTO520
+2020 IFI=30ORI=37THENPRINT"It just happens to be in your size.":GOTO520
+2030 IFI=31THENPRINT"The combination safe is ";:IFJX=0THENPRINT"closed.":GOTO520ELSEPRINT"open.":GOTO520ELSEIFI=38THENPRINT"It's the captain's microphone.":GOTO520
+2040 IFI=43THENPRINT"It's a cook stove, ";:IFI=43ANDJT=0THENPRINT"and it's empty.":GOTO520ELSEIFI=43ANDJT=1THENPRINT"and there's a T.V.dinner in it.":GOTO520
+2050 IFI=44ANDJ0=0THENPRINT"It's frozen solid.":GOTO520
+2060 IFI=44ANDJ0=1THENPRINT"It looks delicious.":GOTO520
+2070 IFI=45ANDJD=1THENPRINT"The decoder is plugged into the radio.":GOTO520
+2080 IFI=45ANDJD=0THENPRINT"The decoder has a plug in it.":GOTO520
+2090 PRINT"There is nothing unusual about it."
+2100 GOTO520
+2140 IFVE$<>"SIG"ORL<>12THEN2160ELSEPRINT"The sign says:":PRINT"<DANGER>":PRINT"NUCLEAR REACTOR AND HAZARDOUS MATERIALBELOW. ANTI-RADIATION SUIT MUST BE WORN!":GOTO520
+2160 IFVE$="MAN"ANDIT(36)=-1THENPRINT"The manual says: `INSTRUCTIONS FORREPAIR OF ELF (EXTREMELY LOW FREQUENCY) RADIO' and contains all the neededinstructions for effecting repair on thesubmarine's radio.":JR=1:GOTO520
+2170 IFVE$="BOO"ANDIT(29)=-1THENPRINT"The title of the book is `The Submariner'":ONJYGOTO2200,2220
+2180 PRINT"You can't read anything...Yet.":GOTO520
+2200 PRINT"Chapter 1: `Getting Your Sea Legs'":PRINT"The directions on a ship, alwaysgiven as though looking forward, are:<FORE>...Forward, <AFT>...Backward,<PORT>...Left,    <STARBOARD>...Right,Up and Down.":JY=2:GOTO520
+2220 PRINT"CHAPTER 2: `Life Aboard a Submarine'":PRINT"Compartments are connected viahatches, water-tight doors, and acentral passageway in the fore and aftsections of the ship."
+2230 PRINT"The Captain has absolute poweraboard ship and gives all the orders.":JY=1:GOTO520
+2270 GOSUB240:IFJH=2THEN520
+2280 IFI=31ANDJX=1THENPRINT"It's already open.":GOTO520
+2290 IFI=31ANDJX<>1THEN2540
+2300 IFI>9THEN2630
+2310 IFJ(I)=1THENPRINT"It's already open.":GOTO520
+2320 IFI=1ANDJW=1THENPRINT"You open the water-tight door withlittle trouble.":LO(3,6)=8:J(1)=1:GOTO520
+2330 IFI=1ANDJW<>1THENPRINT"You aren't strong enough.":GOTO520
+2340 IFI=2THENPRINT"You open the water-tight door despitethe warning.":LO(12,6)=14:J(2)=1:GOTO520
+2350 IFI=3ANDJC=1THENPRINT"You and the crewmen open the water-tightdoor.":LO(39,6)=40:J(3)=1:GOTO520
+2360 IFI=3ANDJC<>1THENPRINT"You aren't nearly strong enough.":GOTO520
+2370 IFI=4ANDIT(32)=-1ANDIT(29)=0THENPRINT"You unlock and open the locker,something falls out!":J(4)=1:IT(29)=2:IS(2)=IS(2)+1:GOTO520
+2380 IFI=4ANDIT(32)=-1ANDIT(29)<>0THENPRINT"You unlock and open the locker.":J(4)=1:GOTO520
+2390 IFI=4ANDIT(32)<>-1THENPRINT"You don't have the right key.":GOTO520
+2400 IFI=5ANDIT(33)=-1ANDIT(37)=0THENPRINT"You unlock and open the locker,something falls out!":J(5)=1:IT(37)=34:IS(34)=IS(34)+1:GOTO520
+2410 IFI=5ANDIT(33)=-1ANDIT(37)<>0THENPRINT"You unlock and open the locker.":J(5)=1:GOTO520
+2420 IFI=5ANDIT(33)<>-1THENPRINT"You don't have the right key.":GOTO520
+2430 IFI=6ANDIT(34)=-1ANDIT(30)=0THENPRINT"You unlock and open the locker,something falls out!":J(6)=1:IT(30)=36:IS(36)=IS(36)+1:GOTO520
+2440 IFI=6ANDIT(34)=-1ANDIT(30)<>0THENPRINT"You unlock and open the locker.":J(6)=1:GOTO520
+2450 IFI=6ANDIT(34)<>-1THENPRINT"You don't have the right key.":GOTO520
+2460 IFI=7ANDIT(40)=-1ANDJW=1THENPRINT"You open the hatch with the wrench.":LO(7,5)=11:J(7)=1:GOTO520
+2470 IFI=7ANDIT(40)=-1ANDJW<>1THENPRINT"You're not strong enough.":GOTO520
+2480 IFI=7ANDJW=1ANDIT(40)<>-1THENPRINT"You need something to open the hatch with.":GOTO520
+2490 IFI=7ANDJW<>1ANDIT(40)<>-1THENPRINT"You can't even begin to open the hatch.":GOTO520
+2500 IFI=8ANDJ1=0THENPRINT"You open the hatch.":LO(21,5)=22:J(8)=1:GOTO520
+2510 IFI=8ANDJ1<>0THENPRINT"You can't open the hatch until the ship surfaces.":GOTO520
+2520 IFI=9ANDJC=1THENPRINT"You and the crewmen open the hatch.":LO(39,5)=38:J(9)=1:GOTO520
+2530 IFI=9ANDJC<>1THENPRINT"You aren't nearly strong enough.":GOTO520
+2540 J8=0
+2560 PRINT"What is the combination...one part at a time"
+2570 FORJ3=1TO3:PRINT"#";J3;:INPUTA$(J3)
+2580 IFA$(J3)=SF$(J3)THENPRINT"click.":J8=J8+1
+2590 NEXT
+2600 IFJ8=3ANDIT(42)=0THENPRINT"The safe pops open. Something falls out.":IT(42)=25:IS(25)=IS(25)+1:JX=1:GOTO520
+2610 IFJ8=3ANDIT(42)<>0THENPRINT"The safe pops open.":JX=1:GOTO520
+2620 IFVE$="SAF"ANDJ8<>3THENPRINT"The safe does not open.":GOTO520
+2630 PRINT"You can't open that.":GOTO520
+2670 GOSUB240:IFJH=2THEN520
+2680 IFI=31ANDJX=0THENPRINT"It's already closed.":GOTO520
+2690 IFI=31ANDJX<>0THEN2790
+2700 IFI>9THEN2790
+2710 IFJ(I)=0THENPRINT"It's already closed.":GOTO520
+2720 IFI=1THENPRINT"You close the water-tight door.":LO(3,6)=0:J(1)=0:GOTO520
+2730 IFI=2THENPRINT"You close the water-tight door.":LO(12,6)=0:J(2)=0:GOTO520
+2740 IFI=3THENPRINT"You close the water-tight door.":LO(39,6)=0:J(3)=0:GOTO520
+2750 IFI=4ORI=5ORI=6THENPRINT"You close and lock the locker.":J(I)=0:GOTO520
+2760 IFI=7THENPRINT"You close the hatch.":LO(7,5)=0:J(7)=0:GOTO520
+2770 IFI=8THENPRINT"You clsoe the hatch.":LO(21,5)=0:J(8)=0:GOTO520
+2780 IFI=9THENPRINT"You close the hatch.":LO(39,5)=0:J(9)=0:GOTO520
+2790 IFVE$="SAF"THENPRINT"You close the safe.":JX=0:GOTO520
+2800 PRINT"You can`t close that.":GOTO520
+2840 IFVE$="DIN"ANDIT(44)=-1ANDJ0=1ANDL=28THENPRINT"You wolf down the T.V. dinner.":IT(44)=0:IN=IN-1:J0=2:GOTO520
+2850 PRINT"You can't eat anything...Yet.":GOTO520
+2890 IFVE$="WEI"ANDL=29ANDJW=0THENPRINT"You lift the weights and becomeincredibly strong!!!":JW=1:GOTO520
+2900 IFVE$="WEI"ANDL=29ANDJW=1THENPRINT"You lift the weights much more easilythis time.":GOTO520
+2910 PRINT"You can't lift anything...Yet.":GOTO520
+2950 IFVE$="UNI"ANDIT(30)=-1ANDJU=0THENPRINT"You put on the Captain's uniform overyour other clothes.":O1$(30)=O1$(30)+C1$:JU=1:GOTO520
+2960 IFVE$="OUT"ANDIT(37)=-1ANDJZ=0THENPRINT"You put on the anti-radiation outfitover your other clothes.":O1$(37)=O1$(37)+C1$:JZ=1:GOTO520
+2970 PRINT"You can't wear anything...Yet.":GOTO520
+3010 IFVE$="CRE"ANDIT(35)=-1ANDL=28ANDJC=0THENPRINT"You wake the crewmen with the smellingsalts.":IT(35)=0:JC=1:IN=IN-1:IS(L)=IS(L)-1:O1$(26)="A group of crewmen":GOTO520
+3020 PRINT"You can't wake anybody...Yet.":GOTO520
+3060 PRINTRV$;"You are carrying:";NR$;" ";
+3070 IFIN=0THENPRINT"Nothing...":GOTO520
+3080 FORI=1TO45
+3090 IFIT(I)=-1THENIFPOS(0)+LEN(O1$(I))>35THENPRINTO1$(I);"...";ELSEPRINTO1$(I);"...";
+3100 NEXT:GOTO520
+3140 IFVE$="BUT"ANDL=5ANDJF=0THENPRINT"This is a complicated device...You just don't give it a `FLICK' of a switch...":GOTO520
+3150 IFVE$="BUT"ANDL=5ANDJ2=0ANDJF=1THENPRINT"You change the ballast setting to";RV$;"SURFACE";:J2=1:PRINTNR$;:GOTO520
+3160 IFVE$="BUT"ANDL=5ANDJ2=1ANDJF=1THENPRINT"You change the ballast setting to";RV$;"DIVE";:J2=0:PRINTNR$;:GOTO520
+3170 IFVE$="BUT"ANDL=19ANDJ5=0THENPRINT"You change the reactor control to ";RV$;:PRINT"COOL";:J5=1:PRINTNR$;:GOTO520
+3180 IFVE$="BUT"ANDL=19ANDJ5=1THENPRINT"You change the reactor control to ";RV$;:PRINT"HOT";:J5=0:PRINTNR$;:GOTO520
+3190 PRINT"You can't push anything...Yet.":GOTO520
+3230 IF(VE$="FIR"ORVE$="SUR")ANDJU<>1THENPRINT"Only a Captain can give such an order.":GOTO520
+3240 IFVE$="FIR"THENINPUT"Fire what";VE$:VE$=LEFT$(VE$,3):IFVE$="TOR"ORVE$="MIS"THEN3270ELSEPRINT"You can't fire that.":GOTO520
+3250 IFVE$="SUR"THEN3290
+3260 PRINTVE$;".":GOTO520
+3270 IFVE$="TOR"ANDIT(38)=-1ANDL=17ANDIT(30)=-1ANDJU=1THENPRINT"Torpedo fires...":GOSUB4570:PRINT"You feel an explosion...You sink one of the waiting rescue vessels...":PRINT"They'll never rescue you now...You blew it!!!":GOTO4070
+3280 IFVE$="TOR"THENPRINT"You can't fire a torpedo...Yet.":GOTO520
+3290 IFVE$="SUR"ANDJU=1ANDIT(30)=-1ANDJ2=1ANDIT(38)=-1ANDL=19ANDJ1<>0THENBEEP:BEEP:BEEP:PRINT"The submarine slowly surfaces...":J1=0:GOTO520
+3300 IFVE$="SUR"THENPRINT"You can't surface...Yet.":GOTO520
+3310 IFVE$="MIS"ANDJU=1ANDIT(30)=-1ANDL=17ANDIT(38)=-1THENPRINT"Only the President can give such anorder.":GOTO520
+3320 IFVE$="MIS"THENPRINT"You can't fire a missile...Yet.":GOTO520
+3330 PRINT"You can't say anything...Yet.":GOTO520
+3370 IFVE$="RAD"ANDL=18ANDJ4=1ANDJD=1THEN4470
+3380 IFVE$="RAD"ANDL=18ANDJ4=1ANDJD<>1THENPRINT"A message comes through, but it's incode. ":GOTO4510
+3390 IFVE$="RAD"ANDL=18ANDJ4<>1THENPRINT"The radio doesn't work.":GOTO520
+3400 PRINT"You can't use anything...Yet.":GOTO520
+3440 IFVE$="RAD"ANDL=18ANDIT(39)=-1ANDJR=1ANDJ4=0THENPRINT"You fix the radio with the repair kit. ":J4=1:GOTO520
+3450 IFVE$="TRA"ANDL=9ANDIT(40)=-1ANDJ7=0THENPRINT"You fix the drive train with the wrench.":J7=1:GOTO520
+3460 PRINT"You can't fix anything...Yet.":GOTO520
+3500 IFVE$="T.V"ANDJF=0ANDL=28ANDJP=1THENPRINT"It's a `HEAVY' film about the up's anddown's of the submarine corps.":JF=1:GOTO520
+3510 PRINT"You can't watch anything...Yet.":GOTO520
+3550 IFVE$="DIN"ANDL=33ANDJT=1ANDJ0=0THENPRINT"You cook the dinner in the stove.":J0=1:O1$(44)="A T.V. dinner":GOTO520
+3560 PRINT"You can't cook anything...Yet.":GOTO520
+3600 INPUT"Into what";A$
+3610 A$=LEFT$(A$,3)
+3620 IFA$="PLA"THEN3660
+3630 IFA$="STO"THEN3670
+3640 IFA$="RAD"THEN3680
+3650 PRINT"You can't put anything into that.":GOTO520
+3660 IFVE$="CAS"ANDIT(42)=-1ANDL=28ANDJP=0THENPRINT"You put the cassette in the player.":JP=1:IN=IN-1:IT(42)=L:IS(L)=IS(L)+1:GOTO520
+3670 IFVE$="DIN"ANDIT(44)=-1ANDL=33ANDJT=0THENPRINT"You put the T.V. dinner in the stove.":JT=1:IN=IN-1:IT(44)=L:IS(L)=IS(L)+1:GOTO520
+3680 IFVE$="DEC"ANDIT(45)=-1ANDL=18ANDJD=0THENPRINT"You attach the decoder to the radio.":JD=1:IN=IN-1:IT(45)=L:IS(L)=IS(L)+1:GOTO520
+3690 PRINT"You can't put that into anything...Yet.":GOTO520
+3730 CLS:PRINT@120,RV$;"SAVE FILE NAME";NR$;:INPUT" ";A$:IFLEN(A$)=0ORLEN(A$)>14THEN3730
+3740 ONERRORGOTO3920:OPENA$FOROUTPUTAS1
+3750 PRINT#1,J0;J1;J2;J4;J5;J7;J8;JC;JD;JF;JL;JP;JR;JT;JU;JW;JX;JY;JZ;L;L1;T;T1;IN;J(1);J(2);J(3);J(4);J(5);J(6);J(7);J(8);J(9);IT(29);IT(30);IT(32);IT(33);IT(34);IT(35);IT(36);IT(37);IT(38);IT(39)
+3760 PRINT#1,IT(40);IT(42);IT(44);IT(45);LO(7,5);LO(21,5);LO(39,5);LO(3,6);LO(12,6);LO(39,6);IS(1);IS(2);IS(3);IS(4);IS(5);IS(6);IS(7);IS(8);IS(9);IS(10);IS(11);IS(12);IS(13);IS(14);IS(15);IS(16);IS(17);IS(18);IS(19);IS(20);
+3770 PRINT#1,IS(25);IS(26);IS(27);IS(28);IS(29);IS(30);IS(31);IS(32);IS(33);IS(34);IS(35);IS(36);IS(37);IS(38);IS(39);IS(40)
+3780 PRINT#1,IS(41);O1$(18);",";O1$(26);",";O1$(30);",";O1$(37);",";O1$(44);",";SF$(1);",";SF$(2);",";SF$(3)
+3790 CLOSE:PRINT"Saved...":GOTO520
+3830 CLS:PRINT@120,RV$;"LOAD FILE NAME";NR$;:INPUT" ";A$:IFLEN(A$)=0ORLEN(A$)>14THEN3830
+3840 ONERRORGOTO3920:OPENA$FORINPUTAS1
+3850 INPUT#1,J0,J1,J2,J4,J5,J7,J8,JC,JD,JF,JL,JP,JR,JT,JU,JW,JX,JY,JZ,L,L1,T,T1,IN,J(1),J(2),J(3),J(4),J(5),J(6),J(7),J(8),J(9),IT(29),IT(30),IT(32),IT(33),IT(34),IT(35),IT(36),IT(37),IT(38),IT(39)
+3860 INPUT#1,IT(40),IT(42),IT(44),IT(45),LO(7,5),LO(21,5),LO(39,5),LO(3,6),LO(12,6),LO(39,6),IS(1),IS(2),IS(3),IS(4),IS(5),IS(6),IS(7),IS(8),IS(9),IS(10),IS(11),IS(12),IS(13),IS(14),IS(15),IS(16),IS(17),IS(18),IS(19),IS(20)
+3870 INPUT#1,IS(25),IS(26),IS(27),IS(28),IS(29),IS(30),IS(31),IS(32),IS(33),IS(34),IS(35),IS(36),IS(37),IS(38),IS(39),IS(40),IS(41),O1$(18),O1$(26),O1$(30),O1$(37),O1$(44),SF$(1),SF$(2),SF$(3)
+3880 CLOSE:PRINT"Loaded...":GOTO520
+3920 CLOSE:BEEP:PRINT"Error in using `";A$;"'.":PRINT"Try a different filename or device.":GOSUB4570:IFERL=3740THENRESUME3730ELSEIFERL=3840THENRESUME3830ELSERESUME530
+3960 IFA$="F"THENA$="GO FOR":RETURN
+3970 IFA$="A"THENA$="GO AFT":RETURN
+3980 IFA$="S"THENA$="GO STA":RETURN
+3990 IFA$="P"THENA$="GO POR":RETURN
+4000 IFA$="U"THENA$="GO UP":RETURN
+4010 IFA$="D"THENA$="GO DOW":RETURN
+4020 IFA$="I"THENA$="INV":RETURN
+4030 RETURN
+4070 PRINT"The briny sea claims another victim...":PRINT"You have let the SUBMARINE CORPS andyour fellow crewmen down..."
+4110 INPUT"Do you want to try this adventure again";A$
+4120 IFLEFT$(A$,1)="Y"ORLEFT$(A$,1)="y"THEN110
+4160 CLS:CLOSE:END
+4200 PRINT"CONGRATULATIONS!!! You made it to thesurface.":PRINT"Rescue ships will be here shortly topick you up."
+4210 GOTO4110
+4250 DATA"GO ",GET,DRO,LOO,REA,OPE,CLO,EAT,LIF,WEA,WAK,INV,PUS,SAY,FIX,USE,QUI,WAT,PUT,COO,SAV,LOA,TAK,REL
+4260 DATAA water-tight door,DOO,3,A water-tight door,DOO,12,A water-tight door,DOO,39,A red locker,LOC,2,A white locker,LOC,34,A blue locker,LOC,36,A hatch,HAT,7,A hatch,HAT,21,A hatch,HAT,39
+4270 DATAA room full of bunks,BUN,2,A room full of bunks,BUN,36,A torpedo tube labeled <LOADED>,LOA,39,A torpedo tube labeled <EMPTY>,EMP,39,The depth gauge,GAU,5,The ballast control,CON,5,A videocassette player and T.V.,PLA,28
+4280 DATAA warning sign,SIG,12,A complex radio,RAD,18,The missile fire computer panels,PAN,16,A control device,DEV,19,The nuclear reactor,REA,14,The steam turbine engine,ENG,9,The electrical generator,GEN,10
+4290 DATAThe search periscope,SEA,20,The attack periscope,ATT,20,A group of unconscious crewmen,CRE,28,A drive train,TRA,9
+4300 DATARescue ships in the distance,RES,23,A hardback book,BOO,0,The Captain's uniform,UNI,0,A wall safe,SAF,25,A key labeled <RKEY>,RKE,0,A key labeled <WKEY>,WKE,11
+4310 DATAA key labeled <BKEY>,BKE,13,Some smelling salts,SAL,27,A Navy repair manual,MAN,8
+4320 DATAAn anti-radiation outfit,OUT,0,A remote microphone,MIC,17,A Navy electronic repair kit,KIT,40,A wrench,WRE,38,A weight training set,WEI,29,A videocassette,CAS,0,A stove,STO,33,A frozen T.V. dinner,DIN,32,A decoder,DEC,37
+4330 DATAIn a bunk,0,0,0,0,2,0,In the after crew's quarters,3,0,0,0,0,1,In the main passageway,6,2,5,4,0,0,In the laundry room,0,0,3,0,0,0,In the maneuvering room,7,0,0,3,0,9,In the main passageway,12,3,7,0,0,0
+4340 DATAOn the upper deck of the main engine room,0,5,0,6,0,10,In the ship's can,0,0,0,0,3,0,In the aft section on the lower deck of the engine room,10,0,0,0,5,0
+4350 DATAIn the fore section on the lower deck of the engine room,0,9,0,0,7,0,In the engine room access trunk,0,0,0,0,0,7,In the main passage way,15,6,0,0,0,0,In the aft section of the reactor room,14,0,0,0,0,0
+4360 DATAIn the fore section of the reactor room,0,13,0,0,12,0,In the main passageway,16,12,0,0,0,0,In the missile compartment
+4370 DATA17,15,0,0,0,0,In the attack center,20,16,0,0,0,19,In the radio shack,24,19,0,0,20,0,In the main control room,18,0,0,0,17,0,In the periscope room,0,17,0,0,21,18,In the access passageway in the sail,0,0,0,0,0,20
+4380 DATAOn the bridge,23,0,0,0,0,21
+4390 DATAOn the main deck,0,0,0,0,0,0,In the main passageway,30,18,25,26,0,27,In the Captain's stateroom,0,0,0,24,0,0,In the officer's wardroom,0,0,24,0,0,0,In the infirmary,0,0,0,0,24,0,In the crew's mess,33,0,0,30,0,0
+4400 DATAIn the health room,0,0,30,0,0,0,In the main passageway,35,24,28,29,0,0,In the main stores room,0,32,0,0,33,0
+4410 DATAIn the frozen stores room,31,0,0,0,0,0,In the galley,0,28,0,35,0,31,In the chief's quarters,0,0,35,0,0,0,In the main passage way,36,30,33,34,0,0,In the main crew's quarters,39,35,0,0,0,37,In a bunk,0,0,0,0,36,0
+4420 DATAIn the forward access and escape trunk,0,0,0,0,0,39,In the forward torpedo room,41,36,0,0,0,0,In the repair and work compartment,0,0,0,0,39,0,In an empty torpedo tube,0,39,0,0,0,0
+4430 DATA0,2,1,0,2,0,1,1,2,1,1,2,1,1,0,1,1,1,1,2,1,0,1,0,1,0,1,2,1,0,0,1,1,1,0,2,1,1,4,1,0
+4470 CLS
+4480 PRINT"The decoded message is: `NAUTILUS...You have been hit by a new SOVIETANTI-SUBMARINE WEAPON. You are restingin approximately ";
+4485 PRINT"alone since the weather is too rough to send down a rescue bell. The structural integrity of the vessel is questionable after the attack, so time is a factor.These alpha-numeric combinations mightbe of some use. "
+4500 PRINTSPACE$(10);SF$(1);"...";SF$(2);"...";SF$(3);"...";:PRINT"These are $#%$^#$%#%'":PRINT
+4510 INPUT"Hit <ENTER> to end decoding";A$:CLS:PRINT"The radio blows up!!!":GOSUB4570
+4520 CLS
+4530 O1$(18)="The smoldering remains of a radio":J4=2:IFJD=1THENIT(45)=0:IS(18)=IS(18)-1:GOTO520
+4570 FORI=1TO5000:NEXTI:CLS:RETURN
+65500 REM rnd# routine
+65510 IFRN<0ORRN>32767THENERROR5
+65512 IFRN=0THENRN=RND(0):GOTO65514
+65513 IFRN=1THENRN=RND(1)ELSERN=INT(RN*RND(1))+1
+65514 RETURN

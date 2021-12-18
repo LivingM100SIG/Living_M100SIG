@@ -1,0 +1,152 @@
+     XBSMGR.200 
+     -----------
+-
+-
+     XBSMGR.200 is a full-featured, cursor driven, file management utility 
+designed to facilitate inter-bank file transfer within BASIC using Paul 
+Globman's remarkable XBASIC.CO program. It also incorporates Mo Budlong's 
+TXTJMP.200 code so .DO files can be edited via TEXT directly from BASIC. You 
+never have to return to the T200's main menu!
+     XBSMGR.200 will:
+      - Transfer .DO files FROM and TO your "home" bank. (This permits 
+considerable flexibilty in planning TELCOM sessions since you'll now be able to
+upload from, or download to, ALL your RAM banks in one session.)
+      - Kill ANY type file in the home bank.
+      - Permit you to read and/or edit any .DO file in the home bank via the 
+T200's built-in TEXT editor. You can also edit .DO files from "away" banks 
+simply by first moving them to the home bank with XBSMGR; then moving them 
+"back" using a different name.
+-
+-
+     Although originally conceived as an adjunct to on-line TELCOM use of 
+XBASIC.CO's file transfer abilities, it may find other "off-line" uses as well.
+Since it runs entirely from BASIC and does not require returning to the T200 
+main menu, it's use will not "hang-up" the internal modem, thus permitting 
+XBASIC and TEXT use while on-line: two  elusive capabilities previously 
+available only with somewhat complicated M/L code.
+     To use XBSMGR.200, download this file (XBSMGR.DOC) and XBSMGR.200. "Clean 
+up" the .DO file and checksum it. LOAD it and save the .BA version. Also 
+download XBASIC.200 (DL10) which you'll use to create XBASIC.CO.
+     PLEASE read ALL these instructions. They're NOT complicated but proper use
+of all XBSMGR.200 features requires a good understanding of exactly what's 
+available. XBSMGR and XBASIC expect you to have THREE memory banks in your 200.
+Also; BE SURE TO HAVE XBASIC.CO IN THE BANK FROM WHICH YOU'LL RUN XBSMGR! (I 
+always keep a copy in each bank as an invisible file because of it's 
+usefullness.)
+     If you have TS-DOS' "Cleuseau" installed, you MUST first deactivate it 
+before using F3 "TEXT" or cursor selecting a .DO file. Either follow the 
+instructions in Cleuseau's manual or use CALL921,146.
+-
+     OPERATION
+     ---------
+-
+     First of all, XBSMGR.200 is a "friendly" program. The only "hooks" 
+required would be those needed for ON-LINE TELCOM operation. These would be 
+whatever are necessary to take you directly from TELCOM to BASIC. (Phil 
+Wheeler's popular XMDPWx programs incoporate this option already; follow his 
+instructions.)
+    You can re-program TELCOM's F6 key to jump directly to BASIC with these two
+pokes: POKE62783,143: POKE62784,131    TELCOM's F6 key would then take you 
+directly to BASIC when pushed. (Be sure to read "F7  TERM" and "F8  EXIT" below
+for returning to TELCOM!) 
+    From BASIC you simply RUN"XBSMGR" to arrive at it's menu, which is similar 
+in layout to the normal menu. All three banks of files will display with the 
+bank number to the left of the first file in each bank. Your HOME bank is 
+listed first. If you have more than 56 files then a "+" will display in front 
+of the last file displayed and the excess will not display. 
+    Bytes free in the HOME bank and .DO file sizes in ANY bank will display in 
+the customary places. Move the cursor with arrow keys or Spacebar. (If an arrow
+key should not happen to move the cursor, try the spacebar or a different arrow
+key.) Time displays in the lower left corner.
+-
+    XBSMGR's menu works very much like the 200's main menu except that:
+      - ALL the files in All the banks will display; "invisible" or visible, 
+and are accessible within the parameters of the different routines.
+      - If you press ENTER while the cursor is over a file in an "away" bank, 
+you'll hear a BEEP and XBSMGR will re-run. Otherwise pressing ENTER while the 
+cursor is over a file in your "home" bank works just like the 200 menu: 
+selecting a .DO file takes you to it via TEXT, a .BA file will execute and a 
+.CO file will run if HIMEM is correct.
+     (Be careful with prgms that return to the main menu if you're on-line with
+the internal modem, or of .CO programs that might load into previously reserved
+HIMEM if you're expecting something else to be there when you leave XBSMGR.)
+-
+-
+     FUNCTION KEYS
+     -------------
+-
+      - F3  TEXT
+     This will prompt you for a file name and take you to the 200's TEXT editor
+in the file name you select. (Or you can simply cursor to an existing file and 
+press ENTER.) All the TEXT function keys and device routines will work normally
+but remember: F8, Menu in the "LIST" routine (TEXT F4) will return you to the *
+T200 menu* losing your carrier, (use "Edit" to return to the file instead); and
+any routine that uses the comm. chip (like SAVE 0:) will also hang up the 
+internal modem. TEXT F8 returns you to XBSMGR.
+-
+      - F4  Copy (.DO files only)
+     If you press it while cursored over a home bank file, you'll be prompted 
+for a "Destination bank:". The file will then be REMOVED from the home bank and
+moved to the chosen bank: either to a new file if the source filename doesn't 
+exist in the destination bank, or APPENDED to a same-named file. If you press 
+F4 with the cursor in one of your "away" banks, the file will COPY to the home 
+bank automatically, opening a new file if one of that name doesn't exist in the
+home bank, or appending the transfer to a file with the same name. In either 
+event, the original will REMAIN in the away bank. 
+    While the file transfer is taking place, "Working..." will display at the 
+bottom of your screen. If you try to write too much data to a bank you will 
+hear a BEEP and an error message will display: the transfer did NOT complete, 
+although you've filled the bank with a PORTION of the source file. If you have 
+the space in the home bank, you can rename your source file and transfer the 
+partial, "failed" file back to your home bank, see how much made it and then 
+edit your source file before moving the "rest" of it to another bank. Or simply
+choose another bank and transfer the whole file again. 
+     When finished, the "new" menu entries will display.
+-
+      - F5  Kill
+     This will Kill ANY file in the home bank except XBASIC and XBSMGR. Any 
+response to the prompt other than "Y" or "y" will re-run. (If you kill a BASIC 
+file you will have to re-run XBSMGR.)
+-
+      - F6  Name
+     Lets you re-name any file in your current bank. Enter six characters; the 
+ENTER and Spacebar keys make spaces. 
+-
+      - F7  TERM
+     This will take you directly to the TERM mode of TELCOM. Change this to 
+CALL24573 if you prefer to return to TELCOM OR you can substitute code needed 
+for your particular application. (LINE215)
+     (If you are using XBSMGR in conjunction with one of Phil Wheeler's XMDPWx 
+programs you may want to substitute the appropriate CALLHIMEM+xx code here. If 
+HIMEM is correct you could also re-enter the program by simply selecting it 
+with ENTER from XBSMGR's menu.)
+-
+      - F8  EXIT
+     XBSMGR.200, as uploaded, simply "END"s the program leaving you in BASIC. 
+You can change the code to whatever you prefer. (LINE100)
+-
+-
+      - ERRORS
+-
+    Errors happen. XBSMGR handles errors in two ways. If it encounters a BASIC 
+error, like OM? or FF? it will BEEP-BEEP, print the error # and line # in the 
+lower left corner of the screen and wait for any key-press before re-running. 
+MOST other errors; incorrect bank number, incorrect key-press and incorrect 
+file-type requests will BEEP and re-run the program.
+-
+-----------------------------------------------------------------------------
+-
+     I am indebted to Paul Globman for his patient help in showing me (over and
+over) how to use the access codes for XBASIC.CO. XBSMGR only scratches the 
+surface of XBASIC's capabilities but will hopefully encourage other 
+applications. Please direct praise and comments about XBASIC.CO to him but ANY 
+problems with XBSMGR.200 should, of course, come to me. I hope you find the 
+program useful.
+-
+ Randy Hess
+ 73267,552
+ Omaha, Ne
+ WATS 800-228-3309
+ COMM 402-397-0900
+ v1.1
+

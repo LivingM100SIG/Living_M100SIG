@@ -1,0 +1,97 @@
+             DISCUSSION AND PATCHES FOR GRMCVT.100 & GRMXLT.BA
+             -------------------------------------------------
+
+
+GRMXLT.BA & GRMCVT.100 are programs to convert M100/102 (and 200, for
+GRMXLT.BA) files with German characters to a format printable on an Epson
+printer in its German international submode.  GRMXLT.BA is a Basic program
+for the 100/102/200.  GRMCVT.100 loads a machine language program to do
+the same job much faster, but only for the 100/102.  GRMCVT.DOC describes
+the conversions for both programs and the use of GRMCVT.100.  GRMCVT.SRC
+is the source of the M/L part of GRMCVT.100.
+
+
+PATCHES FOR IBM PRINTER
+-----------------------
+
+Another approach to printing German characters is use of an IBM printer --
+or the IBM graphics mode 2 emulation capability of certain printers.  This
+has the advantage of not precluding the use of characters below 128d ([,
+], {, }, ~, \, and |) in the original file.  The following patches will
+make this possible.
+
+     a) Patch for GRMXLT.BA
+
+Replace line 120 by:
+
+120 DATA 142, 153, 154, 132, 148, 129, 225
+
+     b) Patch for GRMCVT.100
+
+Replace line 12 by:
+
+12 NEXT:POKE X+26,142:POKE X+36,153:POKE X+46,154:POKE X+56,132:
+POKE X+66,148:POKE X+76,129:POKE X+86,225
+
+(the carriage return between '132:' and 'POKE' must be removed).
+
+
+HOW GRMCVT.100 WORKS
+--------------------
+
+This discussion refers to GRMCVT.100 and GRMCVT.SRC -- so you will need
+copies of those in hand as you read this.
+
+GRMCVT.100 is a program which loads a machine language routine relative to
+the pre-existing value of HIMEM, and then calls it.  It also handles the
+keyboard and screen part of the problem, which are more easily done in
+Basic and where speed is not an issue.
+
+     a) The Basic Loader
+
+The simplicity of the GRMCVT.SRC is due partially to the work done by the
+Basic loader -- in lines 13 through 17, which prompt for the file name,
+format it as needed (all uppercase, no spaces and ending in .DO) by
+'chkf', and where the file length is stuffed into memory (line 15).
+
+The first four lines are the data used to stuff the M/L code into memory.
+The '?'s in the data indicate that the following two-byte pair is an
+address defined relative to the base of the relocated program (X in line
+5).  The actual loading magic is done by lines 6 thru 12 -- which I
+callously cadged from QIKCHK.100 in DL3!
+
+     b) A Walk Through the Source
+
+The first five lines of GRMCVT.SRC perform file handling functions, after
+GRMCVT.100 has stuffed the file name into the defined memory location
+starting at the address 'file' -- and replaced the 10 in the second line
+by one more than the actual length of the file name (e.g., 'FILE.DO' has a
+length of 7).  The call to 'chkf' finds the file's entry in the directory
+(and if it exists), and the call to 'faddr' sets the pointer HL to the
+first byte of the file in memory.  If the file does not exist, the program
+jumps to the routine 'nofile', which beeps and returns to the entry menu.
+Note that 'chkf' and 'faddr are identified M100 ROM routines.
+
+Assuming the file is there, the routine 'getch' moves the character
+pointed to by HL in to the accumulator.  Comparison to 26d determines if
+it is the end of the file being converted; if so, the program jumps to the
+exit routine 'fini'.
+
+Otherwise the program moves through a "ladder" of identical routines to
+test the character against the seven being converted -- and replace it, if
+appropriate.  The first, 'codau' (for CODE-A, with u indicating
+uppercase), tests this character to see if it is a CODE-A (177d).  If so,
+the 'mov m,91' replaces it by a '[' (91d) -- and the program jumps to
+'loop', where HL is increased by one (pointing to the next character in
+the file), then returning to 'getch'.  If it is not CODE-A, the program
+continues down the "ladder", until a match is found or it gets to the
+bottom.
+
+That's all there is to it.  Except for the linefeed patches (see LFUTL
+files in DL7), this is about the simplest M100 M/L program you will ever
+find.
+
+
+Phil Wheeler
+71266,125
+7 May 1987

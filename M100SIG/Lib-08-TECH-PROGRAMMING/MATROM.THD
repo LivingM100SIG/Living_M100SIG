@@ -1,0 +1,71 @@
+MATROM.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The Model 100 system bus gives direct access to the innards of the machine,
+and has been used to expand it considerably (memory expansions, fast disk
+drives, etc.).  This interesting group of messages deals with attatching a
+math coprocessor to the system bus.
+
+Message range: 170687 to 171355
+Dates: 6/26/88 to 7/8/88
+
+
+Sb: #Math Rom
+Fm: Frank Hausman 71251,2002
+To: Stan Wong 70346,1267
+
+I've an Intel 8231 math processor that I'm going to experiment with hooking up
+on the system bus.  It does a heap of trig and floating point, and hell of fast
+at that!  The other option is the cheapest, slowest 8087, but that would
+require an external power supply! I'll let you know if it works...
+
+
+Fm: Stan Wong 70346,1267
+To: Frank Hausman 71251,2002
+
+Wow!  Keep us posted!  I hope to have a "poor man's" ROM development
+environment set up on my IBM PC "real soon now."
+
+
+Fm: Frank Hausman 71251,2002
+To: Stan Wong 70346,1267
+
+Well, I've got the circuit designed (not built) and some preliminary code
+written. What are you guys most interested in - single precision floating point
+(six significant figures), or double precision integer math, or both?  Keep in
+mind that memory is a constant restriction. One of the problems so far is that
+the chip draws 50-95 milliamperes at 5 volts and (!) 50-95 mA at 12 volts.  And
+the 8231/9511 costs about $100.  I haven't completed researching other math
+chips, but the 8087 is out since it costs more and seems to depend very heavily
+on an 8088 or 8086 being present (and draws 500 mA).
+    Two important uses come to mind:  spreadsheets and laboratory data
+analysis.  A Forth written with the 8231/9511 in mind would really scream!
+
+
+Fm: Stan Wong 70346,1267
+To: Frank Hausman 71251,2002
+
+Looks like you are really clipping along on this project.  Why don't you drop
+Scott T. Schad a line.  I think his interest in your project would be much
+greater than mine.
+
+For a math rom, I would think that double precision, and maybe even extended
+precision would be a must.  Unless we are using the same terminology different,
+the precision should be equal to that of what is commonly found on 16-bit
+machines like the IBM PC.  I don't think that people will want to compromise.
+They probably would go back to their IBM PC to do such calculations.
+
+
+Fm: Frank Hausman 71251,2002
+To: Stan Wong 70346,1267
+
+The 8231/9511 internally processes 32 bit floating point and integer numbers.
+32 bit floating point representations allow about 6 decimal digits of
+precision. This is similar to the M100 BASIC's DEFSNG data type.  1.23456E+28
+is an example of this data type.
+    Six digits may not be enough precision for some folks.  The additional
+precision could be obtained in software, at a cost of some calculation speed.
+    Another approach is this:  you write all your routines, but leave the
+integer multiplies and divides to the 8231.

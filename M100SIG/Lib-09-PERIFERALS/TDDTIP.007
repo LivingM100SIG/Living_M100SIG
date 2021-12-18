@@ -1,0 +1,60 @@
+TDDTIP.007 -- Phil Wheeler [71266,125]
+
+
+This TDDTIP relates to the use of FUTIL.BA as a way of conserving 
+RAM while using FLOPPY.CO with other machine language programs in 
+your Model 100.  FUTIL.BA is not a public domain program, but 
+comes as part of the TMPC package.  The following comments are 
+largely extracted from my review of FUTIL.BA in DL6.
+
+FUTIL.BA is a machine language program manager, written mostly in 
+Basic, but with embedded machine language code.  It makes life 
+with more than one resident M/L program very easy.  This is a new 
+situation for me, brought about by the new Tandy drive's FLOPPY.CO
+DOS, and FUTIL.BA came into my possession just in time.
+
+At the end of FUTIL is a set of data statements, one for each 
+machine language program you have in residence.  For example, with
+FLOPPY.CO and LAPWRD.CO in residence, these data statements are:
+
+ 1020 DATA FLOPPY,59400,62959,59400,Y
+ 1030 DATA LAPWRD,59675,62959,60561,Y
+
+where the 'Y' means the program can be run upon loading into high 
+RAM.  When you run FUTIL it asks: (L)oad or (S)ave?  Load will 
+load a program into high RAM and remove it from the menu, while 
+Save will take the program out of high RAM and save it as a menu 
+entry -- and set HIMEM=MAXRAM.  As a result, no machine language 
+program ever takes more RAM than its true size; no more of this 
+double-saving of M/L programs!  The utility seems pretty bomb-
+proof.  It does (not stated in the manual) require caps lock on 
+while typing in the program names, a minor irritant (which could 
+be fixed with a simple subroutine).
+
+If you use this utility, DO NOT run machine language programs by 
+putting the wide cursor over the name XXXXXX.CO on the menu and 
+hitting enter!!  The programs shown on the menu are not the one 
+active in high RAM, and loading one from the menu will zap the one
+held in high RAM.  The best approach is to run all M/L programs 
+with a small Basic driver.  For LAPWRD.CO above, I use LAPWRD.BA 
+as follows:
+
+ 0 IF HIMEM=59675 THEN CALL 60561:MENU
+ 1 MENU
+
+The test of HIMEM assures me that I selected the right Basic 
+driver (works unless two M/L programs have the same TOP: address).
+
+
+As the manual says, FUTIL will not work with all M/L programs; two
+warned against are Pro Aid by Micro Demon and the R/S barcode 
+software.  I've used it successfully with TMPC (of course!), 
+LAPWRD, FLOPPY, and the Custom Software ASMBLR.
+
+My current mode of operation does not employ FUTIL, because I have
+multiple banks of RAM.  For TDD owners without PG Designs or PCSG 
+RAM bank expansions, I think FUTIL.BA is a must (unless FLOPPY.CO 
+is your only machine language program).
+
+pcw -- 11/16/85
+

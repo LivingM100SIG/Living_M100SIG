@@ -1,0 +1,349 @@
+                        FORMAT.CO (c) 1991, R.W. Hess
+                        -----------------------------
+
+
+This document has been uploaded in two parts and both are required for 
+operation: FORMAT.DX1 includes Sections I through IV.
+           FORMAT.DX2 includes Sections V and VI.
+
+
+              Contents
+
+          I.  Introduction
+
+         II.  A Quick Tour
+                o Overview
+                o Starting FORMAT
+                o The Menu Options
+
+        III.  Using the "Print Format" Menu
+                o Setting Values
+                o "Continuous Y/N ?"
+                o "R"ead/scroll Preview
+                o "D"ot Plot Preview
+                o "P"rinting Your Document
+
+         IV.  Using the Print Commands
+                o Print Commands, General
+                o UNIVERSAL Print Commands
+                o PRINTER-SPECIFIC Commands
+
+          V.  Customizing FORMAT
+                o Creating a New Printer file
+                o Loading the New Printer file
+
+         VI.  Important Operational Considerations
+
+
+The two required programs, FMTLDR.BA and FORMAT.BA, are contained in 
+FORMAT.200, DL10.  FMTLDR.BA creates FORMAT.CO which is the actual operating 
+program.  FORMAT.BA allows you to customize FORMAT.CO.  Follow the 
+instructions in FORMAT.200 for creating FORMAT.CO and FORMAT.BA.
+
+
+          I.  Introduction
+
+FORMAT.CO is a 1280 byte, machine-language program which enhances the TEXT 
+formatter built into the model 200.  It runs in the ALT/LCD buffer by simple 
+cursor selection from the main menu and doesn't require any special memory 
+settings or "set-up" procedures.  FORMAT.CO is EASY to use but please read all
+these instructions BEFORE your first use.
+
+FORMAT works within TEXT.  You use TEXT's familiar editing routines to create 
+your document and the "Print Format" window to set printing parameters.  
+FORMAT adds these features to TEXT's formatting functions:
+            - 13 single-character, print commands
+            - File previewing using dot plotting and formatted display
+
+FORMAT is entirely self-contained and includes certain print commands pre-set 
+for EPSON/FX-80 and compatible printers.  If you're not certain if your 
+printer is one of these, try FORMAT's print commands anyway.  If the printer 
+doesn't respond correctly to these commands, consult Section V, Customizing 
+FORMAT: it's simple to make FORMAT work with YOUR printer!
+
+
+         II.  A Quick Tour
+
+   Overview
+
+Text Formatting
+FORMAT works as a text formatter on two levels.  On one level, it operates 
+from the familiar "Print Format" menu accessed using <SHIFT><PRINT> within 
+TEXT.  Here you can set GLOBAL values that affect the entire document.  You 
+can easily change format values from document to document as needed.  
+Additionally, a Printer Set-up String lets you set GLOBAL printer values for 
+type style, character set, paper size, margins etc.
+
+On another level, FORMAT operates from WITHIN your documents using PRINT 
+COMMANDS you enter with your text.  You can add these commands using either 
+TEXT alone or by entering the file through FORMAT.  Print commands appear on 
+your screen and count as file characters but they do not appear in FORMAT 
+preview or print output.  They only have the desired effect when you use 
+FORMAT to preview or print your document.
+
+Previewing
+Among its other features, FORMAT lets you preview documents on the screen 
+before printing.  You can "Read" the lines of a document on the screen, 
+formatted exactly as they would appear when printed.  Or you can produce a 
+"Dot" pixel plot of your document which will show the general layout of each 
+page.
+
+
+   Starting FORMAT
+
+Conventions
+UPPER and lower case letters are interchangeable at prompts.  Bracketed 
+letters mean keys labeled as shown within the brackets: e.g. <ENTER>.  Two 
+keys shown together are expected to be pressed together: e.g. <CTRL><C>.
+<ENTER> = "CR" = Carriage Return.
+
+<ENTER> at the "File to edit:" prompt returns to the T200 Main Menu.
+<CTRL><C> or pressing <ENTER> twice at any prompt in TEXT's "Print Format" 
+window returns to the file as usual: F8 returns to the T200 main menu and 
+clears FORMAT.  <ESC> or <ENTER> at most FORMAT.CO prompts or <ESC> during 
+"reading" or "plotting" will abort to the "Print Format" window.
+
+
+Selecting a File
+Run FORMAT.CO by cursor selecting it from the T200 main menu.  A list of RAM 
+files will display and TEXT's "File to edit:" prompt.  Type an existing file 
+name or a NEW file name: then press <ENTER>.  You will access the file via the
+built-in TEXT routines.
+
+
+Processing Your File
+Write/edit your file as usual.  When you are ready to "R"ead, "D"ot plot or 
+"P"rint your file, press the <SHIFT><PRINT> keys from anywhere in the file to 
+display the familiar "Print Format" window.  Use these prompts to set the 
+GLOBAL print parameters to be used by FORMAT.
+
+When satisfied with the settings, press <ENTER> and answer the "Continuous
+Y/N ?" prompt.  The legend "Print Format" at the top of the window will change
+to "Printer: (name)" to let you know which print command set has been stored 
+in this copy of FORMAT. 
+
+
+   The Menu Options
+
+FORMAT's brief sub-menu, "R/D/P", will appear to the right of your 
+"Continuous" response.  The letters represent FORMAT's three functions:
+	"R"  Read preview - scrolls your file showing formatted lines,
+             page breaks and page numbers.
+        "D"  Dot/pixel preview - displays a pixel plot of your file
+             as it would look when printed.
+        "P"  Prints the file using the GLOBAL settings shown as well
+             and any print commands within the file.
+
+These functions are described in detail in Section III.  <ESC> returns to the 
+"Print Format" window.
+
+
+        III.  Using the "Print Format" Menu
+
+   Setting Values
+
+FORMAT uses the values from the TEXT "Print Format" menu for its GLOBAL 
+printing parameters.  Consult the Tandy 200 manual for acceptable values and 
+how these values interact.  Although 0 (zero) is an acceptable T200 value for 
+the "Page Size" prompt, it defeats the purpose of FORMAT and creates 
+unreliable Dot preview plots.  Zero also makes <CTRL><C> the only way to 
+return to the file from the "Print Format" window until a different value is 
+entered.
+
+
+   "Continuous Y/N ?"
+
+FORMAT recognizes your response to this prompt in two routines: "R"eading your
+file and page printing.  If you answer "N" to this prompt, FORMAT will pause 
+after each page is displayed or printed: otherwise operations are continuous. 
+You can return to the file from this prompt by simply pressing <ENTER>.
+<CTRL><C> at any "Print Format" window prompt also returns to the file.
+
+
+   "R"ead/scroll Preview
+
+Press "R" at the "R/D/P" menu to read/scroll your file, formatted as it would 
+print.  You may enter a page number at the subsequent "Read#" prompt to begin 
+the display at the top of that numbered page: <ENTER> alone starts with
+Page 1.  Any skipped page numbers will list, followed by the selected page.
+
+Any part of formatted lines that exceed the 40 column screen width of the T200
+will display in reverse video.  Margins are NOT displayed.
+
+Press <ESC> to return to the "Print Format" window: any other keypress pauses 
+scrolling.  After the entire file has displayed, the screen will pause and any
+keypress other than <ESC> resumes scrolling at the top of the file.  From the 
+"Print Format" window you can return to where you left the file by pressing
+<ENTER> twice.
+
+You can rapidly edit your way through an entire file by alternating between 
+"R"ead and TEXT.  When you return to the file, use the F1, "Find", function to
+locate text which needs work.  Then quickly re-display that portion of newly 
+edited text by simply re-entering the "R"ead function and typing the 
+appropriate page number at the "Read#" prompt.
+
+
+   "D"ot Plot Preview
+
+Press "D" at the "R/D/P" menu.  You will be prompted to select the GLOBAL font
+("Fnt") which your printer will use when printing the file.  Because the 
+spacing of the pixels on the screen is fixed, the width of the display "page" 
+will change based on your font selection.  Although FORMAT has no way of 
+displaying font changes which you might do WITHIN a file, you COULD plot a 
+"changed-font" file area by setting the GLOBAL "Width:" value for the 
+appropriate font and choosing that area's font before previewing.
+
+The "pixel page" width has been calculated for the 4 font choices using the 
+values shown below on 8" of printable page width.  (These values can be 
+changed by you if desired: see Section V, Setting the Dot Plot Values.)
+                P = "Pica"       10 chr/inch  (80 chr/line)
+                R = pRoportional 11 chr/inch  (88 chr/line)
+                E = "Elite"      12 chr/inch  (96 chr/line)
+                C = Condensed    16 chr/inch  (128 chr/line)
+
+As soon as you press an appropriate letter, the screen clears and a "page" is 
+drawn based on the font choice and the "Page size" value from the "Print 
+Format" window.  Your choice of fonts displays in the lower left portion of 
+the screen and your file begins to "plot".  The appropriate page number will 
+also print and the display will pause between "pages" waiting for a keypress 
+before showing the next page.
+
+<ESC> returns to the "Print Format" window: any other keypress pauses the 
+display.  When all the pages have plotted, the plot returns to the top of the 
+file and starts again.  Experiment with different GLOBAL format and font 
+combinations until you find one you like.  FORMAT expects YOU to enter the 
+appropriate printer commands in your file or Printer Set-up String to actually
+print the file with the font/s you choose as a result of your "preview".
+
+
+   "P"rinting Your Document
+
+Press "P" at the FORMAT sub-menu.  You'll be prompted "1st Pg#": this is where
+you set your page numbering parameters.
+	-  <ENTER> alone returns to the "window".
+	-  You may enter any number from 1-255: it will be printed on the
+	   "first" document page and each following page will be numbered
+	   one higher to a max. of 255.
+	-  0 (zero) or any other entry not beginning with 1-9 disables
+	   page numbering.
+
+The page number is centered between margins on the 5th line from the bottom of
+the first and subsequent printed pages.  If you do not leave at least 5 lines 
+of bottom margin in your "Print Format" settings, page numbering will not 
+occur.  (To change any page numbering parameter, simply return to the "R/D/P" 
+submenu, press "P" and enter a different choice.)
+
+Make sure the printer is "on-line" with paper loaded: then press <ENTER>.  As 
+provided, FORMAT first sends a form-feed to clear the printer and set a new 
+page.  Then it prints your document, following any print commands within the 
+file.  You may abort the printing process in the "usual" way by pressing
+<SHIFT><BREAK>.
+
+After each print job, FORMAT returns to the file.  Use F8 to exit TEXT or
+<SHIFT><PRINT> for more FORMATting work.
+
+
+         IV.  Using the Print Commands
+
+   Print Commands, General
+
+Print commands are the way you affect the appearance of a document from WITHIN
+the document itself.  Enter the print commands in your file at the point where
+you want the print attribute to operate.  They are created by pressing the
+<GRPH> key TOGETHER with a letter key.  These characters do NOT display in the
+"preview" functions and are never sent to your printer, but they ARE counted 
+as one character for line-centering and file-size calculations.
+
+FORMAT recognizes two categories of print commands: UNIVERSAL and PRINTER-
+SPECIFIC.  The three UNIVERSAL commands for Line Centering, Line Spacing and 
+Form-Feed will operate with ANY printer and in FORMAT's two preview modes.  In
+addition, FORMAT has been uploaded with 10, PRINTER-SPECIFIC, command sets 
+suitable for use with EPSON/FX-80 compatible printers.  (Try them: if your 
+printer doesn't work correctly with these commands, consult Section V, 
+Customizing FORMAT.)
+
+
+   UNIVERSAL Print Commands
+
+FORMAT recognizes 3 UNIVERSAL print commands.
+
+<GRPH><f>  Form-feed/Page-break
+Forces a page break.  Insert this character immediately preceeding the last CR
+on a page.  Use <GRPH><f> sparingly, and as "final" editing, because it forces
+all text below it into different paging.  Two or more <GRPH><f><ENTER> sets in
+a row will create numbered blank pages if numbering is selected.  (FORMAT also
+recognizes <GRPH><'>, CHR$(140), as a form-feed command.)
+
+
+<GRPH><=>  Center a Line
+Centers a line of text between margins. Insert the character at the beginning 
+of each line to be centered: all characters, including the <GRPH><=> symbol 
+and the CR, are counted as part of the line.  For obvious reasons, a title or 
+any other text should always be shorter than the line on which it is to be 
+centered.  Lines longer than the selected line "Width" should be split into 
+two or more lines.  Double-width printing will probably require some space 
+padding on the right of the line for proper appearance.
+
+<GRPH><l>  Single/Double-Space Lines
+Toggles between single and double-spaced printed text: default value is SINGLE
+-space.  Depending on the selection, FORMAT sends one or two line-feeds for 
+each CR encountered.  Insert the character at the beginning and end of the 
+text to be changed to the "new" value.  The line-feeds sent by FORMAT and 
+those inserted by you are counted equally in meeting "Line/page" limits.  
+Therefore:  Double-spaced, "50" Line/page will print 25 file lines/page
+            Double-spaced, "49" Line/page will print 24 file lines etc.
+            Single-spaced prints the number of file lines entered.
+
+
+   PRINTER-SPECIFIC Commands:
+
+ALL of the PRINTER-SPECIFIC commands operate in pairs.  The first occurrence 
+of a print command character turns the feature "on"; the second turns it 
+"off".  The actual code sent to the printer by each "on" and "off" command can
+be changed if desired: consult Section V.
+
+The 10 command sets provided with FORMAT are a somewhat arbitrary choice based
+on:   1) the capabilities of the EPSON printer
+      2) FORMAT's 10 set limit
+      3) the relationship of the letters to the print commands invoked
+
+Consult your printer manual for a detailed description of how each of these 
+print attributes operates and the conditions governing their use.  (If your 
+printer has less than 10 print-commands to use, and/or you prefer to change 
+characters or their functions, Section V explains how to proceed.)
+
+Press the <GRPH> key and letter key simultaneously to create the graphics 
+character which invokes the print attribute shown:
+
+        <GRPH><b>  Bold print
+      * <GRPH><c>  Condensed (16 letters/inch)
+      * <GRPH><i>  Italics letter set
+      * <GRPH><n>  Normal (Elite, 12 letters/inch)
+      * <GRPH><p>  Pica (10 letters/inch)
+        <GRPH><r>  pRoportional spacing
+        <GRPH><s>  Superscript
+        <GRPH><u>  Underline
+        <GRPH><w>  Wide letters
+        <GRPH><x>  subsXript
+
+* The "off" command for the three font-change sets and Italics returns the 
+printer to the Elite font.  You can change this default by modifying FORMAT 
+using the procedures set forth in Section V.
+
+
+Keep in mind that the LEFT margin of a document line is created with Spaces 
+whose "length" is determined by the font size in effect at the time of the CR 
+which ends the preceeding line.  And the RIGHT margin is determined by the 
+number of characters printed on a line as set by the "Width:" value.  For 
+example: 78 "Condensed" characters will print a wider RIGHT margin than 78 
+Pica characters.
+
+With some careful planning, you can change the print margins WITHIN your 
+document by judicious use of font-change print commands.  ENDING a line of 
+Condensed text with a WIDE print command and beginning the next line with 
+another WIDE command followed by a Condensed command could give you wider left
+and right margins than the "normal" text.  That's because toggling WIDE "on" 
+before the CR would cause your printer to print the left margin with "WIDE" 
+spaces: the second WIDE command would turn WIDE "off" and the Condensed 
+command would print the subsequent characters in Condensed mode.
+

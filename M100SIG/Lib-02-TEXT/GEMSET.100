@@ -1,0 +1,46 @@
+0 GOTO18:'GEMSET.100 V.04 by J. Bagnall 75765,706- see remarks line 40
+1 P(K)=Z:K=K+1:A(H)=1:RETURN
+2 PRINT@126,U;W:PRINT@126,V;:RETURN
+3 Z=INKEY$:IFZ=YTHEN3ELSEB=INSTR("YyNn"+X,Z):IFBTHENRETURNELSE3
+4 GOSUB2:PRINT" SET UP: CPI=";:PRINTUSING" ##.#  ### \  \";C;R-L+1;"CPL";:PRINT@166,"   left=";:PRINTUSING" ##    \    \ ###   ";L;"right=";R;:RETURN
+5 PRINT@280,U;:FORI=1TO8:IFA(I)THENPRINTV;
+6 PRINTM$(I)U" ";:NEXT:RETURN
+7 PRINT@166,"  Hit [Enter] to Continue   ";:RETURN
+8 Z="4":H=1:GOTO1
+9 Z="G":H=2:GOTO1
+10 Z="E":H=3:GOTO1
+11 Z="U"+O:H=4:GOTO1
+12 Z="V"+O:H=5:GOTO1
+13 Z="W"+Q:F=1:H=6:GOTO1
+14 IFA(8)THENP(K)="N"+Q:K=K+1
+15 Z="A"+CHR$(24):H=7:GOTO1
+16 IFA(7)THENN=2ELSEN=4
+17 Z="N"+CHR$(N)+T+"R"+Q:H=8:GOTO1
+18 CLS:DEFSTRO-Z:DEFINTA-N,R:DEFSNGC:DIMP(15):T=CHR$(27):X=CHR$(13):W=SPACE$(110):Y="":U=T+"q":V=T+"p":O=CHR$(1):Q=CHR$(2):PRINTU+T"V"STRING$(120,255);:PRINT@44," Gemini 15 Set-up Program  V.04 ";:GOSUB2:PRINT" [ENTER] = N for Y/N Inputs ";
+19 GOSUB7:GOSUB3:GOSUB2:PRINT"    12 inch paper?   Y/N   ";:GOSUB3:IFB<3THENP(K)="C"+CHR$(51):K=K+1:G=1
+20 GOSUB2:PRINT@128," Nominal CPI [10,12,17] ";:PRINT@168,"  [ENTER] = 12 CPI  1_  ";:PRINT@189,Y;:Z=INPUT$(1):J=INSTR("027"+X,Z):IFJ=0THEN20ELSEIFJ=4THENC=12:J=2:GOTO21ELSEC=10+VAL(Z):PRINTZ;:IFINPUT$(1)<>XTHEN20
+21 P(K)="B"+CHR$(J):K=K+1:FORI=1TO8:READM$(I):NEXT:ONKEYGOSUB8,9,10,11,12,13,14,16:GOSUB2:PRINT"  Select Option(s) Below &  ";:GOSUB7:KEYON
+22 Z=INKEY$:IFZ<>XTHENGOSUB5:GOTO22
+23 KEYOFF:FORI=1TO3:READL(I):READR(I):NEXT:IFFTHENC=C/2:F=0:GOTO23
+24 IFGTHENR(J)=R(J)*1.29
+25 L=L(J):R=R(J)
+26 GOSUB4:PRINT@206,"  Reset Margins Shown? Y/N  ";:GOSUB3
+27 IFB>2THENP(K)="M"+CHR$(L):K=K+1:P(K)="Q"+CHR$(R):LPRINTT"@";:FORI=0TOK:LPRINTT+P(I);:NEXT:MENUELSEGOSUB4:PRINT@213,Y;:INPUTL:PRINT@226,Y;:INPUTR:IFL=0THENL=1
+28 GOTO26
+29 DATAItal,D/St,Emph,Unid,ZER0,D/Wd,D/Sp,SOP,8,80,13,92,13,135,3,42,8,52,12,73
+40 'GEMSET.100 V.04 3/1/83 by J. Bagnall 75765,706
+41 'This program is useful with the M100 built-in text preparation program. It will set global parameters like character styles,pitch,and margins & other features on the Gemini 10/15 Printer
+42 'Is useful for light formatting tasks like listing a program or text file or running echo in TELCOM
+44 'The function key functions are
+45 'F1-Ital=Italics
+46 'F2-D/St=Double Strike
+47 'F3-Emph=Emphasized Print
+48 'F4-Unid=Unidirectional Print
+49 'F5-ZER0=Slashed Zero's
+50 'F6-D/Wd=Double Width Mode
+51 'F7-D/Sp=Double Spaced
+52 'F8- SOP=Skip Over the Perforation set for 51 or 66 lines per page
+53 'Delete all remarks for a 1410 byte program
+54 '8k owners can load and run program and kill for more text space
+55 'Send Questions & Comments to John Bagnall 75765,706
+

@@ -1,0 +1,27 @@
+1 'this is a very simple calculator
+2 'program.  Only adds (+ or <enter>)
+3 'subtracts (-)
+4 'divides (/)
+5 'multiplys (x or *)
+6 'Wrote it as a simple calculator 
+7 'program that is easy to enter info
+8 'and takes up minimal ram.
+9 'OPERATION: type number
+10 '           type -,/,x(*) or +(<en>)
+11 '           displays running total
+12 '           type <=> for TOTAL
+13 'to end program, type E,Q,S or M
+14 'hope it is of some use to someone
+15 'Questions/Bugs---->david carroll
+16 '                   73125,211
+17 'DELETE LINES 1-17 TO SAVE SPACE!!!!
+18 CLS:G$="##,###,###.##":PRINT"Number +-/x*="
+19 K$=INKEY$:IFK$=""THEN19ELSEIFINSTR("QqEeSsMm",K$)THENMENU
+20 A$=A$+K$:IFINSTR("+-/*xX=",K$)ORK$=CHR$(13)THEN21ELSEPRINT@40,A$:GOTO19
+21 IFK$="="THENA$="":T=0:C=1:GOTO19
+22 IFC=1THENC=0:IFA$=CHR$(13)THENA=TP:TP=0:GOSUB28ELSETP=0
+23 IFA$=CHR$(13)THEN24ELSEA=VAL(A$)
+24 IFK$="-"THENT=T-AELSEIFK$="/"THENT=T/AELSEIFK$="X"ORK$="*"ORK$="x"THENT=T*AELSEK$="+":T=T+A
+25 GOSUB28:PRINT@40,SPACE$(39):TP=T:A$="":GOTO19
+28 PRINT@85,USINGG$;TP:PRINT@122,K$:PRINT@125,USINGG$;A:PRINTSTRING$(38,"-"):PRINT@205,USINGG$;T:RETURN
+

@@ -1,0 +1,37 @@
+10 'Program ADDLAB.100 makes address         labels for return envelopes on          sheets of three wide by eleven long     peel off labels (1" X 2-") using a      12 pitch daisy wheel printer.      
+20 'Written by R.L. Banks 07/28/87          Copyright 1987 R.L.Banks                Available for personal use ONLY by      members of CIS M100 SIG.                Commercial rights reserved.         
+30 CLS
+40 PRINT:PRINT"The following information is required"
+50 PRINT"to produce a sheet of address labels."
+60 PRINT:PRINT:PRINTTAB(4);"Name: ";:LINEINPUTN$
+70 T$=N$:GOSUB330
+80 LINEINPUT"  Street: ";A$
+90 T$=A$:GOSUB330
+100 PRINT"City ,State  ZIP"
+110 PRINT:PRINTTAB(8);": ";:LINEINPUTC$
+120 T$=A$:GOSUB330
+130 CLS:PRINT:PRINT:PRINT"Please insert a sheet of three by eleven"
+140 PRINT"labels.  Press any key to start printer."
+150 BEEP:T$=""
+160 T$=INKEY$:IFT$=""THEN160
+170 PRINT:PRINT" Printout in progress...."
+180 FORX=1TO11
+190 LPRINT
+200 LPRINT" ";N$;TAB(36);N$;TAB(70);N$
+210 LPRINT" ";A$;TAB(36);A$;TAB(70);A$
+220 LPRINT" ";C$;TAB(36);C$;TAB(70);C$
+230 LPRINT:LPRINT
+240 NEXTX
+250 BEEP:CLS:PRINT:PRINT:PRINT:PRINT
+260 INPUT "Do you wish to print another";Q$
+270 Q$=LEFT$(Q$,1)
+280 IF (Q$="y")OR(Q$="Y")THEN130
+290 IF(Q$="n")OR(Q$="N")THEN310
+300 PRINT" Yes or no only please":PRINT:PRINT:GOTO260
+310 CLS:PRINT:PRINT:PRINT"     Thank You .... Gone to Menu!"
+320 MENU
+330 IFLEN(T$)<=33 THEN RETURN
+340 PRINT" Your line of information is too long."
+350 PRINT"Please input the information again....."
+360 BEEP:FORZ=1TO1000:NEXTZ
+370 RUN

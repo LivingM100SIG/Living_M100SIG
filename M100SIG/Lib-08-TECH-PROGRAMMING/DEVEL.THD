@@ -1,0 +1,113 @@
+DEVEL.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+When doing assembly of Model 100/102/200/Kyo machine language programs on my
+Model 100 with TDD2, I've often considered setting up a development
+environment on a bigger, faster desktop.  These messages discuss approaches
+to doing just that.
+
+Message range: 161793 to 161912
+Dates: 12/1/87 to 12/3/87
+
+
+Fm: Mo Budlong 76167,3310
+To: all
+
+Re 100/102 Telcom Differences
+
+I've done a lot of development on the 100, Option Roms, Assembly type stuff and
+have hit a bug/snag/anomaly  etc in the 102.
+
+I develop large .CO programs using CPM's MAC assembler and use an RS-232 loader
+to load the Intel Hex file and translate it and poke it into memory.
+
+The procedure is download a short BASIC loader using RUN "COM:88n1e". The BASIC
+loader is too slow for large files, so the first file I down load is an Intel
+Hex file for a machine code loader.  This loader is poked into memory by the
+BASIC program and then CALL'ed.  The machine loader is very fast and I can
+transfer 20k .CO files in no time.
+
+Problem: This technique works 100% of the time for the Model 100.  For the 102
+which I recently started working on the result is erratic. It seems to depend
+on the telcom program running on the Host computer.
+
+The Wang PC PCTTY program always worked for the 100 and the 102.
+
+SmartCom running on an AT clone always works on the 100 but frequently fails
+(75% of the time) on the 102.
+
+The error always appears in the first 100 or so bytes of the final .HEX file
+that is downloaded.
+
+Why is there a difference between the 100/102?  The Disassemblies I have done
+do not appear to show any significant difference, but I haven't been through
+all the COM code in detail.
+
+I'm scraping up another 102 to test to see if the one I have is unique.
+
+Can anyone help??  Has anyone heard of a difference in the 100/102 in the RS232
+handler?
+
+
+Fm: Phil Wheeler 71266,125
+To: Mo Budlong 76167,3310
+
+There are some difference files, I think in DL8.  Diff is mainly in the
+keyboard matrix -- and I think there are others.  Not that I know of in Telcom,
+tho.
+
+I always use FLTIBM.COM (see FLTIBM.DES, DL3) for such chores.  Works on
+PC-compatibles.  Versions for COM1: & COM2:.  Give it a try and let me know if
+it doesn't do what you want, reliuably.
+
+Now -- what computer are you running MAC on?  Do you have a V-20 or one thos
+NEC chips that will run CP/M, or what??
+
+
+Fm: Mo Budlong 76167,3310
+To: Phil Wheeler 71266,125
+
+Thanks for the tip Phil.  I'm out of town for a few days and will check it out
+when I get back.
+
+I'm running UniDos on an Equity III+.  It comes with a Z80 chip on a plug in
+board.  Unidos is a TSR.  Once installed I presume it filters the DOS command
+line if DOS fails to find a program you requested. Anything named with a .CPM
+extension is picked up and run under a CPM emulation using the Z80 board.  It
+is very fast.
+
+I also have Wang PC.  The Wang runs a non-IBM DOS.  The PC comes with what they
+call a 928 Com board that allows the PC to be used as a standard Wang terminal
+on the Wang VS Mini Computer.  The 928 board is a Z80 that takes control of the
+terminal when you are logged on to the big VS.
+
+Wang provides software that also allows you to use the board for a CPM
+emulator.
+
+Since most compiled languages (aside from Borland's stuff) is MS-DOS rather
+than IBM PC based, Iworked on that Wang PC happily for years.
+
+I have a collection of development tools for the Model 100 all developed under
+CPM (emulations) including a C compiler.  I have since ported the C compiler
+over to MS-DOS so that it runs in native DOS mode rather than under a CPM
+Emulation.  The output is 8080 Assembler.  I haven't finished writing the cross
+assembler yet, so I still use MAC.
+
+Anyway I'll check the notes on telcom differences and thanks for your help.
+
+
+Fm: Phil Wheeler 71266,125
+To: Denny 76701,40 
+
+Hmmmm..just discovered that I have a cross-assembler in my Z-150 and did not
+knwo it.  I'm running with a V-20 which emulates an 8080.  And (which I had
+forgotten) in my CPM directory I have MAC.COM, the standard CP/M macro
+assembler.  It will assemble M100 source files (tho they must be in the
+ROM2/Cleaseau style, it seems) and make an Intel Hex file, to be laoded with
+HEX2CO.BA (or such) in DL8.  The last part may be the rub: Slow, I suspect.
+
+But this is a possible alternative to the use of CS asm with the TDD -- and
+would let me deal with big sources in the PC.
+

@@ -1,0 +1,86 @@
+
+nstructions for use of DisAsm.100.
+Load using HEXLDR.100 or other program that converts from Intel Hex format to a 
+.CO program.  When loaded, the program should be 1217 bytes long.
+
+Program prints          You enter
+--------------          ---------
+Start address:          A hex number between 0000 and FFFF
+End address:            A hex number between 0000 and FFFF
+Output to:              Nothing, or a valid M100 file/device name
+                        (DISASM.DO, COM:98N1E, CAS:LIST, LCD:, LPT:, etc)
+
+Sample listing of 0000 to 0040
+
+L0000:	JMP	7D33	C3337D	' 3}'
+;***
+L0003:	MOV	C,L	4D	'M'
+L0004:	MOV	B,L	45	'E'
+L0005:	MOV	C,M	4E	'N'
+L0006:	MOV	D,L	55	'U'
+L0007:	NOP		00	' '
+L0008:	MOV	A,M	7E	'~'
+L0009:	XTHL		E3	' '
+L000A:	CMP	M	BE	' '
+L000B:	JNZ	0446	C24604	' F '
+L000E:	INX	H	23	'#'
+L000F:	XTHL		E3	' '
+L0010:	JMP	0858	C35808	' X '
+;***
+L0013:	XCHG		EB	' '
+L0014:	LHLD	F6EB	2AEBF6	'*  '
+L0017:	XCHG		EB	' '
+L0018:	MOV	A,H	7C	'|'
+L0019:	SUB	D	92	' '
+L001A:	RNZ		C0	' '
+L001B:	MOV	A,L	7D	'}'
+L001C:	SUB	E	93	' '
+L001D:	RET		C9	' '
+;***
+L001E:	MVI	A,20	3E20	'> '
+L0020:	JMP	4B44	C3444B	' DK'
+;***
+L0023:	NOP		00	' '
+L0024:	JMP	F602	C302F6	'   '
+;***
+L0027:	NOP		00	' '
+L0028:	JMP	1069	C36910	' i '
+;***
+L002B:	NOP		00	' '
+L002C:	DI		F3	' '
+L002D:	JMP	F5F9	C3F9F5	'   '
+;***
+L0030:	JMP	33DC	C3DC33	'  3'
+;***
+L0033:	NOP		00	' '
+L0034:	DI		F3	' '
+L0035:	JMP	6DAC	C3AC6D	'  m'
+;***
+L0038:	JMP	7FD6	C3D67F	'   '
+;***
+L003B:	NOP		00	' '
+L003C:	DI		F3	' '
+L003D:	JMP	1B32	C3321B	' 2 '
+;***
+L0040:	RLC		07	' '
+
+	Note the ;*** after JMP's, RET's, PCHL's and HLT's.  This can help to 
+follow program flow.  You will also see that RST 1 and RST 7 are followed by 
+DB's.  This makes it easier to follow Microsoft's program flow.  RST 1 compares 
+the following byte with (HL).  If they don't match, you get a SN error.  RST 7 
+gets the following byte, uses it as an offset to the table starting in FADA in 
+high memory, and jumps there.
+	You can stop execution of the disassembler by holding SHIFT-BREAK for a 
+few seconds.  You can also pause the screen display by tapping any key.  Press 
+it again, and it continues.
+	This is fairly fast, it produces about 750 bytes/second, not bad....
+	If you get enthusiastic and document your disassembly, send me a 
+message, maybe we can trade code.  I have most of the cold/warm start routines, 
+file handling, and hardware interfaces.  I am interested in the BASIC variable 
+handling stuff.  Good luck.
+	Don Corbitt [75655,1516]
+ps. The first column is the address of the current instruction, the next
+column is the opcode, then the registers/parameters, then the hexadecimal
+representation of the instruction, then an ASCII copy.  You can see that after
+the first JMP 7D33, the word MENU is
+printed.

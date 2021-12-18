@@ -1,0 +1,94 @@
+1 'This is a Decision-Making program
+2 'adapted from an MBASIC version found
+3 'on an RCP/M. It can be a game or a
+4 'tool. It is not compact (the Byte
+5 'Fyter could make mincemeat of this;
+6 'but I'd rather he worked on MVCWM --
+7 'a truly worthwhile program). Remove
+8 'editorial after downloading.
+9 '    Phil Wheeler [71266,125]
+10 CLEAR500
+20 DIMF$(10),L$(10),F(10),M(10,10),V(10),Z(10),Z$(1)
+30 RV$=CHR$(27)+"p":NO$=CHR$(27)+"q"
+40 PRINTRV$+"                DECISION                "+NO$
+60 PRINT"Which best describes the type of"
+70 PRINT"decision you have to make:"
+80 PRINT"(1) Choose an item"
+90 PRINT"(2) Choose a course of action"
+100 INPUT"Which type (1 or 2)";C
+110 IFC<1ORC>2THENPRINT"ILLEGAL CHOICE.":GOTO100
+120 PRINT:IFC=1THENPRINT"What type of item is it that you"
+130 IFC=1THENINPUT"need to decide upon";S$
+140 IFC=2THENS$="Action"
+150 PRINT:PRINT"Now list each ";S$
+160 PRINT"being considered,one at a time."
+170 PRINT"The order is not important."
+180 PRINT:INPUT"   First, how many are there ";L0
+190 IFL0>=2ANDL0<=10THEN210
+200 GOSUB790:GOTO180
+210 PRINT:FORI=1TOL0:PRINT"Number";I;"please";
+220 INPUTL$(I):NEXTI:PRINT
+240 FORI=1TOL0:PRINTI;TAB(5);L$(I):NEXTI:PRINT:GOSUB800
+250 IFLEFT$(B$,1)<>"Y"ANDLEFT$(B$,1)<>"y"THEN150
+260 PRINT:PRINT"How many factors are important"
+270 PRINT"in choosing a ";S$;:INPUTF0
+280 IFF0>=1ANDF0<=10THEN300
+290 GOSUB790:GOTO260
+300 PRINT:PRINT"I need a list of each of these factors."
+310 FORI=1TOF0:PRINT"Factor number";I;:INPUTF$(I):NEXTI
+320 GOSUB900:PRINT"Now decide which is the most important:"
+340 FORI=1TOF0:PRINTI;TAB(5);F$(I):NEXTI
+350 PRINT"Which factor (by no.) is most important?"
+360 INPUT"(Input 0 to change the list)";F2:PRINT
+370 IFF2=0THEN260
+380 IFF2<1ORF2>F0THEN350
+390 PRINT"Suppose a scale of importance"
+400 PRINT"from 0 to 10. Say ";F$(F2);" has a value"
+410 PRINT"of 10 since it is at the top."
+420 PRINT"What value would each of the others"
+430 PRINT"have (decimal numbers are O.K.)?":FORI=1TOF0
+440 IFI=F2THEN470
+450 PRINTF$(I);:INPUTF(I):IFF(I)>=0ANDF(I)<=10THEN470
+460 PRINT"   Your input is no good, try again.":GOTO450
+470 NEXTI:F(F2)=10:C=0:FORI=1TOF0:C=C+F(I):NEXTI:FORI=1TOF0
+480 F(I)=F(I)/C:NEXTI:PRINT:PRINT"Now consider how each ";S$
+490 PRINT"rates for each of the factors."
+500 PRINT"Consider each factor alone & rate each"
+510 PRINTS$;" in terms of that factor only.":GOSUB900
+520 PRINT"Let's consider ";L$(1);" to have a"
+530 PRINT"value of 10 on each scale."
+535 PRINT"Then every other ";S$;" will be given"
+540 PRINT"a number higher or lower than 10"
+550 PRINT"according to how much better or worse"
+560 PRINT"than ";L$(1);" you think it is.":GOSUB900:FORI=1TOF0:PRINT
+570 PRINT"Considering ";F$(I);" only, and"
+580 PRINT"assuming ";L$(1);" to be 10,"
+590 PRINT"what value would you give"
+592 PRINT"to each of the following:"
+595 M(1,I)=10
+600 PRINT:FORJ=2TOL0
+610 PRINTL$(J);:INPUTM(J,I):IFM(J,I)>=0THEN640
+620 PRINT"No negative numbers. Try again.":GOTO610
+640 C=C+M(J,I):NEXTJ:FORJ=1TOL0:M(J,I)=M(J,I)/C:NEXTJ:NEXTI
+650 FORJ=1TOL0:V(J)=0:FORI=1TOF0:V(J)=V(J)+M(J,I)*F(I)
+660 NEXTI:NEXTJ:FORI=1TO10:Z(I)=I:NEXTI:C=L0-1:FORJ=1TOL0
+670 FORI=1TOC:N1=Z(I):N2=Z(I+1):IFV(N1)>V(N2)THEN690
+680 Z(I+1)=N1:Z(I)=N2
+690 NEXTI:NEXTJ:C1=Z(1):C2=Z(2):C=100/V(C1):FORJ=1TOL0
+700 V(J)=C*V(J):NEXTJ:PRINT:PRINT:D=V(C1)-V(C2)
+710 PRINT"Your best choice is ";L$(C1)
+720 IFD<10THENPRINT"but it's pretty close."
+730 IFD<20ANDD>=10THENPRINT"by a fair margin."
+740 IFD>=20THENPRINT"by a good-sized margin."
+750 GOSUB900:PRINT"Here's the final list with ";L$(C1)
+760 PRINT"given a value of 100"
+765 PRINT"and the others set accordingly.":GOSUB900
+770 PRINTS$,"Rating"
+780 FORJ=1TOL0:C=Z(J):PRINTL$(C),V(C):NEXTJ:GOTO810
+790 PRINT"The number must be between 2 and 10.":RETURN
+800 INPUT"Is this correct";B$:RETURN
+810 INPUT"Do you have another case";A$
+820 IFLEFT$(A$,1)<>"N"ANDLEFT$(A$,1)<>"n"THENRUN
+840 MENU
+900 PRINTRV$+">>Press any key to continue<<"+NO$:Z$=INPUT$(1):RETURN
+

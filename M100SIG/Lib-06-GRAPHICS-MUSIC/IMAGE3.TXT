@@ -1,0 +1,116 @@
+Image3 documentation.
+ *Most of the time if you don't want to change any information then just press [
+ENTER] and it will keep it the same as before.
+
+[F] File procedures
+ [1] Load & Append graphic primitive
+  File name? .do file
+  Graphic primitive name? example (CUBE, TRIANGLE or PYRAMID)
+  Offset image? Y/N    Scale image? Y/N
+   If primitive not found try searching the file [2] else check capitol letters.
+
+ [2] Search file
+  File name? .do file
+   Searchs file and displays each name of graphic primitive, lines per 
+primitive. Example: Cube  18 lines
+ [3] Save file
+  File name? .do file
+   Don't save to main graphic primitive file it will write over the file and you
+will lose all the other primitives.  Save to dummy file.  Move by pasting 
+primitive to main primitive file.  Try to round [C][5] off before you save file,
+cuts down on file size.
+ [4] Reset counter
+  New counter? nn (0-99)
+   To change counter or reset for new image (load doesn't set counter to 0 
+instead appends primitive to image file)
+[A] Enter linepoints & reset counter
+  C? 1=starts a new line  0=endpoint  9=exit
+  X? -119 to 119  Y? -32 to 32  Z? -50 to 50
+   Example: draw a line from x=10 y=10 z=10 to x=-10 y=10 z=10 to x=-10 y=-10 
+z=10 (draws a L) would be:
+    1, 10, 10, 10
+    0,-10, 10, 10
+    0,-10,-10, 10
+   To make a square add:
+    0, 10,-10, 10
+    0, 10, 10, 10
+   Y is vertical, X is horizontal and Z is depth
+[B] Same as Add except doesn't reset counter
+[C] Change image
+  [1] Insert line
+   Line number? 1 to End
+   C, X, Y & Z?
+    Inserts before the specified line number.
+  [2] Delete lines
+   Starting line number?
+   Number of lines?
+    Deletes from starting line number to starting line plus number of lines.  If
+starting plus number is larger than counter then delete to end of file.
+  [3] Offset lines
+   Starting line number?
+   Number of lines?
+   X offset, Y offset & Z offset
+    Offsets from starting line to starting + number.  Move lines depending on 
+x,y & z offsets.
+  [4] Scale lines
+   Same as Offset except it scales the lines.
+  [5] Round off file
+   Used so the file will be smaller when saved.
+[D] Edit image file
+  [Up arrow] Reverse listing
+  [Down arrow] Forward listing
+  [V] Move listing forward once
+   List linepoints in image file
+  [Left arrow] Column left
+  [Right arrow] Column right
+   Change cursor position horizontal to be used with [C] (see below)
+  [C] Change C, X, Y or Z depending on line number & column position *.
+  [D] Display image file (see [E] Display image below)
+  [E] Edit line.  Can change entire line.
+  [N] New line number
+  [R] Rubber band
+   Line number?
+   Change X, Y or Z
+    Can change all lines which are at one given point to another different 
+point.
+  [S] Draw specified lines from starting line to starting + number of lines.
+  [T] Change Image (Go see [C] change image up)
+  [Q] Exit
+[E] Display image
+  [I] [O] Rotate on Z axis
+  [K] [L] Rotate on Y axis
+  [<] [>] Rotate on X axis
+   Rotates & draws resulting image.  Doesn't clear screen (compare last image to
+new image)
+  [C] Clears screen & redraws image
+  [M] Change display parameters
+   [1] Angle of rotation
+   [2] Reference points to rotate around
+   [3] Point of view
+    To get best image keep Z from -50 to around -200.
+  [N] Clears screen only
+  [Q] Exit
+
+Notes on graphic primitive files.
+  PRIM.DO used as file name
+  All primitives must have a name (CUBE, PYRAMID, TRIANGLE) 1 to 8 characters.
+  Each primitive must have as an end 2,0,0,0
+  Example:c,x,y,z
+SQUARE
+1,10,10,10
+0,-10,10,10
+0,-10,-10,10
+0,10,-10,10
+0,10,10,10
+2,0,0,0
+
+  Between each primitive an [ENTER] must be present except at start and end of 
+file.
+  There are many improvements that can be made like hidden line removal, window 
+clipping and maybe speeding the line drawing up (spends around 66 percent just 
+drawing the lines).
+  If the coordinates lies outside of the screen then it will not display the 
+line (no window clipping).
+  If file doesn't load check primitive name (has to be exact) or see if enough 
+data in file.
+

@@ -1,0 +1,87 @@
+                DOCUMENTATION FOR WC.BAS, v. 1.0
+                copyright 1985 by Gregory Sandow
+
+	At 488 bytes (with the copyright notice removed) this 
+program isn't as compact as it might be. But writers will love 
+it. It counts words in a text file, and counts them fast: it 
+counts 2000 words in barely two seconds. It's accurate, too.
+	It's fast because the routine that counts the words is 
+written in machine language. That leads to a familiar difficulty:
+version one of WC may not be compatible with other machine 
+language programs. See below for details. If you don't use other 
+machine language programs, you don't have anything to worry 
+about.
+	WC is simple to use. You'll be asked for the .DO file you
+want to count. Type its name (you can leave out the .DO extension
+), then hit ENTER. Moments later you'll have the count. Then 
+you'll see a prompt asking "More?" If you want to count another 
+file, type "y". Any other key returns you to the menu--with one 
+exception. I've added a handy little feature: type "e" and you'll
+be sent directly into TEXT. You'll be asked which file you want 
+to edit. Type the name (again there's no need to add .DO), hit 
+ENTER, and you're at the start of the file, ready to go. (I added
+this feature so I could write, leave my writing, count how many 
+words long it is, and then return to my work without going 
+through the menu.)
+	On conflicts with other machine language programs: WC 
+isn't yet relocatable. It runs at the top of the Model 100's RAM,
+from 62864 to 62959. It clears those locations when it's 
+finished, allowing you to fill memory right to the top (though if
+you do and then try to run WC you'll get an error message, 
+because there won't be enough memory free for it). Because it 
+clears those locations, it IS compatible with most M/L programs 
+saved as .CO files; they too load into high memory and then clear
+themselves. Exception: Jim Irwin's PRN100 and any other program 
+that loads into high memory and then protects itself until you 
+remove it from your machine. If WC finds HIMEM set any lower than
+62690 it won't run. (If you don't understand any of this, don't 
+worry. Try WC; either it will run or it won't. If not, there's no
+harm done; if you need it more than the M/L programs you've 
+already got, remove them, clear memory by going to basic and 
+typing CLEAR 0, MAXRAM, and then try WC again.) Future versions 
+of WC--if and when I get to them, will be relocatable, and will 
+load directly under any M/L programs you already have.
+	Quibbles about accuracy: every word count program has its
+own ideas about what counts as a word. WC thinks hyphenated words
+are two words; that's because making that assumption allowed me 
+to handle both hyphens and dashes with a subroutine I'd already 
+written for spaces, carriage returns, linefeeds, and tabs, which 
+helped make the program more compact. WC thinks empty files have 
+one word (or "1 words," as it will ungrammatically tell you). 
+Why? Because it gives you a figure one word higher than the 
+number it actually counts. If you don't like this feature, remove
+the characters "+1" from line 5 of the program so the line reads:
+
+ CALLS:PRINTPEEK(S+64)+(256*PEEK(S+65))"words"
+
+I myself prefer WC to add one to its count because it won't 
+recognize anything that doesn't end in a space, hyphen, tab, or 
+carriage return as a word. That means it's apt to come out one 
+word short in my text files, since they usually end with the 
+period closing their last sentence. All this is rather nitpicky 
+detail; I've indulged in it just to be complete, or maybe just in
+case someone's entered a "25 words or less" contest (do they 
+still have those?) and needs to the know whether WC will give an 
+ABSOLUTELY accurate count. It would have been easy enough to 
+write code to handle these slightly absurd details (even 
+including the ungrammatical "1 words" announcement), but on a 
+machine with limited  memory it simply didn't seem worth the 
+extra bytes. One detail that might matter a little more: WC knows
+about ellipses, which are not uncommon in coy or scholarly 
+writing. Example: it will correctly tell you that "I . . . love 
+you" consists of three words. But WC will be helpless if for any 
+mad reason you use other punctuation in a similar way: it will 
+think, for example, that  "Hey ! ! ! you" is five words.
+	Future revisions (if I get to them): relocatable code. 
+Write the WHOLE program in machine language. Add a wrinkle to the
+"edit" exit, allowing a one keystroke return to the file WC just 
+counted.
+	WC is freely given to the members of this SIG, in 
+gratitude for all the fine programs, information, and advice 
+they've given me. (I want to acknowledge a special debt to Robert
+Covington's ROM map.) You may remove the copyright notice for 
+your own use. You may give copies of the program to friends, but 
+only with the copyright notice intact. Feel free to contact me 
+with questions or comments, but note that I'm only irregularly on
+the SIG. I and might not see your message before it scrolls off. 
+Better to send EMAIL, or whatever they're calling it now.

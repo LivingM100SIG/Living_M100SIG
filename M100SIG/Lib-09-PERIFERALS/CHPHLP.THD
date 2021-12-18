@@ -1,0 +1,141 @@
+CHPHLP.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Disk drives are great -- unless you cannot get the data off the disk!  This
+THD is aset of messages on that topic, for the Chipmunk.  The availability
+of that fine utility DISKPP is discussed.  And the the originator of the
+thread is graciously welcomed to the "Chipmunk Zone"!
+
+Message range: 160825 to 161353
+Dates: 11/19/87 to 11/25/87
+
+
+Sb: #Chipmunk Help
+Fm: M. Miller 76606,25
+To: All
+
+Background: I have text files (.DO - I presume they're ASCII stored, but I
+don't actually know how chippy stores them) that are less than 20K stored via
+the chipmunk in a third level subdirectory.  I need to load the files to RAM to
+change them.  Problem: I cannot access the files because the chippy 'info'
+function says that they are over 66K long and I receive an OV error when trying
+to load them.  When trying to read them with READIT.BA, I can read all of them
+except one, getting an 'OS Error in 19' error (leading me to believe that,
+somehow, the file was converted to one REALLY long string-do I have that
+right?) - but I need to be able to manipulate them, not just read them.  Also
+interesting, when making a backup copy of the main disk (somehow, my other
+backup copy also has the same problem!), I have no trouble accessing the two
+subdirectories above where my files are located but receive a 'FF - File Not
+Found' error when accessing the final subdirectory where the files are located.
+Additionally, several other files in other subdirectories also show as having
+more than 66K when I KNOW that they don't.
+
+Question: Can anyone direct me toward some online software and help/educational
+material that would help me recover my lost files.  I thought my backup wasn't
+corrupt - until I tried it and discovered that I'm up to my knees in poop - I
+NEED those files.  HELP, ANYONE, PLEEEEEZZZZZ??? (Phil, Tony, Denny???)
+
+
+Fm: Denny Thomas 76701,40
+To: M. Miller 76606,25
+
+Oh dear. Do you have a couple of hours? You have run into a problem that just
+happens - for no reason I can think of - "A Trashed Directory" It isn't pretty.
+What you need is a program called DISKPP in DL9 (BRO DISKPP for associated
+files). It is a very powerful tool for working with Munk disks, but it does
+take some time to learn what is going on. First you have to learn the stucture
+of the Munk disk (as found in the DOC file) and then learn how to actually run
+the program. I have successfully recovered files from a severly trashed disk,
+but it took time. You have to copy the recovered information onto a new disk
+sector by sector. I was able to recover not only text files (the easiest) but
+CO and BA files as well.
+
+After you look through the DOC file, let me know - you will undoubtedly have
+questions that I can answer that will save you hours of puzzling over.
+
+.........."You are now entering the Chipmunk Zone"
+
+
+Fm: Tony Anderson 76703,4062
+To: M. Miller 76606,25
+
+Re the OS Error when using READIT.BA (I assume that's READIT.CHP stored here),
+that's because the program uses the LINE INPUT method of getting lines from the
+file, which assumes a line will not be longer than 255 characters before
+encountering a carriage return.  If your text file had carriage returns only at
+the end of paragraphs, as many users prefer to do, it's likely that the
+paragraphs are longer than the input string can take.  Thus, READIT won't be
+helpful in that case.  You'd have to change the program to get data from the
+file a character at a time, typically with an INPUT$(1,1) type of statement.
+
+There is a major file recovery, disk "fixup" program for the Chipmunk in DL9,
+called DISKPP.V30 - See the DOC files in DISKPP.DO1 & DO2.  It's a major disk
+fiddling program, you can do a lot of damage to the disk files if you're not
+careful, but you can also do a lot of fixing, too.  There is also a lot of
+technical info in DL9 on how the files are stored, how the allocation table
+works, how each sector points to the next, etc.  It can all be found with the
+command S/KEY:CHIPMUNK.
+
+
+Fm: M. Miller 76606,25
+To: Tony Anderson 76703,4062
+
+Thanks for the info.  I will try that software and search the Library.  I don't
+expect that revovery will be easy or quick, so I will let you know if I have
+further problems.  Thanks for the direction!
+
+
+Fm: M. Miller 76606,25
+To: Denny Thomas 76701,40
+
+I think I've been in the Chippy Zone for sometime now, Denny.  I wasn' sure
+whether or not my problem was a trashed directory.  I will look up that
+software and get back to you.  I'm SURE I will be confused, not having taken
+the time previously to fully understand the mechanics of the Chippy's
+innerworkings.  I'll let you know.  THANK YOU! for your help!!!
+
+
+Fm: Larry Holmes 72276,1666
+To: M. Miller 76606,25
+
+How old is your Chipmunk?  If it is one of the early models, or one with a
+particular type of disk drive, there may be a way to at least prevent this from
+happening again.  Although I am no longer associated with my old company, the
+Chipmunki was my pet project and I will be happy to help any way I can.  PCSG
+wrote the CDOS operating system, so Mike Anders may be able to get some help
+for you if you can't solve the problem using the methods already mentioned
+here.  In any event, I'll be glad to do what I can to help you out.  (I haven't
+finished reading this thread so if it turns out that you already solved the
+problem this will just be a good intention!).  Good Luck--I am sure you will be
+able to find a way to recover the "raw" data from the disk at least.  If you
+have any way to make a mirror image backup of the disk, I would do that
+immediately; you may run into problems as CDOS may give you error messages
+during the backup process.  By the way, CDOS, in the final version, actually
+did some minor repairing of problems "on the fly", which was a great idea PCSG
+came up with but, which may also complicate your problem if you allow CDOS to
+try repairs on a disk with a bad directory.  Hence, I would write protect the
+disk whenever you are trying to read the lost data, to prevent CDOS from trying
+to make repairs and actually making the problem worse.  If you can tell me the
+version of CDOS you have, plus the color of the plastic front on the disk
+drive, plus the height of the entire drive, and the approximate date of
+purchase, that may tell me what version of Chipmunk you have and may help in
+the solution of your problem.  I do not usually have much time to check in here
+so it would be best to use EasyPlex so any messages you leave me won't scroll
+of and be lost.  I have started a new company after losing Holmes
+Microsystems/Engineering to my investors and am terribly busy. Good
+luck!!................Larry Holmes
+
+
+Fm: Larry Holmes 72276,1666
+To: Tony Anderson 76703,4062
+
+I think you know more about the 'munk than I do!  Thanks for doing your usual
+terrific job.......Larry
+
+
+Fm: Tony Anderson 76703,4062
+To: Larry Holmes 72276,1666
+
+Not true.  But we try with what we've got.

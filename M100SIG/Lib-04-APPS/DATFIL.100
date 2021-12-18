@@ -1,0 +1,245 @@
+DATFIL.100 by Paul Globman
+        Copyright (c) 1989
+
+DATFIL.100 is a data organizer/filer program with user defined prompts and
+display parameters.
+
+Data files are initialized with the built-in TEXT program, and the data you
+wish to organize is entered and displayed by using the DATFIL program.
+
+Data file organization
+----------------------
+Before initializing the data file you should organize the file structure and
+display layout.  Data files are organized into groups of records, and
+records are organized into groups of fields.  You should determine:
+
+a) the number of fields for the data file record.
+b) the name (prompt) for each field.
+c) the "location" on the LCD where each field prompt will appear.
+
+The "location" is the print position that would be used by BASIC's PRINT@
+function, and is calculated as follows:
+
+ R = row (or line)
+ C = column
+ LOCATION = 40*(R-1)+(C-1)
+
+So if you want a prompt to appear on the third line (row), column 5, you would
+calculate the location as follows:
+
+    LOCATION = 40*(R-1)+(C-1)
+             = 40*(3-1)+(5-1)
+             = 40*(2)+(4)
+             = 84
+
+Data is entered and displayed immediately following the prompt, so
+for a comfortable appearance you should add a space after the prompt.
+
+Since lines are 40 characters, you can make one prompt appear directly under
+the previous prompt by just adding 40 to the location.  Add 80 if you wish to
+skip a line, etc.
+
+Data file initialization
+------------------------
+Create a new TEXT file using the TEXT program.  On the first line enter the
+number of fields (prompts) you need for this data file.  For EACH field, enter
+a prompt <cr> and a location <cr>.  For example:
+
+3
+Name   :
+44
+Phone  :
+84
+Comment:
+124
+
+This example is for a file with 3 prompts (first line).  The first prompt
+is the word "Name   :", and it will display at location 45.  Lines 4/5 and
+lines 6/7 represent fields 2 and 3.  Be sure there are no extra CR's (blank
+lines), but be sure there is a carraige return at the end of each line.
+
+That's all you do manually, to set up a data file.  Some programs do this minor
+chore for you, but to keep the program small enough to run in the ALTLCD
+buffer, this task is done manually.
+
+
+The Program
+-----------
+You must CLEAR 0,62480 to make room for DATFIL.CO.  When you run DATFIL the
+following menu will appear:
+
+DataFiler
+
+        <A>dd
+        <D>isplay
+        <E>xit
+
+        =>
+
+Only an A, D, or E will have any affect.  All other responses are considered
+invalid.
+
+Press A to add data records to your new data file.  Press D to display records.
+Press E to return to the 100 main menu or calling program.  The program 
+accepts upper or lower case characters.
+
+ADD data
+--------
+You will be prompted to enter the name of a previously created data file you
+wish to use.  If the file does not exist, the program will beep and return
+to the A/D/E menu.
+
+Assuming you have entered the name of a data file created for this program,
+DATFIL will read the "header" info (the number of prompts, field names, and
+locations).  You will then be prompted to enter data by displaying the prompts
+ you selected, and the program will accept your input.
+
+After each record is entered, you will be prompted with "More?".  Press N for
+no more!  You are in the ADD mode so the program assumes you wish to continue
+to add data, and only a "N" will break out of the ADD mode and return to the
+A/D/E menu.
+
+If you feel that a mistake was made when entering data, you will be able to
+correct that error with the TEXT program.
+
+DISPLAY data
+------------
+You will be prompted to enter the name of the data file you wish to display.
+If the file does not exist, the program will beep and return to the A/D/E menu.
+
+Assuming you have entered the name of a data file created for this program,
+DATFIL will read the "header" info (the number of prompts, field names, and
+locations).  You will then be prompted to enter "String" data for selective
+record display.
+
+Press ENTER if you wish to display all records, or enter characters to be
+matched.  Only records containing the match string will be displayed, if a
+match string is specified.
+
+Each record is displayed by printing the field prompt at its location, followed
+by the data entry.
+
+After each record is displayed, the cursor jumps to the upper left corner
+of the LCD and waits for a keyboard input.  Any key will bring up the next
+record except "N".  Press N for no more!  You are in the DISPLAY mode so the
+program assumes you wish to continue to display data records, and only a "N"
+will break out of the DISPLAY mode and return to the A/D/E menu.
+
+A beep will sound when the last record of the file is displayed, and the next
+keypress will return to the A/D/E menu.  If the last record doesn't match the
+specified string, then a beep will sound with a blank screen when the file has
+been completely searched.
+
+
+ERRORS
+------
+The beep is the only indication of an error.  If it occurs during the ADDing
+of data then it may indicate an out of memory condition and you should examine
+the data file to see if the last entry is properly organized.  If only a
+partial record is found, you should delete that last partial record, and
+then see about making more room in RAM before continuing to ADD data records.
+
+If the last record is not properly organized, DATFIL may display data
+ which is past the "end of file" marker.  This is harmless to your programs or
+data files and is easily corrected using TEXT to correct the last data record
+in the file.  Use the N command to abort the display.
+
+All other errors are trapped within the program and the operation is aborted.
+This is usually a bad A/D/E command, or a file name error.
+
+
+SUPPORT UTILITIES
+-----------------
+DATFIL data files are completely compatible with files created by
+CRDFIL.BA, and there are many utilities in DL4 that will enhance the use of
+DATFIL.  These utilities can be located with KEY = CRDFIL when scanning or
+browsing DL4.
+
+
+Enjoy the program.... 
+
+Paul Globman [72227,1661]
+-----------------------------
+Run the following loader to create DATFIL.CO.
+
+1 '************************
+2 '*  DATFIL.CO           *
+3 '*    by Paul Globman   *
+4 '*  Copyright (c) 1989  *
+5 '************************
+6 CLEAR 99, 62480 
+10 FOR I = 62480 TO 62955 
+20 READ X:POKE I,X:SM=SM+X
+30 NEXT
+40 IF SM = 66192 THEN 60
+50 PRINT"error in data":STOP
+60 SAVEM"DATFIL.CO",62480,62955,62480
+1000 DATA 55,212,41,66,33,164,245
+1010 DATA 205,48,244,50,130,244,231
+1020 DATA 214,65,202,151,244,214,3
+1030 DATA 202,60,244,61,194,17,244
+1040 DATA 201,33,224,245,205,162,17
+1050 DATA 205,203,18,205,233,15,254
+1060 DATA 78,201,205,44,245,210,17
+1070 DATA 244,33,215,101,205,162,17
+1080 DATA 205,68,70,5,112,205,237
+1090 DATA 244,205,192,244,205,237,244
+1100 DATA 58,132,246,254,0,194,92
+1110 DATA 245,213,205,206,244,213,205
+1120 DATA 224,27,42,120,247,229,205
+1130 DATA 248,244,34,120,247,225,205
+1140 DATA 224,27,225,205,248,244,209
+1150 DATA 29,194,94,244,205,145,244
+1160 DATA 245,62,0,254,26,202,141
+1170 DATA 244,241,194,83,244,245,241
+1180 DATA 195,16,244,33,233,245,195
+1190 DATA 48,244,205,44,245,210,17
+1200 DATA 244,205,237,244,213,205,206
+1210 DATA 244,213,205,224,27,205,68
+1220 DATA 70,205,14,245,225,205,248
+1230 DATA 244,209,29,194,160,244,205
+1240 DATA 45,244,194,157,244,195,16
+1250 DATA 244,123,135,79,205,248,244
+1260 DATA 13,194,195,244,34,120,247
+1270 DATA 201,229,205,248,244,229,197
+1280 DATA 205,235,8,235,35,1,40
+1290 DATA 0,17,0,0,28,85,8
+1300 DATA 242,223,244,235,205,124,66
+1310 DATA 193,209,225,201,205,49,66
+1320 DATA 42,116,247,229,205,235,8
+1330 DATA 225,62,10,6,255,43,35
+1340 DATA 4,190,194,253,244,35,126
+1350 DATA 254,26,192,50,130,244,195
+1360 DATA 41,66,4,35,229,42,118
+1370 DATA 247,72,6,0,205,109,107
+1380 DATA 209,65,218,41,66,205,105
+1390 DATA 52,34,118,247,43,54,10
+1400 DATA 43,54,13,201,33,212,245
+1410 DATA 205,162,17,205,68,70,229
+1420 DATA 215,225,218,90,245,167,202
+1430 DATA 90,245,5,88,35,205,11
+1440 DATA 76,205,15,34,229,245,34
+1450 DATA 116,247,205,45,107,34,118
+1460 DATA 247,241,225,216,235,205,190
+1470 DATA 31,183,201,229,213,197,79
+1480 DATA 123,50,107,245,17,133,246
+1490 DATA 42,120,247,6,1,229,213
+1500 DATA 197,205,109,90,193,209,225
+1510 DATA 202,152,245,126,254,10,35
+1520 DATA 202,130,245,195,108,245,5
+1530 DATA 194,108,245,126,254,26,34
+1540 DATA 120,247,194,106,245,205,8
+1550 DATA 245,33,125,244,195,155,245
+1560 DATA 33,94,244,34,162,245,193
+1570 DATA 209,225,195,94,244,12,68
+1580 DATA 97,116,97,70,105,108,101
+1590 DATA 114,10,10,13,9,60,65
+1600 DATA 62,100,100,10,13,9,60
+1610 DATA 68,62,105,115,112,108,97
+1620 DATA 121,10,13,9,60,69,62
+1630 DATA 120,105,116,10,10,13,9
+1640 DATA 61,62,32,0,12,87,111
+1650 DATA 114,107,102,105,108,101,63
+1660 DATA 32,0,13,10,10,77,111
+1670 DATA 114,101,63,0,27,72,0
+1680 REM       END OF DATA

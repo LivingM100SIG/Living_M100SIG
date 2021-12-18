@@ -1,0 +1,102 @@
+About RAM4TH
+
+Copyright 1988 by Bill Boyd (CompuServe ID 75715,70).
+
+
+HISTORY
+
+Michael Weiblen [72506,2072] uploaded a FORTH compiler (FORTH.4TH) to
+CompuServe in 1986.  His compiler was based on the FIG-Forth model.
+(Forth Interest Group, PO Box 8231, San Jose, CA  95155)  I downloaded
+the file, but found it difficult to use since I didn't have a disk.  I
+deleted the words pertaining only to disks and modified it to allow
+loading Forth code from the normal Model 100 sources (RAM:, CAS:).  I
+converted the executable file to a relocatable ASCII version, and
+uploaded it as RAM4TH.RLC.  From every indication I have, all of the
+code that this program is based on is in the public domain.  I reserve
+copyright rights to the version that I have uploaded, but it may be
+used and distributed freely by anyone.
+
+
+HARDWARE REQUIREMENTS
+
+After conversion from hex format, RAM4TH is a machine-language program
+designed to run on a Model 100 as it was sold by Radio Shack.  Since
+the changes to the 102 are minor, I believe it would also run on a
+102.  Although it should run with 16K of memory, I doubt that it can
+be converted to a M/L file with that little memory.  Machines with 24K
+of memory and some type of mass storage (I have cassette) are able to
+download, convert, and run this compiler.  The present version
+requires that 12,784 bytes of RAM be reserved in high memory for use
+by RAM4TH.
+
+
+INSTALLATION
+
+Download RAM4TH.RLC and save it as RAM4TH.DO in your Model 100.
+Obtain RLCLDR.BA from CompuServe, if you don't have it already.
+Transfer RAM4TH.DO to a cassette or other mass storage device (I will
+write the rest assuming you are using casette).  Erase RAM4TH.DO from
+RAM.
+
+Now you need to decide where you want to locate RAM4TH when it runs.
+As mentioned above, it needs 12784 bytes of high memory.  A standard
+Model 100 has MAXRAM at 62960, so RAM4TH can start at 50176.  In a
+machine with other programs in high memory, subtract 12784 from the
+lowest high-memory address reserved to obtain the starting address.
+The remainder of these instructions are written assuming you are
+locating it at 50176.
+
+Enter BASIC.  Type
+
+        CLEAR 256, 50176
+
+Load and run RLCLDR.BA.  Press 1 to load the machine-language program.
+Answer CAS:RAM4TH.DO to the prompt "File to load ?".  When the file is
+found, the program prompts for the starting address; respond by typing
+50176 (or other address) <ENTER>.  When the file is loaded, RLCLDR
+tries to write the .CO file to the tape, which is still in the play
+mode (don't blame me).  You can abort it using <SHIFT><BREAK>, or let
+it finish and press 3 to exit.  Now, you have a copy of RAM4TH in
+memory, at 50176 (or possibly another address).
+
+Return to BASIC.  To save memory, I like to leave the compiler loaded,
+and run it via a 7-byte m/l file.  To do this, type
+
+        SAVEM "RAM4TH", 50176, 50176, 50176
+
+It is also a good idea to save a copy in m/l form, so you don't have
+to go through the slow conversion process every time you have to
+reload it.  To do this, position the tape and press RECORD, then type
+
+        SAVEM "CAS:RAM4TH", 50176, 57563, 50176
+
+If you have located it at another address, just make sure that the end
+address (the 2nd number above) is 7387 more than the start address.
+
+I also find it convenient to run RAM4TH from within BASIC.  To do
+this, type
+
+        NEW
+        10 RUNM"RAM4TH
+        SAVE "RAM4TH
+
+The primary reason I recommend this step is to enable the function
+keys, especially F8 (Menu).
+
+Run RAM4TH by simply pressing F4.  (You can run it subsequently by
+selecting RAM4TH.BA from the menu.)
+
+Now, you probably want to know how to exit.  Being careful to use
+capitals and spaces exactly as shown, type
+
+        : Menu MENU ;
+
+When you press ENTER, RAM4TH should respond with
+
+        Ok { 0 }
+
+The 0 indicates that there are no items on the stack.
+Congratulations, you have just entered a Forth definition (like a
+subroutine)!  Now, assuming you are running RAM4TH from BASIC, as
+described, you may press F8 or type MENU to return to the main menu.

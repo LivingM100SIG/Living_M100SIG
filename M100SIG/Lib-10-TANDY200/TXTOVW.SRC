@@ -1,0 +1,256 @@
+;TXTOVW.SRC -- Source code for TXTOVW.200, insert/overwrite,word wrap disable utility
+;Type ESC,1 sequence to go into insert mode, and ESC,2 for overwrite mode.
+;Also disables word wrapping.
+;Type ESC,3 to disable word wrapping, ESC,4 to enable it.
+;
+;James Yi 73327,1653
+;
+;
+;
+keygp8	equ	fd15h
+text	equ	719dh
+wrap	equ	$f20c
+tick	equ	36809
+prevky	equ	61387
+keystr	equ	61386
+files	equ	10794
+print	equ	26526
+errtrp	equ	61236
+beep	equ	20293
+input	equ	21744
+Menu	equ	26532
+opendo	equ	11635
+rst7A	equ	62731
+RST7B	equ	62781
+shkey	equ	64781
+filnum	equ	63560
+filtbl	equ	63433
+
+	ORG	63574	;prev screen
+;begin
+	lda	keygp8
+	ani	4
+	jz	selfrun
+;F3 is down - must be XOS-3A calling it.  Enter file under the cursor
+	lda	filnum
+	mov	l,a
+	mvi	h,0
+	dad	h
+	lxi	d,filtbl
+	dad	d
+	xchg
+	lhlx
+	xchg
+	ldax	d
+	ani	$c0
+	cpi	$c0
+	inx	d
+	lhlx
+	jz	enttxt
+;file is not a text file, enter name.
+selfrun:
+	push	psw
+	Cz	files	;List files
+	LXI	H,Error	;Get Resume adr
+	SHLD	errtrp	;Set Error trap
+	lxi	h,29140
+	CALL	28192
+	pop	psw
+Error	CNZ	beep	;Beep if error
+	CALL	29003
+	LXI	H,29124	;Get prompt msg
+	CALL	print	;Print it
+	CALL	input	;Input file nam
+	RST	2	;Test 1st chr
+	ANA	A	;CR or CTRL-C?
+	JZ	menu	;Abort
+	CALL	openDO	;Open file
+
+enttxt:	push	h	;text file location
+
+	LHLD	rst7A	;Save original
+	SHLD	Hook1	;values of
+	LHLD	RST7B
+	SHLD	Hook2	;hooks.
+	LXI	H,Pat1	;Reload them
+	SHLD	RST7A	;with
+	LXI	H,Pat2	;Overwrite
+	SHLD	rst7b	;patches.
+;ROM patch of TEXT entry
+	lxi	h,0
+	shld	efd2h
+	xra	a	;disable word wrap.
+	JMP	$7324	;Jump to editor
+;
+;
+;RST 7 hook patch 2, called upon
+;exiting from TEXT editor.
+Pat2	call	expat
+	lhld	hook2	;exe org hook
+	pchl
+
+expat	PUSH	H
+	LHLD	Hook1
+	SHLD	rst7a	;Restore
+	LHLD	Hook2	;original
+	SHLD	rst7b	;hooks
+	POP	H	;upon exit.
+	RET
+;
+;
+;RST 7 hook patch 1, called by Chget
+;Chget is a rom subroutine at 4855,
+;which prompts for a keystroke.
+Pat1	call	ovpat
+	lhld	hook1	;exec orig hook
+	pchl
+
+ovpat	DI		;needed to protect stack
+	PUSH	B
+	PUSH	D
+	LXI	H,0
+	DAD	SP
+	XCHG		;Save SP to DE
+;Unwind the stack, in order to retrace
+;the call origin.
+	MVI	A,22	;Go back 11
+Loop1	INX	SP	;layers.
+	DCR	A
+	JNZ	loop1
+;If it was called from the TEXT editor, swap the return address with that of overwrite intercept patch.
+	LXI	H,Int
+	XTHL		;Swap
+	LXI	B,29609	;Originated
+	DB	8	;from editor?
+	JZ	Res	;Yes
+	DAD	BC	;If not, do not
+	XTHL		;swap.
+;Restore stack pointer
+Res	XCHG
+	SPHL
+	POP	D
+	POP	B
+	EI
+	RET
+;
+;
+;ROM intercept patch - a jump to this
+;patch, instead of returning to TEXT ;editor's insert routine, is enabled
+;by Pat1
+;This patch recognizes Ins/Ovw toggle
+;and overwrites.
+Int	STA	keystr	;Save keystroke
+	PUSH	PSW
+	CALL	31188
+	POP	PSW
+	JC	30943
+	CPI	127	;DEL?
+	JZ	29945	;Yes
+	mov	b,a
+	lda	prevky	;look at previous keystroke
+	cpi	27	;ESC sequence?
+	jnz	cont
+	mov	a,b
+	cpi	'1'	;ovw mode?
+	jz	toggle
+	sui	'2'	;ins mode?
+	jz	toggle
+	dcr	a	;ww off?
+	jz	stwrap
+	cpi	1	;ww on?
+	jnz	cont
+stwrap	sta	wrap
+be	equ	0
+	if	be=1
+	jmp	bell
+	endif
+	if	be=0
+mt	call	tick
+	jmp	tick
+	endif
+toggle	sta	sw
+	if	be=1
+	jmp	bell
+	endif
+	if	be=0
+	jmp	mt
+	endif
+
+;
+Cont	mov	a,b
+	cpi	9	;tab?
+	jz	inov
+
+	CPI	32	;FNkey or CTRL?
+	JC	29630	;Yes
+;
+;Insert or overwrite visible character.
+;main loop (29690)
+;
+inov	PUSH	b
+	CALL	30320
+	CALL	33238
+	CALL	33332
+	POP	b
+	CALL	Ins	;Insert it
+	JC	29828	;Memory full
+	JMP	29820	;Back to editor
+;Insert routine --
+;Overwrite unless the mode is Insert, ;or the cursor is at the end of file or end of line.
+Ins	XCHG		;Save HL to DE
+	LDA	Sw
+	ORA	A	;Insert mode?
+	MOV	A,B
+	JZ	30584	;Yes, insert
+	LHLD	62997
+	RST	3	;End of file?
+	MOV	A,B
+	JZ	30584	;Yes, insert
+	LDAX	D
+	CPI	13	;End of line?
+	JNZ	Ovw	;No, overwrite
+	INX	D
+	LDAX	D
+	DCX	D
+	CPI	10	;End of line?
+	MOV	A,B
+	JZ	30584	;Yes, insert
+Ovw
+	XCHG
+	mov	a,m
+	cpi	9
+	jz	tab
+	mov	a,b
+	cpi	9
+	jz	tab
+	mov	m,a
+	rst	4
+	pop	b
+	ret
+
+tab	push	b
+	call	29945
+	pop	psw
+	jmp	30584
+
+	if	be=1
+bell	di
+	mvi	d,$80
+s2	mvi	e,$28
+s1	dcr	e
+	jnz	s1
+	call	tick
+	dcr	d
+	jnz	s2
+	ei
+	ret
+	endif
+;
+;
+Sw	DB	1	;Toggle switch
+Hook1	DW	00	;Chget hook
+Hook2	DW	00	;Menu hook
+;
+	END
+;
+

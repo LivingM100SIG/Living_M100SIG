@@ -1,0 +1,193 @@
+SROM03.TIP
+
+AN EXPLANATION OF LUCID'S TBL FUNCTION - Part 2 of 2.
+by Algis Kaupas [73327,3157]
+
+
+EXAMPLE 4: "SINGLE-INPUT LOOKUP."
+======= =   ============ ======
+
+
+In Lucid, what some other spreadsheets call the "look-up" function is a 
+special, more limited, case of Lucid's TBL function.
+
+Here's how it works.
+
+Let's say that we wished to use only the "3" column in any of the tables in 
+SROM02.TIP.  The NEW input screen might look something like this:
+
+Input screen for example 4:
+----- ------ --- ------- -
+
+        [A]      [B]          [C]
+[008]Enter number here:     [INPUT]
+[009]  
+[010]Three times that # is: [RESULT]
+
+Let's use TABLE 2 (BA1:BH8) with this example.
+
+We would enter the following FORMULA in cell C10 of the input screen:
+
+     +TBL(C8,BD1,BE1:BH8)
+
+This formula says to the spreadsheet: 
+You're going to be looking something up in a table.
+Look at the value in C8.
+Find this value in the left-hand column of the table.
+Cell BE1 in the top row of the table is the top entry in the column that 
+contains the value I want.
+Go down this column until you're across from the search value C8.
+Return this value to here (the cell the formula is placed in.)
+
+This example, unlike the previous examples, does not ask the spreadsheet to 
+SEARCH for two values.  Rather, it asks it to search for one value down the 
+lefthand column and then SPECIFIES the column that forms the other axis.
+
+In a "single-input lookup," because we are not asking the spreadsheet to SEARCH
+for a value, but are SPECIFYING one axis of the two axes needed to identify a 
+particular cell, the values along the specified axis can be in any order - they
+do not have to be in an ascending order, which was a requirement for the 
+earlier "two-input lookup" examples.
+
+An aside:
+-- -----
+
+The attempt to be precise in describing how searches work leads to a horrible 
+verbal mish-mash.  If it starts getting confusing, just remember that Lucid 
+first looks at the left-hand row and then at the top column.  Lucid calls the 
+left-hand row the X-axis, and the first entry in the +TBL formula the X-input. 
+The top row of the table is the Y-axis, and the second entry in the +TBL 
+formula is the Y-input.  The third and fourth entries in the +TBL formula, with
+a colon between them specify the range of the table (where it's located).
+
+The input values can both be inputs that are SEARCHED FOR along the X and Y 
+axes.  In this case, the values along BOTH axes MUST be in ascending order, 
+numerically or alphabetically.
+
+Alternatively, one of the inputs can be searched for, and the other SPECIFIED, 
+as in the previous example.  In this case, we are freed from the requirement of
+having BOTH axes arranged in ascending order.  (The SEARCH axis, of course, 
+must still meet this requirement.)
+
+EXAMPLES USING TEXT:
+======== ===== ====
+
+Lucid gives us the ability to make tables using text, as well as numbers.  Here
+are some examples that show this:
+
+EXAMPLE 5:  "SINGLE-INPUT LOOKUP" OF TEXT:
+======= =    ============ ======  == ====
+
+To illustrate Lucid's handling of text, let's make a chart of what the 
+different colors on traffic lights mean.  The table, and associated portion of 
+the spreadsheet for input, might look something like this:
+
+
+Table 5.  What do traffic lights mean?
+----- -   ---- -- ------- ------ ----
+
+              [CG]     [CH]
+     [001]             X
+     [002]    green    go
+     [003]      red    stop
+     [004]   yellow    caution
+
+
+(NOTE:  The colors in column CG are arranged alphabetically because this column
+will be searched alphabetically.  Later on, try making this chart with the 
+usual order of traffic lights: red, yellow green, and see what happens.)
+
+The X is placed in CH1 so that there will be a blank cell, which marks the 
+start of the search, in the upper left hand corner of the table.
+
+
+The section of the spreadsheet for input might look like this:
+
+Input screen for example 5:
+----- ------ --- ------- -
+
+          [CA]    [CB]    [CC]  [CD]
+  [001] Type in a traffic light color.
+  [002] Press enter, then press f2.
+  [003] [X-INPUT] <--------
+  [004] MEANS 
+  [005] [RESULT]
+
+
+The formula placed into cell CA5 is:
+
+     +TBL(CA3,CH1,CG1:CH4)
+
+This formula says, essentially, take the value that's in cell CA3, look for 
+that value down the left-hand column of the table located between CG1:CH4.  The
+answer I want is in the column below CH1.
+
+
+However, try entering amber, pink, silver, and zebra as inputs.  The wrong 
+answers are because, similar to the earlier examples, the search down the X-
+column will be conducted in ascending alphabetical order.  If an exact match is
+not found to the input value, the next higher value will be selected.  If there
+are no values higher than the input value on the chart, there's an ERR 
+somewhere.
+
+EXAMPLE 6.  How to avoid "wrong" answers.
+======= =   === == =====  =====  =======
+
+If you want to avoid these wrong answers your table might be:
+
+Table 6.  What do traffic lights mean?  And don't give me any weird colors!!
+----- -   ---- -- ------- ------ ----   --- ----- ---- -- --- ----- ------
+
+        [CK]  [CL]                         
+[001]          X 
+[002]      a   IS THAT A TRAFFIC LIGHT COLOR?
+[003]  green   GO                            
+[004]    rec   IS THAT A TRAFFIC LIGHT COLOR?
+[005]    red   STOP                          
+[006] yellnz   IS THAT A TRAFFIC LIGHT COLOR?
+[007] yellow   CAUTION                       
+[008] zzzzzz   IS THAT A TRAFFIC LIGHT COLOR?
+
+The FORMULA to be entered into cell CA5 to use this table is:
+
+     +TBL(CA3,CL1,CK1:CL8).
+
+
+
+CONCLUSION:
+==========
+
+This file has used fairly simple examples to explain the TBL function in Lucid,
+and illustrate some of the rules for its use.
+
+The Lucid manual has additional examples, more complex, and more applicable to 
+the "real world."  For the most part, they are designed with variations of the 
+themes that we have explored here.
+
+The best way to approach understanding the examples is to go slowly, simplify 
+wherever possible, and play around with the described order of entry.  Look for
+the logic in what is being done, and ask yourself what is being demonstrated.
+
+It took me a while, but the examples finally "clicked in."
+
+I would also suggest taking a look at spreadsheet examples in other books and 
+manuals.  The exact terminology and functions will be different, but the 
+underlying principles will be the same.
+
+Of the .CA files I've looked at in the Data Libraries, I've enjoyed and learned
+from CHKBAL.CA in DL2 and CASINO.CA (and CASINO.DOC) in DL3.
+
+CHKBAL.CA is an example of a Lucid Database template that enters checks and 
+deposits, and gives a running balance.  The balance is in cell AA1 of the 
+spreadsheet.  Be sure to enter CODE-0 graphic symbols where the / marks are in 
+the VIEW.DO file.
+
+If you come up with any useful or interesting applications, or any 
+clarifications of your own of something that puzzles you in the Lucid and 
+Superrom manuals, be sure to upload them, so that we can all learn from them.
+
+Good luck!
+
+Algis Kaupas [73327,3157]
+September 7, 1986
+

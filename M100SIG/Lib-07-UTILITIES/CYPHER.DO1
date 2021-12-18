@@ -1,0 +1,137 @@
+                         CYPHER.BA
+
+    CYPHER.BA enciphers and deciphers Text (.DO) files on the Tandy Model 100,
+102 and 200 computers.  CYPHER only works on and between these three computers.
+ It is user-customizable, which deters others, even with another version of
+CYPHER, from decoding your files.  You may use it to encipher files which stay
+in RAM or are to be saved on cassette or disk, such as ADRS.DO or NOTE.DO, or
+you may wish to scramble messages sent via Email over networks such as
+CompuServe.  CYPHER is not intended to place scrambled messages on the message
+board; most Sysops frown on this in any case.
+
+
+CAVEAT:   Text files to be enciphered must contain only characters between
+ASCII 32 and 123, ASCII 125 ("}"), TABs and end-of-paragraph markers (ASCII 13
++ ASCII 10).  Any characters above 126 or below 32 will be converted to spaces
+and you will hear a short beep.
+
+    Do NOT use "~" (SHIFT GRPH [) or "|" (SHIFT GRPH -) in your Text files, as
+they will be translated into spaces, tabs or end-of-paragraphs.  CYPHER.BA (in
+.DO form) and CY-REG.DO (see CY-GEN.BA in CYPHER.DO2) are in a form which can
+be encoded by CYPHER but CYPHER.DOC cannot, as it contains both of these
+characters in this paragraph.
+
+    Also, do NOT use a SPACE followed by a TAB, as this will be deciphered into
+an end-of-paragraph.  Use two tabs instead.  You may use a TAB followed by a
+space.
+
+
+USING CYPHER.BA
+
+There are five steps to using CYPHER:
+
+    1)  You are first asked for a filename.  CYPHER only enciphers or deciphers
+Text (.DO) files.
+
+    2)  The first 25 characters of the file are then displayed, and CYPHER asks
+you whether you want to "eNcode or Decode" it.  Just press "N" or "D".  You
+can, by the way, press F8 to abort the program at any time until the coding
+actually begins.
+
+    3)  You are then asked how many LEVELS of coding you require.  This refers
+to the number of times you want to run the file through CYPHER.  You can
+specify from 1 to 9 levels - the more you use the more difficult the coded file
+is to decipher.  When Decoding the file you must use the same number of levels
+used when eNcoding it.
+
+    If you are Decoding, you are then asked if this is the FINAL decode.  You
+can, if you wish, run the file through several different CYPHER programs (e.g.
+CYPH-A and CYPH-B) with different "registers" (see CY-GEN.BA).  Or you may run
+the file through the same CYPHER program using different keywords.  If you do
+run the file through CYPHER several times using different keywords or
+registers, then only the last level of the LAST run-through contains the Final
+Decode, so only type "Y" for the last run-through (which you expect to result
+in the decoded message).
+
+    4)  The next screen consists of a question mark followed by five spaces. 
+Here you enter the first "KEYWORD", which is a NUMBER up to 32766.  The larger
+the number you use, the greater time penalty you'll pay (see RUNNING SPEED
+below).  If you enter a number greater than 32766, then you'll get an "?OV
+Error in 24" message.  Don't worry, just RUN the program again.  As with the
+number of levels, when Decoding you must enter exactly the number that was
+entered when the file was eNcoded.
+
+    5)  You will then see a screen with 94 marked spaces and six vertical lines
+which are intended as a visual aid to entering the KEYWORD string.  You can
+choose any combination of up to 254 characters - upper or lower case being
+significant.  Again, if you are Decoding then you must enter the same keyword
+string that was entered when the file was eNcoded.
+
+
+    This may seem complicated, but you'll find that it requires few keystrokes.
+ After the computer has finished, it emits a high-pitched beep and returns to
+the main menu.
+
+
+NOTA BENE:   If the file was run through CYPHER several times, then to Decode
+it you've got to reverse the order it is run through.  For instance:
+
+                program   FINAL Decode?   levels   key-1   key-2
+                -------   -------------   ------   -----   -----
+To eNcipher: 1) CYPH-A                      6      1234    abc
+             2) CYPH-B                      1      555     Hello
+
+To Decipher: 1) CYPH-B         No           1      555     Hello
+             2) CYPH-A        Yes           6      1234    abc
+
+
+    The more complicated you make the eNcoding process, the more difficult the
+enciphered file will be for others to decrypt.  However, the tradeoff is that
+it will become more time-consuming for _you_ to encipher and decipher.
+
+
+RUNNING SPEED
+
+    As mentioned above, the first "keyword", which is a number, delays the
+program based on the size of the number.  Entering 100 will add around one
+second to the setup time, 1000 will add 14 seconds, 10000 adds 136 seconds, and
+32766 adds 446 seconds.  But the higher the number the more difficult
+decrypting should be.  The remainder of the setup time takes from 10 to 15
+seconds for internal calculations.
+
+    The actual encoding averages about 1185 characters per minute on the Model
+100, or 1125 cpm on the Tandy 200.  Non-final Decodes run at 1040 (M100) or 970
+(T200) cpm; and the Final Decode runs about 835 or 785 cpm.
+
+
+ENCODED FILES
+
+    You should not alter a file encoded by CYPHER.  If the file is sent over a
+network via TELCOM, there likely will be added end-of-paragraph markers and
+possibly spaces and tabs.  Don't worry about any of these when decoding.
+However, when there is some header information such as:
+
+        <
+        Date:   08-Oct-87 08:01 PDT<
+        From:   James A. McGreevy [70206,1115]<
+        Subj:   CYPHER.BA<
+        <
+        <
+
+then the characters MUST be deleted before you can decode the following
+message.  You can paste them temporarily in another file if you want to copy
+them back to the decoded message.  There must be no _characters_ at the
+beginning of the file that were not there when the file was encoded.  However,
+if the file has footer information such as:
+
+        <
+        <
+        <
+        Last page. Enter command<
+        or <CR> to continue! <
+
+deleting these characters is optional as none of the coded message follows and
+thus is not affected.  If you leave them in they will be interpreted as garbage
+at the end of the file.
+
+    --- James A. McGreevy, CompuServe #70206,1115

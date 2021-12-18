@@ -1,0 +1,47 @@
+0 'PWPCH3.DO V4 Woods Martin 01/03/90
+0 'Creates v4.3.4 of PWRMNU.100 and replaces PCH.001 and PCH.002.
+0 '
+0 'Requires PWRHI.CO - see PWRMNU docs.
+0 '
+0 'Features:
+0 'Query before KILL of individual files (but NOT on multiple Kill!).
+0 '
+0 'TRANSFER of .BA,.CO and .DO files with OVERWRITE if needed. Query before OVERWRITE of individual files (but NOT on multiple Transfers!).
+0 '
+0 'Transfer or Kill action is displayed at bottom of screen.
+0 '
+0 'F7 key is labeled Disk and will always invoke disk menu when pressed    (except when More is displayed for full disks). The F1 Alt key works as before.
+0 '
+0 'Pressing Enter will RUN selected .BA program directly.
+0 '
+0 'To make the patch:
+0 '     Name this file PWPCH3.DO
+0 '     Enter BASIC
+0 '     Use <F2> to LOAD "PWRMNU.BA"
+0 '     Type: MERGE"PWPCH3.DO" <CR>
+0 'At the 'OK' prompt, return to the
+0 'main Menu, and the change will be
+0 'in place.
+0 '
+0 'PWRMNU.100 by Wilson Van Alst
+1 'v4.3.4  (c)1988   [76576,2735]
+2 'All rights reserved
+3 'Requires POWR-DOS and PWRHI.CO
+4 'Includes Patch 3.4 (WM 01/03/90)
+8 GOSUB38:PRINT@245,A;H"V:"Z;H"Y' Alt  View Lpt  Xfer Kill Name Disk Menu":IF64ANDX(4)THENPRINT@310,H"pMore"H"q
+10 GOSUB33:GOSUB30:PRINT@265,H"KFile:"Z
+11 KEYON:T=-1:ONKEYGOSUB20,14,18,18,18,15,16,17:A=INKEY$:IFA=""THEN11ELSET=ASC(A):GOSUB33:IFT=5THENGOSUB40:GOTO21ELSEIFT=20THENGOSUB39ELSEIFT=13THENIFM=98THENCLS:PRINTH"W":RUNFELSE9
+12 IFT=21THENFORP=0TOQ-8STEP8:PRINT@P," ":NEXTELSEP=P+8+16*(T=29)+48*(T=30)-32*(T=31)
+16 IFX(5)THENIF64ANDX(4)THENPOKE-2217,0:CLS:W=W+60:CALL-547,,-2312:GOTO8ELSERUN7ELSE20
+18 L=PEEK(-104):X(4)=X(4)XORL:FORI=0TOQSTEP8:IFPEEK(S+I)-62THENNEXT:GOTO41ELSEFORK=2TO4:IF(2^K)ANDLTHENFORU=0TO4:PRINT@279+5*K+U,;:CALL17786:NEXT
+22 GOSUB30:X3=X(3):IFX(3)<128THENX(3)=X(4)AND28OR128:GOSUB33
+26 DATA13,,49,,50,,78,,85,,82,6:RESTORE:FORJ=75TO86:READV:POKE-J,V:NEXT:PRINT@240,H"JXfer "F;:IFI=3THENIFX(5)THENLOADMF,FELSESAVEM(":"+F)
+27 IFI=4THENPRINTH"lKill "F:KILLF
+29 CALL26041:IFERR=67THEN42ELSECLS:BEEP:PRINTERR;:ONERRORGOTO0
+30 N=P/4+W:Z=PEEK(N)+256*PEEK(N+1):IFX(5)THENF=":"ELSEF="
+39 PRINT@P,CHR$(PEEK(S+P)XOR30):RETURN
+41 IFX(4)AND16THENA="Kill ":GOSUB45:IFITHENRUN7ELSE22ELSEGOSUB39:GOSUB33:GOTO22
+42 IFX(5)THENF=MID$(F$,2)ELSEF=":"+F
+43 IFT=-1THENA="Overwrite ":GOSUB45:IFITHENX(3)=128:RESUME23
+44 GOSUB33:X(3)=X3:GOSUB40:I=4:RESUME26
+45 BEEP:PRINT@280,H"K"A;F" Y/N? ";:I=ASC(INPUT$(1))AND95XOR89:RETURN

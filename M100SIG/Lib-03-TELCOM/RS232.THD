@@ -1,0 +1,167 @@
+RS232.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The Model 100 is well suited for interfacing with external devices via its
+RS-232 port.  One user ahs a need to use his for controlling and monitoring
+the status of his scanning radio.  This THD file contains messages relating
+to this application.
+
+Message range: 168226 to 168432
+Dates: 4/27/88 to 5/3/88
+
+
+Sb: #Model 100 Serial Port
+Fm: Bill 73145,115
+To: All
+
+Does anyone know how to access the control lines attached to the serial port,
+ie DTR/CTS, etc?  Need to connect to scanning radio..... [message
+incomplete].
+
+
+Fm: Tony Anderson 76703,4062
+To: Bill 73145,115
+
+Your message was incomplete, but obviously you don't mean accessing the control
+lines by putting a DB-25 plug in the socket and connecting wires to it. Wanna
+try again, outlining what you did mean, so we can get a shot at it.
+
+
+Fm: Alan Rowberg 76703,4421
+To: Bill 73145,115 
+
+  It sounds like you would like to write a program to set DTR, CTS, etc. on
+your model 100 port so your program will control an external device.  True? Can
+you program in Assembler, or will you program in Basic?
+  Are you a wiz at UART programming or a novice?  Or were you just asking how
+to build a cable and you did not know that DTR is pin 20 and RTS is 4. These
+are the 2 status pins set by the M100 when you go into telcom.
+
+
+Fm: Bob Andersen 70526,1233
+To: Bill 73145,115 
+
+Subroutine that I wrote to control Model 100 Serial Port lines DTR and RTS:
+
+       Where  IP is a value from 1 to 4.   The subroutine
+       sets the ports as follows:
+               IP      DTR     RTS
+               ---     ---     ---
+               1       +5v     +5v
+               2       -5v     +5v
+               3       +5v     -5v
+               4       -5v     -5v
+
+       3000 'subroutine to set DTR and RTS
+       3005 'IP is the input parameter
+       3010 PB=INP(186)AND63
+       3015 'READ PORT 186 AND MASK DTR
+       3020 'AND RTS VALUES TO ZERO
+       3030 PP=(IP-1)*64
+       3035 'SET NEW VALUES OF RTS AND DTR BITS
+       3040 OUT186,PB OR PP
+       3045 'SEND THE NEW BITS OUT
+       3050 'BUT DON'T DISTURB OTHER BITS
+       3060 RETURN
+
+An example of its use:
+
+       To set DTR high and RTS low ...
+
+       10 IP = 3 : GOSUB 3000
+
+This has been used succesfully to run a multiplexed test fixture where DTR and
+RTS where normally unused. In BASIC, OPEN"COM ... and CLOSE routines will
+affect the values on these lines. Printing characters to the serial port does
+not affect their value.  So, if you open a comm port, make sure you reset these
+lines for your own purposes, and that nothing bad happens while the lines are
+changing state.
+
+
+Sb: #re my m100 232 ctl lines
+Fm: Bill 73145,115
+To:  76703,4062 
+
+Many tnx for your prompt reply, tony. As you can tell, i'm new to this system
+although i have been a cis member for a long time. What i wanted to do was to
+read the status lines coming in to the serial port on my m100 and determine
+when they are high/low. I've connected the m100 to my scanning radio and set
+the freq's via its serial port. It works ok. The scanner raises one of the two
+control lines back to the m100 when it has locked on to a station, ie broke
+squelsh, I need to determine how to read the two INPUT lines to the m100.  Many
+thanks again for your help. Best regards, Bill .
+
+
+Fm: Bill 73145,115
+To:  76703,4421 
+
+What i am trying to uncover is the port (memory?) address for the control
+lines coming back into the m100's serial port. I have connected the m100 to
+my scanner to control its freq selection and it works. The scanner sends
+back a high on one of the 232 ctl lines when it has a station, ie the
+squalsh is broken. I need to be able to detect the line going high/low to
+complete the program. I don't have a tech ref manual for it( is there one
+avail?) Once again, thanks for your prompt reply.  Best regards, Bill...
+
+
+Fm: Bill 73145,115
+To:  70526,1233 
+
+That is almost what i needed. Instead of SETTING the lines, I need to READ
+the state of the other two INPUT lines. I am a very experanced assem & 'C'
+programmer. I don't have a tech ref manual for my m100 ( does one exist?). I
+am using the m100 to control a scanning radios freq selections and other
+params via the 232 port. It works fine. However, the radio sends back to the
+m100 a dig level on one of the 232's INPUT lines that it is receiving a
+station now, ie breaks the squalsh. Its this that i have to be able to read.
+Bob, once again many thanks for all your help. I was really surprised to see
+a reply at all. As a professional systems developer, i think there must be
+much good info floating arround down here. I'll have to check in more often.
+Again thanks and Best regards, Bill Rugg, Cygnus Research Inc.
+
+
+Fm: Bob Andersen 70526,1233
+To: Bill 73145,115
+
+Glad I could help.   Model 100 tech reference is Radio Shack Cat. No. 26-
+3810. It is complete and includes schematic and parts list.   ~CTS is bit 4,
+and ~DSR is bit 5 of INPUT 187.
+
+
+Fm: Tony Anderson 76703,4062
+To: Bill 73145,115
+
+That's beyond my scope of knowledge, Bill; but I do know that at least one of
+those parameters is capable of beiong read from one of the INP ports. Something
+to do with one of the bits at that port, so it can be tested for by making off
+all bits except the one you want to test for.  Sorry I don't have the exact
+details, but perhaps one of our hardware hackers will know.
+
+There is a neat program in DL7 called INPORT.100, which was written by Peter
+St. Clair, a real hardware hacker nut, who was active here a couple years ago.
+By running that program, you can monitor a port, or group of ports, and watch
+what happens when you do various things, like applying external control
+voltages to the RS-232 lines, etc.  You'd still have to know which port to look
+at, but perhaps you can find it by trial and error, toggling input to the
+RS-232 lines on and off while watching for response from the program.
+
+You might also check the file 100ROM.RC0 in DL8 which provides a lot of port
+information, and also try PORTS.100 and PORTS.USE, also in DL8.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Bill 73145,115
+
+   Just out of curiosity, what kind of scanning radio do you have?  One
+equipped with an optional RS232 interface?  Or have you managed to hack same?
+If the latter, I'd like to hear more!
+
+
+Fm: Bill 73145,115
+To:  70526,1233
+
+Many thanks. You hit my needs right on the head. I can now do what I have
+to with the scanner. Much appreciated. Hope I can help someone out somewhere
+along the way.

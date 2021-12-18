@@ -1,0 +1,46 @@
+ZBGTIP.DOC
+
+George W. Flanders
+[73300,2272]
+
+	I have been working (often struggling) with Radio Shack's ZBGASM.CO 
+Model 100 assembler for some time, and have found that one annoying aspect of 
+the program is its requirement that text strings be enclosed by delimiters; and,
+if you follow the RS's sample, when the string is to be printed one is told to 
+utilize a counter register to terminate a printing loop you can write yourself.
+	That might be good practice, but it makes for additional and unnecessary
+coding. In addition to some other ROM routines which print a buffer until they 
+encounter a null, a routine starting at 27B1H (10161D) has been reported by 
+Robert D. Covington in his ROM disassembly on the SIG. It prints the buffer 
+pointed to by HL until it encounters a null _OR_ CHR$(34) ("). This information 
+allows us to simply add end quotes to the string inside the closing delimiter, 
+thereby avoiding the need to store a null at the end of each string (or using up
+precious bytes with a silly counter/print loop).
+	Formerly, a string in ZBGASM format might have looked like this:
+	GRTNG:	DC	\Hello\
+and we would have had to load a counter register with 05H when printing the 
+string. Now, we can simply add the quotes:
+	GRTNG:	DC	\Hello"\
+point HL (LXI H,GRTNG or any other symbol we'd like to use), and call 27B1H when
+we're ready to print the string. This may not seem like a big deal, but it saves
+bytes and trouble.
+	Interestingly enough, this works in BASIC, too, although it's hard to 
+imagine why anyone would go to all the trouble of poking an ASCII string 
+somewhere in memory terminated by a quote and then CALLing it from the program. 
+Anyway, the form would be "CALL10161,0,addr", which loads a null in the 
+accumulator (it wouldn't matter much what you put there) and points HL to the 
+starting address of the string in memory terminated with chr$(34). If you'd like
+to try it, run the following little program:
+	0 A=0
+	1 FORI=57000TO57005
+	2 READD:POKEI,D:NEXT
+	3 POKE63093,A
+	4 CALL10161,0,57000
+	5 DATA72,101,108,108,111,34
+Changing line 0 to read "A=1" makes the output device the printer (1) instead of
+the screen (default=0). Obviously, in machine code you could change the output 
+device the same way:
+	MVI	A,01H
+	STA	0F675H
+before calling the routine.
+

@@ -1,0 +1,144 @@
+FORTH2.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+More messages on the subject of FORTH for the Model 100.  Continued sallying
+forth, from the messages in FORTH.THD
+
+Message range: 177321 to 177398
+Dates: 12/2/88 to 12/4/88
+
+
+Sb: Forth
+Fm: Bill Brandon [DPTRAIN] 76701,256
+To: SCOTT T. SCHAD 73720,1166
+
+Found a better floating point implementation for FORTH over on Dr. Dobbs
+Journal, Library 6. The file is ZENFP.something - seems to be public domain
+stuff, too.
+
+
+Fm: SCOTT T. SCHA 73720,1166
+To: Bill Brandon [DPTRAIN] 76701,256
+
+I seem to recall that.  It was printed in their (DDJ's) first Toolbox of Forth
+book.  I'll check it out, and thanks for the tip. <STS>
+
+Sb: TIP005.4TH
+Fm: Bill Boyd 75715,70
+To: Bill Brandon [DPTRAIN] 76701,256
+
+I still can't understand why you needed the 4227 CALLX.  I took it out of mine,
+and it ks just fine!  The RST 4 sends the character in register A (which is
+not specified in a CALLX) to the screen, printer, or device, as you know.  It
+is the heart of the Forth word EMIT, which is called, of course, by VLIST at
+some level.
+
+By the way, congratulations on figuring out CALLX without documentation. I am
+surprised to hear that you are a newcomer to Forth; you seem to be doing quite
+well at it.
+
+
+Fm: Bill Boyd 75715,70
+To: Bill Brandon [DPTRAIN] 76701,256
+
+I was surprised that CTRL-P would be slow, so I tried it.  I believe the
+underlying problem is that the screen of the Model 100 is so slow that the
+printer winds up waiting for it!  At least my Okidata 92 does. So you get
+penalized because the output is also being sent to the screen!
+
+I think you'll discover that one of the current weaknesses of RAM4TH that it
+provides no way to write to a file.  OPENF opens a file only for read
+The ability to write files is an enhancement that I would like to add
+"someday."
+
+I want to thank you and Scott for your appreciation of RAM4TH.  I was about
+ready to sell my Model 100, but I'm having a lot of fun going back and forth
+with you two.
+
+
+Fm: Bill Brandon [DPTRAIN] 76701,256
+To: Bill Boyd 75715,70
+
+Worked ok without it, eh? Gee, I think my machine and I are going to have a
+little talk ...
+
+As to figuring out CALLX, that was only a matter of reading your files and
+seeing what you did with it. But thanks for the kind words!
+
+
+Fm: Bill Brandon [DPTRAIN] 76701,256
+To: Bill Boyd 75715,70
+
+Writing to a file would probably have to be one of those "machine-peculiar"
+pieces of work. Maybe would be invoked by the same words as in other FORTHs,
+but those words would be defined in m/l like other primitives. The functionse pretty well defined for the 100's ROM - will let you know when I have built
+my versions of them (if they don't vaporize my PCB!). I need to do this anyway
+for my projects, so might as well get started. Hey, what else are weekends for?
+Maybe I can do it sitting in the stands waiting for my kid's game to start
+tomorrow ... (That's the other thing I love about the 100 - ya can't do that
+with a PC!!!)
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Bill Brandon [DPTRAIN] 76701,256
+
+I seem to recall that.  It was printed in their (DDJ's) first Toolbox of Forth
+book.  I'll check it out, and thanks for the tip. <STS>
+
+
+Fm: Bill Boyd 75715,70
+To: SCOTT T. SCHAD 73720,1166
+
+My opinion:  In a machine like the Model 100 which has small RAM and math
+already built into the ROoutines in ROM.  I just can't keep up with
+you guys:  I have some math stuff like in the HP-71B, and there are some hooks
+in RAM4TH for it.  It's based on the TIP file Bill mentioned.  I have a display
+formatter that looks like what you get on an HP calculator, even down to having
+an ENG mode.  Should I just upload that without documentation (you guys don't
+seem to need explanations anyway)?
+
+One hint:  when you type in a number with a decimal point, it is interpreted as
+floating point, not doublouble numbers have commas in RAM4TH.
+
+
+Fm: Bill Boyd 75715,70
+To: Bill Brandon [DPTRAIN] 76701,256
+
+I have been thinking about file I/O, and I would like to have some input into
+the subject of reading and writing files.  Along the lines of MS-DOS, if you'll
+pardon me, or Pascal, I think there should be a "handle" associated with each
+file.  BASIC does this by file number. Anyway, I would want a varble
+containing the file number.  Then, things would work this way:
+
+1) Declare a variable for the "handle":  0 VARIABLE OUTFILE
+2) Open for writing:                     " FILENAME" OUTFILE REWRITE
+(REWRITE is from Pascal; I borrow whatever I like.)  REWRITE would find an
+available buffer (you don't have to decide which) and store its number into
+OUTFILE.
+3) Write lines, using:                   " STRING" OUTFILE WRITELN
+(WRITELN is also from Pascal.)
+4) When you're done:                     OUTFILE CLOSEF
+
+I'm telling you this because this fits in well with thoughts I've had about how
+I'd like to change file input in RAM4TH.  I put in file input so I could load
+from a file; I thought one possibility would be to have a file including words
+for file output, as discussed above. What do you think?
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Bill Boyd 75715,70
+
+Such a deal you make for us!  I think it is you rather me that is always one
+jump ahead.  Anything I think up to include in Boyd-Forth has alreadly been
+stashed there by its creator! <STS>
+
+
+Fm: Bill Brandon [DPTRAIN] 76701,256
+To: Bill Boyd 75715,70
+
+Bill, I'm thinking along somewhat the same lines. In  day or two, I'll
+run some specific thoughts for words to manage file i/o by for your comments
+and Scot's. Basically, what I want is the ability to read and write files to
+and from any device - the only way to cope with the limited RAM in the 100.

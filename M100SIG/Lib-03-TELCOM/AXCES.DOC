@@ -1,0 +1,33 @@
+AXCES.DOC - Documentation for AXCES.TTT   (2/24/84)
+
+AXCES.TTT is a code which searches the user's ADRS.DO file for alternate 
+Compuserve phone numbers, displays the numbers for user selection, and rebuilds 
+the 'cisp' entry in the ADRS.DO file to incorporate the selected number.  The 
+code also permits automatic execution of another program on completion.
+
+The code initially selects the user's phone and access number from an entry in 
+the user's ADRS.DO file identified as 'cisp'.  A typical 'cisp' entry is:
+
+  cisp:phone<=^C?Iidnumber^M?Ppassword^M?!PRO^M?K>:
+
+    The 'phone', 'idnumber', and 'password' are configured to contain the user's
+information.  The 'PRO' entry is used to access the programming area by other 
+codes.
+
+The 'cisp' phone number (but only the phone number) is displayed for the user, 
+who then is given two choices: use this number, or select an alternate number.  
+If selection of an alternate number is chosen, AXCES searches the user's ADRS.DO
+file for alternate numbers identified as 'CSIS', such as:
+
+    CSIS   San Francisco,CA :9564191:
+
+Both the city designation and the number are displayed for the user's choice.  
+When an acceptable alternate is selected, AXCES rebuilds the ADRS.DO file to 
+include the choice in the 'cisp' entry.
+
+When the initial number is selected, or an alternate choice is included in 
+ADRS.DO, AXCES allows the user to go directly to the execution of another code, 
+or (for no entry), to the MENU.     AXCES.TTT is utilized by other codes: 
+GMAIL3.TTT, FILGET.TTT, FILCOP.TTT, and GETSIG.TTT).  Documentation for these 
+codes is contained in GMAIL3.DOC, FILGET.DOC, FILCOP.DOC, and GETSIG.DOC.
+

@@ -1,0 +1,44 @@
+;WRAPXU.SRC
+;Copyright 1988 by James Yi
+;NoWrap.200 modified to run as XOS utility.
+;Runs in altLCD
+
+BEEP	EQU	4F45H
+PRINTC	EQU	679EH
+INPUT	EQU	54F0H
+GETLEN	EQU	2D43H
+GETFNM	EQU	5ACAH
+FINDDO	EQU	2BBDH
+filnum	equ	63560
+filtbl	equ	63433
+lefd2	equ	$efd2
+l7324	equ	$7324
+
+;Upon entry, the selected file must be in FILNUM as a number.
+;get file's directory slot
+	lda	filnum	;get N
+	rlc
+	mov	e,a
+	mvi	d,0
+	lxi	h,filtbl
+	dad	d	;point to Nth
+	xchg
+	lhlx
+;HL=directory
+;check if DO file
+	xchg
+	ldax	d
+	ani	$f0
+	cpi	$c0	;DO?
+	jnz	beep	;error-exit
+;get its address
+	inx	d
+	lhlx
+;HL=text file begin
+;Last part of NOWRAP code:
+	push	h
+	lxi	h,0
+	shld	lefd2	;?
+;make mod here
+	xra	a	;wrap flag off(MVI A,1=wrap flag on)
+	jmp	l7324	;back to ROM

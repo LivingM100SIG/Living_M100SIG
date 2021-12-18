@@ -1,0 +1,57 @@
+10 CLS
+20 PRINT"Loan amortization version 2.0"
+30 PRINT"By Jim Gerritz & Phil Estrem"
+35 '4111 S. Eliot St. Sheridan,Co 80110
+40 FORD=1TO1500:NEXTD:CLS
+42 CLS:PRINT"PD=Payment date. IP=Interest paid"
+44 PRINT"PP=Principle paid. RP=Remaining"
+46 PRINT"principle."
+48 INPUT"Press enter to continue";XX$
+49 CLS
+50 AT=0:LC=0:AM=0:ZZ=0
+60 PN=1:PA=1
+130 C=0:INPUT"Principle";P
+140 INPUT"Nuber of payments";L
+150 INPUT"nterest rate";R
+160 INPUT"Month of first payment (06)";MM
+165 INPUT"Year of first payment (84)";Y
+190 I=R/12:I=I/100
+200 T=1:FORX=1TOL
+210 T=T*(1+I):NEXTX:T=1/T
+220 T=1-T
+230 M=P*I/T
+240 M=INT(M*100+.5)/100
+241 CLS
+242 PRINT"Your monthly payment is ";:PRINTUSING "$$######.##";M
+245 INPUT "Press enter to continue";XX$
+250 GOSUB 600
+260 FORZ=1TOL
+270 IFC<5THEN300
+290 INPUT"Enter to continue";ZZ$:C=0:GOSUB600
+300 A=(INT(P*I*100+.5))/100
+310 B=M-A
+320 IFB>PTHENM=A+P
+330 IFB>PTHENB=P
+340 P=P-B:P=INT(P*100+.5)/100
+350 IFP<1THENB=B+P:IFP<1THENM=M+P:IFP<1THENP=0
+360 PRINT USING"##";MM;:PRINT"/";Y;
+365 PRINTTAB(1)
+380 PRINTUSING"$$####.##";A,
+385 PRINTTAB(12):PRINTUSING"$$####.##";B;
+390 PRINTTAB(19);
+395 PRINTUSING"$$######.##";P
+450 AM=AM+A:LC=LC+1
+460 PN=PN+1
+470 MM=MM+1:IFMM=13THENGOSUB820
+510 AT=AT+A
+520 C=C+1:NEXTZ
+530 GOSUB820
+540 PRINT"Total interest paid ";:PRINTUSING"$$#######.##";AT
+599 PRINT"Any more":INPUT ZZ$:IF ZZ$="y"THEN42 ELSE MENU
+600 CLS
+610 PRINT" PD        IP        PP        RP"
+810 RETURN
+820 PRINT"Interest paid in ";Y;"  ";:PRINT USING "$$####.##";AM
+890 AM=0:MM=1:Y=Y+1
+895 IFY=100 THENY=0
+900 RETURN

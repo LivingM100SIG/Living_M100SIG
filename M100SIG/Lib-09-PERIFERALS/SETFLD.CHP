@@ -1,0 +1,51 @@
+	Changing CDOS Folders from BASIC
+	I recently saw a request from a SIG member for a program that changes
+folders from within BASIC.  I agree that it should be possible to perform a
+statement such as
+
+10 OPEN "folder1:folder11:MYFILE.DO" FOR OUTPUT AS 1
+
+from BASIC.  Well, you can't. Therefore, from the kindness of my heart (doesn't
+it worry you when people do things "from the kindness of their heart"?) I have
+written this BASIC program that allows you to change folders.  Most
+programmers advanced enough to have the problem in the first place should be
+able to figure the code out, if not just leave me a message.
+
+10 MAXFILES=2:DEFINT I:DIM I(7),IP(1),FL(63)
+20 FOR X=0 TO 7:READ I(X):NEXT
+30 PC=0:Y=0:T=0:S=0:L=0:C=0:RD=1:WR=2:AT=-5947:FL=0:CL=0:IP=0:I=0
+100 CLS:PRINT@48,"1) Find directory			2) Set directory			3) Make directory			4) Kill directory			Q) Quit"
+105 I$=INKEY$:IF I$="" THEN 105 ELSE I=VAL(I$):IF I$="Q" OR I$="q" THEN MENU ELSE IF I<1 OR I>4 THEN BEEP:GOTO 105 ELSE ON I GOSUB 110,120,
+110 INPUT"Folder";F$:GOSUB 1100:IF CL THEN PRINT"Cluster"CL ELSE PRINT"Not found"
+111 RETURN
+120 INPUT"Folder";F$:GOSUB 1100:IF CL THEN POKE 58138,PC:POKE 58139,CL ELSE PRINT"Not found"
+121 RETURN
+130 PRINT"This section not done":RETURN
+140 PRINT"This section not done":RETURN
+900 IP(0)=L:IP(1)=T*256+S
+910 CALLVARPTR(I(0)),C,VARPTR(IP(0)):RETURN
+920 DATA 9054,9046,24277,22051,20449,17151,24026,-14076
+1010 'Read a folder to array FL
+1011 T=INT(CL/3):S=(CL MOD 3)*6+1:C=RD:L=VARPTR(FL(0)):GOSUB 900:S=S+2:L=L+256:GOSUB 900
+1015 IF PEEK(AT)<>240 THEN PRINT"ERROR.  Wrong version of CDOS":STOP ELSE RETURN
+1100 'Find directory.
+1101 'Enter F$=pathname of folder
+1102 'Exit CL=cluster of folder, 0 if not found
+1110 CL=0
+1120 PC=CL:GOSUB 1010:I=INSTR(F$,":"):IF I THEN FL$=LEFT$(F$,I-1)+SPACE$(9):F$=MID$(F$,I+1,LEN(F$)) ELSE FL$=F$+SPACE$(9)
+1130 CL=0:L=VARPTR(FL(0)):GOSUB 1140:IF CL=0 THEN L=L+256:GOSUB 1140
+1135 IF I THEN 1120 ELSE RETURN
+1140 FOR X=1 TO 12:IF PEEK(L+X*18)=0 THEN NEXT X:RETURN
+1150 FOR Y=1 TO 9:IF PEEK(L+X*18+Y)<>ASC(MID$(FL$,Y,1)) THEN Y=10:NEXT ELSE NEXT Y:CL=PEEK(L+X*18+11):X=12
+1160 NEXT X:RETURN
+
+
+	For an example of how the code would look, I wrote a program that will
+open two files, each in a separate cluster, and write to each file in turn.
+
+
+40 F$="folder1:folder11":GOSUB 80:OPEN "0:FILE1" FOR OUTPUT AS 1
+50 F$="folder3:folder31":GOSUB 80:OPEN "0:FILE3.DO" FOR OUTPUT AS 2
+60 FOR X=1 TO 100:PRINT#1,"this is one. ";:PRINT#2,"This is three.";:NEXT:CLOSE
+70 END
+80 GOSUB 1100:IF CL THEN POKE 58138,PC:POKE 58139,CL:RETURN ELSE PRINT"not found":STOP

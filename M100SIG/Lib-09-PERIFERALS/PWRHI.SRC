@@ -1,0 +1,234 @@
+; PWRHI.SRC  (c)9/5/88  
+; Wilson Van Alst 76576,2735
+;
+; RAM and TDD file directory display
+; and file size information, for use
+; in conjunction with call from a BASIC
+; program.  This code is specifically
+; tailored for PWRMNU.100, a menu
+; utlity program to be used with POWR-
+; DOS by Acroatix.
+;
+;>>M100 rom routines and addresses:
+lcdto0	equ	10161
+csrhom	equ	23914
+csrpos	equ	63033
+usrfil	equ	63930
+inxfil	equ	8405
+bufout	equ	28210
+bufget	equ	28030
+filadr	equ	23267
+costat	equ	160
+bastat	equ	128
+dostat	equ	192
+lcdb	equ	7136
+basize	equ	1523
+dosize	equ	27437
+movdh	equ	13417
+mov0s	equ	20234
+file1	equ	64659
+;
+;>>program-defined addresses and buffers:
+;
+sizbuf	equ	63140
+nambuf	equ	sizbuf+82 ;=63222
+flgbuf	equ	nambuf+82 ;=63304
+devflg	equ	63320
+cmdflg	equ	63319
+subflg	equ	63318
+secflg	equ	63317
+linflg	equ	63315	;2-byte flag
+;
+;
+;>>initialize
+;
+	ORG	64704
+;(	mov	m,a	;this instruction at the top could be used
+;for loading device flag and directing
+;program to either ram or disk routines
+;from BASIC.  the BASIC call would be:
+;CALL64704,x,yyyyy, where x=0 for ram
+;or 255 for disk and yyyyy=devflg)
+;
+start	lxi	h,sizbuf ;put index 
+	shld	sizbuf	 ;addresses
+	lxi	h,nambuf+2 ;in size &
+	shld	nambuf	 ;name buffers
+	mvi	b,96	 ;put 0's in
+	call	mov0s	 ;name & flag
+			 ;buffers, up
+			 ;to but not
+			 ;including
+			 ;device flag
+;
+;>>device select
+; (at the end of the last routine, A=0
+;and HL->device flag)
+;
+	cmp	m	
+	jnz	dskorg
+;
+;>>RAM file routine
+ramorg:	lxi	h,usrfil-11
+allfil:	call	inxfil
+	jz	exit
+	mov	a,m
+	ani	00011000B
+	jnz	allfil
+	mov	a,m
+	push	h	;stk1->statbyte
+	call	filadr	;setHL=start adr.  DE->statbyte+2
+	push	d	;stk2->statbyt+2
+	cpi	costat
+	jz	cosize
+	push	h	;stk3=start adr
+	cpi	dostat
+	cz	dosize
+	cpi	bastat
+	cz	basizr
+	pop	b	;BC=STK3=start adr
+	dsub	b	;HL=HL-BC=size
+coret	call	store
+	pop	h	;HL=STK2->statbyt+2
+	call	displa
+	pop	h	;HL=STK1->statbyte
+	jmp	allfil
+;
+cosize	inx	h
+	call	filadr
+	lxi	b,6
+	dad	b
+	jmp	coret
+;
+basizr	call	basize
+	dcx	h
+	ret
+;
+displa	inx	h	;HL->file name
+	mvi	a,32
+	rst	4
+	mvi	b,6
+	call	lcdb
+	ora	m
+	rst	4
+	ret
+;
+store	xchg		;DE=size
+	lhld	sizbuf	;HL=last used
+	inx	h	;increase
+	inx	h	;  it
+	shld	sizbuf	;set new slot
+	xchg		;HL=size. DE=new space
+	shlx		;store HL in DE
+	ret
+;
+exit	lhld	csrpos	;where's cursr?
+	dcr	l	;make it like
+	dcr	h	;POS & CSRLIN
+	shld	linflg	;store it
+	jmp	csrhom
+;
+;===============================
+;
+;>>>>>DISK routine 
+;
+;>>send disk query:
+;
+dskorg	lxi	h,data1
+	call	sendit
+	mvi	b,24
+	mvi	a,32
+spacer	call	bufout
+	dcr	b
+	jnz	spacer
+	lda	secflg
+	ana	a
+	lxi	h,data2
+	jz	firstx
+	lxi	h,data3
+firstx	call	sendit
+;
+;>>get disk response
+;
+	mvi	b,3
+	call	getem
+	ana	a	;is it 0?
+	jz	exit	;yes, end
+	lxi	h,file1
+	mvi	m,32	;start with space
+	inx	h
+	mov	m,a	;no, tstore
+	mvi	c,5	;get #4-#8
+get5	call	bufget	;and tstore
+	inx	h	;them
+	mov	m,a
+	dcr	c
+	jnz	get5
+	call	bufget	;waste#9
+	call	bufget	;get#10
+	ori	32	;lower case it
+	inx	h	;
+	mov	m,a	;tstore
+	mvi	b,18
+	call	getem
+	mov	h,a	;size lobyte
+	call	bufget	;then 
+	mov	l,a	;size hibyte
+	call	store
+	call	bufget	;then secfree
+	inr	a	;don't want 0
+	sta	secflg
+	call	bufget	;waste #31
+;
+;
+;>decide whether to display or store
+;  file name:
+;
+	lxi	h,file1	;where name is
+	lda	csrpos	;A=cursor row
+	cpi	7	;less than 7?
+	cnc	bufit	;no,store name
+	cc	displa	;yes,show it
+	jmp	dskorg
+;
+;
+getEM	call	bufget
+	dcr	b
+	jnz	getEM
+	ret
+;
+;
+bufit	xchg		;DE->name
+	lhld	nambuf	;HL=last used
+	mvi	b,8
+	call	movdh
+;	mvi	m,0	;shouldn't be needed because area was 0'd at start
+	shld	nambuf
+	lda	cmdflg
+	ori	64
+	sta	cmdflg
+	ret
+;
+;
+sendit	mov	a,m
+	cpi	34
+	rz
+	call	bufout
+	inx	h
+	jmp	sendit
+;
+;
+;
+;
+data1	db	'ZZ',0,26,34
+data2	db	'F',1,158,34
+data3	db	'F',2,157,34
+;
+;===========
+; VERY specific to PWRMNU: 
+;
+morcll	call	lcdto0
+	jmp	exit
+;
+	end
+;

@@ -1,0 +1,66 @@
+                 Detailed Study of Model 100 ROM Hooks
+                 =====================================
+
+Copyright 1986 by Bob Andersen, Micro Analog Associates, Monroe,CT. 06468
+
+Routine RST 7 calls the nth 2-byte address specified in the HOOK table located 
+in RAM, starting at 64218, where 2N is the value of the byte that follows the 
+RST 7 instruction.
+
+This study details the location and nature of all RST 7 instructions within a 
+Model 100 ROM.
+
+Default indicates the action installed by a cold start.  Address 32755 is 
+installed in the HOOK table for RET and 2267 is installed for FC ERROR.
+
+Hook Addr  2N  RST 7 Addr   Default     In Function     (Addr)
+--------- ---- ----------   -------     ----------------------
+
+  64218     0     16643     RET         CLEAR            16633
+  64220     2      7592     RET         MAX(RAM)          7579
+  64222     4      4820     RET         CHGET             4811
+  64224     6      5102     RET         CHSNS             5083
+  64226     8     17175     RET         LCD              19268
+  64228    10      5232     RET         PNOTAB            5232
+  64230    12     19656     RET         INPUT$           20110
+  64232    14     20101     RET         INPUT$(NM ERROR) 20110
+  64234    16     20194     RET         INPUT$           20110
+  64236    18     20510     RET         LINE(NM ERROR)    3141
+  64238    20     19796     RET         CLOSE(IE ERROR)  20008
+  64240    22     19944     RET         SAVE             19919
+  64242    24     19727     RET         OPEN             19659
+  64244    26     19851     RET         LOAD             19824
+  64246    28     19751     RET         OPEN             19659
+  64248    30     19625     RET         EOF(IE ERROR)     6281
+  64250    32     20064     RET         LCD(NM ERROR)    19268
+  64252    34     19992     RET         SAVE(NM ERROR)   19919
+  64254    36     19997     RET         LOAD(NM ERROR)   19824
+  64256    38      6281     RET         EOF               6281
+  64258    40     20597     RET         OPEN             19659
+  64260    42     20627     RET         OPEN             19659
+  64262    44     20643     RET         OPEN(NM ERROR)   19659
+  64264    46     20630     RET         OPEN(NM ERROR)   19659
+  64266    48     20771     RET         OPEN             19659
+  64268    50     21789     RET         TELCOM(TERM-F6)  20806
+  64270    52     21792     RET         TELCOM(TERM-F7)  20806
+  64272    54     22064     RET         TELCOM(TERM-UP)  20806
+  64274    56     24673     RET         TEXT             24046
+  64276    58      7619     FC ERROR    WIDTH             7619
+  64278    60     17226     FC ERROR    LCD              19268
+  64280    62      7760     FC ERROR    SCREEN            7714
+  64282    64  NOT IN ROM   FC ERROR    None
+  THROUGH
+  64294    76  NOT IN ROM   FC ERROR    None
+  64296    78     20587     FC ERROR    LOF              20587
+  64298    80     20589     FC ERROR    LOC              20589
+  64300    82     20591     FC ERROR    LFILES           20591
+  64302    84     20595     FC ERROR    DSKI$            20595
+  64304    86     20593     FC ERROR    DSK0$            20593
+  64306    88      8095     FC ERROR    KILL              8081
+  64308    90      8272     FC ERROR    NAME              8247
+  64310    92      8923     FC ERROR    SAVEM             8908
+  64312    94      9381     FC ERROR    LOADM,RUNM        9361
+  64314    96  NOT IN ROM   (zeroed)    None
+  THROUGH
+  64328   110  NOT IN ROM   (zeroed)    None
+

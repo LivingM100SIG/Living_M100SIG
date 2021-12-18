@@ -1,0 +1,31 @@
+10 CLS:PRINT:PRINT:PRINT:INPUT"DO YOU NEED INSTRUCTIONS";A$
+11 IF A$<>"Y" AND A$<>"y" THEN GOTO 50
+20 PRINT"DSKCAT.BA Copyright 9/11/89 by Wayne Talbot CIS 70156,1575"
+21 '
+22 PRINT"DSKCAT is used with the Tandy Portable  Disk Drive and POWER-DOS to generate a"
+23 PRINT"disk catalog database file for use with"
+25 PRINT"DBNEW.100. POWER-DOS must be installed  in memory before running this program."
+26 INPUT"PRESS ENTER TO CONTINUE";A$:CLS
+27 PRINT"The program asks for the Disk name and  whether the disk is for Business or"
+28 PRINT"Personal use. It then reads that disk   through POWER-DOS and builds the"
+29 PRINT"database file. The file can then be usedand manipulated through DBNEW.100."
+30 INPUT"PRESS ENTER TO CONTINUE";A$
+50 MAXFILES=2:OPEN"DSKCAT.DO"FOR OUTPUT AS 2
+60 PRINT#2,"Filename,Type,--Length--,---Disk Name---,Personal"
+70 PRINT#2,",,,,"
+80 PRINT#2,",,,,"
+90 PRINT#2,",,,,"
+100 CLS:PRINT"Disk catalog program."
+110 PRINT"Type 'END' to exit program"
+111 INPUT"What is this disk name";A$
+112 INPUT "Is this (P)ersonal or (B)usiness";C$
+113 IFLEFT$(C$,1)="P"THEN C$="P"ELSEC$="B"
+115 IF A$="END"THENKILL"TEMP**.DO":GOTO 190
+120 LFILES TO "TEMP**.DO"
+130 OPEN"TEMP**.DO" FOR INPUT AS 1
+150 INPUT#1,B$
+155 IFEOF(1)THENCLOSE#1:GOTO100
+160 PRINT#2,LEFT$(B$,6);",";MID$(B$,7,3);",";RIGHT$(B$,8);",";A$;",";C$
+180 GOTO150
+190 MENU
+

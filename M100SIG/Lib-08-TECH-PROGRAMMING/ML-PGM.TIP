@@ -1,0 +1,133 @@
+          ML-PGM.TIP  by Paul Globman
+              Copyright (c) 1990
+          ---------------------------
+
+I believe that over time, most assembly language programmers develop their own
+handy little routines, to do one thing or another.  I would like to share a
+couple of tips that I often use, which will save a few bytes in your program,
+and make your program run faster, and safer.
+
+TIP #1
+------
+Assembly language programs must leave no stones unturned, and the programmer is
+responsible for considering every possibility that the program might encounter.
+This includes errors, subroutine re-direction, and stack manipulation.
+ 
+The Model 100 ROM operating system is very capable of managing free RAM,
+allocating file buffers for BASIC programs, and maintaining the computers
+"stack area".  Most assembly language programs assume that the stack is
+properly positioned and make no attempt to alter or relocate the stack.
+ 
+This is common and not incorrect in the Model 100 environment, but depending
+upon the program, the stack could become larger than expected, and run into an
+area of memory that should not be used.  Here's an example of how this could
+happen... consider this program...
+
+begin:	call display
+	call get_input
+	call function
+	jmp begin
+
+Now suppose you are in the middle of the "function" routine, and you discover
+the input is not valid. You wish to send the user a BEEP, and start over again.
+Since you got to the "function" routine via a CALL, the stack is holding the
+return address of the call.  So a simple BEEP and return will not restart the
+program, and a BEEP with a JMP BEGIN will leave the stack with the previous
+CALL's return address still on the stack.
+
+You could have an error routine and JMP ERROR.  The error routine could pop the
+unwanted address off the stack, BEEP and JMP BEGIN, for example...
+
+error:	pop h
+	call beep
+	jmp begin
+
+This type of error trap is okay, but the POP H instruction requires that ERROR
+should only be jumped to when only one CALL instruction has been executed.
+Very often programmers write all their routines as subroutines.  So routine #1
+will call routine #2, which calls routine #3, which encounters an error.  Now
+the above ERROR routine will not solve the problem of keeping the stack
+balanced ("balanced" means a RETURN for every CALL and a POP for every PUSH).
+If this happens frequently in a program, the stack pointer can quickly run down
+into an area of memory containing data or programs, and cause program
+malfunction, destroyed files and programs, or even cold starts.
+ 
+Here's how to ensure stack balancing, regardless of how many nested CALLS, or
+unmatched PUSHes you have executed.  You can break out to an error routine
+without concern of stack pointer housekeeping.
+ 
+start:	lxi h,0
+	dad sp
+	shld begin+1
+;
+begin:	lxi sp,0
+	call display
+	call get_input
+	call function
+	jmp begin
+;
+error:	call beep
+	jmp begin
+
+By executing the three instructions before BEGIN, you ensure that every time
+you JMP BEGIN the stack pointer is reset.  This is done by making the first
+instruction of BEGIN restore the stack pointer to its original value.  You can
+JMP ERROR (or JMP BEGIN) at any time without concern about CALLs, PUSHes, or
+stack balancing.
+
+I would also point out that this technique can be used more than once within
+a single program, thus restoring the SP register to what it should be at
+different parts of the program.  This will allow the program to freely abort
+subroutines when necessary, and spare the programmer the need to write special
+"housekeeping" code for each aborted subroutine.
+
+
+TIP #2
+------
+Very often the assembly language programmer will use DB and DW statements to
+Define Bytes or Define Words (word = 2 bytes).  This is a common way for one
+part of a program to pass a value to a subroutine, for example...
+
+main:	sta value1
+	shld value2
+	call sub1
+	 .
+	 .
+
+sub1:	lda value1
+	lhld value2
+	 .
+	 .
+	ret
+
+value1:	db 0
+value2:	dw 00
+
+In the above listing, the main program stores A and HL in the data storage
+areas, value1 and value2.  Then a subroutine that needs those values will get
+them from the storage area, and use them as needed.
+ 
+Now consider this alternative...
+
+main:	sta sub1+1
+	shld v2+1
+	call sub1
+	 .
+	 .
+
+sub1:	mvi a,0
+v2:	lxi h,0
+	 .
+	 .
+	ret
+
+Note that the main program stores the A and HL values directly into the operand
+address of the instruction designed to retrieve those values.  This eliminates
+the need to allocate space for the variables, and "immediate" instruction (MVI
+and LXI) executes much faster than its "reference" counterpart (LDA and LHLD).
+You save bytes and have a faster running program!
+
+I've been using these programming techniques for some time now, and I'm sure
+they will be useful to the experienced (as well as the novice) assembly
+language programmer.
+

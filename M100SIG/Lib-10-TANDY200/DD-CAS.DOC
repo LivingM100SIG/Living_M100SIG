@@ -1,0 +1,293 @@
+         DD-CAS.DOC (C)1989, Randy Hess
+          Documents DD-CAS.200 (DL-10)
+          ----------------------------
+
+    DD-CAS.200 links two powerful T200 programs: POWR-DISK, and CASUTL.200.
+POWR-DISK is the DOS of choice for T200/TDD1 users, and CASUTL.200 is James
+Yi's remarkable cassette file management tool.
+    Disk users often forget that disks are vulnerable to a variety of errors
+that don't faze tape; hence the extensive use of tape backup systems in
+complex data systems.  But OUR cassettes aren't as perfect as we'd like:
+they're relatively "slow" and can be "finicky" if the tape or drive is
+misadjusted.  More than once, though, I've discovered the hard way that speed
+is relative: 25 minutes to reload a set of cassette files can be very "fast"
+compared to re-writing or re-downloading all the info on a trashed disk!
+
+    DD-CAS was written to improve both the "speed" and "predictability" of
+TAPE/DISK storage.
+    - By automating the disk-tape-disk transfer process it permits "hands-off"
+      backup and recovery of an entire disk-full of information. (Start it and
+      take a nap.)
+    - BA and CO files are automatically copied twice to the tape.  This is not
+      necessary for DO files because CASUTL's Verify routine lets you recover
+      text info that might otherwise be unreadable.
+
+    DD-CAS is "friendly" but depends on both POWR-DISK and a properly
+relocated version of CASUTL to work: PLEASE read all of this file BEFORE
+running any code.  It will save you time, temper and FILES!
+
+            SET-UP ------
+
+    Download DD-CAS.200 and CASUTL.200 (July, 1989 version) from this Data
+Library.  Checksum both files.  DD-CAS.200 contains TWO programs: DD2CAS.BA
+and CAS2DD.BA.  Separate them and convert to BASIC programs.
+
+    Load and run a copy of CASUTL.BA.   When prompted for "End address?",
+answer with 58959.  This will create a version of CASUTL.CO that will run with
+POWR-DISK installed.  RE-NAME this file as CAS-LO.CO and save it somewhere.
+CAS-LO.CO must be on the menu when you run DD2CAS or CAS2DD.  (I suggest you
+also create a copy of CASUTL.CO using 61104 as the "End" address for future
+use by itself: it's THE tape transfer utility!)
+
+    If you don't already have POWR-DISK in your machine, you should read
+PDSK01.200 in DL-9 for the required files.  POWR-DISK is the DOS of choice for
+many T200 users for a variety of reasons.  Even people who have a DOS in ROM
+will probably find POWR-DISK useful.  DD-CAS is a good example of what it can
+do!  You need POWR-DISK, loaded at its "standard" location of 58960, for
+DD2CAS and CAS2DD operations.
+
+            Summary
+
+    To use DD2CAS.BA or CAS2DD.BA you must have POWR-DISK loaded, and
+CAS-LO.CO on the menu.  You'll also need at least enough free RAM to hold the
+largest BA and CO file you want to transfer: the programs will handle any size
+DO files.  Be sure your cassette recorder is properly connected and adjusted.
+
+            OPERATION ---------
+
+    The two operating programs are named to indicate their functions: DD2CAS
+moves files from disk to tape, and CAS2DD moves files from tape to disk.  Each
+is independent of the other and will run unattended once started; so the
+somewhat time consuming 1500 baud tape transfer speed need not keep you from
+your favorite book.
+
+    When running DD2CAS or CAS2DD, keep the following in mind:
+    -- UPPER or lower case letters work at all the prompts.
+    -- <ENTER> will take you to the program's next operation.
+    -- <ESC> returns you to the previous operaton or menu; it is your "normal"
+     route back to the computer's main menu.
+    -- you should NOT use CTRL/C or SHIFT/BREAK to bail out of either running
+     program except as discussed in the instructions for CAS2DD below: instead
+     use <ESC> where indicated.
+
+    ----- DD2CAS.BA -----
+
+    When the program begins, it checks the drive (see "Drive" below) then
+displays a menu of files for the loaded disk.  You can move the menu's widebar
+cursor just as you do on your computer's main menu.
+    As you move over each file, its size displays near the bottom of the
+screen and, if you select a BA or CO file that is larger than available RAM,
+you'll be warned that the file "is TOO BIG!"  These files will not transfer
+with your available RAM: you must either clear more space and re-run DD2CAS or
+individually move them to tape from RAM using only CASUTL.
+
+  Press the bracketed letter to invoke one of the following functions:
+
+    <T>ag - Selects the file for backup by printing a reference symbol next to
+     it or removes an existing tag.  You cannot tag a file with no ext. or one
+     that is "TOO BIG".
+
+    <G>lobal - Tags ALL files except any that are "TOO BIG" or extensionless.
+
+    <U>ntag - Clears all tags.
+
+    <L>og - Clears the screen and prints the currently loaded disk's files.
+
+    <R>ec - Takes you to the recording process.
+
+    <ESC> - Exits DD2CAS.
+
+    After you've tagged your files for backup, go to the recording process
+with <R>.  DD2CAS will calculate and display the approximate minutes of tape
+you'll need for the chosen files.  You can then press <ENTER> to continue with
+the program, or <ESC> to return to the program's first menu.
+
+    If you continue, you'll be prompted for the names of 1) the disk you're
+backing up, and 2) the cassette you'll be recording.  Then you'll be reminded
+to press "RECORD" on your cassette deck before pressing <ENTER> to begin the
+backup.
+
+    Before transferring any files, DD2CAS lays down a 15-sec. period of
+silence on the cassette to clear any "leader" at the beginning of a tape.  It
+also prints the disk name, tape name, time and date to a RAM file: CSAV.DO.
+
+    As each file is backed up, several things happen:
+    - the file's tag changes from a ">" symbol to a "*" on the menu and then
+      remains high-lighted: the screen displays the running routine.
+    - if a BA or CO file then the bottom of your screen displays a line of
+      time/date information that will become part of the file's "header" when
+      it's written to tape. (This info is a unique feature of CASUTL: read
+      that program's instructions for more on the topic.)
+    - if the file is a BA or CO program, it is saved to tape TWICE under the
+      same name.
+    - each DO file is copied to tape on a line by line basis and is preceded
+      by a 6 byte dummy file titled "[TXT!].CO" that alerts CAS2DD to DO files
+      and, as the file is saved, the number of written bytes displays next to
+      the filename.
+    - the name and file-size for each successful transfer is added to CSAV.DO
+      for your future use.
+
+    The names of any "problem" files that DD2CAS could not transfer are added
+to a RAM file called NOCSAV.DO.  Problem files are usually
+    1) files that are "TOO BIG" for current RAM.
+           OR
+    2) disk files that carry the same name as a file currently in RAM.
+You should be able to transfer some of these files later using only CASUTL
+after you manually move the file from disk to RAM.
+
+    When DD2CAS is finished saving all the tagged files it will sound a tone
+and pause with all the saved files highlighted.  It then gives you the option
+of recording a special marker file, called [SET!].CO, to the tape.  This file,
+if you decide to create it, is used later by CAS2DD to "know" when a full
+"set" of files has been transferred back to the TDD.
+    When would you answer 'N' to the "Mark... [SET!].CO" prompt?  If you
+notice that one or more of your disk files has NOT been highlighted on the
+screen, either because of one of the problems noted above or you forgot to tag
+it: you may decide to <L>og the disk and try again.
+    It's a good idea to remove the "write-protect" tab on the back of each
+cassette as you finish with it.
+
+       *Drive note*  In order not to interrupt program operations if
+        the disk or drive are not ready, DD2CAS will continue to test
+        them at 2 second intervals and print "CHECK DRIVE!".  DON'T
+        stop the program: just fix the problem and DD2CAS will restart.
+
+
+    ---- CAS2DD.BA ----
+
+    This program can be used either to restore a disk that you've backed up
+with DD2CAS or just to transfer a series of cassette files to the TDD for
+easier access and review.
+    In other words, the tape you run need NOT have been created using DD2CAS.
+You can pop in a fresh disk and a "known" or "unknown" cassette and take a
+break.  When you come back you'll have the usable files moved to disk.
+    When you run CAS2DD, it checks your disk drive to make sure it's working,
+and that there is at least one file slot available on the current disk.  If
+the disk is full, that condition will be displayed.  Other errors such as
+drive off, write protect etc. will simply display "CHECK DISK!".  In this
+case, you should press any key to return to the computer's main menu, fix the
+disk problem, and run CAS2DD again.
+
+    Assuming your disk and drive are OK, the first menu of CAS2DD asks you for
+a transfer method:
+
+    <A>ll files - will automatically transfer tape files to the TDD until
+        1) the disk is full
+        2) [SET!].CO is found
+        3) you manually interrupt the program
+
+    <P>rompt - will simply pause at the beginning of each tape file to ask
+     whether you want it transferred or not: otherwise operation is the same
+     as <A>ll
+
+    *NOTE*  Once the file transfers begin you CAN break out of the program
+with SHIFT/BREAK but ONLY when you see the message "S/B OK thenRUN18".  At ANY
+other time, pressing SHIFT/BREAK or <CTRL><C> to abort the program can cause
+unpredictable problems and potential COLD STARTS!
+
+    If the tape was not created using DD2CAS then DO files which exceed RAM
+will only be partially saved to disk. You'll have to recover the file later by
+returning to the BEGINNING of the cassette DO file and moving the file
+individually.  See " Moving BIG..." below.
+    Files which cannot be transfered to disk because they are Dupes, too big,
+corrupted or a non-standard name will be listed in NODSAV.DO.  These files are
+probably safe on the tape but must be recovered manually with CASUTL. Remember
+too that the duplicate copies of BA and CO programs that DD2CAS saves to tape
+will also show as "Dupes" in NODSAV.
+    As files are transferred to disk the display at the bottom of the screen
+will indicate what part of the process is running.  While CAS2DD is searching
+for the next file the "S/B OK thenRUN18" message displays.
+    If you are recovering tape files from a cassette that does not have
+"[SET!.CO]" recorded as a marker, YOU have to press SHIFT/BREAK when the tape
+is done: then type RUN18 and press <ENTER>.
+    DO files that have been saved to tape using DD2CAS will be preceded by
+"[TXT!].CO" which will be "found" before each DO file transfer: it only alerts
+CAS2DD to a following DO file and is not saved to disk.
+    After the save to disk, the file name is printed on your screen.  If you
+have marked the tape with [SET!].CO or the disk is full then CAS2DD will stop
+and audibly remind you it's finished: press any key for the main menu.
+
+
+    ERRORS ------
+
+    Here is a list of ERRORS you may see during DD-CAS operations and some
+quick hints on how to fix the problems. MOST errors relating to drive status,
+DOS, filesize, filename, & filetype are trapped and don't interrupt program
+operations.
+
+    - "NO POWR-DISK" displays if MAXRAM does not equal 58960 which is the
+      correct value with POWR-DISK installed at its "normal" location.  Load
+      POWR-DISK and re-run program.
+
+    - "NO CAS-LO.CO" means CAS-LO.CO isn't in the bank.
+
+>>> -"CAS-LO address err:" means you MUST recheck CAS-LO.CO's END address
+     *** BEFORE *** continuing with ANY disk or tape operation.  If END is 
+     HIGHER than 58959 then you have corrupted your DOS and MUST re-load 
+     POWR-DISK!!  If END is LOWER than 58959 then you have a corrupted or
+     improperly created CAS-LO.CO.  RE-RUN CASUTL.BA and be certain that you
+     enter 58959 at "address" prompt: TOP must be 57426 and END must be 58959!
+
+    In addition to the above, note that CAS2DD actually changes its own name
+while the program is running to avoid problems that would occur if your file
+transfers happen to include the file CAS2DD.BA.  If you ever wind up back
+at the computer's main menu with a file named ?AS2DD.BA, it means program
+operation was somehow interrupted prematurely.  Don't panic!  You can restore
+the file name by running ?AS2DD.BA and using the <ESC> key to exit the program
+normally.
+
+
+    Usage Hints -----------
+
+    DD2CAS.BA and CAS2DD.BA are a "bridge" between the disk-drive and your
+cassette recorder.  Once you have used them to backup your disks on tape, you
+may find one of the following catalog methods helpful:
+
+    - The file CSAV.DO, created when you run DD2CAS, is a usable directory of
+      tape files.  I would suggest printing it, then saving it and/or KILLing
+      it after each disk because it uses memory that may be needed for file
+      transfers.
+
+    - CASCAT.200 by Wilson Van Alst is a VERY useful cassette utility.  It
+      reads a tape and makes a catalog-style list of all the files, along with
+      the approximate "run time" where each file was found.
+
+    - LIBRIS.200 is my full featured disk and cassette library catalog program
+      that will keep track of up to 2500 annotated disk and tape file records.
+
+
+    === Moving BIG text files from tape to disk ===
+
+    This program will transfer to disk any tape DO files which are too big to
+fit in your computer:
+
+       5 CLS:MAXFILES=2:LINEINPUT"Cass file? ";CF$
+       10 LINEINPUT"Disk file? ";DF$
+       15 OPEN"CAS:"+CF$FORINPUTAS1:OPEN"0:"+DF$FOROUTPUTAS2
+       20 A$="":IFEOF(1)THENCLOSE:MAXFILES=1:MENU
+       30 LINEINPUT#1,A$
+       35 IFLEN(A$)=255THENPRINT#2,A$;ELSEPRINT#2,A$
+       40 PRINT".";:GOTO20
+
+                    -------------- Credits ----------------
+
+      James Yi's CASUTL.200 is the heart of DD-CAS and his help, patience, 
+flexibility, and advice in helping DD-CAS and CASUTL "hold hands" made DD-CAS
+a reality.
+
+      Wilson Van Alst generously granted me permission to use sections of
+code from FYLDOS.200, a "DOS-less" disk cataloging program in DL10.  Van
+contributed LONG hours of Beta testing and document editing combined with
+much needed and appreciated advice and code for many of the sub-routines that
+make DD-CAS so compact, quick and easy to use.
+
+                    ---------------------------------------
+
+    Problems or unique operational difficulties should be sent to ME via EMail
+or the M100SIG.
+
+Randy Hess
+September, 1989
+Omaha, Ne
+73267,552
+

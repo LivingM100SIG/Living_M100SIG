@@ -1,0 +1,65 @@
+0 'RECV02.BA Version 2.0 as of 10/18/87
+2 'By: Curtis Garris [75725,1130]
+4 'Licensed only for private use of
+6 'CIS M100SIG Members -- Program
+8 'not available for redistribution
+10 'in whole or in part.
+12 ' (c) 1987 All Rights Reserved
+14 'Original program RECV.100
+16 'by bob b. [70030,137]
+18 'Modified to allow user to set 
+20 'Communications Parameters
+22 'Packed and Renumbered using
+24 'Peter Stanwyck's "TOOLKT.BA"
+26 'Reads a file from the Model-100
+28 'RS-232 port and writes the
+30 'data to a .DO file. F$ is the
+32 'Model-100 End-Of-File character.
+34 'Lines 115-245 may be removed
+36 'You would then change or set 
+38 'COM parameters in line 105 (XX$=)
+100 DEFINTA-C,I-L:C$="":F$=CHR$(26)
+105 MAXFILES=2:XX$="58N1E"
+110 PRINT:PRINT"Communication Parameters Set for ";XX$
+115 PRINT@130,"Press ENTER to accept"
+120 PRINT"Press Any Letter Key + ENTER to Change"
+125 INPUT"Make sure CAPS LOCK is ON for entries";A$
+130 IFA$=""THEN250ELSE135
+135 CLS:PRINT@52,"SELECT BAUD RATE"
+140 PRINT@86,"M = MODEM (300)  1 = 75 BAUD"
+145 PRINT@126,"2 = 110 BAUD     3 = 300 BAUD"
+150 PRINT@166,"4 = 600 BAUD     5 = 1200 BAUD"
+155 PRINT@206,"6 = 2400 BAUD    7 = 4800 BAUD"
+160 PRINT@246,"8 = 9600 BAUD    9 = 19200 BAUD"
+165 INPUT"SELECT BAUD RATE";B$
+170 CLS:PRINT@54,"WORD LENGTH"
+175 PRINT@83,"6 = 6 BITS  7 = 7 BITS  8 = 8 BITS"
+180 INPUT"SELECT WORD LENGTH";W$
+185 CLS:PRINT@57,"PARITY"
+190 PRINT@83,"I = IGNORE PARITY   O = ODD PARITY"
+195 PRINT@123,"E = EVEN PARITY     N = NO PARITY"
+200 INPUT"SELECT PARITY";P$
+205 CLS:PRINT@56,"STOP BIT"
+210 PRINT@82,"1 = 1 STOP BIT      2 = 2 STOP BITS"
+215 INPUT"SELECT STOP BIT";S$
+220 CLS:PRINT@54,"LINE STATUS"
+225 PRINT@82,"E = ENABLE (XON)   D = DISABLE (XOFF)"
+230 INPUT"SELECT LINE STATUS";L$
+235 XX$=B$+W$+P$+S$+L$:CLS
+240 PRINT@48,"Communication Parameters"
+245 PRINT@88,"Now Set for ";XX$
+250 INPUT"WRITE to XXXXXX.DO FILE:";N$
+255 ONERRORGOTO320
+260 OPEN"RAM:"+N$+".DO"FOROUTPUTAS2
+265 OPEN"COM:"+XX$+""FORINPUTAS1
+270 INPUT"Press ENTER to Start";X$
+275 ONCOMGOSUB310
+280 COMON
+285 IFC$=F$THENSTOP
+290 IFEOF(1)THEN300
+295 GOTO285
+300 CLOSE1,2:PRINT;N$;".DO CLOSED"
+305 PRINT"JOB DONE":BEEP:BEEP:END
+310 LINEINPUT#1,C$:PRINTC$
+315 PRINT#2,C$:RETURN
+320 PRINT"ERROR";ERR;"IN LINE";ERL:STOP

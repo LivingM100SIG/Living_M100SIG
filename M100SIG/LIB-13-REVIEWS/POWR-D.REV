@@ -1,0 +1,202 @@
+POWR-DISK from Acroatix is best thought of as an extension of the Model 100's
+BASIC interpreter.  With the Tandy Portable Disk Drive and this program
+installed, you enhance the file manipulation capabilities of M100 BASIC (ie,
+file transfer and sequential read/write) and have a Disk BASIC for this
+notebook computer.  This (potentially) permits your portable to run immensely
+more powerful applications programs.
+
+I am well aware that both Tandy's D/VI and the PCSG/Holmes Chipmunk also
+support versions of a Disk BASIC, and have other advantages as well.  What they
+cannot do is match the abilities of the Tandy Portable Disk Drive (TDD) plus
+POWR-DISK (PD) at a comparable price (less than $250 for the combination).  If
+you already own a TDD, you ought to purchase PD.  If you don't own one, this
+program makes the TDD extremely attractive.
+
+
+Please be aware that I received an incomplete package from Acroatix (it was
+missing the utility programs and a data file) and can thus only review the
+extended BASIC.  (I understand that the setup program gave even very capable
+users problems -- and that it has since been rewritten.)  If, when my complete-
+copy disk shows up, I think it merits additional comments, I'll add them in
+another file.  But the BASIC extensions were my intended purchase, and by
+themselves merit a review.
+
+
+PD's BASIC extensions can be conveniently grouped by type:  Enhanced commands,
+modified commands, one new command, and several things which require comment. 
+In that order:
+
+
+The enhanced commands are commands which work (near as I can tell) exactly
+like their M100 BASIC versions except that they operate on a disk file.  These
+include the file manipulation commands KILL, LOAD, LOADM (but see below),
+MERGE, RUN (behaves as in RAM; first looks for a .BA extension, then for a
+.DO), RUNM, SAVE, and SAVEM (again: see below).  These all require that you
+specify the disk drive with either a "0:" or ":" file prefix but otherwise work
+exactly as you expect.
+
+Also enhanced but functionally unchanged are the following file access
+commands:  OPEN, CLOSEn, EOF(n), INPUT#, INPUT$(n,#), LINEINPUT#, PRINT#, and
+PRINT#USING.  OPEN requires the "0:" or ":" prefix (naturally).  The others in
+this list require (of course) that a file actually be open (except that CLOSE
+behaves as always).  EOF, INPUT$, LINEINPUT, and PRINT#USING are not mentioned
+in PD's documentation but seem unaffected by the interpreter modifications. 
+Moreover, the implicit CLOSE in END and MENU appear to be intact; also not
+documented and more difficult to be certain of.  INPUT$ still loses its last
+value if you read off the end of a file.
+
+
+The modified commands are LOADM and SAVEM.  Besides supporting their "normal"
+functions, both offer significantly increased power in that they can be used to
+transfer .BA and .DO files between the computer and the disk drive.  The usual
+functions are supported with conventional syntax; the new functions are
+implemented with slightly modified versions of the commands.
+
+
+The new command is LFILES, which comes in four varieties.  LFILES prints a
+
+
+
+
+
+
+
+
+
+
+
+01/20/86
+Page 2 
+
+
+disk directory to the screen; seven files at a time with byte counts and a
+prompt to continue.  The last entry is "sectors free", which is a useful way to
+report free memory.  LFILESTO dumps the same information to printer (specify
+"LPT:") or a .DO file (specify) without the prompts.  LFILESMENU resets RS232
+parameters and returns to menu.  LFILESOFF unhooks the program and frees up the
+memory it occupies.
+
+
+Things requiring comment:
+
+There is a potentially serious problem with the way the OPEN instruction works
+with TDD.  If you attempt to open two files on the TDD at once, you will
+probably destroy one or both files.  Although the documentation warns you about
+this in some detail, the program does not trap any attempt to access a second
+file.  While this should not be a problem in normal usage, it is extremely
+dangerous and must be mentioned.  Program developers especially should take
+note.  Everyone should at least be aware that it is hazardous to instruct any
+program to both read from and write to disk files, or to read from two disk
+files.  These problems can be programmed around.  The command sequence matters
+significantly.
+
+There is no convenient way to discover how much free space there is on the
+disk.  LFILES reports sectors available, but you have to read the entire
+directory to find it.
+
+Files on the disk cannot be directly renamed via PD; the best option I've
+discovered is to copy the file to RAM, delete the disk copy, rename the RAM
+copy, save the renamed copy to disk, and delete the RAM copy.  Manipulating a
+BASIC file in this fashion requires even more code than is immediately
+apparent.
+
+POWR-DISK comes with a small manual that's just crammed with interesting
+information.  It's been faulted (properly) on the message board for sometimes
+obscure instructions; for a programmer or technically- minded user, though,
+it's a terrific source of information on M100 BASIC, on PD's extensions, and on
+life with multiple .CO files.
+
+This program resets MAXRAM.  If it's a relocated version of the program,
+there's an empty space between the PD code and the M100 scratchpad ("normal"
+MAXRAM), into which you (presumably) will wish to place another M/L program. 
+This would seem to be a problem, since M100 BASIC usually prevents you from
+loading a program above MAXRAM -- except that here it actually works.  PD
+attempts to protect itself and the M100 scratchpad, but permits the load. 
+Apparently both CLEAR and LOADM have been modified to permit this stunt. 
+(Related note:  FLIPML.100 works satisfactorily as a loader in this
+circumstance, but loses much of its ability to recognize loaded M/L files.)
+
+POWR-DISK will not permit you to overwrite a file with the same name and
+extension as the file being transferred.
+
+PD recognizes, accesses, and manipulates invisible files in the same manner as
+M100 BASIC.
+
+
+
+
+
+
+
+
+
+
+
+01/20/86
+Page 3 
+
+
+
+Acroatix assumes you'll use FLOPPY.CO to format and back up disks.  This is
+perfectly reasonable; much RAM was retrieved by sacrificing these
+capabilities.
+
+
+What's attractive about POWR-DISK is its potential.  Purely as a file transfer
+utility, J.K. Heilman's DSKMGR is probably preferable; it's easier to use and
+eats about the same RAM.  But all DSKMGR does is transfer files.  In contrast,
+PD makes all sorts of things possible; in essense, it permits you to use the
+disk drive as a memory extension.  And it's CHEAP!  (Well, relatively cheap.)
+
+I can't wait to see what develops....
+
+joel dinda
+[75725,1134]
+LSJ-Access/TBBS
+517-482-8144
+20 jan 86
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

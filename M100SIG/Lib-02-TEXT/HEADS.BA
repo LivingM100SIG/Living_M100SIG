@@ -1,0 +1,97 @@
+(I am indebted to Tony Anderson and others who participated in the
+TXTJMP.THD for insights on how to call a .DO file from BASIC)
+
+Why did I write this program?
+
+For two reasons:
+
+1. To allow you to place subheads in a long .DO file, which will be used as a 
+printed report.
+
+(Graphics experts tell us a long report is more readable if typographical 
+devices such as subheads are used.)
+
+2. I wanted to prove to myself that I could make HEADS or TAILS out of BASIC 
+programming!
+
+The opening screen of HEADS.BA will show you 12 different styles of tops and 
+bottoms for subheads.
+
+Pick one you like and hit any key.
+
+After the reserve video display ettles down, you will be asked to type in a 
+header.
+
+A word to the wise: Don't type beyond the line of reverse video.
+
+If you do the subhead will be messed up.
+Once the header is typed, it will automatically be centered on the line in the 
+WORK.DO file.
+
+You can select as many styles of subheads as you like for your long .DO file.
+
+After the header is typed, hit <ENTER> and you will be asked for your
+ "SELECTION". 
+
+Strike any letter from "A" to "L" and another message will pop up.
+
+A "Y" answer at the "ANOTHER CHOICE" option will take you to the top
+ of HEADS.BA for another choice.
+
+An "N" answer at the "ANOTHER CHOICE" option will take you into the
+ WORK.DO file.
+
+Cut and paste the header or headers you want to insert in another
+ .DO file and hit the F8 key, which will take you to the main MENU.
+
+Open the target .DO file and insert the header or headers where you like.
+
+HINT: You can use graphics symbols as bookmarks at the spot where you want to 
+place the headers. 
+
+Use the F1 key seek out the appropriate symbols.
+
+
+Please send any comments to Carmen Paone [72677,42] on this Forum
+or by EMAIL.
+
+
+......................................
+
+0 REM HEADS.BA BY CARMEN PAONE [72677,42]
+1 MAXFILES=1:F$="work.do":OPENF$FORAPPENDAS1
+2 CLS:PRINT@3,STRING$(3,239)TAB(8)STRING$(3,231)TAB(14)STRING$(3,255)TAB(20)STRING$(3,241)TAB(26)STRING$(3,42)TAB(32)STRING$(3,61)
+3 PRINT@44,"A"TAB(9)"B"TAB(15)"C"TAB(21)"D"TAB(27)"E"TAB(33)"F
+4 PRINT@83,STRING$(3,239)TAB(8)STRING$(3,232)TAB(14)STRING$(3,255)TAB(20)STRING$(3,241)TAB(26)STRING$(3,42)TAB(32)STRING$(3,61)
+5 PRINT@163,STRING$(3,36)TAB(8)STRING$(3,35)TAB(14)STRING$(3,58)TAB(20)STRING$(3,225)TAB(26)STRING$(3,138)TAB(32)STRING$(3,48)
+6 PRINT@204,"G"TAB(9)"H"TAB(15)"I"TAB(21)"J"TAB(27)"K"TAB(33)"L
+7 PRINT@243,STRING$(3,36)TAB(8)STRING$(3,35)TAB(14)STRING$(3,58)TAB(20)STRING$(3,225)TAB(26)STRING$(3,138)TAB(32)STRING$(3,48)
+8 INPUT"    CHOICE OF SUBHEAD STYLE (A-L)";S$;
+9 CLS:LINE(1,5)-(238,35),1,BF:PRINT@55,"HEADING":PRINT:LINEINPUTA$:I=(40-LEN(A$))/2
+10 IFS$="A"ORS$="a"GOTO22
+11 IFS$="B"ORS$="b"GOTO23
+12 IFS$="C"ORS$="c"GOTO24
+13 IFS$="D"ORS$="d"GOTO25
+14 IFS$="E"ORS$="e"GOTO26
+15 IFS$="F"ORS$="f"GOTO27
+16 IFS$="G"ORS$="g"GOTO28
+17 IFS$="H"ORS$="h"GOTO29
+18 IFS$="I"ORS$="i"GOTO30
+19 IFS$="J"ORS$="j"GOTO31
+20 IFS$="K"ORS$="k"GOTO32
+21 IFS$="L"ORS$="l"GOTO33
+22 PRINT#1,STRING$(39,239):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,239):PRINT#1,CHR$(143):CLOSE:GOTO34
+23 PRINT#1,STRING$(39,231):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,232):PRINT#1,CHR$(143):CLOSE:GOTO34
+24 PRINT#1,STRING$(39,255):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,255):PRINT#1,CHR$(143):CLOSE:GOTO34
+25 PRINT#1,STRING$(39,241):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,241):PRINT#1,CHR$(143):CLOSE:GOTO34
+26 PRINT#1,STRING$(39,42):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,42):PRINT#1,CHR$(143):CLOSE:GOTO34
+27 PRINT#1,STRING$(39,61):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,61):PRINT#1,CHR$(143):CLOSE:GOTO34
+28 PRINT#1,STRING$(39,36):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,36):PRINT#1,CHR$(143):CLOSE:GOTO34
+29 PRINT#1,STRING$(39,35):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,35):PRINT#1,CHR$(143):CLOSE:GOTO34
+30 PRINT#1,STRING$(39,58):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,58):PRINT#1,CHR$(143):CLOSE:GOTO34
+31 PRINT#1,STRING$(39,225):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,225):PRINT#1,CHR$(143):CLOSE:GOTO34
+32 PRINT#1,STRING$(39,138):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,138):PRINT#1,CHR$(143):CLOSE:GOTO34
+33 PRINT#1,STRING$(39,48):PRINT#1,TAB(I)A$:PRINT#1,STRING$(39,48):PRINT#1,CHR$(143):CLOSE
+34 PRINT@210,"ANOTHER CHOICE?":INPUT"          [Y/N]";A$:IFA$="Y"ORA$="y"GOTO1:IFA$="N"ORA$="n
+35 A$="WORK"+CHR$(0):A=VARPTR(A$):IFPEEK(1)=171THENX=29118 ELSEX=24079
+36 CALLX,0,PEEK(A+1)+256*PEEK(A+2)

@@ -1,0 +1,403 @@
+; 0000
+        jp    7D33      ; power on sequence
+; 0003
+        defm    'MENU',00h
+;
+; 0008 RST 1 check (HL) against byte following RST call
+;
+        LD    A,(HL)    ; get char (HL) =>
+        EX    (SP),HL   ; calling add+1 into HL
+        CP    (HL)      ; compare
+        JP    NZ,0446   ; syntax error if not same
+        INC   HL        ; bump ret add past byte compared
+        EX    (SP),HL   ; put addr back on stack
+        JP    0858      ; check for more
+.
+.
+.
+; 0080
+;
+; THE FOLLOWING IS THE TABLE OF BASIC KEYWORDS
+;
+; The table is stored in memory with the high order
+; bit set on the first letter of each key word.
+; Assume that the MACRO sethi performs this operation.
+;
+;               keyword   location
+;                         in memory
+        sethi   'END'     ; 0080
+        sethi   'FOR'     ; 0083
+        sethi   'NEXT'    ; 0086
+        sethi   'DATA'    ; 008a
+        sethi   'INPUT'   ; 008E
+        sethi   'DIM'     ; 0093
+        sethi   'READ'    ; 0096
+        sethi   'LET'     ; 009a
+        sethi   'GOTO'    ; 009d
+        sethi   'RUN'     ; 00a1
+        sethi   'IF'      ; 00a4
+        sethi   'RESTORE' ; 00a6
+        sethi   'GOSUB'   ; 00ad
+        sethi   'RETURN'  ; 00b2
+        sethi   'REM'     ; 00b8
+        sethi   'STOP'    ; 00bb
+        sethi   'WIDTH'   ; 00bf
+        sethi   'ELSE'    ; 00c4
+        sethi   'LINE'    ; 00c8
+        sethi   'EDIT'    ; 00cc
+        sethi   'ERROR'   ; 00d0
+        sethi   'RESUME'  ; 00d5
+        sethi   'OUT'     ; 00db
+        sethi   'ON'      ; 00de  
+        sethi   'DSKO$'   ; 00e0 
+        sethi   'OPEN'    ; 00e5
+        sethi   'CLOSE'   ; 00e9
+        sethi   'LOAD'    ; 00ee
+        sethi   'MERGE'   ; 00f2
+        sethi   'FILES'   ; 00f7
+        sethi   'SAVE'    ; 00fc
+        sethi   'LFILES'  ; 0100
+        sethi   'LPRINT'  ; 0106
+        sethi   'DEF'     ; 010c
+        sethi   'POKE'    ; 010f
+        sethi   'PRINT'   ; 0113
+        sethi   'CONT'    ; 0118
+        sethi   'LIST'    ; 011c
+        sethi   'LLIST    ; 0120
+        sethi   'CLEAR'   ; 0125
+        sethi   'CLOAD'   ; 012a
+        sethi   'CSAVE'   ; 012f
+        sethi   'TIME$'   ; 0134
+        sethi   'DATE$'   ; 0139
+        sethi   'DAY$'    ; 013e 
+        sethi   'COM'     ; 0142
+        sethi   'MDM'     ; 0145
+        sethi   'KEY'     ; 0148
+        sethi   'CLS'     ; 014B 
+        sethi   'BEEP'    ; 014e 
+        sethi   'SOUND'   ; 0152 
+        sethi   'LCOPY'   ; 0157
+        sethi   'PSET'    ; 015c
+        sethi   'PRESET'  ; 0160
+        sethi   'MOTOR'   ; 0166
+        sethi   'MAX'     ; 016b
+        sethi   'POWER'   ; 016e
+        sethi   'CALL'    ; 0173
+        sethi   'MENU'    ; 0177
+        sethi   'IPL'     ; 017b
+        sethi   'NAME'    ; 017e
+        sethi   'KILL'    ; 0182
+        sethi   'SCREEN'  ; 0186
+        sethi   'NEW'     ; 018c
+        sethi   'TAB('    ; 018f
+        sethi   'TO'      ; 0193
+        sethi   'USING'   ; 0195
+        sethi   'VARPTR'  ; 019a
+        sethi   'ERL'     ; 01a0
+        sethi   'ERR'     ; 01a3
+        sethi   'STRING$' ; 01a6
+        sethi   'INSTR'   ; 01ad
+        sethi   'DSKI$'   ; 01b2
+        sethi   'INKEY$'  ; 01b7
+        sethi   'CSRLIN'  ; 01bd
+        sethi   'OFF'     ; 01c3
+        sethi   'HIMEM'   ; 01c6
+        sethi   'THEN'    ; 01cb
+        sethi   'NOT'     ; 01cf
+        sethi   'STEP'    ; 01d2
+        sethi   '+'
+        sethi   '-'
+        sethi   '*'
+        sethi   '/'
+        sethi   '^'
+        sethi   'AND'     ; 01db
+        sethi   'OR'      ; 01de
+        sethi   'XOR'     ; 01e0
+        sethi   'EQV'     ; 01e3
+        sethi   'IMP'     ; 01e6
+        sethi   'MOD'     ; 01e9
+        sethi   '\'       ; 01ec
+        sethi   '>'  
+        sethi   '='
+        sethi   '<'
+        sethi   'SGN'     ; 01f0
+        sethi   'INT'     ; 01f3
+        sethi   'ABS'     ; 01f6
+        sethi   'FRE'     ; 01f9
+        sethi   'INP'     ; 01fc
+        sethi   'LPOS'    ; 01ff
+        sethi   'POS'     ; 0203
+        sethi   'SQR'     ; 0206
+        sethi   'RND'     ; 0209
+        sethi   'LOG'     ; 020c
+        sethi   'EXP'     ; 020f
+        sethi   'COS'     ; 0212
+        sethi   'SIN'     ; 0215
+        sethi   'TAN'     ; 0218
+        sethi   'ATN'     ; 021c
+        sethi   'PEEK'    ; 021e
+        sethi   'EOF'     ; 0222
+        sethi   'LOC'     ; 0225
+        sethi   'LOF'     ; 0228
+        sethi   'CINT'    ; 022b
+        sethi   'CSNG'    ; 022f
+        sethi   'CDBL'    ; 0233
+        sethi   'FIX      ; 0237
+        sethi   'LEN'     ; 023a
+        sethi   'STR$'    ; 023d
+        sethi   'VAL'     ; 0241
+        Sethi   'ASC'     ; 0244
+        sethi   'CHR$'    ; 0247
+        sethi   'SPACE$'  ; 024b
+        sethi   'LEFT$'   ; 0251
+        sethi   'RIGHT$'  ; 0256
+        sethi   'MID$'    ; 025c
+        sethi   '''       ; 0260
+;
+        defb    80h
+;
+; Keyword address table
+; (token value - 80h)*2 = table entry
+;
+;          execution     mem   key
+;          addr          addr  word
+        defw    409f    ; 0262 END
+        defw    0726    ; 0264 FOR
+        defw    4174    ; 0266 NEXT
+        defw    096e    ; 0268 DATA
+        defw    0ca3    ; 026a INPUT
+        defw    478b    ; 026c DIM
+        defw    0cd9    ; 026e READ
+        defw    09c3    ; 0270 LET
+        defw    0936    ; 0272 GOTO
+        defw    09f0    ; 0274 RUN
+        defw    0b1a    ; 0276 IF     
+        defw    407f    ; 0278 RESTORE
+        defw    091e    ; 027a GOSUB   
+        defw    0966    ; 027c RETURN  
+        defw    09a0    ; 027e REM     
+        defw    409a    ; 0280 STOP    
+        defw    1dc3    ; 0282 WIDTH   
+        defw    09a0    ; 0284 ELSE    
+        defw    0c45    ; 0286 LINE    
+        defw    5e51    ; 0288 EDIT    
+        defw    0b0f    ; 028a ERROR  
+        defw    0ab0    ; 028c RESUME 
+        defw    110c    ; 028e OUT    
+        defw    0a2f    ; 0290 ON     
+        defw    5071    ; 0292 DSKO$  
+        defw    4ccb    ; 0294 OPEN   
+        defw    4e28    ; 0296 CLOSE  
+        defw    4d70    ; 0298 LOAD   
+        defw    4d71    ; 029a MERGE  
+        defw    1f3a    ; 029c FILES  
+        defw    4dcf    ; 029e SAVE   
+        defw    506f    ; 02a0 LFILES 
+        defw    0b4e    ; 02a2 LPRINT 
+        defw    0872    ; 02a4 DEF    
+        defw    12b8    ; 02a6 POKE   
+        defw    0b56    ; 02a8 PRINT  
+        defw    40da    ; 02aa CONT   
+        defw    1140    ; 02ac LIST   
+        defw    113b    ; 02ae LLIST  
+        defw    40f9    ; 02b0 CLEAR  
+        defw    2377    ; 02b2 CLOAD  
+        defw    2280    ; 02b4 CSAVE  
+        defw    19ab    ; 02b6 TIME$  
+        defw    19bd    ; 02b8 DATE$  
+        defw    19f1    ; 02ba DAY$   
+        defw    1a9e    ; 02bc COM    
+        defw    1a9e    ; 02be MDM    
+        defw    1bb8    ; 02c0 KEY    
+        defw    4231    ; 02c2 CLS    
+        defw    4229    ; 02c4 BEEP   
+        defw    1dc5    ; 02c6 SOUND  
+        defw    1e5e    ; 02c8 LCOPY  
+        defw    1c57    ; 02ca PSET   
+        defw    1c66    ; 02cc PRESET 
+        defw    1dec    ; 02ce MOTOR  
+        defw    7f0b    ; 02d0 MAX    
+        defw    1419    ; 02d2 POWER  
+        defw    1dfa    ; 02d4 CALL   
+        defw    5797    ; 02d6 MENU   
+        defw    1a78    ; 02d8 IPL    
+        defw    2037    ; 02da NAME   
+        defw    1f91    ; 02dc KILL   
+        defw    1e22    ; 02de SCREEN 
+        defw    20fe    ; 02e0 NEW    
+        defw    7979    ; 02e2 TAB(   
+        defw    7c7c    ; 02e4 TO     
+        defw    507f    ; 02e6 USING  
+        defw    3c46    ; 02e8 VARPTR 
+        defw    2832    ; 02ea STRING$
+        defw    7b7a    ; 02ec INSTR  
+        defw    35ba    ; 02ee DISKI$ 
+;
+; table seems to break off here
+;
+; 02f0
+        defw    0000
+; 
+.
+.
+.
+; 031c
+; table of BASIC error messages
+;
+        defb    'NF'    ; 031c
+        defb    'SN'    ; 031e
+        defb    'RG'    ; 0320
+        defb    'OD'    ; 0322
+        defb    'FC'    ; 0324
+        defb    'OV'    ; 0326
+        defb    'OM'    ; 0328
+        defb    'UL'    ; 032a
+        defb    'BS'    ; 032c
+        defb    'DD'    ; 032e
+        defb    '/0'    ; 0330
+        defb    'ID'    ; 0332
+        defb    'TM'    ; 0334
+        Defb    'OS'    ; 0336
+        defb    'LS'    ; 0338
+        defb    'ST'    ; 033a
+        defb    'CN'    ; 033c
+        defb    'IO'    ; 033e
+        defb    'NR'    ; 0340
+        defb    'RW'    ; 0342
+        defb    'UE'    ; 0344
+        defb    'MO'    ; 0346
+        defb    'IE'    ; 0348
+        defb    'BN'    ; 034a
+        defb    'FF'    ; 034c
+        defb    'AO'    ; 034e
+        defb    'EF'    ; 0350
+        defb    'NM'    ; 0352
+        defb    'DS'    ; 0354
+        defb    'FL'    ; 0356
+        defb    'CF'    ; 0358
+.
+.
+.
+
+; 03C5
+        defm    'M7I1E'
+.
+.
+.
+;03EA
+        defm    ' Error',00h
+;03F1
+        defm    ' in ',00h
+;03F6
+        defm    'Ok',cr,lf,00h
+;03FB
+        defm    'Break',00h
+.
+.
+.
+; 0858
+        INC   HL        ; bump to next character 
+        LD    A,(HL)    ; get it
+        CP    ':'       ; is it  ":" ?
+        RET   NC        ; ... return if >= :
+        CP    20        ;  space ?
+        JP    Z,0858    ; ... loop back if so
+        CP    0Bh       ; >= 0b hex ?
+        JP    NC,086C   ; ... go if so
+        CP    09        ; >= 09h ?
+        JP    NC,0858   ; ... go if so
+; 086c
+        CP    '0'       ; might be a number ? 
+        CCF             ; set carry for return
+        INC   A         ; set Z or ...
+        DEC   A         ; ... NZ  for return
+        RET             ; bye
+;
+.
+.
+.
+; 0c04
+        RST   1         ; check for next char
+        defb    ')'
+.
+.
+.
+; 0c2b
+        INC   A         ; one extra space
+        LD    B,A       ; b <= count of spaces 
+        LD    A,' '     ; A <= a space
+        RST   4         ; (20h) display it
+        DEC   B         ; one less space to display
+        JP    NZ,0C2F   ; do another if not done
+.
+.
+.
+; 0C74
+        defm    '?Redo from start',CR,LF,00
+.
+.
+.
+; 0c8f
+        LD    HL,0C74   ; redo from start msg
+        CALL  27B1      ; display it 
+.
+.
+.
+;
+; BASIC verb INPUT entry point
+;
+; 0ca3
+        call    10e6    ; (?) get pointed char
+        ld      a,(hl)  ; ... into A
+        cp      '#'     ; INPUT # ?
+        jp      z,0c99  ; ... go do it if so
+        call    10e6    ; (?) get pointed char
+        ld      a,(hl)  ; ... into A
+        ld      BC,0cc4 ; set up for 
+        push    bc      ; JR nz,0cc4
+        cp      '"'     ; input with prompt ?
+        ld      a,00    ; ... (?)
+        ret     nz      ; ... goto 0cc4 if not 
+        call    276c    ; (?) display 0 terminated string
+        rst      1      ; (08h) make sure next 
+        defb    ";"     ; ... char is a ;
+
+        push    hl      ; save line pointer
+        call    27b4    ; (?)
+        pop     hl      ; restore line pointer
+        ret             ; and exit
+; 0cc4
+        push    hl      ; save line pointer
+        call    463e    ; disp "? " and get keyin
+        pop     bc      ; BC <= line pointer 
+        jp      c,40b3  ; (?) BREAK ? go if so
+.
+.
+.
+; 0CE6
+        RST    1        ; 08h check for next char
+        defb   ','
+.
+.
+.
+; 0CFA
+; need more keyin to input statement
+        LD      A,'?'   ; display a
+        rst     4       ; ... "?" and then 
+        call    463e    ; display "? " and get more keyin
+.
+.
+.
+; 0D65 
+        LD    A,(HL)    ; get next char
+        OR    A         ; is it a 0?
+        LD    HL,0D71   ; ...extra ignored msg
+        CALL  NZ,27B1   ; ...disp it if more keyed in
+        POP   HL        ; restore line pointer
+        JP    0C39      ; continue
+; 0d71 
+      defm    '?Extra ignored',cr,lf,00
+.
+.
+.
+

@@ -1,0 +1,132 @@
+
+HOW TO RECOVER FROM A COLD START
+
+Why is it that my NEC 8201A never locks up unless I have some text files in
+RAM that have not been backed up?  After a few months without a hitch on
+this old workhorse, I tend to forget that on rare occasions everything
+in memory can suddenly disappear.   Usually, it happens when I'm using
+someone's machine language utility program and end up out in never-never
+land.  Returning to normal operations usually requires a cold start.
+After that, of course, the Menu is empty and files are gone--or are they?
+
+As long as the internal batteries are working, the 8201A retains its RAM
+memory.  If the cold-start procedure (or the problem that caused it) did
+not zap the entire RAM area, it would seem that some data should still
+be there.  Is there a way to salvage files after a cold start?  Well,
+within certain limits, there IS a way.
+
+First, let's look at what happens after a cold start.  The cold-start
+procedures are carried out in high RAM (above address 62335) where the
+file directory resides.  Among other things, some housekeeping chores
+are done, such as checking how much memory is available and initializing
+the file directory that is displayed in Menu mode.  As near as I can
+determine, the contents of low RAM from 32767 to 62335--where our precious
+files are stored--are not disturbed.  That is, the directory is gone,
+but the files are still there.  The trick is to find them.
+
+Examining the contents of RAM is relatively easy, using the PEEK
+command.  However, deciphering what is found in RAM may not be so easy.
+Text files are stored in ASCII format and are readily recognizable.
+BASIC files are stored in some sort of shorthand notation and, unless
+there are some tell-tale REM statements at the beginning and ending of
+each program, it takes a cryptologist to figure out where one BASIC
+program stops and another starts and to decode the results.  Even if an
+individual program can be recognized, it may very likely require more of
+an effort to decipher it than to rewrite it from scratch.  For example,
+a typical BASIC program line and the corresponding shorthand code is
+shown below:
+
+	20 E=(A+B+C+D)*10/4
+
+	^TE (A B C D) ^O^J ^U
+
+
+Notice that ^T happens to be ASCII Code 20 and ^J is Code 10, but ^U is
+21.  What happened to 4?  And, where are the arithmetic operators?  With
+enough time and effort, a conversion code could no doubt be developed,
+but is it worth it?  So, for the time being, forget about recovering
+BASIC programs and concentrate on TEXT files.  Of course, if the BASIC
+program had been saved in ASCII format (using SAVE"file",A) it would be 
+as easy to recover as a TEXT file.   However, it would require a little
+more memory than a binary file and a few more seconds to load.
+
+Basically, the technique for recovering lost files is as follows:
+
+	1. Open a file that will be used to temporarily hold
+	   the recovered portions of RAM.
+
+	2. Read the contents of RAM, one byte at a time,
+	   using the PEEK command.
+
+	3. Write each recovered byte to the temporary RAM file
+	   or, to be very safe, write to a cassette tape first
+	   and then reload the file from tape to massage it.
+
+	4. Edit out any unusable portions of the temporary
+	   file to free up some space in RAM.
+
+	5. Use the cut-and-paste feature to salvage the text of
+	   interest and recreate the original text files.
+
+	6. Delete the temporary file when finished.
+
+
+Several articles have been published on the subject and it has been
+discussed on CompuServe.  The articles that I can remember are:
+
+	Richard Perry, Portable 100, November 1984
+	Frank Oechsli, Bay Area NEC/100 Newsletter #6, June 1985
+	  (Also, see correction in Newsletter #8, October 1985)
+	Terry Kepner, Pico, February 1986
+
+
+Although the various approaches used are very similar,  each have their 
+strong points and weaknesses.  Oechsli suggested using a CLEAR statement
+(CLEAR100,34767) to protect all but the first 2000 bytes of RAM.  Then,
+a several-line BASIC program can be entered to examine the contents of
+RAM and copy the useful sections to tape for protection and later
+recovery.  However, the problem with using a line-numbered BASIC program
+is that it is loaded into low RAM,  starting at 32767.  If anything of
+recoverable value occupies that area, it will be overwritten and lost.
+
+Kepner's approach was to use a compound, direct BASIC command
+(unnumbered), which is executed from high RAM, leaving low RAM intact.
+
+Now for the specifics of how to do it.   The following direct command,
+entered as one continuous line, will do the job nicely:
+
+	OPEN "Temp" FOR OUTPUT AS 1: PRINT"Standby...":
+        FOR I=32767 TO 62335: PRINT#1,CHR$(PEEK(I));: NEXT I:
+        PRINT"Done...": END
+
+
+If a cassette file is desired, use "CAS:Temp" instead of "Temp".  The
+"Temp" file will contain everything that was recovered from RAM and can
+be examined in TEXT mode.  A CLEAR statement could be used to protect
+most of RAM if the file is copied to tape or to the LCD (for scanning).
+Obviously, the CLEAR statement cannot be used to protect RAM if the
+recovery file will be created in RAM.   It is probably not necessary
+anyhow, since the recovery file is being built in the area that has just
+been read.  Of course, it is possible to make a typo while entering the
+above program that would overwrite a portion of RAM that had not yet
+been read.
+
+If there were any BASIC programs in RAM before the crash, the first part
+of the recovered file will contain what looks like a random assortment 
+of alphabetic, numeric, and special characters.  Keep looking until a
+recognizable text file is found.  Don't be alarmed if bits and pieces of
+the original text file appear to be scattered throughout the recovery
+file.  As files are moved around by Save and Kill commands, remnants of
+earlier versions of the text files may be left at previous storage
+locations and some of these remnants may have been overwritten, leaving
+a hodge-podge of text scattered  throughout RAM.  Keep looking, a
+complete, intact copy of each text file should be found somewhere in the
+recovery file (except for portions which may have been damaged during
+the crash).
+
+Since the above program is generally needed only after a cold start, it
+does no good to keep it stored in RAM.  Copy the program onto a 3x5 card
+and keep it in the 8201A carrying case for THAT DAY.
+
+BILL GRENKE
+74756,235

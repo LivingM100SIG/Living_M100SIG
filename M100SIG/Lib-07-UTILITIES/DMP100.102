@@ -1,0 +1,309 @@
+DMP100.102  G.W.Flanders [73300,2272]
+May 1, 1989
+
+        Model 100/102 graphics and most printers don't get along very well.
+Printing modes change, the paper starts scrolling, unrelated letters appear -
+it's a mess. And, printing bit-mapped screens without special program
+interdiction is unthinkable. There are probably many times when you'd like a
+hard copy of your screen, to preserve special bit graphics or to reproduce an
+image that incorporates graphic characters. DUMP.CO is a short (265 bytes),
+quick (about 35 seconds) machine language program for your laptop which can be
+called from BASIC or activated from within the built-in ROM programs with two
+keystrokes. It can be disabled just as easily whenever you like. Running the
+following loader program creates DUMP.CO.
+
+1 CLEAR256,57650:FORI=57650TO57908:READA:POKEI,A:NEXT:SAVEM"DUMP",57650,57908,57650
+2 DATA42,222,250,34,44,226,33,63,225,34,222,250,201,245,58,151,255,254,8,194,245,225,58,153,255,254,4,202,94,225,254,8,194,245,225,42,44,226,34,222,250,195,245,225,62,1,50,117,246,33,13,226,205,177,39,175,50,244,255,33,20,226,205,177,39,175
+3 DATA50,245,255,33,47,226,205,92,118,22,,205,50,116,17,47,226,6,6,58,46,226,254,1,202,185,225,26,197,213,95,22,,33,16,,205,223,55,205,247,225,209,19,193,5,194,143,225,58,245,255,60,254,40,194,116,225,62,13,231,62,1,50,46,226,195,109,225
+4 DATA26,197,213,95,22,,33,16,,205,126,55,205,1,53,205,247,225,209,19,193,5,194,185,225,58,245,255,60,254,40,194,116,225,62,13,231,175,50,46,226,58,244,255,60,254,8,194,106,225,33,25,226,205,177,39,175,50,117,246,241,201,125,254,,202,9,226
+5 DATA17,29,226,61,202,8,226,19,195,,226,26,231,231,231,201,27,108,10,27,51,22,,27,76,208,2,,27,64,13,,192,48,240,12,204,60,252,3,195,51,243,15,207,63,255,,,,,,,,,
+
+        Don't scowl at the consecutive commas in the DATA statements. BASIC
+interprets a blank data slot as a null (0). Line 1 ends with the command
+SAVEM"DUMP",57650,57908,57650. It is important that the third, or execution
+(EXE) address is included, even though it is identical to the starting address.
+Model 100/102 users are often advised that if the EXE address is the same as the
+starting address it can be omitted when issuing this command. However, unless
+the EXE address is present in the command, the program will not be menu-
+selectable. It will load into place without the EXE address, but then must be
+CALLed from BASIC. An advantage of menu-selecting a .CO program is that doing so
+automatically resets HIMEM, eliminating the need for preparatory commands.
+        Once DUMP.CO has executed, all you have to do to force a screen dump to
+printer is press the ESC and GRPH keys at the same time. This assumes that the
+ROM routine CHGET is invoked, as it normally is in BASIC, TEXT, TELCOM, ADDRSS
+and SCHEDL when user entry is called for. When you choose to disable DUMP.CO,
+press and hold ESC and CODE for a couple of seconds. DUMP.CO won't work if you
+press any other special key at the same time, or if the CAPS LOCK or NUM keys
+are down.
+        The first task of the program is to alter the address contained in the
+RAM vector used by the ROM routine CHGET ($12CB). CHGET is used to await a
+keystroke. Early-on, CHGET issues a RST 7 instruction with an offset of 4. This
+passes program control to whatever address appears in the "hook table" at $FADA
+plus the value of the byte immediately following the RST 7 instruction:
+$FADA+$04=$FADE. The default address at $FADE is $7FF3, which contains a RET
+instruction. Normally that doesn't accomplish anything, but our ability to
+change the RAM vector at $FADE allows us to examine each keystroke before CHGET
+does. DUMP.CO starts by storing the normal vector at $FADE in the buffer HOOKBF,
+replacing it with the start address of our working routine, which happens to be
+$E13F, seen in the source code at the label "NUHOOK".
+        What we're looking for from the keyboard is evidence that the ESC and
+GRPH keys are being held down at the same time. It's reasonable to assume that
+when such an unlikely combination occurs, it's because the user wants an
+immediate screen dump. When ESC/GRPH is detected, we jump to the section called
+"DUMP", which sends the current LCD screen information to the printer in a form
+that faithfully reproduces every pixel. If we don't detect ESC/GRPH, we return
+control to the CHGET routine; but not before we also check for the equally
+unnatural combination of ESC/CODE. If this pair of keys is being pressed, we
+place the original vector in $FADE and return, disabling DUMP.CO. To reactivate
+it, menu-select it again.
+        In performing a screen dump, DUMP.CO processes each of the 320 six-byte
+positions on the LCD (1920 total bytes), printing each of the eight rows in two
+passes. The first pass prints values representing a double-high image of the
+low-order nibble (bits 0-3) of the true byte value MOD16. The second pass prints
+values representing a double-high image of the high-order nibble (bits 4-7) of
+the true value \16. Moreover, each value is printed three times horizontally.
+The result is a hard copy centered on your paper which is close to actual screen
+size. At the beginning of each pass, the printer is commanded into double
+density high resolution mode, and told how many bytes of information it will
+receive per pass.
+        The screen dump routine ends with the RET instruction CHGET must receive
+in order to get on with its own work. If neither ESC/GRPH nor ESC/CODE is
+detected, we RETurn immediately. In any case, the AF registers (accumulator +
+flags), often called the Program Status Word (PSW), are PUSHed on the stack at
+the beginning and POPped off the stack at the end. This assures that CHGET will
+be able to examine the original keystroke and act upon it if necessary. ESC/GRPH
+and ESC/CODE keypress combinations don't have any visible effect, and your
+screen will return to you just as you left it.
+        Here are some considerations which may pertain to your application.
+        1. The printer codes used are specific to my Epson LQ-850 and similar
+Epsons/clones. To make DUMP.CO work with other printers, consult your printer
+manual and change the values in the data staments (see line 5) or in the source
+code at "SET", "HR" and "FIX".
+        SET contains printer commands which define the left margin and linefeed
+values. In the example, the left margin is set to 10. My printer recognizes ESC
++ lower case "l" as the left margin command, and sets the left margin to the
+next decimal value. Hence, SET starts out with 27,108,10. For hard copy
+appearance that suits me, I selected linefeeds of 22/180. My printer recognizes
+ESC + "3" as the command to set linefeeds to x/180, where x is the next value.
+In this case, the numbers are 27,51, and 22. This means 22/180. The null (0) at
+the end of SET signals the end of the commands to be sent.
+        HR contains the printer command that establishes the desired graphics
+mode and sets the number of columns to be printed in a pass. In this case, we
+want double density high resolution, the Epson code for which happens to be ESC
+"L" plus the number of columns to be printed, expressed here as CHR$(208)
+CHR$(2). These values are interpreted as a low-byte/high byte pair, resulting in
+208 + 2 * 256, or 720. Why 720? Because each screen position is six bytes wide,
+and there are 40 positions per row. 6 * 40 = 240 bytes of screen data in a row,
+and we are printing each of them three times per pass. 240 * 3 = 720 bytes of
+data flowing to the printer on each pass.
+        FIX is the way we want to leave the printer when we're done. It simply
+issues the ESC "@" command (27,64) to return the printer to its default
+settings, and adds a carriage return to separate one screen dump from the next
+if you will be doing more than one on the same page. So far as I know, this
+command is common to most printers. If you intend to use the BASIC loader
+instead of assembling the source code yourself, find those numbers in the data
+statements and change them appropriately. Be sure that you don't use and more -
+or less - bytes than the original. Pad with zeros if your printer codes are
+shorter.
+        2. DUMP.CO is short enough to live in the alternate character buffer,
+but I've opted against that location in consideration of cassette users who
+would like to use the program without going through the trouble of reassembling
+it at a lower address. On the other hand, DUMP.CO is ORG'd at a lower address
+than some users might prefer. I did that to stay clear of CDOS, which controls a
+Chipmunk drive. If you use any peripheral that changes HIMEM, check that value
+before reassembling the source.
+        3. DUMP.CO can only work during a call to the ROM routine CHGET, which
+fortunately occurs frequently in the built-in ROM programs, including BASIC
+command mode. When a program is running, CHGET won't necessarily be used at the
+desired time unless you program it in. An easy way is to insert a line like:
+                100 ifinkey$=""then100
+or directly,    100 call4811
+Either method will wait for your keystroke, giving you a chance to enter the
+ESC/GRPH combination. If this method is used, you will have to enter SOMETHING,
+and if you don't want the dump and don't want to mess up the display either, a
+non-destructive response would be to hit ESC by itself. Or, if there is a place
+in your program where you definitely want a screen dump, you can omit the prompt
+and insert CALL 57694 (or whatever address the label "DUMP" is assigned when you
+reassemble the source).
+        4. If you just want to call a screen dump from inside a BASIC program:
+(a) Shorten the existing source code by eliminating everything between the ORG
+declaration and the label "DUMP". (b) At the label "RESET", eliminate the "POP
+AF" instruction. (c) Reassemble at the address you want and CALL that address
+directly from your program.
+        5. Option ROMs flit back and forth between their own code and standard
+ROM routines. This to be true of PCSG's SuperRom, for example. CHGET is
+repeatedly called by WRITEROM, and it would be surprising if LUCID and THOUGHT
+didn't do the same. You may want to research this further by activating DUMP.CO
+and then entering your favorite option ROM.
+        6. The source code was written for Hardware-Software Integrations'
+assembler for Model 100. If you will be using a different assembler, first make
+any required syntax changes in the source code.
+
+--------------------
+SOURCE CODE: DUMP.CO
+--------------------
+BYTES   EQU     $7432
+CINT    EQU     $3501
+DEVICE  EQU     $F675
+DIV%    EQU     $377E
+HOOK    EQU     $FADE
+MOD     EQU     $37DF
+NOINT   EQU     $765C
+PRLP    EQU     $27B1
+        ORG     $E132   ;57650
+        LHLD    HOOK    ;get CHGET's RST 7 hook address
+        SHLD    HOOKBF  ;tuck it away safely
+        LXI     H,NUHOOK;fetch this program's start adress
+        SHLD    HOOK    ;and put it into $FADE
+        RET             ;now our program is installed
+NUHOOK  PUSH    AF      ;save keystroke and flags
+        LDA     -105    ;check special keys in the matrix
+        CPI     8       ;is it ESC?
+        JNZ     RESET   ;no - forget it
+        LDA     -103    ;yes check for GRPH or CODE
+        CPI     4       ;is it the GRPH key?
+        JZ      DUMP    ;yes - dump the screen
+        CPI     8       ;is it the CODE key?
+        JNZ     RESET   ;no - forget it
+        LHLD    HOOKBF  ;yes - get the old vector
+        SHLD    HOOK    ;and put it back in $FADE
+        JMP     RESET   ;we've disabled our program
+DUMP	MVI	A,1	;start the screen dump
+	STA	DEVICE	;select the printer
+	LXI	H,SET	;get the margin and line feed commands
+	CALL	PRLP	;and send them to the LPT
+;
+;read each of the 240 bytes in each LCD row twice. On the first pass, send
+;values which produce double-high images of the original bytes MOD16, + CR
+;next, send values which produce double-high images of the original bytes\16
+;followed by a CR
+;
+	XRA	A
+ROW	STA	-12
+NUPASS	LXI	H,HR
+	CALL	PRLP
+	XRA	A
+COL	STA	-11
+	LXI	H,IMAGE	;six-byte buffer
+	CALL	NOINT	;disable interrupts
+	MVI	D,0	;source=screen, target=buffer
+	CALL	BYTES	;transfer six bytes of data to IMAGE
+	LXI	D,IMAGE	;get ready to process them
+	MVI	B,6	;counter
+	LDA	PASS	;is this the MOD16 (0) pass or
+	CPI	1	;the \16 (1) pass?
+	JZ	DODIV	;if 1, do the\16 pass
+DOMOD	LDAX	D	;if 0, do the MOD16 pass
+	PUSH	B
+	PUSH	D
+	MOV	E,A	;set up for MOD16 operation
+	MVI	D,0
+	LXI	H,16
+	CALL	MOD
+	CALL	CNVRT	;(see CNVRT subroutine)
+	POP	D
+	INX	D	;next byte in buffer
+	POP	B
+	DCR	B
+	JNZ	DOMOD	;do all six bytes
+	LDA	-11	;now do next column
+	INR	A
+	CPI	40	;done yet?
+	JNZ	COL	;no - do another column
+	MVI	A,13	;yes - insert carriage return
+	RST	4
+	MVI	A,1	;and set up for the \16 pass
+	STA	PASS
+	JMP	NUPASS	;go back to start it
+DODIV	LDAX	D	;do the \16 pass
+	PUSH	B
+	PUSH	D
+	MOV	E,A	;set up for integer division
+	MVI	D,0
+	LXI	H,16
+	CALL	DIV%
+	CALL	CINT	;make sure an integer value is in A
+	CALL	CNVRT	;(see CNVRT subroutine)
+	POP	D
+	INX	D	;next byte in buffer
+	POP	B
+	DCR	B
+	JNZ	DODIV	;do all six bytes
+	LDA	-11
+	INR	A
+	CPI	40	;end of row?
+	JNZ	COL	;no - do another column
+	MVI	A,13	;yes - send carriage return
+	RST	4
+	XRA	A
+	STA	PASS	;and set up for a MOD16 pass
+	LDA	-12
+	INR	A
+	CPI	8	;have we done all eight rows?
+	JNZ	ROW	;no - do the next one
+	LXI	H,FIX	;yes - reset the printer
+	CALL	PRLP	;send code for default plus CR
+	XRA	A
+	STA	DEVICE	;re-activate screen
+RESET	POP	AF	;get original keystroke & flags
+	RET		and exit
+;
+;this subroutine exchanges an original byte value (MOD16 for low-order nibble
+;or \16 for high-order nibble) with a value which produces a double-high
+;image of the original when printed. This creates a larger printed image.
+;
+CNVRT	MOV	A,L	;place the result of the operation
+			;in the accumulator
+	CPI	0	;is it zero?
+	JZ	GO	;yes - print it
+	LXI	D,BYTS	;no - find what it should be
+NLP	DCR	A	;
+	JZ	GET	;fetch a value
+	INX	D	;index to the next conversion
+	JMP	NLP	;and start over
+GET	LDAX	D	;get the new value in A
+GO	RST	4	;print it
+	RST	4	;three times
+	RST	4	;for a wider hard copy
+	RET
+SET	DB	27	;ESC
+	DB	108	;"l" - controls left margin on Epsons
+	DB	10	;left margin = 10
+	DM	27	;ESC
+	DB	51	;"3"
+	DB	22	;"^V" - for Epsons this sets
+			;linefeeds to 22/180"
+	DB	0	;end of code
+HR	DB	27	;ESC
+	DB	76	;"L" - double density mode
+	DB	208	;208+(2*256)
+	DB	2	;=720 columns to print per row
+	DB	0	;end of code
+FIX	DB	27	;ESC
+	DB	64	;"@" - set LPT parameters to default
+	DB	13	;send a carriage return
+	DB	0	;end of code
+;
+;Because we are sending each row twice, the MOD16 pass only reads bits 0-3 and
+;the \16 pass only reads bits 4-7. This section substitutes values which print
+;representations of the processed values
+;
+BYTS	DB	192
+	DB	48
+	DB	240
+	DB	12
+	DB	204
+	DB	60
+	DB	252
+	DB	3
+	DB	195
+	DB	51
+	DB	243
+	DB	15
+	DB	207
+	DB	63
+	DB	255
+HOOKBF	DW	0	;hold original vector here
+PASS	DB	0	;keep track of which pass we're on
+IMAGE	DS	6	;buffer to hold each 6-byte image
+	END

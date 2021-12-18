@@ -1,0 +1,426 @@
+;ADSM1.SR1, source code for ADSM1.200/.100
+;Source code is split into three parts, to enable downloading to 200's ram
+;This is the first part. Second part is  ADSM1.SR2, third is ADSM1.SR3
+;James Yi 73327,1653 -- 07/27/88
+;Modified by Mike Audleman 73577,3041 -- 03/17/90
+;	Added CLS Command
+;	Added LFILES x Command (M200 & M100 w/o DVI Does FILES)
+;	Added DVI screen compatibility
+
+mz	equ	1	;0 for norm Mod 100, 1=Mod 100+DVI, 2 for  Mod 200
+
+
+	if	mz,1
+m	equ	1
+lcdsiz	equ	24
+botrow	equ	$118
+	org	58263-4408
+	endif
+
+	if	mz,0
+m	equ	1
+lcdsiz	equ	7
+botrow	equ	$107
+	org	62960-4392
+	endif
+
+	if	mz=2
+m	equ	2
+	org	61100-4499
+	endif
+
+	if	m,2
+;200 equates
+wrlcd	equ	5030h
+inrh	equ	1ach
+null	equ	7
+maxfil	equ	$9be1
+setmax	equ	4c4ah
+open	equ	$5bd1
+readio	equ	$5d36
+writio	equ	$5a05
+close	equ	$5ce6
+closei	equ	$5bf7
+varspc	equ	63077
+varend	equ	63079
+frespc	equ	63081
+FlNm	equ	63302
+coparm	equ	$41A1
+prparm	equ	13072
+Top	equ	62715
+Len	equ	62717
+Exe	equ	62719
+SaveCO	equ	12390
+FindCO	equ	11174
+FindDO	equ	11197
+InpA	equ	$54f0
+InpN	equ	InpA+6
+GetLen	equ	$2D43
+getfNm	equ	$5ACA
+opendo	equ	11635
+dderr	equ	47ah
+nferr	equ	477h
+snerr	equ	471h
+overr	equ	480h
+ulerr	equ	978h
+bserr	equ	57aah
+d0err	equ	474h
+iderr	equ	1119h
+moerr	equ	483h
+ioerr	equ	$15ac
+omerr	equ	$4c3d
+menu	equ	$67a4
+uptdir	equ	$2C62
+restak	equ	$7155
+chrget	equ	4855
+DefFnk	equ	28192
+prnhl	equ	18187
+print	equ	4556
+Caps	equ	$1014
+crlf	equ	$4f3e
+CRLFc	equ	$5a77
+Files	equ	10794
+Setcur	equ	$4F9B
+bell	equ	8271
+Beep	equ	$4f45
+Insert 	equ	33448
+mvhci	equ	15445
+mvhcd	equ	3c5eh
+mvhbi	equ	$32A7
+mvdbi	equ	16826
+mvhbci	equ	33558
+mvhbcd	equ	33569
+zerobc	equ	$7747
+zerob	equ	24001
+InrA	equ	2459h
+InrB	equ	8221
+InrC	equ	28278
+inxH	equ	1b01h
+dcxH	equ	106fh
+InxD	equ	21895
+Bufr	equ	61296
+WkSpc	equ	$f856
+pkgff	equ	64781
+Errtrp	equ	61236
+botrow	equ	$110
+lcdsiz	equ	16
+fferr	equ	5f0eh
+stkval	equ	$f650
+Kill	equ	11052
+PkBnk	equ	$9bb0
+lcd	equ	64048
+setfr	equ	$1ddd
+datfr	equ	$2fc5
+endtfr	equ	$1dd3
+geteof	equ	$8268
+lfiles	equ	files
+	endif
+
+	if	m=1
+;100 equates
+wrlcd	equ	$4313
+inrh	equ	1ach
+null	equ	7
+maxfil	equ	$7f2b
+setmax	equ	$3f2f
+open	equ	$4d12
+rdbyt	equ	$4e7a
+wrbyt	equ	$4b44
+close	equ	$4e27
+closei	equ	$4d38
+varspc	equ	$fbb2
+varend	equ	$fbb4
+frespc	equ	$fbb6
+FlNm	equ	$fc93
+coparm	equ	$3450
+prparm	equ	$25ab
+Top	equ	$face
+Len	equ	top+2
+Exe	equ	len+2
+FindCO	equ	$2089
+FindDO	equ	$20a0
+InpA	equ	$463e
+InpN	equ	InpA+6
+GetLen	equ	$21fa
+getfNm	equ	$4c0b
+opendo	equ	$2206
+dderr	equ	44fh
+nferr	equ	44ch
+snerr	equ	446h
+overr	equ	455h
+ulerr	equ	94dh
+bserr	equ	48f6h
+d0err	equ	449h
+iderr	equ	10efh
+moerr	equ	458h
+ioerr	equ	$1494
+omerr	equ	$3f22
+menu	equ	$5797
+uptdir	equ	$2146
+restak	equ	$5d5d
+chrget	equ	12cbh
+DefFnk	equ	5a7ch
+prnhl	equ	39d4h
+print	equ	11a2h
+Caps	equ	$fe9
+crlf	equ	$4222
+CRLFc	equ	$4bb8
+Files	equ	1f3ah
+Setcur	equ	$427c
+Beep	equ	$4229
+Insert 	equ	6b6dh
+mvhci	equ	2eddh
+mvhcd	equ	mvhci+9
+mvhbi	equ	$2542
+mvdbi	equ	3469h
+mvhbci	equ	6bdbh
+mvhbcd	equ	6be6h
+zerobc	equ	$6366
+zerob	equ	4f0ah
+InrC	equ	5ad6h
+inxH	equ	199eh
+dcxH	equ	1045h
+InxD	equ	46d2h
+Bufr	equ	$f685
+WkSpc	equ	$fcc0
+pkgff	equ	$ff99
+Errtrp	equ	$f652
+fferr	equ	5057h
+stkval	equ	$fb9d
+lfiles	equ	$506f
+	endif
+
+start	jmp	begin
+
+;**** Added routine to clear screen
+cls	mvi	a,12
+	call	wrlcd
+	ret
+
+;**** LFILES command added
+
+	if	mz,1
+lfile	mov	a,l
+	ani	1
+	adi	48	;convert to ascii #
+	sta	lfil+1
+	call	cls
+	lxi	h,lfil
+	call	lfiles
+	ret
+lfil	db	' 0',0,0
+	endif
+
+	if	mz,0
+lfile	call	cls
+	call	files
+	ret
+	endif
+
+InDat	DB	32
+_0	dw	Com
+	DB	'DB',2
+_20	Dw	db
+	DB	'DW',1
+	Dw	dw
+	Db	'DM',2
+_19	Dw	dm
+	DB	'DS',1
+	Dw	ds
+	DB	'ORG',1
+	Dw	org
+	db	'ENT',1
+	dw	ent
+	db	'IF',2
+_40	dw	if
+eistr	db	'ENDIF',2
+_1	dw	endif
+	db	'FIX',1
+	dw	fix
+	db	'DD',1
+	dw	dd
+	db	'MENU',2
+	if	m=2
+	dw	menu
+	endif
+	if	m=1
+_41	dw	exit
+	endif
+	db	'SMB',4
+_2	dw	smb
+	db	'DEL',2
+_3	dw	del
+	db	'MOVE',1
+	dw	move
+	db	'FIND',4
+_5	dw	find
+	Db	'GET',3
+_6	dw	PrnWd
+	db	'CNV',3
+_7	Dw	cnv
+	DB	'GO',1
+	Dw	go
+	DB	'RE',3
+_9	Dw	re
+	DB	'WR',1
+	dw	wr
+	DB	'MD',1
+	Dw	md
+	db	'CD',1
+	dw	cd
+	DB	'ASM',4
+_13	Dw	asmble
+	DB	'DSM',4
+_14	Dw	disasm
+	DB	'OP',1
+	Dw	op
+	db	'IP',3
+_16	dw	ip
+	DB	'SET',1
+	Dw	set
+	db	'LINK',2
+_18	dw	link
+	db	'END',2
+_21	Dw	end
+
+;**** Added commands
+	db	'CLS',2
+_21a	Dw	cls
+	db	'LFILES',1
+_21b	dw	lfile
+
+;**** end of Added commands
+
+MncDat	DB	32
+_22	Dw	mov
+	DB	'MOV',1
+	DB	$40,8
+	db	32
+_23	dw	mvi
+	DB	'MVI',2
+	DB	6,8
+	DB	32
+_24	Dw	RegInc
+	DB	'ORA',1
+	DB	$B0,1
+	DB	'INR',1
+	DB	4,8
+	DB	'DCR',1
+	DB	5,8
+	DB	'XRA',1
+	DB	$A8,1
+	DB	'CMP',1
+	DB	$B8,1
+	db	'ADD',1
+	DB	$80,1
+	DB	'ADC',1
+	DB	$88,1
+	DB	'SUB',1
+	DB	$90,1
+	DB	'SBB',1
+	DB	$98,1
+	DB	'ANA',1
+	DB	$A0,1
+	DB	32
+_25	dw	lxi
+	DB	'LXI',3
+	DB	1,16
+	db	32
+_26	Dw	xeg
+	DB	'PUSH',1
+	DB	$C5,16
+	DB	'POP',1
+	DB	$C1,16
+	DB	'LDAX',1
+	DB	10,16
+	DB	'STAX',1
+	DB	2,16
+	DB	'DAD',1
+	DB	9,16
+	DB	'INX',1
+	DB	3,16
+	DB	'DCX',1
+	DB	$B,16
+	DB	32
+_27	dw	rst
+	DB	'RST',1
+	DB	$C7,8
+	DB	32
+_28	dw	opr+3
+	db	'JNZ',3,$C2
+	db	'JZ',3,$CA
+	db	'JMP',3,$c3
+	db	'RET',1,$C9
+	db	'CALL',3,$CD
+	DB	'LHLD',3,$2A
+	DB	'SHLD',3,$22
+	DB	'XCHG',1,$EB
+	db	'DSUB',1,8
+	db	'LHLX',1,$ED
+	db	'SHLX',1,$D9
+	db	'JNC',3,$D2
+	db	'JC',3,$DA
+	db	'RNZ',1,$C0
+	db	'RZ',1,$C8
+	db	'RNC',1,$D0
+	db	'RC',1,$D8
+	DB	'LDA',3,$3A
+	DB	'STA',3,$32
+	db	'CNZ',3,$C4
+	db	'CZ',3,$CC
+	db	'JP',3,$F2
+	db	'JM',3,$FA
+	db	'CNC',3,$D4
+	db	'CC',3,$DC
+	DB	'CPI',2,$fe
+	DB	'ANI',2,$e6
+	DB	'RLC',1,7
+	DB	'RRC',1,15
+	DB	'RAL',1,$17
+	DB	'RAR',1,$1f
+	DB	'ADI',2,$C6
+	DB	'ACI',2,$ce
+	DB	'SUI',2,$d6
+	DB	'SBI',2,$de
+	DB	'XRI',2,$ee
+	DB	'ORI',2,$f6
+	db	'DESP',2,$38
+	db	'DEHL',2,$28
+	DB	'CMC',1,$3F
+	DB	'STC',1,$37
+	db	'LHLI',1,$ed
+	db	'SHLI',1,$d9
+	db	'HLMBC',1,8
+	DB	'CMA',1,$2F
+	db	'PCHL',1,$E9
+	db	'CP',3,$F4
+	db	'CM',3,$FC
+	db	'RP',1,$F0
+	db	'RM',1,$F8
+	db	'OUT',2,$D3
+	db	'IN',2,$DB
+	db	'DI',1,$F3
+	db	'EI',1,$FB
+	db	'XTHL',1,$E3
+	db	'SPHL',1,$F9
+	db	'NOP',1,0
+	db	'RIM',1,$20
+	db	'SIM',1,$30
+	db	'RHR',1,$10
+	db	'RDL',1,$18
+	db	'JPO',3,$E2
+	db	'JPE',3,$EA
+	db	'CPO',3,$E4
+	db	'CPE',3,$EC
+	db	'RPO',1,$E0
+	db	'RPE',1,$E8
+	db	'JND',3,$DD
+	db	'JD',3,$FD
+	db	'DAA',1,$27
+	db	'HLT',1,$76
+	db	'???',1,203
+	db	32
+_29	dw	dmov
+	db	'DMOV',2,$28
+
+	link	1:adsm1.sr2

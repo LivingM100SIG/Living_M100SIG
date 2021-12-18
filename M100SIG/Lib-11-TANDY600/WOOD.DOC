@@ -1,0 +1,70 @@
+
+Documentation for WOOD.600, a program from CodeWorks Magazine.
+  Adapted for the Tandy 600 by Dave Thomas
+
+	In their Jan/Feb 1986 issue of CodeWorks, the Editors devoted eight
+full pages to discussion of the planning and programming that went into this
+program. Recommend that folks interested in the program technicalities obtain
+a copy of the magazine by addressing CodeWorks at the address given in REM
+at the beginning of the program.
+
+	The WOOD.600 program solves the very complicated problem of trying to
+cut expensive plywood in the most effective way to waste the least wood. With
+complicated problems, it will keep trying (Attempt--> nn) until it can find
+either a "Satisfactory" or "a POOR" solution. In very rare cases the program
+will proclaim an "EXCELLENT solution!"
+	After printing detailed results and cutting procedures to the screen,
+the program provides an opportunity to print further instructions, diagrams,
+and results to the printer.
+
+	Since I'm neither a programmer nor a carpenter, I took the simple way
+of testing the program to make sure all was well. First I had the program cut
+up the base 96 x 48 sheet of plywood in three pieces. No problem. Then, not
+wishing to guess about something I knew nothing about (cabinet making),
+I measured a china cupboard and a computer desk module and had the program
+figure the best cuts to get the pieces needed for those bits of furniture.
+In both cases, the program came up with solutions quickly and then reported
+the size of the pieces remaining after cutting the needed boards. For you to
+see how the program works, I'm including those test inputs below.
+
+	After initialzation, the program asks for the "kerf" of your saw. This
+allows it to adjust for the loss of wood due to the saw's action. Then you are
+prompted for LENGTH, WIDTH, and GRAIN for each needed piece. Naturally t'is
+expected that the program user will have cabinet blueprints prior to running
+the program. The GRAIN prompt is looking for one of two responses: "1" would
+mean that you want the grain to run the length of the piece, whilst "2" would
+indicate grain running the width of the piece. Type a zero (0) at the LENGTH
+prompt to cease input and allow the program to start calculations.
+Note that the "Press ESC to quit, ENTER to continue" prompt provides for a
+tidy exit to System Manager with ESC whilst ENTER takes you to the next screen.
+
+	The screen and printer reports both use "Cut codes" to indicate the
+type of cutting required. These are deciphered as follows:
+   Cut code 1 - exact fit
+   Cut code 2 - one cut, horizontally
+   Cut code 3 - one cut, vertically
+   Cut code 4 - two cuts, 1st vertical, 2nd horizontal
+   Cut code 5 - two cuts, 1st horizontal, 2nd vertical
+.np
+	Now let's try the program out, use the following inputs for
+  PIECES   LENGTH   WIDTH   GRAIN  after starting with "Kerf 1"
+    2 @      29       12      1
+    2 @      22       11      2     [don't trust me for blueprint!
+    1 @      20       12      1       this was hasty measurement
+    1 @      47       12      1        just to test program!]
+    1 @      47        8      1
+
+	One more example for you to test with, but don't trust your good
+china to my measurements!!
+  PIECES   LENGTH   WIDTH   GRAIN  after starting with "Kerf 2"
+    1      47.25    15.5      1
+    2      48       20        1
+    2      54       13        1
+    4      41.5     11.6      2
+
+	A final important comment. The program has many possibilities for
+further development and improvement in solving such questions as "how can
+I best get X items of sizes A, B, C, ..... into (or out of) Y area?" Those
+that wish to investigate further will find the REM lines of help.
+
+Sysop .^Dave^ Thomas 76703,446, Model 100 SIG - 14-Feb-1986

@@ -1,0 +1,54 @@
+10 'AUGUST 14, 1984
+20 'Copyright 1984, S>MICHAEL SARNA
+30 'These lines set up the second file,
+40 '(the actual IPL2 file.) This file,
+50 'when executed causes a jump
+60 'into BASIC, kills the psuedo IPL1
+70 'file and the real IPL2 file and
+80 'makes a simple one-line program and
+90 'excecutes it:
+100 OPEN"IPL2" FOR OUTPUT AS #1
+110 PRINT#1,"BASIC"
+120 PRINT#1,"KILL"CHR$(34)"IPL1.DO"
+130 PRINT#1,"KILL"CHR$(34)"IPL2.DO"
+140 PRINT#1,"10?"CHR$(34)"HELLO"CHR$(34)
+150 PRINT#1,"CLS:RUN"
+160 CLOSE
+170 'The following exec MUST follow the
+180 'CLOSE of creation of a ".DO" file.
+190 'It causes a Directory Search in
+200 'which A=Dir flag and HL=Dir Entry.
+210 'At this point FILNAM="IPL2.DO"
+220 EXEC 8859
+230 A=PEEK(63911!)
+240 'A MUST = X'CO' or something's wrong
+250 IF A<>192 THENPRINT"ERROR":END
+260 L=PEEK(63912!):H=PEEK(63913!)
+270 HL=H*256+L
+280 'This manipulation turns "IPL2.DO"
+290 'into a real IPL-type file:
+300 POKE(HL),(PEEK(HL)OR4)
+310 'The following makes the computer
+320 'think its working on an IPL file
+330 'by calling up the IPL execution
+340 'code with the following Psuedo
+350 'IPL file:
+360 OPEN"IPL1" FOR OUTPUT AS #1
+370 PRINT#1,"TEXT"
+380 PRINT#1,"Afile"
+390 CLOSE
+400 'Same type of dir search is done
+410 EXEC 8859
+420 A=PEEK(63911!)
+430 IF A<>192 THENPRINT"ERROR":END
+440 L=PEEK(63912!):H=PEEK(63913!)
+450 'And we must fool the computer into
+460 'thinking that a return to MENU
+470 'from TEXT is the same as a cold
+480 'boot at powerup by setting FSTFLG:
+490 POKE63897!,1
+500 'Now we fall into the middle of the
+510 'IPL execution code with HL already
+520 'pointing to the pseudo IPL file
+530 'directory entry!
+540 EXEC 22460

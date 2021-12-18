@@ -1,0 +1,9 @@
+10 '"FIX201.BA" -- Program to patch the    PG Design MENU.BA program Vers 2.00     into Vers 2.01; fixes bug in Copy       of files into memory bank without       enough space. Patch info from Peter     Van Heusden (10/7/86). Phil Wheeler     [71266,125]
+20 CLEAR1000:DIM A(71):CLS
+30 IF PEEK(32816)=50 AND PEEK(32818)=48 AND PEEK(32819)=48 THEN 40 ELSE BEEP:PRINT@160,"Version 2.00 Not installed!":STOP
+40 B=0:FOR I=0 TO 70:READ A(I):B=B+A(I):NEXT:IF B=9121 THEN 50 ELSE PRINT@160,"Data Statement Error!":STOP
+50 POKE 32819,49 'New version number is 2.01
+60 FOR I=0 TO 70: POKE 32895+I,A(I):NEXT
+70 PRINT@160,"Version 2.01 Patch Complete":END
+100 DATA 34,5,134,175,103,111,57,34,10,134,33,255,253,120,167,202,148,128,42,120,246,249,33,104,129,229,213,33,176,128,175,87,88,25
+110 DATA 25,94,35,86,235,34,174,128,209,42,5,134,195,231,130,199,130,231,130,249,130,38,131,190,131,139,131,101,131,161,131,15,132,42,132,255,255

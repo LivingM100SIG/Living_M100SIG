@@ -1,0 +1,234 @@
+DOCUMENTATION for Redial.100
+
+
+
+Redial.100 -- either version -- is designed for calling a heavily-used computer
+BBS.  It dials a telephone number and checks to see if a modem answers.  If one
+does, REDIAL calls the Model 100 TERM program.  (Version .JD2 does so after it 
+logs you onto the system.)  Otherwise it hangs up, waits about 30 seconds, and 
+repeats the sequence -- until either it succeeds or you tell it to stop.
+
+This program is one result of trying to rearrange the database on Lansing State
+Journal -- ACCESS, of which I am a Sysop.  I'd grown weary of spending weekends
+at the computer, telling TELCOM to keep trying.  Better to write a program, I 
+decided, and let M100 do the work.
+
+
+
+FEATURES OF THE PROGRAM:
+
+**Automatic repeats until connection is made.
+
+**Version .JD2 features an automatic logon feature.
+
+**Simplified setting of modem protocol parameters.
+
+**Both versions are SMALL.  The longer can be easily trimmed to less than 1000 
+bytes.
+
+**The display tells you the current status of the attempt.  Information is 
+given about what the program is currently doing, what phone it is attempting to
+reach, and how long it has been trying to get through.
+
+**REDIAL beeps twice per cycle to remind you that it's still at work.
+
+**Pressing <ENTER> at any prompt will return you to the M100 main menu.
+
+**REDIAL gives an audible cue when it successfully reaches the other computer.
+
+**Three escapes are provided from the redial cycle, via function keys.  [f1] 
+("New#") prompts you for a new phone number.  [f4] ("Off") shuts the computer 
+down; this is useful if you recieve an incoming call during the window between 
+attempts.  [f8] ("Menu") calls the Model 100 main menu display.
+
+
+
+USING REDIAL.JD1:
+
+This version's for limited RAM.  If you've more than 8K, version .JD2 is almost
+certainly preferable.
+
+The program first asks you to choose between two common RS-232 parameter 
+settings.  (These are the two in use around Lansing; I suppose there may be 
+others.  Changing this option is relatively easy; if there are others you want,
+just leave me a note.)
+
+Then it asks for a phone number.
+
+Then REDIAL dials the number.  It waits about 30 seconds for a modem to 
+respond, then hangs up and waits about 30 seconds before trying again.  The 
+whole cycle takes approximately 75 seconds.
+
+If a modem answers, REDIAL whistles for you and calls the M100 TERM routine.
+
+Automatic logon is possible with this version -- if you want to type in the 
+appropriate string, and if you KNOW the other computer will answer on first
+ring.  BE AWARE that the redial feature will be disabled, which sorta defeats
+the program.  I don't recommend it.
+
+
+USING REDIAL.JD2:
+
+The program assumes you've got the number you want to call in your ADRS.DO 
+file, and prompts for something to look for.  Since the program does not make 
+case conversions, the search string must EXACTLY match that being sought.  (I 
+use only lower case in my ADRS.DO file....)
+
+REDIAL searches ADRS for the entry and, if it's there, dials the number.  The 
+auto- repeat routine is like the other version's; 75 seconds or thereabouts, 
+total.
+
+The fun begins when a modem answers.  REDIAL hollers at you and logs you onto 
+the system (assuming, of course, you've given it correct instructions in the 
+proper format).
+
+A note on "proper format":  REDIAL expects a slightly different format from 
+TELCOM's.  An example format is:
+
+LSJ-A:4828144<all the usual stuff>:(modem parameters) anything else you like --
+up to 255 bytes, total....
+
+Notice the (modem parameters) in parentheses, there.  For example:  "(M8N1E)" 
+for my home board, LSJ-ACCESS; or "(7i1e)" for calling CIS.  (The M is 
+optional.)
+
+The following punctuation marks, used other than as expected by the program, 
+may have unintended results -- ":", ">", "<", "(", and ")".  Using a different 
+format in your ADRS entry may, also, have unexpected consequences; be really 
+careful between the first colon and the closing parenthesis.
+
+In the event this version finds an ADRS entry without logon information or with
+modem parameters missing, it will assume parameters of M8N1E and dial the call,
+but will not log you in.
+
+Of course, it may be that you wish to call a number which is not in your ADRS 
+file.  This can be accomplished by answering the "Search for:" prompt with "D" 
+(<UPPERCASE><D>) and the number you wish to call.  For example, "D4828144" 
+could be used to dial LSJA from a Lansing phone.  Parameters default to M8N1E 
+and automatic logon is disabled.
+
+
+
+TWO PERTINENT WARNINGS
+
+The program occasionally "calls" one of Ma Bell's blasted recordings, which 
+complains (unaccountably) that we've dialed a 1- before a local number.  I've 
+been told that this results from an M100 hardware bug.  REDIAL just hangs up on
+her, and tries again.
+
+
+IMPORTANT CAUTION:  REDIAL cannot tell the difference between:
+ 1) no answer,
+ 2) busy signal, or
+ 3) answered by voice.
+
+DO NOT use this program to dial your girlfriend.  It will hang up on her, then 
+call her again, then hang up on her again.  She'll likely get annoyed.  (See 
+REDIAL.MOD in M100SIG's DL1 for further discussion.)
+
+
+
+CUSTOMIZING REDIAL
+
+I regularly get inquiries about modifying REDIAL.  Here follow changes people 
+have made to fit it better to their needs or preferences:
+
+Many people feel the timer loops are too long, and ask about modifying them.  
+There are two loops:
+
+The first, in line 8 of REDIAL.JD2 (line 5 in .JD1), contains the routine that 
+samples the phone line to see if a connection has been made.  I've set it 
+rather long to match the recycle sequence on LSJA, but it can be easily 
+shortened.  Just change BOTH 2500s to some smaller number; 800 is about 10 
+seconds.
+
+The second timer loop is empty, and lives in line 9 (or 6).  It's the FOR... 
+NEXT loop in exponential notation (this to save bytes), each 1500 (15E2) takes 
+about a second.  Changing the 3E4 to 0 should make this loop take about 10 
+seconds....
+
+Some folks want the screen to display a count of the attempts made to get 
+through.  I find this inexplicable, but here's the solution:  Add ":C=0" at the
+end of line 6 (line 3 if .JD1).  Add "C=C+1:" at the start of the next line.  
+In the same line (either 7 or 4, presumably) replace the "TAB(160)" with 
+"TAB(80)".  IMMEDIATELY BEFORE THIS insert "TAB(104)"Attempts:"C" (sorry about 
+the nested quote marks) so the sequence now reads:
+
+ ...TIME$,5)")"TAB(104)"Attempts:"CTAB(80)"New#"...
+
+Users with an IPL password program will probably wish to modify the POWEROFF 
+option to read RUN"PASS (or whatever you call the program).  Line 11 or 8, 
+depending.
+
+Similarly, some users may wish to modify the MENU calls in lines 2 and 10 (or 
+2, 3 and 7) to RUN"PROGRM -- for instance, I use a manager program that 
+effectively isolates me from the main menu in normal operations.  Notice that 
+if you change the function key call from MENU, you may want also to change the 
+key's label (in line 7 or 4, depending on version.  Just after the TAB(35)).
+
+All the function keys may, of course, be reassigned or rearranged (I've got 
+"Off" and "New#" switched, for instance).  The call is the ONKEYGOSUB in line 0
+(both versions, though the calls are different) and the labels are the last 
+line of TABs in line 7 (4).  (If you add another key here, TAB isn't the best 
+way to define this line, by the way.)
+
+The prompt strings can, of course, be modified to suit your tastes.  Just find 
+'em in the program, and make changes to fit.  You may have to study how I've 
+used TAB to make things work, though, since the manual doesn't properly 
+describe how they behave.
+
+Version .JD2's manual dial cue requires a search prompt response beginning with
+"D".  This can easily be amended to, say, <GRAPH><p> (a telephone) by replacing
+the "D" in line 2 with the appropriate character.
+
+Perhaps you'd prefer that REDIAL.JD2 default to some RS-232 parameter other 
+than M8N1E.  Just replace the "8n1e" in line 5 with your choice.
+
+And a security note:  Your ADRS.DO file may well contain passwords to one or 
+more systems.  These can be hidden.  As a first step, you can make the ADRS 
+file invisible with any of a number of utilities available on M100SIG.  Still 
+better, change its name first, and modify REDIAL.JD2's line 2 to look for the 
+renamed file (change "adrs" to whatever in the OPEN statement).
+
+
+
+NOTES & DEBTS
+
+This program incorporates the Dick Cassidy/ larry gensch/ Jerry Kohl DIALER.100
+routine almost intact, as a PRETTY'd listing will clearly reveal.    Technical 
+questions about their portions of the program should be directed to one of 
+them; I only analyzed their program to the extent that I needed for revisions.
+(larry's CARDET.TXT in M100SIG's DL4 is interesting reading....)
+
+My revisions are of three sorts:
+
+First, I did a fairly careful crunch of the program.  In the process, I changed
+or shortened all variable names.  I also collapsed the logic of the routine, to
+save bytes.  And I deleted their extensive -- and very helpful -- remarks.
+
+Second, I made a minor, but significant, change in their routine.  What I 
+wanted was an endless repeat; their program prompts after each attempt.  So I 
+deleted the prompt, replaced it with a GOTO, and added what they call "a 
+suitable delay."
+
+Finally, I built a shell around the program to give the user more control.  
+Features of the shell include modem parameter selection, the revised display, 
+the function keys, and .JD2's logon routine.
+
+
+The auto- logon routine is based on Rick Perry's LOGON.100.
+
+
+Suggestions, advice, and other comments are welcome and encouraged.  (If these 
+instructions need repairs, tell me that, too.)  My thanks to Dick & larry & 
+Jerry for making their program available.  Also to Rick Perry for locating the 
+logon routine.  And to my friends on CompuNet (LSJA'S predecessor) for their 
+advice while I was testing the program.
+
+
+Joel Dinda
+ [75725,1134]
+ Lansing State Journal -- ACCESS
+ (517)482-8144
+
+24aug85

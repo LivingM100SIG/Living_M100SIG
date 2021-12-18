@@ -1,0 +1,154 @@
+Model 100 Hints and Tips				    Page 1
+
+
+The following is a series of "hints and tricks" for getting the
+most out of the TRS-80 Model 100.
+
+This file is intended to become an ongoing 'mini-magazine'
+within this SIG.  Plans for future updates include deciphering
+some ROM code for use within BASIC and Machine Language
+programs.
+
+
+-----
+
+
+o	"Printer Not Ready"
+
+There is a problem within the TRS-80 Model 100 that makes the 
+machine seem to "hang".  This is usually caused by pressing the
+PRINT key, which attempts to copy the contents of the non-
+graphic Model 100 screen to an attached printer.  The problem 
+manifests itself if there is no printer attached.
+
+Additionally, this can be caused by a BASIC or Machine Language
+(M/L) program, or one of the ROM programs TEXT, TELCOM, SCHEDL,
+and ADDRSS attempting to output to a non-existant printer.
+
+Usually, pressing SHIFT-BREAK will produce an "aborted" message
+within a ROM program, or "?IO Error" within a BASIC program.  
+If a machine language program is executing and the (non-
+documented) error vector is not 'plugged', an "?IO Error" will 
+be generated and a return will be made to BASIC.
+
+Disabling the PRINT key is touchy at best.  Actually, it is 
+possible to disable the key, and all the 'miniature' keys 
+immediately underneath the display (F1-F8, PASTE, LABEL, PAUSE/
+BREAK, etc.).  In my opinion, though, the loss of the function 
+keys is greater than the problem of the PRINT key.
+
+Since there is no easy, '1-poke' method of totazlly disabling 
+the printer in the Model 100, we must be satisfied with the 
+"?IO Error" in BASIC (unless it is trapped with an ON ERROR 
+statement).  On the other hand, there is a simple way in 
+Machine Language or BASIC to tell if there is a printer 
+attached.
+
+
+Model 100 Hints and Tips				    Page 2
+
+
+BASIC
+
+IF (INP(187)AND6)<>2 THEN PRINT"Not Ready"
+
+
+Z80 Assembly Language:
+
+	PUSH	BC		;Save BC
+	LD	B,A		;Save A Reg
+	IN	A,(0BBH)	;Get printer status
+	AND	06H		;Mask off non-status
+	XOR	02H		;Set flag bits
+	LD	A,B		;Restore A Reg
+	POP	BC		;Restore BC
+	JP	NZ,NOTRDY	;Not ready if Non-Zero
+	...			;Printer Ready if code falls
+				;through
+
+
+
+-----
+
+o	The PASTE buffer has been documented by more than one 
+program (although NOT by Radio Shack!) to reside at the address
+at F88CH-F88DH (63628-63629 decimal).  This address is stored 
+in typical 8080 LSB/MSB format.  What isn't so well documented 
+is that the two bytes preceding that address F88A-F88BH (63630-
+63631 decimal) contain the pointer to the text returned by 
+pressing the SHIFT and PRINT keys simultaneously.  (In BASIC, 
+SHIFT-PRINT points to the text "llist" followed by a carriage 
+return in ROM... try it!)  Both of these "buffers" are 
+terminated by a null byte, or CHR$(0).  The SHIFT-PRINT key can
+thus be useful in both BASIC and Machine Language programs.
+
+
+-----
+
+o	"Carrier Detect in Basic"
+
+	A useful routine has been uploaded to the SIG called 
+DIALER.100 and was submitted by Jerry Kohl [71256,23].  It is 
+heavily commented and explains a useful application of a 
+routine that "times out" if carrier is not detected within a 
+given amount of time.  The routine also contains an npublished
+entry point to TERM mode within TELCOM without losing carrier.
+
+Model 100 Hints and Tips				    Page 3
+
+
+-----
+
+o	Tandy BUG Department:
+
+	The CHKDC ROM Call documented by Tandy at 5AA9H 
+contains a "small" bug.  It seems that the routine was actually
+written for the ADRSS and SCHEDL ROM programs to search for 
+ADRS.DO and NOTE.DO.  The limitation here is that the routine 
+will only work if the filename being searched for contains 4 
+characters or less in the file name (preceding the required
+".").
+
+	How to get around this problem:
+
+	The solution is really quite simple, just load the A 
+register with 10 (Hex 0A) and enter the routine at the addess 
+5AABH.
+
+
+-----
+
+o	What is the Shack up to next?
+
+	I have heard from more than one source that the price 
+cut we saw on the Model 100 a couple of months ago is going to 
+be repeated sometime at the end of March or beginning of April.
+
+
+
+
+-----
+
+o	BREAK key disable
+
+	Disabling the BREAK key can be accomplished by POKEing 
+a value of 128 into the reserved RAM location 63056 (Hex F650).
+  This effectively eliminates all of the top row of keys
+(function keys, etc.).  To re-enable, just POKE the value 0
+back into the same location.
+
+
+
+-----
+
+That's all for now... next installment should be available 
+shortly.
+
+
+Send comments and/or suggestions to larry gensch via CompuServe
+EMAIL or through the Model 100 SIG.
+
+		larry gensch
+		[72236,3516]
+		03/21/84
+

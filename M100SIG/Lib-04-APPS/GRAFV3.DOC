@@ -1,0 +1,169 @@
+GRAFV3.DOC
+George Flanders [73300,2272]
+March 3, 1988
+	This file describes the operation of GRAFV3.100 (checksum=416,787) in 
+DL4, and is posted as a total update of GRAF.DOC and GRAFV2.DOC owing to the 
+extensive restructuring of the underlying BASIC program to produce a faster 
+running, more powerful business graphics utility.
+	The major improvements in GRAFV3 over earlier versions are (1) a 
+machine language screen dump which reduces printing time from nearly four 
+minutes via BASIC to 30 seconds or under, depending on the size of the 
+printer's buffer; and (2) the capability to either SAVEM or LOADM graphic 
+screens produced by the program.
+	One earlier feature, the user option to print out all entries and 
+compilations thereof immediately under the graphics dump, has been eliminated 
+for two reasons: (1) including that option defeated the objective of 
+"scrunching" the program so 8K M-100 users can use this utility entirely in 
+RAM; and (2) several folks commenting on GRAF.100 persuaded me that a detailed 
+printout was superfluous to most needs.
+	Let's quickly review the operation of GRAFV3.100, commenting where 
+appropriate.
+	(A) At the outset, the program loads machine language sections into two
+parts of RAM. One starts at D2F0/54000, and contains code that (1) either 
+records the created graphics in a buffer or retrieves the stored graphics and 
+paints the screen with them, depending on the entry point CALLed; (2) performs 
+the dump to printer and (3) defines the graphics buffer region. In the process,
+HIMEM is set to D2F0/54000, protecting the ML code under MAXRAM from BASIC. 
+Users don't have to remember the CALL addresses; they're built into the 
+program. If you would like to use these ML routines in other programs, download
+QIKDMP.100, which presents the data statements and suggestions on how to use 
+them in a program of your own construction. The ML thus loaded will begin at 
+the same address as it does here; unless you download QIKDMP.SRC, reassemble it
+at an address of your choice; run it and then PEEK out the DATA for a BASIC 
+loader.
+	The second ML section of GRAFV3 loads into the alternate character 
+buffer in high RAM, starting at FCC0/64704. This consists of two short routines
+to (1) receive textual inputs which will end up as part of the graphic screen, 
+rejecting the input of characters which are not part of GRAFV3's miniature 
+character set; and (2) scan the RAM directory, printing only .CO filenames.
+	(B) The first visible action of GRAFV3 is to print all .CO filenames 
+currently in RAM, asking the user LOAD? If there are no .CO files present, the 
+program jumps ahead to the FORMAT [(C) below] selection prompt. Assuming the 
+presence of .CO files previously created by the program, an affirmative reply 
+to LOAD? allows the user to enter the name of the file he wishes to load. If a 
+legal filename is inputted (.CO extension NOT required), that file's contents 
+are immediately placed in the graphics buffer, the screen is painted with its 
+data and the program jumps to the DUMP? prompt [(M) below]. A negative reply to
+LOAD? takes us to FORMAT selection [(C) below]. Two cautions: (1) if an 
+incorrect or nonexistant filename is entered, an FF (file not found) error is 
+generated. The user can recover by entering "GOTO1". It would be unlikely for 
+this to happen, with the correct filename spellings sitting right there on the 
+screen. (2) Only 1926-byte .CO files created by the program can be loaded 
+successfully. Selecting any other .CO file will fill your screen with garbage. 
+I'm working on a way to filter out non-graphic files, and that fix will show up
+eventually in a future "GRAFV4". For now, it's suggested that you stick with 
+under five-character filenames, all preceded by a "G", or some other memory-
+jogging device that signals which files are truly graphic ones.
+	(C) Assuming no graphic file is loaded, the user is prompted for 
+Format: 1] BARS, 2] PAIRS or 3] POINTS. Selecting BARS creates a vertical bar 
+chart. PAIRS produces a similar format, but for each entry two values per entry
+are asked for and presented graphically. This is useful for side-by-side 
+comparisons. POINTS simply connects successive values with lines across the 
+chart.
+	(D) If the PAIRS option is chosen, the user is prompted to provide an 
+I.D. for each side of the adjacent bar pairs. The "first" bar of each pair is 
+unfilled, and the "second" bar is filled. These I.D.'s eventually appear as a 
+legend in the lower left of the screen, defining the difference between filled 
+and unfilled bars; e.g., "87" and "88", depicting the difference between two 
+years.
+	(E) Next, to the prompt PLOTS: the user inputs the quantity of entries 
+he wishes to enter. This quantity is held in the variable 'N', referred to 
+below. He can select from two to twenty-four. (In the PAIRS format, each entry 
+will later prompt for two values).
+	(F) Next, the user inputs a graph title or heading of up to 30 
+characters in length.
+	(G) Now we select the callout to appear for the Y (vertical) axis of 
+the chart. The user can answer 'Yy' to any of the following built-in callouts: 
+DOLLARS, HOURS, PERCENT or UNITS. Failing to select one of these, the user is 
+prompted to input any other callout of up to six characters.
+	(H) Next, we determine what callout will accompany the entries (BARS, 
+PAIRS or POINTS) across the X (horizontal) axis of the chart. The user can 
+answer 'Yy' to any of these options: MONTHS, 1- or A-. If MONTHS is selected, 
+the user is then prompted to input the starting month, 1-12 (JAN through DEC). 
+If the option '1-' is chosen, each entry will be numbered consecutively across 
+the bottom of the chart: 1, 2, 3, etc. If 'A-' is chosen, entries will be given
+alphabetical callouts: A, B, C, etc. If the user rejects all of these options, 
+he will be prompted for a callout for each entry as part of the values input 
+sequence. In PAIRS format, and in the absence of defined X axis callouts, only 
+the first entry of each pair will be followed by a callout prompt, since each 
+pair shares the same callout.
+	(I) Now the input of numerical data takes place by successive prompts. 
+The way GRAFV3 is written, any combination of positive and/or negative numbers 
+can be inputted. If the user finds that his inputs will typically be smaller 
+than .01, he should rewrite the DATA in Line 44 to include, for example, 
+".01,.02,.05" at the beginning of the line, immediately after the word 'DATA'. 
+Any smaller options than that may result in some Y axis VALUE RANGE callouts (
+explained in (K) below) appearing in scientific notation. On the other end of 
+the spectrum, users may input quantities up to the trillions. In my use of 
+GRAFV3, I have found that a normal range of inputted data can be successfully 
+portrayed inside the chart area, which measures 50 pixels high and 200 pixels 
+wide. Owing to these hardware constraints, entries which range, say, between 1 
+and 1,000,000 will not be accurately portrayed on the screen. Just a reminder 
+that when entering larger numbers, DO NOT include the usual commas that 
+separate digit triads: enter 1000000, for example, not 1,000,000. Doing so will
+generate an "Extra ignored" message, and the entry will be truncated by BASIC 
+to the digits preceding the first comma, thereby misinterpreting the intended 
+magnitude.
+	(J) When GRAFV3 receives your value inputs, it runs them through a 
+rapid series of tests and comparisons in order to (1) determine the range 
+magnitude, (2) distinguish positive from negative values, (3) select the 
+largest absolute value and (4) calculate a screen position for the bar or point
+to be drawn or connected. When the largest value is determined, and if it turns
+out to be 1000 or over, the program keeps dividing entries by 1000 until an 
+appropriate display range is selected. This having occurred, the graphic screen
+will include a quantifying legend under the vertical callout: 'x K' for 
+example, if the values depicted are in thousands; or 'x M' if they are in 
+millions; or 'x B' for billions or 'x T' for trillions.
+	(K) These calculations done, the screen clears and the chart starts to 
+take shape. The title is printed; the chart area is enclosed; the vertical 
+callout (and any magnitude information such as 'x K') is printed; and VALUE 
+RANGE information appears down the left-hand edge of the chart area, 
+accompanied by "ticks" along left and right edges. VALUE RANGE is derived from 
+the variable T, which holds the next highest available range as determined by 
+the scan of Line 44 DATA undertaken in Line 10. In the case of PAIRS their 
+legends appear lower left; and if both positive and negative quantities are 
+involved, a line is drawn across the vertical center of the graph to separate (
+-) and (+) values. Then the bars are drawn (or points connected). Finally, the 
+X axis callouts appear below the graph, each directly under the quantity(ies) 
+portrayed. If the X axis MONTHS option has been selected, and N<13, the 
+callouts 'JAN...FEB...etc.' appear. If N>12, making three-character callouts 
+appear too messy, these are truncated to 'J...F...etc.; in any case beginning 
+with the requested "starting month".
+	(L) Having drawn the graphic screen, the program immediately loads it 
+into the graphics buffer. Subsequent on-screen prompts will NOT be part of the 
+stored graphic.
+	(M) The first prompt is DUMP?, a 'Yy' answer to which calls the ML 
+routine that sends graphic data to the line printer. Whether or not this is 
+done, we drop through to (or continue with) the next prompt.
+	(N) Now we're asked SAVE? Answering 'Yn', we're prompted for the 
+filename and SAVEM takes place. Normally, the SAVEM command always vectors to 
+BASIC's "Ok", suspending program action. However, GRAFV3 prevents this (thanks,
+SYSOP Tony) by loading a command in the "typeahead" buffer from which BASIC 
+reads pending direct commands. In this case, or if SAVEM is not requested, we 
+find ourselves at Line 32, which asks:
+	(O) MORE? A 'Yy' response clears all variables, redimensions and 
+redefines the ones we need at the outset and restarts the program at the LOAD? 
+prompt in Line 1. Any non-'Yy' reply sets HIMEM=MAXRAM and exits to the M-100 
+main menu.
+	There you have the nuts-and-bolts that hold GRAFV3.100 together. Now a 
+word about the printer command codes which are embedded in the DATA statements.
+The ones you see are specific to GEMINI printers. EPSON users need only change 
+one value to make the program work for them: in Line 39, change the 77 to 108. 
+Changes for other bit-addressable printers can be made, with some careful 
+substitutions. This process is discussed in QIKDMP.100. Although QIKDMP's data 
+statements are numbered differently, the ones which relate to printer commands 
+appear in the same sequence as they do in GRAFV3. A brief comment: the only 
+printer commands which are involved are those which (1) set the left-hand 
+margin on the paper, (2) put the printer into high-resolution graphics mode, (3
+) dictate a line feed value and (4) return the printer to its default settings 
+at the conclusion of the dump. If you hit a snag, I'll do what I can to help 
+out.
+	In response to earlier versions, suggestions have been made that a 
+Tandy 200 version of the machine code also be offered. Since I have neither a 
+200 or its ROM disassembly, that worthy project remains a task for future 
+collaboration. I'd be happy to supply the source code involved to anyone who'd 
+like to make the necessary changes; or I will collaborate to that end. 
+GRAFV3.100 is actually a scrubbed and polished version of GRAFV2.100. I'd like 
+to thank the SIG for its numerous favorable comments on the earlier version, 
+and for pointing out some clinkers.
+

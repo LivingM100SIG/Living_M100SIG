@@ -1,0 +1,98 @@
+ VIEW.CO is a machine language program that alows you to
+veiw a full 60 columns of text with 10 lines on your Model
+100. This means 600 characters can be displayed at one
+time, almost as much as the Tandy 200. Compare this with
+the normal 40 charaters by 8 lines which can only display
+320 characters.
+ View is 1.4K and Himem should be set at 61600. The display
+is readable and easy to use. It has full uppercase and
+lowercase characters with descenders. Characters below
+CHR$(32) [Space] are not shown and characters above
+CHR$(125) [}] are shown as CHR$(255). The TAB key is
+reconized as eight spaces. View has word wrap on Space and
+Dash.
+ View was written to supplement pixel-mapping, helping to
+find formatting errors. It was not my intent to write a
+text editor. My feeling is that a 4K utility would not be
+used as much as a 1.5K (with View.ba) utility whould. The
+Model 100 has a good text editor and anything less would
+have been almost useless.
+ View uses a basic driver to set Himem, load the Filename
+and set word wrap. The idea is that you will probably use
+view, then go into Text then back to View ect. The basic
+driver alows you to only enter the information once until
+you want to change something.
+ ex. You run View.ba for a file. It loads View.co and sets
+the file and word wrap and then showes your file. You see
+something you need to change so you go to the text file and
+make an edit. When you return to the Menu just place the
+cursor on View.co and presto you'll see the text file
+without answering any promts. If you decide to change say
+word wrap Run View.ba at the File name promt press enter,
+then enter the new word wrap setting. Well thats the idea.
+The basic driver is:
+ 
+10 CLEAR56,61600
+20 CALL7994:INPUT"File Name";A$:IFLEN(A$)>6THEN20
+30 IFA$=""THEN60
+40 A$=A$+SPACE$(6-LEN(A$))+"DO":FORX=1TO8
+45 F=ASC(MID$(A$,X,1)):IFF>96THENF=F-32
+50 POKE62950+X,F:NEXT
+60 INPUT"Word Wrap";I
+70 IFI<10ORI>60THENI=60
+80 POKE62959,I*4-1
+90 RUNM"View
+ 
+ Note: Just copy this with the text editor and paste into
+basic and Save as View.ba. If you enter a bad filenameor no
+file name View.co will just return you to the Menu.
+
+ When you run View.ba you'll see the files in memory and
+then be asked for a Filename. Enter a valid file name
+(without extension) and press enter. Next you'll be asked
+for a Word Wrap setting. Just press enter for the full 60
+columns or enter your favorite setting. If you enter a
+number less than 10 or greater than 60 View.ba will enter
+60 for you.
+ The screen will clear and display the first screen of
+text.
+ 
+  [F8] Takes you to the Menu
+  [F4] Takes you into the text file you working with.
+  [Up Arrow] Takes you to the start of file.
+  Any other key will take you to the "next page". Note
+  that the last line of the current screen is the
+  first line of the next screen.
+ 
+Convert View.Hex to View.Co with Change.Ba in DL4. Download
+View.Hex as VHEX.DO (2806 bytes). BACKUP ALL FILES IN RAM!
+Edit the file to remove the garbage in the begining and end
+of the file. Run Change.ba, place the cursor over VHEX.DO
+and press [F2], respond to the file name prompt with
+'View'. Return to this documentation file and using Copy
+and Paste, make a copy of the small basic program in this
+documentation file. Go into basic and press PASTE. Save the
+file as View.ba.
+ 
+ I am suprised that this utility is not already in the data
+base here on the Sig. The character set was based on
+Telewiter-64 for the Color Computer. But I may have gotten
+a little carried away with the 10 lines but 8 line
+characters seemed too skinny. If some one would like, they
+can add a text editor, just let me know if you do.
+ 
+Problems
+ 
+ If you have any problems send me Email as I travel a lot
+and may not be on the Sig for months at any given time.
+ 
+Technical
+ 
+ The first part of View was compiled with TCOMP 61600 -
+62662. The data for the character set is stored from 62663
+to 62950 at three bytes each.
+ 
+ Fred Edelkamp
+ CIS - [70506,223]
+ GEnie F.S.EDELKAMP
+AMP

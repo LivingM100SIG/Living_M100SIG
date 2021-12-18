@@ -1,0 +1,166 @@
+     By popular request, below is a fully commented listing of the program 
+ENCORE.BA.  The listing below is not intended to be loaded in and RUN.  But it 
+does explain the program esoterica.
+
+
+1 POWER"00:00:00",,"ENCORE.BA" REM Run ENCORE.BA at MIDNIGHT each day
+
+     :GOSUB31 REM Look up the MEMORY address of NOTE.DO
+
+     :T=S  REM T = S = Actual memory address for NOTE.DO
+
+
+REMark: The following line begins search for Daily Updates
+
+
+4 M$=",A,"+CHR$(237)  REM Reset the memory search string for daily entries
+
+     :GOSUB13 REM access the memory search routine.
+
+     :A=1 REM String substitution begins at X - 18 + A (X is where match was 
+found.)
+
+     :B=8 REM String subsitution ends at X - 18 + B
+
+     :GOSUB22 REM Do the String substitution (I.E. update the date)
+
+     :IFX<E-18THENS=X+18 REM are we near the end of file, E?
+
+     :GOTO4 REM Continue search and replacement for Daily Updates
+
+
+5 S=T  REM Reset S to actual start of NOTE.DO file in memory
+
+
+REMark: The following line begins the search for Monthly Updates
+
+
+7 M$=",A,"+CHR$(246) REM Reset the memory search string for monthly entries
+
+     :GOSUB13 REM access the memory search routine.
+
+     :A=1 REM String substitution begins at X - 18 + A (X is where match was 
+found.
+
+     :B=2 REM String substitution ends at X - 18 + B
+
+     :GOSUB22 REM Do the String substitution (I.E. update the date)
+
+     :GOSUB30 REM also Update the year when updating the month
+
+     :IFX<E-18THENS=X+18 REM check for end of NOTE.DO
+
+     :GOTO7 REM Continue search and replacments for monthly updates
+
+
+REMark: The following line begins the search for Yearly Updates
+
+
+8 S=T REM Reset S to actual start in memory of NOTE.DO
+
+
+10 M$=",A,"+CHR$(254) REM Reset the memory search string for yearly entries
+
+     :GOSUB13 REM access the memory search routine.
+
+     :GOSUB30 REM Update the Year
+     IFX<E-18THENS=X+18 REM Check for End of FILE
+
+     :GOTO10 REM Continue looking for years to update
+
+
+12 MAXFILES=1 REM Allow one file to be opened
+
+     :OPEN"NOTE"FORAPPENDAS1 REM Open NOTE.DO from BASIC (We do not actually 
+append anthing to the file.  We just open and then immediately close the file 
+to cause the '200 to scan for the updated alarms.)
+
+     :MENU REM Return to main menu (also closes NOTE.DO)
+
+
+REMark: The next code section search memory for any string contained in M$ and 
+returns X for the start of the string.  M=0 if string is not found or M=1 if 
+string is found.
+
+
+13 M=0 REM Initialize M
+
+     :FORX=STOE REM Search only the memory occupied by NOTE.DO
+
+     :P=PEEK(X) REM Look at a single byte at a time
+
+     :IFP=26THENE=X-1 REM did we encounter the End Of File code 26?
+
+     :GOTO13 REM continue search for M$ 
+
+
+14 IFLEFT$(M$,1)<>CHR$(P)THEN20 REM Have we found the first character in M$?
+
+
+15 FORY=XTOX+LEN(M$)-1 REM Fisrt byte in M$ is found start comparsion for 
+remaining bytes
+
+     :IFCHR$(PEEK(Y))<>MID$(M$,Y-X+1,1)THEN20 REM Look for any mismatch--abort 
+if found
+
+
+17 NEXTY REM Keep checking for mismatch
+
+     :M=1 REM We have a total match
+
+     :RETURN REM Self explanatory
+
+
+20 NEXTX REM Match not found YET
+
+     :RETURN REM Self Explanatory
+
+
+22 IFM=0THEN27 REM Exit if match not found
+
+
+23 Y=X-18 REM Match was found.  Assume that it is an alarm code that was 
+located and subtract 18 to get the beginning of the line on which the alarm is 
+found
+
+     :FORW=ATOB REM Start of substitution loop
+
+     :POKEY+W,ASC(MID$(DATE$,W,1)) REM POKE substitute string into memory
+
+     :NEXT REM End of sub. loop
+
+
+27 RETURN REM Done with substitution
+
+
+REMark: Update the year (line 30)
+
+
+30 A=7 REM Set start of substitution
+
+     :B=8 REM Set end of substituion
+
+     :GOTO22 REM Jump to Update routine
+
+
+REMark:  Look for Start and End of NOTE.DO file in memory
+
+
+31 S=62145 REM Start looking in the Tandy 200 Directory
+
+     :E=63000 REM Don't look any farther than this
+
+     :M$="NOTE  DO" REM this is what we are searching the directory for
+
+     :GOSUB13 REM Parameters se, Now do the actual search
+
+
+32 S=PEEK(X-1)*256+PEEK(X-2) REM Calculate start of NOTE.DO file from info 
+obtained from directory.  IMPORTANT:  You must have a NOTE.DO file in memory or
+you are in deep trouble here!
+
+     :E=62145 REM Temporary assumed end of NOTE.DO  (We will define actual END 
+of FILE in line 13.)
+
+     :RETURN REM Exit
+

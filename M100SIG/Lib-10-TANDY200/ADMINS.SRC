@@ -1,0 +1,383 @@
+;ADMINS.SRC source file for ADMINS.200
+;Installs ADSM.CO in LOMEM.
+;James Yi 73327,1653  07/27/88
+
+nomenu	equ	0	;show menu( if 1, bypass menu, take ADDRSS as default)
+
+	if	nomenu	0
+	org	61100-777
+	endif
+
+	if	nomenu	1
+	org	61100-630
+	endif
+
+;check if installed alreadf
+	lxi	d,$a001-$100	;start of lomem
+	lxi	b,'A'+('D'*256)	;look for ID bytes
+	lhld	lomem
+find:	inr	d
+	rst	3
+	jc	install	;not found, go ahead and install
+	push	h
+	lhlx
+	dsub
+	pop	h
+	jnz	find
+
+;found, remove it from lomem
+remove:	inx	d
+	inx	d
+	ldax	d
+	mov	b,a
+	add	d
+	sub	h	;does the adsm end equal lomem end?
+	lxi	h,cantmsg
+	jnz	pause
+
+	sub	b
+	call	setlow	;shrink lomem
+
+;find the dir and restore it
+	lxi	d,adrdir
+	lxi	h,adrdat
+	mvi	b,3
+looknx	push	b
+	push	h
+	push	d
+	mvi	c,6
+	lxi	h,filnm2
+	inx	d
+	inx	d
+	inx	d
+	call	cmparc
+nothere	pop	d
+	pop	h
+	jz	thisdir
+	lxi	b,11
+	dad	b
+	xchg
+	dad	b
+	xchg
+	pop	b
+	dcr	b
+	jnz	looknx
+	jmp	notindir
+thisdir
+	pop	b
+	mvi	b,11
+	call	mvhbi
+notindir
+	lxi	h,rmvmsg
+	jmp	exit
+
+install:
+;get file
+	push	d	;lomem
+	call	getfl2
+	lxi	h,filnm2
+	jz	pause	;no adsm file
+
+	push	d	;file loc
+;choose adsm directory slot
+	if	nomenu,0
+	lxi	h,pmenu
+	call	printc
+	lxi	b,11
+invinp	cnz	beep
+	call	chrget
+	rst	4
+	sui	49
+	lxi	h,adrdir
+	jz	here
+	dad	b
+	dcr	a
+	jz	here
+	dad	b
+	dcr	a
+	jz	here
+	dcr	a
+	jnz	invinp
+	lxi	h,abmsg
+	jmp	wait
+	endif
+
+;ADDRSS = default
+	if	nomenu,1
+	lxi	h,adrdir
+	endif
+
+here:	shld	dirloc+1
+;get file parameters
+	pop	h
+	call	getco6
+	inx	h
+	inx	h
+	shld	filloc
+	pop	h	;lomem
+	push	b	;len
+	push	d	;orig
+	push	b	;len
+	push	h	;dest
+	xchg
+	shld	top
+	dad	b
+	dcx	h
+	shld	end
+	lxi	h,$104	;lomem space needed = int((length+4)/256)+1
+	dad	b
+	mvi	l,0
+	mov	a,h
+	push	h
+	call	setlow	;make lomem space
+	pop	b
+	pop	d	;dest
+;record ID bytes and size
+	lxi	h,'A'+('D'*256)
+	shlx
+	inx	d
+	inx	d
+	mov	a,b
+	stax	d
+	inx	d
+
+;move to lomem
+	lhld	filloc
+	dad	b	;file is moved up
+	pop	b	;len
+	push	d
+	call	mvhbci
+;then relocate
+	pop	h	;dest
+	pop	b	;orig
+	dsub	b
+	shld	diff
+	dad	b
+	mov	d,h
+	mov	e,l
+	pop	b	;len
+	dad	b
+	push	d
+relocate:
+	push	h
+	ldax	d
+	push	d
+	call	getopl
+	pop	d
+	inx	d
+	cpi	3
+	jc	norel
+	lhlx
+	mov	b,h
+	mov	c,l
+	lhld	top
+	dsub	b
+	jnc	nir
+	lhld	end
+	dsub	b
+	jc	nir
+	lhld	diff
+	dad	b
+	shlx
+nir:	inx	d
+norel:	cpi	2
+	cnc	inxd
+	pop	h
+	rst	3	;done?
+	jnc	relocate
+;adjust table
+	lhld	diff
+	mov	b,h
+	mov	c,l
+	lxi	d,table
+adjtbl:	lhlx
+	mov	a,h
+	ora	l
+	jz	done
+	dad	b
+	push	d
+	xchg
+	lhlx
+	dad	b
+	shlx
+	pop	d
+	inx	d
+	inx	d
+	jmp	adjtbl
+
+done:
+;load adsm into directory
+	pop	h
+	shld	pgmdir+1
+dirloc:	lxi	d,adrdir
+	lxi	h,pgmdir
+	mvi	b,9
+	call	mvhbi
+
+	lxi	h,insmsg
+exit:
+	if	nomenu,1
+;if SHIFT is up, delete .co files
+	lda	keygpc
+	rar
+	jc	wait
+	push	h
+	lxi	h,filnm1
+	call	getfl2+3
+	cnz	kill
+	call	getfl2
+	cnz	kill
+	pop	h
+	endif
+
+;display message and exit
+wait:	call	printc
+	call	bell
+	mvi	a,1
+	call	tmdela
+	jmp	menu
+
+;find file
+getfl2	lxi	h,filnm2
+	lxi	d,flnm
+	call	mvhbi-2
+	call	uptdir
+	jmp	findco
+
+;wait for keypress and exit
+pause:	call	printc
+	call	beep
+	call	chrget
+	jmp	menu
+
+;mem error
+imerr:	lxi	h,immsg
+	jmp	pause
+
+;set lomem  A=number of pages(1 page=256 bytes)
+setlow:	lhld	lomem
+	add	h
+	MOV	D,A
+	SUB	H
+	MOV	B,A
+	MVI	C,0
+	MOV	L,C
+	JNC	increa
+	PUSH	B
+	MOV	A,H
+	SUB	D
+	MOV	B,A
+	MOV	H,D
+	CALL	delete
+	POP	B
+	JMP	adjust
+increa:	CALL	insert
+	JC	imerr
+	DAD	B
+adjust:	LDA	DOarea+1
+	ADD	B
+	STA	DOarea+1
+	MOV	A,H
+	STA	lomem+1
+	SUI	$a0
+	STA	$a000
+	RET
+
+;get opcode length
+getopl:	cpi	64
+	jc	group1
+	sui	192
+	jnc	group2
+	mvi	a,1
+	ret
+
+group2:	adi	64
+group1:	mov	e,a
+	ani	3
+	mov	b,a
+	mov	a,e
+	xra	b
+	rar
+	rar
+	lxi	h,opclen
+	mov	e,a
+	mvi	d,0
+	dad	d
+	mov	a,m
+	rlc
+	rlc
+getcl:	rrc
+	rrc
+	dcr	b
+	jp	getcl
+	ani	3
+	ret
+
+;opcode length data
+opclen:	DB	$5D,$65,$55,$65
+	DB	$5D,$65,$55,$65
+	DB	$7D,$65,$76,$65
+	DB	$7D,$65,$76,$65
+	DB	$F5,$67,$75,$6F
+	DB	$B5,$67,$B5,$6F
+	DB	$75,$67,$75,$67
+	DB	$B5,$67,$75,$6F
+
+immsg	dm	Insuffient memory 
+	db	0
+insmsg	dm	Installed
+	db	0
+rmvmsg	dm	Removed
+	db	0
+cantmsg	dm	Cannot remove - The LOMEM configuration has changed.
+	db	0
+filnm1	db	'ADMINS'
+pgmdir	db	$b0
+	dw	0
+filnm2	db	'ADSM  '
+	db	'.CO missing ' 0
+
+	if	nomenu	0
+abmsg	db	'Aborted' 0
+
+pmenu	dm	Choose in place of which one of these   ADSM is to be installed.
+	db	13 10
+	dm	1) ADDRSS
+	db	13 10
+	dm	2) SCHEDL
+	db	13 10
+	dm	3) MSPLAN
+	db	13 10
+	dm	4) I change my mind
+	db	13 10 '?' 0
+	endif
+
+diff	dw	0
+filloc	dw	0
+
+;for relocating a table in adsm
+table	dw	EB05H
+	dw	EB0AH
+	dw	EB14H
+	dw	EB2AH
+	dw	EB32H
+	dw	EB4AH
+	dw	EB50H
+	dw	EB5EH
+	dw	EB64H
+	dw	EB6AH
+	dw	EB74H
+	dw	EB89H
+	dw	EB8FH
+	dw	EB99H
+	dw	EBA6H
+	dw	EBACH
+	dw	EBAFH
+	dw	EBB8H
+	dw	EBC1H
+	dw	EC00H
+	dw	EC09H
+	dw	EC39H
+	dw	EC42H
+	dw	EDADH
+	dw	0

@@ -1,0 +1,14 @@
+
+  COLOAD.BA -- yet another .CO file manager
+   c1987 Jon Diercks [73327,2353]
+
+  COLOAD is something between FLIPML and COMENU <both in this DL>.  It uses elements of both, because both have their advantages and disadvantages.
+  FLIPML is nice because it maintains only one copy of every .CO file in memory at all times, FLIPping them in and out of the HIMEM area as needed.  The only problem is that in all the FLIPping, the files can become accidentally corrupted, leading to cold starts.
+  COMENU, although it forces the existence of two copies of the .CO file, does do the CLEARing automatically, using a menu format instead of stepping through each filename, and does not require you to have the TopEndExe data for all your .CO files stored in DATA statements as in FLIPML; therefore, it takes up much less precious RAM.
+  With a few modifications to COMENU, I created COLOAD.  It adjusts HIMEM, loads the .CO file you select, kills the menu copy, and creates a key xxx<.CO file a la FLIPML.  It does NOT, however, provide for 'unloading' the file, as does FLIPML, because I have found that feature to be to unreliable.  Instead, to change files, I kill the current xxx<.CO key and re-run COLOAD.  This does erase the program I was using, but I was done with it anyway, and FLIPML often screws up the unload.  If I need to use the same .CO program again, I re-load it from disk.
+  COLOAD will load files that have no Exe: address <if there is enough memory> and return to the main menu.  Files that DO have Exe: address are run automatically.  To disable this feature, change line 10 to read "10 MENU".
+  COLOAD is basically transparent in dealing with ML programs that run in the ALT LCD buffer.  Ordinarily, they can be executed straight from the main menu, but if you select it in COLOAD, it will run also, without killing the menu copy or setting up a key file.  <This is handy if you have made the file invisible, as COLOAD diplays *all* valid .CO files.>
+  COLOAD and FLIPML can be used interchangeably, that is, files that have been loaded with COLOAD can be un-loaded with FLIPML, if it is a file that is in FLIPML's DATA statements.  There is not any practical way that COMENU can work together with either of the other two programs, though.  Just use whichever one works best for you <which may be none of them.>
+  Please EasyPlex any problems, questions, comments, or ideas for improvements.
+
+Jon Diercks [73327,2353]

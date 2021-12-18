@@ -1,0 +1,222 @@
+**********
+DATEBG.FIX
+**********
+
+Copyright 1985 larry gensch
+               Dave Thomas & Mortimer
+               Tony Anderson
+               Rick Perry
+
+Used with Permission.  All rights Reserved.
+Publication without prior consent of all parties mentioned above is
+expressly forbidden.
+
+     There is a documented "bug" in the Microsoft software resident in the
+TRS-80 Model 100 ROM, which causes an apparently random change of the year
+in the calendar portion of the internal clock.  This bug (also referred to as
+an "undocumented feature") generally occurs during use of the internal
+TELCOM program, and while using the RS-232 port at high speeds.
+
+     Apparently, this bug is activated when an RS-232 interrupt occurs
+while the M100 is polling the clock chip, twice a second.  It is not uncommon
+to find your clock suddenly showing the year as 1996, or any other year, higher
+or even lower (if reset past 1999) than the actual year.
+
+     For many Model 100 users, it may never appear, for others, it could
+appear often, depending primarily on use of the communication interface chip.
+It is a particular problem to owners of the new Chipmunk disc drives, since
+the Chipmunk disc operating system (CDOS) polls the clock chip, and saves the
+date to disc whenever a file is created or updated.  It is not uncommon to find
+a file or program which was "created" five years after its last "Update".
+
+     Rick Perry [75665,1045] has tried several different machine language
+methods of correcting the date bug to the proper year.  He points out that
+the safest solution to the problem is to include the BASIC statement:
+
+   DATE$ = LEFT$(DATE$,6) + "85"
+
+at the top or bottom of some program you use frequently.  It is then necessary
+to correct the year (in quotes) annually, but any time you run the program,
+the calendar will be reset.
+
+     Sysop Dave Thomas [76703,446] prefers to maintain a small BASIC
+program in RAM which resets the clock year; and also redefines the Function
+keys each time it is run.  This, because he often uses programs which redefine
+the standard function keys, and this program resets them to a "normal"
+configuration.  This little utility program is run every time he presses
+F8, the "Menu" key.
+
+     An example of the program:
+
+1 KEY 1, "Files"+CHR$(13)
+2 KEY 2, "Load "+CHR$(34)
+3 KEY 3, "Save "+CHR$(34)
+4 KEY 4, "Run "+CHR$(13)
+5 KEY 5, "List"+CHR$(13)
+6 KEY 6, ""
+7 KEY 7, ""
+8 KEY 8, "Menu"+CHR$(24)+"RUN"+CHR$(34)+"SET"+CHR$(13)
+9 '
+10 DATE$ = LEFT$(DATE$,6)+"85"
+11 MENU
+
+
+     NOTE the use of CHR$(24) in line 8 in the code above.  This causes
+the BASIC interpreter to "backspace" over the word MENU, and then execute
+the command:
+
+        RUN"SET
+
+followed by an ENTER keystroke.  This is a way of showing a particular
+message on the screen when the LABEL line is generated, which will display
+"Menu" over F8, but will effectively ignore the word "Menu" when the
+F8 key is actually pressed.  Obviously, to work properly, this program should
+be named "SET.BA", and run once to set the keys.  Every time thereafter the
+F8 function key is pressed, the SET.BA program will be called, reset the
+year and the function keys, and return to the MENU.
+
+     If you wish, you could make "SET.BA" invisible (not show up on the
+Menu) by running the program INVISI.100 in DL4.
+
+
+     There are several methods of dealing with the problem in machine
+language, each with its own set of problems and cautions.  Unfortunately,
+machine-language programs, unless well designed, can cause accidental cold
+starts, loss of contents of RAM, and lockups where only a reset or cold
+start will recover control.
+
+     One approach, designed by Rick Perry, is compatible with external ROM
+and other M/L routines, because it stores the operating code in part of
+the area used for the F8 Menu Key string.  It is loaded with this simple
+BASIC program:
+
+1 REM F8 Key DATE$ fix
+2 REM by Rick Perry [75665,1045]
+3 FOR J = 0 TO 14 : READ X : POKE 63610+J,X : NEXT
+4 POKE 63843,128 : POKE 63844,248
+5 DATA 77,101,110,117,13,0,33,5,8,34,45,249,195,73,108
+                              ^ ^
+                              ! !
+                         (YEAR DIGITS)
+
+     (Note the 8th and 9th numbers in the data string.  They are the year
+that the routine will set (in reverse order).  This routine changes the BASIC
+directory pointer to F880hex, thus, whenever BASIC is entered from the Main
+Menu, the year will be set prior to entering BASIC.  This will work for any
+time BASIC is entered via the MENU, by selecting BASIC or by selecting a
+file name with the last three characters ".BA".
+
+     CAUTION: Do not redefine Key 8 after installing this code.  To remove
+the code, use the following:
+
+  (In direct mode) POKE 63843,73 : POKE 63844,108
+
+Note that Rick does not endorse or recommend any M/L fixers; use at your
+own risk.
+
+
+     Sysop Tony Anderson [70506,1261] envisioned the idea of locating the
+M/L code in a "protected" area of RAM, where it would not be subject to any
+conflicts with other M/L programs, and could also be used when the Holmes'
+Chipmunk Disc Operating System (M/L) was in place and operating.  Such a
+protected area was revealed in the file POKES.100 in DL6, providing the M100
+was not using any of the optional ROM packages currently available.  The
+protected area, consisting of 36 bytes, is used to store the name and calling
+routine for the optional ROMs.  Based on this specification, Sysop Larry Gensch
+designed a machine language program, which would make use of part of this
+area, and the BASIC program to load it into RAM.  Once installed, it
+operates every time the F8 Menu key is pressed, and will stay loaded and
+protected unless you experience a cold-start.  To load the M/L routine, simply
+type in this BASIC program and run it once.
+
+
+1 REM "Protected RAM" DATE$ Fix
+2 REM by larry gensch [72236,3516]
+3 POKE 62981,201 : POKE 63018,255
+4 FOR X = 62982 TO 62996 : READ A : POKE X,A : NEXT
+5 KEY 8, "Menu"+CHR$(24)+"CALL62982"+CHR$(13)
+6 DATA 33,45,249,54,5,35,54,8,33,151,87,229,205,179,25
+                    ^       ^
+                    !       !
+                  (YEAR DIGITS)
+
+     Note the 5th and 8th numbers in the data statement, these are the
+year (in reverse order) to which, the program will reset.  Obviously, since
+the program stores "85" in protected RAM, you will have to change the numbers
+annually, or next year, you will be resetting to "85".  
+
+     DO NOT rerun the program, unless you have a cold start!  Each new year,
+simply poke in the update figures as needed, like this (for "86"):
+
+        POKE 62986,6 : POKE 62989,8
+
+     NOTE: You cannot use this program if you are currently using any of
+Rick Perry's ALARM programs, or any other program which might also use this
+area of RAM for storage or operation.
+
+     While this code was designed to load in the "protected" RAM, as
+explained above, by deleting line 3, and changing the addresses in line 4 and
+the CALL address in line 5, the code is relocatable to any place in RAM that
+you might prefer, as is demonstrated in the next program listing.
+
+
+     Sysop larry gensch [72236,3516] has developed the following M/L
+program, which sits at the top of memory, "underneath" other resident M/L
+programs.  This also uses the F8 Menu Key as it's activator.
+
+1 REM HIMEM Date$ Bug Fix
+2 REM by larry gensch [72236,3516]
+3 A = HIMEM - 15
+4 CLEAR 256, A-1
+5 A = HIMEM + 1
+6 A$ = MID$(STR$(A),2)
+7 FOR X = 0 TO 14
+8 READ V : POKE A+X,V
+9 NEXT X
+10 KEY 8, "Menu"+CHR$(24)+"CALL"+A$+CHR$(13)
+11 PRINT "Installed... do not reinstall"
+12 END
+13 DATA 33,45,249,54,5,35,54,8,33,151,87,229,205,179,25
+                     ^       ^
+                     !       !
+                   (YEAR DIGITS)
+
+     Each time this program is run, the program will look at the highest
+memory location available for machine language routines, and subtracts 15
+from this address.  Thus, if this was installed three times, the same routine
+will be in memory three times, wasting an additional 30 bytes of space.
+
+     You can tell that the routine is available by performing a KEY LIST
+command.  If the last entry displayed is "Menu CALL #####" (where #####
+is a number around 62000), then the routine does not have to be reloaded.
+
+     This program is meant to be the LAST program to be installed in
+memory.  Assuming that no other code was loaded underneath it, the
+following BASIC statements will remove this code:
+
+        KEY 8,"Menu"+CHR$(13) :REM Redefine Key 8
+        CLEAR 0,HIMEM+15      :REM Reset High Memory
+        MENU                  :REM Return to menu
+
+     This program uses the same data string as in the previous program.
+Annual update of the correction year may be made by modifying the year digits
+(currently 8 and 5 for "85") in the appropriate data statements.
+
+
+     Please note that the examples above, although they have been tested,
+are examples of methods that could be used if the DATE$ Year "bug" is a
+problem.  These are NOT cures to the problem, which would involve some
+circuit redesign of the Model 100.  Instead, these are methods to reset the
+year to what it is "supposed" to be.
+
+     None of the authors of this document actually recommend using the
+Machine Language fixes, since they have not been tested with every machine
+language (and even BASIC) program available for the Model 100, although we
+have pointed out basic areas of incompatibilities.
+
+     The machine language routines given are extremely specific to the Model
+100; they do not apply to the NEC PC 8201, Olivetti M10, or Tandy 200 machines!
+
+**********
+DATEBG.FIX
+**********

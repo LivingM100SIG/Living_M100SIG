@@ -1,0 +1,148 @@
+0 ' CRDFIL.PR3    Card File Printing        Program for the Model 100/102 and
+1 ' Tandy 200, which prints selected        cardfile data on paper in columnar
+2 ' formats. For operating instructions,    see the file CRDPRT.DOC
+3 '
+4 ' Copyright 1988 Tony B. Anderson         All Rights Reserved
+5 '
+6 ' V1 - 1/9/88
+7 ' V2 - 2/20/88 Fix in Line 330
+8 '
+100 MAXFILES=1:CLEAR2000
+110 CLS:PRINT@48,"CARD FILE PRINT PROGRAM":PRINT
+120 PRINT" This program prints paper listings of   selected cardfile data in specified     columnar form. What is the name of the"
+130 PRINT" data file to be used";:INPUTF$:PRINT:IFF$=""THENMENU
+140 ONERRORGOTO150:OPENF$FORINPUTAS1:ONERRORGOTO0:GOTO160
+150 BEEP:PRINT" File does not exist.  Press ENTER to    continue.   ";:Q$=INPUT$(1):RUN
+160 IFEOF(1)THEN1280
+170 IFPEEK(1)<>171THENCLS:PRINT
+180 ' Look at original datafield names
+190 PRINT" Let's look at your original screen      prompts, and select the datafields you  want to print. The screen display will"
+200 PRINT" give you a number for each field name   or prompt. Note the  numbers, or press  PRINT for a paper copy!"
+210 GOSUB1250:GOSUB1280:CLS:FORA=1TON:PRINT@P(A),LEFT$(A$(A),LEN(A$(A))-1);A:NEXT:GOSUB1260
+220 ' Mark the ones to be printed
+230 CLS:PRINT" Type the number of the fields you want  to list.  Type a zero when you have     selected the last one.":PRINT
+240 INPUT" List field number: ";X:IFX=0THEN260
+250 F(X)=1:N1=N1+1:GOTO240
+260 CLS:PRINT" You are going to list"N1"data fields":PRINT" in columns on paper. Is that correct?   (Y/N) ";:Q$=INPUT$(1):PRINTQ$
+270 IFINSTR("Yy",Q$)THEN300
+280 BEEP:PRINT" Then we have an error here.  Let's      start again.":FORA=1TO700:NEXT:RUN
+290 ' Dimension and get column names
+300 DIMW(N1),N$(N1):PRINT
+310 FORA=1TON1:GOSUB350:NEXT
+320 PRINT" Your total character width is"T+2*(N1-1):PRINT" Will this fit on your printer? (Y/N) ";:Q$=INPUT$(1):PRINTQ$
+330 IFINSTR("Yy",Q$)THENCLS:PRINT:T=T+2*(N1-1):GOTO410
+340 INPUT" Which column do you wish to change";A:T=T-W(A):N$(A)="":W(A)=0:GOSUB350:GOTO320
+350 PRINT" What is the name for column number    "A"?";:LINEINPUTN$(A)
+360 PRINT" What is the width of this column";:INPUTW(A)
+370 IFLEN(N$(A))<W(A)THEN390
+380 BEEP:PRINT:PRINT" Column name is longer than the column   will allow. Try again.":PRINT:N$(A)="":W(A)=0:GOTO350
+390 T=T+W(A):PRINT:RETURN
+400 ' Get Search params
+410 PRINT" Would you like to print <A>ll the data  cards or <S>earch for specific word     matches? <E>nd or <M>enu? (A/S/E/M) ";
+420 Q2$=INPUT$(1):PRINTQ2$:Q2$=CHR$(ASC(Q2$)AND223):IFINSTR("EM",Q2$)THENMENU
+430 IFINSTR("AS",Q2$)THEN440ELSEBEEP:CLS:PRINT:GOTO410
+440 IFPEEK(1)<>171THENCLS
+450 PRINT:PRINT" Do you want them in <C>hronological     order (as entered), or in a Pseudo-     <S>orted order? (C/S/E/M) ";
+460 Q3$=INPUT$(1):PRINTQ3$:Q3$=CHR$(ASC(Q3$)AND223):IFINSTR("EM",Q3$)THENMENU
+470 CLS:IFQ3$="C"THEN620
+480 IFQ3$="S"THEN490ELSEBEEP:GOTO450
+490 PRINT:PRINT" You selected Pseudo-Sort for output.    Pseudo-Sort will list the data in       character groups, but";
+500 PRINT" not in a `true'   sort; and take much longer to print.    Do you still want the output sorted?    (Y/N) ";
+510 Q$=INPUT$(1):PRINTQ$:Q$=CHR$(ASC(Q$)AND223):IFQ$="N"THENQ3$="C":GOTO620
+520 IFQ$="Y"THEN530ELSEBEEP:CLS:GOTO490
+530 IFPEEK(1)<>171THENCLS
+540 PRINT:PRINT" Sort will be by the first letter in a   specified entry. What entry number is   your sort key";:INPUTSE
+550 CLS:PRINT:PRINT" Answer each of the next 3 prompts with  a `Y' or a `N'.":PRINT" Do you wish to sort on  numbers? ";
+560 SN$=INPUT$(1):PRINTSN$:SN$=CHR$(ASC(SN$)AND223):IFINSTR("YN",SN$)THEN570ELSEBEEP:GOTO550
+570 PRINT" Do you wish to sort on Upper-case       letters? ";:SU$=INPUT$(1):PRINTSU$:SU$=CHR$(ASC(SU$)AND223)
+580 IFINSTR("YN",SU$)THEN590ELSEBEEP:PRINT:GOTO570
+590 PRINT" Do you wish to sort on Lower-case       letters? ";:SL$=INPUT$(1):PRINTSL$:SL$=CHR$(ASC(SL$)AND223)
+600 IFINSTR("YN",SL$)THEN620ELSEBEEP:PRINT:GOTO590
+610 ' Get page formating params
+620 CLS:PRINT:PRINT" Assuming you are going to print on      continuous-form paper, how many blank   lines do you want for a";
+630 INPUT" top margin";L1:IFPEEK(1)<>171THENCLS
+640 PRINT:PRINT" How many lines do you want printed on   each page, including the top margin     ";:INPUTL2
+650 PRINT:PRINT" Set left margin at";:INPUTL3:CLS:PRINT
+660 PRINT" Do you want each page numbered? (Y/N) ";:P$=INPUT$(1):PRINTP$:P$=CHR$(ASC(P$)AND223):IFP$="Y"THEN670ELSEP=0:GOTO680
+670 PRINT:PRINT" What is your starting page number";:INPUTP
+680 CLS:PRINT:PRINT" Do you want a title line? (Y/N) ";:Q$=INPUT$(1):PRINTQ$:IFINSTR("Yy",Q$)THEN690ELSE740
+690 PRINT:PRINT" Do you want the title printed on <A>ll  pages, or only on the <F>irst page?     (A/F) ";:Q4$=INPUT$(1):PRINTQ4$
+700 Q4$=CHR$(ASC(Q4$)AND223):T1=1
+710 CLS:PRINT:INPUT" How many lines in your title";N2:DIMT$(N2):PRINT" Type each line, ending each line with"
+720 PRINT" a carriage return (Press ENTER)":FORA=1TON2:LINEINPUT" ";T$(A):NEXT
+730 ' Get Search word
+740 IFQ2$="A"THEN790
+750 PRINT" You have selected `Selective Search'.   What `word' would you like to search    for?  ";:LINEINPUTS$:PRINT
+760 SL=0:PRINT" In what entry number will this word     appear? ";:INPUTSL
+770 FORA=1TOLEN(S$):IFASC(MID$(S$,A,1))>64THENMID$(S$,A,1)=CHR$(ASC(MID$(S$,A,1))AND223)
+780 NEXTA:CLS:PRINT
+790 PRINT" OK, We're now ready to print. Line up   the paper in the printer, and press     ENTER to start non-stop printing.  ";
+800 Q$=INPUT$(1):PRINT:IFSETHENPRINT:PRINT" Now Search-Sorting for character "CHR$(34);:CP=CSRLIN*40+POS(0):GOTO830
+810 IFQ2$="S"THENPRINT" Now Searching for matching entries."ELSEPRINT" You should have printer output now."
+820 ' setup print and header strings
+830 N$(0)="":FORA=1TON1:L=LEN(N$(A)):N$(0)=N$(0)+N$(A)+SPACE$(W(A)+2-L):NEXT
+840 N$(0)=LEFT$(N$(0),T):GOSUB1440
+850 IFSETHEN960
+860 ' "Selected" or "All" print routine
+870 IFEOF(1)THEN1030
+880 GOSUB1340:IFQ2$="A"THEN900
+890 IFINSTR(C$,S$)THEN900ELSE870
+900 IFL3THENLPRINTSPACE$(L3);
+910 FORA=1TON1:LPRINTN$(A);:NEXT:LPRINT
+920 L=L+1:IFPTHENIFL+2=L2THENGOSUB1480:GOTO870
+930 IFL=L2THENGOSUB1440
+940 GOTO870
+950 ' Pseudo-Sorted print routines
+960 X=2*N+1:CLOSE
+970 IFSN$="Y"THENFORS=48TO57:S1=S:GOSUB1070:NEXTS
+980 IFSU$="Y"THENFORS=65TO90:S1=S:GOSUB1070ELSE1020
+990 IFSL$="Y"THENS1=S1+32:GOSUB1070:F1=1
+1000 NEXTS
+1010 IFF1THEN1030
+1020 IFSL$="Y"THENFORS=97TO122:S1=S:GOSUB1070:NEXTS
+1030 IFP=0THENLPRINTCHR$(12):GOTO1060
+1040 L=L2-L-1:FORA=1TOL:LPRINT:NEXT
+1050 LPRINTTAB(((T\2)-2)+L3)"-"P"-"CHR$(12)
+1060 CLS:PRINT:PRINT" Last card has been printed.  Press      ENTER to return to option menu. ":Q$=INPUT$(1):RUN
+1070 OPENF$FORINPUTAS1:FORA=1TOX:LINEINPUT#1,A$(0):NEXTA
+1080 PRINT@CP,CHR$(S)CHR$(34);
+1090 IFEOF(1)THEN1130
+1100 GOSUB1340
+1110 IFASC(B$(SE))=S1THENGOSUB1150
+1120 GOTO1090
+1130 CLOSE:IFS1>95THENLPRINT:GOSUB1190
+1140 GOTO1210
+1150 IFQ2$="S"THENIFINSTR(C$,S$)THEN1170ELSE1210
+1160 ' --- print subroutine ---
+1170 IFL3THENLPRINTSPACE$(L3);
+1180 FORA=1TON1:LPRINTN$(A);:NEXT:LPRINT
+1190 L=L+1:IFPTHENIFL+2=L2THENGOSUB1480:GOTO1210
+1200 IFL=L2THENGOSUB1440
+1210 RETURN
+1220 ' --- main subroutines ---
+1230 DIMA$(N),B$(N),F(N),P(N):RETURN
+1240 ' Continue Prompts
+1250 PRINT" Press ENTER to continue: ";:Q$=INPUT$(1):RETURN
+1260 PRINT@39,"";:Q$=INPUT$(1):CLS:RETURN
+1270 ' Get datafield names from file
+1280 IFEOF(1)THENBEEP:PRINT" Data file is empty":PRINT:CLOSE:STOP
+1290 INPUT#1,N:GOSUB1230
+1300 FORA=1TON:IFEOF(1)THEN1320
+1310 LINEINPUT#1,A$(A):INPUT#1,P(A):NEXT:GOTO1210
+1320 BEEP:PRINT" Data file error":PRINT:CLOSE:STOP
+1330 ' Get cardful of data
+1340 FORA=1TON:IFEOF(1)THEN1320
+1350 LINEINPUT#1,B$(A):NEXT
+1360 C=1:FORA=1TON:IFF(A)THENN$(C)=B$(A):C=C+1
+1370 NEXT:C=0
+1380 FORA=1TON1:IFLEN(N$(A))>W(A)THENN$(A)=LEFT$(N$(A),W(A))+"  ":GOTO1400
+1390 N$(A)=N$(A)+SPACE$(W(A)):N$(A)=LEFT$(N$(A),W(A))+"  "
+1400 NEXT:C$=B$(SL):IFC$=""THEN1210
+1410 FORA=1TOLEN(C$):IFASC(MID$(C$,A,1))>64THENMID$(C$,A,1)=CHR$(ASC(MID$(C$,A,1))AND223)
+1420 NEXT:GOTO1210
+1430 ' Print page headers
+1440 L=0:IFL1THENFORA=1TOL1:LPRINT:NEXT:L=L+L1
+1450 IF(Q4$="F")AND(F=1)THEN1470
+1460 IFT1THENF=1:FORA=1TON2:LPRINTTAB(L3)T$(A):NEXT:LPRINT:L=L+N2+1
+1470 LPRINTTAB(L3)N$(0):LPRINTTAB(L3)STRING$(T,45):LPRINT:L=L+3:RETURN
+1480 LPRINT:LPRINTTAB(((T\2)-2)+L3)"-"P"-":LPRINTCHR$(12):P=P+1:GOSUB1440:RETURN

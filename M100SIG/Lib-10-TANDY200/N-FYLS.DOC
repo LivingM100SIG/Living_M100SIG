@@ -1,0 +1,81 @@
+                        N-FYLS.CMD(c) Randall W. Hess
+                             All Rights Reserved
+                        -----------------------------
+
+     N-FYLS.CMD is a 1551 byte, easy to use, BASIC program which uses Paul
+Globman's RAMDSK.CO(c) DATAPAC access program to quickly create an
+alphabetically sorted index file (w/sizes) of all files currently stored in
+the Node DATAPAC.  It also permits the user to Re-name and Kill DATAPAC files
+and to print an alphabetized, formatted directory.  Each use automatically
+updates and copies to DATAPAC a compact, current, index file called [NFYL].DO.
+     N-FYLS.CMD is written for use with the XOS-C cross-bank access system but
+can be easily modified to operate as a conventional "same-bank" program.
+
+     SET-UP
+     ------
+     Download this file and N-FYLS.CMD. Remove all extra CIS characters,
+checksum the program file and "Load" and "Save" it as N-FYLS.BA.  Make a
+backup copy to the DATAPAC or Disk.
+     You'll also need RAMDSK.CO in Bank 3 and Wilson Van Alst's ZIPSRT.200,
+from this DL, stored in the DATAPAC.  (N-FYLS.BA will copy ZIPSRT from the
+DATAPAC when needed.)
+     N-FYLES is self-clearing: it removes itself and RAMDSK when done so it is
+ideal for cross-bank access using XOS-C's Cmd>/F3 key.
+
+     OPERATION
+     ---------
+     With RAMDSK.CO in Bank 3, select N-FYLS.BA.  N-FYLS first copys ZIPSRT.CO
+ from the DATAPAC, updates [NFYL].DO, sorts [NFYL].DO and stores a copy of the
+updated file to DATAPAC. A menu displays prompting Edit/Print:
+
+         <E>dit directory
+          This begins to display the DATAPAC files one by one for review,
+          Renaming or Killing.  <ENTER>/Cr increments the files: <ESC> ends
+          and updates again if you've renamed or killed files.  After the last
+          name displays, N-FYLS will either update if any changes were made or
+          re-display the first file name.
+              To <R>ename a file press "r": enter a new name with or
+              without extension and press <ENTER>/Cr.  You cannot rename a
+              file with its same name and a simple <ENTER> aborts the command.
+              To <K>ill a file press "k", confirm with "y" and press <ENTER>:
+              any other key aborts the command.
+         <P>rint directory
+          Prints a 76 column formatted list of all DATAPAC files and sizes
+          followed by the number of files and DATAPAC bytes free.
+
+     Each use of N-FYLS leaves an [NFYL].DO copy in RAM for you.  Kill it when
+finished because a copy is already in the DATAPAC.
+
+     [NFYL].DO contains the date and time of the last update in the first line
+and all subsequent lines contain file information in the format:
+"filenam.ext/comma/size" for easy use with BASIC's "INPUT#n,F$,Size" statement.
+
+     Whenever you need to use [NFYL].DO simply move it from the DATAPAC into
+RAM using RAMDSK.CO or re-run N-FYLS.BA.  Regular use of N-FYLS.BA will keep 
+[NFYL].DO up-to-date.
+
+     During DATAPAC loads & saves, command information will flash briefly
+on the bottom of the screen.  The first time you run N-FYLS, the directory
+file [NFYL].DO will not appear in your directory but subsequent updates will
+include it.
+
+     "DATAPAC bytes free:" updates as files are killed.
+
+
+     Non XOS-C use
+     -------------
+     Remove this code in Line 1 >>>  :CALL41179 ..(to).. END:
+     Substitute this code       >>>  :LOADM"RAMDSK":
+     Operation is the same but RAMDSK.CO must be on the menu.
+
+                                 -- CREDITS --
+ Paul Globman gave me the invaluable technical advice needed for this project.
+                                 -------------
+
+
+     Please send comments to me via E-Mail or leave a note on the SIG.
+
+     Randy Hess
+     73267,552
+     3/90
+     Omaha, Nebraska

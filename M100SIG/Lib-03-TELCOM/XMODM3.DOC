@@ -1,0 +1,28 @@
+XMODM3.MLL Revision 1/27/85 by Marty Lowy [75515,662] of
+XMODEM.312 by Rick Perry [75665,1045]
+
+	This documentation assumes you will have downloaded and read Rick Perry's XMODEM.DOC and XMODEM.UPD from the database. It will make very little sense otherwise.
+
+	XMODM3.MLL is a relatively minor revision of XMODEM.312. Principal differences:
+
+	1. Auto-dial and auto-logon code has been modified to support the Anchor Signalman Mark XII modem. After the program "Finds" your CIS entry in ADRS.DO, "S" runs the Mark XII at 1200 baud, "3" at 300 baud. "M" still goes to the internal modem; this code has not been used or tested by me.
+
+	2. During the auto-dial/auto-logon sequence, Control-A ("Again") will redial. Control-R still restarts entire program, and Control-E still exits to main menu. Any other keyboard input during this phase of program execution is throughput to the modem. I would be hesitant about trying to control the modem this way because of the way the auto-dial/auto-logon code affects the modem.
+
+	3. Downloading code has been modified -- at line 27 -- to force a Control-Z at end of file when downloading to a Chipmunk disk drive using CDOS version 2.4.5. Note cautions below re: downloaded disk files.
+
+CAUTIONS:
+
+	1. I have only had a limited oppotunity to test this program. Credit for the good features of the program should go entirely to Rick Perry, who has submitted several versions in the past year. Blame for any bugs introduced in the revision is strictly mine.
+
+	2. Like the earlier versions, this program will only execute auto-logon through direct CIS phone numbers. Note that your ADRS.DO entry will be a little different in form from the one you use with the internal modem: the initial ^C is sent by the program itself, and returns are abbreviated as "^" instead of "^M". The format I use is: CISX:555-1212<?U77777,0000^?PPASS*WORD^>. "CISX" denotes "XMODEM" if you also keep a regular CIS entry in the ADRS.DO file.
+
+	3. The Mark XII escape sequence used to execute the Control-A/R/E options during auto-dial/auto-logon depends on having a couple of seconds of "dead air" on the line. If something comes into the modem while these sequences are executing, the program may hang. If that happens, halt the program with SHIFT-BREAK, switch the modem off and on again (to hang up the phone),  and start over.
+
+	4. Expect trouble accessing the disk files created by downloading this program. This is not due to the download process, but is an inherent problem with creating disk files from CDOS BASIC. My experience is that the files are intact, but you may get CRC Error or Input Past End of File messages when attempting to load them from disk. If so, try using "Load from 0:file.do" in regular TEXT, or run CRCERR.BA from DL4. Revised ROM for the Chipmunk should be forthcoming soon, and is expected to eliminate these problems. It should also eliminate the need for the forced Control-Z in line 27 of this program. Also, I recommend strongly that you *not* try to APPEND to disk files.
+
+	5. There is considerable dispute as to the true speed of a 1200 baud modem running off the Model 100. This much is clear to me: this program does not approach true 1200 baud speed, at least in its terminal emulation mode; it has too much work to do in BASIC. Upload in the XON/XOFF mode, whether from RAM or disk, is *very* slow. My conclusion: don't pay the 1200 baud premium unless you plan to spend most of your time in XMODEM file transfer mode.
+
+	Comments/suggestions are welcome by SIG or EMAIL.
+
+	Program checksum: 428,398.

@@ -1,0 +1,43 @@
+
+
+DOCUMENTATION FOR GRMCVT.100
+----------------------------
+
+The Model 100/102/200 are able to represent German characters on-screen by
+using the key combinations CODE-A, CODE-O, CODE-U, CODE-S, CODE-a, CODE-o, and
+CODE-u.  The Epson printers are able to print these characters, if in the
+German sub-mode of the international character mode (can be switched in be
+typing 'LPRINTCHR$(27)"R"CHR$(2)' in Basic).  Unfortunately, the Tandy
+computers and Epson printers use different representations of these symbols,
+and the following conversions are required:
+
+  German Symbol    M100 LCD ASCII   ASCII to LPT:     Reqd Conversion
+  -------------    --------------   -------------     ---------------
+  Umlaut A         177 (CODE-A)      91 (was [)          177 to 91
+  Umlaut O         178 (CODE-O)      92 (was \)          178 to 92
+  Umlaut U         179 (CODE-U)      93 (was ])          179 to 93
+  Umlaut a         182 (CODE-a)     123 (was {)          182 to 123
+  Umlaut o         183 (CODE-o)     124 (was |)          183 to 124
+  Umlaut u         184 (CODE-u)     125 (was })          184 to 125
+     ss            185 (CODE-S)     126 (was ~)          185 to 126
+
+GRMCVT.100 is a Basic loader which creates a relocating machine language
+program which converts 100/102 German RAM files so that they will print
+properly on a suitably configured Epson printer.  It will NOT run on a Tandy
+200, but the source code (GRMCVT.SRC) can be modified for the '200.  Another
+(slower) approach for the '200 is to use the Basic program GRMXLT.BA (DL2).
+
+When you run GRMCVT.100 (.BA), it will show a "Loading...." message, and then
+will ask for a file name.  If you specify a file which does not exist, it will
+beep at you -- and return to the prompt.  Otherwise, it will convert your file
+-- then return to the prompt.  ENTER in reply to the prompt will clear the m/l
+code from memory and reset HIMEM to its original value.
+
+Note that this program does not create a new file, but processes your original
+file in place.  For this reason, it is very desirable to create a backup copy
+of the original file -- either on disk, or in RAM with another name.
+
+ 
+Phil Wheeler
+71266,125
+4 May 1987

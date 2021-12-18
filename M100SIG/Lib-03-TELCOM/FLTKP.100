@@ -1,0 +1,398 @@
+;kaypro file transfer utility - transfers files to/from Model 100 at
+;19600 baud.  Use setting 98N1E
+;this was my first CP/M program, and might have a few bugs left - let me know if
+;you fix any.
+;Written by Don Corbitt, Feb 1984
+
+	ORG	100H
+BOOT	EQU	0
+BDOS	EQU	5
+FCBL	equ	5ch
+dbuff	equ	80h		;disk i/o buffer
+conin	equ	1		;get char from console - wait
+printf	equ	9		;print buffer function (DE) until '$'
+inlinf	equ	10		;read buffer from console
+openf	equ	15		;open file, 
+closef	equ	16		;close file after write
+search	equ	17		;look for file - ff if not found
+readf	equ	20		;read block from file
+writef	equ	21		;write block to file
+makef	equ	22		;make a file entry
+baud	equ	0		;port to set baud rate
+uartd	equ	4		;uart data port
+uarts	equ	6		;uart status port
+bell	equ	7
+cr	equ	13
+lf	equ	10
+nul	equ	0
+eof	equ	1ah		;end of file signal
+xoff	equ	19		;stop transmission
+xon	equ	17		;start transmission
+
+start:
+	mvi	a,15		;19200 baud
+	out	baud
+	mvi	b,9
+	lxi	h,initcom	;string of chars to initialize uart
+	mvi	c,uarts		;set stat for 98n1e
+	db	0edh,0b3h	;otir
+loop1:
+	lxi	d,menu
+	mvi	c,printf
+	call	bdos
+	mvi	c,conin
+	call	bdos
+	call	touppr		;get upper case letters
+	cpi	'Q'		;return to CP/M
+	rz
+	cpi	'S'		;send file to M100
+	jz	send
+	cpi	'R'		;receive file from M100
+	jz	receive
+	cpi	'P'		; control printer
+	jz	printer
+	jmp	loop1		;try again
+send:
+	lxi	d,sndmsg	;'Enter file to send'
+	mvi	c,printf
+	call	bdos
+	call	gfspec		;get the file name, and see if it exists
+	jnz	sendit		;it exists, so send it
+	lxi	d,nfmsg		;'File doesn't exist'
+	mvi	c,printf
+	call	bdos
+	jmp	loop1		;try again
+sendit:
+	lxi	h,stbuff	;end of program - start of buffer
+	push	h
+	lxi	d,fcbl
+	mvi	c,openf		;open file and read contents
+	call	bdos
+sloop:	mvi	c,readf
+	lxi	d,fcbl
+	call	bdos
+	ana	a		;nz = EOF
+	jnz	sendfil
+	pop	d		;current end of data
+	lxi	h,dbuff		;dma buffer - disk buffer
+	lxi	b,80h		;size of buffer
+	db	0edh,0b0h	;ldir (hl)->(de)
+	push	d		;new end of data
+	jmp	sloop
+
+sendfil:
+	call	motoff
+;	in	28		; get contents of disk select port
+;	ani	252		; de-select both drives
+;	ori	64		; turn off motor
+;	out	28		; rewrite port
+;	mvi	c,closef	;close file now
+;	lxi	d,fcbl		;set params
+;	call	bdos
+	pop	h		;arrange stack - discard this value
+	lxi	h,stbuff	;buffer ended with EOF, OK?
+sloop1:	mov	c,m		;get first char
+	inx	h
+	call	rsout		;send char
+	cpi	eof
+	jz	send		;end of file - send new file??
+	call	rsist		;char waiting??
+	jz	sloop1
+	call	rsin		;get char
+	cpi	xoff		;if xoff, then wait.....
+	jnz	sloop1		;else ignore it
+sloop2:	call	RSin
+	cpi	xon
+	jnz	sloop2
+	jmp	sloop1
+
+
+;rs output status. Z if uart busy, NZ otherwise.  A modified.
+
+rsost:
+	in	uarts
+	ani	4
+	ret
+
+;RS character out, character in C
+
+rsout:				;send byte in C to uart
+	call	rsost
+	jz	rsout
+	mov	a,c
+	out	uartd
+	ret
+
+;rs input status.  Z if no char waiting, NZ if char ready.
+
+rsist:
+	in	uarts
+	ani	1		;char waiting?
+	ret
+
+;get char from uart and return in A.
+
+rsin:
+	call	rsist
+	jz	rsin		;try again if one not waiting
+	in	uartd
+	ret
+
+receive:
+	lxi	d,recmsg
+	MVI	C,printf
+	call	bdos
+	call	gfspec
+	jz	rcvit		;doesn't exist, so get it
+	lxi	d,fexmsg
+	mvi	c,printf
+	CALL	BDOS
+	JMP	LOOP1
+RCVIT:
+	lxi	d,fcbl
+	mvi	c,makef
+	call	bdos
+	lxi	h,stbuff
+rloop:	call	rsin		;get a char
+	mov	m,a		;and put in buffer
+	inx	h
+	cpi	eof		;if not last
+	jnz	rloop		;then get another
+	lxi	h,stbuff
+secloop:
+	lxi	d,dbuff
+	mvi	b,80h
+byteloop:
+	mov	a,m
+	stax	d
+	cpi	eof
+	jz	lastone
+	inx	h
+	inx	d
+	dcr	b
+	jnz	byteloop	
+	call	wsect
+	jmp	secloop
+
+lastloop:
+	stax	d
+lastone:
+	inx	d
+	dcr	b
+	jnz	lastloop
+	call	wsect
+	lxi	d,fcbl
+	mvi	c,closef
+	call	bdos
+	jmp	receive		;end of file - get another one??
+wsect:
+	push	h		;save position in buffer
+	lxi	d,fcbl
+	mvi	c,writef
+	call	bdos
+	pop	h
+	ret
+touppr:
+	cpi	'a'
+	rc
+	cpi	'z'+1
+	rnc
+	ani	5fh
+	ret
+
+gfspec:
+	lxi	h,fcbl
+	mvi	b,33		;33 bytes to erase
+	xra	a
+erase:	mov	m,a
+	inx	h		;next byte in fcbl
+	dcr	b
+	jnz	erase
+	lxi	h,fcbl+1
+	mvi	b,11		;file name block - default spaces
+	mvi	a,32		;space
+erase1:	mov	m,a
+	inx	h
+	dcr	b
+	jnz	erase1
+	lxi	d,fbuff		;buffer to hold file name
+	push	d		;save start of buffer
+	mvi	c,inlinf	;read line from keyboard
+	call	bdos		;get line
+	pop	h		;start of buffer (max count)
+	inx	h		;actual value returned
+	mov	a,m
+	ana	a		;no chars in queue??
+	mov	b,a		;count in b
+	jnz	congsp		;if chars, continue get file spec
+	pop	h		;remove one level of subroutines
+	jmp	loop1		;start over with menu
+congsp:
+	inx	h		;first char of fspec
+	inx	h		;second char of fspec
+	mov	a,m		;get ':' if in fspec
+	dcx	h		;first char of fspec
+	cpi	':'
+	mvi	a,0		;zero (A) without affecting flags
+	jnz	noprefix
+	dcr	b
+	dcr	b		;skipping first two chars of buffer
+	mov	a,m
+	call	touppr
+	sbi	'@'		;get value from 1 to 17 (A to P)
+	sta	fcbl		;set drive number
+	inx	h		;point to ':'
+	inx	h		;point to first char of name
+noprefix:
+	lxi	d,fcbl+1	;start of name section of fcbl
+nprloop:
+	mov	a,m
+	call	touppr
+	cpi	'.'
+	jz	stext		;start extension
+	stax	d		;put in fcbl
+	inx	h
+	inx	d
+	dcr	b
+	jnz	nprloop
+exist:
+	mvi	c,search
+	lxi	d,fcbl
+	call	bdos
+	inr	a
+	push	psw
+	call	motoff
+	pop	psw
+	ret
+motoff:	in	28
+	ori	64
+	out	28
+	ret
+stext:
+	inx	h		;skip '.'
+	lxi	d,fcbl+9	;start of extension
+	dcr	b
+	jz	exist		;done
+extloop:
+	mov	a,m
+	call	touppr
+	stax	d
+	inx	h
+	inx	d
+	dcr	b
+	jnz	extloop
+	jmp	exist	
+
+printer:
+	lxi	d,prmsg
+	mvi	c,printf
+	call	bdos
+print1:	lxi	d,pr1msg
+	mvi	c,printf
+	call	bdos
+	mvi	c,conin
+	call	bdos
+	call	touppr
+
+	sbi	'@'
+	jc	print1
+	lxi	hl,pr1
+	jz	printit
+
+	dcr	a
+	lxi	hl,pr2
+	jz	printit
+
+	dcr	a
+	lxi	hl,pr3
+	jz	printit
+
+	dcr	a
+	lxi	hl,pr4
+	jz	printit
+
+	dcr	a
+	lxi	hl,pr5
+	jz	printit
+
+	dcr	a
+	lxi	hl,pr6
+	jz	printit
+
+	dcr	a
+	lxi	hl,pr7
+	jz	printit
+
+	dcr	a
+	lxi	hl,pr8
+	jz	printit
+
+	dcr	a
+	lxi	hl,pr9
+	jz	printit
+
+	dcr	a
+	jz	start
+	jmp	print1
+
+printit:
+	mov	b,m		; get number of chars to print
+pi1:	inx	hl		; get first char
+	mov	a,m
+	call	prchr		; print it
+	dcr	b	
+	jz	printer
+	jmp	pi1
+
+prchr:	call	pready
+	out	8
+	call	strobe
+	call	pready
+	call	strobe
+	ret
+pready:	push	psw
+prd1:	in	28
+	ani	8
+	jz	prd1
+	pop	psw
+	ret
+strobe:	in	28
+	xri	16
+	out	28
+	ret
+cr	equ	13
+lf	equ	10
+prmsg:	db	cr,lf
+	db	'[A] 10 CPI		[E] Letter quality	[I] Data quality',cr,lf
+	db	'[B] 12 CPI		[F] Enhanced		[J] Quit print control',cr,lf
+	Db	'[C] 17 CPI		[G] Emphasized',cr,lf
+	Db	'[D] Double wide		[H] End <F> and <G>',cr,lf,'$'
+pr1msg:	db	'Select one: $'
+pr1:	db	1,30		; 10 cpi
+pr2:	db	1,28		; 12 cpi
+pr3:	db	1,29		; 17 cpi
+pr4:	db	1,31		; double wide
+pr5:	db	2,27,49		; letter quality
+pr6:	db	2,27,72		; enhanced printing
+pr7:	db	2,27,84		; emphasized printing
+pr8:	db	2,27,73		; end enhanced and emphasized
+pr9:	db	27,48		; data processing quality
+
+fbuff:	db	18
+	ds	18
+
+
+fexmsg:	db	bell,cr,lf,'File already exists',cr,lf,'$'
+recmsg:	db	cr,lf,'File to recieve: $'
+sndmsg:	db	cr,lf,'File to send: $'
+nfmsg:	db	bell,cr,lf,'File doesn''t exist!!',cr,lf,'$'
+menu:	db	'[Q] Return to CP/M',cr,lf,'[S] Send file to M100'
+	db	cr,lf,'[R] Receive file from M100',cr,lf
+	db	'[P] Printer control codes',cr,lf
+	db	'Enter your selection: $'
+initcom:
+	db	18h,4,44h,1,0,3,0c1h,5,0eah
+endbuff:
+	dw	0
+stbuff	equ	$		;start of free space
+	end	start

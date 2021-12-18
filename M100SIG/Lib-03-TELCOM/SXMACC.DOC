@@ -1,0 +1,202 @@
+
+
+
+
+
+
+
+
+                           DOCUMENTATION FOR SXMACC.RLC
+
+      SXMACC  along  with  SXMMRG.ACC  are  designed to be used with SXM.100
+      Xmodem program in this Data Library.  SXMACC.RLC is  the  loader  file
+      for  a  small  (100  byte) machine language program that can be loaded
+      anywhere in memory with the RLCLDR program found in this SIG.  It will
+      allow you to enter TELCOM while using SXM  and  then  return  to  SXM.
+      Originally,  the  path  to  TELCOM from within the SXM program was one
+      way.  If you entered TELCOM  and  later  had  a  file  you  wanted  to
+      download  with  Xmodem protocol, or to disk or cassette or another ram
+      bank (with RAM+ by PSCG) you had to log off, hang-up and redial.
+
+      SXMACC lets you enter TELCOM and then return to SXM and then  back  to
+      TELCOM at will.  An added bonus is the ability to use DIRACC.100 while
+      in  TELCOM  to  edit  TEXT files, maintaining your on-line connection.
+      You can then return to TELCOM or SXM and upload that file.
+
+                                LOADING THE PROGRAM
+
+      You will need the following programs:
+
+        1.  SXMACC.RLC
+        2.  SXMMRG.ACC
+        3.  SXMACC.DOC (Small program inside documentation)
+        4.  RLCLDR.100
+        5.  SXM.100 or SXM.CHP
+
+      If you don't already have RLCLDR.100 by Neil Wick, you  must  download
+      that  program.   It  is  a  relocatable  loader  for SXMACC.RLC.  With
+      SXMACC.RLC in memory, run RLCLDR.  It will give you three  choices  of
+      things  to  do.  You want to 'Load from a DO file'.  It will ask for a
+      start address.  The program is 100 bytes long, so it  must  reside  at
+      62859  or  lower.   When  finished, you have a program saved in memory
+      called SXMACC.CO.
+
+      Now you need  to  edit  the  patch  for  SXM.   This  file  is  called
+      SXMMRG.ACC.   Lines  97 and 98 contain the address of 62859.  In TEXT,
+      change that address to the start address of  SXMACC,  where  ever  you
+      loaded  it.   There  is  a  PEEK command in line 97 to check to see if
+      SXMACC is loaded before calling it in line 97.   If  not  loaded,  SXM
+      jumps  to TELCOM as in the original version.  Also, as in the original
+      version, there is no return.
+
+      To use DIRACC.100 with this program, you need  to  run  the  following
+      utility, after you have loaded SXMACC and DIRACC.
+
+
+
+
+
+
+
+
+
+                                     page -1-
+
+
+
+
+
+
+
+
+      10 INPUT"Is DIRACC Loaded at HIMEM? ";YN$
+      15 IF YN$="Y"or YN$ = "y" then 20 else 100
+      20 INPUT"Enter Start Address of SXMACC";SA:PA=SA+97
+      25 IFPEEK(PA)<>104THENPRINT"Check to see if SXMACC is loaded":goto100
+      30 HI=HIMEM+10:H=INT(HI/256):L=HI-256*H
+      35 IFPEEK(HIMEM)=225THEN40
+      37 PRINT"Check to see if DIRACC is loaded":goto100
+      40 POKEPA,L:POKEPA+1,H
+      50 PRINT"Completed Successfully"
+      60 INPUT"Save both as one program";SY$
+      65 IF SY$="Y"ORSY$="y"THENSAVEM"SXMDIR",HIMEM+1,HIMEM+152+100
+      100 END
+
+
+      This  program  will  save  DIRACC  and  SXMACC together as one program
+      called SXMDIR.CO.  To use it, use the F7 key in TEXT  and  select  the
+      program portion above, then with the F5 key, copy it.  Go to BASIC and
+      press  PASTE and the program will be copied into BASIC and can then be
+      saved or you can just run it.
+
+      The above BASIC program chops off the bottom byte of  DIRACC  when  it
+      saves  it  as  SXMDIR.   That  byte  is  a POP command to maintain the
+      integrity of the stack.  SXMACC has already  done  this  so  it  isn't
+      necessary to do it again.
+
+      To summarize the complete loading process:
+
+      1.  With  the  .DO  file from SXMACC.RLC loaded into memory run RLCLDR
+          from this SIG
+
+      2.  Edit lines 97 and 98 of SXMMRG.ACC to  reflect  the  proper  start
+          address of SXMACC.
+
+      3.  Run DIRACC.100 also from this SIG
+
+      4.  With  DIRACC  and  SXMACC  loaded  in  memory, run the small BASIC
+          program you copied out of SXMACC.DOC
+
+      4.  Load SXM.100 or SXM.CHP from this SIG
+
+      5.  Type MERGE"SXMMRG" and save your patched version of SXM to tape or
+          disk.
+
+      You can now run SXM and enter TELCOM and then enter DIRACC  and  later
+      reenter SXM.
+
+                                   USING SXMACC
+
+      Run  SXM  just  as  you  always  have.   Use  the autologin feature or
+      manually dial.  At the point where you are on-line and want  to  enter
+      TELCOM,  press  F4.  The prompt 'Telcom?' will appear.  Answer 'Y' and
+      you will enter TELCOM.  The function key labels will change to let you
+      know that you are now in TELCOM instead of the SXM terminal  emulator.
+      Pressing  F6  at  any time will return you to the terminal emulator in
+      SXM.  Again, the function key labels will return to the SXM labels  to
+
+
+                                     page -2-
+
+
+
+
+
+
+
+      signal  that  you have indeed returned to SXM.  F4 will now return you
+      to TELCOM.  You can go back and forth as often as you like.
+
+      If, as described above,  you have also loaded  DIRACC  also,  then  in
+      TELCOM,  F7 will bring you to TEXT where you can edit or create files.
+      You must first enter TELCOM to get to DIRACC and TEXT.  After editing,
+      F8 will bring you back to TELCOM.  F6 will then return  to  SXM  where
+      you could upload the recently edited file with Xmodem protocol.
+
+      What  if  you  wanted  to  use DIRACC's capability to enter BASIC from
+      TELCOM?  SXMACC redefines the F6 key to return to SXM  so  that  isn't
+      possible.  However, after returning to SXM, the F7 key stops SXM while
+      maintaining  the on-line connection as long as you heed the warning in
+      the SXM documentation as to what will  cause  a  disconnect  (such  as
+      killing a file or MENU).  Thus, you can still return to BASIC, but are
+      a little more limited in what you can do.
+
+      If  you  are  not using SXM, but have entered TELCOM directly from the
+      menu, the F6 key will then enter BASIC  through  the  DIRACC  program.
+      You must enter TELCOM through SXM if you want F6 to return you to SXM,
+      otherwise  the  F6  key  acts just like F6 in DIRACC.  In any case, F7
+      will always enter TEXT.
+
+                      USING SXMACC WITH OTHER BASIC PROGRAMS
+
+      Actually, SXMACC will allow any BASIC  program  to  enter  TELCOM  and
+      return,  not  just  SXM.   To  do  so, the BASIC program must call the
+      starting address of SXMACC.  This is the address you  entered  in  the
+      RLCLDR  program  at  the  very  beginning.   Thus  you can use it with
+      Xmodem.312 or a  program  you  may  have  written  yourself.   As  you
+      incorporate  SXMACC  into  other  programs,  be aware of the following
+      items:
+
+      1.  Upon returning to BASIC, the function keys will be exactly as they
+          are whenever you enter BASIC, however you have defined  them.   If
+          the  program which calls SXMACC redefines them temporarily for its
+          own use, you must define them again after  the  call.   This  most
+          often  entails  calling the subroutine again which was used at the
+          beginning of the program to define the keys in  the  first  place.
+          That  is  one  of the things accomplished in SXMMRG, the patch for
+          SXM
+
+      2.  If is wise to incorporate some kind of test  in  your  program  to
+          make  sure  SXMACC is loaded before it is called.  For example, in
+          SXMMRG, line 97 peeks at the beginning address to see if indeed it
+          contains a decimal 33 which is the  first  byte  of  the  program.
+          It's  not foolproof, but you only have one chance in 256 of error.
+
+      3.  If you have done a MDMSTOP or COMSTOP command before the call,  be
+          sure to  turn them back on after the call.
+
+
+      Good Telecommunicating!
+
+      Terry Luke
+      73126,1775
+
+
+                                     page -3-
+
+
+
+
+NOTE:  Believe it or not, I forgot to upload SXMACC.RLC with Xmodem so
+you must edit that file to remove all the carriage return after the first
+one, leaving only the first and last carriage return.  Sorry!

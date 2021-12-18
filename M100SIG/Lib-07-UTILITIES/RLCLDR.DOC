@@ -1,0 +1,51 @@
+ Documentation for RLCLDR (ReLoCating LoadDeR)
+ Part 1: Loading RLC format files
+ 
+   As the number of machine language programs for the 100/200 increases, it 
+becomes increasingly desirable to use more than one m/l program at one time.  
+The problem is that they all seem to want to occupy the same area of memory.  A
+program stored in RLC format (uses modified hex coding) can be loaded into any 
+memory address.
+ 
+   This program will produce machine language at any desired memory address 
+from an RLC file or produce an RLC file from an existing m/l program.
+ 
+ 
+ CHANGE FOR TANDY 200
+   For the Tandy 200, substitute the following for line 4:
+ 4 CLS:PRINT:FORY=-3403TO-2908STEP11:IF(PEEK(Y)AND192)
+=192THENFORZ=3TO8:PRINTCHR$(PEEK(Y+Z));:NEXT:PRINT"  ";
+ 
+ 
+ LOADING RLC FORMAT FILES
+ 
+   Before loading a file, you must decide where to put it.  The first number on
+the first line of an RLC file is one less than the length of the machine 
+language.  Let's say the number is 833.  If you have no other m/l loaded, go 
+into Basic and type ?MAXRAM-833-1.  The answer may be, for example, 62126.  
+Write this number down.  You then need to type CLEAR256,62126 and then run 
+RLCLDR.  If you have existing m/l which is to stay loaded when the new m/l 
+program is being used, you would load the new program at Top-833-1 (where top 
+is the lowest address of the existing one) and clear memory accordingly.
+ 
+   When you run RLCLDR you get three choices; Load, Save, or Menu.  Pressing 1 
+or L will start the Load.  (Pressing 3, M or F8 will take you out of RLCLDR.)  
+After pressing L or 1, you see a list of .DO files in the memory.  Type the 
+name of one of these to load it or just press enter to re-start RLCLDR.  The 
+next prompt is "Start address."  Enter the address you just figured out.  If 
+everything goes okay, after awhile the computer will beep and print "Done."  Go
+to the menu and you will see the program saved as a .CO file.  If you plan to 
+leave the new program loaded in high memory, you can kill the .CO file.
+ 
+   One of two error messages may appear with two beeps when attempting a load:
+   "Memory not clear" indicates that you are attempting to load below HIMEM.  
+You need to do a CLEAR256,xxxx where xxxx is the address where the program will
+start.
+   "Checksum error.  File is bad." indicates that there is some error in the 
+RLC file you are trying to load.  Try loading the .DO file again before re-
+running RLCLDR.
+ 
+ For instructions on saving programs in RLC format, see RLCSAV.DOC.
+ 
+ Neil Wick [71056,613]
+

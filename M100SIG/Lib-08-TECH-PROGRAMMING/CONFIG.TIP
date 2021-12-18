@@ -1,0 +1,116 @@
+
+CONFIG.TIP
+
+Copyright 1990 Tony B. Anderson
+All Rights Reserved
+
+
+This is a tip regarding configuration (and marking) your computer(s) if you
+have invisible files or programs in it (them), and how to remember what's
+installed in each.  As it turns out, it's also useful for hiding your ADRS.DO
+file.
+
+
+At one time, I had three Tandy 200's, two Model 100's, and a Tandy 102, sitting
+around my house, each with various different programs in them, with some
+containing invisible utilities or files, different disk operating systems, and
+with different hardware configurations.  It became a problem to remember what
+was installed in each, if I had not used that particular machine in a while.
+
+The way I decided to deal with that was to include a file in RAM in each
+machine, called CONFIG.DO, which would list the important things about that
+particular machine that I wanted to remember - such as which machine contained
+the ExtRAM module, which had the Traveling Software ROM installed, which had
+invisible utilities installed, etc.
+
+During the last week or so, I've been writing, and installing some invisible
+utilities for the Model 100's, and decided that somehow "marking" the machine
+to indicate it had something invisible installed would be a good idea. (Three
+of the invisible utilities have been uploaded to the forum libraries: SAVE.100
+in Library 9, SIZE.100 and LF.100 in Library 7.)
+
+The way I decided to indicate the computer had invisible programs installed was
+to place a plus sign (+) after the word BASIC on the main computer menu, making
+it read: BASIC+.
+
+That's done with a simple poke, directly poking a plus sign into the file
+directory in RAM at the end of the entry for BASIC.  In the Model 100, or 102,
+it's POKE 63850,43.  (To remove the plus sign, poke a space back to that
+location with POKE 63850,32.)  I included that poke in each invisible utility,
+so that any time the utility was run, it would poke the + sign into place.  As
+it turned out, that wasn't really necessary, it could be done once, in BASIC,
+saving a few bytes in each invisible program.
+
+In the Tandy 200, the equivalent address is at 62042.
+
+I decided that one good idea led to another; and decided that I should also
+make my CONFIG.DO file invisible, and that if the machine contained invisible
+TEXT files, the plus sign should be placed at the end of TEXT, not BASIC.
+
+Fortunately, the poke to do that was just bytes away...  In the 100/102, it's
+POKE 63860,43; in the Tandy 200, it's POKE 62052,43.  (Poking 32 into the same
+address removes the plus sign by putting a space back into that location.)
+
+An invisible TEXT file can still be entered by entering TEXT and typing the
+file name at the "File to edit?" prompt.
+
+While I used the plus sign to indicate invisible files, any other character
+could have been used, by poking the ascii value of the character into the
+locations shown.  A small "i" for example, to indicate "invisible", would be
+ascii value 105.  Also, those who are using enhanced versions of TEXT or BASIC
+might want to poke other characters after TEXT or BASIC to indicate that...
+James Yi's TEXT PLUS could be indicated as TEXT+, or his TEXT-E enhancement
+programs could be indicated by poking an E (ascii value 69) into place.
+
+Now to make the .DO file invisible...
+
+There are a couple of ways to approach that task.  You can use CHANGE.BA to
+rename or make a file visible or invisible; or you could use one of the VISI-
+INVISI programs in the Library.  Even some of the file management programs like
+FILEN.100 (Lib. 7) will do it.  Usually these are large programs, to deal with
+all the various options they offer, so I decided to write my own (smaller)
+program.  For one reason, I was only interested in making one particular file
+invisible, the CONFIG.DO file, and I could also incorporate a "make it visible
+again" function, in case I ever wanted the file to appear on the menu again.
+Also, the program could do the appropriate poke to place or remove the plus
+sign indicator after TEXT on the main menu.  This is the program that does what
+I wanted...  it uses less than 400 bytes of RAM space, and only needs to be
+loaded or used when you want to change the visibility of the CONFIG.DO file.
+Additionally, it works in either the 100/102 or 200.
+
+
+0 ' INVIS.BA  Program makes CONFIG.DO file invisible or visible again.
+1 ' Copyright 1990 Tony B. Anderson, All Rights Reserved
+10 CLS:IFPEEK(1)=171THENW=62052:X=62034:Y=45 ELSEW=63860:X=63842:Y=24
+15 Z=Y*11+X
+20 FORA=XTOZSTEP11
+30 IFPEEK(A)=192THENGOSUB100
+35 IFPEEK(A)=200THENGOSUB100
+40 NEXT:END
+100 A$="":FORB=A+3TOA+8
+110 A$=A$+CHR$(PEEK(B))
+120 NEXT
+130 IFA$="CONFIG"THEN150
+140 RETURN
+150 IFPEEK(A)=192THENPOKEA,200:POKEW,43:MENU
+160 IFPEEK(A)=200THENPOKEA,192:POKEW,32:MENU
+170 PRINT@42,"Error at address: "A:PRINT:STOP
+
+
+If you want to change the name of the CONFIG.DO file to something else, like
+your ADRS.DO file, or Write ROM's WSPEC.DO file, change the name you want this
+program to work with in line 130.  Note that you need to use a field of six
+characters, exactly matching the name of the file you want switched, and you
+have to pad the name with blank spaces if it is shorter than six characters.
+ADRS.DO, for example, would be "ADRS  DO" in the file directory, the first six
+characters being "ADRS  ", so that's got to be the matching string in line 130.
+
+
+To make _programs_ invisible, I recommend using the CMD.100 program in Library
+8, for the Model 100/102, which adds the feature of allowing the program to
+be run from the main menu as a callable function.  If the program is not one
+that should be a callable function, then you can use CHANGE.BA, INVISI.100 or
+similar programs from Library 7.  For the 200, use CHANGE.200 from Library 10.
+
+Enjoy.
+

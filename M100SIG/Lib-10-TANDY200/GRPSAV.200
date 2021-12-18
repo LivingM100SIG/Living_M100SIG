@@ -1,0 +1,56 @@
+0 REM GRPSAV.BA (c)1991 by Larry Sloan
+1 REM Save groups of files to disk from
+2 REM RAM/DATAPAK. Put groups of file- 
+3 REM names in file(s) for automated
+4 REM saving.  POWR-D AND RAM200(as
+5 REM CMD>.CO) in bank3. For XOS users
+6 REM only. Other versions of RAMDSK.CO
+7 REM should work, but lines 50-100
+8 REM must be modified accordingly.
+9 REM Filename file must follow format
+10 REM of (filename,filename,...) with
+11 REM a maximum of 12 filenames in
+12 REM the file. Amount of free memory
+13 REM must be greater than largest
+14 REM file. Delete these REM to
+15 REM increase free memory.
+16 REM Note: prgm looks to kill file
+17 REM on disk prior to saving, so
+18 REM error will occur if file doesn't
+19 REM exist on disk. Not for BA files!
+20 CLEAR256,58960:MAXFILES=1
+25 INPUT"FILE";FILE$
+30 OPENFILE$FORINPUTAS1
+40 IFEOF(1)THEN46ELSEN=N+1
+45 INPUT#1,Z$(N):PRINTZ$(N):GOTO40
+46 CLOSE:M=N:GOSUB490
+49 REM----------------LOAD FROM RAMDISK
+50 CLEAR256:GOSUB455:X$="3:CMD>.CO"
+60 GOSUB200:EX=59782:K=-738
+70 C$=CHR$(13):F$=Z$(1)+C$+C$
+80 F=LEN(F$):POKEK,F:K=K-1:FORI=1TOF
+90 J=I*2:POKEK+J,ASC(MID$(F$,I))
+100 POKEK+J+1,0:NEXTI:CALLEX,1
+119 REM--------------------SAVE TO DISK
+120 X$="3:POWR-D.CO":GOSUB200:CALL58960
+130 KILL":"+Z$(1):SAVEM":"+Z$(1)
+140 KILLZ$(1):LFILESOFF:GOTO50
+149 REM-----------------------------END
+150 CLEAR99,59715:CALL40961
+199 REM----------------------SUBROUTINE
+200 CALL41179:CALL63600,8,VARPTR(X$)
+210 IFPEEK(61302)<>0THENBEEP:GOTO225
+220 RETURN
+225 PRINT X$" NOT FOUND":END
+450 REM--------------------------- subs
+455 OPEN"T"FORINPUTAS1:INPUT#1,M
+460 FORN=1TOM:INPUT#1,Z$(N):NEXT
+465 CLOSE:IFM=0THENKILL"T.DO":GOTO150
+470 OPEN"T"FOROUTPUTAS1:PRINT#1,M-1
+475 FORN=2TOM:PRINT#1,Z$(N):NEXT
+480 CLOSE:RETURN
+489 REM-------------1st time save names
+490 OPEN"T"FOROUTPUTAS1:PRINT#1,M
+495 FORN=1TOM:PRINT#1,Z$(N):NEXT
+500 CLOSE:RETURN
+

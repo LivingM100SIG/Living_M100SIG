@@ -1,0 +1,149 @@
+CNVRT2.GWB
+
+Comments on converting Model 100/102/200 programs to GW-BASIC.
+
+Copyright 1990 Tony B. Anderson
+All Rights Reserved
+
+
+The following statements, common in Model 100 programming, are not supported
+in GW-BASIC:
+
+DAY$		HIMEM		MAXRAM		MAXFILES	MENU
+
+PRINT@		MDM ON		MDM OFF		MOTOR ON	MOTOR OFF
+
+CLEAR X,Y	CLEAR X,MAXRAM
+
+Of these, probably only DAY$, PRINT@, and MENU are useful to convert into
+GW-BASIC.
+
+DAY$, The "day of the week" string, may be rescued from the DATE$ string by
+using a routine which calculates the day of the week from the calendar or a
+string input.  Here is one way to do it:
+
+100 DATA"Saturday","Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"
+
+110 ' Get the date string
+
+120 LINEINPUT" What date? ";D$
+130 IF LEN(D$) <> 8 THEN BEEP : GOTO 120
+
+140 ' calculate the day of the week for desired date
+
+150 M = VAL(D$)
+160 D = VAL(MID$(D$,4,2))
+170 Y= 1900 + VAL(RIGHT$(D$,2))
+180 IF M>2 THEN 210
+190 M = M + 12
+200 Y = Y - 1
+210 N = D + 2*M + INT(.6*(M+1)) + Y + INT(Y/4) - INT(Y/100) + INT(Y/400) + 2
+220 N = INT((N/7-INT(N/7))*7+.5)
+230 FOR X=0 TO N : READ X$ : NEXT
+
+240 ' Print the result
+
+250 PRINT X$
+
+
+Here's another way...
+
+
+100 ' Set up month and day arrays
+
+101 DIM M(12),M$(7)
+102 DATA 31,28,31,30,31,30,31,31,30,31,30,31
+103 DATA "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"
+104 FOR A=1 TO 12 : READM(A) : NEXT : FOR A=1 TO 7 : READM$(A) : NEXT
+
+110 ' Get and break down date string (no error checking included here on the
+111 ' date string! You might want to add it to make sure the string is valid
+112 ' before proceeding.)
+
+120 LINEINPUT" Input Date String: ";D$
+
+125 ' Assume target year is in the 20th century, add 1900 to last two digits
+
+130 Y = 1900 + VAL(RIGHT$(D$,2))
+140 M = VAL(D$)
+150 P = INSTR(D$,"/") : X = VAL(MID$(D$,P+1))
+
+200 ' Change # of days in February for target year if it's a leap year
+
+210 IF Y/4 = INT(Y/4) THEN M(2)=29
+220 IF Y/100 = INT(Y/100) THEN M(2)=28
+230 IF Y/400 = INT(Y/400) THEN M(2)=29
+
+240 ' Calculate number of days since fictional year zero; deduct days prior
+241 ' to start of Gregorian calendar (1582), disallowing leap years
+
+250 D = INT(365.25*Y) - INT(Y/100) + INT(Y/400) - 478165
+
+255 ' Add days for each month in the year prior to the target month
+
+260 FOR A=0 TO M-1 : D = D + M(A) : NEXT
+
+270 ' Calculate day of the week for desired date
+
+280 W = INT(7.1*(D/7-INT(D/7)))
+290 D = 1 + ((W+X)MOD7)
+
+300 ' Print or use the results
+
+310 PRINT D$ " is/was/will be on a " M$(D)
+
+
+PRINT@, which positions the text on the Model 100 screen, must be converted to
+LOCATE X,Y form for proper display.  It can be done with the following routine:
+
+N = PRINT@ location
+X = 1 + INT(N/40)
+Y = 1 + (N MOD 40)
+
+
+MENU, a return to the system menu, can be duplicated by the SYSTEM command,
+which will take you out of BASIC, return you to the MS-DOS prompt, and back to
+a menu program if it is set up for a return from a running program.
+
+
+The following statements, common in Model 100 programming, require some
+modification or scrutiny to work in GW-BASIC:
+
+CALL		COM ON		COM OFF		CSRLIN		ERR
+
+ERROR		FILES		INP		KEY ON		KEY OFF
+
+KEY(N)		LINE		OPEN		OUT		PEEK
+
+POKE		POS		PRESET		PRINT#		PRINT#,USING
+
+PSET		SOUND		SOUND ON		SOUND OFF
+
+
+PEEK's, POKE's, and CALL's, are generally computer-specific, and in order to
+convert them to GW-BASIC, you have to know what the peek, poke, or call was
+originally intended to do, and duplicate that in additonal programming code in
+the GW-BASIC version of the program.  A discussion of exact replacements is
+beyond the scope of this article; it will require some knowledge of Model 100
+ROM routines.
+
+
+Opening a device for input or output is not allowed, since these device names
+are specific to the Model 100 family, as in:
+
+OPEN "CAS:name" FOR INPUT/OUTPUT AS #
+
+OPEN "COM:xxxxx" FOR INPUT/OUTPUT
+
+OPEN "WAND"	OPEN "LPT:"	OPEN "LCD:"
+
+OPEN "RAM:name", "0:name", "1:name", or ":name"
+
+
+Additional reading:
+
+Article: "Converting Tandy 100/102 BASIC to GW-BASIC" by Ronald F. Balonis,
+PICO Magazine, October 1987, pgs 23-24
+
+Article: "Cursor Conversions" by Dr. Leo Finklestein, Jr., PCM Magazine, July
+1986.

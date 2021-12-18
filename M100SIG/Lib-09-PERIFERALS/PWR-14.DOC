@@ -1,0 +1,246 @@
+ in the computer are in different
+          locations, and that their
+
+
+                                   Appendix B
+                                 Reserved Memory
+
+          Reserved memory is a difficult subject if you are unfamiliar
+          with machine-language programming.  The secret to
+          understanding it is to understand why you need it.  The first
+          section below explains the need for reserved memory and
+          relocation in fairly simple terms.  Then, the following
+          section explains how POWR-DOS avoids some machine language
+          compatibility problems.
+
+
+                            What is Reserved Memory?
+
+          Tandy laptop users are faced with two choices: either accept
+          mediocre performance, or learn how to best use their
+          machine's limited resources.  There are two crucial areas of
+          knowledge: machine-language compatibility and RAM
+          conservation.  To understand both, it is vital to know a few
+          things about your computer's memory.
+
+          The Model 100/200's memory is divided into a number of bytes. 
+          Each byte represents a value from 0 to 255; you can think of
+          a byte as a character in a DOcument file.  The number of
+          bytes depends on the machine and the amount of memory.
+
+          Each byte within a bank has a unique address.  (If there is
+          more than one bank of RAM, the banks are almost completely
+          independent, and there will be one set of addresses for each
+          bank.)  Depending on the amount of RAM, not all addresses are
+          capable of "remembering" the bytes stored to them.  However,
+          the 8192 addresses from 57344 to 65535 are always valid RAM
+          addresses.
+
+          Your computer keeps very careful track of RAM.  Like a good
+          cook in a crowded kitchen, it divides the available space
+          into different sections.  There are four sections in one
+          division that start from the "bottom up", i.e., from the
+          lowest RAM address working upward:
+
+
+            1. BASIC Programs.  The start of BASIC programs mark the
+               start of usable RAM.
+
+            2. DOcument files.  The DOcument files and the PASTE buffer
+               come immediately after the BASIC programs.  THe exact
+               starting address depends on which BAsic files are in
+               memory.
+
+                                     Page 71
+          Appendix B                                          Page 72
+
+
+            3. COmmand files.  The COmmand files come immediately after
+               the DOcument files.  The exact starting address depends
+               on which BAsic files and DOcument files are in memory.
+
+            4. BASIC Variables.  Whatever BASIC variables have been
+               declared in a running program go here.
+
+
+          There is another major division, containing five sections,
+          that builds from the "top down", i.e., starting at highest
+          RAM address and moving downward:
+
+            9. System Memory.  This area is a "scratch pad" for the
+               computer.  The file names that appear on the main menu,
+               as well as numerous other data, are stored in system
+               memory.  All of the System Memory address are fixed.  On
+               the Model 100, the addresses range from 62960-65535; on
+               the Tandy 200, the addresses range from 61104-65535.
+
+            8. Reserved Memory.  This is the area of memory designed
+               for RAM-based machine-language programs.  Its upper
+               limit is the System Memory, which is fixed; its lower
+               limit is HIMEM, as set in the BASIC CLEAR command. 
+               There is no limit to the number of running
+               machine-language programs that can reside in this area,
+               as long as they do not use the exact same addresses.
+
+            7. The file buffers.  Each file buffer takes up 265 bytes. 
+               The number of buffers is set by MAXFILES in BASIC.  The
+               file buffers vary in location; they always end just
+               below HIMEM.
+
+            6. The string area.  This is the area used by BASIC to
+               store the contents of string-type variables.  The size
+               of this area is set by the BASIC CLEAR command.
+
+            5. The stack.  This is a scratchpad area for the computer's
+               processor.  It also stores information about BASIC
+               FOR-NEXT loops and GOSUB statements.
+
+          Whenever you do something that uses memory, you cause the
+          bottom division to grow upward or the top division to grow
+          downward or both.  For example, when you add a character to a
+          DOcument file, you cause the bottom division to grow upward
+          by one byte; when BASIC starts a new FOR-NEXT loop, the stack
+          grows downward by a few bytes.  You run out of memory when
+          the top of the bottom division (the end of section 4) runs
+          into the bottom of the top division (the beginning of section
+          5).
+          Appendix B                                          Page 73
+
+
+          You notice that all files in the computer are in different
+          locations, and that their locations can change.  BASIC
+          programs and DOcument files never need "relocation", since
+          they are designed to be independent of their position in RAM. 
+          However, machine-language programs must always run from the
+          same addresses.  In other words, it is insufficient t specify
+          that they reside "somewhere" in user memory.  The designers
+          of the 100/200 operating systems made provision for fixed
+          locations: the high memory area (section 8, above).  The
+          lower boundary, called HIMEM, is equal to or lower than the
+          higher boundary, called MAXRAM; now files, variables, etc.,
+          will reside between HIMEM and MAXRAM.  Since MAXRAM is fixed,
+          section 8 has the constant address that machine-language
+          programs need.
+
+          Because the Model 100/200's RAM is scarce, most machine
+          language programs use the exact same locations (those
+          directly below MAXRAM) for their "running position".  It is
+          possible to design two or more specific machine-language
+          programs to share the reserved memory, but it is impossible
+          to do this in general.  As a result, if you want to run more
+          than one machine language program, you are out of luck. 
+          Further, some BASIC programs and ROM programs (such as
+          Interactive Solutions for the Model 100) use the memory
+          location in section 8 as a "scratch pad" when they are
+          running; consequently, they corrupt other machine-language
+          programs.
+
+          The Model 100/200's designers anticipated the clashing of
+          machine language addresses.  They created "command" (CO)
+          files.  A CO file exists in the user memory with other files
+          and never clashes, but it cannot be "run" like a BASIC
+          program.  Instead, it is a snapshot of reserved memory
+          containing an image of a runable machine language program. 
+          When you select a CO file on the main menu and press [ENTER],
+          the computer: (1) Copies the "snapshot" from section 3 into
+          section 8, and (2) begins execution of the copy in section
+          8. (NOTE: On the 200, spreadsheet files are CO files also. 
+          This confuses the issue, because they are not "programs".
+          They do not get copied into high memory.)
+
+          There are some implications to CO files:
+
+
+             * HIMEM must be set low enough to load the CO file into
+               reserved memory before running it.  If it is not, the
+               computer will just beep and return to the menu.
+          Appendix B                                          Page 74
+
+
+             * In order to run a CO file from the menu, you must have
+               enough memory to store it twice: once in the CO file,
+               and once in reserved memory.
+
+             * Once a CO file has been copied into reserved memory, it
+               is often possible to remove the CO file from RAM and
+               still execute the program!
+
+
+                                 Enter POWR-DOS
+
+          POWR-DOS is a machine-language program.  So, like all other
+          machine-language programs, it must run in a fixed address. 
+          However, to be most effective, it must be running constantly,
+          which makes relocation a difficult issue.  We provided a
+          relocator with POWR-DISK (a precursor to POWR-DOS), but it
+          was not an ideal solution.
+
+          POWR-DOS take advantage of the only other fixed location in
+          the Model 100/200: the first BASIC program.  You may have
+          noticed that the 100/200 stores BASIC programs in the very
+          lowest part of RAM.  The very first BASIC program does not
+          move once it is installed.  We "disguised" POWR-DOS as a
+          BAsic file, even though it is a machine-language program; in
+          that way, it has a fixed location and is completely out of
+          reserved memory.
+
+          There is one complication to this arrangement.  There are
+          other programs that use the same scheme! Most notably, some
+          software by Dr. David Sumner (who gets the credit for this
+          loading idea originally) and some software by PG Design use
+          this position.  Other software may appear also.  For this
+          reason, you can specify POWR-DOS to load as the second,
+          third, etc. BAsic file by designating an earlier program
+          "immovable".  See chapter 1 for how you do this.  The only
+          problem, of course, is that if you remove a BAsic file below
+          POWR-DOS in memory, you will get into trouble.
+
+
+
+                                   Error Codes
+
+
+          Code      No.       Description
+
+          NF        1         NEXT without FOR.
+          SN        2         Syntax Error.
+          RG        3         RETURN without GOSUB.
+          OD        4         Out of Data.
+          FC        5         Illegal Function Call.
+          OV        6         Overflow.
+          OM        7         Out of Memory.
+          UL        8         Undefined Line.
+          BS        9         Bad Subscript.
+          DD        10        Doubly Dimensioned Array.
+          /0        11        Division by Zero.
+          ID        12        Illegal Direct Statement.
+          TM        13        Type Mismatch.
+          OS        14        Out of String Space.
+          LS        15        String too Long.
+          ST        16        String Formula too Complex.
+          CN        17        Can't CONTinue.
+          IO        18        Input/Output Error or user Break.
+          NR        19        No RESUME in Error Routine.
+          RW        20        RESUME without error.
+          UE        21        Undefined Error Number.
+          MO        22        Missing operand for command.
+          IE        50        Illegal Error Code.
+          BN        51        Bad File Number (MAXFILES too low)
+          FF        52        File not Found.
+          AO        53        File already open.
+          EF        54        Input past End of File.
+          NM        55        Bad File Name.
+          DS        56        Direct Statement in File.
+          FL        57        RAM Directory Full.
+          CF        58        File not Open.
+          NR        59        RS232 Not Ready for Disk Access.
+          DN        60        Drive not Responding.
+          CM        61        Communications Error.
+          DA        62        Drive Done Early.
+          WP        63        Disk is Write Protected.
+          DF        64        Disk is Full.
+          ND        65        No Disk in Drive.
+          HT        66        Miscellaneous Drive Trouble.
+          AE        67        File already exists; can't overwrite.
+
+

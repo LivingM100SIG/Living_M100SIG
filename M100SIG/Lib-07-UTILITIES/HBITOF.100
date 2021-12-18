@@ -1,0 +1,51 @@
+10'HBITOF.101 (Jean Lalonde 76606,671)
+20' If, using Xmodem (or another transfer protocol), you received a text file
+21' with only graphic chars [CHR$(128)..(255)] instead of standard ASCII chars
+22' [CHR$(0)..(127)], it's probably because during transfer, bytes have
+23' been sent (or received) with hi-bit on.  So, the ^D is now a car, the
+24' the ":" is a TM and the "o" is a black square, etc...
+25' HBITOF.101 reads each byte of your file and sets them with hi-bit off.
+26' This program doesn't have to copy your file to do the correction.  It
+27' pokes every byte directly into RAM.  So it is a great advantage when
+28' your file is large or your RAM small.  But there is a risk so...
+29'
+30' NOTE:  This program pokes directly into RAM at the addresses of the
+31' text file you want to rectify.  But since a bad POKE can cause a cold
+32' start (oh god...), you should save your important files before running
+33' this.  I know my program doesn't poke just anywhere but you don't
+34' know if your copy has been successfully transferred.  So be careful!
+40'
+50CLEAR:DEFSTRC:DEFINTB,D,F,I,J,K,L,N,V:DIMDR(7):DIMVA(27)
+60AC=63842:AA=AC+55:K=0
+70CLS:PRINT" <Hi-Bits OFF>  Directory of .DO files"
+80F=5:L=0:GOSUB340
+90FORJ=0TO7:DR(J)=0:NEXTJ
+100BY=PEEK(AA):IFBY=255THEN230
+110IFBY>=128THENDR(7)=1:BY=BY-128
+120IFBY>=64THENDR(6)=1:BY=BY-64
+130IFBY>=32THENDR(5)=1:BY=BY-32
+140IFBY>=16THENDR(4)=1:BY=BY-16
+150IFBY>=8THENDR(3)=1
+160IFDR(7)=0ORDR(6)=0ORDR(3)THEN220
+170IFK=0THENPRINT
+180PRINT"(";:PRINTUSING"##";F;:PRINT") ";
+190FORJ=3TO8:N=PEEK(AA+J)
+200IFN=0THENPRINT" ";ELSEPRINTCHR$(N);:NEXTJ:
+210VA(F)=1:K=(K+1)MOD3:IFK>0THENPRINT" ";CHR$(245);" ";
+220F=F+1:AA=AA+11:GOTO90
+230PRINT:L=1:GOSUB340:PRINT
+240INPUT" # of file to convert (0=Exit)";I
+250IFI=0THEN380ELSEIFVA(I)=0THEN240
+260AA=AC+(I*11):AA=PEEK(AA+1)+256*PEEK(AA+2)
+270INPUT" View file on screen (def:Y)";CS
+280L=0:IFCS="N"ORCS="n"THENL=1
+290IFLTHEN:PRINT" Converting file #";I;"...";
+300BY=PEEK(AA):IFBY>127THENBY=BY-128
+310IFBY=0ORBY=26THEN60ELSEPOKEAA,BY
+320IFL=0THENPRINTCHR$(BY);
+330AA=AA+1:GOTO300
+340GOSUB350:GOSUB360:GOSUB350:PRINTCHR$(241);:GOSUB360:GOSUB350:RETURN
+350FORI=1TO12:PRINTCHR$(241);:NEXTI:RETURN
+360IFLTHENPRINTCHR$(248);ELSEPRINTCHR$(243);
+370RETURN
+380MENU

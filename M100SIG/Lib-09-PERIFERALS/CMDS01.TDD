@@ -1,0 +1,100 @@
+0 'CMDS01.TDD - 09/06/86 [C] Woods Martin 713/621-3786  ALL RIGHTS RESERVED
+1 'CAUTION - THIS IS AN ONGOING LEARNING EXPERIENCE -- THESE ROUTINES ARE FULLY CAPABLE OF EATING FILES AND DISKS.  ENJOY -- BUT AT YOUR OWN RISK.
+2 'TDD COMMANDS gleaned from DSKL.PDD by Richard Haw, DIRDSK.TDD by Tony Anderson, FORMAT.TDD & ERASER.TDD by Afterhours Software and TANDY DOS DISASSEMBLED by Scott Turner...and a lot of my own experimentation.
+3 'The foregoing programs all work but contain some conflicting information which I have attempted to resolve.  Tandy could make things easier by publishing a TDD technical reference manual but the secrets will out one way or the other.
+4 'TDDCMD is designed to be a runable program to demonstrate the commands as well as to illustrate how they may be used.  It is implemented in BASIC for the M100 but should work on the M200 by correcting the CB and CN addresses in lines 20-25.
+5 '
+6 'This file is posted as a start toward compiling a complete command set for the TDD and all corrections, additions and comments are most welcome and will be included in later versions.
+7 'Most needed is a RS232 input routine capable of handling 131 char messages from the TDD at 19200 baud under BASIC.  Experimentation with other QUERY and QParameter values than those used here may well reveal more TDD features than we know about.
+9 '
+10 'INITIALIZATION - All variables used will be explicitly typed but "real" programs will probably predefine them to save space.
+14 '
+15 MAXFILES=2:CLEAR1000:ONERRORGOTO300:R$=CHR$(13):RL$=R$+CHR$(10):CP$="COM:98N1DNN":GOSUB76
+20 CB=65350' M100 address of RS232 buffer.
+25 CN=65414' M100 address of number of bytes in RS232 buffer at CB not yet INPUTed.  CN+1 is address of pointer in CB to last byte already INPUTed.  CN+2 is address of pointer in CB to last byte not yet INPUTed.
+30 CB$="":CV=VARPTR(CB$):CA%=CB/256:POKECV+1,CB-256*CA%:POKECV+2,CA%:POKECV,64' string pointing to RS232 buffer for use by INPUT bypass routine.  See line 92.
+40 RS%=0:CLS:PRINT"  Cmds01.TDD      [c] 1986 woods martin"
+50 PRINT"S=Status of drive    D=Directory"RL$"I=Find first file    N=Find next file"RL$"R=Open to read       A=Open to append"RL$"G=Get Data           W=Open to write"RL$"C=Close file         P=Put data"RL$"K=Delete file        F=Format disk"
+60 S%=0:PRINT@280,"M=Menu        Select(display=ENTER) ? ";:GOSUB62:CLS:IFS$="-"THEN40ELSEONINSTR("smdinragwcpkf",S$)+1GOSUB100,110,120,125,130,140,150,160,170,180,190,200,210,220:GOTO60
+62 S$=INPUT$(1):S$=CHR$(ASC(S$)OR32):RETURN
+64 BEEP:PRINTMG$" - are you sure  Y or N ? ";:GOSUB62:PRINTS$:MG%=(S$="y"):RETURN
+66 QF$="":INPUT"File Name with Extension";QF$:RETURN
+68 I%=INSTR(1,QF$,"."):IFI%<2ORI%>7THENQF$=""ELSEQF$=LEFT$(QF$,I%-1)+SPACE$(7-I%)+MID$(QF$,I%)' Pad file names to 6 char plus extension to agree with BASIC.  The TDD doesn't seem to care and will accept Upper and Lower case up to 24 char.
+69 QS$=QF$+SPACE$(24-LEN(QF$))+"F"+CHR$(QP%):RETURN' Build filename string for open QUERY=0 padded to 24 char and followed by "F" and the QUERY=0 QParameter.
+70 CK%=0:FORC1%=1TOLEN(S$):CK%=CK%+ASC(MID$(S$,C1%)):NEXT:CK%=(CK%MOD256)XOR255:RETURN' Calculate checksum on string S$.
+72 IFLEN(CK$)=0THENCK%=0:RETURNELSEGOSUB70:CK%=(CK%=ASC(CK$)):RETURN' Compare calculated checksum with received checksum byte CK$.
+76 CLOSE:OPENCP$FORINPUTAS1:OPENCP$FOROUTPUTAS2:RETURN' Open COM: for input/output from/to TDD.
+78 FORI%=1TO100:NEXT:RETURN' Time delay routine
+80 QS$=CHR$(QU%)+CHR$(LEN(QS$))+QS$:S$=QS$:GOSUB70:QS$="ZZ"+S$+CHR$(CK%):PRINT#2,QS$;:RETURN' Send 'ZZ' QUERY=Qu% QueryString QS$ and checksum to TDD.
+90 RS%=0:S$=INPUT$(4,1):RS%=ASC(S$):RP%=ASC(MID$(S$,3)):RETURN' Get status RESPONSE from TDD.  RS%=response type, RP%=response RParameter.
+92 RS%=0:RF%=0:S$=INPUT$(2,1):RS%=ASC(S$):RL%=ASC(MID$(S$,2)):IFRS%<>17ORRL%<>28THEN97ELSER1%=PEEK(CN+1)+1:RF%=ASC(MID$(CB$,R1%)):RS$=MID$(CB$,R1%,28):S$=S$+RS$:CK$=MID$(CB$,R1%+28,1):GOSUB72:IFCK%THEN98ELSEPRINT"ck ";:GOTO98
+93 'Get RESP=17 file name from TDD.  RF%=0 means file does not exist.  Since the response string RS$ contains file length and free sectors which might contain a decimal 26 char (BASIC End of File), the INPUT$ statement is not used.
+94 'RS$ is checked for correct checksum and (for this demo) "ck " is printed if error.
+97 IFRS%=18ANDRL%>0THENS$=INPUT$(2,1):RP%=ASC(MID$(S$,2))
+98 POKECN,0:POKECN+1,0:POKECN+2,0:RETURN' Reset pointers to RS232 buffer to indicate that all characters have been processed.
+100 PRINT"Error":BEEP:RETURN
+109 '
+110 'QUERY 7 - Drive Status
+111 RS%=0:QU%=7:QS$="":GOSUB80:PRINT#2,R$;:GOSUB78:IFPEEK(CN)>3THENGOSUB90:IFS%ANDRS%=18ANDRP%=0THENRETURN' Send QUERY=7, a RETURN and wait for time delay.  Be sure at least 4 char have been received and then read them.
+112 'RESP=18 drive ok.  RP%=0 disk ok.  If S% is true, return to caller, otherwise print message.
+113 PRINT"Drive: ";:IFRS%=67THENPRINT"Wrong mode-will try switch":PRINT#2%,"M1"CHR$(13);:GOSUB78:GOTO110ELSEIFRS%<>18THENPRINT"No response - turn drive Off/On"RL$"Press ENTER "INPUT$(1):GOSUB76:RETURNELSEPRINT"OK - Disk: ";
+114 IFRP%=0THENA$="OK"ELSEIFRP%=16THENA$="file not found"ELSEIFRP%=48THENA$="end of file"ELSEIFRP%=64THENA$="I/O error"ELSEIFRP%=80THENA$="write protected"ELSEIFRP%=96THENA$="no space"ELSEIFRP%=113THENA$="??? check door"ELSE117
+115 GOTO118
+117 IFRP%=167THENA$="Needs formatting"ELSEA$=STR$(RP%)+" error"
+118 PRINTA$:RETURN
+119 '
+120 GOSUB190:MAXFILES=1:MENU
+124 '
+125 'DIRECTORY using QUERY=0 QParameters 1 and 2
+126 GOSUB130:IFS%=0ORRF%=0THENRETURN' Get first file name.
+127 GOSUB140:IFS%=0ORRF%=0THENRETURNELSE127' Get next file name until File Not Found.
+129 '
+130 'QUERY=0 QParameter 1 - Find first file
+131 QP%=1:GOSUB142:IFS%=0ORRF%THENRETURNELSEPRINT"Disk empty":RETURN
+139 '
+140 'QUERY=0 QParameter 2 - Find next file
+141 QP%=2
+142 GOSUB148:IFS%=0THENRETURNELSEQF$=""' Check drive status.  Null filename QF$ for QUERY=0 QParameters 1 & 2
+143 QU%=0:GOSUB68:GOSUB80:GOSUB92:IFRS%<>17THEN113ELSEIFRF%=0%THEN146' Process QS query string and send QUERY=0 to TDD and expect RESP=17.
+144 PRINTUSING"\        \  #####  ###";MID$(RS$,1,10),256*ASC(MID$(RS$,26))+ASC(MID$(RS$,27)),ASC(MID$(RS$,28)):RETURN' Sample use of data received.  The first 10 char are the BASIC filename plus 2 char extension (3 for Floppy_Sys).
+145 'Char 26 is the HIGH byte and char 27 the LOW byte of the file length (reversed from normal M100 convention).  Char 28 is the number of free sectors on the disk and is returned with EVERY filename.
+146 BEEP:PRINT"File not found":RETURN
+148 S%=1:GOSUB110:IFRS%=0ORRP%<>0THENS%=0:RETURNELSERETURN' Check drive status.  In these examples, this is done before every QUERY but many programmers seem to bypass this step after the first time -- at their peril, I would say.
+149 '
+150 'QUERY=0 QParameter 0 - Open file QF$   QUERY=1 QParameter 3 - Position to read
+151 QP%=3:GOSUB154:IFS%=0THENRETURNELSEIFRF%ANDRP%=0THENPRINT"Ready to read":RETURNELSERETURN' Try to open file, then position for reading with QUERY=1 QP 3.
+154 GOSUB156:IFS%=0THENRETURNELSEGOSUB158:RETURN
+156 GOSUB148:IFS%=0THENRETURNELSEGOSUB66:IFQF$=""THENS%=0:PRINT"Illegal file name":BEEP:RETURNELSEQT%=QP%:QP%=0:GOSUB143:QP%=QT%:RETURN'Open file.
+158 QU%=1:QS$=CHR$(QP%):GOSUB80:GOSUB90:RETURN' Position file.
+159 '
+160 'QUERY=0 QParameter 0 - Open file    QUERY=1 QParameter 2 - Position to append
+161 QP%=2:GOSUB154:IFS%=0THENRETURNELSEIFRF%ANDRP%=0THENPRINT"ready to append":GOTO201ELSERETURN
+169 '
+170 'QUERY=3 - Get data string
+171 QU%=3:QS$="":GOSUB80:GOSUB78:A$=INPUT$(PEEK(CN),1):IFASC(A$)=16THENPRINTMID$(A$,3)
+172 RETURN
+173 'This is a crude input routine which handless only the first 64 char of each 131 char response string.  The 131 char come in at 19200 baud in one big rush and the 64 char RS232 buffer overflows, losing the last 67.
+174 'Assignment:  Write a 131 (min) RS232 input routine in ML poked into a BASIC string which can capture all 131 char.
+179 '
+180 'QUERY=0 QParameter 0 - Open file    QUERY=1 QParameter 1 - Position to write
+181 QP%=1:GOSUB154:IFS%=0OR(RP%ANDRP%<>48)THENRETURN
+183 IFRF%=0THENPRINT"ready to write NEW FILE":GOTO201ELSEMG$="File Exists":GOSUB64:IFMG%THENRF%=0:GOTO183ELSERETURN
+189 '
+190 'QUERY=2 - Close file
+191 QU%=2:QS$="":GOSUB80:GOSUB90:IFRS%=18ANDRP%=0THENPRINT"file closed":RETURNELSE113
+199 '
+200 'QUERY=4 - Put data string
+201 PRINT"Type data to be stored, ending"RL$"lines with a RETURN.  'Empty' RETURN"RL$"to end."
+203 QS$="":INPUTQS$:IFQS$=""THEN191
+205 S%=1:QU%=4:GOSUB80:GOSUB90:IFRS%<>18ORRP%<>0THEN113ELSE203
+206 'A file could be transferred here.  QS$ should not be longer than 128 char.:MENU
+209 '
+210 'QUERY=0 QParameter 0 - Open file     QUERY=5 - Delete file
+211 GOSUB 156:IFS%=0THENRETURNELSEIFRF%=0THENRETURNELSEMG$="Really delete "+QF$:GOSUB64:IFMG%=0THENRETURNELSEQU%=5:QS$="":GOSUB80:GOSUB90:IFRS%=18ANDRP%=0THENPRINT"file deleted":RETURNELSE113
+212 STOP:RETURN
+219 '
+220 'QUERY=6 - Format disk
+221 S%=1:GOSUB130:IFS%=0THENRETURNELSEMG$="":IFRF%THENMG$="Contains data "
+223 MG$="Format":GOSUB64:IFMG%=0THENRETURNELSEQU%=6:QU$="":GOSUB80:GOSUB90:IFRS%=18ANDRP%=0THENPRINT"Formatted OK":RETURNELSE113
+300 IFERL=171ANDERR=5THENRESUME172
+310 ONERRORGOTO0

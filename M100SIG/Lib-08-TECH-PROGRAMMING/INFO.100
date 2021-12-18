@@ -1,0 +1,85 @@
+BASIC Escape Codes
+==================
+ESC/A - Cursor UP
+ESC/B - Cursor DOWN
+ESC/C - Cursor RIGHT
+ESC/D - Cursor LEFT
+ESC/E - Cursor Home
+ESC/J - Erase EOP
+ESC/K - Erase to EOL
+ESC/L - Scroll up to cursor.
+ESC/M - Scroll down from cursor.
+ESC/P - Turn on the cursor.
+ESC/Q - Turn off the cursor.
+ESC/T - Protect screen line 7.
+ESC/U - Remove line 7 protection.
+ESC/V - Inhibit scrolling.
+ESC/W - Enable scrolling.
+ESC/Y+yx - locate the cursor to yx-32
+ESC/j - Clear Screen
+ESC/l - Erase Line
+ESC/p - Turn on reverse video.
+ESC/q - Turn off reverse video.
+
+Address	Contents
+=======	========
+F5F0	Value of MAXRAM
+F661	CALL target address
+F678	Top of free RAM
+F962	Address of RAM directory
+FAAF	Location of IPL string
+FAC0	Start of RAM address
+FB65	Type of data in accumulator
+	  2=Integer
+	  3=String
+	  4=Single precision
+	  8=Double precision
+FBB2	Pointer to simple variables
+FBB4	Pointer to array variables
+FB89	String descriptor (see 275D)
+FBB2	Next free RAM address
+FC1A	Software accumulator
+FC82	MAXFILES value
+FC83	Pointer to BASIC file tables
+
+Subroutines
+===========
+RST 4
+Outputs contents of A register to 
+display.
+
+RST 8
+Checks (HL) against byte following the 
+RST command. Reports SN error if not the
+same value.
+
+275D
+Gets string space for the length 
+specified in A. The descriptor is stored
+at FB89.
+
+4222
+Perform CR/LF on display.
+
+4790
+Looks up (or creates) variable pointed 
+to by HL. Address returned in DE.
+
+52BB
+Place telephone on hook.
+
+52D0
+Take telephone off hook.
+
+532D
+Dial telephone number pointed to by HL.
+
+6D3F
+Sends the character in A to the parallel
+printer port.
+
+7283
+Scan the keyboard, return key in A. If 
+no key the Z flag is set.
+
+

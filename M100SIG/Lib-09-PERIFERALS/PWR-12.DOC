@@ -1,0 +1,335 @@
+
+
+
+                                    Chapter 8
+                                Programming Tips
+
+          This Chapter does not have the usual three-part structure but
+          contains tips for programmers using POWR-DOS. POWR-DOS gives
+          BASIC programs complete access to the disk, which makes
+          possible some very interesting programs.  The application
+          programs provided with POWR-DOS make use of many of the tips
+          shown in this chapter.
+
+
+                                  Side Effects
+
+          Several BASIC commands have side effects when a program
+          executes them.  As a rule, the Tandy manuals almost totally
+          ignore these side effects, leaving the curious programmer to
+          discover them by accident and aggravation.  In general, there
+          are two types of effects:
+
+
+             * Some commands reset all variables, DEF designations, and
+               dimensions.  An example is CLEAR (which is documented to
+               do so).  Other examples are LOADM and RUNM, (which are
+               not documented to clear variables).  These commands
+               (except CLEAR) have another side effect: they reset all
+               FOR/NEXT loops and all GOSUB return addresses.  In other
+               words, these commands cannot appear in subroutines or in
+               FOR/NEXT loops without errors resulting.
+
+             * Other commands halt program execution.  Examples are
+               EDIT, LOAD, and SAVE.  Normally, these commands also
+               reset all the variables as well, but at least one
+               command (SAVEM) halts the program without resetting the
+               variables.
+
+
+          Nearly every file-related command stops program execution. 
+          Tandy laptop designers obviously thought that users would
+          only use LOAD, SAVE, etc. as commands from the BASIC "Ok"
+          prompt.  However, there are powerful incentives to automate
+          some of the functions, especially with the PDD.
+
+          In general, POWR-DO extensions do not change the behavior of
+          the file-related commands.  However, because the Tandy
+          manuals do not concisely document their effects, here is a
+          summary.
+
+
+
+                                     Page 61
+          Chapter 8              Programming Tips               Page 62
+
+
+          Command        Effect
+
+          LOAD           Stops execution and clears all variables.
+
+          LOADM          Clears all variables.
+
+          SAVE           Stops program execution.  Saving to BA files
+                         clear all variables; saving to DO files (ASCII
+                         saves) does not clear variables.
+
+          SAVEM          Stops program execution, but does not clear
+                         variables.
+
+
+          The POWR-DOS extensions are design to provide the minimum
+          possible disruption to a running program.  See Chapter 7 for
+          the side effects of each command.
+
+
+                              Re-starting Programs
+
+          Whenever you want to save a program file to RAM, or load in a
+          BASIC program, you find that the necessary commands stop
+          program execution.  The following subroutine pokes a text
+          string into the type-ahead buffer:
+
+
+          1000 IFPEEK(2)=125THENB=-86:'100 Val
+          1010 IFPEEK(2)=152THENB=-738:'200 Val
+          1020 L=LEN(A$):FORI=1TOL
+          1030 POKE(KB+2*I),0
+          1040 POKE(KB+2*I-1),ASC(MID$(A$,I))
+          1050 NEXT:POKEB,L:RETURN
+
+
+          This subroutine is an excellent way to restart a program
+          which stops due to a command.  Here is an example:
+
+
+          10 CLEAR 100,53143
+          20 LOADM ":TMPC"
+          30 LOADM ":TASK.DO",F
+          40 A$="Run 60"+CHR$(13):GOSUB1000
+          50 LOADM ":TMPC.BA",F
+          60 CALL 53143
+          ...
+          Chapter 8              Programming Tips               Page 63
+
+
+          Notice that line 50 stops execution: LOADM stops any program
+          that loads another BAsic file.  However, the statement in
+          line 40 sets up the program to re-start itself.  When it
+          runs, the following material will appear on the screen:
+
+
+          Run                      <--- (User types this)
+          OK
+          Run 60
+          ...
+
+          The buffer can hold up to 16 characters.  There are other
+          interesting uses for this subroutine as well, such as
+          "Self-deleting" programs, etc.
+
+
+                             Machine-Language CALLS
+
+          There are twelve machine-language calls into POWR-DOS. 
+          Programs should make these calls relative to MAXRAMC.  The
+          supported calls allow a BASIC or machine-language program to
+          access PDD files beyond the capabilities of OPEN, PRINT#, and
+          INPUT#.  In the documentation below, each call appears as it
+          would be accessed from BASIC; refer to the TANDY CALL
+          documentation to see an equivalence to machine language.
+
+
+                                  CALL MAXRAMC
+
+          Resets POWR-DOS hooks.  This call should not be necessary in
+          general; use LFILES V when possible.
+
+
+                          CALL MAXRAMC+3, mode, address
+
+          Opens the file, whose name is pointed to by "address".  Legal
+          values for "mode" are 1 (output: new files only), 2 (append
+          to existing file), and 3 (input from existing file).  If you
+          try to open a file with an impossible mode (i.e., output to
+          an existing file, or input from a non-existent file), an HT
+          error will result.
+
+          The file name pointed to by "address" should be in a format
+          best described by the following examples:
+
+
+          Name           Format
+          BLAH.BA        "BLAH  BA"
+          C.CO           "D     CO"
+          LFILES.DO      "LFILESDO
+          Chapter 8              Programming Tips               Page 64
+
+
+          The best way to get "address" is with VARPTR. If you don't
+          know how this is done, adhere to the following example, where
+          the file "GRUNT.CO" is prepared for output:
+
+
+          10 B$="GRUNT CO"
+          20 B=VARPTR(B$)
+          30 CALL MAXRAMC+3,1,PEEK(B+1)+256*PEEK(B+2)
+
+
+                          CALL MAXRAMC+6, len, address
+
+          This call allows you to read data from a PDD file previously
+          opened with MAXRAMC+3 with a "mode" of 3.  "Len" is the
+          number of characters to read, which must be from 1 to 255;
+          "address" is the destination memory location for the
+          characters.  Be warned that, if you use a STRING variable, it
+          must be large enough to receive the characters; this CALL
+          won't change the variable length.  For example, to read 25
+          characters into B$:
+
+
+          40 B$=SPACE$(25):' Allocate space
+          50 B=VARPTR(B$)
+          60 CALL MAXRAMC+6,25,PEEK(B+1)+256*PEEK(B+2)
+
+
+                                 CALL MAXRAMC+12
+
+          This command resets the COM settings on the Model 100 to
+          communicate with the PDD.  It's unlikely that this call would
+          be necessary unless you were attempting to set up a
+          telecommunication program that simultaneously uses the PDD
+          and the Model 100's modem.
+
+
+                               CALL MAXRAMC+15,cmd
+
+          This call sends a single-code command to the PDD.  In the
+          context of the current supported calls, the only sensible
+          value for "cmd" is 2, which closes a file.  Your programs
+          should perform a "CALL MAXRAMC+15,2" after any file
+          input/output using the supported calls.  If you forget, files
+          opened for output will not be changed properly.
+          Chapter 8              Programming Tips               Page 65
+
+
+                                 CALL MAXRAMC+18
+
+          This call is intended only for machine-language programs. 
+          The BASIC CALL command cannot set the DE register, so it
+          cannot use this routine effectively.  This routine needs a
+          file opened with mode 3 using MAXRAMC+3.  It reads a count of
+          bytes equal to the DE register pair from the open file to the
+          address starting at HL.
+
+
+                                 CALL MAXRAMC+21
+
+          This call is intended only for machine-language programs. 
+          The BASIC CALL command cannot set the DE register, so it
+          cannot use this routine effectively.  This routine needs a
+          file opened with modes 1 or 2 using MAXRAMC+3.  It writes a
+          count of bytes equal to the DE register pair from RAM at the
+          address starting at HL to the open file.
+
+
+                            CALL MAXRAMC+24, sec, adr
+
+          Reads the sector from the diskette indicated by "sec" to the
+          address in RAM indicated by "adr".  The sector's 1280 bytes
+          and the 12-byte control block are transferred, for a total of
+          1292 bytes.  This call behaves identically to DSKO$
+
+
+                            CALL MAXRAMC+27, sec, adr
+
+          Writes a sector to the diskette indicated by "sec" from the
+          address in RAM indicated by "adr".  The sector's 1280 bytes
+          and the 12-byte control block are transferred, for a total of
+          1292 bytes.  This call behaves identically to DSKO$
+
+
+                                 CALL MAXRAMC+30
+
+          Puts the disk drive into sector-access mode.  The PDD
+          operates in two modes: file-access and sector-access.  It
+          powers up into file-access mode, and any file-related command
+          will put it into file-access mode.  This call, or the sector
+          read/write calls, will put it into sector-access mode
+          Chapter 8              Programming Tips               Page 66
+
+
+                                 CALL MAXRAMC+33
+
+          Searches for a file in the disk directory.  Upon calling, the
+          file name to search for must be in the eight bytes of RAM
+          beginning at 63302 (200 address is 64659) in the format shown
+          under CALL MAXRAMC+3.  Upon exit, the HL register pair
+          contains the length of the file (or 0) and the Z flag is
+          reset if the file exists.  The A register contains the number
+          of free sectors on the disk.
+
+
+                               MAXRAMC+36, 37, 38
+
+          These three bytes are the length, low-byte address, and
+          high-byte address of the COM string used by POWR-DOS.  They
+          allow BASIC programs to open the correct file to communicate
+          directly with the drive regardless of whether it is
+          configured for 9600 baud or 19200 baud operation.  The
+          following lines illustrate how to open a file to access the
+          drive:
+
+
+          10 A$="":A=VARPTR(A$):R=MAXRAMC+36
+          20 POKE A,R:POKE A+1,R+1:POKE A+2,R+2
+          30 OPEN "COM:"+A$ FOR OUTPUT AS 1
+
+
+                                   Error Codes
+
+          POWR-DOS returns error codes when something goes wrong with
+          PDD interaction.  Below is a list of error numbers, along
+          with a brief explanation of each.  NOTE: These error will
+          print out in BASIC unless you use the ERROR statement, which
+          will print out ?UE error for any error number greater than 58
+
+
+          No.  Code      Explanation
+
+          59   NR        RS232 Not Ready.  This error code usually
+                         occurs if the PDD is turned off or
+                         disconnected.  (Yes, we know that the
+                         description is the same as "no resume".)
+
+          60   DN        Drive not responding.  This error happens most
+                         often when an earlier operation ended
+                         unusually.  The best solution is usually to
+                         turn the PDD off, then back on.
+          Chapter 8              Programming Tips               Page 67
+
+
+          61   CM        Communication error.  Your computer and PDD
+                         use a system of checks to make sure no errors
+                         in transmission occur.  If you get a CM error,
+                         check the cable for snugness and try again.
+
+          62   DA        Drive done early.  This error should never
+                         occur unless you attempt to read past the end
+                         of a disk file.  It can happen when using the
+                         CALL MAXRAMC+6 function.
+
+          63   WP        Disk Write Protected.  You are attempting to
+                         modify a disk with the protect tab set to
+                         "no".
+
+          64   DF        Disk Full.  You have exhausted the oceanic
+                         capacity of the PDD, either by using more than
+                         79 sectors, or by creating more than 40 files
+                         on one disk.
+
+          65   ND        No Disk.  There isn't a disk in the drive.
+
+          66   HT        "Hard Trouble".  This error covers any
+                         miscellaneous problem with the PDD.  It rarely
+                         occurs except when using the CALL functions.
+
+          67   AE        File already exists.  You are attempting to
+                         overwrite a file using SAVEM or LOADM ,F (full
+                         file options).
+
+
+          In addition to the above errors, the IO error (#18) can
+          signify a damaged or unformatted disk, and the FF error (#52)
+          means that you are trying to access a non-existent disk file.
+

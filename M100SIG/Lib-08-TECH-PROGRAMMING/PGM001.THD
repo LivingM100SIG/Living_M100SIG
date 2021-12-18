@@ -1,0 +1,169 @@
+PGM001.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This is the first (001) in an anticipated series of thread files which
+capture individual (or short sets of) messages with programming tips,
+questions, hints, speculations, ideas and so forth.  Topics are: Accessing
+the Model 100 keyboard buffer; a program to kill Model 100 programs from the
+main menu; and a trick to reserve RAM for special uses (which may not work,
+without further thought).
+
+Message range: 148238 to 149018
+Dates: 5/18/87 to 5/29/87
+
+
+Model 100 Keyboard Buffer
+-------------------------
+
+Fm: Jim Howard 76672,366
+To: Anybody!
+
+ARGH!
+
+Does anyone out there know where the Keyboard input buffer is on the M100? I
+need to find it for a drawing program... INKEY$ with repeat just isn't fast
+enough.  I'll upload this program when I'm finished with it.  it's going to
+mirror 4 ways what is drawn on the screen... Should be neat if I can ever find
+the (*&%$ keyboard buffer to peek at...
+
+
+Fm: Tony Anderson 76703,4062
+To: Jim Howard 76672,366
+
+The keyboard buffer starts at 65451, and proceeds for 64 bytes.  Ascii
+characters are inserted into every _other_ bytes, the odd value addresses.
+(65451, 65453, etc)  The even value addresses are zeroed for ascii characters.
+If non-zero it indicates a function key press.
+
+Also, the number of characters in the keyboard are poked into 65450; so if you
+put in 3 ascii characters, and 3 zeros, you put 3 in 65450 so the operating
+system knows how many characters to retrieve.
+
+
+Fm: Jim Howard 76672,366
+To: Tony Anderson 76703,4062
+
+Many thanks, Tony!  Now I can finish my program at last...
+
+
+Fm: bob scott 73125,1437
+To: Jim Howard 76672,366
+
+Jim: I've never really tried to READ the  buffer that Tony described to you.
+General use of that critter has been to put things IN it for the M100 to
+process.  A typical example is to jam a command in it prior to doing something
+that forces a BASIC program to stop (like a KILL) so it will restart. Anyway,
+if you run into trouble trying to peek the buffer, there are a couple of ROM
+calls to test the buffer, pull a character out of it, etc.   Also you can go
+straight to the keyboard decoder which is a bit messy, but fast.  You might
+check out "Inside the Model 100" by Carl Oppedahl and the ROM calls files here
+on the SIG.  Good luck with your project. Bob
+
+
+Program to Kill MOdel 100 Files from the Main Menu
+--------------------------------------------------
+
+Fm: Paul Globman 72227,1661
+To: All
+
+A nice feature of the Tandy 200 is the ability to place the widebar cursor over
+a filename and press a function key AT THE MENU to kill a file and free the RAM
+it occupied.  The Model 100 doesn't allow this...until now.
+
+Just type in this 2 line BASIC program and SAVE it as KILL.BA.
+
+1 AD=64929+2*PEEK(65006)
+  :AD=PEEK(AD)+256*PEEK(AD+1)
+  :FOR I=3 TO 10
+  :F$=F$+CHR$(PEEK(AD+I))
+  :IF I=8 THEN F$=F$+"."
+
+2 NEXT:KILL F$:MENU
+
+Now you can place the widebar cursor over any RAM file and type "KILL.BA" <CR>
+to delete that file.
+
+Use CHANGE.100 to make KILL.BA invisible and eliminate the ".BA".
+
+Now your M100 appears to have a built in KILL command!  If you KILL a .BA file,
+you will remain in BASIC.  To fix this, use this alternate LINE 2.
+
+2 NEXT
+  :M$="MENU"+CHR$(13)
+  :AD=65450
+  :POKE AD,10
+  :FOR I=1 TO 5
+  :M=ASC(MID$(M$,I,1))
+  :POKE AD+2*I,M
+  :POKE AD+2*I+1,M
+  :NEXT
+  :KILL F$
+
+
+
+I suppose I was too lazy to upload this to the proper file area, but it was so
+short and thought I could just pass this along in the message base.
+
+Lemme know what you think.  Did somebody do this already???
+
+
+An "Interesting POKE" -- to Reserve User RAM
+--------------------------------------------
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Phil... I just ran across something interesting in a couple of the RAM/ROM
+maps, and an idea turned over in my head.  So naturally, I decided to bounce
+the idea off your noggin and see what feedback I gets....
+
+Apparently, the RAM address at 64192-3 decimal holds the value of the lowest
+available address in RAM for system use.  Presumably, when the machine is a 32K
+M100, it holds 32768, and if a 24K, it holds 40960. (32768 verified)
+
+Based on this premise, it might be possible to empty a machine's RAM via cold
+start, load a machine language routine (or routines) into RAM at the starting
+address, then move the pointer up to a point above the program to protect it. 
+As long as you get to the program via a direct ML jump, as in entry to the
+macros program, it might work.  If it did, a lot of ML goodies could be hid
+below the first BASIC program in memory, permanently.
+
+My assumption here, of course, is that a direct jump would not check that
+two-byte pointer and unknowingly, jump into "non-existant" RAM space (at least
+as far as the first address pointer was concerned).
+
+Whatcha think?  Is it worth brain-washing an M100 to see if it works?
+
+Has anyone else tried this technique?
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Sounds very interesting.  I wonder if you can use smaller than 8k increments?
+It does seem worth a cold start to try it.  I may try it on my "other" 100 --
+with the PG RAM in this one, who knows what might happen (hooks galore!).
+
+Of course, if you already know how to stuff things down there (0MENU, SUPERA,
+MACPGM), I'm not sure I see the advantage.  But gotta noodle it for a while!
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Tony Anderson 76703,4062
+
+Hi!  Saw your thread whilst skulking and thought I'd add to it.  I tried that
+idea for DVORAK, but there's a hitch.  It works for an instant, but something
+in the OS shuffles the file pointers around, probably the warm start or MENU
+routine -- can't remember.  Maybe you can figure out what's happening and
+somehow intercept it.  T'would be a lot of work, but I hesitate to say that
+anything is impossible.  As for POWR-DOS, I *think* (don't have one to check)
+it just dresses up m/l to look like BASIC ala SUPERA, 0MENU, DVORAK, etc.
+
+I've considered putting temporary code in a file buffer, just making sure that
+buffer is never disturbed while the program's active.  BASIC can find the
+buffer using VARPTR(#n), where 'n' is the buffer number.  The first 9(?) bytes
+of the buffer are used for various things, so your code should be poked in
+after that point.  It might be fun to explore this stuff.  I just don't have
+the time now.

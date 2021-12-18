@@ -1,0 +1,23 @@
+REM ***************************************************************************
+REM   SAMPLE PROGRAM FOR 8085 ASSEMBLER WRITTEN BY M. HENNING.
+REM ***************************************************************************
+BEGIN	ORG	62000D	.START ADDRESS
+START	ENTRY	TEST	.ENTRANCE BYTE
+DATA1	DATA	177O	.177 OCTAL
+DATA2	DATA	01001B	.BINARY 9
+DATA3	DATA	32768D	.DECIMAL NUMBER
+DATA4	DATA	FF00H	.HEX NUMBER
+EQUAL1	EQU	DATA1+4	.EQUATE
+DATA5	RES	10H	.RESERVE 16 BTS
+STRING	STR	THIS IS A TEST.STR DATA
+REM ***************************************************************************
+REM				    END DATA
+REM ***************************************************************************
+TEST	MOV	A,B	.MOVE B TO A
+	JMP	$+2	.JUMP 2 BYTES
+	CPI	FFH	.COMPARE A
+	JZ	TEST1	.FORWARD REFER
+	CALL	DATA4	.CALL
+TEST	MVI	D,89D	.DUPLICATE LBL
+TEST1	CPI	EQUAL1	.WARNING
+	END		.END SAMPLE

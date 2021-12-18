@@ -1,0 +1,63 @@
+CSFIX.100  Cold Start FIX Program
+
+This file describes a program for recovering .DO files after a cold start 
+without the use of cassette tape recorder, external computer, or modem.  The 
+procedure is so simple you can do it anywhere.  It works, provided you run it 
+before any BASIC editing.
+
+Other programs/procedures either require that you back up your files 
+periodically (preferably just before the cold start hits you), or require an 
+external device, which you will probably not have when and where you need it, 
+such as at your seat on an airplane, etc.
+
+  PCSG RESTOR is a nice machine language program that they give away, but
+    you must load it from the cassette to use it, recovers only .DO files.
+
+  DUMPER.100 by Rick Perry is a nice program, but requires a cassette,
+    recovers only .DO files.
+
+  RECOVR.DOC,101 by Russ Villanueva  recovers both .DO and .BA files
+    but it also requires a cassette.
+
+  RECOVR.CLD by Larry Gensch uses another computer to hold the data,
+    recovers only .DO files.
+
+I got this program and procedure from Peter at P. G. Design, to whom I am 
+indebted.  Type the program in and run it right after a cold start.  Do not 
+perform a BASIC CLEAR -- it will set most of memory to nulls, and you will not 
+recover anything.  Do not "Edit" using that BASIC function -- it also will set 
+most of memory to nulls, and you will not recover anything. You can backspace 
+to correct errors, and you can retype the line entirely if you have already 
+pressed ENTER when you see the error.  You may LIST the program, if you wish.  
+Then retype the line that contains an error.
+
+10 OPEN "FILE.DO" FOR OUTPUT AS 1
+20 FOR A = 33000 TO 62000
+30 PRINT #1, CHR$(PEEK(A));
+40 NEXT A
+
+Then press F4 to RUN and wait, about 5 minutes.  The program copies most of 
+memory to a RAM file, "FILE.DO", and you can then use the TEXT program to CUT 
+and PASTE the text you wish to save, pasting into other files that you create. 
+(First delete some garbage, .BA files at beginning of FILE.DO, to make room).
+
+Write or print the program listing and tape it inside the M100 battery cover 
+and you will always have it with you.
+
+This will recover .DO files only but you could try a modification of RECOVR.101
+to recover .BA files (probably not the one in lowest memory, however.
+
+Peter's program starts at 33000 so it does not try to recover itself.  The RAM-
+to-RAM transfers move up in memory together, so they never interfere with each 
+other.  Someone clever will soon figure out how to do this with just a few 
+pokes into the directory area, but this works fine and takes just a few minutes
+longer.
+
+Peter learned not to "Edit" the program by putting a logic analyzer on the 
+backplane buss.  When he started the "Edit" function, he could watch the M100 
+address nearly all of memory, setting it to nulls.  The same applies to other 
+programs: if you Edit DUMPER.100 instead of retyping a bad line, you will 
+recover nothing.
+
+Thanks to Peter!
+

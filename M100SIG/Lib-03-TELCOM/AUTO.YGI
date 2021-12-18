@@ -1,0 +1,46 @@
+AUTO.YGI
+
+This short program allows a CIS user to put in a guest appearance at YGI!
+in case you're going to be gone for more than 30 days and don't want to lose
+your accumulated points.  Since my job requires me to go to Europe for three
+months at a time and I don't want to lose my points, I adapted the auto-dial
+program found in the M-100 manual.  The hearth of the program is line 110,
+which does all the hard stuff. NOTE: Line 110 cannot be much longer than it
+already is. If you EDIT it, the computer will check line length for you and report if it is too long.
+For you to use it, you must edit line 110, and insert your User ID and password
+where indicated.
+The program currently is set up to call at 9:00pm on the day it is run, and on
+the first of every month until stopped. Whereas I could have used the ON TIME$
+interrupt, I decided against it since this is the programs only function. Ob-
+viously, this can be changed as neccessary.
+NOTE: This works with the prompts as of 06/27/86. If CIS or YGI! changes their
+prompts, then you're stuck!
+FINAL NOTE: This is a very specific application.
+
+
+2   T$="21:00:00"  ' time to make call
+10  POWER CONT
+20  DT$=DATE$
+29  PRINT "Waiting for "DT$
+30  IF DATE$<>DT$ THEN 30
+40  ' adj DT$ to next date
+50  M=VAL(DATE$)+1
+55  Y=VAL(RIGHT$(DATE$,2))
+60  IF M>12 THEN M=1: Y=Y+1
+70  M$=MID$(STR$(M),2)
+80  IF M<10 THEN M$="0"+M$
+90  DT$=M$+"/01/"+MID$(STR$(Y),2)
+99  PRINT "Waiting for "T$
+100 IF TIME$<>T$ THEN 100
+101 PRINT "Calling:"
+110 PH$="444-2509 <==^C?D70000,000^M?dpass*word^M?!go gam-17^M?:^M?!3^M===========Hello all. This is my computer putting in a guest appearance while....^M...I'm galavanting around Europe threatening commies. ^MLater...^M/exit^M==?4?!off^M?:===>
+120 M=VARPTR(PH$)
+130 AD=PEEK(M+1)+256*PEEK(M+2)
+140 CALL 21200'          pickup fone
+150 CALL 21293,0,AD'     Dial fone w/ PH$
+160 CLS
+170 OPEN "LOG.DO" FOR APPEND AS 1
+180 PRINT#1,"Logged in: "DATE$" - "TIME$
+190 CLOSE
+200 CALL 21179     ' drop fone
+999 GOTO 29

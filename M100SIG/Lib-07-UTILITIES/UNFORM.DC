@@ -1,0 +1,90 @@
+                         UNFORM.CO
+
+                         by Don Zeikel
+                       [CIS 75775,1430]
+
+
+                         INTRODUCTION
+     UNFORM.CO is a very fast machine language text file unformatter.  It will 
+work in the Model 100 (and probably the 102) ONLY.
+
+     When text material is downloaded from a computer system, it is usually 
+formatted to a specific line width.  If you attempt to print it out using a 
+different width, you can get some strange-looking short lines and other awkward
+blocking.  This is unfortunate, as it would often be nice to be able to print 
+out the text using a formatter, with page numbering, headers, footers, whatever
+width you choose, or anything else your text processor offers.  Even the built-
+in PRINT command in your 100 can adjust for page width, but every time it hits 
+a carriage return, it starts a new line.
+
+     There are several SEARCH & REPLACE programs available that will simply 
+strip all the carriage returns.  If you do that, you will discover that your 
+paragraphs all run together, words run together likethis, and formatted lists 
+are jumbled.
+
+     The only alternative, whether using a SEARCH AND REPLACE program or not, 
+has been to go through the file and make individual decisions on carriage 
+returns.  UNFORM.CO was created to eliminate this tedious chore.  A 
+relocatable, machine language program, UNFORM.CO alters the file in place, so 
+you can even process very long files, over 20K.
+
+     UNFORM.CO makes the decisions, on a line-by-line basis, whether to leave 
+or remove a carriage return, and, if the carriage return is dropped, whether to
+insert 1 or 2 spaces in its place.  It will delete returns within a paragraph, 
+and leave them at the end of a paragraph, on blank lines, and on formatted 
+lists.
+
+
+                           INSTRUCTIONS
+     Since this is machine language, SAVE ANY VALUABLE FILES FROM RAM TO DISK 
+OR CASSETTE.  Machine language always brings with it the off chance of a cold 
+start.
+
+     Convert the file UNFORM.RLC to a .CO file with RLCLDR.BA from DL7.  The 
+finished .CO file is 1139 bytes long.  You may use any address, but if you are 
+not using any other machine language programs at the same time, setting the 
+address at 61820 will load it right under MAXRAM.  You may then save it to disk
+or cassette in its .CO form, but you will also want to save the RLC file in 
+case you want to create a version at another address later.
+
+     Since this program modifies the file in place, if you think you might need
+the original version later, save it to disk or cassette.
+
+     Delete any garbage material from the beginning and end of the file, then 
+run the program.  When the introduction page appears, press any key.  You will 
+see a list of the files in RAM.  Enter the name of the .DO file you want to 
+process.  You should NOT enter the extension .DO, but you MUST hit [ENTER] 
+after you type in the name.
+
+     Almost instantly, you will see the width of the widest line in the file, 
+and a sample of a line at that width.  Because the program makes some of its 
+unformatting decisions on the basis of the formatted width, if there are any 
+problems (if the length looks wrong), this is the time to bail out.  You will 
+be asked if you want to continue, enter "Y" and the program will unformat the 
+file.  This will take from less than a second to a few seconds, depending on 
+the length of the file and number of carriage returns.  The program will return
+to the menu when completed.
+                           PRECAUTIONS
+
+     UNFORM.CO is intended for use only on previously formatted text files.  It
+is not recommended for program listings, or any other type of file in which 
+carriage returns are CRITICAL to the meaning of the file.  It should, however, 
+be able to handle formatted lists within a text file.
+
+     It will not format files that are already not formatted.  Any file with a 
+line of over 150 characters will be rejected.
+
+     Finally, the program may never be perfect.  It has to make subjective 
+judgements, something a computer is not too good at.  For example, if a line is
+short, is it the end of a paragraph or was it specially formatted by the 
+author?  It looks for objective clues as to whether or not to leave in a 
+carriage return, based on spaces, punctuation, and the length of the lines.  If
+a line is formatted oddly, the program might make a mistake.  However, on the 
+whole, it should give satisfactory results, unformatting most files flawlessly,
+and requiring only minimal modifications in the rest.
+
+     This program is my first attempt at assembly language.  I have uploaded 
+the source code as UNFORM.SRC should anyone want to play with it or adapt it to
+another computer.  All I ask is that my copyright notice remains on any 
+different computer versions.  Comments will be most appreciated.
+

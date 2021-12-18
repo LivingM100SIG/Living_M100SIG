@@ -1,0 +1,56 @@
+CSTIME.BA by Bill Heiman 72300,3072 please see CSTIME.INS for instructions
+and enhancements as logging free time, etc.
+This program will write to a file called C-TIME.DO  if you do not have a file
+by that name this program will open one for you.
+If you have closed C-TIME.DO and renamed it for storage you may read the
+renamed file by starting program with a RUN 10000
+Strip this top portion off with select and paste it where you can refer to it.
+Keep the remaining DO program with any excess garbage stripped off in the
+main menu. Go into BASIC, type NEW, then type LOAD"CSTIME.DO"
+After the wait stops flashing and you get an OK prompt, push F3 and type
+CSTIME (or what ever you want to call the program). Go to menu and you should
+have a new program  CSTIME.BA
+--------------------------------------
+5 FI$="C-TIME.DO"
+10 BI$="##":CI$="###":PM=.104166 REM PM = cost per minute including .25 access  charges
+100 TI$=LEFT$(TIME$,5):TH=VAL(LEFT$(TI$,2)):TM=VAL(RIGHT$(TI$,2)):CLS:PRINT@52,"TIME OFF  ";TI$:PRINT
+110 REM  use this line to pull C-TIME.DO	from disk, ramdisk or tape if		it's not stored in main ram.
+120 INPUT"	ENTER MINUTES ON-LINE";MOL:S$="":PRINT
+125 INPUT"SERVICE > (CS)CSIS  (FO)FORUM  (CO)CONF		  (DL)DL    (R) READ   [9] MENU   ";S$:IFVAL(S$)=9THEN10200
+126 IF(S$="R")OR(S$="r")THEN3000
+128 IFS$=""THEN125
+130 NM=TM-MOL:IFNM<0THENTH=TH-1:NM=60+NM
+132 S$=LEFT$(S$,2):S$=S$+CHR$(32)
+135 IFNM<0THENNM=60+NM:TH=TH-1
+137 IFTH<0THENTH=23
+200 CLS:PRINT@80,S$;DATE$;" ";:PRINTUSINGBI$;TH;:PRINT":";:PRINTUSINGBI$;NM;
+205 PRINT" TO ";TI$;" = ";:PRINTUSINGCI$;MOL;:PRINT" MIN.
+300 X$="0":PRINT:INPUT"	IF OK <CR>	<5>=ERROR";X$
+310 IFX$="5"GOTO100
+1100 CLS:OPENFI$FORAPPENDAS1
+1130 PRINT#1,S$;DATE$;" ";:PRINT#1,USINGBI$;TH;:PRINT#1,":";:PRINT#1,USINGBI$;NM;:PRINT#1," TO ";TI$;" = ";
+1131 PRINT#1,USINGCI$;MOL;:PRINT#1," min."
+1150 CLOSE1
+1160 PRINT@171,"ENTERED TO FILES"
+1165 PRINT:INPUT"  <CR> TO RERUN   OR  <9> FOR MENU";X:IFX=9THEN10200ELSE100
+1170 END
+3000 T#=0:HR=0:TT=0:TR=0'  >> READING FILE
+3010 CLS:PRINT@120,"    Please Standby - READING FILES":PRINT:PRINT
+3100 OPENFI$FORINPUTAS1
+3110 IFEOF(1)THEN3150
+3120 LINEINPUT#1,D$
+3130 PRINTD$:T#=T#+1:GOSUB3180
+3140 GOTO3110
+3150 CLOSE1:PRINT:PRINT"THERE ARE";T#;"ON-LINE CALLS ON FILE"
+3155 IFTT>59THENHR=HR+1:TT=TT-60:IFTT>59THEN3155
+3160 PRINT"Total Time [";HR;"hr.";TT;"min. ] =";:PRINTUSING"$$##.##";TR
+3165 PRINT"Last call  [ ";TI;"minutes   ] =";:PRINTUSING"$$##.##";TI*PM;:INPUTX$:IFX$="9"THEN10200ELSEGOTO100
+3170 REM the value in line 3160 & 3180  of PM computes the on-line time by $6.00 per hour plus .25 for access through a CSIS node.
+3171 REM to compute $6.00 plus $2.00 access fees use .133334 or use (total cost per hr./60)
+3180 TI=VAL(MID$(D$,29,4)):TT=TT+TI:TC=0:TC=TI*PM:TC=TC+.005:TC=INT(TC*100)/100:TR=TR+TC
+3185 IFTI<0THENT#=T#-1
+3190 RETURN
+10000 INPUT"NAME OF NEW FILE (filename.ext)";FI$:GOTO10
+10200 MENU REM use this line to send		C-TIME.DO to disk, ramdisk or		tape if not stored in main ram
+10210 REM if line 10200 sends C-TIME.DO		to storage then this line should	read    KILLFI$:MENU
+

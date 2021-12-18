@@ -1,0 +1,234 @@
+QIKCHK.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+A file was uploaded recently which looks like an ASCII file (terminates in
+EOF, etc.) but has embedded graphics (8-bit) characters. In looking at the
+file in question, it was found that several of the Forum checksum programs
+gave the wrong result for extended ASCII files.  This THD chronicles the
+intensive effort to fix two of them -- QIKCHK & LDQQCK.
+
+Message range: 147443 to 147564
+Dates: 5/8/87 to 5/9/87
+
+
+Fm: Tony Anderson 76703,4062
+To: All Checksummers
+
+The machine language checksum program QIKCHK.100 by Jim Moore (5/18/85), which
+has had 95 downloads, has been removed from the data library, because it
+provided incorrect checksum figures. If you've been using it, that may be the
+source of problems you've encountered with checksums not matching those in the
+description.
+
+
+Fm: Don Zeikel 75775,1430
+To: Tony Anderson 76703,4062
+
+     If the QIKCHK you are referring to is the one that takes about 12 seconds
+to load a machine program, then gives results virtually instantly, it is the
+ONLY checksum program I have used since it was first released, and I have NEVER
+EVER had a problem with it!
+     Is it possibly a problem on 102's or 200's?  I have only the 100.
+     What kind of errors was it giving?  perhaps the file was corrupted.
+     Finally, it seems to me there were two versions, one that self-loaded each
+time under HIMEM and erased itself on exit, and one that could be left in
+permanently.  I have been using the former.
+
+
+Fm: Tony Anderson 76703,4062
+To: Don Zeikel 75775,1430
+
+QIKCHK.100 is for the Model 100.  It was used in a 100, and provided wrong
+checksum figures.  It was compared against four other checksum programs, 2 in
+the 100 and 2 in the 200, and all those agreed, QIKCHK did not.
+
+If you'd like to try it, download XMDM25 from DL3 with Xmodem, and run your
+checksum with QIKCHK, and see what you get.  I'll bet it's wrong.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+WHAT????  It's all I ever use -- other than my PC checksum program (CHECK.PC).
+So far as I know, all my checksums have been verified by Sysops over the year
+or so I've used QIKCHK.  Does it always misbehave? Is this new?  What leads you
+to say it's bad? Huh?
+
+Just read your message to Don.  Is there some aspect of XMDM25 that is bizarre?
+Does QIKCHK give the same answer as CHKSUM.WM3, et al, on other files?  What
+checksums do you get for XMDM25 with QIKCHK, and with the others?
+
+I have a disassembly of QIKCHK, so I will give it a look.  It is too good a
+utility to let disappear without a struggle.
+
+
+Fm: Don Zeikel 75775,1430
+To: Phil Wheeler 71266,125
+
+     I have not yet downloaded XMDM25, but have seen a lot of messages which
+indicate that TELCOM parameters have to be changed to 8 bit because it contains
+8 bit characters, which are uncommon on the SIG.  Perhaps QIKCHK can't handle 8
+-bit.
+     I'll wait on any future comments from you (since you indicate you are
+gonna dissassemble and figger out if there is a problem) before I download
+XMODEM 25, as at the present time I have no need for another XMODEM, but will
+download it if it will save the life of the beleagured QIKCHK.
+
+
+Fm: Phil Wheeler 71266,125
+To: Don Zeikel 75775,1430
+
+Well, I've already found some weird stuff in QIKCHK (last week, that is).  He
+develops his own code to find files in the directory -- vs making ROM calls.
+BTW -- are you using M100 or 200?
+
+Suspect it is an 8 bit issue -- and usually there are no hi bits in DO files
+here.  In fact, if it needs a protocol for download, the need for a checksum
+seems non-existent!  Well, I will look into fixing it, tho I don't have much
+time now.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Tony, find new QIKCHK in DL7.  Extension is PW1 to differentiate from old one.
+  But feel free to use 100 or whatever -- but then change it in DES too!
+
+Change was to remove ANI 7F, which stripped high bit before processing the
+bytes.  Amounted to replacing some data bytes in line 3 (1AE67F13) by (
+1A000013) -- i.e., I NOPed it out!  Similar trick should work on QIKCHK.200 if
+there is such a thing and it is the same code.
+
+
+Fm: Phil Wheeler 71266,125
+To: Don Zeikel 75775,1430
+
+Don -- it is fixed and I have uploaded a new version to DL7.  Turns out the
+author stripped the high bits before processing the character.  If the
+character 153 dec had been in the file, his code would convert it to 26 (EOF)
+and terminate prematurely!
+
+Change should make it work correctly with all DO files, graphics or not.  But
+if you need XMODEM for the download, checksum seems a bit unecessary -- if you
+trust the xmodem programs.
+
+Note that you have a 100, by the way: Me too!  It is the BEST of the bunch (
+especiall with all the goodies I've added).  May have cost me as much as a
+Compaq III, or a Tosh 3100 -- But much more fun!
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Re QIKCHK.200: It might be pretty easy to build on from QIKCHK.100.  In fact,
+the only machine-dependent code seems to be reference to F999, which is relates
+to the unsaved Basic file.  the equivalent in the '200 is F294. So by replacing
+(2199F9D5) by (2194F2D5) early in the first data line of QIKCHK.100, you should
+end up with a functioning QIKCHK.200.  Why not give it a try - starting from
+the PW1 version I uploaded this evening.  Let me know if it works.
+
+I hereby serve notice that I will in no way be responsible for cold starts
+and/or loss of data which may be caused by following my suggestions (grin!).
+
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+And the new version has been merged into DL7.  Thanks for the detective work,
+and the fix.  As you pointed out, this is possibly the first time QIKCHK has
+had to deal with 8-bit characters.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+James Yi has already done a modification for the 200, it's in DL10 as FCHK.200.
+He changed the code so it executes in the previous screen TELCOM buffer, so it
+in no way interferes with any other ML programs in RAM, and added a line length
+feature which I like, since I also have to check for line length on uploaded
+files.
+
+Fortunately, James removed that offending mask E67F from the 200 version.
+Incidently, it's the one I use in the 200, since I can download a file, drop
+offline, and check the checksum immediately, check if the program loads, and go
+back and merge it into the DL if all is OK.  Saves a lot of time.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Hmmmm....
+
+James Yi changed F999 to F273, which looks at the attribute byte of the ADDRSS
+file name in the directory, instead of F294, which would be the Unsaved Program
+Buffer.
+
+Why do you suppose Jim used the file address of the Unsaved program buffer?
+(Suzuki)  Was that part of his odd file lookup routine?
+
+If so, apparently James used the same technique, only decided to use ADDRSS as
+his entry point to the directory, rather than SUZUKI.  (Suzuki doesn't appear
+in the 200's directory... the name has been replaced with a group of
+unintelligible graphic symbols.)
+
+Isn't this detective work fun???
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Sure is -- and frustrating sometimes!  It seems the QIKCHK code is
+unnecessarily byzantine, in that the ROM calls to find the file handles are not
+used.  I really don't know what he is doing with the directory attribute; as
+soon as I figured out that he was working too hard re avoiding the ROM calls, I
+lost interest in that part of the code.  I wonder if James did a total re-write
+(in case he can explain) or simply a translation.  Main thing is that it is now
+working -- and it didn't take much time to fix.  If I had the time and desire
+(may someday!) Iwould undertake a total re-write.  Could be shorter, I think.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+A translation.  It's almost exactly the same code, ported over.
+
+
+Fm: Phil Wheeler 71266,125
+To: Don Zeikel 75775,1430
+
+Problem was significant only if file had extended ascii.  The fact is the file
+in question is NOT really a binary file (as has been said).  It is an extended
+ascii file -- but does end in a CHR(26) like a good text file.
+
+Re xmodem: my comment was off the wall.  I agree there is utility in checksum
+for any file having a real EOF.  So QIKCHK was truly flawed.  But should be OK
+now.
+
+
+Fm: Phil Wheeler 71266,125
+To: Don Zeikel 75775,1430
+
+A clue, Don.  Download CHECK2.ASM from DL7.  It is the CP/M 8080 source, with
+comments, for the same code!  Just figured that out -- and am fixing it too!
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil 71266,125
+
+Jim's other ML program, LDQQCK.100 also has the E67F bit filter in line 3 DATA
+statement.  You wanna look at that, and UPL a new version for us?
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Tony, as promised I have uploaded a modified version of LDQQCK.100 called
+LDQQCK.PW1.  It is a resident version of QIKCHK.PW1.  Both the "PW1" files are
+versions of the original which will give the correct result for extended ASCII
+files (like XMDM25.100) -- and will support R)ead [or DC2/DC4] download of such
+files if a user comes in with 8 bit set up (parity 0 in DEFALT).  Of course,
+use of XMODEM is far preferable -- especially in these files with graphics
+(extended-ASCII) characters.

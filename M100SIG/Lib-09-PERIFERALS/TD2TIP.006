@@ -1,0 +1,36 @@
+TD2TIP.006 -- Making the TDD2 OS Work with Low Memory Programs
+--------------------------------------------------------------
+
+With the TDD2, Tandy carried on its tradition of "unfriendliness" to
+low RAM resident programs such as Supera and the PG Designs 0MENU
+program.  The OS installed above 60000 by the loader is coded to load
+BA programs at the bottom of RAM, pushing the low RAM resident
+programs upwards -- where they are, at best, inoperative.
+
+The original TDD OS (FLOPPY.CO on the menu) had the same feature.  A
+fix was provided in TDDTIP.006.  Here is the same fix applied to the
+new drive.
+
+With the OS loaded above 60000 (MAXRAM = 60000), load and run the
+following program:
+
+10 POKE 62116,154:POKE 62117,249:POKE 62118,0
+20 POKE60001,91
+30 MENU
+
+Line 10 makes the OS load BA programs to the top of the list (like the
+cassette, and every other OS for the TDD/TDD2 that I know of).  Line
+20 modifies the test value at 60001-60002 used by FLOPPY to test
+program integrity -- since the computed value has been changed by the
+patch.
+
+You need do nothing more so long as the OS is resident.  But if you
+reload it for any reason, rerun the patcher (I call it FIXFL2.BA)
+before using the TDD2 with 0MENU or Supera.
+
+Note that all other OS's I know of (e.g., TS-DOS v.3.0 for the TDD2)
+do not need such a fix -- having been designed correctly in the first
+place.
+
+Phil Wheeler -- 71266,125
+7/15/87

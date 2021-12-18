@@ -1,0 +1,116 @@
+5 'A program for entering CTRL codes
+6 'and Font Sequences into PRINT word
+7 'processing program.  This program
+8 'can also display the status of codes
+9 'already in your PRINT program
+10 'See PRN100.DOC for complete info.
+11 'Jim Irwin 72346,1020 [Kyo version: Phil Wheeler -- 71266,125]
+20 CLEAR256:I=HIMEM:J=I+60 '    I is for CTRL codes, J is for Fonts
+35 CLS:PRINT:PRINT"[S]tatus":PRINT"[C]trl Codes":PRINT"[F]onts":PRINT"[E]nd"
+36 A$=INPUT$(1):IFA$="E"ORA$="e"THENMENU
+37 IFA$="S"ORA$="s"THEN40
+38 IFA$="C"ORA$="c"THEN200
+39 IFA$="F"ORA$="f"THEN300ELSE35
+40 GOSUB500:GOSUB600:IFPEEK(I)<255THENCLS:JC=0:IC=I:GOTO50
+41 POKEI+1,255:POKEI+2,255
+49 PRINT"No Control Characters Stored":JC=JC+1:GOTO75
+50 I$="^"+CHR$(PEEK(IC)+64):PRINT@JC*40,I$;"+ ";:IC=IC+1
+51 IFPEEK(IC)=255THENPRINT"No Code"
+55 IFPEEK(IC)=255THEN60
+56 PRINTMID$(STR$(PEEK(IC)),2);:IC=IC+1:IF PEEK(IC)<255 THENPRINT",";
+57 GOTO55
+60 PRINT@JC*40+20,I$;"- ";:IC=IC+1
+61 IFPEEK(IC)=255THENPRINT"No Code"
+65 IFPEEK(IC)=255THEN70
+66 PRINTMID$(STR$(PEEK(IC)),2);:IC=IC+1:IFPEEK(IC)<255THENPRINT",";
+67 GOTO65
+70 JC=JC+1:IFJC=8THENJC=0:A$=INPUT$(1):CLS
+71 IC=IC+1:IFPEEK(IC)=255THEN75ELSE50
+75 IC=J:IFPEEK(IC)<255THEN80
+76 POKEIC+1,255:PRINT@JC*40,"No Fonts Stored":GOTO98
+80 PRINT@JC*40,"Font";STR$(PEEK(IC));":  ";:IC=IC+1
+81 IFPEEK(IC)=255THENPRINT"No Font":GOTO96
+90 IFPEEK(IC)=255THEN96
+91 PRINTMID$(STR$(PEEK(IC)),2);:IC=IC+1:IFPEEK(IC)<255THENPRINT",";:GOTO91
+96 JC=JC+1:IC=IC+1:IFJC=8THENJC=0:A$=INPUT$(1):CLS
+97 IFPEEK(IC)<255THEN80
+98 A$=INPUT$(1):GOTO35
+200 C$="CIJMPWXYZ":IC=I
+201 B=INT(I/256):A=I-256*B:POKEHIMEM+1935,A:POKEHIMEM+1936,B
+202 CLS:PRINT"Control Codes are in decimal, with val-"
+203 PRINT"ues separated by commas.  (Ex:  27,45,1)";
+204 PRINT"Just press ENTER at the + or - prompt if";
+205 PRINT"you want a null code."
+206 PRINT@203,"Control Letter: ";:LINEINPUTA$
+207 A=ASC(A$):IFA>90THENA=A-32
+208 B=INSTR(1,C$,CHR$(A)):IFB>0ORA<65ORA>90THEN209ELSE210
+209 PRINT@240,CHR$(27);"p^";CHR$(A);" is not allowed";CHR$(27);"q":GOTO206
+210 PRINT"^";CHR$(A);"+ Ctrl Sequence: ";:LINEINPUTL$(1)
+211 PRINT"^";CHR$(A);"- Ctrl Sequence: ";:LINEINPUTL$(2)
+220 POKEIC,A-64:GOSUB281:FORK=1TO2:IFL$(K)=""THEN240
+221 A=VAL(L$(K)):POKEIC,A:GOSUB281
+225 B=INSTR(1,L$(K),","):IFB=0THEN240
+230 L$(K)=MID$(L$(K),B+1):GOTO221
+240 POKEIC,255:GOSUB281
+250 NEXT
+260 PRINT"Done? (Y/N) ";:LINEINPUTA$
+270 IFA$="Y"ORA$="y"THEN280
+275 IFA$="N"ORA$="n"THEN202ELSE260
+280 POKEIC,255:GOTO35
+281 IC=IC+1:IFIC<JTHENRETURN
+282 FORK=0TO2:POKEI+K,255:NEXT
+283 CLS:PRINT"Your CTRL sequences are going to over-"
+284 PRINT"write your Font sequences.  Your input"
+285 PRINT"has been lost and PRINT.CO now has NO"
+286 PRINT"CTRL codes stored.  (Sorry!)  Edit line"
+287 PRINT"20 and change I=XXXXX to a lower value."
+288 END
+300 JC=J:B=INT(J/256):A=J-256*B:POKEHIMEM+728,A:POKEHIMEM+729,B
+305 CLS:PRINT"Font Codes are any decimal from 1-254."
+306 PRINT"Font Sequences are in decimal, with val-";
+307 PRINT"ues separated by commas.  (Ex: 27,31,9)"
+310 PRINT@208,"Font Code";:CALL16953:INPUTA
+320 IFA<1ORA>254THEN322ELSE330
+322 PRINTCHR$(27);"pFont";STR$(A);" is not allowed";CHR$(27);"q":GOTO310
+330 PRINTUSING"Font ### Sequence: ";A;:CALL16953:LINEINPUTK$
+340 POKEJC,A:GOSUB460
+350 IFK$=""THEN400
+360 A=VAL(K$):POKEJC,A:GOSUB460
+370 B=INSTR(1,K$,","):IFB=0THEN400
+380 K$=MID$(K$,B+1):GOTO360
+400 POKEJC,255:GOSUB460
+410 PRINT"Done? (Y/N) ";:LINEINPUTA$
+420 IFA$="Y"ORA$="y"THEN450
+430 IFA$="N"ORA$="n"THEN305ELSE410
+450 POKEJC,255:GOTO35
+460 JC=JC+1:IFJC<HIMEM+100THENRETURN
+470 GOSUB500:CLS:PRINT"Your Font sequences are about to over-"
+471 PRINT"write the PRINT program.  Your input has";
+472 PRINT"been lost and PRINT.CO now has NO Fonts"
+473 PRINT"stored (sorry).  Edit line 20 and change";
+474 PRINT"J=XXXXX to a lower value.  Your  CTRL"
+475 PRINT"sequences extend to";
+480 PRINTSTR$(K);".  J must be"
+481 PRINT"greater than that! Press any key to end.";
+490 A$=INPUT$(1):END
+500 IK=0:FORK=ITOJ:IFK=IANDPEEK(K)=255THENK=K+2:RETURN
+501 IFPEEK(K)<255THEN510
+502 IFIK=0THENIK=1:GOTO510
+503 IFPEEK(K+1)=255THENK=K+1:RETURN
+510 NEXT:
+512 CLS:PRINT"End of CTRL sequences is past the start"
+513 PRINT"of the Font sequences.  This program"
+514 PRINT"won't change any of your stored data,"
+515 PRINT"but something is wrong.  Either use this";
+516 PRINT"program to enter new codes, or PEEK at"
+517 PRINT"the code tables."
+518 END
+600 FORK=JTOHIMEM+100:IFPEEK(K)=255ANDPEEK(K+1)=255THENK=K+1:RETURN
+601 NEXT
+610 CLS:PRINT"End of Font sequences is past the start"
+611 PRINT"of the PRINT program.  This program"
+612 PRINT"won't change any of your stored data,"
+613 PRINT"but something is wrong.  Either use this";
+614 PRINT"program to enter new codes, or PEEK at"
+615 PRINT"the code tables."
+620 END

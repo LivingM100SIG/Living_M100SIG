@@ -1,0 +1,195 @@
+1 AR=0:RI=0:LE=1:GO=0:X=1:Y=1:DA=42
+3 GOSUB140:PRINT@50,"THE TOLKIEN AFFAIR":GOSUB201:GOSUB186
+4 A$=CHR$(225):B$=CHR$(226):C$=CHR$(227):D$=CHR$(228):E$=CHR$(229):F$=CHR$(230):G$=CHR$(231):H$=CHR$(232):I$=CHR$(233)
+5 J$=CHR$(234):K$=CHR$(235):L$=CHR$(236):P$=CHR$(237):N$=CHR$(238):O$=CHR$(239):R$=CHR$(251):S$=CHR$(252):T$=CHR$(253)
+6 U$=CHR$(254):Z$=O$+O$:V$=Z$+Z$:X$=SPACE$(5):GOSUB189:GOTO12
+7 PRINT@DA,CHR$(239);
+8 DA=(((X*2)-1)*40)+((Y*3)-1)
+10 PRINT@DA,CHR$(147);:FORN=1TO200:NEXT
+11 ON1+L(X,Y)GOSUB 107,21,28,43,56,66,79,93,101
+12 GOSUB170
+13 Q$=INKEY$:IFQ$=""THEN 13
+14 IFQ$=CHR$(29)THENBEEP:GOTO109
+15 IFQ$=CHR$(31)THENBEEP:GOTO111
+16 IFQ$=CHR$(30)THENBEEP:GOTO113
+17 IFQ$=CHR$(28)THENBEEP:GOTO117
+18 IFQ$="U"ORQ$="u"THEN:GOTO119
+19 IFQ$="D"ORQ$="d"THEN:GOTO122
+20 GOTO13
+21 L(X,Y)=0
+23 GO=GO+1000
+24 GOSUB140:PRINT@58,"GOLD":GOSUB205
+25 PRINT@120,"There is pile of ORC GOLD here. You will be rich, if you live long enough."
+26 IFGO<6000THENPRINT"You need";(6000-GO);"more gold bars"
+27 GOSUB68:RETURN
+28 GOSUB140:PRINT@57,"GOBLIN"
+29 IFAR=1THEN40
+30 PRINT@120,"You have just met a GOBLIN! This horrible evil creature really hates wizards."
+31 IFRI=1THENPRINT"It is so dark here that your ring is useless."
+32 GOSUB68:PRINT"In the darkness of the cave the Goblin can sense you but you can not see him."
+33 GOSUB68:CLS:PRINTTAB(40);"The Goblin is now chasing you are the cave, will he catch you?":GOSUB202
+34 GOSUB188:GOSUB68:Q=RND(1):IFQ>.75THEN42
+35 PRINT"Ha! Ha! Ha!  He has you!"
+36 IFQ<.25THENPRINT"You hav been boiled in oil!"
+37 IFQ>=.25ANDQ<=.5THENPRINT"You have been roasted for dinner!"
+38 IFQ>.5ANDQ<=.75THENPRINT"You have been dropped into a lake of molten lava!"
+39 GOSUB200:PRINTTAB(10);"aaaaaarrrrrgggggh!":GOSUB68:GOTO166
+40 PRINT"The Arkenstone protects you against the Goblin."
+41 GOSUB68:RETURN
+42 GOSUB205:PRINT"You have escaped him!!.":GOSUB68:RETURN
+43 GOSUB140:PRINT@56,"SERPENTS"
+44 PRINT@120,"You are in a cave which has many pits filled with serpents"
+45 IFAR=1THEN51
+46 PRINT"Can you get through without falling into a pit?"
+47 GOSUB68:GOSUB202:GOSUB188:Q=RND(1):IFQ>.5THEN49
+48 PRINT"You have fallen down a pit.";:GOSUB204:PRINT" The serpents thought you tasted very good.";:GOSUB68:GOTO166
+49 GOSUB205:PRINT"Wing Foot! You didn't fall in any pits. Well Done!":GOSUB68
+50 RETURN
+51 Q=RND(1):PRINT"You have the Arkenstone to protect to from serpent bites."
+52 IFQ>.75THENPRINT"You are protected from bites but you have tripped into a very deep pit.";
+53 IFQ>.75THENPRINT"and died of starvation because you can't get out."
+54 GOSUB68:IFQ>.75THEN166
+55 RETURN
+56 GOSUB140:PRINT@57,"BALROG";:PRINT@120," "
+57 IFAR=0ANDRI=0THENPRINT"You have met the BALROG, a DISGUSTING creature with very bad manners.";
+58 GOSUB200:PRINT"  He has just split you in two --aaiiieeee!"
+59 GOSUB68:CLS:IFAR=1THENPRINT"You have met the BALROG, but the Arkenstone protects you."
+60 IFRI=1ANDAR=0THENPRINT"You have met the BALROG but you are wearing the MAGIC RING; he can not see you."
+61 IFRI=0ANDAR=0THENPRINT@120,"That's the way the WIZARD crumbles!"
+63 GOSUB68
+64 IFAR=0ANDRI=0THEN166
+65 RETURN
+66 GOSUB140:PRINT@58,"ORCS";
+67 PRINT@120,"There are ORCS here, sensible since we are in an Orc cavern.":GOTO69
+68 PRINT@295,"<<Enter>>";:LINEINPUTQ$:CLS:PRINT:RETURN
+69 IFRI=1THENPRINT"Your Ring is useless against Orcs."
+70 IFAR=1THENPRINT"The Arkenstone has no effect on Orcs."
+71 GOSUB68:CLS
+72 PRINT"The ORCS are going to give you 3 guessesat their secret number (between 1 & 5). If you guess correctly they";
+73 PRINT"will let you go. If not, they will blast you with their PROTOPLASMIC IONIZER."
+74 GOSUB188:Q=INT(RND(1)*5)+1:GOSUB68:CLS
+75 FORF=1TO3:PRINT"Enter Guess -->";:INPUT" ";G:IFG=QTHEN78
+76 NEXT:PRINT"zzziiiiippp!!";:GOSUB200:PRINT" You have been ionized":PRINT" -- Bye Bye":GOSUB68:GOTO166
+78 PRINT"Correct!  You lucky dog!":GOSUB68:RETURN
+79 GOSUB140:PRINT@57,"TROLL";:PRINT@120," "
+80 IFAR=1ORRI=1THEN87
+81 PRINT"You have met a TROLL. This is a greedy, sharp toothed creature. He wants 2000 pieces of gold, or else.";:GOSUB68:CLS
+83 IFGO>2000THEN92
+84 IFGO=2000THEN91
+85 PRINT@40,"You haven't enough gold. OH DEAR! That means he will eat you!":GOSUB68:PRINT@44,"crunch crunch crunch *** gulp***"
+86 GOSUB200:PRINT@120,"Well, at least you can try to give him indigestion":GOSUB68:GOTO166
+87 IFAR=1THENPRINT"The Arkenstone is protecting you from the Troll"
+88 IFAR=0ANDRI=1THENPRINT"You are wearing the Ring; he can not see you"
+89 IFAR=1ORRI=1THENPRINT", but you may leave him some gold if you wish."
+90 GOSUB68:RETURN
+91 PRINT"Aw! He has taken all your gold.":GO=0:GOSUB68:RETURN
+92 PRINT"You have enough gold to give him 2000.":GO=GO-2000:GOSUB68:RETURN
+93 GOSUB140:PRINT@58,"EXIT";
+94 PRINT@120,"You have found the EXIT. This is actually the Sorcerer's Transmatter Portal."
+95 GOSUB68:IFAR=1THEN98
+96 PRINT"But you haven't got the Arkenstone. The portal will not work without it."
+97 GOSUB68:RETURN
+98 PRINT"You have the Arkenstone!  Oh you are a clever adventurer!!":GOSUB68:GOTO141
+101 L(X,Y)=0
+102 GOSUB140:PRINT@55,"MAGIC RING";:GOSUB205:GOSUB205:GOSUB205
+103 PRINT@120,"You have found the one true MAGIC RING.  You will be invisible to all save Orcs and Smaug."
+104 GOSUB68:PRINT:RI=1
+105 PRINT"DAMN!!  Now you might survive!  Oh well, I can still try to kill you."
+106 PRINTTAB(10);"...I suppose":GOSUB68:GOTO12
+107 GOSUB140:PRINT@54,"NOTHING HERE";:FORN=1TO300:NEXT:RETURN
+109 IFY=1THENBEEP:GOTO12
+110 Y=Y-1:GOTO7
+111 IFX=4THENBEEP:GOTO12
+112 X=X+1:GOTO7
+113 IFGO>=6000ANDX=1ANDLE=3ANDY=7THEN157
+114 IFLE=3ANDX=1ANDY=7THEN124
+115 IFX=1THENBEEP:GOTO12
+116 X=X-1:GOTO7
+117 IFY=7THENBEEP:GOTO12
+118 Y=Y+1:GOTO7
+119 IFLE=1THENBEEP:GOTO12
+120 GOSUB206:LE=LE-1
+121 GOSUB189:GOTO7
+122 IFLE=3THENBEEP:GOTO12
+123 LE=LE+1:GOSUB204:GOTO121
+124 CLS:GOTO137
+125 CLS:PRINTV$V$V$O$R$T$R$"    "U$"  "U$"    "T$V$V$Z$
+126 PRINTV$V$R$" "T$R$X$"   "V$U$X$T$V$V$
+127 PRINTV$O$Z$R$X$X$" "S$Z$L$O$L$X$"  "T$V$Z$
+128 PRINTV$R$X$X$"   "V$Z$O$X$"   "V$Z$
+129 PRINTZ$O$R$X$X$"   "V$V$U$X$"  "V$Z$
+130 PRINTO$R$X$X$"    "V$O$U$T$Z$O$X$"  "T$V$O$
+131 PRINTO$"   "S$U$" "S$U$X$" "V$Z$T$U$" "T$R$X$"   "V$O$
+132 PRINTR$" "S$V$Z$O$U$"  "H$V$Z$R$" "T$C$X$"    "S$V$O$;
+133 GOSUB186:PRINT@168,"SMAUG":PRINT@210,"RULES"
+134 FORN=1TO1300:NEXT
+135 GOSUB140:PRINT@55,"Smaug's Den";
+136 FORN=1TO200:NEXT:CLS:RETURN
+137 GOSUB125:PRINT@40,"You are in Smaug's Den but don't have enough gold for the guard":GOSUB200:PRINT"...so he kills you."
+138 GOSUB68:IFRI=1THENPRINT"The ring's magic won't fool Smaug";:GOSUB68
+139 GOTO166
+140 CLS:LINE(3,3)-(236,20),1,B:LINE(4,4)-(235,19),1,B:RETURN
+142 FORG=1TO12:LINE(G-1,G-1)-(240-G,64-G),1,B:NEXT:RETURN
+143 CLS:GOSUB142
+144 PRINT@133,"very well done"
+145 FORN=1TO500:NEXT
+146 PRINT@133,"              "
+147 PRINT@50,"you have shown,"
+148 PRINT@85,"that you are as"
+149 PRINT@138,"brave, cunnning,"
+150 PRINT@180,"clever and nifty"
+151 PRINT@222,"as a Master Wizard"
+152 PRINT@248,""
+153 FORN=1TO1000:NEXT
+154 FORN=1TO6:PRINT@(40*N+4),SPACE$(31);:NEXT
+155 PRINT@126,"any key for another game...":
+156 IFINKEY$=""THEN156ELSECLS:RUN
+157 GOSUB125:PRINT:GO=GO-6000
+158 PRINT"You have entered Smaug's den":PRINT"and have bribed the guard":PRINT" with 6000 gold bars."
+159 PRINT:PRINT"But Smaug always sleeps":PRINT"with one eye open & has seen you.":GOSUB68
+160 CLS:PRINT@47,"You have ony 5 arrows with which to shoot Smaug.":PRINT"Press "+CHR$(34)+"1"+CHR$(34)+" to shoot.":AR=5
+161 IFINKEY$<>"1"THEN161
+162 GOSUB188:IFRND(1)>.80THEN164
+163 PRINT"zzzzzzziiiiiiiippppp you missed":ARR=ARR-1:IFARR=0THEN166ELSE161
+164 PRINT"zzzzzziiiiiiiipppp you hit him":PRINT"You have won the Arkenstone":AR=1:X=1:Y=7:LE=3
+165 GOSUB68:GOSUB170:GOTO7
+166 CLS:GOSUB142
+167 PRINT@131,"You are no longer":PRINT@171,"a ranking Wizard":GOTO153
+170 CLS:PRINT@226,"GOLD=";GO:PRINT@266,"LEVEL ";LE;:IFRITHENPRINT@306,"Ring"
+171 IFARTHENPRINT@311,"Arkenstone"
+172 PRINT@0," "S$H$" "D$H$C$S$H$U$D$H$C$D$H$C$H$H$H$" "H$H$:PRINT@40," " Z$P$Z$K$Z$O$N$V$K$Z$O$N$Z$" "
+173 PRINT@80," " T$O$A$G$O$A$T$O$R$B$O$A$B$O$A$T$O$R$D$P$" "
+174 PRINT @120,S$Z$P$Z$P$Z$P$N$O$U$S$O$P$P$O$U$Z$O$C$
+175 PRINT@160,G$G$O$R$G$O$A$T$O$R$G$O$R$G$O$A$T$O$R$G$K$G$R$
+176 PRINT@200," "Z$P$Z$P$N$Z$P$O$K$Z$O$N$O$P$Z$O$C$
+177 PRINT@240," "B$O$R$G$O$A$U$O$S$C$O$U$G$O$G$T$O$R$S$N$H$U$
+178 PRINT@280,T$Z$K$Z$K$Z$O$K$Z$L$O$P$N$O$K$A$Z$K$;
+179 IFLE=3THEN180ELSE185
+180 PRINT@20,S$K$G$L$U$" smaugs"
+181 PRINT@61,O$"  "T$U$"den "CHR$(153)S$Z$U$
+182 PRINT@104," "T$V$V$O$U$
+183 PRINT@144,"  "T$V$V$O$
+184 PRINT@184,"    "T$V$Z$R$
+185 PRINT@DA,CHR$(147);:RETURN
+186 RESTORE187:READLN:FORN=1TOLN:READI,J:SOUNDI,J:NEXT:RETURN
+187 DATA 10,9394,40,8368,10,7456,20,9394,22,1,50,9394,40,8368,10,7456,20,9394,22,5818,40
+188 M=VAL(RIGHT$(TIME$,1)):FORI=1TOM:Q=RND(1):NEXT:RETURN
+189 A=X:B=Y:GOSUB196
+190 FORN=1TO12:GOSUB197:L(X,Y)=1:NEXT
+191 FORN=1TO2:GOSUB197:L(X,Y)=3:GOSUB197:L(X,Y)=6:GOSUB197:L(X,Y)=2:GOSUB197:L(X,Y)=5:NEXT
+192 GOSUB197:L(X,Y)=4:GOSUB197
+193 IFLE=1ANDRI=0THENL(X,Y)=8
+194 GOSUB197:IFLE=1THENL(X,Y)=7
+195 X=A:Y=B:RETURN
+196 FORX=1TO4:FORY=1TO7:L(X,Y)=0:NEXTY,X:RETURN
+197 X=4-INT(RND(1)*4):Y=7-INT(RND(1)*7)
+198 IFX=1ANDY=1ANDFL=0THEN197
+199 RETURN
+200 FORZJ=1TO20:SOUNDINT(RND(1)*16383),1:NEXT:RETURN
+201 PRINT@160,"Ho! Adventurer!  You, a Wizard of great renown have been asked to recover the"
+202 PRINT"Arkenstone from Smaug the Terrible, a Dragon of ill repute.";:FORN=1TO300:NEXTN:RETURN
+203 FORZX=1TO20:SOUND9235,1:SOUND1,1:SOUND400,3:NEXT:RETURN
+204 FORZX=1TO60:SOUND400+ZX*8,1:NEXT:RETURN
+205 SOUND 4000,4:SOUND1500,25:RETURN
+206 FORZX=60TO1STEP-1:SOUND400+ZX*8,1:NEXT:RETURN
+

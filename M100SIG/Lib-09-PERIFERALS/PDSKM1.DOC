@@ -1,0 +1,262 @@
+
+
+
+               PPPPPPPP     OOOOOOO    WW           WW   RRRRRRRR
+               PP     PP   OOOOOOOOO   WW           WW   RR     RR
+               PP     PP   OO     OO   WW           WW   RR     RR
+               PPPPPPPP    OO     OO   WW    WWW    WW   RRRRRRRR   =====
+               PP          OO     OO   WW   WW WW   WW   RR  RR     =====
+               PP          OO     OO   WW   WW WW   WW   RR    RR
+               PP          OOOOOOOOO    WW  WW WW  WW    RR     RR
+               PP           OOOOOOO      WWWW   WWWW     RR      RR
+            
+                    DDDDDDD      IIIIII     SSSSSSS     KK   KK
+                    DD    DD     IIIIII    SS     SS    KK  KK
+                    DD     DD      II      SS           KK KK
+                    DD     DD      II       SSSSSSS     KKKK
+                    DD     DD      II             SS    KK KK
+                    DD     DD      II             SS    KK  KK
+                    DD    DD     IIIIII    SS     SS    KK   KK
+                    DDDDDDD      IIIIII     SSSSSSS     KK    KK
+
+
+
+
+
+                             P O W E R  -  D I S K
+           
+           
+           
+                    Power for the Tandy Portable Disk Drive
+           
+           
+                                 Owner's Manual 
+           
+           
+           
+           
+
+           
+           
+           
+           
+           
+           
+           
+           
+                   Transcribed By Tony Anderson [76703,4062] 
+               Exclusively for CompuServe Model 100 Forum Members 
+           
+
+
+            
+                         (C) 1985 Acroatix Incorporated 
+                               All Rights Reserved
+
+
+
+
+
+
+
+
+                                   POWR-DISK
+
+                                      for
+
+                          The Tandy Portable Disk Drive
+
+
+                            A Supplement to FLOPPY.CO
+
+
+
+
+
+                              Acroatix Incorporated
+
+
+
+
+
+
+
+                       Copyright (C) 1985 by Acroatix Inc.
+                               All Rights Reserved
+
+
+                                     NOTICE
+
+	Acroatix Incorporated  shall have no liability  to any customer or
+	use  with  respect to  any loss,  damage,  or liability  caused by
+	POWR-DISK, including but not limited to loss of data, interruption
+	of service, or loss of business or profits.
+
+	If you are  sufficiently jolted by  this disclaimer,  we recommend
+	that you save all files  before first loading  POWR-DISK, and that
+	you use it  with care  until you  feel sure  that it  will perform
+	reliably in your machine.
+
+
+	                        Table of Contents
+
+                Section One:
+	        Getting Started................................1
+		    Notes for the Expert.......................1
+		    Removing POWR-DISK.........................2
+
+		Section Two:
+		Using MENU.BA..................................3
+
+		Section Three:
+		Using POWR-DISK without MENU.BA................6
+		    Convenient Access from TEXT................6
+		    Convenient Access from BASIC...............7
+
+		Section Four:
+		BASIC Command Extensions.......................9
+		    LFILES.....................................9
+		    LFILES TO "fname".........................10
+		    LFILES OFF................................10
+		    LFILES MENU...............................11
+		    LOADM ":fname"............................11
+		    LOADM ":fname.xx",F.......................11
+		    OPEN ":fname".............................12
+		    SAVEM ":fname"............................12
+
+		Running BASIC programs with POWR-DISK.........13
+		Machine-language calls to POWR-DISK...........14
+		Error Codes...................................17
+
+		Section Five:
+		Using Other Machine-Language Programs.........19
+		    Checking for Possible Conflicts...........19
+		    Running Relocated Programs................20
+		    Relocating POWR-DISK......................22
+
+		Appendix A:
+		The Tandy Portable Disk Drive.................25
+
+		Appendix B:
+		Machine Language Programs in Tandy Laptops....28
+
+	Editorial note: Original manual was printed with 52 column lines,
+	and 51 lines per page. In order to accommodate standard 80-column
+	printers,  some material has been reformatted,  and some pages of
+	this transcription contain  material that appeared on two or more
+	pages of  the original manual.  Page numbers  in the  upper right
+	corner of each page refer to the pages in the original manual.
+
+     Occasional editorial comment will be  found inside [square brackets]
+
+				 Tony Anderson
+				September  1988
+
+POWR-DISK Owner's Manual					Manual Page 1
+								-------------
+
+			      Section One
+			   Getting Started
+
+CAUTION: Read through this entire section at least once before proceeding. You
+may save yourself time and trouble.  In this manual, material in UPPER CASE
+letters indicates something you type into the computer; <ENTER> means pressing
+the ENTER key; and function keys are shows as [F1], [F2], etc.
+
+If you have never used a disk drive before, you may want to read Appendix A,
+which explains some basic concepts of the Tandy portable disk drive. You may
+want to skim over this appendix in any case.
+
+[Instructions are for loading from the original Utility disk. Forum users can
+skip down to "Notes for the Expert User" section. - ed.]
+
+POWR-DISK is a supplement to FLOPPY.CO. In order to load POWR-DISK, you must
+use FLOPPY.CO to get started.  Here is the simplest way:
+
+1.  Run FLOPPY.CO.  If you haven't loaded FLOPPY, follow the directions given
+    with the Tandy Portable Disk Drive (called TDD in this manual.)
+
+2.  Press [F2], "Load".  Answer the prompt, "File name on disk:" with
+    POWR-D.CO <ENTER>.  Press ENTER again, after the prompt, "File name in
+    RAM".
+
+3.  Press [F2] again.  This time, load in the file, START.BA from the disk.
+
+4.  Press [F8] to exit FLOPPY.CO.
+
+5.  Run START.BA. When it finishes, POWR-DISK is operational and MENU.BA is
+    available for your use.
+
+Notes for the Expert User:
+
+This section describes the startup procedure in more technical terms.  The
+POWR-DISK code comes packaged in [an assembly language] file, POWR-D.CO.  The
+file loads into the area directly below the computer's default MAXRAM (system
+memory boundary).  Running it changes some RAM hooks to add extra functionality
+to BASIC and TEXT.  In addition, MAXRAM itself gets lowered to protect the
+POWR-DISK code from accidental clears.  So, once POWR-D.CO has been run, the
+file itself can be removed from memory without danger.
+
+								Manual Page 2
+								-------------
+
+The program START.BA simply runs POWR-D.CO, deletes the [menu] file, sets
+HIMEM to the new MAXRAM, loads MENU.BA from the disk, and removes FLOPPY.CO
+from memory.  Errors can occur in START.BA if FLOPPY.CO does not exist, etc.,
+but once POWR-D.CO has been run, POWR-DISK is safely in place.
+
+If you are working in an environment with frequent cold-starts (such as
+assembly language development), it is wise to keep a copy of POWR-D.CO on
+cassette tape, where it can be reloaded more easily than using dip switches,
+IPL.BA, etc.  It may seem ironic, but the cassette is supported in the ROM, so
+support for it won't evaporate with a cold-start.
+POWR-DISK Owner's Manual
+
+Removing POWR-DISK
+
+You will have only infrequent occasions to remove POWR-DISK.  With the
+relocation techniques discussed in Section Five, you can leave POWR-DISK active
+virtually all the time.  However, if you ever want to remove it, use the
+following BASIC command:
+
+	LFILES OFF : CLEAR 0, MAXRAM : MENU <ENTER>
+
+Be certain that you can restore POWR-DISK before you disable it.  (The simplest
+way to be sure is to have POWR-D.CO and START.BA in RAM before doing the LFILES
+OFF.)  Otherwise, you may be forced to start from the very beginning and load
+FLOPPY.CO from your Tandy Utility Diskette.
+
+[Forum versions of the two necessary files, START.BA and POWR-D.CO (in hex
+format) may be downloaded from the forum's library whenever needed; the hex
+file converted with HXFER.200, and you're ready to load.  Both START.BA and
+POWR-D.CO are contained in the single file, PDSK03.200 in Library 9. - ed.]
+
+								Manual Page 3
+								-------------
+
+				 Section Two
+				Using MENU.BA
+
+MENU.BA is a utility program, written in BASIC, to simplify file transfers to
+and from the TDD.  You can get by without MENU.BA; POWR-DISK allows you to save
+and retrieve files from the TDD in BASIC or TEXT.  However, MENU.BA allows you
+to examine the disk and RAM contents and to move files back and forth without
+typing filenames.
+
+[One problem with all menu-type programs is that they consume RAM space; it is
+recommended that users learn to use direct commands to access disk functions,
+and use menu-type programs only when needed, not as a regular practice. - ed.]
+
+To run MENU.BA, simply put the wide cursor bar over it from the main menu, and
+press <ENTER>.  After a few seconds, a display similar to the one below will
+appear:
+
+	        ----------------------------------------
+	       |Src:RAM  Type:DO  Free: 1444  Len: 1798 |
+	       |12/20/85 14:35:39                       |
+	       |EPS     ADRS    M-CMD   MAN2    R0      |
+	       |R4      TASK    MSG0                    |
+	       |                                        |
+	       |                                        |
+	       |TDD  Save Sel  BA   Kill Info      Menu |
+		----------------------------------------

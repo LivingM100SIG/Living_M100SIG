@@ -1,0 +1,34 @@
+1 CLS:PRINT" 1: reaction test     ";"2: truth in adv"," 3: file length       ";"4: adrs additions"," 5: number guess      ";"6: goodnight"," 7: invis files       ";"8: calculator   "," 9: music ipl        ";"10: alarm clock","11: add fractions    ";
+2 PRINT"12: boxes display","13: face/animation   ";"14: MENU":INPUT"SELECTION: ";X:CLS:ONXGOTO5,7,9,11,13,15,17,21,23,25,27,29,31,98
+4 GOTO1
+5 FORR=1TO10:CLS:P=INT(RND(1)*279):L=INT(RND(1)*26):PRINT@P,CHR$(L+65):FORT=1TO1000:IFINKEY$=CHR$(L+65)THENBEEP:CLS:PRINT@41,"TIME:";T:FORW=1TO500:NEXT:S=S+T:NEXTR:CLS:BEEP::PRINT@201,"TOTAL:";S,:INPUT"AGAIN (Y/N)";R$:IFR$<>"Y"THEN1ELSES=0:GOTO5ELSENEXT
+7 PRINT@120,SPACE$(10);:FORX=27689TO27698:PRINTCHR$(PEEK(X));:NEXT:FORX=27700TO27709:PRINTCHR$(PEEK(X));:NEXT:PRINT" ";:FORX=27711TO27717:PRINTCHR$(PEEK(X));:NEXT:PRINT@306,CHR$(77);CHR$(97);CHR$(100);"e in ";CHR$(74);CHR$(97);CHR$(112);CHR$(97);"n";:GOTO7
+9 DIMA(21),N$(21):FORI=63898TO64129:A(L)=PEEK(I)+256*PEEK(I+1):N$(L)="":FORI=I+2TOI+7:N$(L)=N$(L)+CHR$(PEEK(I)):NEXT:L=L-(PEEK(I-11)>0):NEXT:FORI=0TOL-1:B=PEEK(64434)+256*PEEK(64435):A=A(I):FORJ=0TOL-1:C=A(J):B=B+(B>C)*(C>A)*(C-B):NEXT:PRINTN$(I)A;B-A:NEXT
+10 FORX=1TO2000:NEXT:GOTO1
+11 MAXFILES=1:OPEN"ADRS"FORAPPENDAS1:FORA=1TO10:CLS:PRINT"Addr Entry #"STR$(A):LINEINPUT"Name ";A$:IFA$=""THEN1ELSEINPUT"Tel# ";B$:INPUT"Addr1 ";C$:LINEINPUT"Addr2 ";D$:PRINT#1,A$+":"+B$+":"+C$+":"+D$:NEXT:MENU
+13 T=RND(1):L=0:K=0:FORI=1TO11:IFI=11THENPRINT"Score ="L"of 10 with AVG miss ="K/10:INPUT"Again";A$:IFA$="Y"THEN13ELSE1ELSEN=ABS(FIX(10*SIN(1.5*T*I+5*T))):INPUT"Guess (0-9)";M:IFM=NTHENL=L+1:PRINT"Right!":NEXTELSEPRINT"No! # is"N:K=K+ABS(M-N):NEXT:PRINT
+15 CLS:LINE(0,0)-(239,63),1,BF:LINE(30,16)-(212,47),0,BF: PRINT@126,"C'mon, Boss - It's too early.":PRINT@168,"I'm going back to sleep!":FORI=1TO2000:NEXT:CLS:POWEROFF
+17 F$="":T=256:FORX=1TO27:A=11*X-1705:Q=A+3:B=PEEK(A):IFB=0THENNEXTELSEZ=VARPTR(F$):POKEZ,8:POKEZ+1,QMODT+T:POKEZ+2,Q/T+T:PRINTF$,MID$("IV",1-((BAND8)=0),1)":";:E$=INPUT$(1):PRINTE$:IFE$="V"THENPOKEA,BAND247:NEXTELSEIFE$="I"THENPOKEA,BOR8:NEXTELSENEXT
+18 GOTO1
+21 CLS:INPUT" 1)A+B 2)A-B 3)A*B 4)A/B 5)A%B <EN>";C:IFC<1ORC>5THEN0ELSEC$=MID$("+-*/%",C,1):PRINTTAB(5)C$;:INPUT" A,B";A,B:A(1)=A+B:A(2)=A-B:A(3)=A*B:A(4)=A/B:A(5)=A*B/100:PRINTTAB(10)STR$(A)" "C$STR$(B)" ="STR$(A(C)):INPUT"<EN>";D:GOTO21
+23 DIMN(64):Z=2^(1/12):Y=15792:FORI=1TO64:N(I)=Y:Y=Y/Z:NEXT:P$="88888881486666666.368888888:;=;86311":D$="($$($$((((($$($$((((($$($$((((((((13":FORJ=1TO2:FORI=1TO36:P=N(ASC(MID$(P$,I,1))-32):D=ASC(MID$(D$,I,1))-32:SOUNDP,D:NEXT:NEXT:GOTO1
+25 IFA$<>""THENPRINTDATE$" "B$:FORA=0TO999:BEEP:E$=INKEY$:IFE$=""THENNEXTELSEFORC=1TO25000:PRINT@40,TIME$:NEXT:NEXT:ENDELSECLS:INPUT"hh:mm:ss";A$:INPUT"Note";B$:CLS:PRINT@2,"Time      Alarm":FORA=0TO1:IFTIME$=A$THEN25ELSEPRINT@40,TIME$"  "A$:A=0:NEXT
+27 INPUTR$,S$:F=INSTR(R$,"/"):G=INSTR(S$,"/"):U=VAL(MID$(R$,F+1)):W=VAL(MID$(S$,G+1)):P=VAL(LEFT$(R$,F-1))*W+U*VAL(LEFT$(S$,G-1)):Q=U*W:FORA=2TO99:IFA=99ORP=1THENPRINTR$" + "S$" = "P"/"Q:GOTO27:ELSEIFP/A=P\AANDQ/A=Q\ATHENP=P/A:Q=Q/A:A=1:NEXT:ELSENEXT
+29 Z=RND(1)*15360:C=RND(1)*15360:X=ZMOD(240):A=CMOD(240):Y=Z\240:B=C\240:LINE(X,Y)-(A,B),ZMOD(2)+1,BF:LINE(X,Y)-(A,B),ZMOD(2),B:GOTO29
+31 DEFSTRA-I:A=CHR$(27):B=A+CHR$(113):D=A+CHR$(112):E=STRING$(3,181):F=CHR$(178):G=CHR$(208):H=STRING$(5,167):I=STRING$(7,142):FORX=0TO28:CLS:PRINT@2+X,D;E:PRINT@8+X,E:PRINT@43+X,F:PRINT@49+X,F:PRINT@86+X,G:PRINT@164+X,H;B:PRINT@203+X,I:SOUND415*X,X:NEXT
+32 GOTO1
+98 MENU
+100 'NOTES TO PROGRAMS:
+101 '1: by Michael D. Nugent, Ph.D.  Set caps lock on; type letters that appear randomly on screen. (Author's note: " Publication rights reserved.")
+102 '2: from idea by Dave Thomas.  Names of Japanese programmers which appear in ROM! SHIFT/BREAK to exit
+103 '3: by Wm. C. Davidon.  RAM location and length (in bytes) of all programs
+104 '4: by Peter Stanwyck.  Additions in format Name:Phone:Adr line 1:Adr line 2 ... <Enter> to exit. (Author's note: "Licensed for private use of M100 SIG ONLY!")
+105 '5: by Phil Wheeler.  Number guess.  Y/N response at end must be CAP
+106 '6: by Phil Wheeler.  Submitted by frustrated one-line programmer as an IPL.  Causes a poweroff, but not a cold start.
+107 '7: by larry gensch.  Very useful utility. At ":" prompt, I makes files invisible; V makes visible, <Enter> leaves as is.  CAUTION: don't mess with Hayashi (paste buffer) or Suzuki (Basic buffer); hit <Enter> for them or lose everything!
+108 '8: by Peter Stanwyck.  Choose function (1,2,3,4,5), then enter numbers in format n1,n2.  Requires Shift/Break to exit.
+109 '9: by Peter Schug.  Delightful, with incredible programming.
+110 '10: by Peter Stanwyck  Enter time carefully; 24-hour clock, hh:mm:ss.  Enter memo at Note: prompt if you like.  At alarm, hit any key for approx. 10 minute snooze.  Shift/Break to exit.
+111 '11: by Phil Wheeler.  Adds fractions, provides lowest common denominator. At ? prompt, enter two fractions in format n/n1,n2/n3 <Enter>
+112 '12: by Peter Schug.  IPL display. Shift/Break to exit.
+113 '13: libelous animation and sound by CompuServe's Model 100 SIG Sysop (a/k/a Byte-Fyter)

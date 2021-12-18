@@ -1,0 +1,94 @@
+2 E$=CHR$(27):R$=E$+"p":N$=E$+"q"
+4 CLS
+6 SCREEN0,0:CLS:LINE(11,8)-(227,55),1,B
+8 PRINT@51,R$" Price Comparison"N$
+10 PRINT@133,"Beer -- Liquor
+12 PRINT@250,R$" Drink Pricing Guide"N$
+14 IFINKEY$=""THEN14
+16 CLS:PRINT@81," <1> Beer Compare
+18 PRINT@122,"<2> Whisky Compare
+20 PRINT@162,"<3> Whisky (% & Bar Cost / Pricing)
+22 PRINT@202,"<9> Quit (Menu)
+24 PRINT:INPUT"Selection";B
+26 IFB=1THENGOTO34
+28 IFB=2THENGOTO77
+30 IFB=3THENGOTO124
+32 IFB=9THENBEEP:MENU
+34 CLS:PRINT@54,R$" BEER "N$
+36 INPUT"Size of Glass (oz) ";S
+38 INPUT"Price per Glass (.45) ";P
+40 INPUT"Cost of Half";C
+42 O=2048:G=INT(O/S):GR=INT(P*G):N=INT(GR-C)
+44 PRINTR$"You will get"N$;G;R$"Glasses Per 1/2"N$
+46 A$="####.##"
+48 PRINTR$"You will Gross $"N$;
+50 PRINTUSINGA$;GR;
+52 PRINTR$" per 1/2"N$
+54 PRINTR$"You will net   $"N$;
+56 PRINTUSINGA$;N;
+58 PRINTR$" per 1/2"N$
+60 BEEP:INPUT"How Many 1/2 's";H
+62 GH=H*GR:NH=H*N
+64 PRINTR$"Gross for"N$;H;R$"1/2 's = $"N$;GH
+66 PRINTR$"Net for  "N$;H;R$"1/2 's = $"N$;NH
+68 OPEN"BEER.DO"FOR APPEND AS1
+70 PRINT#1,S;"oz";:PRINT#1," @";:PRINT#1,P;
+71 PRINT#1,"glass *";H;"halves";:PRINT#1," = $";NH:CLOSE
+72 A$=INKEY$:IFA$=""THEN72
+73 CLS:PRINT@132,"ANOTHER (Y/N)";B$
+74 B$=INKEY$:IFB$=""THEN74
+75 IFB$="Y"ORB$="y"THENCLS:GOTO34
+76 IFB$="N"ORB$="n"THENGOTO16
+77 CLS:PRINT@54,R$" WHISKY "N$
+78 PRINT:INPUT"Portion to be Served (oz)";S
+80 INPUT"Price per Drink";P
+82 INPUT"Cost of Bottle";C
+83 INPUT"Size of Bottle";B
+84 O=B:G=INT(O/S):GR=INT(P*G):N=INT(GR-C)
+86 PRINTR$"You will get"N$;G;R$"Shots Per BTL"N$
+88 A$="####.##"
+90 PRINTR$"You will Gross $"N$;
+92 PRINTUSINGA$;GR;
+94 PRINTR$" per BTL"N$
+96 PRINTR$"You will net   $"N$;
+98 PRINTUSINGA$;N;
+100 PRINTR$" per BTL"N$
+102 BEEP:INPUT"How Many BTL's";H
+104 GH=H*GR:NH=H*N
+106 PRINTR$"Gross for"N$;H;
+108 PRINTR$"BTL's = $"N$;
+110 PRINTUSINGA$;GH
+112 PRINTR$"Net for  "N$;H;R$"BTL's = $"N$;
+114 PRINTUSINGA$;NH
+116 OPEN"WHISKY.DO"FOR APPEND AS1
+117 PRINT#1,S;"oz";:PRINT#1," @";:PRINT#1,P;
+118 PRINT#1,"shot *";H;"BTL's";:PRINT#1," = $";NH:CLOSE
+119 A$=INKEY$:IFA$=""THEN119
+120 CLS:PRINT@132,"ANOTHER (Y/N)";B$
+121 B$=INKEY$:IFB$=""THEN121
+122 IFB$="Y"ORB$="y"THENCLS:GOTO77
+123 IFB$="N"ORB$="n"THENGOTO16
+124 CLS:PRINT@50,"Drink Pricing Guide"
+126 PRINT""
+128 PRINT"Bar Cost Percent Averages:"
+130 PRINT"    Liquor      20% to 25%
+132 PRINT"    Bottle beer 33% to 43%
+134 PRINT"    Wine        40% to 50%
+136 PRINT""
+138 INPUT"Cost of bottle";C
+140 INPUT"Size of bottle (oz)";B
+142 INPUT"Serving size (oz)";S
+144 CLS:PRINT:PRINT:PRINT
+147 PRINT"If Bar Cost desired is 25% then enter 25
+148 PRINT"If Bar cost = 25 then Profit % = 75
+150 INPUT"Bar cost desired (%)";P
+151 P=P/100
+152 A$="###.##"
+154 PRINT"Selling price is $";
+156 SP=C/(B/S)/P
+158 PRINTUSINGA$;SP
+160 C$=INKEY$:IFC$=""THEN160
+162 CLS:PRINT@132,"ANOTHER? (Y/N)";B$
+164 B$=INKEY$:IFB$=""THEN164
+166 IFB$="Y"ORB$="y"THENCLS:GOTO138
+168 IFB$="N"ORB$="n"THENGOTO16

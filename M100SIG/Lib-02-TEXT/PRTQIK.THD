@@ -1,0 +1,109 @@
+PRTQIK.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The Model 100 Forum is the focal point of activity for the M100 family of
+computers, and has been for almost four years.  Some of our early members
+have moved on to other computers (Hiss! Boo!), but many are still here --
+like Joel Dinda -- and supporting their software offerings.  This is a set
+thread which originated when George Mok asked Joel (via a Easyplex
+message) how to modify PRINT.QIK (DL2).  Fortunately, Joel answered here,
+and now we all have the information.
+
+
+Message range: 146902 to 147034
+Dates: 5/1/87 to 5/2/87
+
+
+Fm: Joel Dinda 75725,1134
+To: Phil 71266,125
+
+George's question was Email; the three issues he raised can be figured
+from my response.  Basically he wanted to know how to completely delete
+the page headers from the program; whether he could adjust the program to
+his printer by changing BM & TM, and why he gets an extra linefeed at the
+beginning of the document.  Not sure I answered the last. As a matter of
+policy I generally answer technical questions received via EZ on the
+Message Board....
+
+
+Fm: Joel Dinda 75725,1134
+To: George Mok 73720,435
+
+George---
+Thanks for the note.  Always delighted to know someone's using one of my
+programs....
+
+Removing the page heading:
+Modify Line 12 to read:
+12 FOR T=1 TO TM:PRINT#2,"":NEXT:RETURN
+
+This gets rid of the print routine.  You also want to remove two prompts:
+
+In Line 21 you want to delete :CLS:PRINT "Page Heading: ";:LINEINPUT H$
+
+In Line 24 delete everything from ELSE to the end of the line.
+
+Those changes accomplish what you want.  The following changes tidy things up a
+bit, as the preceding changes render some of the other code useless:
+
+In Line 20 delete :H$="" and :L$="N"
+
+In Line 21 delete :P=0
+
+In Line 26 delete everything from :PG$ to the end of the line.
+
+In Line 31 delete :P=0
+
+
+Adjusting the top & bottom margins:
+As you've obviously figured out already, the program's defaults are set in Line
+20.  BM is indeed the bottom margin, and TM is the top (PL is page length,
+too).  Adjust them as you see fit EXCEPT that TM should not be set to zero; I'd
+recommend BM=8 and TM=1 instead of your suggestions.  The problem is a bug
+(actually a design "error") in BASIC, which treats a FOR/NEXT loop limited with
+zero identically to a loop limited with one. This messes up the counter [C] in
+line 12.
+
+
+Extra linefeed at top:
+If that last comment didn't address your question about the extra linefeed, I
+need more information....
+
+
+Fm: Joel Dinda 75725,1134
+To: Joel Dinda 75725,1134
+
+OOPS!  Line 12 should read:
+
+12 FOR T=1 TO TM:PRINT#2,"":NEXT:C=TM+1:RETURN
+
+
+Fm: George Mok 73720,435
+To: Joel Dinda 75725,1134
+
+Hi Joel, Thank you very much for your time and effort in fixing the program for
+me. I will try it out as soon as possible. Whatever happens I'll let you know.
+Anyway thanks again.
+
+
+Fm: Joel Dinda 75725,1134
+To: GEORGE 73720,435
+
+Welcome.  If it don't work, complain....
+
+
+Fm: Joel Dinda 75725,1134
+To: GEORGE 73720,435
+
+Trust you noticed my correction in message 146903.
+joel
+
+
+Fm: George Mok 73720,435
+To: Joel Dinda
+
+I've tried your suggestions and it's working pretty good. I also took out the
+DATE$=.....etc. in line 20. I still get a linefeed prior to printing. But it
+doesn't affect the line count, so I would't worry about it.

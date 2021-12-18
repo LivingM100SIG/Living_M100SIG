@@ -1,0 +1,13 @@
+1 OPEN"NULL.DO"FOROUTPUTAS1
+2 PRINT#1,"null-> <":CLOSE
+3 A$=""
+4 FORA=62034TO62628STEP11
+5 Z=VARPTR(A$):POKEZ,8:POKEZ+1,(A+3)-FIX((A+3)/256)*256:POKEZ+2,FIX((A+3)/256)
+6 IFA$="NULL  DO"THEN7:ELSE8
+7 AD=A:A=65535
+8 NEXTA
+9 IFAD=0THENEND:ELSEA=PEEK(AD+1)+PEEK(AD+2)*256
+10 IFPEEK(A)=32THENPOKEA,0:END:ELSEA=A+1:GOTO10
+99 REM the >^@< must be copied and pasted as a whole into the TEXT file where it is needed.
+100 REM The > and < can then be stripped off using the delete button.
+

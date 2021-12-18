@@ -1,0 +1,178 @@
+;
+; CIRCLE.SRC
+; Machine Language Circle routine
+;   v2.0 12/10/87
+;   c1987 Jon Diercks [73327,2353]
+; based on an algorithm published
+;   by Mike Higgins
+; as modified for M100
+;   by Jay Holovacs [74756,413]
+;   and Neil Wick   [71056,613]
+;
+; *** IT WORKS !!!
+;
+; *** clocked at least 30 times faster
+;     than BASIC conterpart!!!
+;
+; entry conditions:
+;  hl=xy of center
+;   a=radius
+;   poke64705,0 to enter erase mode
+;   poke64705,1 to enter draw mode
+;    (default on initial loadm is DRAW)
+;
+; See CIRCLE.LDR/.DOC/.DEM
+;
+; for T200, will be necessary to re-org
+;  and change some equ's, and alter the
+;  y-limit in the 'dot' routine
+;
+	org	$fcc0	;alt lcd
+;
+plot	equ	$744c
+unplot	equ	$744d
+;
+circle	mvi	d,1	;1=draw,0=erase
+	shld	yc
+	sta	xx
+	cpi	2	;radius=1or0?
+	jc	c1	;don't divide
+	rar		;divide radius by 2
+c1	sta	r1
+	sub	a
+	sta	yy	;init yy=0
+	mov	a,d
+	sta	mode
+;
+;
+cloop	lda	xc	;xc+xx,yc+yy
+	lxi	h,xx
+	add	m
+	cc	over
+	mov	d,a
+	lda	yc
+	lxi	h,yy
+	add	m
+	cc	over
+	mov	e,a
+	push	d
+	call	dot
+
+	pop	d	;xc-xx,yc+yy
+;in popped de, e already = yc+yy
+	lda	xc
+	lxi	h,xx
+	sub	m
+	cc	over
+	mov	d,a
+	push	d
+	call	dot
+;
+	pop	d	;xc-xx,yc-yy
+;in popped de, d already=xc-xx
+	lda	yc
+	lxi	h,yy
+	sub	m
+	cc	over
+	mov	e,a
+	push	d
+	call	dot
+;
+	pop	d	;xc+xx,yc-yy
+;e already=yc-yy
+	lda	xc
+	lxi	h,xx
+	add	m
+	cc	over
+	mov	d,a
+	call	dot
+;
+;
+	lda	xc	;xc+yy,yc+xx
+	lxi	h,yy
+	add	m
+	cc	over
+	mov	d,a
+	lda	yc
+	lxi	h,xx
+	add	m
+	cc	over
+	mov	e,a
+	push	d
+	call	dot
+;
+	pop	d	;xc-yy,yc+xx
+;e already=yc+xx
+	lda	xc
+	lxi	h,yy
+	sub	m
+	cc	over
+	mov	d,a
+	push	d
+	call	dot
+;
+	pop	d	;xc-yy,yc-xx
+;d already=xc-yy
+	lda	yc
+	lxi	h,xx
+	sub	m
+	cc	over
+	mov	e,a
+	push	d
+	call	dot
+;
+	pop	d	;xc+yy,yc-xx
+;e is set
+	lda	xc
+	lxi	h,yy
+	add	m
+	cc	over
+	mov	d,a
+	call	dot
+;
+;
+next	lda	xx
+	dcr	a
+	lxi	hl,yy
+	cmp	m	;ifxx<yythen
+	rc		;all done!
+	inr	m	;yy=yy+1
+	xra	a	;clear carry
+	lda	r1
+	sub	m	;r1=r1-yy
+	sta	r1
+	jnc	cloop
+	lda	xx	;ifr1<0then
+	dcr	a	;xx=xx-1
+	sta	xx
+	lxi	hl,r1	;r1=r1+xx
+	add	m
+	mov	m,a
+	jmp	cloop
+;
+;
+over	mvi	a,$ff	;d/e overflow--don't plot it
+	ret
+;
+;
+dot	mov	a,d
+	cpi	240	;x off screen
+	rnc
+	mov	a,e
+	cpi	64	;y off screen
+	rnc
+	lda	mode
+	ana	a	;0,erase?
+	jnz	plot
+	jmp	unplot
+end	ret
+;
+buf	equ	end+1
+xx	equ	buf
+yy	equ	buf+1
+r1	equ	buf+2
+yc	equ	buf+3	;(2)
+xc	equ	buf+4
+mode	equ	buf+5
+;
+	end

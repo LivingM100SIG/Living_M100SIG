@@ -1,0 +1,35 @@
+0 'MATCH.100 (v3.3)    3-Oct-87
+1 ' Bill Templeton   [75655,1056]
+2 ' Copyright 1987  All rights reserved
+3 ' Compares contents of 2 ASCII files
+4 '   .DO - no conversion required
+5 '   .BA - convert to ASCII (.DO)
+6 '   .CO - convert to ASCII (.DO)
+7 ' POKE63038,0... turns scroll `on'
+8 ' To return to Menu, early in program
+9 '    press 'q', 'Q' or 'ESC'
+10 CLEAR1000:MAXFILES=3:DEFSTRE,N,R:E=CHR$(27):R=E+"p":N=E+"q
+11 CLS:PRINT@0,RSPACE$(15)"MATCH.100"SPACE$(16)N;:POKE63038,191:ONERRORGOTO26
+12 FILES:PRINT@280,R" Name of File A (.DO): "N;:INPUTA$:PRINTSPACE$(39):PRINTR" Name of File B (.DO): "N;:INPUTB$
+13 IFINSTR("qQ",A$)ORINSTR("qQ",B$)THENMENU
+14 CLOSE:OPENA$FORINPUTAS1:OPENB$FORINPUTAS2
+15 PRINTR" Output to: 1-LCD  2-RAM  3-DSK  4-LPT "N;:Q$=INPUT$(1):Q=VAL(Q$):PRINTN:PRINTSPACE$(39):IFQ$=ETHENMENU
+16 IFQ<1ORQ>4THEN15
+17 IFQ=1THENF$="lcd:
+18 IFQ=2THENF$="tigers
+19 IFQ=3THENGOSUB28:F$="0:tigers.do
+20 IFQ=4THENGOSUB29:F$="lpt:
+21 OPENF$FOROUTPUTAS3:CLS:PRINT@133,R"  Working...  "N:PRINT@280,:PRINT#3,"<<< START >>>
+22 LINEINPUT#1,X$:LINEINPUT#2,Y$:IFX$<>Y$THENBEEP:PRINT#3,"---":PRINT#3,X$:PRINT#3,Y$:PRINT#3,"---":X$="":Y$="
+23 IFEOF(1)ANDEOF(2)THENSOUND3900,7:SOUND3900,7:PRINT#3,"<<< EOF 1 and 2 >>>":MAXFILES=1:MENU
+24 IFEOF(1)THENSOUND3300,7:SOUND3300,7:PRINT#3,"<<< EOF 1 >>>":MAXFILES=1:MENU
+25 IFEOF(2)THENSOUND2900,7:SOUND2900,7:PRINT#3,"<<< EOF 2 >>>":MAXFILES=1:MENUELSE22
+26 IFERR=52THENPRINTRSPACE$(8)"Enter correct filenames!"SPACE$(8)N:FORT=1TO999:NEXT:RESUME11
+27 IFERRTHENPRINTRSPACE$(11)"Error"ERR"in line"ERLSPACE$(11)N:END
+28 IFINP(130)AND7THENPRINTRSPACE$(11)"Connect Disk Drive"SPACE$(11)N:FORT=1TO999:NEXT:GOTO15ELSERETURN
+29 IF(INP(187)AND6)=0THENPRINTRSPACE$(13)"Is Printer on?"SPACE$(13)N:FORT=1TO999:NEXT:GOTO15ELSE21
+30 '        *** Optional ***
+31 'To input a CHARACTER, instead of a   LINE, at a time from each file,
+32 'Save memory... delete CLEAR1000         in line 10
+33 'change line 22 to:                      X$=INPUT$(1,1):Y$=INPUT$(1,2)...
+34 'WARNING - it takes about 8 times longer to compare 2 files!

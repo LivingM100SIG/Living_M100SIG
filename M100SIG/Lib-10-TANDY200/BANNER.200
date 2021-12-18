@@ -1,0 +1,67 @@
+10 'Characters 32-255 start at 36963, 8 bytes per character
+20 CLS:PRINT"     BANNER.200 by Joe Wasserman":PRINT
+30 MAXFILES=2
+40 'Maximum length of headline = 13 characters
+50 A$="B":INPUT"B>anner H>eadline(Enter for Banner)";A$:IFINSTR("BbHh",A$)=0THEN50
+60 IFA$="h"ORA$="b"THENA$=CHR$(ASC(A$)-32)
+70 IFA$="B"THEN90
+80 PRINT:PRINT"For best results - set your printer to  print 12 lines/inch"
+90 PRINT:FILES:PRINT:LINEINPUT"Input file? ";F1$:IFF1$=""THEN90
+100 PRINT:LINEINPUT"Output file (ENTER for LPT:)? ";F2$:IFF2$=""THENF2$="LPT:"
+110 IFLEN(F2$)=3THENF2$=F2$+":"
+120 IFA$="H"THENH=1:W=1ELSEH=10:W=6
+130 'Width expansion on headlines limited by number of characters in file. Program will not let you use too wide an expansion.
+140 PRINT:PRINT"Height expansion (ENTER for"H")";:INPUTH:PRINT"Width expansion (ENTER for "W")";:INPUTW
+150 'Character used for printing must be one that your printer can print
+160 'It might  not look on the printer like it does on the screen
+170 'For headlines CHR$(239) is a good character for easy readability
+180 CLS:C$="":L2$=" ":INPUT "Character to use for printing (ENTER to print each character with itself)";C$
+190 IF LEN(C$)>1THENC$=LEFT$(C$,1)
+200 'If using inverse, insert chr$(233) at beginning of text file to create left side border
+210 N$="N":PRINT:INPUT"N>ormal I>nverse (ENTER for Normal)";N$:IFINSTR("NnIi",N$)=0THEN210
+220 IFLEN(N$)>1THENN$=LEFT$(N$,1)
+230 M=0:PRINT:INPUT"Left Margin (ENTER to center)";M
+240 IFA$="H"THEN310
+250 R$="N":PRINT:PRINT"Line feed after each line":INPUT"(ENTER for No)";R$
+260 R1$=LEFT$(R$,1):IF R1$="Y"ORR1$="y"THENF=1ELSEIFR1$="N"ORR1$="n"THEN F=0ELSE250
+270 CLS:PRINT"If you are using the maximum width of   your printer, and your printer does an  ";
+280 PRINT"automatic return at the last column,    resulting in double-spacing, answer     the next question 'Y'.
+290 R$="":PRINT:INPUT"Suppress return in last column";R$
+300 R1$=LEFT$(R$,1):IFR1$="Y"OR R1$="y"THENE=0ELSEIFR1$="N"ORR1$="n"THENE=1ELSE290
+310 CLS:OPENF1$FORINPUTAS1:OPENF2$FOROUTPUTAS2
+320 IFA$="H"THEN530
+330 IFM=0THENM=40-(H*4)
+340 IFEOF(1)THEN520
+350 L$=INPUT$(1,1):L=ASC(L$)
+360 IFL<32THENFORV=1TOW*6:GOSUB490:NEXTV:GOTO340
+370 IFC$=""THENL1$=L$ELSEL1$=C$
+380 IFN$="I"ORN$="i"THENL2$=L1$:L1$=" "
+390 P=36970+(L-32)*8
+400 FORY=0TO5
+410 FORX=1TOW
+420 IFM>0THENFORV=1TOM:PRINT#2," ";:NEXTV
+430 FORZ=PTOP-7STEP-1
+440 IFPEEK(Z)AND2^YTHENPRINT#2,STRING$(H,L1$);ELSEPRINT#2,STRING$(H,L2$);
+450 NEXTZ
+460 IFETHENGOSUB490
+470 NEXTX,Y
+480 GOTO340
+490 PRINT#2,
+500 IFFTHENPRINT#2,CHR$(10);
+510 RETURN
+520 CLOSE:END
+530 LINEINPUT#1,B$:B=LEN(B$)
+540 IFM=0THENM=(80-(B*W*6))/2:IFM<0THENPRINT"Expansion too wide for len. of headline":PRINT:RUN50
+550 FORX=0TO7
+560 FORY=1TOH
+570 IFM>0THENFORU=1TOM:PRINT#2," ";:NEXTU
+580 FORZ=1TOB
+590 B1$=MID$(B$,Z,1):B2=ASC(B1$):P=36963+X+(B2-32)*8
+600 IFC$=""THENL1$=B1$ELSEL1$=C$
+610 IFN$="I"ORN$="i"THENL2$=L1$:L1$=" "
+620 FORV=0TO5
+630 IFPEEK(P)AND2^VTHENPRINT#2,STRING$(W,L1$);ELSEPRINT#2,STRING$(W,L2$);
+640 NEXTV,Z
+650 PRINT#2,
+660 NEXTY,X
+670 CLOSE:END

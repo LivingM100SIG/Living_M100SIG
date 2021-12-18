@@ -1,0 +1,150 @@
+Spell checker / type finder (WRDSPL)
+
+Program length (Bytes) - 979
+
+Program Installation:
+
+    This program is written entirely in machine langauge and is specific
+to the Tandy 200. To install it on your machine first download the 
+program, (which is a text form of a BASIC program).Then set HIMEM to a 
+value below where you wish the M/L program to start, and load and run 
+the BASIC program. It will ask you for the ending address for the file. 
+The M/L program is relocatable to anywhere in memory from the current 
+HIMEM to MAXRAM - program length. If you just enter a return, the 
+program will be loaded just below MAXRAM. The current line count and 
+address are listed as the file is being created. Any character or 
+checksum errors will be reported and the program will abort. At the end 
+of the program, the M/L program will be saved as a .CO file, and you 
+will be returned to the main menu.
+
+Program execution:
+
+    When you first enter the program you will be asked for the name of 
+the file to check. Any valid .DO file is allowed. Hitting <ENTER> 
+without a name will return you to the main menu. If the file is a valid 
+.DO file, it will be checked for probable spelling errors. Errors are 
+defined in Note 1. The file will be listed out as it is checked. When a 
+word is found which does not meet passing criteria, it will be listed in
+inverse video, and the message:
+
+(S)kip/(C)hange/(A)dd/(ESC)ape
+
+will appear in the system line. The program will then wait for the 
+appropriate key to be hit. Each option is described below:
+
+(S)kip:
+
+    The word will be ignored, and the search will continue.
+
+(C)hange:
+
+     You will be prompted with "Change to:" in the system line. What you
+then type in will replace the word which is currently printed in reverse
+video. If you hit ESC when entering a new word, the operation is 
+canceled, and the word is skipped.
+
+(A)dd:
+
+    If there is a _DICT_.DO file in the dictionary, this option adds the
+currently highlighted word to the dictionary, otherwise it is the same 
+as (S)kip. If there is a _DICT_.DO file you will be prompted with "s 
+Ending". If the word can exist both with and without an s ending, hit Y,
+otherwise hit N. (If the word has an s on the end, and you hit Y, the s 
+will be stripped off before the word is added to the dictionary, it 
+won't let you have a word with two s's on the end). The word Wait will 
+appear in the system line while the word is added to the dictionary, and
+then the search will resume.
+
+(ESC)ape:
+
+    Hitting the ESC key will exit the program and return you to the 
+menu. Any changes you make are made as you select them, so any changes 
+to the file, or words added to the dictionary will be done, even though 
+you exited before the end of the program.
+
+
+
+Note 1:
+
+    The following conditions have to be met for a word to be considered 
+incorrect.
+
+    The word contains more than one letter.
+
+    The word does not occur in the text file twice.
+
+
+    The word is not is the user dictionary.
+
+
+    Words are considered strings of alphabetic characters, delimited by 
+special characters or numbers. (With the exception of the ' symbol, 
+which is considered part of a word). Note that numbers delimit words, so
+that XIJ9F is interpreted as two words, XIJ, and F.
+
+    This program has the ability to allow the user to specifiy a 
+dictionary of words to check, along with just listing out the unique 
+words. Due to the memory limitations of the 200, you can't really put in
+much of a dictionary, but a list of common words specific to a 
+particular users requirements may prove useful. I really haven't done 
+much experimenting with this, and would appreciate any feedback on the 
+matter.
+
+    The dictionary used must be named _DICT_.DO, and is used if it is 
+there, and it is not used if it is absent. There is no difference in 
+what you see on the screen. The program doesn't tell you it found the 
+dictionary, it just uses it. The form of the dictionary is as follows. 
+Each word is prefixed with a byte describing the word in the following 
+format, bit 7 is zero, bit 6 is one, bit 5 is set if the word has an 
+optional s ending, and bits 4 to 0 contain the length of the word in 
+bytes. (Note that this restricts words to 31 bytes or less).
+
+    The following BASIC program will read a file consisting of one word 
+per line, and append it to a dictionary file.
+
+100 ' BUILD _DICT_ FILE
+110 '
+120 ' INPUT IS ONE WORD PER LINE
+130 ' IF WORD CAN END IN S, WORD
+140 ' SHOULD BE ENTERED ON LINE
+150 ' AS "WORD,S"
+160 '
+170 MAXFILES=2
+180 CLEAR 500
+190 DEFINT I-N
+200 CLS
+210 INPUT "Enter file to read ";F$
+220 CLS
+230 OPEN F$ FOR INPUT AS 1
+240 OPEN "_DICT_" FOR APPEND AS 2
+250 ' READ IN FILE
+260 '
+270 IF EOF(1) THEN 450
+280 LINE INPUT#1,A$
+290 ' CONVERT TO UPPER CASE
+300 '
+310 B$=""
+320 FOR I=1 TO LEN(A$)
+330 J=ASC(MID$(A$,I,1))
+340 IF J>95 THEN J=J-32
+350 B$=B$+CHR$(J)
+360 NEXT I
+370 PRINT@83,B$;SPACE$(20);
+380 ' CHECK FOR ENDING S
+390 '
+400 J=INSTR(B$,",")
+410 IF J THEN B$=LEFT$(B$,J-1):J=32
+420 K=64+J+LEN(B$)
+430 PRINT#2,CHR$(K);B$;
+440 GOTO 270
+450 ' END OF PROGRAM
+460 '
+470 CLOSE
+480 MAXFILES=0
+490 MENU
+
+
+Any comments/suggestions/etc. would be appreciated.
+
+Richard C. Haw  [71706,334]
+

@@ -1,0 +1,105 @@
+DALITE.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Special times of year often beget timely programming projects for our
+computers -- for, example, the holiday music found in DL 6.  Often the
+tidbits scroll by and get lost.  This file captures recent messages on
+writing a program to automatically adjust the computer's time to adapt for
+daylight savings time.  Perhaps not the best use of programming time or
+computer power -- but interesting!
+
+
+Message range: 144772 to 144954
+Dates: 4/5/87 to 4/7/87
+
+Fm: Jon Kaplan 73337,1414
+To: sysops 
+
+I realize this is a day late for daylight savings time, but since the subject
+is lack of timeliness, who cares.
+
+I've written a little program for those who are like me and never bother to set
+their clocks ahead because resetting the seconds is too much hassle.
+
+
+1 CLS:PRINT@90,"ENTER":PRINT@135,"S]pring":PRINT@175,"F] all":PRINT@215,"E]XIT"
+2 M$=INKEY$:GOSUB20:IFM$=""GOTO2
+3 A=VAL(LEFT$(TIME$,2)):IFA=0THENA=24
+4 GOSUB10:IFA>23THENA=A-24
+5 IFA<10THENA$="0"+RIGHT$(STR$(A),1)ELSEA$=RIGHT$(STR$(A),2)
+6 TIME$=A$+RIGHT$(TIME$,6):GOTO2
+10 IFM$="S"ORM$="s"THENA=A+1:RETURN
+11 IFM$="F"ORM$="f"THENA=A-1:RETURN
+12 IFM$="E"ORM$="e"THENMENU
+13 GOTO2
+20 PRINT@0,TIME$:RETURN
+
+This program is really silly, but I thought I'd share it.
+
+
+Fm: Tony Anderson 76703,4062
+To: Jon Kaplan 73337,1414
+
+Not silly at all, Jon... but why didn't you upload it to one of the DL's so
+we'd have it again next year when it was needed? (grin)
+
+Lemmee see.... last fall we had a two-liner that set the clocks back.  It was
+something like this, as I recall...
+
+ 1 IF TIME$ = "02:00:00" THEN TIME$ = "01:00:00" : POWER OFF
+ 2 PRINT@45,TIME$ : GOTO 1
+
+Wouldn't it be simpler to use a similar technique:
+
+ 1 IF TIME$ = "01:00:00" THEN TIME$ = "02:00:00" : POWER OFF
+ 2 PRINT@45,TIME$ : GOTO 1
+
+???
+
+Two programs. Call one "SPRING.BA" the other, "FALL.BA".  Just run the
+appropriate one before going to bed, and forget it.  Wouldn't it be nice if we
+could change ALL the clocks like that?
+
+
+Fm: Jon Kaplan 73337,1414
+To: Tony Anderson 76703,4062
+
+You Mean I should wait for 2 in the AM for this program to happen? That ain't
+no fun. You really want I should upload this? I thot it were just a lark. '
+
+
+Fm: Tony Anderson 76703,4062
+To: Jon Kaplan 73337,1414 
+
+Yeah, you have to wait until 2 AM to make the time change, or it ain't
+official.  The Government says so.  Now you wouldn't want to set your clocks at
+10 PM, and have them wrong for 4 hours, would you?  (grin)
+
+Nah, don't bother to upload it, unless you want to.  If there's any interest in
+it, we'll capture the thread and get it all.
+
+
+Fm: Jon Kaplan 73337,1414
+To: Tony Anderson 76703,4062
+
+Tony, I'll let this be a lesson to me: There's always a simpler way. JOn
+
+
+Fm: Tony Anderson 76703,4062
+To: Jon Kaplan 73337,1414 
+
+Don't take umbrage, Jon... they had a contest here in the early days of the
+forum, who could write the most effective one-line program.  There were so many
+good ones, they finally put them it TWO files.  Seemed like Everyone jumped in
+with an idea or two.
+
+
+Fm: Wayne Day 76703,376
+To: Tony Anderson 76703,4062 
+
+Hmmm....
+
+Might be time for another one, maybe.  That way, Jon wouldn't have to stay up
+past his bed time!

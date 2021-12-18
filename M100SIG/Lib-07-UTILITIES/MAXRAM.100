@@ -1,0 +1,26 @@
+0 'MAXRAM.100 by Mike Safonov 70506,1472
+1 'This program installs a 51 byte patch of machine code which changes MAXRAM.
+2 '
+3 'Programmers notes:
+4 'This program uses the RST7 hooks in the M100 ROM at 16643 and 7592 to
+5 'alter the function of the BASIC statements CLEAR and MAXRAM.  See Bob
+6 'Anderson's HOOKS.100 in DL4 for further details on RST7 hooks.
+9 '*********************************
+10 CLS:PRINT@8,"MAXRAM.100 program loader"
+11 PRINT@81,"HIMEM is currently at ";HIMEM
+12 PRINT"Do you want it just below HIMEM (Y/N) ";:A$=INPUT$(1):PRINT
+13 IFA$="Y"ORA$="y"THEN TA=HIMEM:GOTO100
+14 INPUT"End address+1";TA:IFTA<32768+51ORTA>62960THEN14
+100 AD=32755:M=64218:GOSUB200:M=64220:GOSUB200 'reset existing CLEAR & MAXRAM RST7 hooks to coldstart values
+110 PRINT"MAXRAM machine code installed from"TA-51"to"TA-1:PRINT"Existing code beginning"STR$(TA)" protected"
+120 T=TA-51:IFHIMEM>TTHENCLEAR256,T:T=HIMEM
+122 FORI=1TO40:POKET+I,PEEK(16644+I):NEXT 'copy part of CLEAR routine from ROM
+130 POKET,193:FORI=41TO50:READA:POKET+I,A:NEXT 'add some custom machine code
+140 AD=T:M=T+46:GOSUB200 'poke new MAXRAM value into CALL T routine
+141 AD=T+1:M=T+39:GOSUB200 'poke new MAXRAM+1 into CALL T+44 routine
+142 AD=T:M=64218:GOSUB200 'set hook RST7 0 in CLEAR routine to CALL T
+143 AD=T+44:M=64220:GOSUB200 'set hook RST7 2 in MAXRAM routine to CALL T+44
+150 PRINT"New MAXRAM="MAXRAM
+160 END
+200 AH=INT(AD/256):AL=AD-256*AH:POKEM,AL:POKEM+1,AH:RETURN
+300 DATA195,45,65,193,33,0,0,195,173,29

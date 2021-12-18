@@ -1,0 +1,16 @@
+1 CLEAR1000:MAXFILES=2:DEFSTRA-T:Q=CHR$(34):L=CHR$(13):LINEINPUT".DO file  ";A:OPENAFORINPUTAS1:OPEN"T"FOROUTPUTAS2
+2 IFEOF(1)THEN6ELSED=";:":LINEINPUT#1,B:X=INSTR(B," "):W=1:F=C:N=LEFT$(B,X):GOSUB5
+3 Y=INSTR(W,C,"GOSUB"):IFY=0THENPRINTF:PRINT#2,F:GOTO2ELSEW=Y:Y=INSTR(W,C,":"):IFY=0THENC=C+":":Y=LEN(C):D=""
+4 B=C:X=Y:GOSUB5:W=Y:IFD<>""THEN3ELSEPRINTF:PRINT#2,F:GOTO2
+5 C=LEFT$(B,X)+"?"+Q+"["+STR$(VAL(LEFT$(B,X)))+" ]"+Q+D+MID$(B,X+1):PRINTN:F=C:RETURN
+6 N="load"+Q+"T"+Q+L+"save"+Q+"TRONED"+Q+L+"kill"+Q+"T.DO"+Q+L
+7 FORY=1TOLEN(N):Z=(Y-1)*2+65451:POKEZ,ASC(MID$(N,Y,1)):POKEZ+1,0:NEXT:POKE65450,Y-1:END
+11 'TRON.100 is a rough approximation of the TR(acer) ON feature of many MS Basics, but not of the 100's
+12 'It can be a powerful debugging tool.  It prints to the screen the line number reached each time a new line is
+13 'dropped to, or reached by a GOTO, GOSUB, THENnnn, or ELSEnnnn.  It has not been programmed for ON/GOTO/GOSUB interrupts.
+14 'To use, SAVE your Basic file as a .DO file, but do not kill the .BA.  Run TRON, and answer the ".DO file" prompt.
+15 'You will see each time TRON accesses a line, and the final result for each.  At the end, you'll have a garbage
+16 'T.DO file (kill it) and a file called 'TRONED.BA'.  This is your original program with a built-in tracer.
+17 'Make all edits to your original program, and rerun TRON as needed to create a new tracer of your edited program.
+18 'Using with lines approaching 200 bytes could cause a faulty TRONED file, but wont hurt the original.
+19 'Public domain.  Written by Howard J. Benner 70235,1337

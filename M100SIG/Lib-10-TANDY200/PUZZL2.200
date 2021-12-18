@@ -1,0 +1,41 @@
+PUZZL2.200 by Paul Globman
+           Copyright (c) 1989
+
+Here's a little puzzle that I have seen posed as a brain teaser somewhere...
+and indeed it is!
+
+The rules are simple... the right arrow will rotate the letters clockwise.  The
+left arrow will rotate the letters counter-clockwise.  The ESC key will restart
+the puzzle from the beginning.  The down arrow will reverse the four letters in
+the box. 
+
+You start with the letters alphabetized except for 'A' and 'B', which are
+reversed.  Your task is to reverse the 'A' and 'B' so all the letters are in
+order.  The number in the upper right corner of the LCD counts "moves".  A move
+is a reversal of the boxed letters.  Left of right rotation is not counted as a
+move.  Can you alphabetize the letters in 50 moves?  How about 30 moves?  How
+about 20 moves?   Have fun!!
+
+0 REM PUZZL2.200  Copyright (c) 1989
+1 REM              by Paul Globman
+2 DIML(20):D$="BACDEFGHIJKLMNOPQRST"
+3 CLS:FORI=1TO20:READL(I):GOSUB17:NEXT
+4 FORI=0TO2:GOSUB15:NEXT
+5 FORI=1TO20:PRINT@L(I),MID$(D$,I,1)
+6 NEXT:PRINT@75,C:X$=INKEY$
+7 IFX$=CHR$(27)THENRUN
+8 IFX$=CHR$(29)THENGOSUB20
+9 IFX$=CHR$(28)THENGOSUB21
+10 IFX$=CHR$(31)THENC=C+1:GOSUB22
+11 GOTO5
+12 DATA 254,257,260,263,266,309,351
+13 DATA 431,469,506,503,500,497,494
+14 DATA 491,448,406,326,288,251
+15 LINE(76+I,35+I)-(150-I,67-I),1,B
+16 RETURN
+17 X1=((L(I)MOD40)*6)-3:X2=X1+10
+18 Y1=((L(I)\40)*8)-4:Y2=Y1+14
+19 LINE(X1,Y1)-(X2,Y2),1,B:RETURN
+20 D$=MID$(D$+D$,2,20):RETURN
+21 D$=MID$(D$+D$,20,20):RETURN
+22 MID$(D$,1,4)=MID$(D$,4,1)+MID$(D$,3,1)+MID$(D$,2,1)+MID$(D$,1,1):RETURN

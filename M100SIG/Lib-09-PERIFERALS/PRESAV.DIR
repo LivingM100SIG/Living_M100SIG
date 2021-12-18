@@ -1,0 +1,43 @@
+ADVANCE WARNING (perhaps) for CRASHES
+	
+	
+	The Chipmunk (all CDOS versions, even 3.11) has an occasional crash due
+to the main directory being overwritten.  I have been able to mimick this crash
+by setting the first byte of the Allocation Table to 0 (it's normally 
+240, the code for a directory).  In consequence the next SAVE to disk 
+thinks that Cluster 0 is free for filing, and overwrites the directories
+ and maybe even the Allocation Table itself.
+	The first byte is probably reset (not always to 0, those are just the
+ cases that produce catastrophic results) in the RAM image of the allocation
+ table which starts at 59589 (at least in v.3.11).  If you'll check that
+ location with ?PEEK(59589) after all non-CRC disk errors and report the
+ results to Larry Holmes, perhaps it will help find this occasional bug in
+ an otherwise lovely operating system.  In the meantime....
+	PRECAUTIONS:  Use the procedures in INSURE.DIR regularly for backup in
+ case of a crash.  The program PRESAV.BA listed below, however, may well warn
+ you of an impending overwrite if you ise it BEFORE EVERY DISK SAVE.  The
+ crashes are rare and often discovered only well after the damage has been 
+done (if you are working in a subdirectory and don't pop out to the
+ main directory for awhile); they may be associated with error messages (my
+ recent ones have been heralded by RF errors) but maybe not.
+	
+	When it's really important, both 1) check before saving to disk with
+PRESAV.BA, and immediately afterwards 2) save a new backup of the directory
+and alloation table with SAVDIR.BA (from the INSURE.DIR package).
+	
+1 'PRESAV.BA to test for imminent disk overwrite.  W.H.Calvin 71256,1353 
+10 IF LEFT$(DSKI$(0,0,5,0),1)<>CHR$(240)THEN 20
+15 CLS:PRINT@90,"Probably OK to SAVE":SOUND9999,10:MENU
+20 BEEP:BEEP:CLS:PRINT"Oops, you had a glitch in the":PRINT"Allocation Table"
+22 PRINT "The first byte was reset to: ";ASC(LEFT$(DSKI$(0,0,5,0),1))
+25 PRINT:PRINT"Make a note of any prior symptoms or" 
+27 INPUT" error messages.  ENTER to reset the bad byte";X$:IFX$=""THEN30ELSE STOP
+30 A$=DSKI$(0,0,5,0):MID$(A$,1,1)=CHR$(240)
+40 DSKO$0,0,5,0,A$:DSKO$ 0,0,6,0,A$:MENU	
+	
+Again, see DL4's INSURE.DIR (and the patch in INSURE.FIX) for backup and
+ restoration procedures following an overwrite.
+		William Calvin
+		71256,1353
+		29 May 1985
+

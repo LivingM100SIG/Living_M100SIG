@@ -1,0 +1,27 @@
+1 REM Adapted from routines in the n82 BASIC manual.
+2 REM These routines duplicate the LINE commands on the TRS-80 Model 100.
+3 REM Lines 30000-30060 draw a line one pixel wide from starting to ending coordinates; equiv. to 'LINE,1 command.
+4 REM The starting coordinates are input as X0 and Y0, the ending ones as X1 and Y1. 
+5 REM Syntax: X0=nn:Y0=nn:X1=nn:Y1=nn:GOSUB30000. Xmax=239, Ymax=63.
+6 By adding DE<lete>=1(or any odd #) to the syntax, the specified one-pixel-wide line will be 'undrawn', i.e.,deleted.
+7 REM This is equivalent to 'LINE,0' on the Model 100. If DE=0 (or any even #), the line is drawn.
+8 REM To draw an outline box: Call subroutine 40000. Same syntax, but now  X0,Y0 is the upper left corner, X1,Y1 the lower right. 
+9 Equiv. to 'LINE,1,B' on Mod. 100.
+10 REM Setting DE=1 deletes the outline of a box with the specified coordinates. Equiv. to 'LINE,0,B' on Model 100.
+11 REM To draw a filled box, use subroutine 50000. Same syntax, coordinates as for the outline box.
+12 REM This is equiv. to 'LINE,1,BF'.
+13 REM Setting DE=1 erases a filled box. Equivalent to 'LINE,0,BF'.
+29999 REM   Line subroutine
+30000 F=0:XD=ABS(X1-X0):YD=ABS(Y1-Y0):XS=SGN(X1-X0):YS=SGN(Y1-Y0):IFXD>YD THEN30020
+30010 F=-1:T=X0:X0=Y0:Y0=T:T=X1:X1=Y1:Y1=T:T=XD:XD=YD:YD=T:T=XS:XS=YS:YS=T
+30020 R=XD/2
+30030 IFFTHENPRESET(Y0,X0,DE)ELSEPRESET(X0,Y0,DE)
+30040 IFX0=X1THENIFFTHENY0=X1:X0=Y1:RETURNELSERETURN
+30050 X0=X0+XS:R=R+YD:IFR>=XDTHENR=R-XD:Y0=Y0+YS
+30060 GOTO30030
+39999 REM   Box subroutine
+40000 FORBC=X0TOX1STEPSGN(X1-X0):PRESET(BC,Y0,DE):PRESET(BC,Y1,DE):NEXT
+40010 FORBC=Y0TOY1STEPSGN(Y1-Y0):PRESET(X0,BC,DE):PRESET(X1,BC,DE):NEXT:RETURN
+49999 REM   Filled box subroutine
+50000 FORBC=X0TOX1STEPSGN(X1-X0):PRESET(BC,Y0,DE):PRESET(BC,Y1,DE):NEXT
+50010 Y0=Y0+1:Y1=Y1-1:IFY0<=Y1THEN50000ELSERETURN

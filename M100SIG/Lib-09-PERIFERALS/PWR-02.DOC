@@ -1,0 +1,391 @@
+
+
+
+                                    Chapter 1
+                                Loading POWR-DOS
+
+
+
+          POWR-DOS gives you access to your portable disk drive (PDD)
+          from your computer.  Yet, POWR-DOS comes on a disk, so the
+          question arises: how can you load in POWR-DOS itself?  The
+          answer is a special-purpose loader program which can access
+          the PDD only to load POWR-DOS.  We provide two different
+          loader programs; you choose one depending on your situation. 
+          Both programs are written in BASIC.  Each has its own
+          advantages and disadvantages:
+
+
+             * PL.BA ("program loader") operates with the PDD DIP
+               switches in their normal position.  Consequently, if you
+               frequently re-load POWR-DOS, PL.BA is more convenient. 
+               However, PL.BA is difficult to enter from the keyboard.
+
+
+             * IPL.BA ("initial program loader") is compatible with the
+               Tandy IPL.BA program (as listed in the Tandy instruction
+               manual.)  You can key it in quickly; further, PCSG's
+               Super ROM has IPL.BA built in.  However, each time you
+               run IPL.BA, you must set the DIP switches differently
+               from the running position, which can be annoying if done
+               often.
+
+
+          You may occasionally have use for both programs.  PL.BA is
+          probably handier most of the time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           
+                                     Page 1
+          Chapter 1               Loading POWR-DOS            Page 2
+
+
+                                Basic Procedures
+
+                            Choose the Loader Program
+
+          If you are using another disk program already, such as
+          Tandy's FLOPPY.CO or our POWR-DISK, load in PL.BA from your
+          owners disk.  PL.BA operates correctly when all four DIP
+          switches are off; since this is their normal operating
+          position, you will probably not need to change them, but they
+          are worth checking the first time.
+
+          If you do not have access to your disk, then you must type in
+          IPL.BA.  (Note: if you have Super ROM, you can use the
+          built-in IPL.BA found in the ROM.)  To enter IPL.BA, get into
+          BASIC and enter the following program:
+
+
+          10 OPEN"COM:88N1DNN" FOR OUTPUT AS 1
+          20 PRINT#1, "S10985157C00AD7EF08B3AS901FE"
+          30 LOAD "COM:88N1ENN",R
+          SAVE "IPL
+          Menu
+
+
+          If you make an error in a numbered line, re-type it.  Once
+          you have returned to the menu, switch off the power on your
+          PDD.  Turn it over, and locate the four DIP switches.  (See
+          your PDD manual for more information.)  Move them all to the
+          "on" position.  Then, switch the power back on and insert the
+          POWR-DOS owner's disk.
+
+
+                                 Choose POWR-DOS
+
+          Once you have PL.BA or IPL.BA in place, run it from your
+          computer's menu.  If you are using a disk package (such as
+          POWR-DISK) that adds functions to BASIC, deactivate the disk
+          program first.  Refer to the product's manual for details.
+          When running the loader program, you will see the prompt:
+
+
+          Powr-DOS or Tiny (p/t)?
+
+
+          Answer with a "p" and press ENTER.  The loading procedure
+          with commence.
+          Chapter 1               Loading POWR-DOS            Page 3
+
+
+                            Shift the BASIC Programs
+
+
+          A question may appear:
+
+
+          Is it safe to move PROGRM (y/n)?
+
+
+          Instead of "PROGRM", the question will contain the name of a
+          BASIC program.  If the  program name is SUPERA or PG Design's
+          MENU program, see the section below about "immovable
+          programs"; otherwise, answer this question with a "y".  (It
+          is safe to move almost any BASIC program.)
+
+          The following message should appear:
+
+
+          POWR-DOS now active.
+          Press space bar for Menu
+
+
+          Press the space bar, and you will return to your computer's
+          menu.  There should be about 3,000 fewer bytes free than
+          before you started.  If you used IPL.BA (as opposed to
+          PL.BA), you must return the DIP switches to their normal
+          position: all off (Do this with PDD power off).  Then, you
+          can move on to the next chapter, "POWR-DOS Basics".
+
+
+
+                                Notes and Options
+
+
+                               When to use IPL.BA
+
+          Just about the only time you will want to use IPL.BA is after
+          a "cold start", when all your files are gone.  In this case,
+          IPL.BA is far easier to type in than PL.BA, which justifies
+          flipping the DIP switches.  However, if you cold-start
+          frequently, you may want to save PL.BA on cassette tape, or
+          leave yourself an electronic letter (on a bulletin board
+          service) containing PL.BA.  This way, you can use PL.BA,
+          which is easier, with a minimum of trouble.
+
+          Of course, whenever you remove POWR-DOS from RAM, you should
+          load a copy of PL.BA first.  This way, re-loading it will be
+          easy.
+          Chapter 1               Loading POWR-DOS            Page 4
+
+
+                                   Using TINY
+
+          POWR-DOS takes up about 3,000 bytes; the loading process
+          needs about 7,000 bytes to work successfully.  In
+          anticipation of possible memory problems, we provide TINY, a
+          program which gives you access to the PDD using 800 bytes of
+          memory.  TINY has limited functions; you will probably want
+          to use it only when you load and save files too large to fit
+          into RAM with POWR-DOS.
+
+          If you respond "t" to the question, "Powr-DOS or Tiny", you
+          will load in TINY.  If you are using IPL.BA, the :low
+          battery: light will flash irregularly after loading TINY; you
+          must turn off the drive and re-set the DIP switches before
+          proceeding. The TINY prompt appears as follows:
+
+
+          > C FFFFFF.XX (C=KLSQ)
+          >
+
+
+          The prompt is designed to remind you of TINY's functions. 
+          "C" stands for a command (one of K, L, S, or Q) and the F's
+          and X's help line up the files names.  All TINY commands
+          consist of a single letter, which stands for one of four
+          commands:
+
+
+             * L for Loading from disk;
+
+             * S for saving to disk;
+
+             * K for Killing a disk file; and
+
+             * Q for Quitting the program.
+
+
+          All commands require a file name. (Even "Q" may not work
+          unless you enter a file name.)  The file name must line up
+          with the F's and X's on the prompt.  So, for instance, to
+          save a file called MEMO.DO to the disk, enter the following
+          command:
+
+
+          > C FFFFFF.XX (C=KLSQ)
+          > S MEMO  .DO[ENTER]     <--- (You type this)
+          Chapter 1               Loading POWR-DOS            Page 5
+
+
+          Neither [L]oad nor [S]ave will overwrite an existing file. 
+          If you try to overwrite a file either in RAM or on disk, you
+          will get an "AE" (already exists) error.  If you are [S]aving
+          to disk, use TINY to [K]ill the old disk file first , then
+          try [S]aving it again.  If you are [L]oading a RAM file and
+          you get an AE error, you must [Q]uit TINY, kill the RAM file,
+          then run TINY again to [L]oad the file.
+
+
+          As you can see, TINY is a "no-frills" program.  It does have
+          one convenience, however; it remembers the last file name you
+          typed.  This can come in handy when overwriting files.  For
+          example, if you wanted to replace MEMO.DO on the disk, with
+          the MEMO.DO in RAM, you could use the following command
+          sequence:
+
+
+          > C FFFFFF.XX (C=KLSQ)
+          > S MEMO  .DO[ENTER]     <--- (You type this)
+          AE err
+          > C FFFFFF.XX (C=KLSQ)
+          > K[ENTER]               <--- (You type this)
+          > C FFFFFF.XX (C=KLSQ)
+          > S[ENTER]               <--- (You type this)
+
+
+                         Specifying an Immovable Program
+
+          POWR-DOS exist in memory as an invisible BASIC program file. 
+          The way that your computer manages its memory, BASIC programs
+          reside in the very bottom portion of RAM; POWR-DOS usually
+          resides in the very first possible BASIC position.  There are
+          many advantages to the method, but there are two significant
+          disadvantages:
+
+
+             * Software that loads BASIC programs from the "bottom up"
+               will cause cold-starts.  WARNING: FLOPPY.CO is the only
+               known program that does this!  After loading POWR-DOS,
+               do NOT use FLOPPY to load BASIC programs! (All other
+               FLOPPY functions will work fine.)
+
+             * Other software that uses BASIC files to "hide"
+               machine-language code cannot be moved and still run
+               properly.  There are only two programs of concern here:
+               SUPERA.BA and PG Design's bank transfer program.
+          Chapter 1               Loading POWR-DOS            Page 6
+
+
+          If you are using one of these immovable programs, its name
+          will appear in the "is it save to move" question.  Answer
+          "n", and the name of the next BASIC program may appear in
+          another question.  Answer "y" when a movable program name
+          appears.  POWR-DOS will still load properly.
+
+          Once you've loaded POWR-DOS "above" an immovable program, you
+          must adhere to an important restriction.  Do Not Kill The
+          Immovable Program until you turn POWR-DOS off.  If you
+          accidentally kill an immovable program, you will very
+          possibly cause a cold-start, so be careful.  See the error
+          section below for more details on what you should do if this
+          happens
+
+
+                               Errors and Recovery
+
+
+                              Errors in PL and IPL
+
+          Both PL.BA and IPL.BA are simple programs which contain very
+          little error-trapping.  The only reliable error indication is
+          ?OM, which means that you have insufficient memory to run the
+          program.  If this happens while loading POWR-DOS, try loading
+          TINY, then saving some files to the disk.  Kill the files you
+          saved, then try again.  If even TINY will not load, you have
+          very little memory left.  You must remove something to allow
+          for at least 900 free bytes before TINY will load.
+
+          If the load procedure fails, the most likely indication is
+          that the computer and the drive will idle, i.e., do nothing. 
+          When this happens, press SHIFT-BREAK.  If you get an OK (in
+          BASIC), press [F8] (or type Menu[ENTER]) and go through the
+          following checklist:
+
+
+            1. Remove the disk and examine it.  Is it a POWR-DOS
+               owner's diskette?
+
+            2. Turn off the drive's power.  Examine the DIP switches on
+               the bottom of the drive - are they correctly set?  They
+               should be all ON for IPL.BA or all OFF for PL.BA.
+
+            3. Check the disk-drive connection to the computer.
+
+            4. If you are using IPL.BA, check the listing carefully for
+               typos.
+          Chapter 1               Loading POWR-DOS            Page 7
+
+
+            5. Turn the drive back on and insert the disk.  (Turning
+               the drive off, then back on resets some internal
+               circuits in the drive and could make the difference all
+               by itself.)
+
+          Once you've gone through this checklist, try to re-run the
+          program.
+
+
+                                 Errors in TINY
+
+          TINY gives disk error codes corresponding to the POWR-DOS
+          codes.  See the listing at the back of the manual if you are
+          getting errors in TINY.
+
+
+                          Errors While Loading POWR-DOS
+
+          THe loading procedure for POWR-DOS can result in three error
+          messages:
+
+
+          Not enough memory to IPL POWR-DOS
+
+          or:
+
+          Directory is Full
+
+          or:
+
+          POWR-DOS code already installed!
+          MAXRAMC = 32777
+
+
+          (Note: MAXRAMC may have a value other than 32777)
+
+
+          If there is not enough memory, use TINY to save some files to
+          disk, then kill them to clear out approximately 7,000 bytes. 
+          If the directory is full, you must kill one file, no matter
+          how small, before you can proceed.
+
+          It is possible that POWR-DOS can be installed and not active. 
+          There is one CALL statement in particular which will
+          deactivate POWR-DOS without removing the invisible BASIC
+          program; for the Model 100, it is CALL 32454, and for the
+          Tandy 200, it is CALL 39703.  These calls sometimes get used
+          by other software; an example is the bar-code reader
+          software.  When POWR-DOS is disable, it will not function,
+          but it will not load, either.
+          Chapter 1               Loading POWR-DOS            Page 8
+
+
+          If some POWR-DOS features do not work, yet the loader
+          complains that POWR-DOS is already installed, get into BASIC
+          and type LFILES V[ENTER].  If you get a version message, full
+          functionality has been restored.  If you get an ?FC error,
+          you must use the BASIC program shown below to remove
+          POWR-DOS, then load it again.  Alternatively, enter the BASIC
+          command CALL nnnnn, where nnnnn is the value of MAXRAMC
+          printed by the loader.  In nearly every case, this CALL will
+          restore full functionality; however, it is less reliable than
+          the BASIC program below, so use it with care.
+
+          If you answer "n" to the question, "is it safe to move....?"
+          you must never kill the "immovable" file while POWR-DOS is
+          active.  If you do, you are at great risk of a cold-start. 
+          If you do this accidentally, you may not get a cold-start
+          immediately; however, POWR-DOS will be effectively disabled,
+          and any file-related command or any POWR-DOS command could
+          potentially cold-start the system.  If you have your wits
+          about you, get into BASIC and enter the following program:
+
+
+          10 'Tandy 200 values
+          20 IF PEEK (2)=152 THEN C=39703:A=63302:D=10904
+          30 'Model 100 Values
+          40 IF PEEK (2)=125 THEN C=32454:A=64659:D=8098
+          50 CALL C
+          60 FOR X=A TO A+7
+          70 READ I:POKE X,I
+          80 NEXT
+          90 CALL D
+          100 DATA 112,111,119,114,45,100,111,115
+
+          After running this program, it is safe to re-load POWR-DOS.
+

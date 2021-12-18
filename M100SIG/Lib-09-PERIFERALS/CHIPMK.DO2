@@ -1,0 +1,248 @@
+      BASIC Guide and Warranty
+             for the 
+   Holmes Engineering/PCSG "Chipmunk"          Portable Disk Drive.
+
+By: Portable Computer Support Group
+    (214) 351-0564
+
+Contents (Continued from CHIPMK.DO1)
+
+                                   Page
+Section 12. Syntax additions to Basic                                       13
+Section 13. Disk BASIC messages     18
+Section 14. The fine print          19
+
+
+***************************************
+                                Page 13
+
+SECTION 12.  SYNTAX ADDITIONS TO BASIC
+
+12-1 SEQUENTIAL ACCESS TO DISK FILES:
+
+     All the M100 BASIC syntax for RAM is implemented for disk files, too.   
+They are used in the same way, except that the OPEN statement requires a drive 
+specifier ("0:") at the beginning of the filename.
+
+Example statements for disk files:
+   OPEN"0:MYFILE.DO" FOR INPUT AS #1
+   OPEN"0:YOURFL.DO" FOR OUTPUT AS 1
+   OPEN"0:TEST.DO" FOR APPEND AS 1
+   INPUT #1,A$,B$,C
+   LINE INPUT#1,A$
+   A$=INPUT$(20,1)
+   PRINT #1,"Hello there";
+   PRINT #1, USING"####.##";25
+   PRINT EOF(1)
+   LOAD"0:TEST
+   SAVE"0:BITS
+   LOADM"0:MCCODE.CO"
+   SAVEM"0:ROM.CO",0,32768,0
+   NAME"0:SMILE.DO" AS "0:GRIN.DO"
+   KILL"0:SLOTH.DO"
+   RUN"0:TEST.BA"
+   RUNM"0:FILEMN.CO"
+
+Note that just like with RAM files, the "#" channel specifier character is 
+optional.
+
+***************************************
+                                Page 14
+
+12-2 RANDOM ACCESS TO DISK FILES
+
+The OPEN statement:
+     The syntax for opening a random file is consistent with the sequential 
+access methods.   There are two options, which do exactly the same thing.  They
+look like this:
+   OPEN"0:RNDFIL.DO" FOR RANDOM AS #1
+or
+   OPEN"0:MYDATA.DO" AS #1
+
+Again, the "#" is optional.   All the sequential input and output instructions 
+work with random files, but additionally CDOS offers five simple but remarkably
+powerful new statements.  These are: FIELD, GET, PUT, LOF,LOC
+
+The GET and PUT statements:
+     
+The syntax for GET is:
+         GET#c,r
+This will get record number r from file channel c.   The ",r" is optional.
+     
+The syntax for PUT is:
+         PUT#c,r
+This will put a record into the rth position in the file opened as #c.   Again,
+the ",r" is optional.   If you leave out the ",r" from a GET or PUT statement (
+eg. GET 1), CDOS will do a sequential read or write using the fields you have 
+specified with your FIELD statement, starting at the last position accessed in 
+the file.
+    
+Note that you must have opened a file for RANDOM (see OPEN) and you must have 
+additionally specified the makeup of the record that you have in that file with
+a field statement before doing GEts and PUTs.
+     
+***************************************
+                                Page 15
+     
+The FIELD statement:
+     This is a remarkably powerful feature of CDOS extended BASIC.   You can 
+construct a record from different variables, and modify all those variables 
+from a disk record with a single GET statement.
+     
+Examples:
+   FIELD#1,A$:35
+this statement, issued after an OPEN statement, sets up the variable A$ to 
+contain a disk record.   If you were to execute the statements as follows:
+     
+   10 OPEN"0:TEST.DO" AS 1
+   20 FIELD#1,A$:35 'GET and PUT will access A$ now
+   30 A$="Hello there"
+   40 PUT#1,1 'this puts A$(padded with spaces to 41'35 bytes long) in the 
+first disk record
+   50 A$="Goodbye, there"
+   60 PRINT A$;"!"
+   70 GET#1,1 'recall the first disk record into A$
+   80 PRINTA$;"!"
+   90 CLOSE
+
+the screen output would be:
+
+   Goodbye, there!
+   Hello there             !
+   OK
+
+Note that when the record is retrieved from the disk, the entire length of A$ 
+that you specified in the FIELD statement is returned.  This accounts for the 
+long gap between 'Hello there' and the exclamation point in the printout 
+example.
+You can get rid of the trailing spaces by doing something like this:
+   A$=LEFT$(A$,INSTR(A$,"")-1)
+
+***************************************
+                                Page 16
+
+The FIELD statement with numeric variables:
+
+This section is for advanced programmers only.   It is unlikely to make much 
+sense to a beginner, so just skip it if it seems complicated.
+
+As you know, thereare three types of numeric variables in BASIC, namely integer
+(%), single precision (!) and double precision (#).   An integer takes up two 
+bytes of memory, a single precision number takes up four bytes and a double 
+precision number takes up 8 bytes.   Since the M100 defaults to double 
+precision, it is safest to allocate eight bytes of a record to numeric 
+variables, but if you are certain that a particular variable is single or 
+integer, you can allocate a smaller space.  For example:
+     
+   FIELD#1,A$:35,F%:2,F!:4,F#:8,B$:3
+     
+This will cause a record 52 bytes long to be written with a PUT statement or 
+accessed with a GET statement.   A single PUT or GET will update all the 
+variables tied to a file channel with a FIELD statement.
+
+Only one FIELD statement can be active per file open, so if you issue a second 
+FIELD statement for a particular file channel, the first one is superceded.
+
+The only limit on the number of variables associated with a single FIELD 
+statement is the length of a line of BASIC code, which means that you could 
+have single records as long as 10,000 bytes.
+
+CDOS does not remember the record length or structure for a file, so it is up 
+to you to make sure that you use the same FIELD statement for a particular file
+in every program.
+
+***************************************
+                                Page 17
+
+The LOF function:
+     LOF stands for "Last of File" and tells you how many records there are in 
+the file.   Example syntax:
+   PRINT LOF(1)
+   L=LOF(1)
+Remember that this is record oriented, not byte oriented, so if your FIELD 
+statement specifies a 40 byte record, and LOF returns 50, the file will be 40*
+50 or 2000 bytes long.
+
+The LOC function:
+     LOC stands for LOCATION, and tells you the record number of your last PUT 
+or GET in the file.  Example syntax:
+   PRINT LOC(1)
+   W=LOC(1)
+
+The EOF function:
+     EOF stands for End of File.   If you have tried to GET a record that is 
+past the end of the file, or if LOC = LOF, EOF will be true(-1), otherwise EOF 
+will be false(0).   Example syntax:
+   PRINT EOF(1)
+   ND=EOF(1)
+Note that if you have built a file with records of a certain length, but you 
+are accessing it with a FIELD statement that specifies a different length (
+unwise but not impossible), EOF can remain false when LOC=LOF.  This would mean
+that there is an incomplete record after the current record in the file.
+
+DSKI$,DSKO$:
+     For compatibility reasons, these work exactly the same way in CDOS as they
+do with the DVI.   However they are somewhat feeble, and not worth fooling with
+unless you already have a DVI.   They are documented in the DVI manual.
+
+***************************************
+                                Page 18
+
+SECTION 13.  ADDITIONAL ERROR MESSAGES FOR DISK BASIC
+
+60 ?DN bad drive number
+61 ?TS bad track/sector id (for DSKI$/DSKO$)
+62 ?FE file already exists (for rename)
+63 ?DF disk full
+64 ?WP write protected
+65 ?RF record not found (hardware error)
+66 ?LD lost data (hardware error)
+67 ?CC CRC error (disk media problem)
+68 ?ND No disk
+70 ?RC ROM CRC error (ROM is bad)
+71 ?NR Drive not ready (not plugged in or turned on)
+
+***************************************
+                                Page 19
+
+SECTION 14. PORTABLE COMPUTER SUPPORT GROUP LIMITED WARRANTY
+
+PCSG, Inc. warrants their products to be in working order for a period of 
+ninety days from the date of purchase.   Should a PCSG product fail to be in 
+working order during this ninety day period, PCSG will repair or replace that 
+product, at its option, at no charge except as set forth below.
+
+Replacement products or repair parts will be furnished on a replacement basis 
+and will either be new or reconditioned.  All replaced products or parts do not
+include service to repair damage to the product resulting from accident, 
+misuse, disaster or non-PCSG modification to the product.
+
+Limited warranty service may be obtained by delivering the product, and proof 
+of purchase during this ninety day period or by mailing the product and proof 
+of purchase to:
+
+Portable Computer Support Group, Inc.
+11035 Harry Hines Blvd.,  #207
+Dallas, TX  75229
+
+If you mail the product you must insure the product or assume risk of loss or 
+damage due to shipping.   You also assume the cost of shipping to PCSG, Inc.
+
+All express and implied warranties for this product including the warranties of
+merchantability and fitness for a particular purpose, are limited in duration 
+to a period of ninety days from the date of purchase, and no warranties, 
+whether expressed or implied, will apply after this period.
+
+In no event will PCSG, Inc. be liable to you for any damages, including lost 
+profits, lost savings, or other incidental or consequential damages arising out
+of the use of or inability to use such product, even if PCSG or a PCSG 
+representative has been advised of the possibility of such damages, or for any 
+claim by any other party.
+
+This warranty gives you specific legal rights, and you may also have other 
+rights which may vary from state to state.
+
+***************************************
+                End.
+
+

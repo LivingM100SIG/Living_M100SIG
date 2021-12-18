@@ -1,0 +1,42 @@
+0 'MOTOHX - Convert memory to Motorola S-Record Format (24-bit addresses)
+2 ' Copyright (c) 1987 by Stanley Wong
+4 ' For private use by CIS M100SIG members only.
+6 ' Contact the author for additional permissions at CIS [70346,1267].
+10 CLEAR256:MAXFILES=1:R$=CHR$(27)+"p":N$=CHR$(27)+"q"
+12 CLS:PRINT@15,R$" MOTOHX "N$
+14 PRINT@45,"Memory --> Motorola S-Records":PRINT
+16 INPUT" Beginning address";BA
+18 INPUT" Ending address";EA
+19 INPUT" Load Address";LA
+20 INPUT" S-Record filename";F$
+24 OPENF$FOROUTPUTAS1
+26 DIM H$(16)
+30 FORI=0TO15:READH$(I):NEXT
+90 PRINT#1,"S0030000FC"'S0 header
+95 A1=BA-24
+100 A1=A1+24:IFA1>EATHEN165
+102 A2=A1+23:IFA2>EATHENA2=EA
+104 HX$="":CK=0:CK$="":AD$="":BC$=""
+105 GOSUB200
+106 FORI=A1TOA2
+108 A=PEEK(I)
+110 I1=INT(A/16):I2=INT(A-I1*16)
+112 HX$=HX$+H$(I1)+H$(I2)
+113 CK=CK+I1*16+I2
+114 NEXT
+116 I1=INT(LA/4096):I2=INT((LA-I1*4096)/256):I3=INT((LA-I1*4096-I2*256)/16):I4=LA-I1*4096-I2*256-I3*16
+117 LA=LA+24
+118 AD$="00"+H$(I1)+H$(I2)+H$(I3)+H$(I4)'address
+120 L=LEN(HX$)/2+4
+122 BC$=H$(INT(L/16))+H$(L-INT(L/16)*16)'byte count
+124 CK=CK+L+I1*16+I2+I3*16+I4
+125 CK=INT(CK-INT(CK/256)*256)
+126 C1=INT(CK/16):C2=INT(CK-C1*16)
+128 CK$=H$(15-C1)+H$(15-C2)'checksum
+150 PRINT#1,"S2"+BC$+AD$+HX$+CK$'S2 record
+155 GOTO100
+165 PRINT#1,"S9030000FC"'S9 record (end)
+170 CLOSE1:A1=EA:GOSUB200:BEEP:MAXFILES=0
+180 CALL21264:MENU
+200 PRINT@288,"Processing "R$" "A1" "N$;:RETURN
+1000 DATA"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"

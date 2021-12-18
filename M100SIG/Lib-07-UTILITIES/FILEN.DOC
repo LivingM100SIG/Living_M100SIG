@@ -1,0 +1,66 @@
+
+
+               FILEN.DOC -- Phil Wheeler [71266,125]
+
+
+This is the text of message I wrote a year or so ago, in response
+to a question.  It describes the "non-file" items listed by the
+program FILEN.100.  I assume it applies to FILEN.200, too -- but I
+cannot test that.
+
+1) "Reserv.ed" is reserved memory from HIMEM to MAXRAM, and
+    usually means you have a machine language program in residence
+    (intentionally or otherwise).  You can recover this RAM by
+    doing 'CLEAR 256,MAXRAM' while in Basic.
+
+2) "File  .BF" is a file buffer, related to having MAXFILES=N,
+    where for N=1 the buffer size is 267 (in a Model 100).  You
+    can get rid of this by setting MAXFILES=0; but I don't
+    recommend doing this, since some programs won't run under
+    these conditions.  But if File  .BF is 3-4 times larger than
+    267 bytes, go to Basic and do 'MAXFILES=1'.
+
+3) "Noname.BA" is the last unsaved Basic program accessed (i.e.,
+    loaded but not saved to the menu).  It can be cleared down to
+    two bytes by going to Basic and doing 'NEW'.
+
+4) "Paste .BF" is the paste buffer.  It can become quite large,
+    and make it appear that your RAM is dwindling!  You can clear
+    it in Basic by doing 'CLEAR', 'CLEAR 256,HIMEM' or 'CLEAR
+    256,MAXRAM' (the latter will zap any resident machine language
+    programs, though).  The paste buffer can also be cleared by
+    entering a text file (in TEXT) and hitting keys F7 and F6 in
+    succession.
+
+5) "4 PCS.G" is something you will see if you have Lucid (or
+    SuperROM) installed.  It is the Lucid paste buffer, and can
+    become quite large.  It can be cleared down to 11 bytes by
+    copying a blank cell while in Lucid.  To eliminate it
+    completely after removing Lucid, use the file K4PCS.G in DL4.
+
+FILEN, in addition to showing the sizes of all files on your menu
+(and hidden files), is an extemely valuable indicator of memory
+usage.  It was one of the first utilities I loaded, and I'm never
+without it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

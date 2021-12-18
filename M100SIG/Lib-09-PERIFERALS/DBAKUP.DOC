@@ -1,0 +1,264 @@
+
+
+
+
+                            DBAKUP.TDD DOCUMENTATION
+
+
+     DBAKUP.TDD is a program to save all the files in ram to the Tandy Disk
+     Drive.   It requires POWR-DISK from Acroatix.  DBAKUP will back-up all
+     .BA, .DO, .CA, and .CO files automatically.  It will even back-up  .CO
+     files  which have been saved as a 7 byte file - a method often used to
+     save .CO files to conserve memory when the file is left loaded in high
+     memory.  You do have to input the top, end and execute addresses  into
+     the data statements in line 30 once.  You can have up to eight of your
+     most often used .CO files saved automatically.
+
+     While saving your files, DBAKUP also writes a directory file with date
+     and  other  information  used to automatically restore the same filels
+     using DRESTO.TDD, also in this database.  In addition,  DBAKUP  allows
+     you to save any selected group of files as a set, which can then later
+     be  restored  as  a  set.  This feature can be handy to keep different
+     sets of programs and files  which  can  then  be  loaded  as  a  group
+     automatically.
+
+     There  is also the feature of backing up just .DO files, since in most
+     of my applications, they are the only files which change  on  a  daily
+     basis.
+
+     This  program  is designed to be used for daily back-ups.  As such, it
+     over-writes any file of the same name already on the disk.  If this is
+     not what you want, thenthis program is not for you.  All  other  files
+     are  left  intact.  If you use the same disk every day to back-up, and
+     you have constantly changing file names, you could conceivably run out
+     of the 40 file name limitation lvery quickly on the disk.  There is no
+     error trapping for this and the program will halt.
+
+     If the program halts due to this or some other  unforseen  error,  and
+     you have already backed-up .CO files, then you may have to edit line 5
+     so that c2$=" 0 ". (space on each side of the zero)
+
+     Before running the program for the first time, you must also edit line
+     30  and  add your own M/L program names and addresses for top, end and
+     execute.  Program names should be  six  characters,  so  fill  in  the
+     spaces  if they are shorter.  This table is only used for M/L programs
+     aved in 7 bytes, so M/L programs which aren't in  this  section,  will
+     still be backed-up if saved in ram at their full length.
+
+     Since  I  have  the  PCSG  128K  ram upgrade, there is some code which
+     allows me to differentiate directories  created  in  different  banks.
+     For example, the directory default for Bank#1 is DIR1.DO.  If you have
+     no PCSG banks, then your directory file will be named DIRi.DO.  "i" is
+     the  last letter in the hyas.hi (paste buffer) file.  PCSG names these
+     files hyas.h1, .h2, .h3, .h4 in the various banks.
+
+     If you chose to <S>elect a group of files to back-up, you are prompted
+     first for .BA, then.DO, then .CA, then .CO files.  Answering with only
+     a C/R at any of these prompts brings up the next file type.  After the
+     .CO prompt, it starts saving the files.  Using the <S>elect mode,  .CO
+     files  must be saved in ram first, unlike the save-all mode which will
+     look-up the addresses in line 30  before  saving  them.   In  <S>elect
+     mode, it will save the 7 byte file as a 7 byte file.  Sorry.
+
+
+
+
+
+
+
+
+
+     DBAKUP Doc.
+     page -2-
+
+
+     On  the  whole,  this  program takes about 2790 bytes, a little bigger
+     than I had hoped.  Maybe someone can crunch it down a little.   It  is
+     best  run  directly  from  disk  (RUN":DBAKUP")  rather  than  doing a
+     LOADM":DBAKUP.BA",F".  Otherwise, if you have mutiple banks of memory,
+     it will be auto-loaded in every bank every time  you  use  the  DRESTO
+     program.
+
+     If  you have any questions, you can leave a message for me, but I only
+     get on Compuserve about every 7-10 days.
+
+
+     Below is a description of the functions of the various lines  of  code
+     that may be useful if you need to make changes.
+
+     Line #
+
+     1  A  quick  chekc  to see if MAXRAM is et.  Since I have the PCSG ram
+        upgrade, it unhooks POWR-DISK hooks and requires a constant  LFILES
+        OFF.   This  checks  to  make  sure  POWR-DISK  has  at  least been
+        installed.
+
+     3 D$ is the name of the directory used to  back-up  the  files.   Code
+        later  in  the  program  pokes  a  different  name  here,  actually
+        re-writing this line of code.  Since the program sometimes  has  to
+        rerun  itself,  this  keeps  track of the directory file name after
+        other variables are only a memory.
+
+     5. C2$ is another variable hard-coded into  the  program  so  that  it
+        isn't  lost when the program reruns itself.  If C2$ is greater than
+        0, it means the program has already been running and sets  switches
+        to  jump back to where the program leff off before it ended (saving
+        a .CO files using top, end and ex. stops program execution)
+
+     6 This peek defines which PCSG bank you are in.  If no PCSG upgrade is
+        used, it returns "i" which is then  tacked  onto  the  end  of  the
+        directory  file.   You  can delete this if it doesn't apply to you.
+        This line also allows you to choose the name of the directory  file
+        if  you  don't  want  to do an automatic back-up of all files.  For
+        example, if you type in a directory name that exists in ram  or  on
+        disk, it will back-up only the files in that directory.  Or, if you
+        choose  "S",  <S>elect mode, iit will allow you to select the files
+        you want to go into that directory.  Only these files will then  be
+        backed-up.   Use  this  feature to create your own sets of programs
+        and files to be backed-up and later reloaded as a group.
+
+     9-10 Here is the choice of saving .CO files as well as .BA, .DO,  .CA.
+        Also the choice of only backin gup .DO files is given.  This can be
+        handy  if  your  basic and M/L programs are fairly stable and don't
+        need to be backed-up as often.
+
+     11 Choice to kill the directory file in ram after done (it will  still
+        be on disk)
+
+
+
+
+
+
+
+
+
+
+     DBAKUP Doc.
+     page -3-
+
+
+     12 Opens the directory file and writes the header information - Bank #
+        and Date.  It then defines the file types to be looked for.
+
+     16-19 Subroutine to scan the ram directory and write the file names to
+        the  directory  file  in  the propoer order.  .CO files are written
+        later, as they are being backed-up.  Jumps to 41 to actually  start
+        saving the files to disk.
+
+     21-38 Subrouting to write the .CO files to the directory and save them
+        at the same time.
+
+     21 Find the start, length, end and execute address for the current .CO
+        file.
+
+     22 If  the length of the current .CO file is 1 (meaning it is saved to
+        conserve memory - 1byte + 6bytes)then it initiates  the  subroutine
+        in  24  which  matches  the  file  name to the propoer top, end and
+        execute address which you hopefully added into  lines  30-31.   The
+        file on disk is killed (if it already exists)
+
+     23 The new .CO file is written to disk.
+
+     24-27 The subroutine which saves .CO files which are not saved in ram,
+        but  rather  as a 7 byte file and left resident in high memory.  It
+        first goes to the subroutine which matches the  file  name  to  the
+        right addresses and records if none was found.
+
+     25 Prints  the  name  of  the file beilng saved and kills the existing
+        file of the same name on disk ( if it exists)
+
+     26 Gosubs to the routine to load the  keyboard  buffer  with  the  run
+        command,  then  gosubs to the routine which pokes new code for C2$,
+        which is the variable which counts how many .CO files have  already
+        been  saved.   Since the next save command halts program execution,
+        the keyboard buffer will rerun it and c2$ will have been poked with
+        the value of how many .CO programs have already been saved, so when
+        the program automatically reruns itself, (and naturally resets  all
+        other variable to 0) this variable will remain intact.  If you stop
+        the program at this point and list it, you will see line 5 actually
+        has been changed. 
+
+     39 Pokes  "RUN"  into  the  keyboard buffer so the program restarts as
+        explained above.
+
+     41-46 This begins the section which saves all but  the  .CO  files  to
+        disk.   At  the  end, it runs the previously discussed routines for
+        saving .CO files, or proceeds to the end section  if  you  answered
+        "N" to backing up .CO.
+
+     48 Clears  out  the keyboard buffer in case something has been lift in
+        it, then lets you choose to delete the ram version of the directory
+        (leaving it on disk).
+
+
+
+
+
+
+
+
+
+
+     DBAKUP Doc.
+     page -4-
+
+
+     49 Lists .CO files which it couldn't find in line  #30,  so  were  not
+        backed-up (if any).
+
+     50 Ends  the  program.   It  first  jumps  to the sub that repokes the
+        original value for C2$ so that the next time you run it,  it  knows
+        you're starting fresh.
+
+     51 Subroutine to poke new vode into line 5 for C2$
+
+     54 Subroutine  to  poke  new code into line 3 which is the name of the
+        directory being used.  Otherwise, it too would  be  lost  when  the
+        program reruns itself.
+
+     56-57 Error handling.
+
+     58-61  Subrouting to allow selection of files to be backed-up to disk.
+        It prompts for file name while displaying the proper extention.  It
+        first does, .BA, then .DO, then .CA, then.CO.  A simple C/R with no
+        entry will brilng up the next file type.  With the  .CO  extension,
+        no  entry  with C/R returns back to the program to start saving the
+        files.  Don't forget to save the directory  file  if  you  want  to
+        automatically reload these files later.
+
+     Good  luck!.  Be patient then I'm not a programmer, I just needed this
+        capability.
+
+
+     TERRY LUKE
+     73126,1775
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

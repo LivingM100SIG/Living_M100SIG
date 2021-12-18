@@ -1,0 +1,124 @@
+10 'WORMY.BA -- by Mark Lutton 11/24/84     Public Domain
+11 'Modified/error trapped for T200 screen by Tony Anderson
+12 'Variables:
+13 'S%(2560) Screen -- 80*32 3-by-4 pixel squares
+14 'SH% - points to head of worm
+15 'ST% - points to tail of worm
+16 'L% - length of worm
+17 'F% - how much food eaten still to be digested
+18 'FS% - size of food to be eaten
+19 'FL% - location on screen of food
+20 'K% - key pressed (numeric value)
+21 'NH% - location of new head
+22 'HY% - current head Y coord
+23 'X is 0 to 80; Y is 0 to 32
+24 'PB% - parm to sub3000, 3500 -- where in s% to print
+25 'PX%, PY% - for sub3000 to get x and y coords corresponding to PB%
+30 'R$ - reply from user
+31 'I% - good old iteration variable
+32 'T% - temporary variable
+35 'F2% - work variable for sub1500
+90 'program starts here
+95 DIM S%(2559):'screen array
+96 'next line sets random seed from clk
+97 I=VAL(RIGHT$(TIME$,2)):FORI2=1TOI:I3=RND(1):NEXT
+100 GOSUB 1400:'initialize
+150 IF FS%>0 THEN 200:'need food?
+170 GOSUB 1500:'yes, get food
+190 'get input
+200 R$=INKEY$:IF R$<>""THEN K%=ASC(R$)
+215 'if you want to accept other inputs, do it here
+220 IF K%<28 OR K%>31 THEN 200
+250 'figure out where head goes next.
+260 IF K%=28 THEN IF HX%=79 THEN GOTO 2000: ELSE NH%=SH%+1:HX%=HX%+1:GOTO 300
+270 IF K%=29 THEN IF HX%=0 THEN GOTO 2000:ELSE NH%=SH%-1:HX%=HX%-1:GOTO 300
+280 IF K%=30 THEN IF HY%=0 THEN GOTO 2000:ELSE NH%=SH%-80:HY%=HY%-1:GOTO 300
+290 IF K%=31 THEN IF HY%=31 THEN GOTO 2000:ELSE NH%=SH%+80:HY%=HY%+1:GOTO 300
+299 'extend head of worm
+300 SOUND ((K%-20)*1200),1
+305 IF S%(NH%)>0 GOTO 2500:'ran into self
+310 PB%=SH%:GOSUB 3000:'solid block where head was
+320 S%(SH%)=NH%:S%(NH%)=32767:'point old head to new one
+330 PB%=NH%:GOSUB 3500:'hollow block for new head
+340 SH%=NH%:'point to new head
+400 'if not digesting, shorten tail
+410 IF F%>0 THEN F%=F%-1:L%=L%+1:IF L%>=2560 GOTO 4000:ELSE GOTO 450:'if digesting, lengthen. if max length, you won
+420 PB%=ST%:GOSUB 3800:'erase tail
+430 T% = S%(ST%):S%(ST%)=-1:ST%=T%:'set tail block free, point to next.
+440 'got food? (fl% is food location)
+450 IF SH%<>FL% THEN 150:'no, loop back to continue playing
+470 F%=F%+FS%:FS%=0:'eat food, disappear food
+480 GOTO 150:'continue this madness
+1000 'initialize
+1007 K%=8
+1010 PRINT:PRINT " OK - Wait a minute ... "
+1020 FOR I%=0 TO 2559:S%(I%)=-1:NEXT I%:'all squares free
+1025 CLS
+1030 'initial worm at 648 to 656
+1040 FOR I%=648 TO 655
+1050 PB%=I%:GOSUB 3000:'print block
+1060 S%(I%)=I%+1:'chain body segments
+1070 NEXT I%
+1080 PB%=656:GOSUB 3500:'print head
+1090 S%(656)=32767:'head
+1100 ST%=648:SH%=656:'head and tail
+1110 HX%=16:HY%=8:'head and tail
+1115 L%=9:'initial length
+1120 FS%=0:'need food to start with
+1130 F%=0:'not digesting
+1399 RETURN
+1400 CLS:PRINT@40,"                 WORMY":PRINT
+1410 PRINT "      by Mark Lutton    73106,1627":PRINT
+1420 PRINT " You are a hungry little worm. Use the"
+1430 PRINT " arrow keys to move around the screen"
+1440 PRINT " and eat the food.  Every meal will"
+1450 PRINT " make you longer by 1 to 12 segments.":PRINT
+1460 PRINT " Don't run into yourself or the wall!":PRINT
+1470 PRINT "      Hit any key to continue.";
+1480 R$=INPUT$(1):PRINT
+1490 GOTO1007
+1495 'set food location; get a random location that is free
+1496   'if 10 random tries do not find a free one, pick next free one.
+1500 I%=0:'10 try counter
+1540 FL%=RND(1)*2560
+1550 IF S%(FL%)<0 THEN 1600
+1560 I%=I%+1:IF I%<10 THEN 1540
+1570 '10 tries, no free one found.
+1580 FL%=FL%+1:IF FL%>2559 THEN FL%=0
+1590 IF S%(FL%) >-1 THEN 1580
+1599 'got free location.  Get food size.
+1600 FS%=RND(1)*12+1
+1620 'display food at FL%
+1630 F2%=FS%:I%=3:PX%=(FL%MOD80)*3:PY%=(FL%\80)*4
+1640 PSET (PX%,PY%):F2%=F2%-1:IF F2%=0 THEN 1700
+1650 PX%=PX%+1:I%=I%-1:IF I%>0 THEN 1640
+1660 PX%=PX%-3:PY%=PY%+1:I%=3:GOTO 1640
+1700 RETURN 'finished displaying food
+2000 FOR I=1 TO 5:SOUND 12538,1:SOUND 0,1:NEXT I:CLS:PRINT:PRINT" In your greed and haste, you ran into"
+2010 PRINT " the wall so hard you broke your head.":PRINT
+2020 PRINT " You are dead, a victim of your own "
+2030 PRINT " greed."
+2040 GOTO 4050:'play again?
+2500 FOR I=1 TO 15:SOUND 12538,1:NEXT I:CLS:PRINT:PRINT " In your foolish haste you ran into"
+2510 PRINT " yourself so hard you injured yourself"
+2520 PRINT " mortally.":PRINT
+2530 GOTO 2020
+2990 'print solid block at pb%
+3000 PX%=(PB%MOD80)*3:PY%=(PB%\80)*4
+3020 LINE (PX%,PY%)-(PX%+2,PY%+3),1,BF
+3030 RETURN
+3490 'print hollow block at pb%
+3500 PX%=(PB%MOD80)*3:PY%=(PB%\80)*4
+3520 LINE (PX%,PY%)-(PX%+2,PY%+3),1,B
+3530 RETURN
+3790 'print space at pb%
+3800 PX%=(PB%MOD80)*3:PY%=(PB%\80)*4
+3820 LINE (PX%,PY%)-(PX%+2,PY%+3),0,BF
+3999 RETURN
+4000 CLS:PRINT " I can't believe you ate the whole thing."
+4010 PRINT " You greedy little worm!  You have"
+4020 PRINT " filled up the screen with your slimy"
+4030 PRINT " self.  Now what will you do? You have"
+4040 PRINT " won, only to die of starvation!"
+4050 PRINT:PRINT " Your score:";L%;CHR$(8)".  ";:INPUT "Play again";R$:IF R$=""THENBEEP:GOTO4050
+4055 R$=LEFT$(R$,1):IFR$="Y"ORR$="y" THEN 100 ELSE MENU

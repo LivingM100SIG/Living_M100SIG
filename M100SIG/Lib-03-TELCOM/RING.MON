@@ -1,0 +1,31 @@
+0 'RING.MON
+1 'Eiji Miura [71216,1564]   02/14/87
+2 'This program monitors a telephone line and records date, time, and the
+3 'number of rings received in "RINGS.DO" file in RAM (default).
+4 'You may change the filename and/or device by editing line 10.
+5 'You _must_ have a ring detecting modem cable.  See SCHEM.REV and TELECO.DO
+6 'for details on how to make the cable.
+7 'You _must_ exit this program with [F8] (MENU).  Other methods of terminating
+8 'the program are not recommended.
+9 'Remove remark lines (0-9) from a running copy of the program to save memory.
+10 DEFSTRF,Q:F="RINGS.DO":ONERRORGOTO29
+11 CLS:PRINT@55,CHR$(27)"p RING.MON "CHR$(27)"q":PRINT@280,"List"SPACE$(16)"Clear"SPACE$(10)"Menu";:ONKEYGOSUB21,,,,25,,,28:KEYON
+12 PRINT@167,DAY$"   "DATE$"   "TIME$:IFINP(208)=208THEN13ELSE12
+13 F2=TIME$:IFA=1THENGOSUB15
+14 A=1:FORD=1TO1200:NEXT:R=R+1:F1=F2:GOTO12
+15 D2=VAL(MID$(F2,7,2)):D1=VAL(MID$(F1,7,2))
+16 IF VAL(MID$(F2,4,2))=VAL(MID$(F1,4,2))THEND=D2-D1ELSED=D2+60-D1
+17 IFR=0THEN19
+18 IFD>6THENOPENFFORAPPENDAS1:PRINT#1,LEFT$(DATE$,5)" "LEFT$(F1,5)" "R:CLOSE1:R=0:A=0
+19 RETURN
+20 F2=TIME$:GOSUB15:RETURN
+21 CLS:GOSUB20:OPENFFORINPUTAS1
+22 FORG=1TO7:IFEOF(1)THENCLOSE1:GOSUB23:GOTO11ELSELINEINPUT#1,Q:PRINTQ:NEXT:GOSUB23:GOTO22
+23 PRINT"Press any key.";
+24 IFINKEY$<>""THENCLS:RETURNELSE24
+25 BEEP:PRINT@300,"Sure?";:GOSUB20
+26 Q=INKEY$:IFQ=""THEN26ELSEIFQ="Y"ORQ="y"THENGOSUB27:GOTO11ELSE11
+27 OPENFFOROUTPUTAS1:CLOSE1:RETURN
+28 CLS:GOSUB20:MENU
+29 IF ERR=52THENGOSUB27:RESUME
+30 BEEP:PRINT"Error #"ERR"in line"ERL:END

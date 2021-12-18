@@ -1,0 +1,76 @@
+Wheeler [71266,125]
+1 '  Minor fix to "Checksum fail" line
+2 ' Build a relocating BASIC loader fm      two MENU copies of a CO program
+3 '
+4 ' This program writes out a text file     BASIC program which when
+5 ' run will build an M/L program at any    desired, legal address.
+6 '
+7 ' The input required to create the        program is two copies, at 
+8 ' different addresses, of the machine     code program.
+9  'This is based on Richard Haw's pgm      BASBLD.REL (as fixed in BASBLD.NEW)
+10 'but differs in that if works with       two CO files on the menu (v. loaded
+11 'above HIMEM).
+12 '
+13 'The output file MUST be written to      an external device (not RAM). The
+14 'program will prompt you for a name.     Examples are "0:NAME" (to disk, if
+15 'an OS is installed) and "CAS:NAME"
+16 '
+17 'This version produces a loader which    will automatically load below the
+18 'Current HIMEM, preserving existing      loaded M/L programs
+19 '
+20 'Credit to Richard Haw for most of       this code and Don Zeikel for the
+21 'Approach to building the CLEAR          routine into the loader
+22 '
+23 'Copy these comments to a DOC file,      and delete from this program
+24 'Phil Wheeler [71266,125]
+25 '
+26 CLS:MAXFILES=1:CLEAR500:E$=CHR$(27):PRINT:INPUT"Name of Relocatable File";FP$
+27 N=PEEK(1):IFN=51ORN=167THENA1=63930:A2=64129:GOTO400ELSEIFN=170THENA1=62133:A2=62629:GOTO400ELSEBEEP:CLS:PRINT "Wrong Computer!":END
+28 CLS:AD=S1+D1:AF=E1+D1:AE=EN:AC=S2+D2:AL=AF-AD:DEFINTI-Q
+29 PRINT@130,"Writing out program";:Q=0:PRINT#1,Q"'"FP$:Q$=CHR$(34):R$=Q$+";":Q=Q+1
+30 PRINT#1," 99 DEFINTI-X:DEFSTRY-Z:Z="Q$"0123456789ABCDEFGHIJKLMNOPQRSTUV"Q$":CLS:E=";:XT=AL:GOSUB57:PRINT#1,":D=";:XT=AE-AD
+31 GOSUB57:PRINT#1,":RETURN":Q=Q+1:PRINT#1,Q"GOSUB99":Q=Q+1
+32 PRINT#1,Q"PRINT@42,"Q$"Enter end address"Q$";:PRINT@82,"Q$"<ENTER> for just below current HIMEM"Q$:Q=Q+1
+33 NS=Q:PRINT#1,Q"Y="Q$Q$":PRINT@122,SPACE$(30);:PRINT@122,;:INPUTY:IFY=";:PRINT#1,Q$Q$"THENB=HIMEM-E-1ELSEB=VAL(Y)-E":Q=Q+1
+34 PRINT#1,Q"IFB>=MAXRAM-ETHENBEEP:GOTO";:XT=NS:GOSUB57:PRINT#1,"ELSECLEAR256,B:B=HIMEM:GOSUB99":Q=Q+1
+35 PRINT#1,Q"CLS:A=B:C=B+E:D=D+B:S=99:M=99:PRINT@48,"Q$"Line"R$":PRINT@88,"Q$"Address"R$:Q=Q+1:NS=Q
+36 PRINT#1,Q"GOSUB60:IFO=0THENPOKEA,K:A=A+1:GOTO";:XT=NS:GOSUB57:PRINT#1,:Q=Q+1
+37 PRINT#1,Q"P=K:GOSUB60:G=P+256*K+B:P=INT(G/256):Q=G-P*256":Q=Q+1:PRINT#1,Q"POKEA,Q:A=A+1:POKEA,P:A=A+1:GOTO";:XT=NS
+38 GOSUB57:PRINT#1,:Q=40:PRINT#1,Q"SAVEM"Q$FP$Q$",B,C,D:MENU":Q=50:PRINT#1,Q"U=INSTR(1,Z,MID$(Y,M,1)):IFU=0THEN55":Q=Q+1
+39 PRINT#1,Q"IFU>16THENU=U-16:O=1ELSEO=0":Q=Q+1:PRINT#1,Q"V=INSTR(1,Z,MID$(Y,M+1,1)):IFV=0ORV>16THEN55":Q=Q+1
+40 PRINT#1,Q"K=(U-1)*16+V-1:RETURN":Q=55:PRINT#1,Q"BEEP:PRINT@165,"Q$"Bad character"R$":END":Q=60:PRINT#1,Q"IFM<N*2+5THEN70
+41 Q=Q+1:PRINT#1,Q"IFL<>RTHENBEEP:PRINT@165,"Q$"Checksum fail"R$":END":Q=Q+1:PRINT#1,Q"READY:M=1:GOSUB50:IFK=0THEN40":Q=Q+1
+42 PRINT#1,Q"S=S+1:PRINT@70,S;:PRINT@110,A;:N=K:M=3:GOSUB50:M=5:L=K:GOSUB50:L=K*256+L:R=0":Q=70
+43 PRINT#1,Q"M=M+2:GOSUB50:R=R+K:RETURN":CLS:A=AD:D=AD-AC:L=0:A$="":Q=99
+44 IFA>AFTHEN49
+45 J=PEEK(A-D1):IFPEEK(A-D1-(AD-D1)+AC-D2)=JTHEN48
+46 B=PEEK(A-D1)+PEEK(A-D1+1)*256:PRINTA"-"B"Changed to start +";:B=B-AD:PRINTB:C=INT(B/256):B=B-C*256
+47 M=1:K=B:GOSUB50:K=C:GOSUB50:A=A+2:GOTO44
+48 K=J:GOSUB50:A=A+1:GOTO44
+49 GOSUB51:Q=Q+1:PRINT#1,Q"DATA00":MAXFILES=0:MENU
+50 IFLEN(A$)<112THEN52
+51 I=L/256:J=L-I*256:GOSUB54:C$=B$:J=I:GOSUB54:D$=B$:J=LEN(A$)/2:GOSUB54:Q=Q+1:PRINT#1,Q"DATA"B$C$D$A$:A$="":L=0
+52 L=L+K:IFMTHENJ=K+256:M=0ELSEJ=K
+53 GOSUB54:A$=A$+B$:RETURN
+54 J1=J/16:J2=J-J1*16:IFJ1>9THENJ1=J1+55ELSEJ1=J1+48
+55 IFJ2>9THENJ2=J2+55ELSEJ2=J2+48
+56 B$=CHR$(J1)+CHR$(J2):RETURN
+57 X$=STR$(XT):FORI=1TOLEN(X$):Y$=MID$(X$,I,1):IFY$<>" "THENPRINT#1,Y$;
+58 NEXTI:RETURN
+400 'initialization
+420 CLS:PRINTE$"p   BASBLD.PW2 -- Menu File BASBLD.REL   "E$"q";:FILES
+430 F$="":PRINTE$"pCO File No. 1"E$"q <CR to End>";:INPUTF$:IFF$=""THENMENUELSEGOSUB600
+460 S1=I+6:E1=S1+PEEK(I+2)+256*PEEK(I+3)-1:D1=PEEK(I)+256*PEEK(I+1)-S1:EN=PEEK(I+4)+256*PEEK(I+5)
+500 F$="":PRINTE$"pCO File No. 2"E$"q <CR to End>";:INPUTF$:IFF$=""THENMENUELSEGOSUB600
+530 S2=I+6:E2=S2+PEEK(I+2)+256*PEEK(I+3)-1:D2=PEEK(I)+256*PEEK(I+1)-S2
+580 PRINTE$"pOutput to (Not RAM File):"E$"q ";:LINEINPUTFL$:IFFL$=""THEN580ELSEOPENFL$FOROUTPUTAS1:FA=VARPTR(#1):IFPEEK(FA+4)=248THENBEEP:CLOSE:PRINT"RAM Output will Give Erroneous Result":FORN=1TO1000:NEXT:KILLFL$+".DO":GOTO420
+590 GOTO28
+600 B=INSTR(F$,"."):IFB=0THENF$=LEFT$(F$,6)+".":B=INSTR(F$,".")
+610 IFMID$(F$,B+1,2)<>"CO"THENF$=LEFT$(F$,B)+"CO"
+620 FORK=1TOLEN(F$):X=ASC(MID$(F$,K,1)):IFX>96ANDX<123THENMID$(F$,K,1)=CHR$(X-32):NEXTELSENEXT
+630 H$="":FORK=1TOB-1:H$=H$+MID$(F$,K,1):NEXT:H$=H$+SPACE$(7-B)+RIGHT$(F$,2)
+640 FORA=A1TOA2STEP11
+650 G$="":FORK=3TO10:G$=G$+CHR$(PEEK(A+K)):NEXT
+660 IFG$=H$ANDPEEK(A)<>0THENI=PEEK(A+1)+256*PEEK(A+2):GOTO680ELSENEXT
+670 BEEP:PRINT"CO File Not Found; Try Again!  ":GOTO430
+680 RETURN

@@ -1,0 +1,409 @@
+
+LCD	4244
+Display a character on the LCD at 
+current cursor position.  On entry, 
+character to be displayed is in A.
+
+SETCUR	7440
+Set cursor position to specified 
+location.  On entry, D=Column number
+(1-40) and E=Row Number (1-8).
+
+PLOT	744C
+Turn on the LCD pixel at specified 
+location.  On entry, D=X coordinate
+(0-239) and E=Y coordinate (0-63).
+
+UNPLOT	744D
+Turn off the LCD pixel at specified 
+location (see PLOT for entry
+conditions).
+
+POSIT	427C
+Get the current LCD cursor position.  
+On return, H=Column number (1-40) and 
+L=Row number (1-8).
+
+ESCA	4270
+Send a specified escape code sequence. 
+On entry, A=escape code.
+
+CRLF	4222
+Generate a carriage return and line 
+feed.
+
+HOME	422D
+Move cursor to home position (1,1).
+
+CLS	4231
+Clear display and return cursor to home
+position (1,1)
+
+SETSYS	4235
+Protect screen line 8 (LABEL line).
+
+RSTSYS	423A
+Unprotect screen line 8 (LABEL line).
+
+LOCK	423F
+Lock display (inhibit scrolling).
+
+UNLOCK	4244
+Unlock display (enable scrolling).
+
+CURSON	4249
+Turn on blinking cursor.
+
+CUROFF	424E
+Turn off blinking cursor.
+
+DELLIN	4253
+Delete current line from LCD.
+
+INSLIN	4258
+Insert blank line at current line.
+
+ERAEOL	425D
+Erase from cursor to end of line.
+
+ENTREV	4269
+Set reverse character mode.
+
+EXTREV	426E
+Turn off reverse character mode.
+
+CSRY	F639
+* Location of cursor ROW position.
+
+CSRX	F63A
+* Location of cursor COLUMN position.
+
+BEGLCD	FE00
+Start of LCD image memory.
+
+ENDLCD	FF40
+End of LCD image memory.
+
+BRKCHK	7283
+Check for BREAK characters (^C or ^S). 
+On return, carry is set if BREAK or 
+PAUSE was entered; reset if no BREAK 
+characters.
+
+INLIN	4644
+Input a line from keyboard, terminated 
+by ENTER.  Data is stored starting at 
+location F685.
+
+STFNK	5A7C
+Set function key definitions (F1-F8).  
+On entry, HL points to address of 
+function table.  Function table 
+consists of 8 character strings and are
+terminated by ORing the last character 
+in the string with 80H.  Nulls are 
+ignored, so string could be terminated 
+with 80H.  Character strings for all 
+eight function keys must be specified.
+
+CLRFLX	5A79
+Clear function key definition table
+(fill with 80H's).
+
+DSPFNK	42A8
+Display function keys (SCREEN,1).
+
+STDSPF	42A5
+Set and display function keys.  On 
+entry, HL points to start address of 
+function key table (see STFNK).
+
+ERAFNK	428A
+Erase function key display (SCREEN,0).
+
+FNKSB	5A9E
+Display function table (if enabled).
+
+KYREAD	0724
+Scan keyboard for a key. Do not wait 
+for a key.  On return, A=Character, if 
+any.  Z flag is set if no key was 
+pressed, reset if a key was pressed.  
+Carry is reset if normal character is 
+entered, set if special character is 
+entered.  If carry is set, then A 
+contains code as follows:
+	 A	KEY
+	===	===
+	 0	F1
+	 1	F2
+	 2	F3
+	 3	F4
+	 4	F5
+	 5	F6
+	 6	F7
+	 7	F8
+	 8	LABEL
+	 9	PRINT
+	 A	SHIFT-PRINT
+	 B	PASTE
+
+CHGET	12CB
+Get a character from keyboard.  Wait 
+for character.  On return, A=Character 
+entered.  Carry is set if special 
+character (see KYREAD description); 
+reset if normal character.  NOTE:  On 
+return from CHGET, function keys
+(F1-F8) return their programmed text
+strings.
+
+CHSNS	13DB
+Check keyboard queue for characters.  
+On return, Z flag is set if queue is 
+empty, reset if queue contains 
+characters.
+
+KEYX	7270
+Check keyboard queue for characters or 
+BREAK.  On return, Z flag is set if 
+queue is empty, reset if queue contains
+characters.  Carry flag is set if BREAK
+was entered; reset if not entered.
+
+PRINTR	6D3F
+Send a character to the line printer.  
+On entry, A contains character to be 
+printed.  On return Carry is set if 
+cancelled by BREAK; reset if normal 
+return.
+
+PNOTAB	1470
+Print character without expanding TAB 
+characters (09H).  On entry, A contains
+character to be printed.  On exit, 
+conditions are unknown.
+
+PRTTAB	4B55
+Print a character with expanding TAB 
+characters (09H) to spaces.  On entry, 
+A contains character to be printed.  On
+exit, conditions are unknown.
+
+PRTLCD	1E5E
+Send LCD Image (no graphics) to the 
+printer.
+
+DISC	52BB
+Disconnect phone line.
+
+CONN	52D0
+Pick up phone line.
+
+DIAL	532D
+Dial a specified phone number.  On 
+entry, HL contains address of phone 
+number string.
+
+RCVX	6D6D
+Check RS-232 queue for characters.  On 
+exit, A contains number of characters 
+received.  Z flag is set if no data; 
+reset if characters pending.
+
+RV232C	6D7E
+Get a character from RS-232 receive 
+queue.  On exit, A contains character 
+received.  Z flag is set if ok; reset 
+if error (PE, FF, or OF).  Carry is set
+if BREAK pressed, otherwise reset.
+
+SENSCQ	6E0B
+Send an XON resume character (^Q-11H).
+
+SENDCS	6E1E
+Send an XOFF pause character (^S-13H).
+
+SD232C	6E32
+Send a character to the RS-232 or Modem
+(with XON/XOFF control).  On entry, A 
+contains character to be sent.
+
+CARDET	6EEF
+Detect carrier.  On exit, Z flag is set
+if carrier is detected; reset if not 
+detected.  Also, A contains zero if 
+carrier detected, FF if no carrier.
+
+SNDCOM	6E3A
+Send a character to the RS-232 without 
+XON/XOFF flow control.  On entry, C 
+contains character to be sent.  Exit 
+conditions are unknown.
+
+BAUDST	6E75
+Set baud rate for RS-232C.  On entry, H
+contains baud rate code (ASCII "1"-"9",
+or "M" for internal modem).
+
+INZCOM	6EA6
+Initialize RS-232 or Modem.  On entry, 
+H contains baud rate code (see BAUDST).
+L contains UART configuration (see 
+below).  Carry is set if RS-232; reset 
+if internal modem.  On exit, conditions
+are unknown.
+	UART CONFIGURATION
+	Bit 0	Number of stop bits - 1
+	Bit 1-2	Parity setting:
+		00 - None
+		01 - Even
+		10 - Odd
+	Bit 3-4	Word length:
+		00 - Six
+		01 - Seven
+		10 - Eight
+	This byte is ANDed with 1F to
+	ignore bits 5-7.
+
+RSTAT	F65B
+* Text string containing the current
+RS-232 setting as follows:  BAUD,
+Length, parity, Stop Bits, XON/XOFF
+switch.
+
+SETSER	17E6
+Set serial interface parameters and 
+activate RS-232/Modem.  On entry, HL 
+points to ASCII string containg STAT 
+parameters terminated by binary zero
+(Syntax is same as STAT in TELCOM).  
+Carry flag is set for RS-232; reset for
+internal modem.  Exit conditions are 
+unknown.
+
+CLSCOM	6ECB
+Deactivate RS-232/Modem.
+
+CTON	14A8
+Turn cassette motor on.
+
+CTOFF	14AA
+Turn cassette motor off.
+
+CASIN	14B0
+Read a character from cassette and 
+update checksum.  On entry, C contains 
+current checksum.  On exit, A contains 
+character received.  C contains the 
+updated checksum.
+
+CSOUT	14C1
+Send a character to cassette and update
+checksum.  On entry, A contains 
+character to be sent.  C contains 
+current checksum.  On exit, C contains 
+updated checksum.
+
+SYNCW	6F46
+Write cassette header and sync byte 
+only.
+
+SYNCR	6F85
+Read cassette header and sync byte 
+only.
+
+DATAW	6F5B
+Write a character to cassette -- no 
+checksum.  On entry, A contains 
+character to be sent.
+
+DATAR	702A
+Read a character from cassette -- no 
+checksum.  On exit, D contains 
+character from cassette.
+
+MUSIC	72C5
+Make Tone.  On entry, DE contains 
+frequency.  B contains duration.
+
+TIME	190F
+Read system time.  On entry, HL 
+contains address of 8 byte area to hold
+time.  On exit, HL points to current 
+time in ASCII in "hh:mm:ss" format.
+
+DATE	192F
+Read system date.  On entry, HL 
+contains address of 8 byte area to hold
+date.  On exit, HL points to current 
+date in ASCII in "mm/dd/yy" format.
+
+DAY	1962
+Read system DAY of week.  On entry, HL 
+contains address of 3 byte area to hold
+day.  On return, HL points to current 
+DAY of week in ASCII.
+
+INITIO	6CD6
+Model 100 COLD START jump.
+
+IOINIT	6CE0
+Model 100 WARM START jump.
+
+MENU	5797
+Jump address for MENU.
+
+MAKTXT	220F
+Create a text file.  On entry, the file
+name should be stored in ASCII at FC93 
+(.DO extension not required).  On exit,
+HL points to TOP address of new file.  
+DE points to director entry (flag).  
+Carry flag is set if file already 
+exists, reset if new file.
+
+CHKDC	5AA9
+Search for file entry in directory.  On
+entry, DE points to address of filename
+to find (ASCII filename plus binary 0 
+terminator byte).  On exit, HL points 
+to TOP address of file.  Z flag is set 
+if file is found; reset if file is not 
+found.
+
+GTXTTB	5AE3
+Get TOP address of file (start add-
+ress).  On entry, HL points to address
+of directory entry for file (flag).  On
+exit, HL points to TOP address of file.
+
+
+KILASC	1FBE
+Kill a text (.DO) file.  On entry, DE 
+points to TOP address of file;  
+HLpoints to directory entry (flag).
+
+INSCHR	6B61
+Insert a character in a file.  On 
+entry, A contains character to insert. 
+HL contains to insert character.  On 
+return, HL is incremented by one, Carry
+is set if out of memory.
+
+MAKHOL	6B6D
+Insert a specified number of spaces in 
+a file.  On entry, BC contains number 
+of spaces to insert.  HL contains 
+address to insert spaces.  On return, 
+HL and BC are preserved.  Carry is set 
+if out of memory.
+
+MASDEL	6B9F
+Delete specified number of characters. 
+On entry, BC contains number of 
+characters to delete.  HL contains 
+address of characters to delete.  On 
+return, HL and BC are preserved.
+!/-500
+

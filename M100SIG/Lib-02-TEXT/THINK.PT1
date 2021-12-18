@@ -1,0 +1,22 @@
+THINK.PT1 -- PATCHES TO THINK.IT3
+---------------------------------
+ 
+The following replacement lines are recommended for THINK.IT3.  In line 91 a 
+MID$ statement replaces a RIGHT$ statement to correct a flaw I found in 
+printing long titles.  In line 92 some code is added which gives left 
+justification of the print-out of multiline entries.
+ 
+The first of these patches also applies to my earlier mod of the commercial 
+versions of THIINK.IT.  The second can be tried in those versions; it's really 
+a matter of aesthetics!
+ 
+ 
+91 IFLEFT$(A,1)="0"THENPRINT#1,SPACE$(LM)MID$(A,4,W1-3)ELSEPRINT#1,SPACE$(TS+LM
+)LEFT$(A,W1);:IFLS>0THENFORZ=1TOLS:PRINT#1,:NEXTZ
+ 
+92 A=MID$(A,W1+1):IFA$<=""THEN93ELSEA=RIGHT$(A,LEN(A)-1):GOTO89
+ 
+Note that there will be some extra linefeeds to be removed.
+ 
+Phil Wheeler -- 71266,125
+

@@ -1,0 +1,396 @@
+
+
+
+
+        THE DISK DEVICE
+
+            CDOS adds a new device to the TRS-80 Model 100 and Tandy
+        200 operating systems.  A device is a part of a computer
+        system involved with storing, transmitting, or displaying
+        data.  Each device has its own device name, so that the
+        operating system recognizes where to send the data when that
+        device name is used.  Built in to the Model 100/200 computer
+        are devices such as LCD, the Liquid Crystal Display screen,
+        RAM, the Random Access Memory, and MDM, the built-in modem.
+        External devices are CAS, the tape cassette, and LPT, the line
+        printer.  COM, the RS-232 serial port, can be connected to an
+        external modem or to another computer.  LPT and LCD are
+        display devices.  CAS and RAM are storage devices.  CDOS adds
+        another storage device, the Chipmunk disk drive, which has a
+        device name of 0 (or 1 in the case of a second drive).  When
+        CDOS is loaded, the operating system recognizes 0 and 1 as
+        legitimate storage devices, enabling the computer to use the
+        Chipmunk in the same way as it would use any other storage
+        device.  M-100/200 storage devices collect data into files.
+        Program files, text files (documents), and data files are
+        three distinct classes of files.  The disk device handles
+        files just like the CAS and RAM devices handle files.  CDOS
+        also adds new file handling capabilities with its expanded
+        Disk BASIC repertoire.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    - 1 -
+
+
+
+
+
+
+
+
+
+
+
+        USING THE CHIPMUNK FROM BASIC AND TEXT
+
+            Now that the Model 100/200 recognizes the Chipmunk as a
+        valid storage device, it's very easy to use disk-based program
+        and text files from within BASIC and TEXT.  Just use the disk
+        device name 0 or 1 as a file name prefix instead of RAM or
+        CAS.
+
+
+        FROM BASIC
+
+            For example, to load a BASIC program from the disk named
+        TEST3.BA, type LOAD"0:TEST3.BA" and press Enter.  Notice how
+        the file name is prefixed with the disk device name and a
+        colon.  Loading from the Chipmunk works just like loading from
+        cassette except much much faster.  Run a file directly from
+        disk with RUN"0:FAST.BA".  Save a BASIC program to disk with
+        SAVE"0:GAME.BA", or as an ASCII (DO) listing by using the DO
+        extension and appending ,A.  Of course, function keys F2 and
+        F3 work equally well.  Just add the 0: or 1: after the quote.
+        Machine language file commands work with the Chipmunk, too.
+        LOADM"0:SPACE.CO" loads the CO file into memory and
+        SAVEM"0:SHOOT.CO",56000,57900,56000 saves a block of memory to
+        disk as a CO file.
+
+            Notice how all the load/run/save commands work with the
+        Chipmunk in much the same way as they work with cassette and
+        RAM.  (There are a few differences noted at the end of this
+        section.)  BASIC file commands are on page 126 of the Model
+        100 manual and page 10 of the Model 200 BASIC Reference Guide.
+        These other file manipulation commands work with the Chipmunk,
+        too.  Rename a disk file with NAME or kill a disk file with
+        KILL just by prefixing the file name with the disk device
+        name.  Don't forget to put the 0: or 1: inside the quotes.
+        The disk device indentification is part of the file name
+        specification.
+
+
+        FROM TEXT
+
+            TEXT works with disk DO files just as easily.  When
+        specifying a file name to load from or save to at a function
+        key prompt, prefix it with the disk device name 0 or 1 and a
+        colon.  (Quotes around the file name aren't needed here.)
+        Suppose that a disk file named SPEECH.DO needs editing.  Enter
+        TEXT and specify the name of the file to edit: SPEECH.DO.
+        (It's not important what name is entered at this prompt.)
+        Press function key F2 and at the Load from: prompt enter
+        0:SPEECH.DO.  When finished editing, press function key F3 and
+        at the Save to: prompt enter 0:SPCH2.DO.  (It's a good idea to
+        give the revised file a different name so that the original
+
+
+
+                                    - 2 -
+
+
+
+
+
+
+
+
+
+
+
+        will be preserved on disk as a backup.)
+
+            TELCOM uses only RAM files for uploading and downloading
+        because it does not recognize device names.  However, PCSG
+        includes a TELCOM.CO utility program in the Chipmunk bundled
+        software that adds disk upload/download capability to TELCOM.
+
+
+        DISK BASIC DIFFERENCES
+
+            There are several interesting differences when using disk
+        files with the built-in software.  Unlike RAM or CAS files,
+        the file extension should always be included in the complete
+        file name as well as the disk device name.  The proper
+        extension cannot be assumed from the usage context like it can
+        with RAM and CAS files, and thus the appropriate file
+        extension is not automatically added.  Curiously, any file
+        extension (or none at all) is valid.  You're not restricted to
+        using BA, CO, and DO.  Files with non-standard or no
+        extensions load and run from the disk menu with no problem and
+        the non-standard extensions show up on the RAM file menu after
+        loading.  Such files also run from the RAM file menu.  All of
+        the BASIC and TEXT file commands work with files having non-
+        standard or no extensions; however, if the file has an
+        extension, it must be used.  Otherwise, you'll get a NM error.
+        For example, if a BASIC program's file name is SEARCH.TX, you
+        must type RUN "0:SEARCH.TX" to load and run it from disk.  RUN
+        "0:SEARCH" does not work.  Similarly, if you type 0:LETTER at
+        the TEXT "Save to:" prompt, the filename on the disk will be
+        LETTER, not LETTER.DO.
+
+            Another difference is how BA disk files are added to the
+        menu when loaded with a BASIC command.  BA files are
+        automatically added to the menu.  Unlike loading from
+        cassette, you don't need to do a separate save to a RAM file.
+        If a file loaded has the same name as a file already on the
+        RAM menu, the file loaded replaces the file on the menu.  CO
+        files are handled just like files loaded from cassette.  When
+        LOADMed from disk, a separate SAVEM to a RAM file is needed
+        (if you want it in a RAM file.)  Also, like cassette files,
+        you must first reserve memory with the CLEAR command.  This is
+        not done automatically as it is when a CO file is run from the
+        CDOS disk menu.
+
+            Finally, if the disk file to be loaded or run is contained
+        inside a folder, prior to using that file from BASIC or TEXT
+        that folder must have been opened from the CDOS disk menu.
+        For example, let's say the file SLICK.BA is located inside a
+        folder named "games".  Before typing 'RUN"0:SLICK.BA"' display
+        the main CDOS disk menu. Starting at the main disk directory,
+        place the widebar cursor over the "games" folder name and
+
+
+
+                                    - 3 -
+
+
+
+
+
+
+
+
+
+
+
+        press Enter to open that folder.  Then SLICK.BA can be loaded
+        and run.  Likewise, if the program BUDGET.BA uses data in a
+        file called DATA.DO, the folder within which DATA.DO is
+        located must have been opened from the CDOS disk menu.
+        Putting both the program and the data file it uses in the same
+        folder is a good idea.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    - 4 -
+
+
+
+
+
+
+
+
+
+
+
+        SYNOPSIS OF COMMAND SYNTAX
+
+
+        In BASIC:
+
+        LOAD "drivenumber:filename.ext" -- loads a file (either ASCII
+        or tokenized) from disk into BASIC and adds it to the menu.
+
+        LOAD "drivenumber:filename.ext",R -- loads the BASIC file as
+        above and runs it.
+
+        SAVE "drivenumber:filename.ext"  -- saves the current BASIC
+        program to disk in tokenized format.
+
+        SAVE "drivenumber:filename.ext",A  -- saves the current BASIC
+        program to disk in ASCII format.
+
+        MERGE "drivenumber:filename.ext" -- merges an ASCII BASIC
+        program file on disk into the current BASIC program in RAM.
+
+        RUN "drivenumber:filename.ext" -- loads and runs the BASIC
+        program file, and adds it to the menu.
+
+        KILL "drivenumber:filename.ext"  -- kills the disk file.
+
+        NAME "drivenumber:filename1.ext" AS
+        "drivenumber:filename2.ext"  -- renames the disk file
+        filename1 as filename2.
+
+        LOADM "drivenumber:filename.ext"  -- loads the machine
+        language program into its load address in memory, but does not
+        add it to the menu.  Memory must first be CLEARed as
+        appropriate.
+
+        SAVEM "drivenumber:filename.ext",addr1,addr2,addr3  -- saves a
+        block of RAM to disk from addr1 to addr2 with execution
+        address of addr3.
+
+        RUNM "drivenumber:filename.ext"  -- loads and runs the machine
+        language program from disk.  Memory must first be CLEARed.
+
+        LFILES -- prints on the screen a list of files in the current
+        folder.
+
+        LFILES OFF -- removes CDOS from memory and restores MAXRAM and
+        HIMEM to their default values.
+
+        CALL 0 -- installs CDOS if the Chipmunk is connected and
+        turned on, and returns to the menu.  If a BASIC program uses a
+        machine language subroutine that is not compatible with CDOS,
+        execute LFILES OFF at the very beginning of the program and
+
+
+
+                                    - 5 -
+
+
+
+
+
+
+
+
+
+
+
+        CALL 0 at the very end.
+
+
+        In TEXT:
+
+        Load from: drivenumber:filename.ext -- loads filename.ext from
+        disk into RAM for editing in TEXT.
+
+        Save to: drivenumber:filename.ext -- saves filename.ext from
+        RAM to a disk file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    - 6 -
+
+
+
+
+
+
+

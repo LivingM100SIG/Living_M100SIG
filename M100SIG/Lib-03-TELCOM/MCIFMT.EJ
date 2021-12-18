@@ -1,0 +1,25 @@
+0 'Format program for MCI Mail users
+2 '  by Ed Juge [70007,1365]
+4 'Removes carriage returns (except
+6 '  between paragraphs), 
+8 '  and removes the prompt "Press RETURN for more; type NO to stop:"
+10 '  from downloaded MCI documents.
+12 'Makes for easier reading & easier
+14 '  printing of your document.
+16 '
+18 'MCIFMT.EJ	07/04/84
+20 MAXFILES=2:CLEAR2000:CR$=CHR$(13)+CHR$(10)
+22 CLS:FILES:PRINT:INPUT"File to format";F$
+24 ONERRORGOTO20:
+26 F$=F$+".DO":F1$=LEFT$(F$,3)+"NEW.DO"
+28 OPENF$FORINPUTAS1
+30 OPENF1$FOROUTPUTAS2
+32 IFEOF(1)THEN48
+34 LINEINPUT#1,L$
+36 FORX=1TOLEN(L$):IFMID$(L$,X)>" "THEN40ELSENEXT
+38 FL=1:GOTO32
+40 IFLEFT$(L$,1)=CHR$(10)THENL$=MID$(L$,2):FL=1
+42 IFINSTR(L$,"Press RETURN for more")THENFL=0:GOTO32
+44 IFFL=1THENPRINT#2,CR$:FL=0
+46 PRINT#2,L$+" ";:GOTO32
+48 CLOSE:MAXFILES=0:CLEAR255:MENU

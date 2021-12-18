@@ -1,0 +1,136 @@
+
+        (c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Michael Mayers
+To: ALL
+
+I'm having a couple of problems with my WP-2.  I wonder if anyone has a
+solution. I recorded over the first part of a file on a cassette recorder.
+Is it possible to recover the remaining part of the file?
+
+		- 0 -
+
+Fm: Stan Wong
+To: Michael Mayers
+
+I am unaware of any technique to recover the last part of a file that's been
+recorded over unless you can load the preceeding file and the remaining part
+of the file gets sucked in.  If you have a M100 then using some direct
+programming techniques it might be possible. There are several gentlemen here
+who might very well have some advice on that topic (Wilson Van Alst and James
+Yi).
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Stan Wong
+
+   Partly out of curiosity, and partly because I'm trying to help Michael
+Mayers get his file-tail back, I wonder if you're able to confirm whether an
+M100 will read WP-2 cassette files?  (I kinda have my doubts, but if you have
+the gear, maybe you could check....)
+
+
+		- 0 -
+
+Fm: Stan Wong
+To: Wilson Van Alst
+
+I will check for you.  First off, the WP-2 allows for eight character
+filenames but only the first six get saved to tape.  Of course this info will
+go into the BEWARE.WP2 file.  Aside from formatting info I don't see why the
+M100 shouldn't be able to read WP-2 tapes.  Get back to you tomorrow.
+
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Stan Wong
+
+   That 8-letter file name is one of the things that gave me doubts about
+compatibility.  Knowing that the WP-2 cuts the names to six letters, a la
+M100/T200, offers a glimmer of hope.  But there are a few other variables in
+the cassette storage equation: sync pulse configuration, frequencies used for
+high/low bits, checksum algorithms, even the type of modulation (full-wave vs.
+modified Manchester, for example).  I had to deal with all these things when I
+wrote a program to read professional videotape time code, and it wasn't easy.
+Looking forward to your test...
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Michael Mayers
+
+   I don't have a WP-2; so I'm shooting in the dark here to some extent. You
+can try a technique described in the Lib 9 file, RECOVR.CAS.
+   If that doesn't work, your chances of recovering the file, using "known"
+techniques, would seem to depend on two things: 1) access to a M100/102 or
+T200 computer, and 2) "compatibility" between those machines and the WP-2's
+cassette storage methods (they could be vastly different, since there is no
+"standard" for such things as modulation frequencies, synchronization pulses,
+or the size of data blocks).
+   So: do you have, or can you get your hands on, one of the other computers?
+If so, and if you can confirm that it will read WP-2 cassette files, James
+Yi's program CASUTL.100 (or .200), may get your file back.
+   Let me know how it's going.
+
+		- 0 -
+
+Fm: Michael Mayers
+To: Wilson Van Alst
+
+  It turns out that A little fooling around on my part turned up a way to
+recover thepesky file.  I simply loaded the preceeding file from the cassette
+and turned down the volume as the end of the file came by, so the WP-2 never
+got the endmessage and went right on in to my lost file.  Try that with your
+hard disk.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Michael Mayers
+
+   Nice work!  As I recall, that's the technique outlined in the RECOVR
+file for the M100.  And I used to have a hard disk that would do that
+all on its own. <g>
+
+                - 0 -
+
+Fm: Stan Wong
+To: Wilson Van Alst
+
+I successfully transferred files from the WP-2 to the M100 via cassette tape.
+I tried both the formatted .DO files and the ascii .DA file form.
+
+The converted ascii .DA is read by the M100 byte for byte as it is stored in
+the WP-2.  No problems.
+
+The WP-2 formatted .DO files are transferred with a (approximately) 64 byte
+binary header.  Otherwise the rest of the file is just plain ascii text.  One
+caution though, I did not have any embedded formatting commands, such as line
+centering or underlining, in the document.  I would expect that in that case
+there would be some control characters interspersed throughout the document.
+These are easily editted out using M100 TEXT.
+
+The bottom line is that it is possible to recover a damaged WP-2 tape using
+M100 utilities.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Stan Wong
+
+Stan,
+   That's interesting.  It means that James Yi's CASUTL program should
+work to recover partially trashed WP-2 tapes -- if the WP-2 owner can
+get his/her hands on an M100 or T200.  Thanks.
+
+		- 0 -
+
+Starting message #: 190817  Starting date: 28-Nov-89  23:22:24
+ Participants:
+Michael Mayers 73557,1331
+Stan Wong 70346,1267
+Wilson Van Alst 76576,2735

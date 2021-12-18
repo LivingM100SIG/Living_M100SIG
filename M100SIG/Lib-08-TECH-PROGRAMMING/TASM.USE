@@ -1,0 +1,246 @@
+USE OF TASM.EXE FOR MODEL 100/102/200 CROSS-ASSEMBLY
+----------------------------------------------------
+
+TASM.EXE (part of TASM.ARC, IBMSW Forum, DL4) is a cross-assembler which
+runs in the MS-DOS environment.  With the instruction table file
+TASM85.TAB (in DL8 of this Forum), and a suitable loader (e.g., LOAD.BA or
+HEXLDR.100, DL7), TASM can be used for development of Model 100/102/200
+machine language programs.
+
+1. Use of TASM
+
+Basic command syntax is: TASM -85 FILENAME.EXT.  Note that the EXTension
+is not assumed to be ASM.  I've decided to use TSM to indicate source
+files written in the TASM syntax (see below).
+
+2. Syntax
+
+There are two syntax issues, instruction formats and assembler directives.
+The new version of TASM85.TAB in DL8 accommodates the former -- at least
+providing compatibility with the Custom Software assembler in common use
+here.
+
+Assembler directives for TASM are both more numerous and formatted in a
+somewhat unique manner.  Following is a resipe for converting Custom
+Software soruce files to TASM format.
+
+a) Case: All labels and equates ARE CASE SENSITIVE.  Best thing is to make
+   everything either upper or lower case.
+
+b) Assembler directive conversion
+
+               Custom S/W       TASM.EXE
+               ----------       --------
+                 EQU              .EQU
+                 ORG              .ORG
+                 DB               .BYTE
+                 DW               .WORD
+                 DM               .TEXT (and put text in "double quotes")
+                 END              .END
+                 DS               .BLOCK
+                 ENT              No direct equivalent
+
+Note that ENT is a directive in the CS assembler which allows specifying the
+ENTry address.  This is really part of the loading process -- and if you use
+LOAD.BA (DL7) to do the loading in your Model 100, you will be prompted for
+the "Run" (aka ENT) address at the end of the loading process.
+
+3.  Example of Conversion
+
+Following is SORTHI.TSM, which is SORTHI.ASM from DL 7, converted for
+assembly using TASM.EXE on my IBM compatible.
+
+;SORTHI.ASM -- Rick Perry's SORT
+;made free-standing (no BA driver)
+;for use in the alt LCD buffer.
+;          Phil Wheeler -- 71266,125
+;          2 August 1987
+;
+;TASM version -- Phil Wheeler -- 1/16/88
+;
+;SORT 6/7/84 by Rick Perry 75665,1045
+
+; This based on the source code for the sort routine
+; contained in the programs: ALARMS.100 & SORT.LDR
+
+; The algorithm is a 'bubble sort' designed to sort a RAM .DO file
+; in place. File can have variable length lines, with line length
+; up to 255 chars, including <CR><LF>.
+
+;
+chkdc	.equ	$5aab	; lookup file in ram dir
+gtxttb	.equ	$5ae3	; get pointer to start of file
+cls	.equ	$4231	; clear screen
+upcase	.equ	$0fe8	; convert (m) to uppercase
+buf	.equ	$f685	; start of line input buffer
+prtmsg	.equ	$5791	;msg to lcd on new line
+ntfnd	.equ	$5cd6	;not found msg in rom
+waitsp	.equ	$5f2f	;wait for press and rtn
+linein	.equ	$4644	;input line from kbd
+menu	.equ	$5797	;back to m100 menu
+beep	.equ	$7662	;oops!
+files	.equ	$1f3a	;display files
+crlf	.equ	$4222	;make a blank line
+;
+	.org	64704	;put it alt lcd buffer
+;	ent	64704	;this is where it ENTers/RUNs
+begin   call    cls     ;clear screen
+	call	files	;show user the files on menu
+	call	crlf	;make a blank line
+	lxi	h,films	;prompt for the file to sort
+	call	prtmsg
+	call	linein	;line input the file to sort
+	rst	2	;see if there is one
+	jz	exit	;main menu if none
+;
+	lxi	h,buf	;hl -> file name
+	push	h
+	dcx	h
+;
+lp1	inx	h	;make file name uppercase
+	call	upcase
+	mov	m,a
+	cpi	'.'
+	jz	do
+	ora	a
+	jnz	lp1
+;
+do	lxi	d,dotyp	;put in .do extension
+	mvi	b,4
+	call	$3469
+;
+	pop	d	;try to lookup file in dir
+	mvi	a,10
+	call	chkdc
+	jz	exitn	;failure exit for 'file not found'
+;
+	call	gtxttb	;get pointer to start of file
+	shld	start
+;
+;during the main loop, de will point to start of line with length c
+;hl will point to following line with length b
+;
+mainlp	xra	a	;start a pass
+	sta	done	; (done) will remain 0 if no swaps needed
+	lhld	start
+	push	h
+	call	getnxt
+	shld	next	;(next) holds start address of next line
+	pop	h
+;
+lp2	xchg		;this loop advances through the file
+	mov	c,b	;line by line.
+	lhld	next
+	push	h
+	call	getnxt
+	shld	next
+	pop	h
+	mov	a,b
+	ora	a
+	jz	endlp	;pass finished when next line is zero length
+	push	b
+	push	d
+	push	h
+	call	compar	;will set carry if lines out of order
+	pop	h
+	pop	d
+	pop	b
+	cc	switch	;swap the lines
+	jmp	lp2
+;
+endlp	lda	done
+	ora	a
+	jnz	mainlp
+	jmp	begin	;done --> another
+;
+;i find it difficult to properly comment the following switch routine.
+;it not only swaps the two current lines, but also sets the current
+;line pointer, hl, and length, b, to continue the flow of the main loop.
+;see end of file for info on the block move rom routines.
+;
+switch	push	b
+	push	h
+	lxi	d,buf
+	call	$2542	;move one line to buffer
+	pop	d
+	xchg
+	inr	c
+	call	$2ee8	;replace one line...
+	lxi	d,buf
+	pop	b
+	inr	b
+	call	$346c	;then the other
+	mov	b,c
+	mvi	a,255	;set (done) nonzero to indicate
+	sta	done	;swap was performed
+	ret
+;
+compar	xchg		;on return, carry set if swap needed
+comp1	ldax	d
+	cmp	m
+	rnz
+	inx	d
+	dcr	b
+	rz
+	inx	h
+	dcr	c
+	jnz	comp1
+	ret
+;
+getnxt	mvi	b,0	;get pointer to next line (hl)
+nxt2	mov	a,m	;and length of current line (b)
+	cpi	26	;^z = eof
+	rz
+	inx	h
+	inr	b
+	jz	toolng	; b>255
+	cpi	13
+	jnz	nxt2	;line ends with <cr>...
+	mov	a,m
+	cpi	10	;optionally followed by <lf>
+	rnz
+	inx	h
+	inr	b
+	rnz
+;
+toolng	call	cls
+	pop	d	;unstack normal return address from getnxt.
+	pop	h	;pointer to current line, was stacked
+	mvi	b,100	;before call to getnxt.
+t2	mov	a,m
+	rst	4	;just display first 100 chars
+	inx	h
+	dcr	b
+	jnz	t2
+	jmp	exitl	;line too long exit
+;exit routines
+;
+exitl	lxi	h,lnmsg	;point to msg
+	call	prtmsg
+	jmp	error
+exitn	lxi	h,ntfnd
+	call	prtmsg
+error	call	beep
+	lxi	h,press
+	call	prtmsg
+	call	waitsp
+exit	jmp	menu
+;
+;messages
+;
+press	.text	"Press space bar"
+	.byte	$00
+dotyp	.text	".do"
+	.byte	$00
+films	.text	"File to sort?"
+	.byte	$00
+lnmsg	.text	"Long line!"
+	.byte	$00
+;
+
+;data storage
+;
+done	.byte	0
+start	.word	00
+next	.word	00
+	.end

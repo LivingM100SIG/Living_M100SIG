@@ -1,0 +1,128 @@
+                                 MAKEDIR
+
+     MAKEDIR is a BASIC program to create and maintain disk directory
+database files for the Tandy 600 Portable Computer.  MAKEDIR places disk
+directory information into FILE format files.  These files may be searched
+and sorted using the Tandy 600's FILE firmware.
+
+     MAKEDIR Version 1.0 maintains a separate database file for each
+individual disk.  The FILE record format is as follows:
+
+          Field ID       Field Type     Purpose
+          ---------------------------------------------
+          DISK           AlphaNumeric   Disk ID
+          POSN           Numeric        Directory Position
+          FILENAME       AlphaNumeric   File Specification
+          RHA            AlphaNumeric   File Status
+          DATE           Date           Creation Date
+          SIZE           Numeric        File Size
+          COMMENT        AlphaNumeric   File Description
+          UPDATE         Date           MAKEDIR use date
+
+     A sample FILE display follows:
+
+ID  |DISK|POSN|FILENAME    |RHA|DATE          |SIZE |COMMENT        |UPDAT
+FORM|AAAA|####|AAAAAAAAAAAA|AAA|MM/DD/YY HH:MM|#####|AAAAAAAAAAAAAAA|MM/DD
+SORT|    |    |            |   |              |     |               |
+FIND|    |    |            |   |              |     |               |
+1   |TU0 |   1|!!TU0.WRD   |   |10/ 9/87 09:27|    0|Disk ID        | 2/ 5
+2   |TU0 |   2|!RICK.WRD   |   |10/ 9/87 09:27|    0|Disk Owner     | 2/ 5
+3   |TU0 |   3|FORMAT.!60  |   | 5/10/85 19:08| 1536|Disk formatter | 2/ 5
+4   |TU0 |   4|INSTALL.!70 |  A| 6/14/85 15:17| 1024|Driver install | 2/ 5
+5   |TU0 |   5|DISKCOPY.!90|  A| 6/14/85 15:16| 1920|Disk imager    | 2/ 5
+6   |TU0 |   6|PRINTER.DVR |  A| 1/ 1/85 19:21|   61|CRLF print dvr | 2/ 5
+7   |TU0 |   7|DBCALLS.LIB |   | 4/19/85 16:43| 3072|FILE BASIC call| 2/ 5
+6   |TU0 |   6|BASIC.!55   |   | 4/26/85 10:10|33997|BASIC          | 2/ 5
+
+     In practice, I assign a 4-character Disk ID name to each of my disks,
+and this ID appears in the first field of the FILE record.  These are
+arbitrary IDs, and you need not follow the same practice to use MAKEDIR.
+
+     The POSN field contains the disk directory position in which the file
+appears on the disk.  These appear to be assigned sequentially by HH/OS,
+much as they are under MSDOS.  This is the sequence in which the LIST
+command displays files.
+
+     The FILENAME field contains the filename and extension assigned to
+the file.  These are described in the Owners Manual on page 34 (and
+probably lots of other places, too).
+
+     The RHA field contains the flags which indicate file status.  An "R"
+in this field indicates that a file is a read-only file.  An "H" indicates
+that it is a hidden file which will not be displayed on the System Manager
+Screen.  An "A" indicates that the "archive bit" is set -- whatever that
+means.  I think its only affected by DISKCOPY.
+
+     The DATE field contains the date and time of file creation.  This is
+stored in date format, and may be sorted using the FILE command.
+
+     COMMENT is a text field which is not affected by MAKEDIR.  It may be
+used to contain a textual description of a particular file.
+
+     UPDAT contains the date on which the MAKEDIR program was last used to
+update the directory database for a particular file.
+
+                              USING MAKEDIR
+
+     To use MAKEDIR, a disk directory is LISTed to a text file using the
+LIST command from the System Manager.  The text file MUST have the
+extension ".DIR".  The filename which is given to this text file will
+become the Disk ID contained in each FILE record, as well as the name of
+the .FIL and .DAT files for the FILE database created by MAKEDIR.  An
+example follows:
+
+Microsoft(R) Works V1.20, Copyright (1984, 1985) Microsoft Corp.
+LIST file: A:                to: TU0.DIR
+Enter filename
+System Manager: WORD              Bytes free: 110816 3/10/1988 12:56:35 PM
+
+     Multiple LIST directory text files may be created -- I usually run
+all the disks which I've updated through MAKEDIR at the end of each day.
+
+     After creating the directory text files, RUN MAKEDIR.BAS to generate
+or update FILE databases for each separate disk.  You MUST have a copy of
+DBCALLS.LIB in memory or on a disk in order for the program to function.
+If it is NOT in memory, MAKEDIR will prompt you to insert a disk with a
+copy of DBCALLS.LIB before it continues.
+
+     MAKEDIR will display a list of all files with the extension ".DIR".
+If no files with this extension are present in memory, MAKEDIR will end
+and return to the System Manager.
+
+     If MAKEDIR finds one or more files with the extension ".DIR", you
+will be prompted to enter the name of the directory text file which you
+wish to convert to FILE format.  The file extension, ".DIR", need not be
+entered.  You may abort MAKEDIR at this point by pressing "ENTER" without
+entering a filename.
+
+     If MAKEDIR does not locate a FILE ".DAT" file in memory with the same
+filename you've specified, the program will ask if this is a NEW file.  If
+it is a new file (i.e. if you're creating a brand new database for this
+disk) respond "YES" to the prompt.  If this is NOT a new file, MAKEDIR
+will prompt you to insert a disk containing a copy of the correct database
+file.  MAKEDIR assumes that you DO NOT want to create a new file unless
+you specify otherwise.
+
+     After the database file has been located, created or loaded, MAKEDIR
+will create or update the file entries in the database file.  If updating
+an existing file, MAKEDIR will update the records for any previously
+existing filename with the proper directory position, date, time and size.
+Any new filenames will be added, and the entries for any deleted files
+will be removed from the database file.
+
+     MAKEDIR will erase each directory text file once it has been used to
+create or update a FILE database file.
+
+     Database files may be saved on disk after they have been created.
+
+
+                                CONCLUSION
+
+     MAKEDIR has been fairly effective in helping me manage my collection
+of forty disks with God-only-knows how many files.  It would obviously be
+more useful to write everything to a single database, and that was my
+original intent.  I wasn't successful -- BASIC kept blowing up when I
+tried -- but I'll work on it some more when I get the time.  Then again,
+maybe someone else will!
+
+

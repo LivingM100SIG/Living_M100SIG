@@ -1,0 +1,325 @@
+SROM02.TIP
+
+AN EXPLANATION OF LUCID'S TBL FUNCTION - Part 1 of 2
+ by Algis Kaupas [73327,3157]
+
+Being new to spreadsheets, I found it difficult to grasp the notion of "TBL" in
+Lucid.  The examples in the manual, while demonstrating some interesting 
+possibilities, were too complex for me to easily grasp the underlying concept. 
+Once it "clicked in," however, I started imagining how I could start applying 
+Lucid to my own needs.
+
+This file is offered to new users who may be experiencing the same difficulty, 
+in the hopes of speeding up that learning process.
+
+(I made a spreadsheet of the examples in this file while writing it, and would 
+be happy to upload it, should anyone so desire, although the examples are 
+simple enough to key in yourself).
+
+
+BASIC CONCEPT UNDERLYING LUCID'S TBL FUNCTION:
+===== ======= ========== ======= === ========
+
+
+***********************************
+* LOOKING SOMETHING UP ON A CHART *
+***********************************
+
+
+It's really that simple!
+
+
+EXAMPLES OF "TABLES" WE USE EVERY DAY:
+======== ==  ======  == === ===== ===
+
+Here are some examples of tables that we use every day.  Using them has become 
+so natural to us that it may take a moment to appreciate that they ARE, in 
+fact, tables.  (I've added the column and row labels that Lucid uses to make it
+even clearer that any of these could be entered into a Lucid spreadsheet.)
+
+
+1.  A table of contents:
+    - ----- -- --------
+
+          [A]           [B]
+[001]	Page  #      Contents
+[002]	Page  #      Contents
+[003]	Page  #      Contents
+
+
+2.  An appointment book:
+    -- ----------- ----
+
+         [A]          [B]
+[001]	time      appointment
+[002]   time      appointment
+[003]   time      appointment
+
+
+3.  Those "mileage between cities" charts you see in road atlasses:
+    -----  ------- ------- ------  ------ --- --- -- ---- --------
+
+        [A]    [B]     [C]       [D]
+[001]        Boston  Chicago   Detroit 
+[002] Boston     0     mi.       mi.
+[003] Chicago   mi.     0        mi.
+[004] Detroit   mi     mi.        0
+
+
+4.  A telephone directory:
+    - --------- ---------
+
+        [A]       [B]            [C]
+[001]	name    address     tel. number
+[002]   name 	address     tel. number
+[003]	name    address     tel. number
+
+
+"LOOK-UP" IN OTHER SPREADSHEETS:
+ =======  == ===== ============
+
+The descriptions of other spreadsheets that I've looked at often have something
+called a "look-up" function.  This function allows data to be entered in the 
+same format as the table of contents or appointment book examples above.
+
+Related data is listed in two separate columns.  By entering a formula, the 
+spreadsheet can be told to look at a value in a cell, look for that value down 
+the left-hand column of the two-column table, and return the value "across" 
+from it.
+
+A simple example, not taking the specific format of any spreadsheet, but 
+illustrating the concept, would be to tell the spreadsheet "look for  # 24...in
+the table located at cell # to cell # [table of contents]... return the value 
+across from that...."  The spreadsheet might then return Chapter # 2.
+
+Looking at the input and the result, we would then know that page 24 is the 
+beginning of chapter two.
+
+
+HOW TBL WORKS IN LUCID:
+=== === ===== == =====
+
+Lucid gives us the ability to use larger tables, to use two input values, and 
+to use text as well as numbers in both the input and the table.  A mileage 
+table or telephone directory, for example, could be entered into a Lucid 
+spreadsheet.
+
+
+EXAMPLE 1:  A SHORT MULTIPLICATION TABLE
+======= =   = ===== ============== =====
+
+Here's a simple example:
+
+Let's enter a short multiplication table starting at cell AA1 in a Lucid 
+spreadsheet.
+
+Table 1: A short multiplication table.
+----- -  - ----- -------------- -----
+
+      [AA] [AB] [AC] [AD] [AE]  [AF]
+[001]        1    2   3    4      5
+[002]  1     1    2   3    4      5
+[003]  2     2    4   6    8     10
+[004]  3     3    6   9   12     15
+[005]  4     4    8  12   16     20
+[006]  5     5   10  15   20     25
+
+To use it, we find a number that we want to multiply down the left hand column 
+and the other number along the top row.  The result of multiplying the numbers 
+is where the selected row and column meet.  
+
+Let's ask the spreadsheet to look something up in this table:
+
+
+First, let's create an INPUT SCREEN:
+
+(Note:  this example uses an input screen set up within the Lucid spreadsheet, 
+not a separate "VIEW.DO" screen using Lucid Database, although this could, of 
+course, be done.)
+
+Input screen for Example 1:
+----- ------ --- ------- -
+
+         [A]      [B]       [C]
+[001]   First number:     [INPUT  ]
+[002]   Second number:    [INPUT  ]
+[003]   Multiply the two: [FORMULA]
+[004]
+[005]   <ENTER> NUMBERS INTO C1,C2.
+[006]   PRESS F2 TO CALCULATE.
+
+Cell C1 is for entering a number.
+Cell C2 is for entering a second number.
+Cell C3 is the cell we have chosen for displaying the result of multiplying the
+two input numbers.  We instruct the spreadsheet that we want it to display the 
+value found by looking up the two input values in our multiplication table.  We
+do this by entering the following FORMULA in cell C3:
+
+
+	+TBL(C1,C2,AA1:AF6).
+
++TBL tells the spreadsheet that we want something looked up in a table.  
+
+The first entry after the parentheses, C1, tells the spreadsheet to look at the
+value in C1, and look for it down the left-hand column of a table.
+
+The second entry tells the spreadsheet to look at the value in C2, and look for
+it along the top row of a table.
+
+The third and fourth entries, AA1:AF6, tell where the table to be used is 
+located in the spreadsheet.  This is the RANGE of the table, expressed in 
+Lucid's shorthand as AA1:AF6, from AA1 in the upper left hand corner to AF6 in 
+the bottom right-hand corner.
+
+(PLEASE NOTE that cell AA1 is a BLANK CELL, which is simply one of the rules 
+for constructing tables to be used in Lucid: A TABLE MUST HAVE A BLANK CELL IN 
+THE UPPER LEFT HAND CORNER.)
+
+When F2, Calc(ulate), is pressed after making appropriate entries into cells C1
+and C2, the spreadsheet searches for C1 down the left hand column, C2 along the
+top row, takes the value in the cell where these two axes meet, and places that
+value in the cell where the formula is written, in this case, C3.  Voila!  
+We've multiplied two numbers!
+
+Wrong answers and ERR messages:
+----- ------- --- --- --------
+
+The spreadsheet searches DOWN the lefthand COLUMN and ACROSS the top ROW until 
+it finds values that are EQUAL TO or GREATER THAN the input values.
+
+This can lead to some peculiar results.
+
+For example, if our inputs are C1=0 and C2=2, the value displayed will be, not 
+the expected answer for 0*2=0, but 2.  This is because the spreadsheet, not 
+seeing a 0 in the column, will choose the next higher value, 1, and search for 
+the cell that corresponds to that.
+
+Inputs of C1=6 and C2=2 will lead to an ERR message.  This is because, not 
+seeing the value 6 or any higher value in the lefthand column of the specified 
+table, the spreadsheet has been designed to return an ERR message to alert us 
+to the fact that this particular combination of input and table cannot be 
+evaluated, and we should take a closer look at what we have done to look for 
+the source of the error.
+
+
+EXAMPLE 2:  A SLIGHTLY EXPANDED MULTIPLICATION TABLE.
+======= =   = ======== ======== ============== =====
+
+Here's how to correct two of these problems with "table sentries."
+
+Table 2:  A multiplication table with "sentries."
+----- -   - -------------- ----- ----  --------
+
+    [BA][BB][BC][BD][BE][BF][BG][BH]  
+[1]      0   1   2   3   4   5  10^50
+[2]  0   0   0   0   0   0   0   0   
+[3]  1   0   1   2   3   4   5  Mes  
+[4]  2   0   2   4   6   8  10  Mes  
+[5]  3   0   3   6   9  12  15  Mes  
+[6]  4   0   4   8  12  16  20  Mes  
+[7]  5   0   5  10  15  20  25  Mes  
+[8] 10^50MesMes Mes Mes Mes Mes Mes  
+
+Input screen for example 2:  same as in example 1:
+----- ------ --- ------- -   ---- -- -- ------- -
+
+The FORMULA, to be placed into cell C3 of the INPUT SCREEN, to use Table 2 is:
+
+	+TBL(C1,C2,BA1:BH8.
+
+This table has been constructed to return a value of 0 for inputs of 0 in 
+EITHER cell C1 or C2.  
+
+When a number that is higher than 5 is entered as the C1 value, the spreadsheet
+  searches for a value in the left-hand column that is either equal to 5, or, 
+failing to find it, looks for a number that is HIGHER than 5.  In this table, 
+that number will be 10^50, which is 10 to the 50th power, 10 with 50 zeros 
+after it, or 1E+50, all of which are different ways of expressing the same 
+number.  Any number that would have resulted in the "ERR" message in Table 1 
+can have a suitable "MESSAGE" returned by typing that message into the 
+appropriate cells of the table.  That message can be anything we wish up to 36 
+characters, such as, "TBL range is 0 to 5"
+
+
+EXAMPLE 3.  ANOTHER APPROACH: INTERFACING TABLES:
+======= =   ======= ========   =========== ======
+
+The same results obtained by using Table 2 in Example 2 can be gotten another 
+way.  This is to use another table that refers input values to Table 1 in 
+Example 1 ONLY if they are above 0 but equal to or less than 5.
+
+This is a simple example of "interfacing tables."
+
+Let's place that table, simply for convenience' sake, starting at cell E1:
+
+
+Table 3:  A table that refers to another table.
+----- -   - ----- ---- ------ -- ------ -----
+
+         [E]    [F]     [G]     [H]
+[001]            0       5    10^50
+[002]     0      0       0        0
+[003]     5      0     FORM*   MESS
+[004]   10^50    0     MESS    MESS
+
+The FORMULA placed into cell G3 of TABLE 3 would be the same as in example 1:
+
+	+TBL(C1,C2,AA1:AF6)
+
+
+
+Input screen for Example 3:  same as for Example 1:
+----- ------ --- ------- -   ---- -- --- ------- -
+
+The FORMULA to be placed into cell C3 of Input screen #1 to use Table 3 is:
+
+     +TBL(C1,C2,E1:H4)
+
+
+
+The formula in cell G3 of Table 3 will be evaluated ONLY if BOTH inputs are 
+above 0 and less than or equal to 5.  Otherwise, Table 3 ensures that inputs of
+0 in either C1 or C2 will return a value of 0 in C3.  Inputs above 5 will 
+return the message that you place in the cells labelled "MESS" above.
+
+It's interesting to note that this table, in effect, allows us to "filter out" 
+answers we don't want and to specify answers that we do want.
+
+Some other sources of wrong answers.
+---- ----- ------- -- ----- -------
+
+Please note that, even in such a simple example, we have still not dealt with 
+some other sources of error.
+
+For example, try entering -1 as one of the inputs.  Also, input values that are
+fractions, such as 2.5, will be evaluated as if they were the next higher whole
+number.
+
+These kinds of errors are something to be kept in mind when designing actual 
+spreadsheets for your own use.
+
+
+The order of "search" column and row entries.
+--- ----- --  ------  ------ --- --- -------
+
+Left-hand columns and/or top rows that will be SEARCHED for a matching value 
+MUST have their entries in ASCENDING ORDER.  Failure to do this will also 
+create wrong answers.
+
+Here's why:
+
+As you recall, the spreadsheet searches from the blank cell down a column and/
+or to the right across a row until it sees a value that is equal to, or greater
+than, the input value.
+
+Let's say that the order of numbers in a column or row in any of the above 
+examples were, for example 1,3,2,4.  If the input value being searched for were
+2, the spreadsheet would stop at 3 and perform the rest of the +TBL function 
+using "3."
+
+This is because the spreadsheet, seeing 3, would, in effect say, "OK, I see a 
+3.  The rule that I follow is to look for a match to the specified input value,
+and, if there isn't one, to use the next higher number.  I haven't seen a "2" 
+yet, but I do see a "3,"  so that must be the value for me to use."
+
+****** CONTINUED IN SROM03.TIP ********

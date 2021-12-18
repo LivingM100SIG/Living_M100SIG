@@ -1,0 +1,37 @@
+10 REM function approximation by Newton's Method
+20 REM Frank G. Kienast January, 1986
+25 REM MODIFIED FOR TANDY 102 SEPTEMBER, 1986
+27 REM COMPUSERVE USER [73327,3073]
+30 REM Y=f(X)=0 defined in lines 1000-1999
+35 NI=30
+37 CLS
+40 INPUT"Enter initial guess for X";X0
+50 X=X0
+60 N=0
+70 GOSUB 1000
+80 IF ABS(Y)<.00001 THEN 210
+90 N=N+1
+92 IF N>NI THEN 410
+95 YTEMP=Y
+100 XTEMP=X
+110 X=X+.00001
+120 GOSUB 1000
+130 DY=(Y-YTEMP)/.00001
+140 X=X-Y/DY
+150 GOTO 70
+210 REM Found value for Y
+260 PRINT N;"iterations were required."
+265 PRINT"X=";
+290 IF X<0 THEN SIGN=-1 ELSE SIGN=1
+300 LET X3=ABS(X)
+310 LET X4=INT(100000!*X3+.5)/100000!
+320 PRINT SIGN*X4
+350 STOP
+410 REM No answer
+450 PRINT"The function did not converge
+460 PRINT"in";NI;"iterations."
+470 STOP
+1000 REM define Y=f(X)=0 here
+1010 LET Y=SIN(X)-3*COS(X)^2 'Example
+1999 RETURN
+9999 END

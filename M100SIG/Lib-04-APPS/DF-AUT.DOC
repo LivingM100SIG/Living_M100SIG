@@ -1,0 +1,246 @@
+                        DF-AUT.BA (c) 1989, R. W. Hess
+                              All Rights Reserved
+                      -----------------------------------
+
+    DF-AUT provides three useful data management options for DATFIL and
+CRDFIL data files and gives users who regularly prepare similar formatted
+reports the ability to automate the process.  (If you like to create each
+report individually then you may prefer DF-RPT in this same library.  You
+might even find it handy to have both!)
+
+    DF-AUT:
+        1) permits you to completely sort an entire data file by any priority
+           of data fields.
+        2) will write formatted reports based on any data fields you
+           require to either the screen, printer, disk-drive or RAM
+        3) permits you to set conditions for each data field which must be
+           met before the record is reported and can total data fields and
+           report the result
+
+    DF-AUT is easy to use and fully compatible with the 100/102/200.  Because
+it uses Wilson Van Alst's ZIPSRT.CO sorting program, DF-AUT can process
+data-cards of virtually any combined field length.  Please read ALL these
+instructions before using DF-AUT.
+    With your source file in RAM and DF-AUT and ZIPSRT on the menu you'll need
+at least 3500 bytes PLUS the size of your data file as free RAM.  Using a Disk
+based source file only requires 3500 bytes free plus the size of your data
+file: clearly an advantage when dealing with LARGE data files.
+    If writing reports to RAM then you'll also need RAM room for them.  Large
+reports can be written directly to disk and printed later.
+
+                - SET-UP -
+
+     Download DF-AUT.DOC (this file) & DF-AUT.BA.  M100/102 users also
+download ZIPSRT.100 from DL7.  T200 users will need ZIPSRT.200 from DL10. 
+Remove any extra bytes and checksum the files as .DO files.  Make and save a
+copy of DF-AUT.BA for backup.
+     RUN ZIPSRT.100/200 as appropriate. They will create ZIPSRT.CO which must
+be on the menu whenever you run DF-AUT.BA. Save a copy of ZIPSRT as backup.
+     BEFORE you begin to run DF-AUT for the FIRST time you must set up
+DF-FMT.DO as described in that section at the end of this file.  DF-FMT.DO
+MUST be on the menu whenever you run DF-AUT.
+     If you'll be working with Disk based data files you must also have your
+disk loaded, the drive on and a DOS installed that is "ON" and which
+recognizes "0:" commands.
+
+
+            - OPERATION -
+
+     DF-AUT expects you to use UPPER and lower case letters to EXACTLY match
+Source and Format names.  At "Y/n" prompts either UPPER or lower case letters
+are recognized and <ENTER> is considered to mean "no".
+     When you run DF-AUT.BA you will first see a listing of all the source
+files for which you have created print formats.  You have two options here.
+       1) Type in the name of the source file and press <ENTER>.  (If there is
+         only one format file for that source then DF-AUT will automatically
+         run it.)
+       2) Type in the name of a source file, a "/", and the name of a format
+         file and it will run automatically. (E.g. "TRYOUT/LABEL".)
+     If you did not specify a correct format name and there are more than one
+format available in DF-FMT for that source then a format list will display
+for the chosen source.  After you correctly enter the name of a format, its
+paramaters will display as a reminder.  If Ok, press "y": any other key
+redisplays the formats available for your chosen source.
+     DF-AUT will show the record numbers as they are being prepared and call
+ZIPSRT to do the sorting (if chosen). Be patient when running large files. 
+Sorting is M/L fast but preparing a 5K data file may take 1-2 minutes.
+     The report begins with a header line containing the prompts for your
+report fields. Your report will be as wide as the longest entry in each field
+plus two spaces and will list data horizontally.  The header will be followed
+by an appropriate string of dashes.  If your format chose "LCD:" as the
+report destination then your screen will clear and the report will display:
+use "PAUSE" to stop scrolling if needed.  Otherwise the record # displays as
+data is reported.
+     When DF-AUT finishes writing the report it returns to the "Source" menu.
+<ENTER> quits to the main menu or type a source name to prepare another
+report.
+
+
+
+        - Setting up "DF-FMT" -
+
+     DF-AUT operates using small, 6-line "report formats" contained in a .DO
+file which you must create called DF-FMT.  Go to TEXT and open DF-FMT.  Return
+to this DOC and use F5 to "Copy" the 25 data lines below and "Paste" them into
+DF-FMT.DO.  This will become the master file where you will store ALL your
+report formats using DATFIL.CO.  It also includes two formats for use later.
+
+           ------------
+6
+Frmt name: 
+0
+Srce file: 
+40
+Report to: 
+80
+Sort  /n/: 
+120
+Rprt  /n/: 
+160
+Sel /n?v/: 
+200
+LIST
+DF-FMT
+LCD:
+/2/
+/2/1/3/
+NONE
+LIST-P
+DF-FMT
+LPT:
+/2/
+/2/1/3/4/5/6/
+NONE
+           ------------
+
+         - Creating Report Formats -
+
+     DF-AUT expects to find the information it needs to create formatted
+reports in DF-FMT.  To create each report format you'll need to know some
+information about your data file.  Most of this information can be found by
+examining the prompt field data contained in the first lines of the
+data/source file.
+
+       1)   Determine the number of prompts.  This is the number in the first
+          line of the source file and must never be exceeded when working
+          with DF-FMT.
+       2)   Make a list of the prompts in the order they appear and number
+          them, first to last, making sure you have as many listed as the
+          number in step 1.
+       3)   Decide how you want this data sorted: Name, ZIP, balance etc.?
+          Your records will be sorted by the "ASCII value" of each data field
+          with the "smallest" values on top.
+            Write down the prompt field numbers in your preferred sort order:
+          4  1  2  5  7 etc.  Only list the most important fields. (Including
+          the phone# field when sorting a gift list may not be necessary.)
+       4)   Decide how you want the data reported: which fields and the order
+          you want them displayed.  You may report ANY of your source file's
+          data fields in ANY order regardless of your sorting sequence.
+          (E.g. 23  1  4  5  9)
+            You might also want to scan the source file for maximum data entry
+          length because your report lists record data horizontally and will
+          be as wide as the combined longest entries in each of the reported
+          fields with two spaces between each field.
+       5)   Decide what conditions you want to set for records to be reported.
+          A record must meet ALL your conditions before any part of it is
+          reported.
+            DF-AUT uses five selection condition codes: ">", "=", "<", "+"
+          and "$".  ( ">" means greater-than, "<" means less-than and "$"
+          means a string. ) 
+            Because DATFIL/CRDFIL record-fields can contain both numeric and
+          alphabetic data you MUST know the nature of the data field before
+          choosing a selection code.
+
+            ">", "=", and "<" should only be used in NUMERIC fields because
+          they define an arithmetic relation and letters always "equal" zero.
+          Condition codes can only be used singly: if you need to report =>300
+          then use >299.99.
+
+            "+" tells DF-AUT to total all similar fields of any records that
+          meet all other conditions and writes the total to the report.
+          ("+" is used alone with the field number and requires no "value".)
+
+            "$" reports a record only if the specified field contains an EXACT
+          match of a text string and is best suited to alphabetic fields.
+          You CAN use "$" in numeric fields: e.g. to select 5 digit ZIPCODEs
+          from fields that also contain 10 character ZIP+4 data.
+
+
+     When you've completed your preliminary outline, run DATFIL.CO using
+DF-FMT as the data file. The prompts will be:
+
+    "Frmt name: "
+       Enter up to 8 characters as the name. (E.g. BAL>300 or ZIPLABEL.)
+
+    "Srce file: "
+       Enter the name of the source data file for this report using
+       UPPER-CASE letters and no extension.  If the source file will be run
+       from disk then include "0:" (E.g. 0:FAMILY )
+
+    "Report to: "
+       Specify the destination of your finished report using a MAXimum of six
+       UPPER-CASE letters (plus prefix if disk): "LCD:", "LPT:", "BRTHDY",
+       "0:BRTHDY".
+
+    "Sort  /n/: "
+       Enter the prompt field numbers in order of sort priority.  Begin the
+       entry with a "/", type the field number, type another "/" etc.  The
+       data MUST begin and end with a "/". (E.g. /2/3/1/4/ )  If you do NOT
+       want the report sorted then type NONE or press <ENTER> at this prompt.
+
+    "Rprt  /n/: "
+       Enter the prompt field numbers to be reported: beginning, separating
+       and ending with a "/".  
+
+    "Sel /n?v/: "
+       Enter selection conditions as follows: "/", field number, specifier,
+       value (no entry if specifier is "+"), "/" etc.
+       Example:  /3>1200/4$Y/5+/6=100/7+/  Type NONE or press <ENTER> at this
+       prompt if you do not want to set conditions for this report format.
+
+
+     If you want to create another report format file respond "y" to DATFIL's
+"More?" prompt and begin again: otherwise press "n".  DF-FMT.DO now contains
+your format file/s and is ready for further use.  You add NEW formats anytime
+by simply re-running DATFIL.CO using DF-FMT and responding as above.
+     The DF-FMT.DO you initially made includes two formats that let you keep
+track of what is contained in DF-FMT.DO itself: "LIST" and "LIST-P".
+Whenever you run DF-AUT you will see DF-FMT listed as a source file.  "LIST"
+will display "Srce file:",  "Frmt name:", and "Report to:" on your screen.
+"LIST-P" will report ALL the fields for each format to your printer.  (These
+two formats also serve as examples of the way each format file appears.)
+     If you later decide that a format no longer meets your needs you can
+delete it from DF-FMT by using TEXT.  Find the SIX lines of code relative to
+that format and carefully remove them using "Cut"/F6. (Remember that format
+data will show the format name first, followed by the source file etc.)
+
+                - ERRORS -
+
+     The error trapping routines are only designed to catch problems with
+files and formats.  Any other error will END and display the error code.  "No
+printer" will display that condition and re-run DF-AUT.
+     If you error out because of lack of RAM then go to the computer main
+menu, kill SRT***.DO and SRT###.DO, if found, clear some more RAM and re-run
+DF-AUT.
+
+        ---------CREDITS-------
+
+    Paul Globman suggested this automated reporting system based on many of
+the routines in his commercial, 40,000 byte, CPM data base managment program
+GLOBAL(c) and was very helpful in getting DF-AUT to run so smoothly.  Paul
+Beta-tested all the routines and contributed many useful ideas about prompts
+and displays.  Paul also wrote DATFIL.100/200 which breathes new life into the
+"CRDFIL" tradition.
+    Wilson Van Alst wrote ZIPSRT.100/200 which is twice as fast as other M/L
+sorters and which allows DF-AUT to work with any length records.
+
+    DATFIL.CO(c) 1989 Paul Globman
+    ZIPSRT.100/200(c) 1989 Wilson Van Alst
+    CRDFIL.BA(c) 1987 Tony B. Anderson
+             -------------
+
+     Please direct comments and suggestions to me at 73267,552.
+
+Randy Hess
+Omaha, Ne
+1/90

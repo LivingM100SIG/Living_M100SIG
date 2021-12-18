@@ -1,0 +1,30 @@
+0 'ADRSBA by Curtis Garris [75725,1130]
+1 'Version 1.0 as of 12/19/86 1295bytes
+2 'This program creates an ADRS.DO file
+3 'for use with the <TWRIT> software
+4 'appends ADRS file with new entries
+5 'also usefull with other programs that require
+6 'ADRS.DO information to be formatted
+8 'Seperator contained in line 29 can be changed from "," to anything you like.
+10 MAXFILES=1:OPEN"ADRS"FORAPPENDAS1:TC$="Too Many Characters"
+11 CLS:PRINT"Press ENTER to End"
+12 LINEINPUT"First & Last   .NAM: ";A$
+13 IFA$=""THEN31ELSE14
+14 IFLEN(A$)>30THENPRINTTC$:GOTO12
+15 LINEINPUT"Ph.000 000 0000.TEL: ";B$
+16 IFLEN(B$)>12THENPRINTTC$:GOTO15
+17 LINEINPUT"Apt # & Street .ADD: ";C$
+18 IFLEN(C$)>30THENPRINTTC$:GOTO17
+19 LINEINPUT"City and State  .ST: ";D$
+20 IFLEN(D$)>30THENPRINTTC$:GOTO19
+21 LINEINPUT"Zip *****-**** .EX0: ";E$
+22 IFLEN(E$)>10THENPRINTTC$:GOTO21
+23 LINEINPUT"Company Name   .EX1: ";F$
+24 IFLEN(F$)>30THENPRINTTC$:GOTO23
+25 LINEINPUT"Title          .EX2: ";G$
+26 IFLEN(G$)>30THENPRINTTC$:GOTO25
+27 LINEINPUT"Product/Service.EX3: ";H$
+28 IFLEN(H$)>30THENPRINTTC$:GOTO27
+29 I$=",":PRINTLEN(A$)+I+LEN(B$)+I+LEN(C$)+LEN(D$)+I+LEN(E$)+I+LEN(F$)+I+LEN(G$)+I+LEN(H$)" Characters & Spaces"
+30 PRINT#1,A$;I$;B$;I$;C$;I$;D$;I$;E$;I$;F$;I$;G$;I$;H$:GOTO11
+31 CLOSE1:MENU

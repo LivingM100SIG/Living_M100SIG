@@ -1,0 +1,35 @@
+;TEXT.ASM --Source for TEXT.CO (Model 100 version)
+;Based on TEXT.CO for the Tandy 200 by James Yi
+;Loaded by the Basic program NOWRAP.100
+;Bypasses part of ROM TEXT routines to provide writing without
+;wordwrap.  Useful with tables, headings, etc.
+;
+;Note that code loads into alternate LCD buffer
+;above MAXRAM.
+;
+;Phil Wheeler -- 71266,125
+;10 June 1987
+;
+	prt
+	org	64704	;start of alt LCD buffer
+start	lxi	hl,lbl1	;relative address
+	ent	start
+	shld	$f652
+	lxi	hl,$5e22
+	call	$5a7c
+	xra	a
+lbl1	cnz	$4229
+	call	$5d53
+	lxi	hl,$5e15
+	call	$27b1
+	call	$463e
+	rst	2
+	ana	a
+	jz	$5797
+	call	$2206
+	push	hl
+	lxi	hl,0
+	shld	$f6e7
+	mvi	a,0
+	jmp	$5f6e
+	end

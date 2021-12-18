@@ -1,0 +1,48 @@
+        <How to use SHPDRW.200>
+
+Shpdrw.200 is a shape drawing utility, called from Basic.
+Use it to enhance the picturesque dimension of your programs and games.
+To use it, first compile it into .CO machine language file from .DO hex 
+format, by using either DOCO.200, or BIN-HX.BA, if you want to load it into a 
+different memory area.
+
+To draw a shape, first there has to be a shape table.  There is a sample table 
+called BOMBER.SHP, which was merged into DL initially, and as more shapes are 
+added to the data library, they can be fished out by searching for files with 
+.SHP extension.
+
+   To display a shape, from Basic do this:
+
+CALL draw,shape#,coordinate
+
+ DRAW is fixed at 63574, unless you relocated it.
+SHAPE# can range from 0 to number of shapes in the table minus 1.
+COORdinate is X+Y*256: for exmp, to draw at coordinate (10,10), it is 2570
+
+Before you call it, there are several memory locations that has to properly 
+poked:
+
+-14 and -13: has to contain the location of shape table.  Low order in -14 and 
+High order in -13.
+
+-12:  0 indicates that you are drawing shapes in the shape table.  1 indicates 
+you want to print ASCII characters in rom.  For example, if you poke 1 into
+- 12, shape# corresponds to the ASCII code of a character.
+  When printing ASCII, you need not define the location of shape table.
+
+-11:  0 indicates xor drawing, which means that graphics image is xor'ed onto
+ the screen, which means that if you draw once, it will appear, then if 
+you draw the shape over it again, it will disappear.  1 indicates paint
+ drawing, which will either darken or erase the area of shape, according to 
+the paint color stored at -10.
+
+-10: contains paint color.  0 is white, 255 is black, any other value results in
+ striped shapes.
+
+
+Equipped with this information, you are ready to start creating colorful graphics programs.
+
+  To create your own shapes, see SHPMKR.200 and SHPMKR.DOC in dl10.
+
+Shpdrw.200 can be adapted for 100.  If anyone wants to attempt it, I'll be glad
+ to assist.   Contact James Yi 73327,1653

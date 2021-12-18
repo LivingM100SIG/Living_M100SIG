@@ -1,0 +1,323 @@
+;DATE GENERATOR FOR CALENDER
+DATE	EQU 1A9EH	;puts date in datstr
+DAY	EQU 1AC5H	;puts day in daystr
+CLS	EQU 4F4DH	;cls
+CRLF	EQU 4F3EH	;CRLF
+OFFREV	EQU 4F8DH	;turn off rev char mode
+ONREV	EQU 4F88H	;set rev mode
+SPACE	EQU 1EH		;prints space
+PRINT	EQU 11CCH
+WAIT	EQU 12F7H
+SCAN	EQU 8B03H
+;
+	ORG 60000
+	LXI H,DATSTR
+	CALL DATE
+	LXI H,DAYSTR
+	CALL DAY
+GETDAY#	LXI H,DAYSTR+1	;2nd letter of day
+	MOV A,M
+	MVI B,1
+	CPI 'u'		;sun or tue?
+	JZ PKSUTU
+GETDAY3	INR B
+	CPI 'o'		;mon
+	JZ FINDAY
+	INR B
+	INR B
+	CPI 'e'		;wed
+	JZ FINDAY
+	INR B
+	CPI 'h'		;thur
+	JZ FINDAY
+	INR B
+	CPI 'r'		;fri
+	JZ FINDAY
+	INR B		;assume it's sat
+	JMP FINDAY
+PKSUTU	LXI H,DAYSTR	;1st letter of day
+	MOV A,M
+	CPI 'S'		;SUN
+	JZ FINDAY
+	CPI 'T'		;TUE
+	INR B
+	INR B
+FINDAY	MOV A,B
+	STA DAY_NO
+;
+;get date from ascii to binary
+	LXI H,DATSTR
+	CALL DATER
+	STA MO_NO
+	STA CUR_MO	;save for rev char mode
+	LXI H,DATSTR+3
+	CALL DATER
+	STA DATE_NO
+	STA CUR_DAT	;save for rev char mode
+	LXI H,DATSTR+6
+	CALL DATER
+	STA YR_NO
+	STA CUR_YR	;save for rev char mode
+;get start position:
+;keep adding 7 to day_no until large
+;enough to subtract date_no
+	LXI H,DATE_NO
+	MOV D,M
+	LDA DAY_NO
+FINDER	CMP D
+	JNC END
+	ADI 7
+	JMP FINDER
+END	SUB D
+	STA STAR_NO
+;position cursor:
+POSITN	CALL CRLF
+	CALL CRLF
+	MVI H,7		;center mo/yr
+POSITN2	CALL SPACE
+	DCR H
+	JNZ POSITN2
+	LXI H,MO_NO
+	MOV E,M
+	MVI A,0
+	STA ZERO?	;0=0?0 or space?
+	CALL ONEDIG
+	MVI A,'/'
+	RST 4
+	LXI H,YR_NO
+	MOV E,M
+	MVI A,0
+	STA ZERO?	;0=0
+	CALL ONEDIG
+	CALL CRLF
+PRINTR	LXI H,HEADER
+	CALL PRINT
+DATPUT	CALL CRLF
+	LDA STAR_NO	;put start pos in a
+	ADI 1
+	MOV H,A
+	MVI L,7		;7 dates/line
+	CALL LENGTH	;countdown in b
+	MOV A,B
+	STA NO_DAYS	;for future ref
+	MVI E,0		;start at 0
+	DCR H
+	JZ DATGEN
+START	CALL SPACE
+	CALL ADJUST
+	DCR L
+	DCR H
+	JNZ START
+DATGEN	MOV A,E
+	ADI 1		;add one day at a time
+	MOV E,A		;save it
+	CALL REV
+	MVI A,1		;1=SPACE
+	STA ZERO?
+	CALL ONEDIG	;print it
+	CALL SPACER
+	DCR L
+	JNZ NEXT	;CK FOR LF CR
+	CALL CRLF
+	MVI L,7
+NEXT:	DCR B		;chck days left
+	JNZ DATGEN
+LOOP	CALL SCAN	;wait keyboard
+;start of next/last month routines:
+;
+	JZ LOOP
+	CPI 30		;is it up arrow
+	JZ NEXTMO
+	CPI 31		;is it down arrow
+	JZ LASTMO
+	RET		;gone
+NEXTMO	LDA MO_NO
+	CPI 12
+	JZ PLUS
+	ADI 1
+	STA MO_NO
+	JMP PLUS4
+PLUS	SUI 11
+	STA MO_NO
+	LDA YR_NO
+	CPI 99
+	JZ CENTRY
+	ADI 1
+	STA YR_NO
+	JMP PLUS4
+CENTRY	MVI A,0
+	STA YR_NO
+	LXI H,CEN_NO
+	INR M
+PLUS4	LDA STAR_NO
+	LXI H,NO_DAYS
+	ADD M
+PLUS7	SUI 7
+	CPI 7
+	JNC PLUS7
+	STA STAR_NO
+	JMP POSITN
+;to get start pos going back must get
+;complement of old start pos -- 7 -
+;star_no+no_days-28 = no_days-star_no
+;-14
+LASTMO	LDA MO_NO
+	CPI 1
+	JZ MINUS
+	SUI 1
+	STA MO_NO
+	JMP MINUS4
+MINUS	ADI 11
+	STA MO_NO
+	LDA YR_NO
+	CPI 0
+	JZ CENTRY1
+	SUI 1
+	STA YR_NO
+	JMP MINUS4
+CENTRY1	MVI A,99
+	STA YR_NO
+	LXI H,CEN_NO
+	DCR M
+MINUS4	CALL LENGTH
+	MOV A,B
+	STA NO_DAYS	;for future ref
+	SUI 28
+	MOV C,A
+	LDA STAR_NO
+	CMP C
+	JC MINUS5
+	SUB C
+	STA STAR_NO
+	JMP POSITN
+MINUS5	ADI 7
+	SUB C
+	STA STAR_NO
+	JMP POSITN
+;
+;
+SPACER	CALL OFFREV
+	CALL 1EH	;print space
+	RET
+ZERO	MVI A,'0'
+	RST 4
+	RET
+;FOR PRINTING NUMBERS
+;
+ADJUST	CALL 1EH
+	CALL 1EH
+	RET
+;CHECK FOR SINGLE DIG
+ONEDIG:	MOV A,E
+	CPI 10
+	JNC TWODIG
+	LDA ZERO?
+	CPI 0
+	JNZ NOT0
+	CALL ZERO
+	JMP NOT01
+NOT0	CALL SPACE
+NOT01	MOV A,E
+	ORI 00110000B
+	RST 4
+	RET
+TWODIG	MVI C,0		;C holds quotient
+DIVIDE	SUI 10
+	INR C
+	CPI 10
+	JNC DIVIDE
+	MOV D,A		;hold remainder
+	MOV A,C		;a=quotient
+	ORI 00110000B
+	RST 4
+	MOV A,D
+	ORI 00110000B
+	RST 4
+	RET
+DATER	MOV A,M
+	ANI 00001111B	;conv to binary
+	ADD A		;X2
+	MOV B,A		;STORE IN B
+	ADD A		;X4
+	ADD A		;X8
+	ADD B		;X8+X2=X10
+	MOV C,A
+	INX H
+	MOV A,M
+	ANI 00001111B
+	ADD C
+	RET
+LENGTH	MVI B,31
+	LDA MO_NO
+	CPI 2
+	JZ LPYR
+	CPI 4
+	JZ THIRTY
+	CPI 6
+	JZ THIRTY
+	CPI 9
+	JZ THIRTY
+	CPI 11
+	JZ THIRTY
+	RET
+THIRTY	DCR B
+	RET
+LPYR	MVI B,28
+	LDA YR_NO
+	CPI 0		;is it yr 2000?
+	JZ CENT
+BEG	CPI 4
+	RC
+	SUI 4
+	JZ LP_YR
+	JMP BEG
+CENT	LDA CEN_NO
+BEG2	CPI 4
+	JZ LP_YR
+	RC
+	SUI 4
+	JMP BEG2
+LP_YR	INR B
+	RET
+REV	LDA CUR_YR	;-> month no
+	PUSH H
+	LXI H,YR_NO
+	CMP M
+	JZ REV1
+	JMP NORM
+REV1	LDA CUR_MO
+	LXI H,MO_NO
+	CMP M
+	JZ REV2
+	JMP NORM
+REV2	MOV A,E
+	LXI H,CUR_DAT
+	CMP M
+	JZ REV3
+	JMP NORM
+REV3	CALL ONREV
+	POP H
+	RET
+NORM	CALL OFFREV	;turn off rev char mode
+	POP H
+	RET
+FINISH	RET
+;header label
+HEADER:	DB 'Su Mo Tu We Th Fr Sa',0
+;date storage area
+;datstr actually uses 8 bytes which are written over after it is used
+;daystr uses 3 bytes which are written over after it is used
+DATSTR	DS 1		;place starting date from clock mm/dd/yy
+CUR_MO	DS 1		;current mo
+DATE_NO	DS 1		;start date
+CUR_DAT	DS 1		;current date
+YR_NO	DS 1		;start yr
+CUR_YR	DS 1		;current yr
+NO_DAYS	DS 1		;no days in mo
+STAR_NO	DS 1		;start position
+ZERO?	DS 1		;to zero or space:
+DAYSTR	DS 1		;place starting day of week from clock
+DAY_NO	DS 1		;sun=1 sat=7
+MO_NO	DS 1		;start mo
+CEN_NO	DB 19		;clock only gives 19xx as century
+	END

@@ -1,0 +1,232 @@
+
+     Here is yet another list of miscellaneous information about various ROM and RAM locations in the Mod-100, done as sort of a "Model-100 ROMs commented".  This list will be updated on an ongoing basis as I pick through the Mod-100 ROMs.
+
+     In keeping with the spirit of the disassemblers available, restart (RST) instructions are shown with the hex address they branch to.
+
+     24 August 1983, Robert Briggs, Holmes Engineering [70515,1262]
+
+0000 (0000)     jp     7d33  jump to power on routine
+0003 (0003)     defm   'MENU',00h
+.
+.
+.
+11a2 (?????)	display string (HL)=> until 0 byte
+	ld	a,(hl)
+	or	a
+	ret	z
+	rst	20h
+	inc	hl
+	jp	11a2
+.
+.
+.
+1978 (?????)	Day table
+	defm	'Sun'
+	defm	'Mon'
+	defm	'Tue'
+	defm	'Wed'
+	defm	'Thu'
+	defm	'Fri'
+	defm	'Sat'
+.
+.
+.
+
+253d (?????)
+	ld	de,(0faceh)  (0faceh)=> ???
+2540 (?????)	(HL+)=> to (DE+)=> for 6 bytes
+	ld	b,06
+2542	ld	a,(hl)
+	ld	(de),a
+	inc	hl
+	inc	de
+	dec	b
+	jp	nz,2542h
+	ret
+.
+.
+.
+25d5 (?????)	more table stuff
+	defm	'Top: ',00h
+	defm	'End: ',00h
+	defm	'Exe: ',00h
+.
+.
+.
+
+	load *** display control subroutines***
+
+4222 (16930)	send carriage return / line feed to display
+	ld	a,0dh
+	rst	20h
+4225 (16933)    send line feed to display
+	ld	a,0ah
+	rst	20h
+	ret
+4229 (16937)    "ring bell"
+	ld	a,07h
+	rst	20h
+422d (16941)	home cursor
+	ld	a,0bh
+	rst	20h
+4231 (16945)	clear screen
+	ld	a,0ch
+	rst	20h
+4235 (16949)	protect label line
+	ld	a,'T'
+	jp	4270h
+423a (16954)    unprotect label line
+	ld	a,'U'
+	jp	4270h
+423f (16959)    lock screen (no scroll)
+	ld	a,'V'
+	jp	4270h
+4244 (16964)    unlock screen (enable scroll)
+	ld	a,'W'
+	jp	4270h
+4249 (16969)    cursor on
+	ld	a,'P'
+	jp	4270h
+424e (16974)    cursor off
+	ld	a,'Q'
+	jp	4270h
+4253 (16979)    delete current line
+	ld	a,'M'
+	jp	4270h
+4258 (16984)    insert line
+	ld	a,'L'
+	jp	4270h
+425d (16989)    erase to end of line
+	ld	a,'K'
+	jp	4270h
+4262 (16994)	clear keyboard buffer
+	ld	a,'X'
+	jp	4270h
+4267 (16999)    A or (HL)=>,  return if Z else RVIDEO ON.
+	or	(hl)
+	ret	z
+4269 (17001)    Rvideo ON
+	ld	a,'q'
+  	jp	4270h
+426E (17006)	RVIDEO OFF
+	ld	a,'p'
+4270 (17008)    Display ESCAPE character followed by contents of A
+	push	af
+	ld	a,01bh
+	rst	20h
+	pop	af
+	rst	20h
+	ret
+.
+.
+.
+50f1 (?????)	device table
+	defm	'LCD',0ffh
+	defm	'CRT',0feh
+	defm	'CAS',0fdh
+	defm	'COM',0fch
+	defm	'WAND',0fbh
+	defm	'LPT',0fah
+	defm	'MDM',0f9h
+	defm	'RAM',0f8h
+	defb	00h
+.
+.
+.
+517c	(?????) TELCOM text and table
+
+	defm	'Telcom: ',00h
+
+	       text        address
+	       ----        -------.
+5185	defm	'STAT',	   51c0
+518b	defm	'TERM',	   5455
+5191	defm	'CALL',	   522f
+5197	defm	'FIND',	   534d
+519d	defm	'MENU',	   5797
+51a3	defb	0ffh
+
+Telcom label line
+
+51a4	defm	'Find',0a0h
+51a9	defm	'Call',0a0h
+51ae	defm	'Stat',0a0h
+51b3	defm	'Term',08dh
+51b8	defb	80h
+51b9	defb	80h	; blank entries
+51ba	defb	80h
+51bb	defm	'Menu',08dh
+.
+.
+.
+6bdb (?????)	Z-80 LDIR equivalent. (HL+)=> to (DE+)=> for (BC-) bytes
+	ld	a,(hl)
+	ld	(de),a
+	inc	hl
+	inc	de
+	dec	bc
+	ld	a,b
+	or	c
+	jr	nz,6bdbh
+	ret
+6be6 (?????)	Z-80 LDDR equivalent (HL-)=> to (DE-)=> for (BC-) bytes
+	ld	a,(hl)
+	ld	(de),a
+	dec	hl
+	dec	de
+	dec	bc
+	ld	a,b
+	or	c
+	jr	nz,6be6h
+6c48	ret
+
+   ROM program entry point table.
+
+         type  location   text
+         ----  --------   ----
+6c49 defm b0h, 6c49h,	'BASIC  ',00h
+6bfc defm b0h, 5deeh,	'TEXT   ',00h
+6c07 defm b0h, 5146h,	'TELCOM ',00h
+6c12 defm b0h, 5b68h,	'ADDRSS ',00h
+6c1d defm b0h, 5b6fh,	'SCHEDL ',00h
+6c28 defm 88h, 000000,	'Suzuki '
+6c33 defm c8h, 000000,	'Hayashi'
+6c3e defm 48h  000000,	'Ricky  '
+.
+.
+.
+
+Display control codes
+         
+
+07h		bell
+0ah		line feed
+0bh		home cursor
+0ch		clear screen
+0dh		carriage return
+
+ESC then	result
+--------	------
+  K		erase to end of line
+  L		insert line
+  M		delete line
+  P		cursor on
+  Q		cursor off
+  T		protect line 8 (label)
+  U		unprotect line 8
+  V		lock screen
+  W		unlock screen (enable scroll)
+  X		clear keyboard buffer
+  p		RVIDEO ON
+  q		RVIDEO OFF
+
+.
+.
+.
+Misc RAM locations
+
+F63D (-2499)	# of bottom lines to scroll protect in twos complement
+		form. 0=0, 0ffh (255)=1, 0feh (254)=2, etc.
+		WARNING: using values from 1 to 247 decimal can lock the
+		system up so badly that MEMORY has to be powered off and
+		then back on to reset your machine.

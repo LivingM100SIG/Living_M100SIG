@@ -1,0 +1,311 @@
+
+
+
+
+              A TRANSLATION OF BRODIE'S "STARTING FORTH" TO figFORTH
+
+        Copyright 1987 by David O Rowell (70406,445), all rights
+        reserved.
+        
+        Version 1.0, not thoroughly proofread.  Please direct corrections
+        and comments through EASYPLEX.
+        
+        Contributed to the members of CompuServe TRS80 Mod 100 SIG to
+        guide the student of FORTH struggling along with a figFORTH
+        interpretor, such as FIG4TH.100.  May your persuit of knowledge
+        become a bit easier.
+        
+        For personal use only, not for publication without the permission
+        of the author.
+        
+        CHAPTER 1
+            P 12 Fool with the margin, it'll look better
+            P 16 In fig 31 characters are valid
+                XLERB ? MSG #0
+            P 18 Last footnote applies here too
+            P 25 Does not print "STACK EMPTY" 
+                . ? MSG#1 prints
+            
+        CHAPTER 2
+            P 34 Try: 4 17 12 * + . 208 OK
+                Get used to the stack and working its way
+            P 50 Try this: 
+                : .S  CR SP@ 2 - S0 @ 2 -
+                    DO I @ . -2 +LOOP ;
+                His 'S is fig's  SP@ 2 -
+            P 52 2SWAP 2OVER 2DROP are not fig std words
+                they are included in FIG4TH.100 in a screen
+                2DUP is in the kernal
+            
+        CHAPTER 3
+            P 60 fig should also work this way.
+                Right now this figFORTH accesses only 3 screens (BLOCKS)
+                Always 1, 2 and 3 in high memory
+            P 63 Remember, only 3 blocks
+                to clear the 3 screens:  HEX E000 C00 ERASE
+                to enter the EDITOR  EDITOR (ENTER)
+                to return to FORTH  FORTH (ENTER)
+            P 64 To stop the listing press space
+            P 77 S use last screen nr + 1
+            P 78 M doesn't work right - fix in progress
+            P 80 no EMPTY
+            P 83 : DEPTH   S0 @ SP@ - 2 / ;
+                : .S  DEPTH IF SP@ 2 - S0 @ 2 -
+                    DO I ? -2 +LOOP
+                    ELSE ." Empty Stack "
+                    ENDIF ;
+
+                THEN and ENDIF are synonyms, they both work
+                add WHERE to the definitions
+                    displays the location of the error and enters the
+                    editor
+                
+        CHAPTER 4
+            P 90 I like ENDIF better
+            P 91 no 0> or NOT
+            P 96 NOT and 0= are very different
+                NOT should be the logical complement of the value, all
+                bits reverse
+                0 NOT is then -1 not 1
+            P 97 rather than + use OR for this
+                see bottom of P 98
+            P 101 use -DUP for ?DUP
+                no ABORT" has ABORT which is not a test
+            P 103 no 0>, NOT and ABORT"
+                ?DUP becomes -DUP
+                add XOR
+            
+        CHAPTER 5
+            P 107 1+ yes    1- no
+                2+ yes    2- no
+                2* no     2/ no
+            P 108 NEGATE is MINUS in fig
+            P 110 >R yes    R> yes
+                I only in a DO loop
+                fig does not have I' and J
+                    DO loops can be completely nested, however
+                R copies the top of the stack the same as I
+                    I is for use only in a loop
+            P 111 >R SWAP I becomes >R SWAP R in fig
+            P 112 typing T doesn't get into the editor
+            P 119 footnote  : R%   50*/ 1+ 2 / ;
+            P 123 no 1- 2- 2* 2/ I' J in fig
+                replace NEGATE with MINUS
+                replace I with R
+                    I is loop index for DO loop only
+            P 125 Problems 3 & 4
+                it is NOT 1.8 its really 5/9
+                try fooling with this fact -40 F = -40 C
+                you should be able to do this better
+            
+        CHAPTER 6  To type a word longer than one screen line go ahead
+        with a CR and pick the word up on the next line - the defn ends
+        with the ; no matter how many lines
+            P 132 second defn of TABLE
+                no J in fig
+                try this  : U.R   0 SWAP D.R ;
+                    (unsigned_integer field_width -- )
+            P 142 PAGE is replaced by the FIG4TH.100 word CLS
+                one way or another EMIT a decimal 12
+            P 143 no U.R but see above
+                no PAGE but see above
+
+
+
+        CHAPTER 7
+            P 156 if you're wondering, FIG4TH.100 will only print codes
+            127(decimal) and less
+                all characters are ANDed with 7FH to drop the high bit so
+                that garbage won't print
+            P 161 no U/MOD or /LOOP but add U/
+            P 162 no OCTAL
+            P 163 Handy Hint-try using U. to better see the binary digits
+            P 164 use only . to signify a double number
+            P 165  ditto
+            P 166  ditto
+            P 171 fig has S->D to sign extend a single to a double number
+            P 173 fig(more to the point FIG4TH.100)has D+  DMINUS  DABS 
+            D.R  D.  D+-  DLITERAL  
+                2SWAP  2DROP  2DUP  2!  2@  #S  #  SIGN  #>  <#  S->D
+            P 174 M/MOD  M/  M*
+            P 175 example 200.000 7 S->D D+ D.
+                no M*/
+            P 177 fig doesn't have U/MOD or /LOOP or OCTAL
+                but does have U/
+            P 178 fig has D+  DMINUS  DABS  D.  D.R  D+-  S->D  DLITERAL
+            P 179 fig has M*  M/  M/MOD (d n -- d_quot n_rem)
+            
+        CHAPTER 8
+            P 183 in fig a value MUST be assigned to a variable (or
+            constant) in the definition - 0 VARIABLE DATE
+            P 188  0 VARIABLE EGGS
+            P 190 remember value before VARIABLE
+            P 192 footnote, in fig 0, 1, 2 and 3 are CONSTANTs
+            P 193 no double variables or double constants in fig
+            P 195 have 2! and 2@
+            P 196 now you see how to make a double variable or
+            constant-2@ and 2! both work just fine
+            P 198 LIMIT is a fig system constant giving the end of RAM
+            used
+                don't leave it defined as somethine else for too long!
+            P 199 have both FILL and ERASE
+                use erase for this
+            P 204 use +LOOP
+            P 206 have C@ and C!
+            P 207 CREATE is a completely diferent animal in fig - don't
+            try this CREATE or you'll bomb it big time
+                220 VARIABLE TRYIT 340 , 170 , 100 , 190 ,   works just
+                fine
+                fig CREATE is for headering machine code
+            P 208 0 VARIABLE SIZES
+                SIZES DP ! 18 C, 21 C, 24 C, 27 C, 30 C, 255 C,
+            P 209 remember CREATE is very different
+            P 210  no 2VARIABLE or 2CONSTANT in fig
+                DUMP is not a fig word
+                fig has no  0. but try ..
+            
+        CHAPTER 9
+            P 216  in fig ' returns the PFA of a word
+                EXECUTE needs the CFA, therefore  ' GREET CFA EXECUTE
+                footnotes: fig has the word -FIND  (-- ff) if not found
+                and (-- PFA length tf) if found
+            P 217 remember  ' GREET CFA EXECUTE
+                example line 3 0 VARIABLE 'ALOHA
+                example line 4 : ALOHA   'ALOHA @ CFA EXECUTE ;
+            P 218 ' acts like FORTH '79
+                : SAY   [COMPILE] ' 'ALOHA ! ;
+                : COMING   ' HELLO 'ALOHA ! ;
+                : GOING   ' GOODBYE 'ALOHA ! ;
+            P 219 NUMBER behaves in a straightforward manner
+                fig has ' but it returns PFA in many instances you'll
+                need ' XXX CFA  immediate word
+                [COMPILE] see examples for fig  will allow ' to be
+                complied into definition
+            P 220 precidence bit = 80H
+                OK lets look at CLS in detail
+                    NFA ->  83 |  C    80H(smudge bit) + 3 char
+                    .        L | S+80H last letter +80H
+                    LFA ->  55 | BB    link to previous defn NFA
+                    CFA ->  11 | A6    : code field
+                    PFA ->  56 | A1    LIT paramater field
+                    .        C |  0    12 decimal CTRL L
+                    .       E0 | A2    EMIT paramater field
+                    .       47 | A4    ; PFA
+                    this is HEX dump of CLS in my system
+                    fig allows 31 char names
+            P 223 bottom: fig uses CFA not PFA for this purpose 
+            P 225ff IP is the 8085 BC register pair
+                EXIT is not a fig word
+                ; compiles ;S into dictionary
+                ;S is approximately his EXIT
+            P 230 use ;S (semis)
+                QUIT is OK
+            P 231 for FIG4TH.100 the lowest address is A100H (41216) and
+            highest E000 (57344)
+                his [H] is about C167 (49511)
+                the editor is loaded at this time but not the assembler
+            P 223 H is DP in fig
+            P 235 'S is SP@ in fig
+            P 236 input message buffer is known as TIB the terminal input
+            buffer
+            P 237 FIG4TH.100 does not yet R & W to the TDD so this is to
+            memory between E000 and EC00
+            P 240 >IN is IN   OFFSET should be always -8 in FIG4TH.100
+            P 245 no LOCATE
+            P 246 no EXIT use ;S
+            P 247 for ['] use '
+                H is DP  >IN is IN  'S is SP@
+
+
+        CHAPTER 10
+            P 253 at this time we're simulating disk in RAM
+            P 254 FIG4TH.100 has 2 block buffers
+            P 255 FLUSH is OK
+
+
+
+
+
+            P 256-257 be careful with BLOCK and BUFFER there are really
+            16 buffers, 8 per block buffer
+                there are 2 block buffers, each holds 128 characters (a
+                CP/M disk sector)
+                screen number * 8 = block number
+                EMPTY-BUFFERS actuall fills the buffers with 0
+                BLOCK there are 8 blocks in on of his
+                    8 blocks/screen  128 byte buffers
+                the first block of screen 1 won't load right 'cause fig
+                thinks its already there until they're all reassigned!
+            P 258 in FIG4TH  CTRL P will toggle the printer on and off
+            P 259 bottom: use ' for [']
+            P 261 214 B/BUF * BLOCK 64 TYPE
+                214 B/BUF * {line# 2 / +} BLOCK 64 TYPE
+                fig has no >TYPE not needed in single user implementation
+            P 262 Of course BUZZ won't work as is due to the difference
+            between Brodie's BOLCK and fig's.
+                But if we do it this way ....
+                : BUZZ   10 CHOOSE (which line of file)
+                    2 /MOD (2 lines/BLOCK)
+                    3 8 * + (screen 3 + addl blocks)
+                    BLOCK  (get it)
+                    SWAP 64 * + (remainder 0,1 is the line we need within
+                    the block.  So, we move that many characters into the
+                    block)
+                    +  (to get the column we want)
+                    20 -TRAILING TYPE ;  (type it out)
+                It works just fine.
+            P 265  This is a neat random number generator, keep it and
+            cherish it.
+            P 266  fig has no MOVE or <CMOVE
+            P 268  fig has no FILL but to fill 1k of the pad with blanks
+            we have
+                PAD 1024 BLANKS  neater isn't it?
+                KEY does not echo the character to the screen
+                BLOCKS could be done as above if needed
+            P 269  your editor has WIPE but not K
+                Brodie's #I is fig INSERT-BUF and #F is FIND-BUF
+                This K won't work
+            P 270  your CR is ASCII 13
+            P 271  fig has QUERY
+            P 272  H is DP
+            P 273  CREATE is a no-no but: 0 VARIABLE MY-NAME 40 ALLOT 
+            works as well
+            P 275  0 VARIABLE NAME 10 ALLOT etc.
+                variable already gave you 2 bytes
+                substitute CMOVE for MOVE adjust the count etc.
+            P 276  use IN rather than >IN
+            P 277  : PLUS   32 WORD HERE NUMBER DROP + ." = " . ;
+                better  : PLUS   S->D 32 WORD HERE NUMBER D+ ." = " D. ;
+                fig's WORD leaves the string at HERE + 1 with a length
+                byte at HERE (for TYPE)
+                    NUMBER converts to a double number
+            P 278-279  don't have >BINARY
+            P 280 use IN for >IN
+                WORD leaves nothing on the stack, the count is at HERE
+
+            P 281  -TEXT see footnote on P 282
+                the screen of auxilary words that you loaded before the
+                EDITOR has (MATCH) which does about the same thing
+            P 283  see previous discussion of BLOCK
+            P 284  fig has no MOVE  >BINARY  or CONVERT  see previous
+            discussion of WORD
+            P 285  NUMBER  converts to double
+                no >TYPE or <CMOVE
+                -TEXT can be entered from P282
+                BLANKS not BLANK
+            
+        CHAPTER 11
+            P 291  CREATE just doesn't work this way, as we've seen
+                fig CREATE generates a header, the code field points to
+                the next address in memory and does not smudge the first
+                byte of the NFA
+                    This may well be what you want for a machine code
+                    defn but not what Brodie has in mind!
+                    You really must learn to use <BUILDS  DOES>.  But,
+                    you could redefine  : CREATE   <BUILDS DOES> ;  and
+                    this will emulate his CREATE.
+            MORE?  If you struggled along this far you don't need me
+            anymore!  BYE...
+            
+        David O. Rowell   CIS 70406,445  4/7/87
+

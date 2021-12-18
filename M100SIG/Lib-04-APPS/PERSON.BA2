@@ -1,0 +1,70 @@
+1   CLS:PRINT@88,"Interpersonal Checklist":PRINT@136,"Form VI ":PRINT@243,CHR$(171);" 1983 by Michael D. Nugent, Ph.D."
+5   LINE(5,5)-(235,58),1,B             :LINE(5,40)-(235,40):FORI=1TO64:READI$,L,A,D:NEXT:FORI=1TO8:READP:SOUNDP,10:NEXT
+10   OBJ$(1)="myself":OBJ$(2)="my partner":OBJ$(3)="my ideal for myself"
+15   OBJ$(4)="my ideal partner":OBJ$(5)="my father":OBJ$(6)="my mother":OBJ$(7)="someone else":FORW=1TO1000:NEXT
+20   CLS:PRINT:PRINTTAB(4);"(Press [ENTER] after each entry)":PRINT:PRINT:INPUT"Your FIRST name";N1$
+22   PRINT:INPUT"Your LAST name";N2$
+25   CLS:FORN=1TO7:L=N*40+13:PRINT@L,N;" - ";OBJ$(N);:NEXT:PRINT@0,"WHO WILL YOU DESCRIBE (1-6)";
+30   INPUTN:IFN=7THENPRINT@297,SPACE$(15);:PRINT@297,"";:INPUTOBJ$(7)ELSEIFN<1ORN>7THEN30
+100   AF=0:DO=0:PI=3.14159
+110   RESTORE:FORI=1TO64:READI$,L,A,D:CLS:PRINT@41,"I see ";OBJ$(N);" as being":PRINT" ";I$;"."
+115   PRINT@230,"T = TRUE":PRINT@270,"F = FALSE":R$=""
+120   PRINT@241,"";:INPUTR$:IFR$="T"ORR$="t"THENAF=AF+A:DO=DO+D:Q$=Q$+"X":ELSEIFR$<>"F"ANDR$<>"f"THEN120ELSEQ$=Q$+"O"
+130   NEXT:V=INT((SQR(AF^2+DO^2))/10+1):ANG=ATN(AF/(DO+.000001))*57.3:IFDO<0THENANG=ANG+180
+131   IFANG<=-67.5ORANG=>247.5THENTR$="HOSTILE"
+132   IFANG=>-67.5ANDANG<-22.5THENTR$="CRITICAL"
+133   IFANG=>-22.5ANDANG<22.5THENTR$="DOMINANT"
+134   IFANG=>22.5ANDANG<67.5THENTR$="NURTURANT"
+135   IFANG=>67.5ANDANG<112.5THENTR$="AFFILIATIVE"
+136   IFANG=>112.5ANDANG<157.5THENTR$="DEPENDENT"
+137   IFANG=>157.5ANDANG<202.5THENTR$="SUBMISSIVE"
+138   IFANG=>202.5ANDANG<247.5THENTR$="REBELLIOUS"
+500   CLS:PRINT@57,N1$+" "+N2$;:PRINT@97,DATE$:PRINT@177,CHR$(34);OBJ$(N);CHR$(34):PRINT@256,V;CHR$(8)+"/10 "+TR$
+510   RESTORE:FORI=1TO64:READI$,L,A,D:P$=MID$(Q$,I,1):IFP$="X"THENPRINT@L,CHR$(157);:NEXT:ELSENEXT
+515   PRINT@5," ";
+520   FORX=11TO65:PSET(X,31):NEXT:FORY=0TO63:PSET(38,Y):NEXT:LINE(11,0)-(65,63),1,B
+700   OPEN"ICDATA.DO"FORAPPENDAS1:PRINT#1,N1$;",";N2$;",";DATE$;",";OBJ$(N);",";Q$;",";V;",";TR$:CLOSE
+899   BEEP
+900   R$=INKEY$:IFR$<>"P"ANDR$<>"p"THEN900:ELSELCOPY:PRINTQ$:L=65:FORI=1TO16:PRINTCHR$(L)+"   ";:L=L+1:NEXT:GOTO900
+901   DATA able to give orders,126,0,1,someone who likes responsibility,86,0,3.33
+902   DATA dominating,46,0,6.67,dictatorial,6,0,9
+903   DATA self-respecting,85,-.38,.92,self-confident,45,-1.14,2.76
+904   DATA proud and self-satisfied,44,-2.66,6.44,egotistical and conceited,4,-3.42,8.28
+905   DATA able to take care of self,125,-.71,.71,someone who likes to compete with       others,84,-2.13,2.13
+906   DATA shrewd and calculating,43,-4.97,4.97,cold and unfeeling,2,-6.39,6.39
+907   DATA able to be strict if necessary,124,-.92,.38,firm but just,123,-2.76,1.14
+908   DATA sarcastic,83,-6.44,2.66,cruel and unkind,82,-8.28,3.42
+909   DATA able to be frank and honest,5,-1,0,straightforward and direct,5,-3.33,0
+910   DATA outspoken,5,-6.67,0,hard-hearted,5,-9,0
+911   DATA able to complain if necessary,164,-.92,-.38,resentful when bossed,163,-2.76,-1.14
+912   DATA a complainer,203,-6.44,-2.66,rebellious against everything,202,-8.28,-3.42
+913   DATA able to doubt others,165,-.71,-.71,touchy and easily hurt,204,-2.13,-2.13
+914   DATA stubborn,243,-4.97,-4.97,distrustful of everyone,282,-6.39,-6.39
+915   DATA able to criticize self,205,-.38,-.92,apologetic,245,-1.14,-2.76
+916   DATA shy,244,-2.66,-6.44,always ashamed of self,284,-3.42,-8.28
+917   DATA able to be obedient,166,0,-1,someone who usually gives in,206,0,-3.33
+918   DATA someone who obeys too willingly,246,0,-6.67,spineless,286,0,-9
+919   DATA grateful,207,.38,-.92,very respectful of authority,247,1.14,-2.76
+920   DATA someone who hardly ever talks back,248,2.66,-6.44,a clinging vine,288,3.42,-8.28
+921   DATA appreciative,167,.71,-.71,trusting and eager to please,208,2.13,-2.13
+922   DATA easily fooled,249,4.97,-4.97,someone who will believe anyone,290,6.39,-6.39
+923   DATA cooperative,168,.92,-.38,eager to get along with others,169,2.76,-1.14
+924   DATA too easily influenced by friends,209,6.44,-2.66,someone who agrees with everyone,210,8.28,-3.42
+925   DATA friendly,5,1,0,affectionate and understanding,5,3.33,0
+926   DATA someone who likes everybody,5,6.67,0,someone who loves everyone,5,9,0
+927   DATA considerate,128,.92,.38,someone who encourages others,129,2.76,1.14
+928   DATA someone who forgives everything,89,6.44,2.66,someone who tries to comfort everyone,90,8.28,3.42
+929   DATA helpful,127,.71,.71,someone who gives freely of self,88,2.13,2.13
+930   DATA generous to a fault,49,4.97,4.97,someone who spoils people with          kindness,10,6.39,6.39
+931   DATA well thought of,87,.38,.92,respected by others,47,1.14,2.76
+932   DATA someone who tries to be too successful,48,2.66,6.44,someone who expects everyone to admire  him/her,8,3.42,8.28
+940   DATA 8368,7456,6642,6269,1,8368,1,12538
+950   REM - PERSON.BA is an unvalidated version of the Interpersonal Checklist Form VI (also by M. Nugent).
+960   REM - Forms V and VI are major revisions of Form IV which was developed at Kaiser Permanente Hospital in the
+970   REM - mid-1950's by Drs. Leary, Coffey, Suzcek, and LaForge.
+980   REM - Users interested in reading more about this model should find Interpersonal Diagnosis of
+990   REM - Personality by Leary (Ronald Press, 1957).
+
+1000   REM - When uploading this program to the SIG, CIS put in many blank 
+1001   REM - spaces that are not in my copy.  If they cause problems, complain
+1002   REM - to the SIG sysops and drop me a line via EMAIL.

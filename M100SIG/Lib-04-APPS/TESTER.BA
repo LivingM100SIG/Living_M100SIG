@@ -1,0 +1,106 @@
+0 ' Plaudits: Lynn C. Sherman, Walter        Baldassaro, Tony Anderson
+1 ' On opt #6 (Matching Test) answers       are always in the same order
+2 ' SIGers, prog. could use a different     randomizing routine to avoid this
+3 ' Please u/l patch - I used Tony          Andersons' "Passw.GEN"  DL1
+4 ' for rnd routine (without DATA           statements)
+5 CLS:CLEAR2000
+10 BEEP:PRINT@41,"IS PRINTER ON!
+20 PRINT@121,"Press any key to begin...
+30 A$=INKEY$:IFA$=""THEN30
+40 CLS:PRINT
+50 INPUT" 1 PRINT TEST HEADING                    2 MULTIPLE CHOICE                       3 FILL IN THE BLANK                     4 ANSWER QUESTIONS                      5 TRUE / FALSE                          6 MATCHING";N
+60 IFN<1ORN>6THEN50
+70 ONNGOSUB1000,2000,3000,4000,5000,6000
+1000 CLS:PRINT:INPUT" CLASS OR SUBJECT";C$
+1010 INPUT" TEST TITLE";T$
+1020 INPUT" DATE (00/00/00)";D$
+1030 LPRINT,TAB(40)"    "+C$;"    "+T$;"    "+D$:LPRINT
+1060 LPRINT:LPRINT"NAME _____________________________________":LPRINT
+1070 CLS:GOTO50
+2000 LPRINT:LPRINT"Circle the best & most correct answer for each statement...
+2010 J=0
+2020 CLS:PRINT"           MULTIPLE CHOICE
+2030 PRINT"    Type statement or question. When    finished, selections will appear A-B-C-D    Then type in your selections.       When finished - statements & selections   PRESS <SHFT/BRK> & <RUN> for Menu            ->->-> hit any key <-<-<-
+2035 A$=INKEY$:IFA$=""THEN2035
+2040 CLS:PRINT:PRINT"This section will accept two lines.     TAB or Space to ^ to finish question     *** important *** for formatting
+2045 PRINT"                ^"
+2050 LINEINPUTC$
+2060 CLS
+2070 J1=1:J=J1+J
+2080 LPRINT:LPRINTJ;TAB(5)C$:LPRINT
+2090 C2$="A. ":C3$="B. ":C4$="C. ":C5$="D. "
+2100 LINEINPUT"A. ";A$:LINEINPUT"B. ";B$:LINEINPUT"C. ";C$:LINEINPUT"D. ";D$
+2110 LPRINTTAB(10)C2$+A$:LPRINTTAB(10) C3$+B$:LPRINTTAB(10)C4$+C$:LPRINTTAB(10)C5$+D$
+2120 GOTO2040
+3000 CLS:PRINT@11,"FILL IN THE BLANKS
+3010 LPRINT"Fill in the blanks of each of these statements":LPRINT
+3020 PRINT"This section will accept two lines plus  characters to the ^. If more space is     needed, <ENTER> to continue question
+3030 PRINT" Statement or Question:                        ^"
+3040 LINEINPUTF$
+3050 J1=1:J=J1+J
+3060 LPRINTJ;F$:LPRINT
+3070 INPUT"Press 1 for space if needed";A:ONAGOSUB3090
+3080 GOTO3020
+3090 LINEINPUTAA$
+3100 LPRINTTAB(3)AA$
+3110 GOTO3020
+4000 CLS:PRINT@13,"ANSWER QUESTIONS"
+4010 LPRINT"Answer questions on lines provided":LPRINT
+4020  PRINT"This section will accept two lines plus  characters to the ^. If more space is     needed, <ENTER> to continue question
+4030 PRINT" Question:                                      ^"
+4040 LINEINPUTY$
+4050 YY$="________________________________________________________________________________"
+4060 J1=1:J=J1+J
+4070 LPRINTJ;Y$:LPRINT
+4080 INPUT" Press 1 for space if needed";A:ONAGOSUB4100
+4090 GOTO4150
+4100 LINEINPUTAA$
+4110 LPRINTTAB(3)AA$
+4150 INPUT" How many lines 1-2-3-4 ";H
+4160 ONHGOSUB4200,4300,4400,4500
+4200 LPRINTYY$:LPRINT
+4210 GOTO4020
+4300 LPRINTYY$:LPRINT:LPRINTYY$:LPRINT
+4310 GOTO4020
+4400 LPRINTYY$:LPRINT:LPRINTYY$:LPRINT:LPRINTYY$:LPRINT
+4500 LPRINTYY$:LPRINT:LPRINTYY$:LPRINT:LPRINTYY$:LPRINT:LPRINTYY$:LPRINT
+4510 GOTO4020
+4999 END
+5000 LPRINT"Circle TRUE if the statement is true. Circle FALSE if the statement is false":LPRINT
+5010 CLS
+5020 J=0
+5030 PRINT@8,"TRUE / FALSE QUESTIONS
+5040 PRINT" This section will print 48 characters   per line. TAB or space to the                  ^ to continue
+5050 PRINT"                                                ^"
+5060 LINEINPUTA$
+5070 B$="TRUE - FALSE  "
+5080 Q$="  "
+5090 J1=1:J=J1+J
+5110 LPRINTJ;B$;Q$;A$:LPRINT
+5120 CLS:GOTO5030
+5130 END
+6000 LPRINT"Match column A with column B in space provided":LPRINT
+6005 CLEAR2000
+6010 CLS:PRINT@14,"MATCHING TEST
+6020 PRINT"This section will randomize 10 items in    Column A with 10 items in Column B
+6030 PRINT"Column A can be up to the ^ on 1 line.  Column B can be up to the ^ on the 2nd  line
+6060 FORX=1TO10
+6065 PRINT"                            ^"
+6070 LINEINPUT"A- ";G$(X)
+6075 PRINT"           ^"
+6080 LINEINPUT"B- ";H$(X)
+6090 NEXTX
+6095 'CLS:PRINT@180,"WORKING
+6100 FORY=1TO10
+6120 X=INT(RND(1)*10)+1
+6130 IFA$(X)<>""THEN6120
+6135 A$(X)=G$(Y)
+6140 X=INT(RND(1)*10+1)
+6150 IFB$(X)<>""THEN6140
+6160 B$(X)=H$(Y)
+6170 NEXTY
+6200 FORX=1TO10
+6205 L2$="  ___ "
+6210 LPRINTL2$;A$(X)TAB(30);X;"- ";B$(X)
+6220 LPRINT
+6230 NEXTX

@@ -1,0 +1,162 @@
+                NODFND.CO(c) 1990, R.Hess   All Rights Reserved
+                -----------------------------------------------
+
+        NODFND.CO is a 2264 byte, machine language, RAMPAC text file utility
+which gives you the ability to quickly and easily perform a variety of search
+and print functions on RAMPAC ".DO" files without moving the files into RAM. 
+NODFND takes about 15 seconds to search 100k of 60 different RAMPACK .DO
+files, examining each file line by line for a string.  Its report response
+time is primarily limited by printer or LCD display speed.
+        Neither the Node ROM nor RAMDSK.CO(c) is necessary for successful
+operation but NODFND does require N-READ.CO(c) and XOS-C.CO(c), both written
+by Paul Globman.
+
+                        SET-UP
+                        ------
+        The "HEX" code for NODFND.CO is contained in NODFND.HEX (DL10). Down-
+load it into a separate Text file.  (If you have a checksum program I strongly
+suggest using it here to confirm your download accuracy before proceeding.)
+Then use James Yi's HXFER.CO (DL10) to convert the .DO file into the
+machine language program NODFND.CO: create NODFND.CO at the "default" address
+by pressing <ENTER> at the HXFER address prompt.  Save a back-up copy for
+future use.
+        NODFND operates in HIMEM between memory addresses 58840 and 61103 and
+executes at 58840.  It can be run with one of the simple BASIC loaders shown
+below or with a loader created using Paul Globman's MAKLDR.BA (see MAKLDR
+note.)  NODFND expects XOS-C to be correctly installed in all three banks and
+N-READ.CO to be in Bank 3.  If N-READ.CO is not in Bank 3, NODFND BEEPs and
+returns to the T200 main menu.
+     >>>  DO NOT ATTEMPT TO RUN NODFND.CO WITHOUT XOS-C INSTALLED!!  <<<
+     
+
+                        OPERATION
+                        ---------
+        The NODFND main menu provides a brief reminder of each function.  The
+function keys (FK) operate whenever the FK labels display.  NODFND operations
+examine ONLY files with a .DO extension with the exception of "Files" which
+includes .DP, .DW and .DC files.
+        The string search functions will accept any combination of 20
+characters or less and are NOT case sensitive: searching for "cat" will report
+"cat", "Cat", "CAT", and any other string which contains the data entered:
+e.g. "indicate".  (If you only wanted to report strings which contain the word
+"cat", for example, then you could preceed the search string with a space:
+" cat".)  NODFND reports the whole string in which a search string occurs but
+it will NOT report a match if potential matches overlap the 255 byte points in
+any lines of data longer than 255 bytes. (e.g. unformatted files)
+         <ENTER> alone at any input prompt will return to the previous prompt
+and pressing the <ESC> key while any sub-routine is running will abort the
+function and redisplay the FK label line.  If any routine cleared the top
+line, the NODFND main menu redisplays.
+        If the <SHIFT> key is pressed along with one of the first four
+function keys, then NODFND will send the function results to a connected
+printer.  The lprint routines print spaces in place of any character whose
+ASCII value exceeds 126.  The <PRINT> function key operates in the usual
+manner at any screen.
+
+
+                      - Function keys -
+
+        Files:  lists RAMPAC .Dx files in alphabetical order: if you have more
+than 60 files then the display will pause and wait for any key press before
+continuing.  When all files have displayed, the FK label line redisplays.  The
+lprint option prints extensionless filenames 10 to a line, 70 columns wide.
+
+        Scan:  searches ALL files for a given string and displays the NAMES of
+any files containing matches.  If more than 60 files contain a match then the
+display will pause for key input before continuing.  When all match files are
+shown, "done!" will display and a tone will sound with the search string data
+displayed: any key press returns to the FK label line.  The lprint option
+prints the filenames AND the match strings; each preceeded with a "-".
+
+        Find:  searches ONE file for matches and displays each string
+containing the match.  The display pauses with each full screen and waits for
+any key press.  If the screen pauses with only a partial match string shown
+then the first display on the "next" screen will be the entire match string. 
+	If your file contains lines longer than 254 bytes, then NODFND
+examines and reports these lines as separate 255 byte "segments" and only the
+first 254 bytes will display of any matched segment.  Each match display is
+preceeded by a "-".  When "done!", any key press will return you to the
+"String:" prompt and you can re-search the same file if desired.  The
+lprint option prints the filename and strings.
+
+        Read:  scrolls a file for viewing.  The screen will display the
+filename, size and the first 14 file lines, then pause for any key press.
+Subsequent key presses will scroll or pause the rest of the file until the
+entire file has displayed.  Any key press will then re-scroll the file.  Use
+<ESC> to exit the Read function at any time.  The lprint option prints the
+file as found with no header or size information.
+
+        Help:  clears the screen and restores the function descriptions.
+
+        Fmfd:  sends a Chr$(12), "Form Feed" to the printer.  (This is useful
+when printing files or different lists.)
+
+        Rdsk:  will cross-bank load and run RAMDSK.CO(c) from Bank 3.  If
+RAMDSK.CO is not in Bank 3 then NODFND beeps and returns to the T200 main
+menu.
+
+        Menu:  returns to the T200 main menu.
+
+
+                        ERRORS
+                        ------
+        If N-READ.CO is not in Bank 3 then NODFND will BEEP and return to the
+T200 menu: likewise with RAMDSK.CO.  If you enter a bad or non-existent file
+name then the FK labels redisplay.  If a printer is not connected and
+"on-line", a BEEP and "No printer!" message displays for 2 seconds before
+returning to the FK labels.
+        It is possible that your printer might go "off-line" during an lprint
+function thereby preventing NODFND from continuing or exiting to the T200
+menu.  If the keys don't operate during or after using the lprint option,
+check to ensure that the printer is on-line and loaded with paper.  NODFND
+is written to send a Carriage Return after any lprint routine ends and
+expects the printer to always remain on-line during lprint functions.
+
+
+                	Loader Programs
+                	---------------
+        Here are two simple BASIC loaders to run NODFND.  Copy them into BASIC
+and run them as needed: the cross-bank loader can, itself, be run cross-bank
+using the XOS-C "CMD>" key.
+
+         0 REM:same bank
+        10 CLEAR0,58840:RUNM"NODFND"
+
+         0 REM:cross-load from Bank 3 with XOS-C installed
+        10 CLEAR0,58840:CALL41179:X$="3:NODFND.CO"
+        20 CALL63600,8,VARPTR(X$)
+        30 IF PEEK(61302) THEN END ELSE CALL58840
+
+
+                MAKLDR.BA operation
+                -------------------
+        Paul Globman provides a universal, self-clearing, cross-bank loader
+program called MAKLDR.BA(c) to registered XOS-C users.  This invaluable
+program permits XOS-C users of programs which require HIMEM space (like
+NODFND.CO) to create individual 81 byte .CO loader programs which
+automatically clear the correct memory space for ML programs AND cause the
+programs to reset HIMEM=MAXRAM at exit!
+        If NODFND.CO is run cross-bank from Bank 3 using one of these loader
+programs then you'll never have to worry about setting HIMEM for it.  AND,
+whether you exit to the T200 main menu using NODFND's "Menu" key OR you exit
+to the menu using RAMDSK's "Menu" key, HIMEM will be cleared of EITHER program
+and reset to 61104 (MAXRAM)!
+	If you use a "MAKLDR" loader to run NODFND, then you can run RAMDSK.CO
+from the NODFND menu and you wouldn't need a separate loader for RAMDSK.
+
+                        --- Acknowledgments ---
+        Paul Globman wrote XOS-C.CO, N-READ.CO, and RAMDSK.CO.  He also gave
+me the benefit of his machine language expertise in helping me make NODFND
+do want I wanted, as well as offering encouragment and much sound advice about
+program operation, during his many hours of Beta testing.
+                        -----------------------
+
+
+        I hope you find as many uses for NODFND.CO as I have.  Please send
+        comments and suggestions to me on the M100 SIG or CompuServe E-Mail.
+
+          R.Hess
+          12/10/90
+          Omaha, Ne
+
+        CompuServe User ID: 73267,552

@@ -1,0 +1,51 @@
+	How to write/read sector(s) to/from the Tandy DVI.
+
+RWSCTR	E3C0	This routine will handle all handshaking and data transfer
+		required to transfer data sector-by-sector between the
+		Model 100 and the Tandy DVI.
+
+Entry conditions:  Device number (00 or 01) should be at $FC89
+	Flags:		Carry set - read
+			Carry clear - write
+	Registers:	A = number of sectors
+			B = track number (00 - 27)
+			C = starting sector number (01-12)
+			DE = start RAM address
+				- read - destination for data
+				- write - start of data to write
+
+Exit conditions:   Zero flag set - data transfer OK
+		   Carry flag set - error byte in A (except 02)
+		Error bytes: 02 - Drive Error (exits to BASIC "Illegal
+					Direct Error")
+			     03 - Write-protected
+			     04 - R/W Error
+			     06 - Undefined Error
+
+Sample calls--
+
+Read a Sector...
+
+RWSCTR	EQU	0E3C0H
+DVNMBR	EQU	0FC89H	;Device number stash
+	MVI	B,2	;Track number = 02
+	MVI	C,1	;Sector number = 01
+	LXI	D,0FCC0H ;Destination address (prev screen memory)
+	MVI	A,0	;Drive 0
+	STA	DVNMBR
+	MVI	A,01	;# of sectors = 1
+	ANA	A	;Clear Carry flag.. read a sector
+	CALL	RWSCTR
+	JC	ERROR	;Add your own error-handling routine
+	RET
+
+Write a sector... Same as above, but add STC instruction after ANA A.
+
+	This should enable you to read and write sectors to the DVI from
+machine language.  If you have any problems or suggestions, leave me a
+message or MAIL (preferably MAIL).
+ 
+	Dave Newman [76656,2526]
+	DaMN Software, Uninc.
+	946 South 12th
+	Lincoln, NE 68508

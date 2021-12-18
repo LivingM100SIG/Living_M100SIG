@@ -1,0 +1,181 @@
+                    CRAPPS.100 by Don Zeikel [CIS 75775,1430, Delphi ZEIKEL]
+
+            Copyright 1986, all rights reserved
+
+CRAPPS.100 is a full-featured Crap game for your Model 100 or 102, including a 
+machine-language crap table that your bets are placed on.  It supports almost 
+all casino bets, including Pass, Don't Pass, Come, Don't Come, Hard Ways, and 
+the other Proposition and Place bets.
+
+If you are not familiar with the rules of craps, don't worry.  These 
+instructions, while not intended to be a detailed rule book for the game, will 
+get you started, and you will find that you can learn the rest as you go along.
+  All of the bets are driven by menus, and are very easy to follow.
+
+Additionally, if you are new to the Model 100, and have not done a lot of 
+cassette loading or saving of machine language before, these instructions will 
+tell you everything you need to do.
+
+                            GETTING STARTED
+
+First, a warning:  These programs use machine-language code, which might result
+in a cold start on your 100.  Therefore, before running any of them, SAVE THEM 
+TO CASSETTE OR DISK.  Also save any other files you have in Ram that you want 
+to retain.
+
+There are two files required to play CRAPPS.100.  They are:  CRAPPS.100 and 
+CRAPPS.QIK.
+
+
+CRAPPS.100 file
+
+This is the BASIC program you will run every time you play the game.  Please 
+note that in the form you download it, it is very long!  You will need almost 
+all of your 32K of Ram cleared to transfer it from a .DO file to a .BA file.  
+If you do not have enough room, SAVE the .DO file to cassette or disk, then 
+kill it from Ram and LOAD it into BASIC directly from the cassette or disk.
+
+To do this with cassette, first delete any extraneous garbage from the 
+beginning and end of the file, then save it to cassette as you would any .DO 
+file.  Then, go into BASIC and type
+KILL CRAPPS.DO
+Rewind your cassette, set it up for playing, and type
+CLOAD "CRAPPS.DO" [ENTER]
+and, at the OK prompt, type
+SAVE "CRAPPS.BA
+
+CRAPPS.QIK file
+
+CRAPPS.QIK creates the machine language file CRAPS!.CO, necessary for running 
+CRAPPS.100.  It is a major improvement in the graphics of this game, as the 
+playing table no longer dissappears, as it did in earlier versions.
+
+To create CRAPS!.CO, you must use RLCLDR.BA from DL7.
+
+First, name the .DO file containing CRAPPS.QIK "CRAPS!.DO".  CRAPS! has to be 
+the name of the final .CO file, and this is the easiest place to name it.
+
+Before running RLCLDR, you must clear memory.  If you have no other machine 
+language programs in high memory, enter
+
+CLEAR 256, 60991.
+
+Otherwise, use a lower address instead of 60991.
+
+Then, run RLCLDR.  Answer the first prompt with 1 (for LOAD).  When it asks for
+a .DO file, enter CRAPS!.  When it asks for start address, enter the memory you
+cleared earlier (just the last 5 digit number, not the 256).  The program will 
+finish the job itself, and when it tells you it is DONE, you are almost ready 
+to play!
+
+If you would like to save CRAPS!.CO as a .CO file on cassette, go into BASIC 
+and enter LOADM "CRAPS!" , and write down the three numbers that appear on the 
+screen (Top, End, Exe).  Ready your recorder, and enter 
+CSAVEM"CRAPS!.CO",xxxxx,xxxxx,xxxxx
+where the xxxxx's are the three numbers you copied.
+
+You can check your CSAVEM by rewinding the tape and entering: CLOADM?
+
+The next time you want to load the program from cassette, the command will be:
+
+CLOADM "CRAPS!"
+
+After it is loaded, immediately type:
+
+SAVEM "CRAPS!",xxxxx,xxxxx,xxxxx
+
+using the numbers as above.
+
+ EDIT line 263 of CRAPPS.100, changing 58267 to whatever start address you used
+above.  The number appears twice on that line; change it in BOTH places.
+
+If you are using an address lower than 60991 to protect some higher-memory 
+program, you may also EDIT line 45; change MAXRAM to
+
+HIMEM+1968
+
+
+
+                      HOW TO PLAY
+
+Now that you have gone through the above, you should have CRAPPS.BA and 
+CRAPS!.CO in Ram.  You are ready to enjoy the game.
+
+Run CRAPPS.BA.  The first screen gives you two optional ways of running the 
+game. You can use one, both, or neither.
+
+THE OPTIONS:
+
+Manual Dice:  The program is designed to run with the built-in computer dice, 
+and it is EXTREMELY unlikely that any two games would ever be alike.  However, 
+if you want to use your own REAL dice, type M.  When you are prompted to roll 
+the dice during the game, roll your own and enter the two numbers.  The 
+computer dice will still roll, but the numbers they roll will be the ones you 
+entered.
+
+Manual Screen:  The program will show messages about roll results, etc., for a 
+few moments each and then move on to the next message automatically.  If you 
+would like to play at a different pace, you can control the screen manually 
+throughout the game by entering S at this opening prompt.  Each message will 
+have [ENTER] at the bottom, and will not move on until you press ENTER.  This 
+might be of particular interest to beginners of the game, who want to follow 
+the betting a little more slowly.
+
+
+PLAYING:
+
+All bets are menu-driven, with the letter you must push in reverse video.  
+Pressing ENTER will move you up to the previous menu. YOU MUST BE AT THE TOP 
+MENU, AND HAVE MADE A PASS OR DON'T PASS BET, TO ROLL.
+
+You will be able to watch the chips laid on the table as you make each bet.  
+The minimum bet is $5 and you are playing with $1 chips to facilitate odds 
+betting.  You will be prompted as to minimum bets and any other requirements as
+you play (for example, you must bet $6 or a multiple of $6 if you want to bet 
+on Place 8).
+
+The main bet of Craps is Pass (or Don't Pass).  All other bets are side bets 
+and help contribute to the excitement of the game.
+
+On the come-out roll (the first roll of each series), a natural (7 or 11) wins,
+craps (2,3, or 12) loses, and any other number becomes a "point."  If you roll 
+the point again before rolling a 7, you win.  If not, you lose. The point will 
+be highlighted in negative video.  "Don't Pass" is just the opposite, except 
+that 12 is a standoff, not a win.
+You will see how many rolls you have made, as well as your wins or losses, 
+prior to each come-out roll.
+
+There are three types of side bets:  Come (and Don't Come), Place, and 
+Proposition
+
+Come bets are like Pass bets, except they are made during other than come-out 
+rolls.  Place bets stay on the board, paying off, until a 7 is rolled.  
+Proposition bets are good for one roll only, except for Hard 4, 6, 8, and 10, 
+which stay until a win or loss.
+
+Odds other than 2-1 are posted where space on the screen allows.  Some other 
+odds:  on a Craps/11 win, half the bet is lost and the other is paid at the 
+Craps (or 11) odds.  On the Field, 2 or 12 pay 3 to 1.
+
+TO END: Press [ESC] key at any menu prompt.  You will see your final win/lose 
+results, and then go to the menu.  It also returns to you the memory used by 
+CRAPS!.CO.
+
+
+PROGRAM CREDITS:
+
+Three utilites were essential in creating this program:
+
+CRAPS!.CO was written in BASIC and changed to machine language with SAVLCD (in 
+DL7) by Neil Wick [71056,613].  The program was converted to uploadable format 
+with Neil's RLCLDR.
+
+The many circles (in both the BASIC and .CO programs) are generated by 
+CIRCLE.BAS by Jay Holovacs [74756,413].
+
+Thanks also to Denny Thomas [76703,444] who was instrumental in improvements in
+earlier versions of the program, and to Mike Weiblen [72506,2072], whose TCOMP 
+was used in earlier versions of the game.
+I hope you win!  Your comments will be appreciated.
+
+

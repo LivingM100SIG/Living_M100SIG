@@ -1,0 +1,246 @@
+              LCDIO.200
+    James Yi/73327,1653/Oct. 2, 1986
+
+
+How LCD unit works on 200:
+
+It has 16 controllable registers.
+These are accessed through IO ports.
+To change them, do this: 
+OUT 255,r:OUT 254,x
+r stands for register # and x stands for a numeric value 0-255
+The register to be accessed is sent to port 255 and all numerical values are
+transferred through port 254.
+If x should be greater than 255, the LSB(least significant byte) is assigned to
+r, then MSB(most significant byte) is assigned to r+1.
+There is only one readable register which is r13, through which graphics
+data is read.  It has the format:
+OUT 255,13:B = INP(254):B = INP(254):'first INP() is ignored by LCD
+
+
+Explanation of each register:
+
+  r0 - enable or disable screen.  Any value less than 63 indicates screen off,
+value 63 indicates screen on.
+
+  r1 - determine how many pixels wide is each character.
+    0,1 = 6 bits
+    2 = 7 bits
+    3 = 8 bits
+
+  r2 - vary the format of graphics data.  Each byte of graphics data are 
+displayed one after another, 40 bytes in one line.  By changing this register, 
+the order in which they are displayed can be changed.
+    18 = double height
+    38 = normal display
+    58 = half height
+    any other = strange display
+
+  r3 - darkness of the pixels.  Any other values other than 63 distorts the 
+screen.  To not see the distortion, screen can be disabled with r0, then 
+darkness can be varied.
+    63 = normal
+    <63 = lighter
+    >63 = darker
+
+These are unknown:
+  r4 - ?
+  r5 - ?
+  r6 - ?
+  r7 - ?
+
+  r8,r9 - where the first byte of the screen display is.  This register points
+to the first byte displayed on the screen.  Address can range from 0 to 
+8191.  LSB of value is sent to r8, MSB to r9.  See SCROLL.200 in DL4 for 
+demonstration using this.
+
+  r10,r11 - Points to the address of a byte which is to be written to or read 
+from in the display field.  Address range is 0 to 8191.  LSB to r10, MSB to
+r11.
+
+  r12 - Write mode.  After this register has been accessed, the value placed at
+port 254 is written to LCD.  The byte is written to the address pointed by r10 
+and r11.  The address pointer is automatically incremented by one after a
+ write, so if the next byte is to be written is right next to it, address 
+need not be defined again.
+
+  r13 - Read mode.  After this register has been acessed, the byte of graphics 
+data that the r10 and r11 points to is placed at port 254.  After it is read, 
+the address is incremented by one, and points to the next byte.  The data that 
+is read right after the address is redefined by r10 and r11 has to be 
+ignored(a delay of 3 NOP instructions has to follow it if done in machine 
+language), and the real data is fetched by second read.  After that the rest of 
+data can be read in successive order without delays or null inputs.
+  Format is: OUT 255,13:B = INP(254):B = INP(254):'B=byte
+
+  r14 - Position of the bit to be set to 0.  Manipulates only a single bit of a
+byte on the screen.  Other bits are unaffected.  Range 0-7
+
+  r15 - Does same thing r14 does, except that it sets a bit to 1
+
+
+Demonstrations:
+
+Using r0:
+5 'r0
+10 OUT255,0
+20 OUT254,0
+30 FORL=0TO15
+40 PRINTSTRING$(40,239);
+50 NEXT
+80 FORL=0TO6
+90 OUT255,0:OUT254,0
+100 FORW=0TO200:NEXT
+110 OUT255,0:OUT254,63
+115 FORW=0TO200:NEXT
+120 NEXT
+
+
+Using r1:
+
+10 'r1
+20 FORL=1TO3
+25 PRINT"The characters are now"L+5:PRINT"bits wide.":print
+30 OUT255,1:OUT254,L
+35 FORW=0TO1000:NEXT
+40 NEXT
+45 PRINT"Now back to 6 bits wide characters"
+50 OUT255,1:OUT254,0
+
+
+Using r2:
+
+10 'r2
+15 PRINT"Press any key to stop.":FORW=0TO700:NEXT
+20 OUT255,2:OUT254,18
+30 C$="":FORL=0TO19
+40 C$=C$+CHR$(RND(1)*224+32)
+50 NEXT
+60 PRINTC$;TAB(20);C$;:'tab(20) because screen is split in half and the parts are masked over each other.
+70 IFINKEY$=""THEN30
+80 OUT255,2:OUT254,38
+
+
+Using r3:
+
+10 'r3
+15 print"Press any key to stop."
+20 out255,0:out254,0
+30 forl=0to127
+40 out255,3:out254,l
+50 next
+60 forl=127to0step-1
+70 out255,3:out254,l
+80 next
+90 ifinkey$=""then30
+100 out255,3:out254,63:out255,0:out254,63
+
+
+Using r8,r9: See SCROLL.200, DL4
+
+
+Using r10,r11,r12,r13:
+
+10 'r10-13
+15 PRINT@0,"Inverting screen.  Press ^C to end."
+20 L=PEEK(65196):M=PEEK(65197):'These memory locations contain where first byte on the screen is.
+25 dimd(319)
+30 A=L:B=M
+40 FORC=0TO5119
+45 GOSUB100:OUT255,13:D=INP(254):'request input
+50 FORC2=0TO319:D(C2)=INP(254):NEXT:'read 320 byte(1 line of text(8 lines)) at a time
+60 GOSUB100:OUT255,12:'request output
+65 FORC2=0TO319:OUT254,D(C2)XOR(255):NEXT:'Invert each byte and write over the old information
+70 A=A+64:IFA>255THENA=A-256:B=B+1:'Locate the next 8 lines to be inverted
+75 B=B+1:IFB>31THENB=B-32
+80 NEXT:end
+100 OUT255,10:OUT254,A:OUT255,11:OUT254,B:'Point to this address
+110 RETURN
+
+Line 60-65 can be changed to output to a printer for a graphics screen dump
+
+The above is very slow and its purpose was to demonstrate how each register 
+works.  This machine language version will do the same thing with a blink of 
+an eye:
+
+10clear74,61030
+20forl=61030TO61103
+30readb:pokel,b
+40next
+50savem"invert",61030,61103,61030
+55print"Press any key to end."
+60runm"invert"
+70ifinkey$=""then60
+80 DATA42,172,254,1,0,20,17,48,250,62,10,211,255,125,211,254,62,11,211,255,124
+90 DATA211,254,62,13,211,255,219,254,0,0,0,219,254,18,28,13,194,134,238,62,10
+100 DATA211,255,125,211,254,62,11,211,255,124,211,254,62,12,211,255,26,238,255
+110 DATA211,254,28,13,194,160,238,36,5,194,125,238,201
+
+The next program will fill all the bytes on the screen with a certain value.
+Value 0 does same thing that CLS does:
+
+10clear37,61067
+20forl=61067TO61103
+30readb:pokel,b
+40next
+50savem"fill",61067,61103,61067
+60input"What value (0-63)";v
+70call61067,V
+75goto60
+80 DATA95,42,172,254,1,0,20,123,10,211,255,125,211,254,62,11,211,255,124,211,254
+90 DATA62,12,211,255,123,211,254,13,194,165,238,5,194,165,238,201
+
+
+Using r14,15:
+
+10 'r14,15
+15 out255,1:out254,3
+20 cls
+25 print@200,"Watch the top left corner."
+30 print@400,"Set or Reset a bit(Q/q to end)":PRINT"?";
+40 K$=INKEY$:IFK$=""THEN40ELSEIFK$="S"ORK$="s"THENP=15ELSEIFK$="q"ORK$="Q"THEN100ELSEP=14
+50 IFP=15THENPRINT"Set"ELSEPRINT"Reset"
+55 INPUT"Which bit(0-7)";V
+60 OUT255,10:OUT254,PEEK(65196):OUT255,11:OUT254,PEEK(65197):'Locate top left corner
+70 OUT255,P:OUT254,V
+80 PRINT@440,"      ":GOTO30
+100 OUT255,1:OUT254,0
+
+
+How a character is displayed:
+
+  A single character consists of 8 bytes stacked on top of each other.
+
+01234567  
+
+00100000  0
+01010000  1           Eight
+10001000  2           rows
+10001000  3           of
+11111000  4           bytes
+10001000  5           form
+10001000  6           a
+10001000  7           character.
+
+The letter formed is "A".  To draw it on the screen, each byte, starting from 
+the first byte in row 0, is sent to LCD one byte per line.  Since a line 
+consists of 40 bytes, the address of the next byte has to be incremented by 40.
+So if the first byte is in address 0, 2nd byte is in address 40, 3rd in 80, 
+and so on.
+  The next character to be drawn has to relocate its address on the screen so 
+that its first byte is right next to the first byte of the previous character, 
+else the character would be displayed right underneath the previous one, not 
+side by side.
+
+
+Internal organization:
+
+  The total number of bytes in the LCD graphics field is 8192.  The total 
+number that can be displayed at one time is 5120.  r8 and r9 are used to 
+determine which 5120 portion of 8192 bytes are displayed.
+  All bytes are displayed one after another, line by line, each line 
+consisting of 40 bytes.  There are 204.8 lines all together, and 128 lines 
+displayed on the screen.
+
+           <END OF FILE>
+

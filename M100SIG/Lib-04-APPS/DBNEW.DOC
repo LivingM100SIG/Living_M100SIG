@@ -1,0 +1,390 @@
+
+
+
+******************* Database Management *******************
+
+     All Commerical rights reserved by Bob Ripley.  8140 Ammonette Drive, 
+Richmond Va. 23235, 804-272-1560 [75715,1510].  For personal use only.
+Commercial rights may be purchased by sending $10 to the above address for
+each machine in which this program is used.
+
+     In this program (Y/N) Means you should respond with a 'Y' or 'N'.
+
+**************************** SPECIFICATIONS **********************
+
+
+1) Sorts by any column either numerically of alphabetically.
+
+2) Searchs for up to 10 items on any column or columns.  Allows operators of or,
+and, <>(less than and greater than, and not.  The results of this search can be 
+sent to cassette, printer, disc, lcd, crt, and RS232.
+
+3) Prints data in columns, on address labels,  postcards or any size paper (with
+return address) or a single variable on a line.
+
+4) Allows math with a single operator between columns (+,-,*,/).  Also totals 
+each column.  The results of this are printed in an additional column.
+
+5) Allows additional printing options such as single field per line, skipping 
+lines between records, printing of only selected fields, multiple copies, and 
+batch sort and printing.
+
+6) Allows from 1 to 16 fields of data.
+
+
+     Prior to running this program a data file with certain information must be 
+in memory.   This data may be entered from the text editor as described below or
+you may run 'INIT.BA' (The first program on the tape) and generate the file from
+the questions asked.  This file then becomes your source file and should be 
+saved to tape or disc before it is cleared from memory.  Another program which 
+is included is POSTCD.BA, which will print a message on a 4 x 6 inch postcard.  
+Addresses and return address may be printed using Database.
+
+***************************** INITILIZATION ************************
+
+     The first four lines of the file will not be sorted, and will always be the
+first four lines.  They must contain certain data as described below.  Before 
+running this program go to the text editor and enter these four lines of data.
+
+1) The first line of the file contains headings of the fields (columns) that you
+will be using.  You are allowed up to 16 columns with a maximum of 255 
+characters minus the number of fields.  Separate each column heading with a 
+comma.
+     The printed width of each field is determined by the first line of the file
+(the heading).  Spaces may be added after the field heading to provide extra 
+space for data. Ex 'name     ' or to center it '----name----'  . Spaces to the 
+left of the heading  cannot be used to center it and they will be ignored (Ex. '
+     Name    ' will come out as 'Name    '.
+If data in a column is wider than the column the extra data will be printed in 
+the next line and in the correct column area. 
+
+2) On the second line of the file enter the math operators +,-,/,* Or N for none
+(any other characters not an operator will be ignored during calculations).  
+The equation that will be used during math enabled printing will consist of:
+Intial Constant, col zero operator, col zero value, col one operator, col one 
+value, etc.  
+Try entering some operators and observe the results during formatted printing.  
+At the end of the printing the operators will be printed after the totals.  If 
+you re-enter this after it has been enabled it will simply disable and return to
+print menu.
+Example:  With math operators of +,-,*, initial constant of 5 and a data line of
+2,3,4 the equation would be 5+2-3*4=16.  Calculations are done in order of 
+occurence.
+
+     This second line can also be used for the return address to be printed on a
+postcard.  They must be in the same respective columns as the other address 
+information.
+
+3) On line three enter the title that you wish printed at the top of each page. 
+Place commas after the title to supply the same number of fields as the heading.
+  Important - every line in the file must have the same number of commas.  Ex.  
+  'Personal Telephone List,,' would be used for three columns.
+
+4) On line four enter the initial constant (see math section below) and the 
+apporpriate number of commas.  An example file is shown below:
+
+Description,Price each ,quantity ,units (Column headings)
+n,+,*,n                                 (Column math operators)
+Material Cost,,,                        (Title of file)
+1.1,,,                                  (Initial constant)
+nails, 1.45,10,Lbs                      (Data from here on)
+flat headed screws,12.45,5,100's
+
+
+     Another sample file is shown below:
+
+Name          ,Address         ,Telephone #,City    State   Zip
+me,here,555-1212,Richmond Va 23235
+Mailing Address List,,,
+0,,,
+John Smith.,555-1234,101 1st Street,Anytown Va 22222 
+
+     No blank lines are allowed within the file and each line must contain the 
+same number of fields(ie commas) as the heading.  After entering the heading 
+additional data may be entered from the text editor, however it is easier and 
+more accurate to enter it from within the program.  The file must be edited from
+the text editor.  Deletions and corrections are not allowed within the program.
+
+     Data may be longer than the heading and still be properly printed on the 
+next line during formatted printing.
+
+     Now run the program.
+
+     Database and the year will appear on the screen.  If this is not the 
+present year then change line 9010 to the correct year.  If you don't then the 
+wrong year will be printed on your documents.  This corrects the random year 
+changing problem with the Model 100.
+
+     Input question "File?      .do"
+enter the filename but not ".do".
+
+     Input question "About how many records are to added?"
+This tells the program how much space to allow for additional records (a record 
+is one complete line of data, such as "description, price each, quantity, and 
+units".
+     The program will now count the number of records in the file and then move 
+the array to the data.
+
+**************************** Print Menu ***************************
+
+This Is the main menu of the program (there are four others)
+
+The first line indicates the number of records at present,  the number of 
+fields, and the maximum number of records that the array A(c,cc) is dimensioned 
+for.  You may not have more than this number of records in the file without 
+restarting the program.
+
+
+
+1) Sort - Can sort by any column either numerically or alphabetically.  If a 
+numerical sort is selected and alpha data is encountered this data will be given
+considered to have a value of zero for sorting purposes.
+     Sort will simply sort the file.  From then on all printouts will be sorted 
+although the data in the source file will not actually be moved.
+
+     Sort & Print will sort by a column, print the results and do the same for 
+any other selected columns.  Be sure to select the printer with F2 before 
+printing starts if you want data sent there.  You will notice the words over the
+  functions keys.  These select the device to which the results of all printing,
+searching, sorting, etc. will be sent.
+
+2) Search - Allows searches on up to 10 items in the same or different columns. 
+It also allows 'OR','AND', 'NOT' or "<>" selection.
+
+     If 'OR' is selected then a record printing will occur if any item within a 
+field is encountered. 
+
+     If 'AND' is selected then all items must be encountered within a record for
+it to be printed.
+
+     If 'NOT' is selected then if selected items are encountered within the 
+selected field of a record that record will not be printed, while other records 
+will.
+
+Example: If you search for "up" and the field contains "supper" it will be 
+considered found.  An example search entry is shown.  Note:  0,END will not be 
+searched for.  Also  both strings must be in the same case i.e. 'up' and 'UP' 
+will not match.
+
+0,Bob
+1,street
+2,city
+0,END (must be capitol letters
+
+     If '<>" is selected then you will enter a range of values to look for.
+Only one search will be done and the search will be an alphabetical search.
+
+3) Format printing - Data will be sent to print file (p$).  The print file can 
+be changed using keys F1-F8 at any time they are displayed.  Columns will be 
+lined up and math will be performed if enabled.  Print using is used during this
+section to create evenly spaced columns.
+If data is sent to the cassette or disk using this section or search it will not
+be formatted but appear exactly as formatted in the data file.  The file may 
+then be loaded into memory using text, and a subset of the original file will be
+obtained.  Hold 'E' to terminate the listing prior to normal ending.  You may 
+have to hold it for several seconds.
+
+Note: Data cannot be sent to another ram file using this or unformated printing 
+
+4) Options- this selects another menu. See explanation below.
+
+*********************** Option Menu *******************
+
+1) Title printed? Selects if title with time, date, headings, page number, etc 
+will be printed. 'Y' indicates printed and 'N' indicates not printed. This 
+toggles when you enter 1.
+
+2) Lines skipped ,underlining - Select number of lines to be skipped between 
+records during formatted printing, and underlining between records.  Multiple 
+lines skipped and underlining together will give multiple underlining.
+
+3) Form feed - Toggles form feed at end of last page printed.
+
+4) 1 Field/line - allows each field to be printed on a separate line. Toggle.
+Ex John Smith
+   101 1st Street
+   555-1234
+   Anytown Va. 22222
+
+5) Lines/page - select number of lines per page. You may change default in 
+program line 9024. Normally 66.
+
+6) # Of copies - Select number of copies to be printed during formatted 
+printing, searching and sorting.
+
+7) Free memory and field size - give free variable space, free string space, 
+width of each field, and total width used.
+
+8) Postcard - Prints addresses from file and return address from line two of 
+file.  You may select the fields that you want printed.  Enter 'Y' or 'N'.  The 
+program is setup for 4 x 6 inch postcards with 24 lines of print on each.  It 
+can also print the same data on any length page (24 and 66 are standard lengths)
+.  The return address data must be in the same columns respectively as the other
+address data.
+
+9) Adrs. Labels - sets up appropriate status to allow printing of one column.
+of addresses on 3 3/4 by 7/8 inch address labels (available at Radio
+Shack). 
+
+0) Print menu - Return to print menu
+
+************ Return to Print Menu Descriptions *************
+
+5 100 Menu - Goes to model 100 menu.  Be careful, you will not loose data but it
+does take time to restart the program.
+
+6) Prt setups - Another menu. See following descriptions.
+
+********************* Prt Setups **********************
+
+0) Print menu - Return to main menu
+
+1) Spaces between fields - Allows you to have any number of spaces between 
+fields during formatted printing.
+
+2) Printer setup - allows you to send codes to your printer.  Simply enter the 
+decimal codes that change your printer fonts and operation.  Press 'ENTER' 
+between codes and enter '0' as your last.
+
+Example: If chr$(29) Setups your printer for condensed print enter '29' 'enter' 
+'0' 'enter' and 'chr$(29)' Will be sent to your printer.  You may send multiple 
+codes, just press enter between each one and enter '0' as your last entry.
+
+3) Fields printed - You may select to print only certain fields.  Enter 'Y' if 
+you want a field printed and 'N' if you don't.
+
+4) CRT: Width - sets width of CRT (40 or 80).  Use only if you have the disc 
+drive.  This section also allows you to select the screen (0/1) lcd or crt.
+
+
+************ Return to Print Menu Descriptions *************
+
+7) Math enabled - Allows calculation between columns.  This Section allows you 
+enable and disable the math operation (+,-,*,/,n(none)) entered in line two of 
+the file.  The equation consist of :
+Intial Constant, col zero operator, col zero value, col one operator, col one 
+value, etc.  
+Try entering some operators and observe the results during formatted printing.  
+At the end of the printing the operators will be printed after the totals.  If 
+you re-enter this section after it has been enabled it will simply disable and 
+return to print menu.
+Example:  With math operators of +,-,*, initial constant of 5 and a data line of
+2,3,4 the equation would be 5+2-3*4=16.  Calculations are done in order of 
+occurence.
+
+8) Enter data - Enter more data to array.  You will be prompted with the heading
+of each column and the previous record.  You will also see a block graphics 
+character which indicates the end of column.  You may enter data past this point
+but it will be printed on the next line during formatted printing.  If there is 
+no change in that field from the previous entry then press enter.  After each 
+record is entered data will be automatically added to the text file.  You will 
+be given a chance to change the record after you have entered all its fields.  
+The maximum length of a record is 255 characters minus the number of fields.
+
+9) Unformatted print - This will send data exactly as it appears in the text 
+file.  It also faster than the formatted printing.  This section will also work 
+on the printer and LCD but data is not formatted neatly.
+
+F1-F8 Funtion keys - These keys select where data is sent during formatted and 
+unformatted printing.  They may be pressed anytime they are visible and the 
+device will be selected, however the reverse video may not change until printing
+starts.  Data sent to disc or cassette will always be unformatted to minimize 
+storage space.  The resulting file may then be entered into ram and accessed by 
+database.
+
+
+********************** ERROR HANDLING **********************
+
+     If a program error is encountered an alarm will be setoff.  You may recover
+from this error generally by pressing enter.  This is not a guaranteed recovery.
+
+
+If a source file format error is encountered the line number in the source file 
+in which the error occurs is given and after you press enter the line the error 
+occurs in will be printed.  It is possible that the error is on the preceding 
+line or following line, so check these if you cannot find the error.  Remember 
+all lines in the file must have the same number of commas and must be 254 or 
+fewer characters long.
+
+******************** End of print menu ********************
+
+
+
+********************** Variable list **********************
+
+     Note: Certain variables may be changed to setup different default 
+parameters in lines 9000 and on
+
+defint C,I,J,K,L,M,N,G,S:defstr A,B,Y,N
+dim JJ(15)'width of fields 0 to 15
+
+CM$="COM:88N1E" Com stat used during printing.  See line 9024 to change this and
+other default values.
+SS=Lines skipped between records
+PD=66 lines/page
+TG= Address start printing at this horizontal position when doing postcards
+
+P$="LCD:" Default print file.
+DL$="|"(this is shift graph -) Field separator. During printing a '|' will 
+separate each field.  This can be changed by using item '4) Status' in 'Print 
+Menu'
+DH=1 Number of spaces between fields
+DH$="!" Print formatting used between fields
+WW=1 #of copies printed during formatted printing, searching and sorting.
+C=Max # Of records+5
+CC = Number of fields -1
+Q(C)= Pointer for sort and printing
+A(C,CC)=Data Array
+Q$(CC)= Print using data
+PP$(CC)= Set = 'Y' if column is printed
+PP = Quantity of columns printed. Equal to CC+1 if all columns printed
+Y="Y":N="N"
+T$=N'Total Toggle - math enabled if 'Y'
+SV$=N'Single field/line
+HS$=Y'Heading printed
+LB$=N'Labels toggle
+TM$(CC)'Math Operator array
+T(CC)' Column total variables
+BC(CC)' Batch sort question(Y/N)
+BD(CC)' Batch sort numerical column question
+CO 'line 4021' 1 indicates variable is longer than field and an extra line must 
+be printed
+CQ=1 Indicates to subroutine that it is being called the second time for this 
+field
+JJ(CC) = Length of col headers
+
+*** Follows is a list of main routines  and line numbers ***
+
+0011 Printing during formatted printing
+0100 Getting directory into A2$
+0500 Formatting file name FG$ to agree with that used in directory
+0600 Get start position of file FG$ into LL
+0710 Pointing variables in file at array A(I,II)
+0800 Sort routine
+1000 Print menu
+1300 Add enable
+1800 Error handling routine
+2000 Sort section setup
+3600 Search and print
+3800 Formatted printing setup 
+3810 Print heading at each page 
+4000 Formatted print
+4020 Print record
+4270 Print results of column addition
+4400 Math section
+4500 Unformatted printing of data to file
+5000 Get data in array from source file at start of program
+5800 Count # of fields in heading prior to getting data
+5900 Enter file names
+5930 Status change
+5950 Open files - Only one open allowed at a time
+6010 Printer setup menu
+6930 Print address labels
+8000 Enter data 
+8150 Sending just entered data to text file
+8160-8190 Point array at text file
+8500 Printer setup
+9000 Initial setup and dimensioning
+     edit variables in this section to change startup defaults.
+
+

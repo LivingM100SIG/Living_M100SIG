@@ -1,0 +1,309 @@
+;OVAL.SRC
+;Source code for OVAL.100 and OVAL.200
+;Copyright 1988 by James Yi
+;This is an oval drawing program.
+;The basis for the circle drawing algorithm is borrowed from CIRCLE.100
+;
+;Parameters:
+;H=X center
+;L=Y center
+;A=
+;  0=draw unfilled
+;  1=draw filled
+;  2=undraw unfilled
+;  3=undraw filled
+;For 200, 	63574=Y radius
+;		63575=X radius
+;For 100,	64704=Y radius
+;		64705=X radius
+
+m	equ	1	;2 for 200
+			;1 for 100
+
+	if	m=1
+	org	62582
+altlcd	equ	$fcc0
+rplot	equ	$744f
+ymax	equ	64
+	endif
+	if	m=2
+	org	$f858	;altlcd+2
+altlcd	equ	$f856
+rplot	equ	8d78h
+ymax	equ	128
+	endif
+
+xmax	equ	240
+
+
+begin:	shld	yc
+	xri	2
+	sta	mode
+	lhld	altlcd	;Get XY radius
+	shld	yr
+	shld	yf
+	mov	a,h
+	sta	xf
+	cmp	l
+	jnc	mrisx
+	cmc
+	mov	a,l
+;A=major axis radius
+mrisx:	sta	mr
+	sta	xd
+	rar		;divide major ax by 2
+
+	inr	l
+	shld	yt
+	inr	h
+	shld	yb
+
+	mov	l,a
+	mov	h,a
+	sta	xs
+	shld	yv
+	shld	xh
+
+	xra	a
+	sta	yd
+	mov	l,a
+	mov	h,a
+	shld	yn
+
+	inr	a
+	sta	yb
+	sta	xt
+
+plotem:	lhld	yb
+	lda	mode
+	rrc
+	lda	yn
+	mov	c,a
+	jc	ddisc
+
+	sub	l
+	mov	e,a
+	lda	xf
+	mov	b,a
+	sub	h
+	ora	e
+	mov	h,b
+	mov	l,c
+	shld	yb
+	cnz	quadpt
+
+	lhld	yt
+	lda	yf
+	mov	c,a
+	sub	l
+	mov	e,a
+	lda	xn
+	mov	b,a
+	sub	h
+	ora	e
+	mov	h,b
+	mov	l,c
+	shld	yt
+	cnz	quadpt
+	jmp	cnext
+
+ddisc:	cmp	l
+	sta	yb
+	lda	xf
+	mov	b,a
+	cnz	dcline
+
+	lhld	yt
+	lda	yf
+	mov	c,a
+	cmp	l
+	sta	yt
+	lda	xn
+	mov	b,a
+	cnz	dcline
+
+cnext:	lhld	yr
+	xchg
+	lxi	h,YD
+	lxi	b,YN
+	inr	m	;YD=YD+1
+	inx	h
+;yv=yv-yr
+	mov	a,m	;YV
+	sub	e	;YR
+	mov	m,a
+	jnc	hystep	;yv>=0
+;yv=yv+mr
+	lda	MR
+	add	m
+	mov	m,a
+;yn=yn+1
+	ldax	b	;YN
+	inr	a
+	stax	b
+hystep:	inx	h
+	inx	b
+;yh=yh-xr
+	mov	a,m	;YH
+	sub	d	;XR
+	mov	m,a
+	jnc	xstep	;yh>=0
+;yh=yh+mr
+	lda	MR
+	add	m
+	mov	m,a
+;xn=xn+1
+	ldax	b	;XN
+	inr	a
+	stax	b
+
+xstep:	inx	h
+;xs=xs-yd
+	lda	YD
+	sub	m	;XS
+	cma
+	inr	a
+	mov	m,a
+	jc	plotem	;xs>0
+
+;xs=xs+xd
+	inx	b
+	ldax	b	;XD
+	dcr	a	;xd=xd-1
+	stax	b
+	inr	a
+	add	m
+	mov	m,a
+
+	inx	h
+	inx	b
+;xh=xh-xr
+	mov	a,m	;XH
+	sub	d	;XR
+	mov	m,a
+	jnc	xvstep	;xh>=0
+;xh=xh+mr
+	lda	mr
+	add	m
+	mov	m,a
+;xf=xf-1
+	ldax	b	;XF
+	dcr	a
+	stax	b
+xvstep:	inx	h
+	inx	b
+;xv=xv-yr
+	mov	a,m	;XV
+	sub	e
+	mov	m,a
+	jnc	chkend	;xv>=0
+;xv=xv+mr
+	lda	mr
+	add	m
+	mov	m,a
+;yf=yf-1
+	ldax	b	;YF
+	dcr	a
+	stax	b
+
+chkend:	lda	xd
+	lxi	h,yd
+	cmp	m
+	jnc	plotem	;xd>=yd
+	ret
+
+dcline:	lhld	yc
+	mov	a,h
+	add	b
+	mov	d,a
+	jc	xpovf
+	cpi	xmax
+	jc	xpok
+xpovf	mvi	d,xmax-1
+xpok	mov	a,h
+	mov	h,d
+	sub	b
+	mov	d,a
+	jnc	xnok
+	mvi	d,0
+xnok	mov	a,l
+	sub	c
+	mov	e,a
+	cnc	dline
+	mov	a,l
+	add	c
+	rc
+	cpi	ymax
+	rnc
+	mov	e,a
+	jmp	dline
+
+dline:	push	d
+dline2	call	dplot
+	mov	a,d
+	inr	d
+	cmp	h
+	jnz	dline2
+	pop	d
+	ret
+
+quadpt:	lhld	yc
+	mov	a,l
+	sub	c
+	mov	e,a
+	cnc	plotlr
+
+	mov	a,l
+	add	c
+	rc
+	mov	e,a
+
+plotlr:	mov	a,h
+	sub	b
+	mov	d,a
+	cnc	cplot
+	mov	a,h
+	add	b
+	mov	d,a
+	jnc	cplot
+	ret
+
+cplot:	mov	a,d
+	cpi	xmax
+	rnc
+	mov	a,e
+	cpi	ymax
+	rnc
+
+dplot:	lda	mode
+	ani	2
+	push	h
+	push	d
+	call	rplot
+	pop	d
+	pop	h
+	ret
+
+yn	db	0
+xn	db	0
+xd	db	0
+xf	db	0
+yf	db	0
+
+yd	db	0
+yv	db	0
+yh	db	0
+xs	db	0
+xh	db	0
+xv	db	0
+
+yb	db	0
+xb	db	0
+yt	db	0
+xt	db	0
+yr	db	0
+xr	db	0
+yc	db	0
+xc	db	0
+mode	db	0
+mr	db	0

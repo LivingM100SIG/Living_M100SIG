@@ -1,0 +1,396 @@
+
+
+Tue Sep  6 21:16:28 1988  logit.do  Page 1, Line 1
+
+
+
+              N7KHU LOGIT.BA QSL Logging Program
+            For The Radio Shack M100/102 Computer
+                         Version 1.0
+
+               Copyright 1988 By Tom Gilchrist
+                  N7KHU @ KE7OM, Seattle, WA.
+                    CompuServe 76010,1273
+
+ This  document covers the LOGIT.BA program for the Radio
+ Shack M100/102 Laptop Computer.  The program logs HAM radio
+ contacts for future use and assists the operator during a
+ contact.
+
+ NOTE: the LOGIT program has been tested on a M102 with 32K
+ memory and requires the ULTRASCREEN (TM) program for
+ operation.  This program increases the screen size from 40X8
+ to 60X10. ULTRASCREEN (TM) is available from Ultrasoft
+ Innovations, Inc., 76 Main Street, PO Box 247, Champlain,
+ NY, 12919-9980.
+
+ I wrote the LOGIT program for the M102 because the computer
+ is so well suited to portable HAM operation.  It is light
+ weight and small, it has a low current consumption, and has
+ very low RF noise.  It also is priced right for a dedicated
+ HAM computer (the Radio Shack retail of $600 seems a bit
+ much, but you can get used M100's and M102's for $250 to
+ $350).  The small MS-DOS portables I have tried are heavy
+ (7-14 lbs) and very RF noisy.
+
+ For those not interested in HAM radio, LOGIT shows a
+ technique for full screen data entry using the CRDFIL data
+ base format for the M100/102.
+
+ Description:
+
+ LOGIT was written to help with the management of ham radio
+ contacts (QSO's) while on-the-air.  The program will allow
+ the radio operator to log information using "full screen"
+ data entry in 13 fields:
+
+      1) Call Sign        2) Date
+      3) Time             4) Mode (USB, CW, etc)
+      5) Frequency        6) Sent Report (RST)
+      7) Rec. Report      8) 10X (Ten-Ten Number)
+      9) QSL Sent Flag    10) QSL Rec. Flag
+      11) Contact Name    12) Contact QTH
+      13) Note (Misc. information)
+
+ The program writes the data in a format compatible with the
+ CRDFIL set of data base programs.  This allows the user to
+ edit, sort, and print log files.  This set of programs is
+ available on COMPUSERVE in
+ the M100SIG.  You do not have to have the CRDFIL programs to
+ use LOGIT.  The data files are ASCII ".DO" files and can be
+ directly modified and printed by the TEXT program on the
+ M100/102.
+
+ Installation:
+
+
+
+
+Tue Sep  6 21:16:28 1988  logit.do  Page 2, Line 60
+
+
+
+ The BASIC source file LOGIT.100 needs to be transferred to
+ your M100/102 and renamed to LOGIT.DO.  Once on the M100/102
+ computer, the ".DO" file needs to be converted to a ".BA"
+ file by LOADing it into BASIC and SAVEing it as a ".BA"
+ file.
+
+ The program uses 4 data files which are created by the user
+ with the TEXT program.  These data text  files contain
+ specific information which can be displayed while working a
+ station.  The program names are "hard wired" in the code to
+ the following names and a brief description of my use of the
+ files:
+
+ INFO1.DO - Phonetics for my name, address, and etc.  My
+ "numbers" (CQ Zone, 10X, etc.).  RST description.
+ A partial list of International call sign series.
+
+ INFO2.DO - TNC information and codes for use with my PK-232
+ for packet and Baudot.
+
+ CW.DO - Abbreviations for CW work.
+
+ QSIG.DO - A list of Q Signals.
+
+ If these files do not exist, and they are activated on the
+ main LOGIT screen with function keys 1-4, the program will
+ quit with an error and you will loose the current
+ information screen you were entering.
+
+ LOGIT uses the computer time and date as defaults in the QSO
+ data entry screen.  I set the computer time and date to UTC
+ (Coordinated Universal Time).  If you use your local time
+ and date, you can convert to UTC when sending QSL cards.
+
+ Operation:
+
+ As mentioned earlier, the ULTRASCREEN (TM) program needs to
+ be loaded.  If you want to use the program without it, you
+ will need to modify the "PRINT@" statements (a lot of
+ work!).
+
+ The first screen prompts for the name of the log file.  I
+ use names like "LOG1", "LOG2", etc.  If the file does not
+ yet exist, LOGIT will ask if you want to create it.  If you
+ create it, a special header will be written and the program
+ will end.  (Note:  I had to exit the program because I was
+ unable to catch the function key interrupts after the
+ program runs the test to check for the file and creates it.
+ If anyone fixes the problem, let me know).  To use the new
+ log file, simply re-enter the program and give the newly
+ created file name.
+
+ I have tested my RS 100K disk drive with TS-DOS by Traveling
+ Software, 1-800-343-8080.  All you need to do is to add a
+ "0:" to the LOG file name (Example, "0:LOG1").  The LOGIT
+ program will then use the disk drive for all record storage.
+ I normally don't use the disk drive because I don't like to
+ carry it around.
+
+
+
+
+Tue Sep  6 21:16:28 1988  logit.do  Page 3, Line 119
+
+
+
+ Once a log file has been opened, the main screen is
+ presented.  This screen allows you to enter all the QSO
+ information which will be stored in the log file.  The
+ flashing cursor shows the position of the entry.  You can
+ change fields by using the <CR> key.  All entries must end
+ in a <CR>.  There are some things you need to know about
+ data entry on this screen.
+
+      1) The "CALL" needs to be entered in all caps.  (I
+      leave the "CAPS LOCK" key on all the time.)
+
+      2) Once the call is entered and the <CR> (ENTER) key is
+      pressed, the program will display the phonetics for the
+      call.  (This takes a second or two).
+
+      3) The DATE and TIME are automatically entered whenever
+      you a) enter the screen for the first time, b) SAVE a
+      QSO record, or c) CLEAR a screen.  You can type over
+      the entries if you wish.
+
+      4) If you type only a <CR>, the information on the
+      field will not change.  If you type anything before the
+      <CR> it will replace the data on the screen.  If the
+      new data is shorter in length than the new data, the
+      remaining old data will not be erased.  To erase the
+      old data you can use the "ReDr" function key.  This
+      will re-draw the screen.  NOTE: remember to enter the
+      new information and end it with a <CR>, then press
+      function key 6 (ReDr) and press the <CR> key.  (Note:
+      The function key interrupt seems not to be serviced
+      until the <CR> key is used.  I guess someone needs to
+      write a complete data input editor using INKEY$.  I
+      looked at it and it looks bigger than I am...perhaps
+      someone else will add a line editor to LOGIT!)
+
+      5) The only edit key is the "BKSP" (destructive
+      backspace key).  Forget the arrow keys.  This means if
+      you type something, you can backspace back and correct
+      an error (the good news).  However, once you have
+      accepted the data by typing a <CR>, the only way to
+      change the data is to a) type <CR> until the cursor is
+      on the field you want to edit, then b) type in ALL the
+      field data again (the bad news).  (NOTE:  Because the
+      old data not overtyped is not erased, you could end up
+      with incomplete field data.  Until you get the hang of
+      the screen, use the ReDr function key just before you
+      SAVE a record and check your work.)
+
+      6) You can type as much data as you want on the screen
+      for each field (the good news).  However, if the data
+      is longer than the space allowed for it on the screen,
+      you will overwrite the next prompt!  This makes for a
+      very messy and confusing screen (the bad news).  If
+      this happens, simply get back to the field with <CR>'s
+      and enter a single letter or space and a <CR>.  Then
+      press the ReDr function key and a <CR> to redraw the
+      screen.
+
+
+
+
+
+Tue Sep  6 21:16:28 1988  logit.do  Page 4, Line 178
+
+
+ Once you have completed the screen, you can save the
+ information by using the "SAVE" function key and a <CR>.
+ When the record has been saved, a fresh screen will be
+ displayed ready for the nest contact.  Note that a new DATE
+ and TIME is entered as defaults.  Also, the MODE and FREQ
+ fields have the last used data already entered.  You can
+ type new data in these fields at any time.  I found that
+ these fields do not change very much during an operating
+ session.
+
+ When I am working, I sometimes hear a station calling CQ.
+ When I hear the call, I type it in and hit the <CR> key.
+ This gives me the phonetics.  However, sometimes I do not
+ work the station or I have an incomplete contact.  When this
+ happens, I want a new fresh screen, but I don't want to
+ store the record.  The CLEAR function key will clear the old
+ screen, set the new TIME and DATE and present a fresh
+ screen.
+
+ The MENU function key is used to exit the program.  It has a
+ "ARE YOU SURE YOU WANT TO QUIT?" screen.  This is because I
+ sometimes I get the SAVE and MENU keys confused and I don't
+ want to always exit the program.
+
+ OK, this brings us to the first four function keys.  These
+ are used to display the four information data files
+ mentioned earlier.  The data is presented one screen at a
+ time.  At the end of each screen of data (9 lines), you can
+ either get another screen (with a <CR>) or return back to
+ the data entry screen (with an <ESC>).  I find this very
+ helpful in looking up information during a QSO.  There is a
+ tradeoff however.  The larger the four information data
+ files are, the fewer records can be saved in the LOGIT QSO
+ file.  I don't have much of a problem because I save the log
+ file to disk after every session and start with an empty one
+ for the next session.  If you use this program for
+ contesting, you will need to check the amount of memory
+ needed for your LOG file.  You can also use a disk drive to
+ log your files.
+
+ Customizing:
+
+ Everyone will want to do some customization to LOGIT to suit
+ their own style of operation and needs.  As mentioned
+ before, the four LOGIT information files should be
+ customized to include the information you want on-line.  The
+ file names and function keys can be changed to match your
+ needs. The function key names are defined on line 580 and
+ the file names are defined on lines 620, 880, 900, and 920.
+
+ The screens all have my own call in phonetics on the top
+ line.  You can replace them with your own by editing line
+ 350 and adjusting the PRINT@ location to center the line.
+
+ Future LOGIT Directions:
+
+ I am thinking of adding some features to LOGIT to add to its
+ usefulness during QSO's.  Here is a list that might inspire
+ others...
+
+
+
+
+Tue Sep  6 21:16:28 1988  logit.do  Page 5, Line 237
+
+
+
+      1) Add a "duping" function.  When the user inputs the
+      name of the log file, LOGIT would create a table of
+      call signs found in the LOG file.  Then, during data
+      entry, new calls would be checked against this list.
+      If a dup was found, a message would appear on line 2 or
+      4.  The user could either ignore the message and fill
+      in and save the record, or CLEAR the screen and start
+      another record.  This could would be added to the
+      phonetic look up code.
+
+      2) A Terminal screen (much like the TELCOM program) to
+      run a TNC like the PK-232 on the COM serial port.  The
+      screen would allow you to upload and download text and
+      would be "hard wired" to 1200 baud (58N1E).  This would
+      allow you to use the LOGIT program during a packet,
+      rtty, or CW session.  I understand there is a technique
+      to change to BASIC from within TELCOM and back to
+      BASIC.  This might be all that's needed...it is not
+      clear that the technique allows a program to be running
+      in BASIC when switching back and forth.
+
+      3) Along with the duping function, it might be good to
+      add contesting fields in place of the single "NOTE:"
+      field.  This could include an automatic contact serial
+      number field,
+      location code field, etc.
+
+      4) The ability to make a hard copy on a printer of a
+      record either on demand or while SAVEing.  The use of
+      ULTRASCREEN (TM) seems to defeat the screen print
+      function.  Anyway, it would be better use program
+      controlled printing to control log formatting.  While I
+      have never lost any records during operation, all it
+      takes is using the MENU key before SAVEing a record and
+      you've lost the last contact record!
+
+      5) I already mentioned the need for adding a line
+      editing routine using the INKEY$ function to allow
+      complete control of data entry and editing (where is a
+      C compiler for the M100/102 when you need one?).
+
+      6) The LOGIT program writes out a header which is
+      compatible with the CRDFIL series of programs.  The
+      header assumes that you ARE NOT using ULTRASCREEN (TM)
+      while using CRDFIL.  I would like to write a version of
+      the column print program (CRDFIL.PR3) designed
+      specifically for LOGIT records (2 or 3 lines per
+      entry).
+
+ 7) While I'm wishing....how about letting the LOGIT program
+ read the settings of my ICOM 751 through its RS232 port.
+ LOGIT could enter the correct MODE and FREQUENCY fields from
+ the radio or change the radio settings by simply typing in
+ the data on the screen.  There should be no reason not to
+ automate CW, packet, and RTTY contest contacts.  Once the
+ information is entered on the screen, the code is sent
+ automatically.  If you add a PK232, you can read the contest
+ information directly from the radio without any user data
+
+
+
+
+Tue Sep  6 21:16:28 1988  logit.do  Page 6, Line 296
+
+
+ entry!  Just think of it, a contest robot, automatically
+ churning up points...naaaa....
+
+ Enjoy!
+
+ //EOT
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

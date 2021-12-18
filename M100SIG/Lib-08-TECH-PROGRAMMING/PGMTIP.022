@@ -1,0 +1,44 @@
+
+		SHADES OF UNDOCUMENTED FEATURES
+
+I've been doing some reasearch on the Model 100/102
+for a floating point library for the new C100 'C'
+compiler and was looking at a disassembly of the RND
+function.
+
+The routine checks the value in parenthesis RND(0) or
+RND(1). If the value is zero it just reloads the
+last generated pseudo-random number, but I was intrigued
+by a call that was issued if the value in parenthesis
+evaluated to a negative value.
+
+Lo and behold!! If the value is negative (any value), it
+is used to re-seed the generator.
+
+This is of course not mentioned in the manual, and I have
+seen no reference to it anywhere else.
+
+I tried it out in BASIC and it seems to work.
+
+It should be possible to extract any random numbers from
+the system, build a negative value and re-seed the generator.
+
+10 SEED=VAL(RIGHT$(TIME$,2))+VAL(MID$(TIME$,4,2))+FRE(0)
+20 SEED=0-SEED:X=RND(SEED)
+30 FOR A=1 TO 5
+40 ?RND(1):NEXT A
+
+The above program creates a negative seed from the seconds, minutes and
+the amount of free memory. In the above example the free memory
+won't change, but for a game program presumably the state of the
+computer changes from time to time.
+
+Any way this program produces a different sequence every time it
+is run (because of the changing time).
+
+Don't know if anyone has come accross this before. I checked other
+references and couldn't find anything.
+
+Mo Budlong
+
+76167,3310

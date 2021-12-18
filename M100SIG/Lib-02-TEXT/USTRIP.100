@@ -1,0 +1,34 @@
+0 'STRIPR.100 Copyright 3/87 R.W.Hess
+1 '73267,552. This program is fairly
+2 'self-explanatory and INTERACTIVE!
+3 'Remember; YOU are responding Y/N at
+4 'each CR to keep the CR or substitute
+5 'a space. Original is left unedited.
+6 'Edited version is XX____.DO.
+7 'REMOVE LINES 1-7 TO SAVE BYTES.
+13 CLS:MAXFILES=2:DEFSTRC,E:CR=CHR$(13)+CHR$(10)
+14 ONERRORGOTO13
+15 FILES:PRINT:INPUT"Edit CRs in which .DO file";FL$:CLS
+16 IFFL$=""THENBEEP:MENU
+17 PRINT@4,"At each ? prompt press either"
+18 PRINT@45,"Y to KEEP CR or N to STRIP it."
+19 PRINT@167,"Stripped file appears"
+20 PRINT@208,"in Main Menu as XX____.DO"
+21 PRINT@286,"Press Spacebar to continue.";:CALL24367:CLS
+22 OPENFL$FORINPUTAS1
+23 MID$(FL$,1)="XX"
+24 OPENFL$FOROUTPUTAS2
+25 IFEOF(1)THENCLOSE:BEEP:MENU
+26 C=INPUT$(1,1)
+27 E=RIGHT$(E,4)+C
+28 IFASC(RIGHT$(C,1))=9THEN30
+29 IFASC(RIGHT$(C,1))<32THEN25
+30 IFMID$(E,3,2)=CRTHENGOTO32
+31 PRINTC;:PRINT#2,C;:GOTO25
+32 CALL17001:PRINT"Cr?";
+33 CALL17006
+34 A$=INKEY$:IFA$=""THEN34
+35 IFA$="N"ORA$="n"THENC=" "+C:GOTO31
+36 IFA$="Y"ORA$="y"THENC=CR+C:GOTO31
+37 BEEP:GOTO33
+

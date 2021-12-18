@@ -1,0 +1,118 @@
+FKEY.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+One of the cute tricks used in programming the Model 100 is hiding little
+machine language subroutines or programs in normally-unused areas in the
+computer's system RAM (the area above MAXRAM).  The linefeed patches in the
+LFUTL family use the F8 function key storage area this way -- and commercail
+programmers are even trickier.  This is a short set of messages discussing
+this approach, messages having the topic "Stashed Assembler Code".
+
+
+Message range: 143959 to 145088
+Dates: 3/28/87 to 4/8/87
+
+
+Fm: KIT ANDERSON 72217,2600
+To: Phil Wheeler  71266,125
+
+We were discussing poking stuff in the KEY8 buffer in Basic to enable F7 in
+TERM to return Free Bytes while Tony's Macro program was on. I wanted to know
+how the addresses and code were found. Vey useful stuff. I have POKEd myself
+into 1900, but I'm learning. By the way, the Macro prog is working beautifully.
+I can hardly wait for TEXT version.
+
+
+Fm: Tony Anderson 76703,4062
+To: Kit Anderson 72217,2600
+
+In answer to your EasyPlex message, the function key setup code puts in the
+following command:
+
+KEY8,"MENU"+<ENTER>+ a machine language routine.
+
+The ML routine is as follows:
+
+CD3A1F  CALL    1F3AH   ;  7994dec
+CDAC7E  CALL    7EACH   ; 32428dec
+CD2242  CALL    4222H   ; 16930dec
+C9      RET
+
+This technique effectively hides a short assembly language routine in a
+protected place in RAM, i.e. in the unused portion of the function key
+definition.
+
+1F3Ahex is a ROM call that does the "Files" statement.
+
+7EAChex is a ROM call that displays the number of free memory bytes on the
+screen.
+
+4222hex is a ROM call that sends a CR/LF pair to the screen or printer.
+
+The pokes to 64270-71 activate the F7 key in the M100's TELCOM program, and
+cause it to jump to the location of the above code.
+
+This is all assembly language programming, often called "machine language",
+erroneously.  It is a complete programming study in itself. We have a number of
+files to help you get started in understanding assembly language, and you can
+start with ASMBLY.UTL in DL8, the TUTORA.ASM through TUTORD.ASM series, and get
+a few good books.  You might also check the file ASSMBL.CAT in DL8, which gives
+comparative descriptions of Assembly language oriented files.
+
+See also the complete Model 100 ROM and RAM maps in DL8, in 8 files, starting
+with 100RAM.RDC, then 100ROM.RC0 through 100ROM.RC6.
+
+How are such pokes found?  Experimentation, disassembling code, reading the
+available books, and study of the ROM maps.  See also TELTIP.001 in DL3 which
+lists a whole bunch of functions you can put on your function keys.
+
+
+Fm: Grant S. Robertson 73337,1746
+To: Tony Anderson 72217,2600
+
+    How do I find out more about the "function key setup code" you were
+discussing with Kit Anderson back on March 28? I don't have the expertise to
+use it now but it seems too valuable to let slip away without saving for a
+later date. I have one naive question: when you change the key functions in
+BASIC does that destroy routine stashed there? Oh yeah, what about CDOS?
+
+
+Fm: Tony Anderson 76703,4062
+To: Grant S. Robertson 73337,1746
+
+Function key setup code is detailed in the instruction manual for your
+computer.  If for the Model 100, on page 149.
+
+There is only one routine I can think of that is stashed in unused function key
+bytes, LFUTL, the Linefeed Utility.  Naturally, if you change the function key
+definition where that is located, you will lose it.  But since that's F8, and
+F8 is generally "Menu", there's not much chance of it being changed, as with
+the other keys.
+
+Changing function key definitions has no effect on CDOS.  CDOS changes them to
+suit itself.  Interestingly, many novice programmers actually change the
+function key definitions when they need to use them in a program, rather then
+enabling the function key interrupts and using _them_, which doesn't change the
+original definitions.  The WORST, are those programs that arbitrarily reset
+function key definitions to the cold-start default definitions, whether you
+want them or not.
+
+
+Fm: Grant S. Robertson 73337,1746
+To: Tony Anderson 76703,4062
+
+Tony, Thanks for reminding me of the difference between redefining the function
+keys and setting their interrupts. I've read your's and Phil's discussion on
+the subject and I think I have a basic grasp on it. I wonder where else there
+are little nooks and crannies to hide peices of code in.
+
+
+Fm: Tony Anderson 76703,4062
+To: Grant S. Robertson 73337,1746
+
+Have you read the file POKES.100?  There's a list of quite a few little nooks
+and crannies there.
+
+

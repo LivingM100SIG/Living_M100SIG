@@ -1,0 +1,110 @@
+;This is a commented disassembly of the
+;Model 100 rom routine to dump the
+;screen contents to the printer.
+;Greg Susong - 70635,1312 - 09/13/83
+;
+;The section below is the main loop of
+;the routine. It is the entry point of
+;the routine and keeps track of end of
+;lines so that carriage returns can be
+;lprinted.
+1E5E  PUSH  HL       ;Save HL register.
+1E5F  CALL  4BA0H    ;Lprint a C/R.
+1E62  LXI   HL,FE00H ;Start of LCD image memory
+1E65  MVI   E,08H    ;Number of rows on screen.
+1E67  MVI   D,28H    ;Number of collumns on screen.
+1E69  MOV   A,M      ;Put byte pointed to by HL into A.
+1E6A  CALL  1470H    ;Lprint character.
+1E6D  INX   HL       ;Bump pointer to next screen location.
+1E6E  DCR   D        ;Decrement collumn counter.
+1E6F  JNZ   1E69H    ;If not last collumn in row, then go again.
+1E72  CALL  4BA0H    ;End of row so lprint a C/R.
+1E75  DCR   E        ;Decrement row counter.
+1E76  JNZ   1E67H    ;If not last row, reset collumn counter and go again.
+1E79  POP   HL       ;Restore HL to original value.
+1E7A  RET            ;Return to CALLer.
+;
+;
+;This section is CALLed by the main
+;loop when carriage returns need to be
+;sent to the printer. Most of it is
+;irrevelent to the screen dump routine.
+4BA0  MVI   A,0DH    ;Load C/R into A.
+4BA2  CALL  4B7AH    ;
+4BA5  XRA   A        ;
+4BA6  STA   F674H    ;
+4BA9  RET            ;
+;
+;
+4B7A  CPI   0AH      ;
+4B7C  JNZ   4B88H    ;
+;
+;
+4B88  STA   FAACH    ;
+4B8B  RZ             ;
+4B8C  CPI   1AH      ;
+4B8E  RZ             ;
+4B8F  JMP   1470H    ;
+;
+;
+1470  RST   7        ;CALL 0038H
+1471  DEFB  0AH      ;Data byte used to calculate offset into branch table.
+1472  CALL  6D3FH    ;Routine to lprint character.
+1475  JNC   147FH    ;If lprint wasn't terminated by a break, go to 147FH.
+1478  XRA   A        ;Zero A.
+1479  STA   FACDH    ;Store 0 in buffer to indicate termination by BREAK.
+147C  JMP   1494H    ;
+147F  PUSH  AF       ;Save AF.
+1480  MVI   A,FFH    ;Put FFH into A.
+1482  STA   FACDH    ;Store FFH in buffer to indicate succesfull lprint.
+1485  CALL  1BB1H    ;
+1488  POP   AF       ;Get AF
+1489  RET            ;Return to CALLer. (4BA5H or 1E6DH)
+;
+;
+1BB1  LDA   F657H    ;Take byte from here and
+1BB4  STA   F931H    ;Store it here.
+1BB7  RET            ;Return to CALLer. (1488H)
+;
+;
+0038  JMP   7FD6H    ;Go to routine to calculates offset into branch table.
+;
+;
+;The following routine calculates the
+;offset into a branch table starting at
+;FADAH. The branch address is then put
+;onto the stack and a RETurn is made to
+;that address. Currently, each entry in
+;the branch table points to 7FF3H which
+;is the return from this routine. This
+;allows you to intercept the character
+;before it is lprinted and do with it
+;what you want. To do this, put the
+;address of your routine in lsb/msb
+;form into memory locations FAE4 and
+;FAE5. NOTE - All lprint functions will
+;then go through your routine before
+;being sent to the printer.
+7FD6  XTHL           ;Put top of stack into HL so data byte can be found.
+7FD7  PUSH  AF       ;Save AF.
+7FD8  MOV   A,M      ;Put byte following RST 7 instruction into A.
+7FD9  STA   FAC9H    ;Store it in buffer at FAC9H.
+7FDC  POP   AF       ;Get AF.
+7FDD  INX   HL       ;Point HL to instruction following data byte.
+7FDE  XTHL           ;Put this address on the stack.
+7FDF  PUSH  HL       ;Save HL.
+7FE0  PUSH  BC       ;Save BC.
+7FE1  PUSH  AF       ;Save AF.
+7FE2  LXI   HL,FADAH ;Point HL to start of branch table.
+7FE5  LDA   FAC9H    ;Get offset value from buffer.
+7FE8  MOV   C,A      ;Put offset value into C.
+7FE9  MVI   B,00H    ;Put 0 into B. Now BC equals offset into table.
+7FEB  DAD   BC       ;Add offset value in BC to start of table in HL.
+7FEC  MOV   A,M      ;Get LSB of branch address.
+7FED  INX   HL       ;Point HL to MSB of branch address.
+7FEE  MOV   H,M      ;Put MSB into H.
+7FEF  MOV   L,A      ;Put LSB into L. Now HL contains branch address.
+7FF0  POP   AF       ;Get AF.
+7FF1  POP   BC       ;Get BC.
+7FF2  XTHL           ;Put branch address onto the stack.
+7FF3  RET            ;Return to branch addres 1st time - to 1472H 2nd time.

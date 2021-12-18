@@ -1,0 +1,18 @@
+1 CLEAR 1300:DEFINTO-Z:DEFSTRA-M:DIMH(2):DIM A(26):B=CHR$(27)+"p":C=CHR$(27)+"q":CLS:PRINT@80,"Initializing...."
+2 O=-1694:FOR Q=0TO26:D="":E="":F=""
+3 FORR=0TO2:S=PEEK(O+R):GOSUB12	:H(R)=G	:NEXTR:D=H(0)+B+H(2)+H(1)+C
+4 FORR=3TO10:S=PEEK(O+R):GOSUB12:E=E+" "+G
+5 IFS>31ANDS<127THENI=CHR$(S)ELSEI="."
+6 F=F+I:NEXTR:A(Q)=D+E+" "+F:O=O+11:NEXTQ
+7 FOR R=0TO7:PRINT@(40*R),A(R+T);:NEXT
+8 J=INKEY$:IFJ=""THEN8ELSEU=ASC(J)
+9 IFU=28THENT=T+1ELSEIFU=29THENT=T-1ELSEIFU=30THENT=T-4ELSEIFU=31THENT=T+4ELSEIFU=13THENMENU
+10 IFT<0THENT=0ELSEIFT>19THENT=19
+11 GOTO 7
+12 V=S\16:V=V-7*(V>9)+48:W=S MOD16:W=W-7*(W>9)+48:G=CHR$(V)+CHR$(W):RETURN
+20 '(c) Hugo Ferreyra [75735,1261]	   5050 N.W. 7 St., Miami, FL 33126	    (305) 446-9790
+21 'This program shows the DIRECTORY area of RAM. This area is located from F962 Hex = 63842 Dec to FA8A Hex = 64138 Dec.
+22 'There are 27 entries, each 11 Bytes long. The first byte shows the type of file, the next two are the
+23 'address of that file, and the last eight, are the ASCII filespec. When you run it,wait 23 seconds
+24 'for initialization, then, you have commands available: 4 arrows to scroll one or four rows, forward
+25 'or reverse, and <ENTER> for Menu.

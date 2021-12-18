@@ -1,0 +1,129 @@
+Here are some of the useful ROM calls for the NEC PC8201a.  All numbers
+listed are in Hex, as shown by the "H" 
+after the number, and are in equate
+("EQU") form.  The labels are mostly
+the same as used by NEC and the CUSTOM
+Software assembler.  Also included is
+information on the directory and some
+reserved RAM locations that may be
+useful.  If there is much interest, I
+will upload more of this information.
+If you have specific requests, please
+send my an easyplex message.
+Have fun with these!!
+
+
+			Barry Rowe
+			[75106,3463]
+checksum = 482,624
+;sound
+MUSIC	EQU	730DH	;ROM call for music -- put frequency in [DE] and
+ length of tone in [B] -- use same values as in BASIC reference manual
+when using "SOUND" command
+BEEP	EQU	4258H	;ROM call to make a beep
+
+;keyboard input
+CSROFF	EQU	427DH	;turns curser off
+CSRON	EQU	4278H	;turns curser on
+DELIN	EQU	4282H	;delete line curser is on
+DELEOL	EQU	428CH	;delete from curser to end of line
+INSRT	EQU	4287H	;insert a line at curser
+INLIN	EQU	47AAH	;get line from keyboard -- get input from curser
+position to end of line
+PINLIN	EQU	4798H	;get a whole line -- even include a prompt
+BUF	EQU	F5A1H	;input buffer for INLIN & PINLIN
+GETCH	EQU	7279H	;get a char from the keyboard -- don't wait --
+This must be used in a loop -- the zero flag is set if a key has been pressed.
+CHGET	EQU	174DH	;get a char from the keyboard -- this routine turns
+back on the curser if you have called CSROFF
+CHSNS	EQU	183DH	;sense char in keyboard queue -- must be used in a
+loop -- zero flag =0 if char is in queue
+BREAKX	EQU	72DFH	;checks for SHIFT+STOP key -- carry flag set (=1)if
+it has been pressed
+
+; LCD output
+NOSCRL	EQU	426EH	;inhibit screen scroll
+SCRL	EQU	4273H	;enable screen scroll
+PRASC	EQU	3898H	;print a number in ASCII -- put the number to be
+printed to the screen in [HL], then call PRASC
+CLRSCR	EQU	4260H	;clear screen
+NVRS	EQU	42A2H	;inverse video on
+NONVRS	EQU	42A7H	;inverse video off
+CHPUT	EQU	4363H	;print to LCD -- prints the char in [A]
+LCDISP	EQU	1462H	;ROM routine to display to LCD -- point [HL] to the
+beginning of the message -- end the message with a 00H
+POSIT	EQU	42B5H	;locates curser location -- put col # (1-40) in [H] (H
+for horizontal), line # (1-8) in [L] (you guessed it -- L for line)
+CRSRC	EQU	F3E6H	;current curser column location --called "X" by NEC
+CRSRL	EQU	F3E5H	;curser line location -- called "Y" by NEC
+ERAFNK	EQU	42C3H	;erase function keys -- and inactivates line 8 from
+system use
+DSPFNK	EQU	42E4H	;display function keys -- and reserves line 8
+for system use (you can't write on it)
+IMAGE	EQU	FD00H	;320 bytes (8 lines by 40 chars) of screen image --
+poking here does no good, but you can read what is currently on the LCD --
+FDOOH contains the char on line1,col1.
+Lines are numbered 1-40, columns are 1-8 when using assembler (different from
+BASIC)
+
+;files
+USRDIR	EQU	F891H	;beginning of directory for RAM files -- each
+directory entry is 11 bytes long (1st byte = directory flag, 2nd, 3rd bytes =
+start address of file, 4th-9th byte = file name{pad with nulls if shorter
+than 6 chars}, 10th-11th bytes are extension {DO,CO,BA} note that the '.'
+is not in the directory {or used in FILNAM} The master flag consists of 8
+bits set as follows:  bit7 (master bit); 1 if valid file, bit6 (ASCII bit);
+1 if text (.DO file), bit5 (Binary bit); 1 if .CO file, bit4 (File-in-ROM);
+1 if the file is in ROM, bit3 (Hidden file); 1 if the file is hidden (not
+displayed on main menu); bit1 (OPEN file); 1 if open RAM file, bit2 is not
+used, and bit0 should always be 0:  Bit3 can be manipulated to make files
+invisible.  Be careful, though, if you make the program invisible that changes
+bit3, you could be in trouble.  Think about it!!  Also, watch checking for
+valid files.  The master bit tells you if the file is valid.  If it is reset
+(=0), then even if there is an address and filname in the file slot, the file
+may not be there!!  DIR entries are not erased when the file is killed.
+
+BASIC	EQU	F84FH	;BASIC directory entry
+TEXT	EQU	F85AH	;TEXT directory entry
+TELCOM	EQU	F865H	;TELECOM directory entry
+NULDIR	EQU	F870	;directory entry for non-registered BASIC program --
+written from BASIC, but not saved
+SCRDIR	EQU	F87BH	;directory for SCRAP -- a temporary file used by EDIT
+ and TEXT
+EDTDIR	EQU	F886H	;directory for temporary file used by EDIT
+	note: BASIC through EDTDIR are not the same format as USRDIR files.
+There appears to be only 3 bytes for each file if it is hidden-- a master
+flag and address bytes. note, the address bytes are LSB first. If the
+file is not hidden, there are 3 bytes + the name (which can be changed!)
+followed by a null (0H).  It is obvious that the LCDISP call is used to
+display these files to the LCD.  All of this is interspersed with the authors'
+ names (Suzuki and Hayashaki!!).
+SRCNAM	EQU	229BH	;ROM routine to search directory for file name -- file
+to be searched for must be in FILNAM
+FILNAM	EQU	FB78H	;buffer in reserved RAM to hold filename
+LNKFIL	EQU	233AH	;ROM routine to fix up file structure -- ALWAYS DO THIS
+BEFORE SEARCHING FOR A FILE FOR ANY USE!!
+
+;MISC ROM calls
+LDIRSB	EQU	6C78H	;LDIR z80 emulation (load, increment, repeat)
+LDDRSB	EQU	6C83H	;LDDR z80 emulation (load, decrement, repeat)
+TIMRD	EQU	7359H	;transfers the time/date information from
+a special time buffer called TIMBUF
+It transfers 9 characters.
+They are in this order (possible values):
+TIMBUF:   lower digit of second (0-9)
+TIMBUF+1: upper digit of second (0-5)
+TIMBUF+2: lower digit of minute (0-9)
+TIMBUF+3: upper digit of minute (0-5)
+TIMBUF+4: lower digit of hour   (0-9)
+TIMBUF+5: upper digit of hour   (0-2)
+TIMBUF+6: lower digit of day    (0-9)
+TIMBUF+7: upper digit of day    (0-3)
+TIMBUF+8: day of the week(0=Sun,6=Sat)
+TIMBUF+9: Month (1=Jan,9=Sep,12=Dec)
+The year is contained in TIMBUF+10
+(lower digit:'6' of 86).  TIMBUF+11
+contains the higher digit of the year.
+However -- The year is only maintined
+in bank 1.
+!

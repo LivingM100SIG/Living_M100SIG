@@ -1,0 +1,56 @@
+1 'Revised CYPHER PROGRAM - to code & decode a .DO file.
+2 'BY Russ Villanueva [70526,1434]
+3 'All rights reserved
+4 'With exception for use of CompuServe
+5 'Model 100 SIGers
+6 'The password can be upper or lower cae but MUST BE EXACTY the same to
+7 'decode your file. <TABS> can be used.Compatablity With the old cypher
+8 'program unknown.  This program is based on an actual cypher method and is
+9 'extremly hard to decode w/o the password.
+10 'This Program can be shortened but hasn't so it's easier to understand.
+11 'And while decoding, You can see if your password is correct.
+12 'IF NOT, use the <break> key and start over, else your file will be lost
+13 'Send comments via 'sig' message or EMAIL.
+14 MAXFILES=2:CLEAR:DEFINTA-Z
+15 CLS:PRINT@92,"<<< CYPHER >>>",,,
+16 INPUT"   Password";C$:CL=LEN(C$)-1
+17 IFCL<0THENMENU
+18 BEEP:PRINT@120,"(c)ode or (d)ecode:";
+19 PRINTSPACE$(61);:D$=INPUT$(1)
+21 IFD$="c"THEN50ELSEIFD$="d"THEN150
+22 GOTO18
+50 INPUT"File to code";F$:OPENF$FORINPUTAS1:OPEN"xxxxxx.do"FOROUTPUTAS2
+51 PRINT@280,CHR$(27)"p CODING ";
+52 IF EOF(1)THEN210ELSEN$=INPUT$(1,1)
+54 IFASC(N$)=13THENN$=INPUT$(1,1):PRINT#2,"":GOTO52
+56 IFASC(N$)=9THENPRINT#2,CHR$(9);:GOTO52
+57 IFASC(N$)<32THENPRINT#2,N$;:GOTO152
+58 IFASC(N$)>127THENPRINT#2,N$;:GOTO152
+60 IF X>CLTHENX=1ELSEX=X+1
+62  P=ASC(MID$(C$,X,1))-31
+64  N=ASC(N$)-31
+66  Z=N+P+31:IFZ>126THENZ=Z-126+31
+70 PRINT#2,CHR$(Z);
+90 GOTO52
+150 CLS:FILES:INPUT"--- File to be decoded:";F$:OPENF$FORINPUTAS1
+151 OPEN"xxxxxx.do"FOROUTPUTAS2
+152 IF EOF(1)THEN200ELSEN$=INPUT$(1,1)
+154 IFASC(N$)=13THENN$=INPUT$(1,1):PRINT#2,"":PRINT:GOTO152
+156 IFASC(N$)=9THENPRINT#2,CHR$(9);:PRINTCHR$(9);:GOTO152
+157 IFASC(N$)<32THENPRINT#2,N$;:GOTO152
+158 IFASC(N$)>126THENPRINT#2,N$;:PRINTN$;:GOTO152
+160 IF X>CLTHENX=1ELSEX=X+1
+162   P=ASC(MID$(C$,X,1))-31
+164   N=ASC(N$)+64
+166 Z=(N-P+31):IFZ>126THENZ=Z-126+31
+168 I$=CHR$(Z):PRINTI$;
+170 PRINT#2,I$;
+190 GOTO 152
+200 PRINT:SOUND1000,50
+201 PRINTCHR$(27)"p Press <ESC> to kill and re-name old     file"
+202 A$=INKEY$:IFA$<>CHR$(27)THEN202
+210 IFINSTR(1,F$,".")THEN201ELSEF$=F$+".do"
+212 KILLF$:NAME "XXXXXX.DO"ASF$
+214 CLOSE:MAXFILES=0:MENU
+
+300 'p.s. lines 201-202 can be ommitted

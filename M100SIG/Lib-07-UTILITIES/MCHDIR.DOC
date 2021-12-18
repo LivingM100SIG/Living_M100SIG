@@ -1,0 +1,29 @@
+               Model 100
+    Machine Code Directory Program
+               Jim Moore
+                5/11/85
+
+The file MCHDIR.100 is a BASIC program that loads a 236 byte machine code 
+program (PCD) into the contiguous memory location of your choice.  An 
+additional 13 bytes are used by the BASIC calling program (D).  PCD provides 
+a paged display of the name of all RAM files and their size in bytes.  The 
+names of the BASIC and patch buffers are changed to Basic.BF and Patch.BF.  
+Also, the name of the BASIC calling program is shortened from D.BA to just 
+D.  This allows running the program from the MENU by just typing D and a 
+RETURN.  The Model 100 doesn't have to be in any particular state to load 
+the programs (i.e. cold start reset not necessary).
+
+Whether loading MCHDIR.100 from a RAM file, cassette, or whatever, the first 
+thing to do is to SAVE it to RAM:D.BA (Note that RAM:D.BA is self-altering 
+and hence a poor choice for backup).  Next RUN the program.  First, you will 
+be asked if you have saved the program to D.BA.  If you have done so, hit 
+ENTER.  Next, you will be asked where to start loading PCD (i.e. HIMEM).  
+Usually just hit enter and confirm your choice with a "Y".  Once the program 
+returns to the Ok prompt, TEMP.DO and any other file associated with this 
+program, except D, may be deleted.
+
+PCD may be loaded below any other machine language programs that reside 
+below MAXRAM or other programs may be loaded below PCD as long as an 
+additional 20 bytes are left between the start of PCD and the end of the 
+program below it.  If you prefer not to see Basic.BF and Patch.BF change the 
+number 144 in the DATA statements to 152.

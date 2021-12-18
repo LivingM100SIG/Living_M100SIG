@@ -1,0 +1,22 @@
+ST PETERSBURG POLICE
+FLO521400
+SP87
+D H DEKAY
+OFF
+024309
+ST PETERSBURG
+FL
+33705
+813
+AREA
+ZONE
+GRID
+0800-1700
+SAT SUN
+8937799
+M Q MCGOUGH
+SGT
+000000
+PINELLAS
+0464
+

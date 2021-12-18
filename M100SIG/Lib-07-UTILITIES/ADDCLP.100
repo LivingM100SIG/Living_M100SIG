@@ -1,0 +1,60 @@
+ADDCLP.100
+(c)1989 by James Yi 73327,1653
+  Adapted for the M100 by Wilson Van Alst
+
+ADDCLP.CO is 209 bytes and runs in AltLCD.  The original source code is
+ ADDCLP.SRC, in Lib 10.
+
+It's a text utility that lets clips of text cut <F7><F6> or copied <F7><F5>
+append to the paste buffer.  The accumulated buffer contents are
+returned whenever the PASTE key is pressed.
+
+While in ADDCLP, the paste buffer can be cleared by pressing <F7><F6>
+without moving the cursor.
+
+When ADDCLP is run from the Menu, it prompts for a file name.  Type the
+name, and as you press ENTER, hold down SHIFT if you want the normal word-wrap
+feature intact.  If you press ENTER without the SHIFT key, word wrap will
+be disabled.
+
+The program turns itself off when you exit from TEXT.
+
+If typing the file name each time you access a text file becomes too
+ inconvenient, you may want to try the following solution.
+
+Create the Basic program listed below for each text file that you access
+ frequently, and then whenever you want to edit one, run the Basic program for
+ that file.
+
+In line 1, replace "NOTE" with another name, and change W=0 to W=1, if you
+ want the word-wrap feature enabled.
+
+1 F$="NOTE":W=0
+2 F$=F$+CHR$(0):V=VARPTR(F$)
+3 LOADM"ADDCLP":CALL64704,W,PEEK(V+1)+PEEK(V+2)*256
+
+
+To create ADDCLP.CO, run this loader:
+
+0 REM ADDCLP.100
+2 REM Lets paste buffer append
+3 REM (C)1989 James Yi 73327,1653
+4 REM Adapted for M100 by Wilson Van Alst
+5 REM This is a BASIC loader to create ADDCLP.CO, which runs in AltLCD.
+6 REM ADDCLP.CO can be run from the Menu or called from BASIC, but it will exit to Menu and not return to BASIC.
+10 FORI=0TO202:READA:POKE64704+I,A:C=C+A:NEXT
+15 IFC-29641THENPRINT"Pgm Data Error":BEEP:END
+20 SAVEM"ADDCLP",64704,64906,64707
+100 DATA 195,235,252,205,58,31,33,211, 252,34,82,246,33,25,94,205,124
+101 DATA 90,175,196,41,66,205,83,93,33, 20,94,205,145,87,205,62,70
+102 DATA 215,202,151,87,58,162,255,230, 1,245,205,6,34,241,229
+103 DATA 17,222,250,237,34,42,253,33,5, 253,217,33,0,0,34,231,246,195,110
+104 DATA 95,229,42,42,253,227,229,213, 197,245,33,237,20,229
+105 DATA 56,28,237,1,240,95,8,33,143, 247,194,38,253,54,255,33,48,253,217
+106 DATA 201,126,60,200,33,0,0,34,222, 250,201,50,223,246,245,205
+107 DATA 236,101,241,245,254,15,202,88, 253,254,21,202,101,253,254,27
+108 DATA 194,247,95,58,224,246,254,27, 194,247,95,241,205,41,253,175
+109 DATA 195,92,96,241,205,238,98,205, 131,99,205,120,253,195,58
+110 DATA 100,241,205,238,98,205,131,99, 205,171,100,202,75,100,205,120
+111 DATA 253,195,78,100,205,70,33,17, 165,249,237,62,26,190,35
+112 DATA 194,129,253,43,217,195,188,100

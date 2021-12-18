@@ -1,0 +1,167 @@
+DOCUMATION FOR TODO.PJP
+By Phil Pearsall [70476,1476] 10/16/84
+
+INTRODUCTION:
+
+TODO is a Reminder-Clock-Alarm-Calendar-Calculator program that has been 
+bouncing around in my Model 100 for most of a year developing.  It started out 
+as CLKCAL.100 by Jim Frerris 70506,1102 who, according to the rem's in the 
+begining of the downloaded program, derived it from APOINT.220 by Richard Ross 
+and CLKDAT.101 by Howard J Bender 70235,1337.  Along the way I also picked up 
+ABACUS.100 by Dave Mack 71256,44.  The rest is mine except for a short 
+capitalization routine that I "borrowed" from RFU by Jesse Bob Overholt as 
+published in "Portable 100".
+
+
+DESCRIPTION:
+
+TODO lets you input appointments and ToDo's to NOTE.DO.  It then displays 
+today's appointments and all ToDo's (up to six lines) in a window on the 
+display. In another window the day, date, time, and alarm time are displayed.  
+By means of function keys you can:
+
+        F1. View and Delete appointments and ToDo's
+        F2. Enter Appointments or ToDo's
+        F3. Retrieve phone numbers from ADRS.DO
+        F4. Set or Cancel alarm time
+        F5. Run ABACUS (calculator)
+        F6. View the perpetul calendar
+        F7. Redraw display windows on power up.
+        F8. Return to M100 menu
+
+
+OPERATION:
+
+1) Files:
+
+ALARM.DO with at least one entry must exist in RAM for the program to run. A 
+single character or your name or whatever will suffice for the single entry.  
+You can later delete it after an alarm time is entered.  The program will open 
+a NOTE.DO file if none exists.  To use the phone directory routine, ADRS.DO 
+must be in RAM (more on this later).  Using NOTE.DO and ADRS.DO allows one to 
+use the M100's ADDRSS and SCHEDL routines when TODO is not loaded and with 
+phone numbers in ADRS.DO, TELCOM with auto-dialing can be used.
+
+2) Display:
+
+The opening display is a window on the left side of the screen for displaying 
+appointments and To-Do's and a smaller window on the right displaying the day, 
+date, 12 hour clock time, and a small window for alarm time.  Without any data 
+in NOTE.DO the Appointment & To-Do's Window is empty as is the alarm mini-
+window without an alarm time loaded.  Under the windows the function keys are 
+labeled "view entr phon alrm calc caln reln menu".
+
+3) Function Keys:
+
+        F1 (view) allows viewing of appointments and To-Dos one at a time with 
+the option to delete.  Pressing F1 calls up a window that lets you select 1) 
+Scan, 2) MM/DD, 3) Today, or 4) TO-DO.  1) lets you scan all entries in the 
+file, 2) lets you select a date then view appointments for that date, 3) calls 
+up todays appointments, while 4) calls up TO-DOs.  As you view each entry you 
+have the option to delete it.
+
+        F2 (entr) lets you enter appointments and To-Dos.  You first are asked 
+to select <T>oDo or <A>ppointment.  Upon selection of either, a heading will 
+appear to guide the entry.  An entry can be up to 254 characters long but only 
+23 characters (to the end of the screen) will be displayed in the Appointment 
+and ToDo window.  After typing an entry, hit ENTER and you will be asked if you
+want to make another entry.  Hit any key but "Y" and the program sorts the new 
+entry into the file.  Appointments are sorted ahead of ToDos in chronological 
+order and Todos are sorted alphabetically by the first five characters in the 
+entry with upper case ahead of lower case.
+
+        F3 (phon)  Now is a good time to talk about organization of the ADRS.DO
+file.  First of all, I don't have addresses in this file only phone numbers.  
+Each entry consists of name, home no., and work no. and should be spaced 
+exactly as follows to match the display headings in TODO:
+                    BOBBI ARCHAMBAULT 700-6000 :900-4000:
+For longer names, shorten.  For shorter names, fill in with spaces.  The ":" 
+enclose the number you might want to auto-dial.  Names must be in caps because 
+TODO capitalizes the keyboard input before looking for a match.  Thus, during 
+operation one does not have to worry about how the name appears in the file or 
+if CAPS LOCK is on or off.  This is the most recent addition to TODO and, as 
+mentioned in the introduction, is "borrowed" from RFU by Jesse Bob Overholt as 
+published in "Portable 100".  CIS and BBS numbers with auto-logon sequences are
+also in my ADRS.DO file.  These entries are indented eight spaces so that when 
+the file is sorted on the last name they are sorted to the top after which they
+are treated as header when using HDSORT.100.  That is if you sort the ADRS.DO 
+file.
+
+        Back to F3 (phon)  Pressing F3 displays a window that asks for a name. 
+First, last or any part of a name can be entered in lowercase,uppercase or any 
+combination and all matches will be displayed.  When you type in the wrong name
+or want to make a second call you can look up another number by hitting "Y" in 
+response to the "Another No?" Question.
+
+        F4 (alrm) results in a window and the menu <S>et or <C>ancel.  Pressing
+<S> leads to another menu <D>aily or <S>ingle.  Pressing <D>, in turn, lets you
+enter an alarm time.  The entry should be 24 hour time in the form HH:MM.  This
+entry will cause the alarm to sound every 24 hours at the inputed time.  
+Selecting <S> on this menu lets you input a date and time.  This input should 
+be in the form MM/DD  HH:MM and will result in the alarm sounding once at that 
+date and time.   Selecting <C>ancel lets you view each entry in the ALARM.DO 
+file with a cancel option.
+Note:  In the top display each alarm time is displayed for one second each pass
+through the file.  This is by design so that one has time to read the times, 
+but it, also lets you cause the alarm time to flash by selecting <D>aily and 
+entering spaces for the time after an alarm time has been entered.
+
+        F5 (calc) selects ABACUS, a friendly easy to use Calculator without any
+reverse polish arithmetic or other tricks required.  One caution though, 
+selecting the ABACUS to PRINTER option without a printer connected or turned on
+will result in the M100 hanging up until either the printer is connected and 
+turned on or SHIFT-BREAK.
+
+        F6 (caln) selects a perpetual calendar.  The opening display shows the 
+current month, with today's date hi-lighted, in one window and the day, date, 
+time, alarm time displayed in another window.  Function keys (F4-F7) allow 
+display of next mo., previous mo., any month, from the year 100 to I don't know
+how far into the future (don't know about the accuracy at the extremes), and 
+today.  F8 returns you to the main program.  The first three 'F' keys are not 
+used because for some months (Sept. and Dec. 84) some dates fall outside of the
+window and overwrite the ledgend for the first couple of keys.
+
+        F7 (reln)  Until I find something else for this function, it is used to
+RUN after powering up with the program loaded, to redraw the windows.
+
+        F8 (menu)  Returns to the Model 100 Menu.
+
+
+Notes:
+
+1) Variables: There was no rhyme or reason used in naming the variables.  Like 
+I said, the program grew and I learned as I went. Does make things a little 
+hard to follow though.
+
+2) Modularity:  All the functions are independent of one another and any one 
+can be removed and replaced.  An exception is that retn in the calendar routine
+is the same instruction as reln (line 700).  Saves a few bytes.  A given module
+will not run stand alone, however, as it depends on the definitions in line 10.
+
+
+3) Use:  My Model 100 goes from home to office to home and on trips with me.  
+TODO is usually in the computer and tends to keep me organized.  In fact I 
+called it ORGIZR for a while.
+
+4) Bug: There is a bug in the 12 hour clock routine (lines 70-75).  Between 12 
+and 1 AM 0 not 12 is displayed.  It doesn't bother me enough to fix it since I 
+don"t use the program much that time of day.  While in the area, line 77 
+updates the display at midnight  for those times that I leave the computer on 
+all night (using an AC adapter) to be my wake up alarm.
+
+5) Bug 2: There is, also, a bug in the calendar routine (600 lines).  When 
+"any" Month and Year is called while todays date is displayed, todays date is 
+hi-lighted in the new month and year.
+
+6) Windows: I'm not sure that I am technically correct in calling the 
+rectangles in the displays "Windows", but I like "windows" better than "BOXES".
+
+
+7) to-do: If someone can figure out a consistent spelling of todo, To-Do, TO-
+DO, etc. let me know and I may revise this document.
+
+I welcome comments or help reducing the size of the program while keeping all 
+the features (I tend to be a byte fyter).  I will, also, be glad to answer any 
+questions.  You can contact me by EMail or on the Message Board. Have Fun...
+                                                                   phil p
+

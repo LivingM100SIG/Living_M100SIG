@@ -1,0 +1,9 @@
+0 CLS:FILES:MAXFILES=2:INPUT"FILE (______.DO)";F$
+1 OPEN F$ FOR INPUT AS 1:OPEN LEFT$(F$,3)+"PAK"FOR OUTPUT AS 2 :ON ERROR GOTO 6:KY$=CHR$(9)+" '"+CHR$(34)';Main Loop
+2 C$=INPUT$(1,1):O=O+1:ON INSTR(KY$,C$) GOTO 2,2,4,5';Normal Transfer
+3 PRINT#2,C$;:N=N+1:GOTO 2';Apostrphe (REM)
+4 C$=INPUT$(1,1):O=O+1:IF C$=CHR$(13)THEN 3 ELSE 4'END IF;Double-quote (Literal)
+5 PRINT#2,C$;:N=N+1:C$=INPUT$(1,1):O=O+1:IF C$=CHR$(34) THEN 3 ELSE 5'END IF;Finish
+6 CLOSE:CLS:PRINT@130,"OLD LENGTH="O:PRINT@170,"NEW LENGTH="N:END
+10 '(c) Hugo Ferreyra [75735,1261]5050 N.W. 7 St., Miami, FL 33126 (305) 446-9790
+11 'This program creates a new BASIC ASCII file from an original BASIC ASCII file. The new one will not have embeded spaces, TAB's or Comments delimited by apostrophes

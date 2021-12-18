@@ -1,0 +1,39 @@
+For those seeking a genuine challenge, M3DTUF is a difficult variant of Tim 
+Ekdom's marvelous MAZE3D. Caution: if you haven't mastered MAZE3D, you may find
+M3DTUF too tough to be any fun.
+
+M3DTUF looks "almost" exactly like MAZE3D to the user, so read the MAZE3D 
+instructions. Differences:
+
+ o M3DTUF lets you choose the cube size. 5x5x5 is the default. 1x1x1 is trivial
+(a confidence booster!), while 2x2x2 & 3x3x3 are suggested for learning about 
+the kinds of mazes generated. Run-time memory use is about a third of MAZE3D's,
+but still increases with the cube of the size. Mazes larger than 10x10x10 are 
+possible, but AWFULLY hard to solve: consider that even in a 10x10x10 cube, 
+there are a thousand rooms to try!
+
+ o MAZE3D can't guarantee that a solution exists - it works "almost all" the 
+time because it creates LOTS of passages in the cube (about a 70% chance that 
+any two adjacent cells are connected). The algorithm here is slower (about 2.5 
+cells a second), but: (1) guarantees that a solution exists; and, (2) further 
+guarantees that the solution is unique. In fact, there's exactly one path 
+between ANY two cells in the cube. This makes the mazes VERY difficult to 
+solve, as a single wrong turn anywhere takes you off the only winning path.
+
+ o The ROM calls to the function key routines were removed (F4 & F8 still work 
+here, but M3DTUF does NOT change any function key definitions).
+
+ o A trivial glitch in the elapsed-time computation was fixed.
+
+
+Thanks again to Tim Ekdom, for contributing one of the slickest programs on the
+SIG!
+
+Tim Peters  CIS 72227,2416
+
+
+Tech notes: For those up on their elementary graph theory, M3DTUF generates a 
+random spanning tree of the cube's natural connectivity graph - existence & 
+uniqueness of paths between arbitrary cells follows immediately. The method is 
+linear in the # of cells, & is interesting in its own right.
+

@@ -1,0 +1,463 @@
+
+;HXFER.SRC - source code for HXFER.200
+;Binary file to Hex ascii file
+;conversion program.
+;James Yi 73327,1653 - 04/27/1988.
+;
+
+null	equ	7	;point to 0
+maxfil	equ	$9be1	;not used
+open	equ	$5bd1
+select	equ	$5b7e
+readio	equ	$5d36
+writio	equ	$5a05
+close	equ	$5ce6
+devout	equ	$f73f
+
+restak	equ	$7155
+errtrp	equ	61236
+reterr	equ	$4a6
+maxram	equ	61100
+swapnm	equ	11711
+cls	equ	20301
+INXD	EQU	$5587
+LoadBL	equ	33756	;Load BA label
+Rflptr	equ	11362
+Kill	equ	11052
+OMmsg	equ	$69AC
+Delay2s	equ	25102
+SaveCO	equ	12390
+Bell	equ	20293
+Print	equ	26526	;Print @ clmn 1
+InpA	equ	21744
+InpB	equ	21750	;Input w/o '?'
+Files	equ	10794
+GetLen	equ	11587
+FmtFnm	equ	23242
+FindCO	equ	11174
+Top	equ	62715
+Len	equ	62717
+Exe	equ	62719
+GetVal	equ	2326
+ChGet	equ	4855
+
+
+;
+;Begin HXFER
+	org	maxram-875	;Put it in HIMEM
+;
+	call	LoadBL	;load label
+	lxi	h,trapit	;set BA error trap
+	shld	errtrp
+;Display Menu
+Choose:	call	restak
+	call	close
+	call	Rflptr
+	call	CLS
+	call	Files
+	lxi	h,Menu	;display menu
+	call	Print
+;Make a choice
+Notchoosy
+	call	ChGet
+	CPI	13	;CR=exit
+	jz	0
+	sui	49
+	jz	Hex
+	dcr	a
+	jz	Binary
+	dcr	a
+	jnz	choose
+	rst	0
+
+;.DO to .CO - Enter hex file
+Hex:	lxi	h,msg1
+	call	Print
+	call	InpA
+	rst	2
+	jz	Choose
+	mvi	a,1	;INPUT
+	call	openit
+	mvi	a,1	;#1
+	call	select
+;Load CO file parameters: Top,End,Exe
+	mvi	c,6
+	lxi	d,Top
+L2	call	Getbyt
+	stax	d
+	inx	d
+	dcr	c
+	jnz	L2
+;Prompt for relocating address
+	lxi	h,0
+	shld	devout	;turn off device for lcd output
+	lxi	h,msg2
+	call	Print
+	call	InpB
+	rst	2
+	push	h
+	lhld	Top
+	xchg
+	pop	h
+	cnz	GetVal	;If a number is
+	lhld	Top	;entered, use
+	mov	b,h	;this as the
+	mov	c,l	;new address
+	xchg		;else keep old
+	dsub	b
+	shld	Diff	;Old-New
+	push	h
+	call	FindCO	;Does CO exist already?
+	cnz	Kill	;then replace it - kill it.
+	call	Rflptr	;Reset file ptr
+	call	SaveCO	;Create a new CO
+	mvi	a,1
+	call	select
+	call	FindCO	;Get its location
+;Change the first 6 parameter bytes of the CO file according to the new addr
+	pop	b	;Add difference of Old-New to TOP and EXE
+	lhlx
+	dad	b
+	shlx
+	inx	d
+	inx	d
+	inx	d
+	inx	d
+	lhlx
+	mov	a,h
+	ora	l
+	jz	zero	;If EXE=0, don't change it
+	dad	b
+	shlx
+zero	inx	d
+	inx	d
+;Poke program content into the created .CO file
+	lhld	top
+	MOV	B,D
+	MOV	C,E
+	DSUB	B
+	SHLD	PCDIFF	;diffence of loading location and CO file location
+	lhld	Len	;Get length of program
+	mov	b,h
+	mov	c,l
+	push	d
+	push	b
+;DE=.CO addr, BC=Length
+;Start poking the CO file with the program content
+Load:	call	Getbyt
+	jc	Err	;Reached EOF
+	stax	d
+	inx	d
+	dcx	b
+	mov	a,b
+	ora	c
+	jnz	Load
+;Adjust addresses after loading - relocate
+	pop	b	;get length
+	lhld	Top
+	dad	b
+	dcx	h
+	shld	Len	;addr of last byte of loading addr - for checking if JMP range is withing the program.
+	pop	h	;CO location
+	dad	b
+	shld	Exe	;addr of last byte + 1 of CO file
+	dsub	b	;reset to beginning
+	xchg
+	call	NxExcl	;Get relocate skip addr
+AdjLoop	ldax	d
+	INX	D
+	call	ilen	;3 bytes long?
+	cpi	3
+	jnz	NOT3
+;3 bytes - relocate it if neccessary
+	lhld	PCDIFF	;get PC of 
+	DAD	D	;actual loading
+	MOV	B,H	;address
+	MOV	C,L
+	LHLD	EXCL	;Is this ok to
+	DSUB	B	;relocate?
+	jnz	L4	;If so, process in normally.
+	PUSH	PSW	;Not relocated.
+	call	NxExcl	;Load next one to skip
+	POP	PSW
+	jmp	NIR	;Get next instr
+L4	lhlx		;If the operand points to an addr within range of program, relocate it.
+	mov	b,h
+	mov	c,l
+	lhld	Top
+	dsub	b
+	jnc	NIR	;Not In Range
+	lhld	Len
+	dsub	b
+	jc	Nir	;Not in range.
+	lhld	Diff	;Adjust if
+	dad	b	;in range
+	shlx
+NIR	INX	D
+NOT3	CPI	2
+	CNC	INXD	;point to next instr
+	mov	b,d
+	mov	c,e
+	lhld	Exe
+	dcx	h
+	dsub	b	;Done?
+	jnc	AdjLoop	;check next instr
+
+;Use data leftover to relocate tables and such.
+L8	lhld	Excl
+	mov	a,h	;leftover?
+	ora	l
+	jz	choose	;if not, assume no table adjustments neccessary, done.
+	xchg		;DE=relocating addr
+	LHLD	PCDIFF	;Get program data location in the CO file for this addr
+	MOV	B,H
+	MOV	C,L
+	XCHG
+	DSUB	B
+	XCHG
+	lhlx		;instr to relocate is here
+	mov	b,h
+	mov	c,l
+	lhld	Diff	;add the difference of Old and New addr
+	dad	b
+	shlx		;adjusted.
+	call	NxExcl	;get next instr to relocate
+	jmp	L8
+
+
+;Read unused data at the end of hex file
+NxExcl	call	Getbyt
+	sta	Excl
+	call	Getbyt
+	sta	Excl+1
+	ret
+
+;Get length of instruction - 1,2, or 3
+ilen	cpi	$3f
+	jc	Grth1
+	cpi	$c2
+	jnc	Grth1
+Eq1	mvi	a,1
+	ret
+Grth1	mov	b,a
+	cpi	$ed
+	jz	Eq1
+	ani	$f7
+	cpi	$d3
+	jz	Eq2
+	ani	$c7
+	cpi	$c6
+	jz	Eq2
+	cpi	$6
+	jnz	Grth2
+Eq2	mvi	a,2
+	ret
+Grth2	mov	a,b
+	ani	$ef
+	cpi	$28
+	jz	Eq2
+	ani	$cf
+	cpi	$01
+	jz	Eq3
+	cpi	$cd
+	jz	Eq3
+	mov	a,b
+	ani	$e7
+	cpi	$22
+	jz	Eq3
+	mov	a,b
+	cpi	$c2
+	jc	Eq1
+	cpi	$c3
+	jz	Eq3
+	ani	$7
+	jz	Eq1
+	rar
+	jc	Eq1
+Eq3	mvi	a,3
+	ret
+
+;Read a byte from hex file.
+GetByt:	call	Fetch	;get high hex digit
+	cpi	26
+	jz	Eof	;error
+	rlc
+	rlc
+	rlc
+	rlc
+	mov	h,a	;move it to b7-4
+	push	h
+	call	Fetch	;get low hex digit
+	pop	h
+	cpi	26
+	jz	Eof	;error
+	ora	h	;or with b7-4
+	ret
+;EF error
+Eof	xra	a
+	stc
+	ret
+
+;Read a hex character, and convert it into binary number
+Fetch:	call	readio
+	cpi	26
+	rz
+L9	sui	48
+	jc	Fetch	;not hex chr
+	cpi	10
+	rc
+	cpi	17
+	jc	Fetch	;not hex chr
+	cpi	23
+	jnc	Fetch	;not hex chr
+	sui	7
+	ret
+
+;Error routine
+trapit:
+	mov	a,e
+	cpi	52
+	jz	FFerr
+	cpi	7
+	jz	OMerr
+	cpi	55
+	jz	NMerr
+	jmp	reterr	;other errors: resume error processing.
+FFerr	lxi	h,nofile
+	jmp	prerr
+NMerr	lxi	h,badnam
+	jmp	prerr
+
+Err:	call	FindCO	;.CO file is
+	call	Kill	;unusable.
+	lxi	h,errmsg	;Bad Hex file
+	jmp	PrErr
+OMerr:	lxi	h,OMmsg	;Out of Memory
+PrErr:	push	h
+	call	close
+	pop	h
+	call	Print
+	call	Bell
+	call	delay2s	;Wait
+	jmp	choose	;and resume
+
+;.CO to .DO - Enter .CO file
+Binary:	Lxi	h,msg3
+	call	Print
+	call	InpA
+	rst	2
+	jz	Choose
+	call	getlen
+	call	fmtfnm
+	call	FindCO
+	jz	FFerr
+	call	swapnm
+	lxi	h,msg4
+	call	print
+	call	inpa
+	rst	2
+	jz	choose
+	mvi	a,2
+	call	openit
+	call	rflptr
+	mvi	a,1
+	call	select
+	call	swapnm
+	call	findco
+	lxi	h,linlen
+	mvi	m,128
+	inx	h
+	mvi	m,0	;buflen
+	push	d
+	inx	d
+	inx	d
+	lhlx
+	lxi	b,6	;Actual length
+	dad	b	;to encode is
+	mov	b,h	;len+parameters
+	mov	c,l
+	pop	d
+
+;Encode binary into hex and store them.
+L5	call	Store
+	inx	d
+	dcx	b
+	mov	a,b
+	ora	c
+	jnz	L5
+	jmp	choose	;Done
+
+;Store one byte as two hex characters
+Store	ldax	d
+	rrc		;store high digit
+	rrc
+	rrc
+	rrc
+	call	Cnvert
+	ldax	d	;store low digit
+
+;Encode binary to hex - b3-0
+Cnvert	ani	$F
+	cpi	$A
+	jc	Lest10
+	adi	$7
+Lest10	adi	$30
+	call	chout
+	lxi	h,linlen
+	dcr	m
+	rnz
+	mvi	m,128	;CR&LF every 128 chrs
+	mvi	a,13
+	call	chout
+	mvi	a,10
+;write to hex output file
+chout:	call	writio
+	lxi	h,buflen
+	dcr	m
+	rnz
+;Adjust CO pointer, if neces
+	lda	device
+	cpi	$f8	;is DO output to RAM?
+	rnz
+	inr	d	;if so, CO file is moved up 256 bytes.
+	ret
+
+
+openit:	push	a	;Operation type :1=input, 2=output
+	call	getlen
+	call	fmtfnm
+	JNZ	spec	;device specified
+	MVI	D,$F8	;no device specified: Default is RAM
+spec:	mov	a,d
+	sta	device	;remember if this was RAM file.
+	lxi	h,null
+	pop	a
+	mov	e,a	;operation type
+	mvi	a,1	;buffer #
+	jmp	open
+
+
+errmsg	db	'Corrupt Hex File',0
+msg1	db	'.DO File',0
+msg2	db	'Load at? (<CR> for Default): ',0
+Msg3	db	'.CO File',0
+msg4	db	'Hex Output File' 0
+badnam:	db	'Bad file name' 0
+nofile:	db	'File not found' 0
+
+
+Menu	db	13,10
+	dm	1) x.DO --> x.CO
+	db	13,10
+	dm	2) x.DO <-- x.CO
+	db	13,10
+	dm	3) Exit
+	db	13,10,10,'?',0
+
+Diff	dw	0
+linLen	db	0	;64 byte count
+buflen	db	0
+Excl	dw	0
+PCDIFF	DW	0
+device	db	0
+

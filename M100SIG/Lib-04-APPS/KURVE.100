@@ -1,0 +1,128 @@
+5 'PROGRAM requires file NAMES.DO of
+6 'Student Names with length about 20
+7 'characters & a file e.g., CH1.DO
+8 'of the number of the record for the
+9 'student in NAMES.DO and the grade
+10'like this   5,95
+11'            7,80
+12'            2,100
+13'           10,60
+14'          999,999
+15'NB: last item as 999,999 avoids some
+16'problems.
+17'
+18'
+20 'KURVE PROGRAM ORIGINALLY WRITTEN IN FORTRAN BY R. K. CURTIS
+40 'ON IBM SYSTEM /3 AT HACKENSACK HIGH SCHOOL IN 1972.
+60 'KURVE/DSK  --  R K CURTIS  --  LAST REVISED 29-MAY-82
+100 CLEAR 5000
+120 DEFINT I-N
+140 CLS:PRINT:PRINT "Program KURVE.DO   07-APR-83 Version"
+160 PRINT
+180    I=1 : N=1 : NN=1 : R=0 : SX=0 : SS=0 : AA=80 
+200    UA=.31938153    : UB=-.356563782  :'CONSTANTS FOR %ILE
+220    UC=1.78147937   : UD=1.330274429  :'CALCULATIONS
+240    UE=-1.821255978 : UG=2.506628275
+260             M9 = 75     ' M9 is mean of curved grades
+280            S9 = 12.5    ' S9 is value of 100/(1 S.D.)
+300 PRINT:PRINT"This program will curve to a mean of ";M9
+320 PRINT"One standard deviation will be ";100/(S9-.5);"points."
+340 PRINT:PRINT"The program is set for up to ";AA;"students."
+360 PRINT "AA =";AA;"  M9 =";M9;"  S9=";S9;"  100/(S9-.5) ="; 100/(S9-.5)
+380   LINE INPUT"What is the FILESPEC for this test? (E.g. CH1.DO)   ";F$
+400    Y$=LEFT$(Y$,1)
+420   INPUT"Should output be ordered by score  (Y/N) ";Y$
+440      IF Y$="y" THEN Y$="Y"
+460      IF Y$="n" THEN Y$="N"
+480    IF Y$<>"Y" AND Y$<>"N" THEN PRINT "Respond Y or N only!": GOTO 420
+500    IF Y$="Y" THEN F0=1 ELSE F0=0
+520 DIM Z(AA),X(AA),B$(AA),N$(AA),N0(AA),N1(AA),N2(AA),UP(AA)
+560 PRINT "LOADING FILE NAMES.DO"
+580 OPEN"NAMES.DO"FOR INPUT AS 1
+600       J=1
+620       LINEINPUT#1,N$(J)
+640          IF EOF(1) THEN 680
+660       J=J+1 : GOTO 620
+680 CLOSE 1
+700 PRINT"LOADING FILE  "; F$
+720 OPEN F$ FOR INPUT AS 1
+740      LINEINPUT#1,TITLE$
+760         IF LEN(TITLE$)<8 THEN GOSUB 2040
+780      PRINT:PRINT"TEST TITLE: ";TITLE$
+800         INPUT#1,Z(I),X(I)
+820            IF X(I)>=900 OR Z(I)>=900 GOTO 940
+830  IF EOF(1) THEN 940
+840          SX=SX+X(I)
+860          SS=SS+X(I)*X(I)
+880       I=I+1
+900       R=R+1
+920       GOTO 800
+940 CLOSE 1
+960 I=I-1
+980 IF F0=1 THEN GOSUB 1740 :' FLAG FOR ORDERING 
+1000 PRINT "CALCULATING!"
+1020    XM=SX/R :              ' MEAN
+1030   S0=R*SS-SX*SX
+1040    SD=SQR(S0):SD=SD/R : ' STANDARD DEVIATION
+1060 J=1
+1080       B$(J)=N$(Z(J)) : ' Loop begins here.
+1100       N0(J)=INT(((X(J)-XM)/SD)*100)
+1120 N1(J)=N0(J)/S9+M9 : 'GRADE   M9 is mean of grades 
+1140                     'S9 is the value of 100/1 s.d.
+1160       N2(J)=(10*INT((N0(J)+505)/10)) : ' SAT STYLE SCORE 
+1180       UZ=N0(J)/100 :  'CALCULATES  %ILE 
+1200       UV=-.5*UZ*UZ
+1220       UY=1/(1+.2326419*UZ)
+1240       UF=UC+UY*(UD*UY+UE)
+1260       UP=1-EXP(UV)/UG*UY*(UA+UY*(UB+UY*UF))
+1280       UP(J)=100*UP : ' %ILE 
+1290 IF UP(J)<0 THEN UP(J)=0
+1292 IF UP(J)>100 THEN UP(J)=100
+1300    IF J=I THEN 1330
+1320    J=J+1 : GOTO 1080 : ' Loop ends here. 
+1330 FF$=LEFT$(F$,LEN(F$)-1)+"K"
+1331 OPEN FF$ FOR OUTPUT AS 1
+1332 FOR J=1 TO I
+1333 PRINT#1,Z(J);",";N1(J)
+1334 NEXT J
+1335 CLOSE 1
+1336 J=1
+1340 JJ=1
+1360 INPUT"SET PRINTER TO NEW PAGE AND PRESS ENTER";BB$ 
+1380 'Printing page loop begins here. 
+1400 PZ=4
+1420    LPRINT TITLE$
+1440    LPRINT "MEAN = ";XM,"STANDARD DEVIATION = ";SD
+1460 LPRINT "CURVED MEAN = ";M9,"ONE S. D. IS ";100/(S9-.5);"POINTS"
+1480   LPRINT " "
+1500   LPRINT "NAME"; TAB(32) "RAW SCORE"; TAB(43) "CURVED GRADE"; TAB(58) "SAT STYLE      %ILE"
+1520      LPRINT Z(J); TAB(4) B$(J); TAB(36) X(J); TAB(46) N1(J); TAB(59); N2(J); TAB(63)"        ";
+1540      LPRINT USING"###.#"; UP(J)
+1560 ' Inner printing loop -names- begins here.
+1580      PZ=PZ+1
+1600      IF JJ = I THEN GOTO 1660
+1620      J=J+1: JJ=JJ+1
+1640      GOTO 1520 : ' Inner printing loop ends here. 
+1660   IF PZ>60 THEN LPRINT CHR$(12):GOTO 1340
+1680   PZ=66-PZ:FOR ZZ=1 TO PZ:LPRINT CHR$(138):NEXT ZZ:GOTO 1340 
+1700  ' Outer printing loop ends here. 
+1720 END
+1740 PRINT: PRINT "ORDERING!     ";
+1760 FOR K= 1 TO I
+1780 FOR L=1 TO I-K
+1800 X=X(L)
+1820 Z=Z(L)
+1840 Y=X(L+1)
+1860 ZZ=Z(L+1)
+1880 IF X>Y THEN 1980
+1900 X(L)=Y
+1920 Z(L)=ZZ
+1940 X(L+1)=X
+1960 Z(L+1)=Z
+1980 NEXT L
+2000 NEXT K
+2020 RETURN
+2040 CLOSE 1
+2060 OPEN F$ FOR INPUT AS 1
+2080 LINEINPUT"What is the title of this test?";TITLE$
+2100 RETURN

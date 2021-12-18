@@ -1,0 +1,22 @@
+DIRACC.PW1: Enhancement of DIRACC.100
+-------------------------------------
+Phil Wheeler -- 71266,125
+
+
+DIRACC.100 in DL1 is one of the more exciting TELCOM-related utilities on the SIG.  It lets you edit files while on-line, and costs little in terms of memory.  I have been using it for sometime.  But when I got my Chipmunk, I found that removing it per the instructions in DIRACC.DOC removed CDOS, and made it impossible to re-boot the 'Munk without doing a cold start.  So, files could be lost.
+
+This version of the program is simply a shell around the original DIRACC.100.  This Install/Remove shell gives an indication of the status of DIRACC, and makes it easy to install or remove.  And it should be removed after each use, since it runs below MAXRAM and is unprotected from overwrite.
+
+The remove technique used here is to reset the TELCOM F6/F7 hooks to their original values, directly if CDOS is not active, and via an 'LFILESOFF:CALL0' sequence if CDOS is active; the latter re-installs the CDOS TELCOM F6/F7 hooks.  Removal also defines F6 in Basic as 'Kill"'; change this to your own needs.
+
+There are two minor pitfalls remaining (that I know of:
+
+  1) Doing a 'CLEAR256,MAXRAM' without first removing DIRACC will remove the code installed by the loader, even though the program will say it is installed and the F6/F7 jumps will be installed.  Then going into TELCOM without first re-installing the code may give undesirable side effects when those keys are used.
+
+  2) Installing DIRACC twice in succession without first removing it will push HIMEM down 152 bytes, since it loads relative to HIMEM, not MAXRAM.  But this is no big thing.
+
+I hope this version of DIRACC will prove more user friendly and bomb-proof.  Any questions, just ask.
+
+Finally, a tip of the hat to Stephane Burgoyne and Hugo Ferreyra who gave us this in the first place.
+
+Phil Wheeler -- 71266,125

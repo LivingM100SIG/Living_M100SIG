@@ -1,0 +1,63 @@
+
+Use of DSKO$ with POWR-DOS
+--------------------------
+
+
+The DSKO$ function of POWR-DOS has the general syntax:
+
+     DSKO$ SW, SE, AD
+
+     where
+
+          o SW is a Switch (SW=0 for read from disk to RAM; SW
+            non-zero for write from RAM to disk)
+
+          o SE is the disk sector number operated on (0 to 79)
+
+          o AD is the start (low end) of the RAM block used as a
+            buffer; must be 1292 bytes long and cleared before use
+            -- e.g., CLEAR 0, MAXRAM-1292.
+
+This command allows POWR-DOS to pull in a sector from disk, modify
+individual bytes, or groups of bytes (up to a sector in length),
+and write the modified sector back to the disk.
+
+This function requires that the disk be formatted, but not that
+there be a directory.
+
+This would seem to allow some pseudo-formatting, to get
+sub-sectors ("blocks") on the disk.  For example, each 1292 byte
+sector could be considered as a set of four 323 byte blocks (320
+total blocks on a disk); since 1292 factors into 4*17*19, there
+are other possibilities.  Each block could be used as a data
+"record" (without a directory structure, a dedicated data base is
+about the only application I can think of for a disk used this
+way).  Each block could hold it's block number (may not be needed)
+and data in a format determined by a (to be developed) data base
+program.
+
+With SE as the sector number, the block number would be given by
+4*SE+OF, OF is an offset within each sector (OF is 0 to 4, in the
+above example).  Bytes within a block would be identified by an
+index BT (0 to 322 in this case).
+
+Although this has some interest, I'm not likely to pursue it
+further myself -- since data bases on the Model 100 are not an
+interest of mine  (my data bases are all too big to fit even on a
+Chipmunk disk!).
+
+A down side of this is that the total sector must be read and
+written to replace any one of the blocks -- suggesting a
+four-times speed-up if the disk were truly formatted into smaller
+sectors.  From the published data, TS-RANDOM (Traveling Software)
+appears to do just that.
+
+BUT -- although I have not tried it, the POWR-DOS manual says that
+disks formatted with FORMAT.BA (part of the POWR-DOS package) will
+accept sector (DSKO$) writes almost 20 times faster than normally
+formatted disks -- so long as they have not been written to by any
+file based command.
+
+Phil Wheeler [71266,125]
+Torrance, CA
+10/11/86

@@ -1,0 +1,124 @@
+10 REM stored as SRSS.BA on disk 14
+20 REM  This program is to determine the stress rating of an individual
+30 REM version 1.2 as of 12/25/86
+50 REM By Byron Myhre, 72135,744
+51 REM This program is adapted from Coleman,Butcher,&Carson
+52 REM Abnormal Psychology and Modern Life, 6th ed. 1980
+53 REM Scott,Foresman, & Co., Ill.
+60 REM This program is not copyrighted, but is protected by a small, mean
+61 REM Norwegian troll whose curse will require you to see a Urologist weekly
+62 REM DON'T MESS WITH IT.
+100 CLS:CLEAR 1000
+110 DEFINT A-Z
+120 DIM QU$(60),QU(60),AN$(60)
+190 N=0:QT=0:YE$=" YyNn"
+199 REM main driver program
+200 PRINT"Do you want instructions"
+210 GOSUB 730:IF Y$="Y" THEN GOSUB 7000
+249 REM  *** Main driver program ***
+250 CLS
+255 N=N+1
+260 READ QU$(N),QU(N)
+270 IF QU$(N)="END" THEN GOTO 350
+280 PRINT"Have you recently experienced"
+290 PRINT TAB(2) QU$(N);"?"
+300 GOSUB 730
+310 IF Y$="Y" THEN QT=QT+QU(N)
+315 AN$(N)=Y$
+320 GOTO 250
+350 N=N-1:CLS:PRINT TAB(15)"End of quiz"
+360 PRINT"Your Life Change Unit Score (LCU)= ";QT
+370 IF QT<300 THEN GOTO 380 ELSE GOTO 400
+371 REM about 80%
+380 PRINT"You are not too stressed at this time."
+390 PRINT"Keep it up.":GOTO 460
+400 PRINT"You are under considerable stress."
+410 PRINT" Try to do everything to decrease it.":GOTO 460
+430 REM- Actually there is a 80% probability of mental problems if the stress
+440 REM is not altered in the next 2 years.
+450 REM **** Print routine ****
+460 PRINT"Do you want to print out the results?"
+470 GOSUB 730
+480 IF Y$="Y" THEN GOTO 490 ELSE CLS:PRINT"Have a nice day":END
+490 PRINT"Is the printer on?":GOSUB 730
+500 IF Y$="Y" THEN GOTO 510 ELSE PRINT"Turn it on and try again":GOTO 490
+510 INPUT"Enter your name";NM$
+520 LPRINT"Stress Rating for ";NM$
+530 LPRINT"Date = ";DATE$
+540 LPRINT
+545 LPRINT"Questions and Answers given"
+550 FOR R=1 TO N
+560 LPRINT QU$(R);" = ";AN$(R)
+570 NEXT R
+580 LPRINT
+590 LPRINT"Total Stress Rating is ";QT
+600 LPRINT "Interpretation"
+610 LPRINT"<300 = Not too much stress"
+620 LPRINT">300 = Considerable stress"
+630 LPRINT"Try to reduce it if possible"
+640 END
+699 'Pause subroutine
+700 PRINT TAB(5)"Press <ENTER> to continue";:INPUT E:RETURN
+719 REM Yes/No subroutine
+720 INPUT"Select Y or N and press <ENTER>";Y$:IF INSTR(YE$,Y$)=0 THEN 720 ELSE GOTO 750
+730 PRINT"Press Y/N"
+740 Y$=INKEY$:IF Y$="" THEN 740 ELSE IF INSTR(YE$,Y$)=0 THEN 740
+750 Y=INSTR(YE$,Y$):IF Y<=3 THEN Y$="Y":RETURN  ELSE Y$="N":RETURN
+1000 DATA the death of a spouse,100
+1010 DATA a divorce,73
+1020 DATA marital separation,65
+1030 DATA a term in jail,63
+1040 DATA the death of a close family member,63
+1050 DATA a personal injury or illness,53
+1060 DATA marriage,50
+1070 DATA being fired,47
+1080 DATA a marital reconciliation,45
+1090 DATA retirement,45
+1100 DATA the change in health of a family       member,44
+1110 DATA pregnancy,40
+1120 DATA sexual difficulties,39
+1130 DATA the gain of a new family member,39
+1140 DATA a business readjustment,39
+1150 DATA a change in financial state,38
+1160 DATA the death of a close friend,37
+1170 DATA a change to a different line of work,36
+1180 DATA a change in the frequency of           arguements with your spouse,35
+1190 DATA a high mortgage,31
+1200 DATA a foreclosure of a mortgage or loan, 30
+1210 DATA a son or daughter leaving home,29
+1220 DATA trouble with in-laws,29
+1230 DATA outstanding personal achievement, 28
+1240 DATA a wife who begins or stops work,26
+1250 DATA the beginning or ending of school,26
+1260 DATA a change in living conditions,25
+1270 DATA a revision of personal habits,24
+1280 DATA trouble with your boss,23
+1290 DATA a change in work hours or conditions,20
+1300 DATA a change in residence,20
+1310 DATA a change in schools,20
+1320 DATA a change in recreation,19
+1330 DATA a change in church activities,19
+1340 DATA a change in social activities,18
+1350 DATA a small mortgage or loan,17
+1360 DATA a change in sleeping habits,16
+1370 DATA a change in the number of family get-  togethers,15
+1380 DATA a change in eating habits,15
+1390 DATA a vacation,13
+1400 DATA Christmas,112
+1410 DATA minor violations of the law,11
+1500 DATA END,0
+7000 CLS:PRINT"Social Readjustment Rating Scale (SRRS)"
+7005 PRINT STRING$(38,"-"):PRINT"This program is a method of measuring"
+7010 PRINT"the amount of stress to which an ind-"
+7020 PRINT"ividual is exposed."
+7030 PRINT"   A series of questions will be asked."
+7040 PRINT"Answer each with a Y or N. "
+7050 GOSUB 700
+7060 CLS:PRINT"Each question is worth a certain number"
+7070 PRINT"of points.  These will be added to your"
+7080 PRINT"score.  At the end of the quiz, your"
+7090 PRINT"score will be shown, and you will find"
+7100 PRINT"an interpretation."
+7110 PRINT"You can then print out the answers"
+7120 PRINT"if you wish."
+7130 GOSUB 700:RETURN

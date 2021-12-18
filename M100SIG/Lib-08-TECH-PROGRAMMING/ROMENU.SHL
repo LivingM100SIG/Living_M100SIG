@@ -1,0 +1,104 @@
+0 ' Universal ROM MENU program
+
+1 A$=" ROMENU.SHL Copyright 1989 Tony B. Anderson, All Rights Reserved "
+2 '
+3 ' Designed to act as a "front end" menu program for a group of BASIC programs
+4 ' burned into an EPROM with RBASIC. Each BASIC program must be renumbered, so
+5 ' that the program's line numbers lie between increments of 1000; the first
+6 ' program should be renumbered so it's line numbers are between 1000 and 1999,
+7 ' the second program's numbers should be between 2000 and 2999, etc.  To
+8 ' conserve space, programs may use GOTO's or GOSUB's for common routines in
+9 ' other program segments.
+10 '
+11 ' Each program should start with the CLEAR statement to clear preexisting
+12 ' variables used in the menu program, and end with a terminating statement.
+13 ' END will put you back into BASIC at the OK prompt; MENU will take you back
+14 ' to the computer's main menu; and RUN will rerun the ROM access menu again.
+15 ' Programs may also run other programs, by using a GOTO statement to the
+16 ' next desired program, sort of like chaining the programs with a "Do you
+17 ' want to sort now? (Y/N)" type of question.
+18 '
+19 ' All remarks, except the copyright notice in line 1 will be removed by the
+20 ' RBASIC compiler before compiling, to preserve EPROM space. This listing
+21 ' has been broken into logical segments, so it will be easier for you to
+22 ' modify to your own needs
+23 '
+24 ' Display is designed for the 100/102 screen, and can be expanded to
+25 ' accomodate the 200 screen. It emulates the computer's main menu, you use
+26 ' the cursor keys or space bar to move the wide-bar cursor over a programs
+27 ' name, then press the ENTER key to select that program.
+
+
+50 ' The number of programs to be selected at the ROM menu, plus 1, goes here:
+51 DATA 1
+
+52 ' The first menu entry, to facilitate exit from the ROM:
+53 DATA "Exit ROM"
+
+
+60 ' Insert program names or other identifiers that will appear on the ROM menu
+61 ' in the following data statements. Each "name" is limited to 9 characters.
+62 ' You may use as many names as are specified in line 50, minus 1. The program
+63 ' is "normalized" to handle up to 15 programs or program names on the display
+64 ' menu; it could be modified to handle more, or multiple screens, but users
+65 ' will probably not need more than 15. "Exit ROM" is the first entry, to
+66 'facilitate getting out of the ROM chip, back to the computer's menu.
+67 ' Your program names go here, like this:
+
+70 DATA "NONAME.BA"
+71 DATA "PGM2.BA"
+
+72 ' etc....  Or, you can use descriptive names, like "SORTER", "LISTER",
+73 ' CHECKSUM, etc., anything you like, up to nine characters long. You can
+74 ' also use lower case letters, numbers, symbols and spaces.
+
+
+90 ' Program starts here; initialize and display program names.  Note that the
+91 ' MAXFILES and CLEAR256 statements are accomodations, RBASIC will reset
+92 ' them according to the needs of the compiled program.  But be sure that
+93 ' each program you add to this menu shell defines how much space it needs
+94 ' cleared, and how many file buffers it needs, and starts out with an
+95 ' undefined CLEAR statement, as in: CLEAR:MAXFILES=3:CLEAR615 (as an example).
+
+100 MAXFILES=1:CLEAR256
+105 R$=CHR$(27)+"p":N$=CHR$(27)+"q"
+110 CLS:PRINT@42,"Optional ROM Menu"TAB(30)CHR$(171)" 1989":PRINT
+120 READA:DIMA$(A):FORB=1TOA:READA$:A$=LEFT$(" "+A$+SPACE$(11),10):A$(B)=A$:PRINTA$;:NEXTB:PRINT
+130 PRINT@120,R$A$(1)N$;
+140 PRINT@285,"Move Cursor - Press ENTER key";:X=1
+
+145 ' Get cursor key selection of program selection
+150 A$=INKEY$:IFA$=""THEN150
+152 IFASC(A$)=13THEN300
+154 IFASC(A$)<28THEN150
+160 ONASC(A$)-27GOTO170,180,190,200,170:GOTO150
+165 ' move cursor around menu
+170 GOSUB220:X=X+1:IFX>ATHENX=1
+175 GOTO210
+180 GOSUB220:X=X-1:IFX<1THENX=A
+185 GOTO210
+190 GOSUB220:X=X-4:IFX<1THENX=1
+195 GOTO210
+200 GOSUB220:X=X+4:IFX>ATHENX=1
+210 PRINT@110+10*X,R$A$(X)N$;:GOTO150
+220 PRINT@110+10*X,A$(X):RETURN
+
+290 ' run selected program
+300 ONXGOTO310,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000:GOTO150
+310 MENU
+
+1000 ' Program 1 starts here
+2000 ' Program 2 starts here
+3000 ' Program 3 starts here
+4000 ' Program 4 starts here
+5000 ' Program 5 starts here
+6000 ' Program 6 starts here
+7000 ' Program 7 starts here
+8000 ' Program 8 starts here
+9000 ' Program 9 starts here
+10000 ' Program 10 starts here
+11000 ' Program 11 starts here
+12000 ' Program 12 starts here
+13000 ' Program 13 starts here
+14000 ' Program 14 starts here
+15000 ' Program 15 starts here

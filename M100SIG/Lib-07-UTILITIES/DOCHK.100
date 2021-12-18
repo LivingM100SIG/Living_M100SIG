@@ -1,0 +1,17 @@
+0 'DOCHK.BA - Reads & compares .DO
+1 'files after they have been written
+2 'to tape. Another down & dirty
+3 'utility from the "WIZ" of miniRAM
+4 'utility usage. Permission granted to
+5 'improve & resubmit to SIG - Enjoy
+6 'Copyright @1983
+7 'Richard Horowitz [75735,677]
+10 MAXFILES=2:CLEAR2000:CLS:INPUT"Filename:";FI$
+20 F1$="CAS:"+FI$
+30 OPENF1$FORINPUTAS1
+40 OPENFI$FORINPUTAS2
+50 IFEOF(1)THEN100ELSEIFEOF(2)THEN100
+55 C$="":R$="":INPUT#1,C$:INPUT#2,R$
+60 IFC$=R$THEN50ELSEPRINTC$:PRINTR$:PRINT"ERROR":STOP
+100 CLOSE:PRINT"CHECK
+

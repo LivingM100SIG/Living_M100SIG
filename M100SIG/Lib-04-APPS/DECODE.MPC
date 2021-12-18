@@ -1,0 +1,47 @@
+0 'DECODE.MPC 11/05/88 15:21
+1 'TMPC Single Date Item Decoder
+2 'by Jean-Luc Crevier CIS [73720,2456]
+3 '
+4 'INSTRUCTIONS: (see also TMPCUT.DOC)
+5 'Paste your copied appnt in CODE.do
+6 'To visually locate the date string
+7 'remember:
+8 '
+9 '    ( = year 1988
+10 '   ) = year 1989
+11 '
+12 'Note: the 2 characters just before
+13 '      are the encoded day and month
+14 '      (ASCII value offset by 32)
+15 '
+16 '
+17 'The year value is also offset by 32
+18 'but is the number of years elapsed
+19 'since 1980: so ASCII - 32 + 1980
+20 '(see manual, page 74)
+21 '
+22 'To locate the start of
+23 'the Fixed Item Section
+24 'enter 5 spaces (sect. 4 terminator)
+25 'as the search string
+26 '
+27 CLEAR500:MAXFILES=2:ONERRORGOTO44
+28 CLS:PRINT"TMPC Single Date Appointement Decoder":PRINT
+29 INPUT"Output dev:file";F$:IFF$=""THENF$="LCD:"
+30 OPEN"CODE"FORINPUTAS1
+31 CLS:OPENF$FOROUTPUTAS2
+32 IFEOF(1)THENCLOSE1,2:END
+33 LINEINPUT#1,DA$
+34 '
+35 D1$=LEFT$(DA$,1):D2$=STR$(ASC(D1$)-32):D3$=MID$(D2$,2,LEN(D2$)-1)
+36 IFLEN(D3$)=1THEN D3$="0"+D3$
+37 M1$=MID$(DA$,2,1):M2$=STR$(ASC(M1$)-32):M3$=MID$(M2$,2,LEN(M2$)-1)
+38 IFLEN(M3$)=1THENM3$="0"+M3$
+39 Y1$=MID$(DA$,3,1):Y2$=STR$(ASC(Y1$)-32+80):Y3$=MID$(Y2$,2,LEN(Y2$)-1)
+40 PRINT#2,M3$;"/"D3$;"/";Y3$;" ";
+41 IFLEN(DA$)>5THENPRINT#2,RIGHT$(DA$,LEN(DA$)-5)
+42 GOTO32
+43 END
+44 IFERR=52THEN BEEP:CLS:PRINT"You must paste the extracted (copied)   appointment from TMPC Task File         into CODE.do":PRINT"See Instructions in Listing!":GOTO46
+45 PRINT"Error"ERR"in line"ERL:SOUND12538,10
+46 END

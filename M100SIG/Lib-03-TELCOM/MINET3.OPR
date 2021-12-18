@@ -1,0 +1,198 @@
+
+
+         MiniNet Version 1.03
+
+          Sysop Documentation
+
+    Copyright (c)1983 David J. Ulmer
+
+
+  Since     I     recently     noticed 
+documentation   for  an  Auto   Answer 
+circuit for the Model 100 being placed 
+here  in this SIG,  I decided I  would 
+put  up  my BBS software system to  go 
+with it.   I have been running Mininet 
+with  my  own cluged  up  auto  answer 
+circuit  for many months now with good 
+success.  Documentation  for the  Auto 
+Answer circuit can be found in XA4: as 
+TELECO.DO   and  SCHEM.TEL  and   this 
+should  work fine  with  MiniNet.  The 
+auto  answer  circuit can be built  on 
+less  than  a square  inch  of  vector 
+board and either pasted inside the 100 
+on  top  of the two relays or  outside 
+soldered to the phone connector.
+
+ I  have  uploaded  two  versions   of 
+MiniNet  that  I am using,  Version  3 
+automatically  saves the oldest  files 
+to cassette when the memory gets full. 
+This makes the User wait quite a while 
+sometimes during upload but makes sure 
+nothing  geDs  lost.   Version  4   is 
+smaller  and  doesn't  save  files  to 
+cassette,  the Sysop is expected to do 
+this  manually and not burden the User 
+with  waiting for this time  consuming 
+cassette save operation.
+
+ 1.  To  use MiniNet you will need  an 
+operational  auto  answer  circuit  as 
+mentioned above. 
+
+ 2.  Create a file MENU.DO to  contain 
+the  title block and main menu for the 
+MiniNet  sytem.   The  format  is   as 
+follows:
+(Title Block)
+  ************************************
+  *        MiniNet Main Menu         *
+  ************************************
+  *  1. Goodbye         2. Upload    *
+  *  3. Delete          4. Help      *
+  ************************************
+(Blank Line)
+(Main  Menu  Items  go  from  here  on 
+like:)
+5. DAVE's     10:02:35 on Fri 12/09/83
+6. DEBBIE's   08:31:21 on Sat 12/10/83
+(etc...)
+ You  can put any text you want in the 
+title block to identify your  personal 
+network.
+
+3.  Create user names and passwords in 
+your ADRS.DO file separating them with 
+commas.  You can place other ADRS info 
+after the password
+ Format like this:
+
+JOHN,BAREFOOT, :5551234 <>:
+SALLY,SLEEPS
+DAVE,NETWORKING, 70125,532 etc...
+
+ Mininet  doesn't  check for upper  or 
+lower  case  so I recommend  that  all 
+users  have their NAMES and  PASSWORDS 
+in upper case.
+
+4. Setup a function key like:
+
+ KEY1,"RUN"+CHR$(34)+"MINET3"+CHR$(13)
+
+ This  is so that you can restart  the 
+network with a single keystroke.
+
+5.  Load  MINET3 into ram and save  it 
+with  that name.  Change the  text  in 
+line 135 to say whatever you want. Add 
+any other opening messages here too.
+
+6. You can change the U=18 in Line 110 
+to  a lesser value to limit the number 
+of files MiniNet uses in your machine. 
+This  number should be one  more  than 
+the  maximum number of items you  want 
+in the menu.
+
+7.  Using  TEXT create a file MU  4.DO 
+(don't  forget the space!) and load in 
+the MINET3.USR help file.
+
+8.  Swith the modem switch on the side 
+of the 100 to ANS and RUN MINET3. Your 
+own personal network should now be  up 
+and running!
+
+THEORY OF OPERATION:
+
+ MiniNet    was    designed   as    an 
+experimental Simple Social Network for 
+use by beginning Networkers.  The fact 
+that  the  100 has only a  maximum  of 
+about  21K of network database  space, 
+information  overload  is   prevented. 
+This  small  memory also acts to  keep 
+the  network lively since  it  doesn't 
+remember  things too long,  this helps 
+keep users logging in  regularly.  The 
+fact that MiniNet quickly forgets past 
+messages   makes   the  system   quite 
+forgivable to novice networkers.
+
+ When   operating  MiniNet  you   will 
+notice  that the first  file  uploaded 
+will  be menu item #5 the next will be 
+#6  and so on until (U-1 in Line  110) 
+is reached.  When the menu is full the 
+oldest   file  #5  will   be   deleted 
+automatically   and  all  other  files 
+renumbered (ie.  #6 becomes #5 and  so 
+on). You will notice on the 100's MENU 
+that  these  menu files are  named  
+MU #.DO and as Sysop you can read  the 
+files in TEXT mode.
+
+ Be  careful  not to muck with the  MU 
+#.DO files too much because it is easy 
+to mess things up.  Deleting the  last 
+file  on the Menu is easy,  just go to 
+MENU.DO  and CUT off the  last  entry. 
+Then  you  can KILL"MU #.DO" for  that 
+last  entry.  Never delete any of  the 
+middle   numbered  files   this   way. 
+Actually  its  best  to  do  all  file 
+deletions  as  a User,  using  the  #3 
+Delete   function   (Of  course   this 
+assumes you have two computers and two 
+phone lines as I have).
+
+ As sysop of a MiniNet system with two 
+100's and phone lines,  I always  call 
+up MiniNet and upload my messages just 
+like  any other user.  If all you have 
+is a single phone line,  uploading  is 
+going  to be a real problem.  You will 
+have  to create the next MU #.DO  file 
+in TEXT mode and enter its ID line  in 
+the  MENU.DO  file manually.  THE  BIG 
+CAUTION here is that in TEXT mode  you 
+must   keep  your  LINE  LENGTH  under 
+control.  I  recommend that all  users 
+send their text with a line length  of 
+38  characters,  so as Sysop you  will 
+have  to learn to hit ENTER at the end 
+of each line so that excessively  long 
+lines  aren't  sent out to  the  users 
+(this  can  cause errors).  A  utility 
+program  should  be written  to  allow 
+Sysop's to do simulated uploading.
+
+ When  in operation  MiniNet  displays 
+the  Time,  Names and Times that  your 
+users  called  in,  #'s and  Names  of 
+files deleted, and  any Error messages 
+issued.
+
+ Errors  can be caused by many  events 
+like  users  not logging off with  #1, 
+calling  the network  without  logging 
+in,   sending lines that are too long, 
+hitting Control-Z, etc...
+
+DISCLAIMER:
+
+ I'm putting this MiniNet software out 
+in the public domain as an unsupported 
+prototype.  I'm  sorry but my time  is 
+short these days and I may not be able 
+to  answer  all questions  about  this 
+software.  I'm  hoping the user  group 
+will  pick up MiniNet and help support 
+it,  you will probably find it in need 
+of some modification.
+
+ Enjoy MiniNet!  Dave Ulmer 70125,532
+

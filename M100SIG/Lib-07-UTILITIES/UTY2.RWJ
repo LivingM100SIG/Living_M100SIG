@@ -1,0 +1,44 @@
+0'UTY2.RWJ by Ron Johnson [70116,1416]; (see Don Barry's UTILTY.300[71256,23]
+1'with FILEN.100 by [75765,762](lines1000-1009); RWJ version 2, 01/28/84(merge lines 971-2 with 970;981 w.980)
+2 DATE$=LEFT$(DATE$,6)+"84"'resets DATE$; reprogram at New Year's
+8 GOSUB2000'initialize variables
+10 PRINT@280,E"V"P"Kill Load Flen Name Cadv Scrn Pout Menu "E"T"'F-key menu
+12 ONKEYGOSUB100,200,1000,400,500,600,700,800:KEYON:GOSUB900
+16 GOTO16'idling loop
+100 PRINT"Kill";:GOSUB950:IFI=NTHENRETURNELSEKILLI:GOTO900'Kill files
+200 PRINT"Load";:GOSUB950:IFI=NTHENRETURNELSELOADI$,R:RETURN'Load DO-file to Basic (do NOT change I$ to I)
+400 PRINT"Name";:GOSUB950:IFI=NTHENRETURNELSEPRINTK" "P"as"Q" ";
+405:LINEINPUTJ:IFJ=NTHENRETURNELSEIFINSTR(J,".")=0THENGOSUB955'if no extension then gosub
+410 NAMEI$ASJ$:GOTO900'do NOT change I$/J$
+500 MOTORON:FORZ=0TO999:NEXT:MOTOROFF:GOTO900'runs short length of tape
+600 LCOPY:GOTO900'lineprint files screen
+700 CLEAR:GOSUB2000:LPRINTDATE$,TIME$,O
+725 PRINTP"[M]enu  [P]ause/[P]roceed  [U]tility"K
+750 LPRINT:I=INKEY$:IFI=NTHEN750ELSEIFINSTR("Pp",I)THEN755ELSE760'idle-a
+755 I=INKEY$:IFI=NTHEN755ELSEIFINSTR("Pp",I)THEN750'idle-b
+760 IFINSTR("Uu",I)THEN8ELSEIFINSTR("Mm",I)THEN800ELSE750
+800 MENU
+900 PRINTQ;:CLS:FILES:PRINTO;P:RETURN'print files subroutine, with RAMspace
+950 PRINT" which?"K;Q;:LINEINPUT" ";I:IFINSTR(I,".")<>0THENRETURN'request filename; if no ext.then subr.
+953 A=I:GOSUB960:I=A:RETURN'ready filename 1 for subr.
+955 A=J:GOSUB960:J=A:RETURN'ready filename 2 for subr.
+960 PRINTP".[D]O  .[B]A  .[C]O ?"Q" "K;'list estension choices
+970 H=INKEY$'<<<merge next line>>>
+971:IFH=NTHEN970ELSEIFINSTR("Bb",H)THENA=A+".BA"ELSEIFINSTR("Cc",H)THENA=A+".CO"'<<<merge next line>>>
+972ELSEIFINSTR("Dd",H)THENA=A+".DO"ELSE970'add extension
+980 PRINTG;L;A;'<<<merge next line>>>
+981:IFINSTR(A,".B")THENPRINTG;L;Q"   press "P" F4 "Q" to continue"L;'if .BA file killed, Basic halts; F4 resumes
+985 RETURN
+1000 DIMF(23),V(23)'subr. FILEN.100 by[75765,762]
+1001 PRINTECHR$(85)Q:FORX=-1408TO-1639STEP-11:IFPEEK(X)THENFORZ=0TO7:F(Y)=F(Y)+CHR$(PEEK(X+3+Z)):NEXT:GOSUB1008
+1002 NEXT:F(Y-1)="NonameBA":F(Y-2)="Paste BF":X=-1103:GOSUB1008:Y=Y-1:X=Y\2
+1003 FORZ=0TOY-X:W=Z
+1004 IFV(W)>V(W+X)THENU=V(W):V(W)=V(W+X):V(W+X)=U:A=F(W):F(W)=F(W+X):F(W+X)=A:W=W-X:IFW>-1THEN1004
+1005NEXT:X=X\2:IFXTHEN1003ELSEF(Y)="Reserved":F(Y+1)="File  BF":V(Y+1)=V(Y)+MAXRAM-HIMEM:Y=Y+2:V(Y)=V(Y-1)+MAXFILES*267:Z=0
+1006 CLS:FORW=ZTO15+Z:PRINT@(W-Z)*20,LEFT$(F(W),6)"."RIGHT$(F(W),2);:PRINTUSING" #####";V(W+1)-V(W);:IFW+1=YTHENW=98
+1007 NEXT:A=INPUT$(1):Z=W:IFW=99THEN10ELSE1006
+1008 V(Y)=PEEK(X+2)*256+PEEK(X+1)-65536:Y=Y+1:RETURN'end FILEN.
+2000 DEFINTU-Z:DEFSTRA-S:O=STR$(FRE(0))+" Bytes free,"+STR$(FRE(""))+" for strings"'O$=date/time/bytes line
+2001 E=CHR$(27):P=E+"p":Q=E+"q":K=E+"K":L=CHR$(13):G=E+"l":N="":RETURN
+2002'E$=Escape; P$=inverse screen; Q$=normal screen; K$=erase line from cursor; L$=CTRL-left; G$=erase line; N$=null
+

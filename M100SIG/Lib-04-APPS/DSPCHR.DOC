@@ -1,0 +1,101 @@
+Program Documentation
+DSPCHR.100
+
+Introduction:
+
+M100 literature is rich with programs which can initiate themselves at certain
+times of day to get stock quotations, send or receive EMAIL, etc. DSPCHR.100
+removes the requirement for code in individual programs supporting time-
+actuated execution.
+
+The Dispatcher works from a run list called RUNLST.DO which contains names
+of .BA programs to be run, the times they are to start, and required keyboard
+input. If he finds no run list when you start him, he will automatically 
+enter input mode and build one for you. You can force a new run list to be 
+built by hitting F1 whenever the Dispatcher is waiting for a time
+interrupt.
+
+When a valid run list has been set up, the dispatcher quietly goes to sleep
+pending a time interrupt for the first run time on file. It preloads the
+startup key sequence (<=32 characters) into the keyboard buffer and RUN's the
+specified program.
+
+It's now up to the program. If it crashes or requires unexpected human
+intervention (say your EMAIL program can't cope with the busy signal it gets)
+everything grinds to a stop. Otherwise, it should terminate with RUN "DSPCHR"
+instead of returning to the menu or some other technique. The dispatcher
+consults the run list and goes to sleep again until the next specified run 
+time. Naturally, if the run times are arranged so one run can't complete 
+before the next time comes up, the second program will never be executed.
+
+The dispatcher will go on happily running the same programs at the same
+times every day until something dies or the user interrupts him. To stop this
+from happening, insert a shutdown program in the list. This can be as 
+simple as
+
+1 power off
+
+or can embody some logic such as
+
+1 if day$="Tue" then power off else run "dspchr"
+
+The dispatcher sets the power to "cont" when he is activated; if you press F8
+(Menu) in either input or run mode, he resets it to 2 minutes delay before
+shutdown. Edit line 42 to change this default.
+
+Notes and caveats:
+
+1. The programs activated should obviously avoid mucking about with the
+keyboard buffer unless they have already picked up their required startup 
+data.
+
+2. As previously mentioned, failure to return to the dispatcher for any 
+reason obviously interrupts the sequence from then on.
+
+3. The dispatcher always begins execution with the next specified run
+time after he's started. To accomplish this, the input mode forces you to
+prepare the run list in ascending sequence by time. If you diddle the file
+yourself via TEXT, you may cause a program to be skipped, and you'll be
+bypassing an extremely tight edit on time. Caveat emptor.
+
+4. Very little effort has been put into fyting the byte. The time edit I
+mentioned is an obvious candidate for a ML routine. I'm looking forward to
+seeing improved versions on the SIG soon.
+
+Data input:
+
+You can get into input mode in one of two ways: either kill RUNLST.DO 
+(which will cause you to enter input mode automatically when you run 
+DSPCHR) or press F1 from execution mode. In either case, RUNLST.DO is built 
+from scratch.
+
+You can leave input mode in two ways also. If you press F2 (Exec), you will
+enter run mode immediately, so you'd better have your 100 already hooked up
+to ac power, etc. If you press F8 (Menu), you'll close the run list file and
+return to the menu without starting the actual dispatcher. This file will be
+used later when you activate the  dispatcher.
+
+Expected time format is HH:MM or HH:MM:SS on the 24-hour system. You must
+enter the times in sequence from 00:00:00. The program won't accept a
+time out of sequence.
+
+Enter the program name *without* the .BA extension. Otherwise, it'll be 
+rejected if its total length exceeds 6.
+
+Enter the startup data using ^m to produce carriage returns. In general,
+any control character can be sent by including a caret (^) followed by the
+appropriate letter in the input stream. Finish the whole sequence with 
+a(n actual) carriage return. By the way, just respond with a carriage return
+if no startup data is required for a given program. DSPCHR understands 
+this situation.
+
+You will be asked if everything is OK after startup data has been entered.
+Respond with a capital or lower-case y or n--no carriage return needed. The
+input routine will then solicit your next record. When you have no more
+records, simply hit F2 or F8 to close the file and start or return to the
+menu, respectively.
+
+
+Hope you enjoy the program--good luck!
+Al Williams [71435,1077
+

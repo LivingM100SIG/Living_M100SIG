@@ -1,0 +1,95 @@
+200102.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+How to get two lappers to talk to one another -- that is the question!
+These messages address one members question about getting his 102 and 200 to
+communicate via RS-232.
+
+Message range: 171108 to 171123
+Dates: 7/4/88 to 7/4/88
+
+
+Sb: #m200 to m102 connection
+Fm: dana sullivan 71560,3532
+To: all
+
+M200 help Anyone: I have a 200 and a 102, I have a cable, and a null modem
+(one). Now, I do everything in the manual, and in Lien's funny book, but I
+can't con connect them. I must get this accomplished, or the company will take
+one away. Assume I know nothing. Thanks, Dana Sullivan
+
+
+Fm: Eiji Miura 76703,4311
+To: dana sullivan 71560,3532
+
+I have the 100 and the 200, so this should work on 102/200 combination, also.
+First connect two computer through RS-232 with a null modem in between.  In
+TELCOM, set the STAT to 98N1E on the 102, and 98N1ENN on the 200.  Go into the
+TERM mode by pressing [F4] key on the both computers.  Now you should be able
+to see what you type on one computer on the other computer's LCD.  If you want
+to have characters echoed on a local computer, set Half Duplex by pressing [F4]
+key.
+
+Once this works, you can transfer files without using TELCOM.  For example, to
+transfer a .DO file, on the sending computer, select the file you want to send
+from a Menu and go into edit mode, press [F3] (save) and type COM:98N1E (for
+102) or COM:98N1ENN (for 200), depending on which computer you're using, but do
+not press ENTER key yet.  Then, on the receiving computer, go into a TEXT and
+create a file by giving a filename; when you are in edit mode, press [F2]
+(load), type COM:98N1E (102) or COM:98N1ENN (200).  Press ENTER key on the
+receiving computer first, then on the sending computer.  This also works for
+.BA files, using BASIC instead of TEXT.
+
+
+Fm: Paul Globman 72227,1661
+To: dana sullivan 71560,3532
+
+Dana - I have seen null modems differ from one another regarding certain
+handshaking signal that the T200 uses but the M100 ignores.  If push comes to
+shove and you still have no success, you can transfer files using the internal
+300 baud modem.  Be sure that one unit is ORIGINATE while the other is set to
+ANSWER.  You will need a modem cable for each (that will have a DIN connector
+that plugs into the 102/ 200 and a modular phone connector on the other end).
+Once you have that connection you can follow the steps that Eiji has outlined
+for TELCOM.
+
+
+Fm: Tony Anderson 76703,4062
+To: dana sullivan 71560,3532
+
+Well, one thing they don't tell you is that the 100/102 does not respond to
+"hardware handshaking" signals on pins 4 and 5, while the 200 does.  So if you
+have a regular (25 wire) RS-232 cable, it's not wired in a configuration that
+will allow communications between the two computers.
+
+The way I solved the problem with my 100/200 combination, and set them up for
+reliable communications, was to buy the parts from a nearby Radio Shack, and
+construct my own "null modem cable" which is a dedicated connection between the
+two computers.  I can transfer stuff back and forth at will, with a few
+keystrokes.  What you'll need is two RS232 plugs and hoods, a length of four
+conductor wire (a telephone extension cable makes a nice, flexible cable), and
+a bit of solder.
+
+Connect a wire from pin 1 in one connector to pin 1 in the other.  Connect a
+second wire from pin 7 on one end to pin 7 on the other.  Now connect a wire
+from pin 2 on one end to pin 3 on the other, and a second wire from pin 3 to
+pin two on the other; in effect, crossing the #2 and #3 wires.
+
+Now solder a short piece of wire between pins 4 and 5 on each connector.  Then
+solder another short wire between pins 6, 8 and 20 on each connector.  This
+establishes the handshaking signals so that everything is always "on and
+ready". These wires do not travel between connectors, but are entirely within
+the cover on each RS-232 connector.
+
+Plug one end into one computer, the other into the other computer (doesn't
+matter which one), and you're all ready to transfer stuff back and forth.  Do
+not use TELCOM, as it's cumbersome, and doesn't work in a no-host mode well.
+Use the "Save to:" function available in TEXT or BASIC to send a file, and the
+"Load from:" function in TEXT or BASIC to receive a file.  Specify COM:87I1E in
+the 100/102, and COM:87I1ENN in the 200 as a starting technique.  Use other com
+parameters if you prefer. Consult your manual.
+
+With this technique, you do not have to change the ORIG/ANS switch; leave it in
+ORIG in both machines.

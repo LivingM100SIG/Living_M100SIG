@@ -1,0 +1,190 @@
+							 1 December 1987
+
+
+
+				     LPTCOM
+				     ======
+
+			  Redirect LPT I/O to COM Port
+
+		      Copyright (c)  1987  by Stanley Wong
+
+	Note:  The  LPTCOM  program and associated documentation are  re-
+	leased  for  personal  use by Compuserve  M100SIG  members  only.
+	Contact the author for additional permissions.
+
+
+	LPTCOM  is a program which will send data written to the LPT port
+	of the M100/102 to the COM port.  LPTCOM is useful for people who
+	have serial printers.   Most Basic programs use LPRINT  statments
+	to  write  to the print device.   It is inconvenient to find  and
+	change all the print statements to use the serial port.   This is
+	impossible  if the program is written in machine language  (m/l).
+
+	I wrote LPTCOM because I have two parallel printers at home and a
+	serial  printer  at work.   I wrote a simple utility F2COM  which
+	prints  a text file on a serial printer but some packages  insist
+	on a parallel printer.   The listing for F2COM is included at the
+	end of this document.
+
+	LPTCOM  does not performs true I/O redirection as in CP/M or  DOS
+	machines.  The routine which sends data to the printer port is in
+	ROM  and  can  not  be changed.   If you are  interested  in  the
+	programming techniques used please read the file LPTCOM.NOT.
+
+	LPTCOM  requires  that a shorting plug for the  printer  port  be
+	built.   This  is  described  in the section  below.   Since  the
+	printer routine is in ROM we have to fool the M100 into  thinking
+	that a printer is hooked up and ready.   In fact if you hook up a
+	serial AND a parallel printer at the same time,  your output will
+	be printed on both machines.
+
+	The program F2LPT can be used to test your setup.  The listing is
+	included at the end of this document.
+
+	Create  a  LPTCOM.BA  file and run  in  the  usual  fashion.  The
+	comments lines 1-6,15,19,39,  and 89 can be deleted while in your
+	machine.   The  program is 1317 bytes long with comments and 1023
+	bytes without.
+
+	The main LPTCOM menu offers four choices:
+
+				 I)nitialize
+				 L)PT-to-COM
+				 C)OM LF
+				 T)op Menu
+
+
+
+
+
+
+
+
+
+
+
+	LPTCOM						   Page 2
+
+
+				   Initialize
+				   ----------
+
+	If  the  MDM or COM ports have been used for  any  other  purpose
+	since  Initialize  was last run you must re-initialize the  port.
+	The port settings are in line 22.   It is currently set to 88N1E.
+	Change  it  to  suit your serial device.   LPTCOM also  uses  the
+	memory  reserved for the F7 function key.   You can not  use  any
+	program  that defines F7 and LPTCOM.   If a program that you  use
+	sets  F7  and  later  you want to print  to  COM,  you  must  run
+	Initialize again.
+
+
+
+				   LPT-to-COM
+				   ----------
+
+	Select  this  option  to enable or disable  the  I/O  redirection
+	feature.
+
+				     COM LF
+				     ------
+
+	If  your serial printer (or device) requires that a LF  character
+	be sent after every CR, enable this option.
+
+
+				    Top Menu
+				    --------
+
+	Return to the M100/102 main menu.
+
+
+
+				  Shorting Plug
+				  =============
+
+	Connect  a wire jumper between pin 21 (BUSY) and any of the  even
+	number  pins 2-24.   Pin number 21 is the third from the left  on
+	the  top  row  as you look at the printer  connector.   The  even
+	number  pins  2-26 are on the bottom row.   Any  pin  except  the
+	leftmost  one  (pin  26)  will do.   There is a  picture  of  the
+	connector in your users manual.
+
+	Below  is a list of possible ways to construct the shorting plug.
+	It  is  not  meant to be a  comprehensive  list.   The  suggested
+	solutions are given in order of "most permanent" solutions.
+
+	** To create a permanent shorting plug buy a 26-pin connector and
+	add a jumper wire.   To aid in removing the plug you may want  to
+	add  a short length of ribbon cable to the plug and then tie wire
+	21 to ground (even pins 2-24).
+
+	**   Use  the  standard printer cable and add  a  jumper  at  the
+	Centronics  plug  end of the cable.   The printer cable  for  the
+
+
+
+
+
+
+
+
+	LPTCOM						   Page 3
+
+
+	TTXpress  printer has serial DB25 connector even though it  is  a
+	parallel  printer.   It is easier to hook a jumper to serial pins
+	that Centronics pins.
+
+	**  Add a jumper to the printer port connector.   I used a  short
+	push-on  jumper of the type used for wirewrap posts.   This makes
+	for a handy "emergency" jumper if you are on the road and need to
+	use a serial printer.  Be careful though,  if you bump the jumper
+	wire you can bend the connector posts (I did).
+
+	**  Use a paper clip on the printer connector.   It's awkward but
+	it works.  I used this method for initial concept testing.
+
+
+				  F2LPT Listing
+				  -------------
+
+	F2LPT  is a simple program to help you check out your setup.   It
+	prints a text file to the printer via Basic LPRINT statements.
+
+	1 'F2LPT - Test LPTCOM setup
+	2 'Stan Wong CIS [70346,1267]
+	10 MAXFILES=2:CLS
+	20 PRINT:PRINT"Text File? ";:LINEINPUTA$
+	30 OPENA$FORINPUTAS1
+	40 IFEOF(1)THEN100:LINEINPUT#1,B$:LPRINTB$:GOTO40
+	100 CLOSE:MENU
+
+
+				  F2COM Listing
+				  -------------
+
+	F2COM  is  a simple Basic program which prints a text file  to  a
+	serial printer through the serial port.   The port parameters are
+	set  in  line  30.   The current setting is  88N1E  (9600  baud).
+	Change it to suit your particular configuration.
+
+	1 'F2COM - Print a TEXT file on a serial printer
+	2 'Stan Wong - CIS [70346,1267]
+	10 MAXFILES=2:CLS
+	20 PRINT:PRINT"Text File? ":LINEINPUTA$
+	30 OPEN"COM:88N1E"FOROUTPUTAS1
+	40 OPENA$FORINPUTAS2
+	50 IFEOF(2)THEN100:LINEINPUT#2,B$:PRINT#1,B$:GOTO50
+	100 CLOSE:MENU
+
+		     =======================================
+
+	Acknowledgements:  The  LPTCOM program borrows several ideas from
+	Phil Wheeler's LFUTL.PW1 program.   In particular the idea to use
+	the function key definition area for the m/l code is from LFUTL.
+
+	Please   send  comments  and  bug  reports  to  Stan   Wong   CIS
+	[70346,1267].
+

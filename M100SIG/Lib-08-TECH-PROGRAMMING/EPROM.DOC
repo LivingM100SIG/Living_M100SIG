@@ -1,0 +1,96 @@
+     The following is description of the proceedure I used to
+     store my BA, DO, and CO files in EPROM so they could be
+     easily loaded after a cold start. This has been done
+     sucessfully on both a Model 100 and a 102. It would probably
+     work on a 200 but it has not been tested.
+
+The Hardware-
+
+   Tandy National Parts has a small circuit board (pt. #  AXX-
+   7113) that is necessary to adapt the pinout of a standard
+   27256 eprom to the socket of the option rom. It costs about
+   $10.00, and can be ordered thru your local Radio Shack store.
+   You will receive three small pieces. A circuit board, a spacer
+   and a nylon strap. The spacer goes on the underside of the
+   board and the strap goes between the eprom and the board. It
+   is possible to mount a very low profile 28 pin socket on this
+   board so that you can remove the eprom for reprogramming. If
+   you do this, however, the cover will not fit back over the
+   opening.
+
+   The way this board is designed there are 14 plated thru holes
+   on either side. The board has been cut directly thru the
+   holes, exposing them so they will make contact with option rom
+   socket. I would suggest filling each of these openings with
+   solder so they will make better contact and last longer.
+
+The Software-
+
+   The basic concept that I used was to take a snapshot (memory
+   image) of the ram after all programs that I would use had been
+   loaded. This snapshot would be stored in the eprom so that
+   after a cold start it could be copied back into the ram
+   without having to reload it from cassette or disk.
+
+   Since the eprom is 32k and the ram is 32k it would not be
+   possible to store all of the ram and still have room for a
+   transfer program. I discovered that there are 3 major areas
+   that have to be saved inorder to restore the computer to
+   previous operating state. They are; an area from maxram to the
+   end of memory, a small area just below himem, and the file
+   area.
+
+   The first area, maxram (F5F0h) to the end of memory (FFFFh)
+   contains all of the directory entries as well as most
+   operating system parameters. Also in this area is a flag to
+   indicate an option rom is present. If the name of the option
+   rom is to appear in the directory after a cold start then this
+   location will have to be changed. The location is F62Ah, in a
+   Model 100 it must be set to FFh, in a Model 102 it must be set
+   to 00h. If you have any machine language programs that have
+   been loaded just below maxram they can be saved at the same
+   time by moving the beginning address down to include them.
+
+   The second area that must be saved is approximately 560 bytes
+   just below himem. The exact purpose of this area is not well
+   documented but it has to be saved or this proceedure won't
+   work.
+
+   The third area is the file area from the beginning of ram
+   (8000h on a 32k machine) to the end of the last file (pointed
+   to by the data stored at FBB2h). You should make sure that the
+   paste buffer and any unsaved basic programs have been
+   eliminated by doing a NEW and a CLEAR command.
+
+   Each of these areas are saved by using the SAVEM command.
+   Although they could be saved to ram and then transferred out
+   to the programmer it is easier to use a floppy disk and save
+   them to it first.
+
+   The next step is to determine the size of each of the saved
+   areas and where it will be stored in the eprom. We can then
+   write a short transfer program to move the three segments back
+   into there proper locations in ram. The entry point for the
+   transfer program is 00h. Upon entry the first two things it
+   should do are disable the interrupts, and set the stack
+   pointer to an unused area at FCC0h. On exit we will have to
+   jump to a short program in ram that switches back to the
+   regular rom and does a RST 0.
+
+   There is a reserved area in the option rom (40-47h) that must
+   have two special characters followed by a six letter filename.
+   In a Model 100 the letters TC must be in locations 40 & 41h.
+   In the Model 102 they must be the letters AB. On a cold start
+   the computer will then load the six letter filename into the
+   directory. This part is optional since the option rom can also
+   be started by the statement CALL 63012 from basic. If you do
+   not use the letters TC to activate the option rom it is
+   necessary to change the option rom flag in the maxram area. If
+   you forget the computer will cold start each time you try to
+   activate the option rom.
+
+   After inserting the option rom and performing a cold start the
+   menu should appear with the option rom filename right after
+   SCHEDL. Move the cursor to the file name and press enter to
+   jump to the option rom. If you had a basic program setup as an
+   IPL then it will load and execute automatically.

@@ -1,0 +1,52 @@
+
+
+ #: 39855      Sec. 4 - Tech Notes & Util.
+Sb: #COLD START RECOVERY
+    03-Jul-84  19:55:58
+Fm: Sysop larry gensch   72236,3516
+To: BOB SAUNDERS 71656,352 (X)
+
+Bob...
+        Recovering takes a wee bit of
+knowledge.  The way <<I>> usually do
+it is to connect the newly Cold
+Started M100 to another computer (any
+one with a Model 100 compatible
+RS-232), and then execute this short
+one liner:
+
+OPEN "COM:37I1E" FOR OUTPUT AS 1: FOR
+X = 32768 TO MAXRAM: PRINT #1, CHR$
+(PEEK (X));: NEXT: END
+
+(Actually, the COM setting could be
+anything, whatever you normally use
+with a direct-hook up).  On the
+receiving computer, you should get a
+bit of garbage, followed by some
+intelligible data. Since you know the
+addresses where the files were, you
+can substitute FOR X = 54262 TO 56410 
+for the 32768 to MAXRAM in the above
+line.  When enough has been
+transmitted, set up the receiving
+computer to transfer the data back to
+the Model 100, capturing the data to a
+file called "RECOV.DO".  Then, edit
+the file and PASTE the contents of the
+NOTE file into a new file called
+NOTE.DO, and likewise for ADRS.DO.
+
+        This may not be the easiest
+for everybody, but it is simple for
+me.  You may be able to figure an
+alternative using a cassette, DVI, or
+anything else (how about CompuServe?).
+
+ =====>
+ larry
+<=====
+
+* Reply:
+     39889
+(UA RE T):

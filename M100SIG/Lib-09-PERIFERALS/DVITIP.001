@@ -1,0 +1,53 @@
+
+DVITIP.001
+==========
+
+Fm: MADDI DURHOLZ 70466,1511
+
+
+SCREEN FORMATTING and PRINT@ on the D/VI
+
+"SCREEN 1" switches the display to the CRT (or "SCREEN1,1" if the label line
+display is desired- I prefer this).
+
+"SCREEN0,1" is best to move to the LCD again (the date does not revert and
+if this move is forgotton, date must be reset again while in CRT mode.
+
+Recommend stacking:
+
+"SCREEN1,1:WIDTH80" to switch to CRT
+
+"SCREEN0,1:WIDTH40:MENU" prior to end of program run as system must be in 40
+col. & MENU mode before turning the power off.
+
+
+The PRINT@ command does work differently when in CRT mode- I'm not sure I
+completely understand this but here goes: when using PRINT@, Disk Basic
+recognizes the numeric expression of the first parameter in this command as an
+ESC code, line # & column # according to whether 40 or 80 cols. is set.
+
+Example: PRINT@75;"ABC" will be written by disk basic as
+
+PRINT+ESC+"Y"+line#0, column #75+"ABC"
+
+In 40 col. mode the A (first character in the string) is displayed on the last
+column in the first line, instead of the 75th column from the "home" position,
+where it should appear if in 80 col. mode. (In 40 col. mode the "BC" should
+appear in the 1st & 2nd cols. of the 2nd line.) So, in your docs. you need to
+clarify for the user whether they must be using an 80 col. monitor, because if
+they have their DVI hooked up to the TV or are using the LCD with their DVI,
+any PRINT@ commands programmed for an 80 col. format will not display
+correctly.
+
+Now, if all this sounds like gobbledygook to you, please check it out with
+Woods Martin! Good luck. Also, you might want to take a look at VT100.DVI in
+DL1 as an example.
+
+Another example:
+
+PRINT@160,"ABC"
+
+will print to cols. 1,2 &3 of line 3, when in 80 column mode.
+
+
+			Maddi

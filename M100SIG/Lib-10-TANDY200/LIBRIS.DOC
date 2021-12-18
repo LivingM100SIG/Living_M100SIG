@@ -1,0 +1,296 @@
+LIBRIS:  A Disk and Cassette file record system for the T200 and TDD1
+=====================================================================
+
+	LIBRIS.BA is a disk-based, full-featured, automatic, easy to use file 
+reference system which will store, update and cross-reference the names, dates,
+file sizes and free bytes of your Disk and Tape files. It also lets you add 
+remarks to file records and automatically transfers those remarks to each 
+subsequent update of that source.
+	You can catalog up to 100 sources and the number of files it will 
+catalog is limited only by available disk space: 92000 bytes will store about 
+4000 uncommented file records in 35 data files of 2700 bytes each.
+	LIBRIS also permits you to search all your file records for any 
+character string enabling you to quickly find a file or remark.
+
+	LIBPRT.BA works independently of LIBRIS but uses the same data files 
+and will create "fancy" directories and labels for your tapes and disks. It is 
+VERY easy to use and prints a variety of formatted file documents in 80/96/132 
+column format. Follow the brief instructions in the file description and Line 0
+of the program.
+
+
+        You will find LIBRIS to be faster and more comprehensive than 
+BIBLIO.100 or BIBPWR.100. Model 100 users of those programs can use BIBCNV.200 
+(DL10) to convert the BIBFYL.DO created by those programs to LIBRIS format for 
+T200 use.
+
+	LIBRIS requires a DOS (Disk Operating System) that recognizes "0:" 
+commands. POWR-DISK (DL10) is a fine example. (Disk-based TS-DOS users should 
+only load the "resident" portion: press F5 at the TS-DOS menu.)
+
+	PLEASE read all these instructions completely before running LIBRIS. 
+They're not complicated but they ARE necessary.
+
+
+		INITIAL SET-UP
+
+	Download LIBRIS.200, LIBRIS.DOC, & LIBPRT.200 from DL10. Edit out the 
+garbage and checksum them as .DO files. Print out a copy of LIBDOC for future 
+use. Save a back-up copy of the .DO files to your disk, "Load" the .DO files 
+and Save all of them as .BA's.
+
+        Before you run LIBRIS the first time, go to TEXT and create a file 
+named LIBFYL.DO: this will be the source-data file. Type a "#" as the only 
+character in this file and press <ENTER>. Save this 3 byte file to your "LIBFYL
+Storage Disk" (the disk where you'll keep LIBFYL and the LIBRIS data files) by 
+pressing F3: type "0:LIBFYL" and press <ENTER>. Kill the RAM copy. (You'll be 
+prompted when to load this disk while using LIBRIS.)
+	The "LIBFYL" disk should have about 90,000 bytes free before using 
+LIBRIS for the first time. Ideally it should be a disk which only has 
+LIBRIS.BA, LIBPRT.BA, SORTH1.CO (for LIBPRT ops) and LIBRIS data files on it. 
+DO NOT STORE ANY FILE ON THIS DISK THAT HAS A NUMBER AS THE 5th NAME CHARACTER 
+other than LIBRIS's data files which use the format LIB#nn.DO!
+	LIBRIS.BA is 6895 bytes and needs another 3500 bytes for operating 
+room: about 10400 bytes total. You should really have only LIBRIS.BA, and DOS 
+in RAM when updating files.
+
+
+
+		HOW TO USE LIBRIS
+
+	Always begin an update session with your DOS and the drive "on" and 
+your "LIBFYL Storage Disk" loaded. (Whenever LIBRIS needs the "0:LIBFYL.DO 
+storage disk" loaded during operations it will remind you to load it.) Use 
+EITHER upper or lower case letters. <ENTER> or <ESC> will return you to the 
+previous menu from any prompt.
+
+	Cursor select LIBRIS.BA from the T200 main menu. LIBRIS first confirms 
+that you have your LIBFYL.DO storage disk loaded by checking for a correctly 
+formatted 0:LIBFYL.DO. If found it then reads 0:LIBFYL and checks that all the 
+necessary data files are available. (If any are missing, LIBRIS will END and 
+display the name: see "The LIBRIS data files" below.)
+
+	Your screen will display the first 50 logged sources and two lines of 
+prompts at the bottom of the srcreen. (No sources, of course, if this is your 
+initial session.)
+
+	UP-ARROW will page your source display if you have more than 50.
+
+	<TAB> lets you "Preview" any loaded disk's files & sizes WITHOUT 
+logging it.
+
+	<SHIFT/DEL> takes you to the search routine which searchs ALL the data 
+files for occurences of a data string.
+
+	<ESC> ends the session and saves your work to disk before returning to 
+the T200 Main Menu.
+
+
+		ADDING NEW SOURCES
+
+	To ADD a source type a NEW Source ID (1-6 characters) and press <ENTER>
+. LIBRIS permits you to use UPPER and lower case titles for your sources. For 
+example: you can use duplicate names with different UPPER/lower case 
+combinations for same content disks and tapes.  LIBRIS decides whether you want
+to add a NEW source or update an exisiting source based on an EXACT match of 
+the name you enter and, if new, prompts you to choose <D>isk or <C>assette.
+	If you decide NOT to log your entry for some reason press <ESC> at the 
+<D>isk/<C>assette prompt to return to LIBRIS' main menu.
+
+	If you press <D> you will be prompted to load the disk: do so and press
+<ENTER>.
+	If you press <C> you'll be asked the size of the cassette, then whether
+you prefer to manually enter each file's counter reading or let LIBRIS 
+automatically log the program's starting time in mm:ss from the beginning of 
+the tape.
+
+	The files on the source will display as they are read. When LIBRIS has 
+read all a disk's file names or when YOU end the tape routine it will ask 
+whether you wish to add <R>emarks to the file records. You can do so here or 
+after the disk is logged. <ENTER> will log the records.
+		If you choose <R> you will see your first file record displayed
+above the Remark Editor's prompts: follow the instructions; <ESC> ends the edit
+routine and logs the files.
+
+	Since it is possible (and often desirable) to save two or more copies 
+of the same program using the same name to an individual tape, ALL records will
+be stored. Any comments you add to file records of duplicated files should be 
+made only to the first record: comments added to a second occurence of the file
+will be replaced by comments added to the first record and comments added ONLY 
+to the second record will be added to both.
+	All cassette files will have a "c" substituted for the final file 
+extension character in the LIBRIS data files for ease of reference. The 
+filename on the tape is not changed.
+
+
+		PREVIOUSLY LOGGED SOURCES
+
+	At LIBRIS' opening menu type in a source name EXACTLY as it is 
+displayed: UPPER/lower case etc. A new screen will display showing Source Name,
+Type (c-cass, d-disk), Date last updated, Free bytes (disk) or min/high counter
+(cass), and number of files. (If you had intended to review an existing 
+source's files and miss-typed the name you will arrive at the "ADD...NEW" 
+prompt instead. Press <ESC> for the main menu and re-enter the name.)
+
+	<ESC> returns you to the previous menu.
+
+	<U>pdate prompts you to load the disk/tape to be updated. Previously 
+added remarks will be automatically saved to same-named files on the "update" 
+source and a "<" will display next to the file name if remarks exist. When 
+finished reading the source, LIBRIS asks the same <R>emark or <ENTER> question 
+as when adding a NEW source.
+
+	<D>elete first asks you to confirm your intent before removing ALL 
+records of the source, INCLUDING REMARKS, from the data files. Use carefully!
+
+	<R>ename permits you to change the name of a source and its file 
+records.
+
+	<P>rint...  Lprints all the file records of the source including 
+remarks
+
+	<E>dit...  lets you add or delete remarks to each file record. After 
+the source's file records display use the UP/DOWN arrow keys to scroll through 
+the file records. If you wish to add a remark just type, use <BKSP> if needed, 
+and press <ENTER>. To change an exisiting remark use <BKSP>, re-type and <ENTER
+>. A "<" signifying a "remarked" file record will display next to the filename 
+in the display field on the upper portion of the screen and next to the file 
+name on the "edit" line. Press <ESC> when finished.
+
+
+
+
+		The LIBRIS Data Files
+		---------------------
+
+	NOTE: IT IS CRUCIAL TO SUCCESSFUL OPERATION OF LIBRIS THAT THESE FILES 
+NOT BE EDITED OR SORTED IN ANY WAY!!
+
+
+	LIBRIS stores your file records in two types of files:
+
+		LIBFYL.DO begins with a "#" and contains the Source Name, 
+Source Type, Update Date, Free source space (Disk=bytes free; Cass=time 
+remaining or the ending counter reading); a graphic symbol used in keeping 
+track of number of files and "LIB"; the LIB#nn "data" file which contains the 
+source's file information.
+
+		LIB#nn.DO files are created using a numerical value based on 
+the checksum of the source name: often called "hashing". Up to 35 different 
+data files are possible: from LIB#01 to LIB#35. This method was chosen for two 
+reasons: 1) the size of the individual data files are kept small relative to 
+the overall volume of information therby reducing access time; 2) the amount of
+RAM needed to process the individual files is reduced permitting a more 
+comprehensive program: 92000/35 LIB#nn = 2629 bytes per file (100 sources x 40 
+files per source).
+
+	LIBRIS expects to find these files on the "0:LIBFYL storage disk" 
+during each operation and WILL NOT RUN if the files aren't there. If a file 
+should begin to approach the size of your free RAM you'll be prevented from 
+using any new source name which would be added to that file.
+
+
+		-MODIFICATIONS-
+
+	You can change the number of Sources LIBRIS will catalog (100 is 
+default) or the number file-records per source if you have cassettes which 
+contain more than 50 files (50 is default).
+	Increasing the number of sources runs the risk of exceeding available 
+disk and RAM space if these sources are all "full" of files but, if not, you 
+may change the value of "XM" in line 2. You must also increase the "CLEAR" 
+value in the same line by 250 bytes for every 10 sources added to XM: e.g. if 
+100 is changed to 150 then CLEAR3500 must be changed to CLEAR4750.
+	The TDD1 will only hold 40 files per disk but if you need to increase 
+the number of files per cassette then the value of "XF" can be increased from 
+it's default value of 50. Screen displays are sized for 75 max tho so I 
+wouldn't suggest anything over that value. The CLEAR statement must also be 
+increased by 400 bytes for every additional 10 added to XF.
+
+	Before LIBRIS takes you to the T200 main menu it re-sets your MDM stats
+to M7E1ENN. If you prefer a different setting then you can change the DATA 
+statements in line 178. (These values are the ASCII values of the individual 
+letters in the TELCOM "STAT" string: 77=M etc.)
+
+
+		-ERRORS-
+
+	Simple error trapping was used to save space. Be sure that your DOS and
+disk drive are on and ready to go. Most errors are "LIBFYL" related and 
+trapped. Any error that LIBRIS can't deal with will clear the screen, display 
+the error # and line and end the program. Refer to the table below. If the 
+solution isn't apparent, drop me a note.
+
+	You may encounter the following error messages:
+
+		"LIB#nn.DO not found": one of the data files has been lost OR 
+the source name has somehow been changed in LIBFYL. You'll have to compare the 
+LIB###'s in LIBFYL.DO against the files on your storage disk to see which is/
+are missing. Then delete ALL sources with that file number from LIBFYL using 
+the TEXT editor after downloading LIBFYL to RAM. SAVE the edited LIBFYL back to
+DISK and try again.
+
+		"NO xxxxxx FILES!": although the source name matches a data 
+file, there are no file records for that source found and LIBRIS can't 
+continue. Remove ONLY the offending source information from LIBFYL: SAVE the 
+edited LIBFYL to disk and re-run.
+
+		"DATA FILE FULL!" - The data file which would normally store 
+these records is full; pick another Source name.
+
+		ERROR 17 - this tells you the checksum of the disk or cassette 
+read routines' data is wrong: re-run the program; if you still have the error 
+then the program has been corrupted. Try another copy.
+
+		ERROR 7 -  one of the data files has too much data in it for 
+the RAM available. You'll have to clear more RAM before re-running the program.
+If that's not possible then you must CAREFULLY remove all the records of a 
+source from the oversize data file by following these instructions EXACTLY:
+			1) Re-run LIBRIS. If you make it to the main menu use <
+TAB> to check file sizes. (If you're missing a file then see "LIB### not found"
+above.)
+			2) Return to the T200 main menu and load the oversize 
+file into RAM by opening a new .DO file with the same name as the oversize file
+and using F2 within TEXT.
+			3) Pick one of the source-sets of file records and 
+delete all files from that source. SAVE this file back to the storage disk 
+USING THE SAME TITLE.
+			4) Load LIBFYL.DO into RAM and delete the SAME source's
+information. SAVE this file to disk and re-run LIBRIS.
+			5) If LIBRIS runs then use <SHFT/DEL> to search for any
+other "stray" records of the deleted source before continuing.
+
+
+
+
+
+-------------------------------------------------------------------------------
+
+
+	I hope you enjoy LIBRIS. If I've missed something in the program or DOC
+please let me know by E-MAIL.
+
+		ACKNOWLEDGMENTS
+
+	I am particularly indebted to Wilson Van Alst for numerous byte-saving 
+and unique routines and countless hours of beta testing together with his 
+patient advice and help at crucial development stages; including the program's 
+name!
+
+	Paul Globman helped me develop the "hashing" routines that create 
+unique data files for each source.
+
+
+		CREDITS:
+
+	Wilson Van Alst kindly granted me permission to use his pioneering 
+Cassette and Disk routines as the core of LIBRIS. His original code is found in
+CASCAT.100/200 and FYLDOS.100/200
+
+
+4/13/89
+Randy Hess
+73267,552
+Omaha, Ne 
+(402-556-4211)
+
+/EX

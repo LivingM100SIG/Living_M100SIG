@@ -1,0 +1,43 @@
+10'    ---Alarm2---
+20'		Written by:
+30'	John Mifsud [70076,501]
+40'		12/13/83
+50' This program was inspired by ALARM.100
+60'	Many thanks to the original author.
+70' This program sets a tone alarm, a tape alarm (any cassette in a recorder connected to the rem jack), or both
+80'to go off at a specified time.
+90'Please contact me via Email for any info or if you find bugs that I overlooked.  Delete all lines up to 100 to save space. 
+Enjoy!
+100 CLS
+110 TIME$ ON
+120 ON ERRORGOTO390
+130 PRINT"time is now ";TIME$
+140 PRINT"What time do you wish to wake up"
+150 INPUT"as '07:30:00' for 7:30 am";WAKE$
+160 ONTIME$=WAKE$GOSUB260
+170 CLS:PRINT:PRINT"	OPTIONS
+180 PRINT:PRINT"1-Alarm only","2-Tape only","3-Both
+190 INPUT"Please enter your choice";O
+200 IFO<1ORO>3THENPRINT"try again":GOTO190
+210 O=INT(O):CLS
+220 PRINT@0,"Time is now ";TIME$
+230 PRINT@80,"Timer set for ";WAKE$
+240 ONTIME$=WAKE$GOSUB260:GOTO220
+250 MOTOR OFF:MENU
+260 CLS:IFO=2ORO=3THENGOSUB360
+270 PRINT@90,"It's now ";TIME$
+280 IFO=1ORO=3THENGOSUB330
+290 Q$=INKEY$
+300 IFQ$=""THENGOTO270
+310 GOTO250
+320 RETURN
+330 IFZ=1000THENZ=10000ELSEZ=1000
+340 SOUNDZ,5
+350 RETURN
+360 MOTOR ON
+370 RETURN
+380 END
+390 PRINT"Please re-enter time..."
+400 FORX=1TO1000:NEXTX
+410 GOTO100
+

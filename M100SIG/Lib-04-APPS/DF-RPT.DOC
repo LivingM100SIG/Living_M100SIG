@@ -1,0 +1,211 @@
+                        DF-RPT.BA (c) 1989, R. W. Hess
+                              All Rights Reserved
+                      -----------------------------------
+
+    DF-RPT provides three useful data management options for DATFIL and
+CRDFIL data files.  It is written for users who prefer to select reporting
+paramaters each time they prepare a report.  Users who regularly prepare
+reports with the SAME format may prefer the automation of DF-AUT.BA, also in
+this library.
+
+    DF-RPT:
+        1) permits you to completely sort an entire data file by any
+           priority of prompt fields.
+        2) will prepare a formatted report based on any data fields you
+           require and send it to either printer, disk or RAM.
+        3) permits you to set conditions for each data field which must be
+           met before the record is reported and it will add data columns and
+           report the total.
+
+    DF-RPT is easy to use and fully compatible with the 100/102/200.  Because
+it uses Wilson Van Alst's ZIPSRT.CO sorting program, DF-RPT can process
+data-records of virtually any combined field length.  Please read ALL these
+instructions before using DF-RPT.
+    With your source file, DF-RPT, and ZIPSRT on the menu you must have 3500
+bytes PLUS the size of your source file of additional free RAM.  When using
+disk-based source files and with DF-RPT and ZIPSRT in RAM you'll only need
+3500 bytes plus the size of your source file as additional free RAM: clearly
+an advantage when using large source/data files!
+    If writing a report to RAM you must also have enough additional space for
+the report.  Large reports can be written to disk and printed later.
+
+
+                - SET-UP -
+
+     Download DF-RPT.DOC (this file) & DF-RPT.BA.  M100/102 users also
+download ZIPSRT.100 (DL7). T200 users will need ZIPSRT.200 from DL10.  Remove
+any extra bytes and checksum the files as .DO files.  Make and save a copy of
+DF-RPT.BA for backup.
+     RUN ZIPSRT.100/200 as appropriate. They will create ZIPSRT.CO which must
+be on the menu whenever you run DF-RPT.BA. Save a copy of ZIPSRT as backup.
+     If you'll be working with Disk based data files you must have your disk
+loaded, the drive on and a DOS installed that is "ON" and which recognizes
+"0:" commands.
+
+
+
+                - OPERATION -
+
+     DF-RPT accepts either UPPER or lower-case letters at all prompts and
+<ENTER> is assumed to mean "no".  Don't use extensions or prefixes when asked
+for file names.  "LCD:" and "LPT:" are NOT acceptable file names.
+     When you run DF-RPT.BA you will first be prompted for the location of
+your data file.  If you press "R", RAM files will display.  Pressing "D"
+will display your disk files and automatically prefix the chosen file name
+with a "0:". (NOTE: some DOS will display files "linearly": i.e. one above
+the other. Use the spacebar to complete the listing after making a note of
+your file name.  DF-RPT will then continue normally.)
+     Enter the name of the file in either instance with or without extension.
+You will then be asked if you want to sort the source file before reporting.
+(Some of your data files may not be arranged for sorting or you may wish to
+report the records in the order they were added.) If you answer "n", skip to
+"output screen" below.
+
+   SORT SCREEN:
+     This screen will display all your prompt fields with a "Y" and "N"
+in the upper and lower right screen corners along with "sort" written
+vertically along the right side of the screen as a reminder you're inputing
+"sort" data.
+     The cursor will be next to the first prompt field.  The Right and Down
+arrow keys and <ENTER> move the cursor to the next open field and the Left
+and Up arrows move the cursor to the preceeding open field.  UPPER or lower
+case letters work at single letter prompts.
+     Move the cursor to the field you want to use as the primary sort field
+and press "1".  You may continue to enter numbers further defining sort
+priorities to a maximum of 9.  DF-RPT will not let you repeat or skip a
+number or enter one that exceeds 9 or the number of sort fields, whichever is
+less, and will only move the cursor among un-numbered fields.  (Whenever you
+want to erase all the numbers and start over just press "n".)
+      When you're satisfied with the priorities press "y".  Because all
+fields must be accounted for, DF-RPT will automatically number all remaining
+fields and display your sort priorities if you've chosen to enter less than 9
+and/or there are more than 9 fields.  (If you haven't entered ANY numbers
+then DF-RPT will simply sort by the appearance order of the prompts.)  The
+cursor will then move to the upper right corner.  Review the display and
+press "Y" if you're satisfied.  Any other key press will clear the screen and
+begin again.
+
+     DF-RPT will then show the record numbers as they are being read and
+call ZIPSRT to do the sorting.  Please be patient when running large files.
+Sorting is M/L fast but preparing a 5K data file may take 1-2 minutes.
+     Your records will be sorted by the "ASCII line value" of each data field.
+If you left spaces at the beginning of a data field, that record might be
+placed ahead of other records relative to THAT field.  The ASCII value of "1st"
+is "less" than "First" and "FIRST" is less than "First" etc.  (Keep this in
+mind when creating DATFIL/CRDFIL files.)
+
+   OUTPUT SCREEN:
+     DF-RPT then will display a menu of choices for your data.  (If unsorted
+then that message will display in place of <S>tore... described below.)  Press
+the appropriate single letter.  Each routine returns to this menu.
+        <S>tore sorted file
+           This will re-display the files contained on your original source,
+           RAM or disk, and prompt you for a name for the newly sorted data
+           file: <ENTER> alone uses the same name.  Your sorted data will be
+           written to that file: there will be NO change in the original.
+           (Be sure that you have enough free space available in the
+           destination medium for another copy of the source file!)
+        <P>rinted report
+           Outputs report to a parallel printer (serial printer mod is easy)
+        <R>AM report
+           Writes report to a RAM file named by you: use together with TEXT
+           when writing documents etc.
+        <M>enu
+           Quits to the computer main menu
+
+   RPT SCREEN:
+     The report creation routines begin by re-displaying your prompt fields
+with the reminder "rpt" written vertically at the right side of the screen. 
+Regardless of how you chose to sort your data earlier you now choose which
+fields to report and the order you wish them reported.  For example: you may
+have chosen to sort a mailing list by ZIPCODE, Name and City but you can
+report the data as Name and City only for a RAM report and Name and Phone
+Number for a printed report!
+     Begin as before with number "1" in the first field to be displayed,
+using the arrows and <ENTER> to move the cursor to desired fields.  You may
+choose only one field or as many as 9.  When you've chosen the fields for
+display press "y": "n" begins again.
+     DF-RPT will now display the header line for your chosen report and show
+how wide the report will be, based on the longest data entry for each
+selected field plus two spaces between fields.  If the format and width are
+acceptable press "y": any other key will begin again.
+
+   CONDITION SCREEN:
+     You will now be asked if you want to "Set field conditions".  "N" begins
+the report with no conditions set.  Press "Y" to create reporting conditions.
+All your prompt fields will display along with a "><=$+" reminder. 
+     Regardless of how you sorted or chose to display your report, you may now
+choose a variety of parameters to further define the conditions under which a
+record will be reported: all fields are available for setting conditions.  A
+record will not be printed at all if ALL conditions are not met for specified
+fields.
+    In the example above you might have choosen to report only Name and Phone
+number BUT you may set a condition that restricts your report to ONLY Names
+and phone numbers with "New York" in the address.
+     Four symbols are used to set selection conditions: ">", "<", "=" and
+"$".  "+" is used to indicate you want these fields totaled.  (They function
+similarly to their BASIC programming use.)
+       ">" means greater-than.
+       "<" means less-than.
+       "=" means equals.
+       "$" means a string of letters or numbers.
+       "+" totals all values in this field and prints the result
+
+     When using these functions it is important to understand how DF-RPT uses
+them.  Because DATFIL/CRDFIL record-fields can contain BOTH numeric and
+alphabetic data you MUST know the nature of the data field before choosing a
+function.  DF-RPT accepts only ONE condition per field.  E.g. if you wanted
+to report values = or > $300 then you would enter >299.99 in the data field.
+     The four functions ">", "<", "=" and "+" relate to NUMERIC fields ONLY
+because they're used arithmetically.  Using these four functions in an
+alphabetic field could result in non-selection because letters always have a
+"value" of 0.
+     "$" should generally be used for ALPHABETIC fields because DF-RPT looks
+to see if your chosen field contains an EXACT match of the text "string" you
+enter.  You CAN use "$" in numeric fields: e.g. to select 5 digit ZIPCODEs
+from fields that also contain 10 character ZIP+4 data.   The arrows and
+<ENTER> move the cursor among the fields as before.  Press the desired symbol
+and it will display and wait for further input: type your data and press
+<ENTER>: "+" is the only entry necessary to total that field.  If you want to
+change your entry simply re-type it.  When you're done press "y" at any prompt
+and your report will be prepared: "n" begins "conditions" again.
+
+     The record # displays as each record is read.  When DF-RPT finishes
+the report it returns to the "OUTPUT SCREEN" menu.  You can prepare another
+report or press "m" to quit DF-RPT and return to the main menu.
+
+
+            - Serial Printers -
+
+     If you use a serial printer you can either print a RAM report with your
+serial print utility or you can change the code in LINE 36 from "LPT:" to
+whatever serial stats your printer requires. (No "ready" test is done by
+DF-RPT for serial printers.)
+
+
+                - ERRORS -
+
+     The error trapping routines are only designed to catch problems with a
+file name.  Any other error will END and display the error code except
+"No Printer!" which returns to the "OUTPUT SCREEN" menu.
+     If you error out because of lack of RAM then go to the computer main
+menu, kill SRT***.DO and SRT###.DO, if found, clear some more RAM and re-run
+DF-RPT.
+
+        ---------CREDITS-------
+
+    Paul Globman did Beta testing on the M100 routines and suggested some of
+the display routines.  He also wrote DATFIL.100/200 which breathed new life
+into the "CRDFIL" tradition.  Wilson Van Alst wrote ZIPSRT.100/200 which
+allowed DF-RPT to work with any length records.
+
+    DATFIL.CO(c) 1989 Paul Globman
+    ZIPSRT.100/200(c) 1989 Wilson Van Alst
+    CRDFIL.BA(c) 1987 Tony B. Anderson
+             -------------
+
+     Please direct comments and suggestions to me at 73267,552.
+
+Randy Hess
+Omaha, Ne
+1/90

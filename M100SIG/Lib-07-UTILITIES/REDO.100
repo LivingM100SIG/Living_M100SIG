@@ -1,0 +1,102 @@
+REDO.100
+2 ' Redo Program
+4 ' After Cold Start
+6 CLS:PRINT@90,"Model 100 Redo Program"
+8 PRINT@200,"Press any key to continue..."
+10 A$=INKEY$:IF A$=""THEN10
+12 MAXFILES=0:IPL
+14 CLS:SCREEN,1
+16 Q$=CHR$(34):CR$=CHR$(13)
+18 ON ERRORGOTO50
+20 PRINT"Date= " DATE$
+22 LINE INPUT"Date: ";A$
+24 IFLEN(A$)>0THENDATE$=A$
+26 PRINT"Time = "TIME$
+28 LINEINPUT "Time:  ";A$
+30 IFLEN(A$)>0THENTIME$=A$
+32 PRINT"Day = "DAY$
+34 LINEINPUT "Day:  ";A$
+36 IFLEN(A$)>0THENDAY$=A$
+38 LINEINPUT "IPL: ";A$
+40 IFLEN(A$)=0THEN44
+42 IPL A$
+44 P=0:INPUT"POWER OFF (in 1/10 SEC):";P
+46 IFP=0THENPOWERCONTELSEPOWERP
+48 GOTO 68
+50 IF (ERL=240)OR(ERL=270)OR(ERL=300)OR(ERL=410)OR(ERL=400)THEN50
+52 '
+54 PRINT"Line";ERL":;ERROR ERR
+56 PRINT"Format Error -- Please Re-enter"
+58 IFERL=240THENRESUME22
+60 IFERL=270THENRESUME28
+62 IFERL=300THENRESUME34
+64 IFERL=400THENRESUME44
+66 IFERL=410THENRESUME44
+68 CLS 
+70 PRINT 
+72 PRINT "         FUNCTION KEYS"
+74 PRINT
+76 PRINT "  Normal Function Key Set = 1"
+78 PRINT "  Program Writing Key Set = 2"
+80 PRINT "  Utilities Key Set...... = 3"
+82 PRINT
+84 INPUT "Which Set Do You Want";A
+86 IFA=1THEN96
+88 IFA=2THEN114
+90 IFA>3THEN10
+92 IFA<1THEN10
+94 IFA=3THEN134
+96 KEY1,"Kill"+CHR$(34)
+98 KEY2,"Load"+CHR$(34)
+100 KEY3,"Save"+CHR$(34)
+102 KEY4,"Run"+CHR$(13)
+104 KEY5,"List"
+106 KEY6,"Edit"
+108 KEY7,"Print"
+110 KEY8,"Menu"+CHR$(13)
+112 GOTO152
+114 KEY1,"Csave"+CHR$(34)
+116 KEY2,"Load"+CHR$(34)
+118 KEY3,"Print"
+120 KEY3,"Input"
+122 KEY5,"Cload"+CHR$(34)
+124 KEY6,"Goto"
+126 KEY7,"Edit"
+128 KEY8,"Menu"+CHR$(13)
+130 GOTO152
+132 CLS
+134 KEY1,"Print"
+136 KEY2,"Lprint"
+138 KEY3,"CL23164,0,23366"
+140 KEY4,"CL27795"
+142 KEY5,"*"
+144 KEY6,"+"
+146 KEY7,"^"
+148 KEY8,"Menu"+CHR$(13)
+150 GOTO152
+152 'Kill Addrss & Schedl from menu
+154 POKE63875,184:POKE63886,184
+156 'Set dial speed to 'pps,20'
+158 POKE63019,20
+160 'Set LF to auto in MDM & COMM
+162 POKE63066,1
+164 PRINT"Load ADRS.DO? <y/cr>"
+166 A$=INKEY$:IF A$=""GOTO166
+168 IFA$<>"y"GOTO178
+170 PRINT"Ready Cassette and press any key";
+172 A$=INKEY$:IFA$=""GOTO172
+174 MAXFILES=2:OPEN"cas:adrs"FORINPUTAS1:OPEN"adrs"FOROUTPUTAS2
+176 LINEINPUT#1,A$:PRINT#2,A$:IFEOF(1)GOTO178ELSEGOTO176
+178 CLOSE:MENU
+180 'Error routine.
+182 BEEP:RUN
+
+REDO.DOC
+Just a merging of "setup" & "cold start "programs from this SIG with the 
+addition of "key" setup from "port. 100 mag". I, not being a programmer, have to
+tailor your progs. to my needs and find this prog. very useful.  Hope some other
+business user will find this useful. I keep this on cassette - load "Redo.BA" & 
+then load "ADRS.DO" (your adrs.do) & utilize after any cold start..Change "Key" 
+functions to fit your needs". Originally I used 'key' function #3 for calculater
+signs, i.e., +,-,*,/, etc.
+ 

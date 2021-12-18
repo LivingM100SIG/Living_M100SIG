@@ -1,0 +1,42 @@
+HEX2CO -- Intel Format Hex Loader, and
+CO2HEX -- Convert .CO to Intel Hex
+
+HEX2CO loads an Intel format hex file as  a .CO file on the model 100.  This
+format is used by a number of assemblers, including the standard CP/M
+ASM.
+
+To load a hex file, simply run HEX2CO. You will be prompted for the name of
+the file (the .DO is not necessary). It may take several minutes to load;
+be patient.
+
+After loading, there will be a .CO file with the same name as the .DO file.
+The machine language program will also be loaded and ready to run.  HIMEM
+will be set to reserve space for the machine language program.  Remember to
+
+        CLEAR 256,MAXRAM
+
+when you are finished running the machine language program to recover
+the space.
+
+CO2HEX performs the reverse process: it converts a .CO file in the model 100's
+RAM into its Intel hex representation. The EXE: address is used to set the
+beginning address contained in the EOF (:00) record.
+
+
+Known Deficiencies:
+
+- Both programs require a 24k system to operate.
+
+- The first address loaded with HEX2CO must be the lowest address used.
+
+
+
+Credits:
+
+These programs are updates of programs written by Michael J. Rubenstein called
+(respectively) HEXLDR.100 and UNLOAD.100, both of which can be found
+on the CompuServe Model 100 SIG. If you are not a member of this SIG, I
+strongly recommend that you join it, as there are a lot of knowledgable and
+helpful folks on there. These programs differ from the previous ones in that
+they properly handle the checksums at the end of each line of data.
+

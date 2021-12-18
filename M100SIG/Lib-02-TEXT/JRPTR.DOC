@@ -1,0 +1,46 @@
+
+
+Documentation for the file JRPTR.100
+by Bob Scott 73125,1437 (AUG 88)
+
+Recently IBM PCjr thermal printers have appeared on the surplus market for as 
+little as $29.  This program acts as driver for the PCjr printer, allowing the 
+M100 to dump files to it at the fastest possible speed without data loss.
+
+Out of the box, the printer has an odd-ball connector (yet another reason for 
+the PCjr's sucess, no doubt) which you must replace with a standard male DB-25 
+connector available from Radio Shack.  Referring to the pin-out on page 37 of 
+the printer manual, connect the wires as follows:
+
+  Printer -> DB-25
+  Ground (B04/B07)(black) (2 wires) -> pin 7
+  Clear to Send (A07)(white) -> pin 5
+  Trans. Data (A04)(red) -> pin 3
+
+The colors above were correct for my printer, but you should check the actual 
+pin connections on yours to be sure.
+
+After making the connector, connect the printer to the RS-232 port on the M-100
+and run JRPTR.BA; it will present you with a list of files.  Type in the name
+of the file you want to print and press return.  After printing the file, the 
+program will return to the main menu.  If you want to abort the printing 
+process, press SHIFT-BREAK or type CTRL-C.
+
+The PRINT statements at the top of the program set the "form length" to two 
+lines.  This is handy if you dump a captured file from CIS to the printer; most
+CIS downloads have one or more form feeds in them (^L) and this translates them
+to a simple double space instead of wasting a page of paper.
+
+Line 50 is the key to this program. The INP(187) picks up a PIO input byte, and
+ANDing this with 16 masks off bit 4.  This bit gives the status of pin 5 of the
+RS-232 connector.  If INP(187) AND 16 = 0 then pin 5 (CTS) is high.  If the 
+result is 16, then CTS is low (this usually means the connected device cannot 
+accept data).  In this case the program simply loops until CTS tests clear.
+
+If you want to check the status of pin 6 (DTR) substitute INP(187) AND 32. This
+works similarly, but the values to test for are 0 or 32 to indicate DTR high or
+low.
+
+By changing the STAT parameters in the OPEN statement above, and selecting the
+correct pin to test, this little driver program should work for almost any 
+hardware handshaking serial printer.

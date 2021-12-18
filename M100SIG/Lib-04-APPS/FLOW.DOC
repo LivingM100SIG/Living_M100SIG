@@ -1,0 +1,210 @@
+FLOW solves complex problems involving the relationships among time, money, and
+interest. For example: suppose I can invest $3000 this year, and 5% more every 
+succeeding year for the next 30 years. At the end of the 30 years, I want to 
+take $50000 out for a retirement party. I also want to take out $20000 the year
+after that, and 4% more (to cover inflation) in each of 28 further years, and, 
+finally, have $100000 left over for my heirs. What after-tax rate of return on 
+my investments do I need to achieve this? Although this problem is beyond the 
+abilities of the best commercial financial calculators, FLOW solves it easily.
+
+Features
+--------
+ o Up to 51 cash flow "groups" can be defined. Just two or three groups suffice
+to solve more difficult problems than commercial financial calculators can 
+handle.
+
+ o Initial payment, number of payments, time of first payment, discount rate, 
+and "accretion rate" (the rate at which the group's payments grow or shrink) 
+are separately specifiable for each group. To save time in many cases, any 
+attribute's value may also be "broadcast" into all the groups with a single 
+keystroke.
+
+ o Any subset of attributes may be "solved for".
+
+ o A calculator with 10 memories is included.
+
+ o The unique "accretion rate" feature allows for easy modelling of rising or 
+declining income, as well as inflation. The lack of this feature makes 
+REALISTIC long-range planning impractically difficult on commercial financial 
+calculators (which is why FLOW was written!).
+
+Warnings
+--------
+ o Substantial "sophistication" is assumed of the user. An owner's manual for a
+Hewlett-Packard financial calculator is an excellent introduction to time-&-
+money concepts. For "simple" loans, annuities, sinking funds, etc., FLOW is 
+clumsy: to allow for arbitrary complexity, FLOW must give up useful simplifying
+assumptions; best used only when its power is really needed.
+
+ o When solving for unknowns, an initial guess is required from the user. The 
+method (secant) may not converge from a poor initial guess. In any case, be 
+aware that many financial problems (especially internal rate of return problems
+) do not have unique solutions - and some don't have ANY solutions! USE common 
+sense when interpreting the results.
+
+ o The implementation of the calculator depends crucially on ROM calls, so FLOW
+can be used ONLY on a Model 100.
+
+The Display
+-----------
+The top line gives the current group number & the highest group number. The 
+next five lines give the five attributes for the current group. One of these 
+first six lines will be in reverse video, and is called the "current item"; 
+some operations implicitly refer to the current item. The seventh line has a 
+flashing cursor at the left end - this line displays the calculator's 
+"accumulator".
+
+Basic Operations
+----------------
+Left arrow: move to prior group.
+
+Right arrow: move to next group.
+
+Up arrow: make item above the current item the new current item.
+
+Down arrow: make item below the current item the new current item.
+
+"r": "r"un the program again.
+
+"m": return to the M100's "m"enu.
+
+These are "special" keys; more special keys are described below ("a", "b", "d",
+"p", "s", and "?"). If you don't press a special key, FLOW assumes you want to 
+use the calculator:
+
+The Calculator
+--------------
+Enter any BASIC expression (followed by the ENTER key), and FLOW will evaluate 
+it and display its value on the seventh line. E.g., "1+2 <ENTER>" puts "3" into
+the accumulator. More special keys:
+
+"a": "a"ssigns the value in the accumulator to a memory. You'll be prompted for
+the memory number; in response, press one of the digit ("0" thru "9") keys. 
+E.g., if 3.47 is in the accumulator, then pressing "a" followed by "8" will 
+give memory number 8 the value 3.47.
+
+"d": "d"efine the current item with the value of the accumulator. E.g., if the 
+accumulator's value is 8.6, and the current item is "discount rate", pressing 
+"d" will cause the current group's discount rate to be set to 8.6.
+
+More on Expressions
+-------------------
+In an expression, "&d", where "d" is a digit, is replaced by the value of 
+memory number "d". E.g., if memory 3 contains 2.1, and memory 2 contains 1.2, 
+"&3-&2 <ENTER>" computes 2.1-1.2, yielding 0.9.
+
+Also, "@d", where "d" is a digit from 1 thru 5 inclusive, is replaced by the 
+value of one of the current group's attributes. "@1" refers to the number of 
+payments, "@5" to the discount rate, and so on. E.g., if the current group's 
+discount rate is 0.5, "12*@5 <ENTER>" yields 6 (thereby computing the nominal 
+yearly rate corresponding to an actual monthly rate).
+
+Solving for Unknowns
+--------------------
+The "solution" to a cash flow problem is a value that, when substituted for the
+unknowns, causes the sum of the present values of all the cash flows to be 0.
+
+"?": causes FLOW to mark the current item as an unknown. The value of an 
+unknown item is displayed beginning with "?? ", so you can easily tell which 
+items FLOW will be solving for. At least one item must be marked as unknown.
+
+"b": "b"roadcasts the current item into all the groups. This is a time-saver. 
+The corresponding item in every group is set to the current item of the current
+group. E.g., if every cash flow group will contain 2 payments, set the "num 
+payments" item of any group to 2 & make it the current item, and then press 
+"b": "num payments" for EVERY group will be set to 2. Or, to solve an internal 
+rate of return problem, mark the discount rate in some group as unknown (by 
+pressing "?") and then hit "b" - now the discount rate in EVERY group will be 
+marked as unknown.
+
+"s": tells FLOW to "s"olve the problem. FLOW will tell you what it's solving 
+for, precompute the present values of the groups that don't contain an unknown 
+item (computing these invariants once saves oodles of time later), and prompt 
+you for a guess. The better the guess, the faster you'll get an answer; a very 
+poor guess may cause the program to crash (overflow, or divide by 0, errors) or
+to run forever. Hit any key to make FLOW give up the attempt. As FLOW tries to 
+improve your guess, it will show you the values it's trying, the present values
+of the variant groups (those whose values depend on unknowns), and the sum of 
+the present values. When the sum of the present values gets "close" to 0, FLOW 
+returns control to you.
+
+"p": puts the "p"resent value of the current group into the accumulator.
+
+Example & Hints
+---------------
+There are 4 cash flow groups in the "retirement" example given at the start:
+
+1) Paying $3000 for 30 years, increasing 5% annually; enter:
+
+30<ENTER>d-3000<ENTER>d5<ENTER>d
+<DOWN ARROW>?b
+
+Number of payments defaults to 1, so we had to change it.
+3000 is negative because it's an amount being paid BY you. Sums paid TO you 
+should be positive.
+The "start time" is left at 0 - "time" is in arbitrary units, and present 
+values are computed with respect to "time 0". Times near 0 are preferable 
+because of limitations in computer arithmetic.
+The "discount rate" is best considered as the rate of return you get on your 
+investments (or the rate charged to you on a loan). We're solving for it here, 
+and use the "broadcast" feature to mark it as unknown in all the groups. 
+Whether or not the discount rate is the unknown, you'll almost always want to 
+broadcast it - mixing discount rates shouldn't be attempted unless you know 
+EXACTLY what you're doing.
+
+2) A one-time payment of $50000, at time 30; enter:
+
+<RIGHT ARROW><DOWN ARROW>5e4<ENTER>d
+<DOWN ARROW>30<ENTER>d
+
+Here we accept the default of 1 payment.
+50000 is a payment TO you, so it's positive.
+Note that the discount rate has already been marked as unknown because of the 
+broadcast earlier.
+
+3) 29 payments of $20000, increasing 4% annually, starting at time 31; enter:
+
+<RIGHT ARROW>29<ENTER>d2e4<ENTER>d
+4<ENTER>d31<ENTER>d
+
+4) One payment of $100000 for the heirs, at time 60; enter:
+
+<RIGHT ARROW><DOWN ARROW>1e5<ENTER>d<DOWN ARROW>60<ENTER>d
+
+Now we're ready to solve; enter "s". At the prompt, try "8.5 <ENTER>". NOTE: if
+you use 0 as the guess, the program will crash; never guess 0.
+
+Reams of stuff will scroll down the screen until FLOW finally discovers (in a 
+minute or so) that 6.308 is an answer: if you can achieve a 6.31% yield on your
+investments, the retirement scenario will work out OK.
+
+Of course, the $20000 payments will, after 30 years of inflation, be worth only
+a small fraction of 20000 of TODAY'S dollars, so to be more realistic we should
+probably boost those payments to start at $100000. Just change the "initial 
+payment" item of group 2 to 100000 and solve again: we'd need 11.9% yields to 
+make THIS work, one WHALE of a consistent after-tax return. Welcome to the real
+world...
+
+Tech Notes
+----------
+Computing a group's present value: suppose the # of payments is "n", initial 
+payment is "p", accretion rate is "a", start time is "t", & the discount rate 
+is "r".
+Let A=1+a/100 and let R=1+r/100. Consider the value at time t: at time t we 
+have a payment of p; at time t+1 a payment of p*A, adjusted back to time t by 
+dividing by R; at time t+2 a payment of p*A^2, to be adjusted by a factor of 
+R^2; and so on until time t+n-1.
+The value at time t is therefore p +p*A/R +p*(A/R)^2 ...+p*(A/R)^(n-1), which 
+equals p*SUM(for j=0 to n-1:(A/R)^j). If A=R, this is p*n; else the series can 
+be collapsed to p*(1-(A/R)^n)/(1-(A/R)). In either case we need to adjust back 
+from time t to time 0 by dividing by R^t.
+
+Computational headaches: we need to evaluate expressions like (1+e)^n-1, where 
+"e" is "small". Truncation & cancellation errors are obviously a problem when e
+is "very" small. I don't know how to get around this short of using a series 
+expansion for the whole expression, which is too slow in BASIC on the M100 - so
+FLOW ignores the potential problems here.
+
+
+Happy planning!  Tim Peters  CIS 72227,2416
+

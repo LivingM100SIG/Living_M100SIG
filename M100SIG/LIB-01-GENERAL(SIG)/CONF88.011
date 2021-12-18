@@ -1,0 +1,281 @@
+9:25:13 AM PST Sunday, January 3, 1988
+
+(arnie s) I've been having a problem using DSKMGR with ml programs. DSKMGR
+  seems to grab the other ml programs even when they are in different ml
+  locations.
+
+(Phil W) Well Arnie, I don't know what you mean by "grab".  Need a better
+  description. And What version of DSKMGR are you using?  The original
+  DSKMGR.100 or DSKMGR.REL, my relocating version? Or DSKMGR.200.
+
+(arnie s) If I'm dskmgr.rel  when I load an ml program with dskmgr and then
+  try to run he other program I end up in DSKMGR or in the  frozen north(blank
+  screen)
+
+(Phil W) I suspect you need some basic info re M/L program usage in the
+  M100.  For that FLIPML.DOC is excellent!  And FLIPML.100 is a program
+  designed to help you manage multiplke M/L programs in the 100/102 I suggest
+  you give it a try. (in DL7).   There is nothing inherent in DSKMGR which
+  should make it give any unique difiiculties tho the original DSKMGR.100
+  does clear itself from hiram after running DSKMGR.REL does not, and I
+  suggest you use it in combo with FLIPML.100.
+
+(arnie s) I'll try that  But I've tried the same proceedures with FLOPPY.CO
+  and I've had no problem.
+
+(Phil W) Arnie, FLOPPY is a bit different in that regard (depending on
+  TDD1 or TDD2). And a lot depends on the addresses of the other M/l programs
+  (i.e., you may have gotten lucky!).  Anyway try FLIPML.  Great stuff! All
+  done on this topic?
+
+(arnie s) Yes.
+
+(DaveR) Some q's for ya  1. What is the correct Basic call statement for
+  PRTMSG?  I learned this from xmdpw5, by the way.  2. How can I create a null
+  terminated string in BASIC?  3. Is there any assembler for the PC so I can
+  use its resources for m100 assembly development?
+
+(Phil W) Well, You can find the correct call in XMDPW5.ASM  I think it's
+  5791h or 22417.  On creating a null terminated string you should be able to
+  use pokes to an absolute address. I have not found a good PC assembler for
+  doing 8085 (or even 8080) sorurce code.  This was a topic on the board a few
+  weeks back. See DEVEL.THD (DL8).
+
+(DaveR) great.  You are, by the way  a terrific resource for this machine.
+  Radio Shack should be supporting this SIG. I guess assembly language is
+  easier to deal with for what I want to do than BASIC.  Is the BYTEIT
+  assembler a good way to go?
+
+(Phil W) RS did sponsor this Sig once - it was a disaster. Yes, try BYTEIT.
+
+(Sysop Denny)  For a null at the end of a string, try adding the phrase
+  +CHR$(0) to the end of the string after the quote.
+
+(DaveR) thanks.
+
+(Phil W) Denny, and not just POKE AD,0?
+
+(Sysop Denny) Well, then you'd have to do a varptr to find the address.
+
+(Phil W) True, but then who would want to not use assembly instead
+  <Grin!>.
+
+(R Caley) Ok  Where's Tony??....off writing report modules for his CRDFIL
+  program <GRIN>.
+
+(Phil W) At Casino, with other lounge lizards!
+
+(Sysop Denny) On an assembler, I notice that there is an ad in Pico this
+  month from HSI that has an assembler for sale that is suspciously similar to
+  the Custom Software assembler. Might be worthwhile checking out.
+
+(Phil W) Yes, sounds like CS assembler to me!  Highly recommended, Dave!
+
+(DaveR) Well, assembly lang. itself doesn't scare me no problem.  But this
+  business about relocatable codes, and these funny loaders, and memory (RAM)
+  utilization, is all a little bit confusing. Any suggestions on where to
+  begin?
+
+(Phil W) Relocatable is easy. Just assemble it with two ORG addressed
+  (TOP of program) then run BASBLD.PW3 (DL8) and it automatically builds the
+  loader. Need a disk drive to use it, tho -- or a Cassette should work. So
+  no special assembly code is NEEDED to make it relocatable.  [two addresses =
+  two CO files]
+
+(DaveR) okay. can I use FLOPPY.CO and a TDD2? 
+
+(Phil W) No, you will need an OS which supports 0: device in Basic, but
+  to get started, you can assemble programs of reasonable length wholly in
+  RAM, to get a feel for it.  For example, TEL101.ASM can be done in RAM, and
+  it is about 10K as a source file, 1.8K as a CO. BASBLD does need a non-RAM
+  device, though -- but I suspect even CAS: will work fine.  And because
+  BASBLD is slow, it will not likely slow execution all that much!
+
+(DaveR) does DSKMGR suffice as an OS?
+
+(Phil W) No. You will need one of following: TS-DOS; POWER-DOS;
+  DISK-POWER 100
+
+(DaveR) okay, i got the idea.
+
+(Phil W) see POWR-D.TD2 on how to use it with TDD2.
+
+(DaveR) yes, i read the dl's.  thanks.  can I modify BASBLD to work wholly in
+  RAM?
+
+(Phil W) BTW -- Dave, what we need is free 0: OS for the M100!  Well,
+  re BASBLD it works by reading the files from the menu I believe that
+  BASBLD.NEW will do what you want it requires that both CO files be loaded in
+  their running locations while PW3 version picks them off the menu storage
+  location, without being loaded.
+
+(DaveR) i just got a little lost  but i am logging this and will mull it
+  over. As far as free OS, I guess when you start totalling $$ in m100, it
+  starts to look like a bigger machine but then again, this is trench
+  computing which is a disappearing challenge people are missing a lot of fun.
+
+(Phil W) I will clarify re BASBLD (trench computing -- love it!)
+  BASBLD takes two CO files to create a BA loader. In the NEW version those
+  files are loaded in RAM at running locations. In the PW3 version, they are
+  CO files on the menu. For PW#, writing the DO loader file to RAM will move
+  the CO files on menu around, giving garbage.  NO such problem with the NEW
+  version which is my fix of Richard Haw's original program.
+
+(DaveR) thinking...  I am losing some last letters of your comments on each
+  line. As far as trench computing, in many ways, the PC has opened up
+  computing for zillions but it doth not necessarily a programmer make.
+
+(Phil W) Well, I like programming on the PC, but there are lots of folks
+  doing it very professionally in the public domain.  For M100, there are
+  still lots of challenges, and few addressing them. Makes it kind of a
+  nice niche.  But I am also moving into PC more and more.
+
+(DaveR) That's because of the resources available for this beast (pc that is).
+  BTW, some lines of your comments end with a "."  and I think some letters
+  are lost.
+
+(Phil W) Hmmm.. all should end with ... and I am getting echoed back
+  exactly what I am typing. Denny is grabbing a transcript, so you may want
+  to look for it later, if he decides it is substantial enufff to merge, that
+  is!  You still here, Denny?  Hmmm..Denny got zapped, I think! I see Gene,
+  Jeff and Ron
+
+(gene) [I temporarly zapped Denny]
+
+(Ron) Hi, Phil..got a long question for you, ok?
+
+(Phil W) Sure, Go ahead, Ron
+
+(Ron) I was reading "Portable Computing with the M100" and I came across a
+  telcom program called "Term.ba". This program lets you up and download data
+  using the cassette circuitry(CIC) while ON-LINE! My question then is this...
+  The CIC uses an 8-pin DIN and the TDD uses an 8-pin connector. Is there a way
+  of shunting the modem circuit in the CIC to produce digital output and then
+  devising a cable to link a TDD to the CIC?
+
+(Phil W) The fundamental problem is that the TDD uses the same UART chip in
+  the M100 as is used by the comm port. I cannot imagine that the Cassette h/w
+  can be used ot support the serial needs of the TDD. Aside from that would
+  be some software issues.  Nothing is impossible but it would be easier to
+  buy a Booser Pack or some such and download directy to a megaRAM.
+
+(DaveR) gotta go Phil...TNX alot!
+
+(Sysop Denny) [forgot to disable call waiting, geesh!]
+
+(Ron) Ok. Sounds like the right approach
+
+(Phil W) [bye, Dave!]]
+
+(Ron) speaking of MegaRAM, any data on the SoundSight?
+
+(Phil W) Well, there is a new product announcement in the new Portable 100
+  (or Pico). Sounds very good, but everything does to me!  Maybe Denny has
+  better info (probably has a free one by now!!)
+
+(Sysop Denny) No free one (yet), but I did talk to them last week and I looks
+  like they are starting to ship the Gold cards, but the text editor to allow
+  editing of huge files is not due till Feb./Mar.
+
+(Phil W) [what year?]
+
+(Sysop Denny) heh, heh  I hope we will be able to get them here for a
+  conference soon. They have indicated a desire to do a CO, but nothing firm
+  yet.
+
+(Phil W) Well, It does sound impressive!  But can add up to big bucks!
+  The thing I like best is that the 102 still is slim but it seems to not be
+  available for 100, from the ads) true, Denny?
+
+(Sysop Denny) From what I see in the ad, it looks like it wouldn't work with
+  a M100.
+
+(Ron) I spoke with George Lucas at SS  and he said it will work with the 100
+  He is sending me some literature but right now a 128K Gold Card for a M100
+  is $399.ga
+
+(Sysop Denny) [steep!]
+
+(Phil W) So what is 102 price for 128K ?
+
+(Ron) Probably the same. 2Mb could be a wallet-buster, though  Nevertheless,
+  It looks like the right product at the right time. Folks are always moanin'
+  about the lack of RAM in the 100/102 but they like the size and portability
+  of the machines vs. the lugable MS-DOS "laptops".
+
+(Phil W) Well, re "right time", I'd say about three years late, since small
+  ms-dos laptops are becoming available (Toshiba T1000 = 6.4 lbs with 1.3Meg of
+  RAM and a disk drive), and other guys have had big RAMS available for a long
+  time now.
+
+(Sysop Denny) What facinates me most about this new SS stuff is the utilities
+  that they describe. It looks like they have a Basic compiler and a method in
+  which you can store all of your ROMs in RAM and then eliminate the need for
+  them. The possibilities look very mouth-watering.
+
+(Phil W) Yes it does sound fantastic. But what I really need is an 80 x 16
+  (or so) screen to make that kind of investment worthwhile.  And (being a
+  skeptic!) the Vault sounds good, too, but reports are not too encouraging. I
+  still LOVE my 8 bank PG RAM) in my 100.
+
+(Ron) Just wanted to say re the SS ROM Eliminator that I see alot of folks
+  swapping ROMs like floppy diskettes!
+
+(Phil W) Yes, sounds "fantastic". Hey, there's Tony, the lounge lizard.
+
+(Sysop Tony) Good morning, he said sheepishly.
+
+(Phil W) I reported that you were probably still in the Casino this AM
+  <Grin!>
+
+(Sysop Denny) Had a hot string going.
+
+(Phil W) Perhaps you could fill us in on your latest re CRDFIL.
+
+(Sysop Tony) Gee whiz, guys. You know I don't gamble.  (grin) I also have an
+  option on the Brooklyn Bridge. Well, I was up all night making the latest
+  puppy work, and thought I'd catch a nap before the CO. The nap idea didn't
+  work out too good.
+
+(Sysop Denny) Yeah, I know, "I'll just rest my eyes for a few minutes"!
+
+(Sysop Tony) Anyway, the latest is the first of 3 print modules. It prints data
+  to cards or labels, in a semi-customized format. But does allow for picking
+  what data fields get used, and allows you to both search for matching words,
+  and provides a pseudo-sort for output. It can be used in a form that will
+  "Provide a list of names and phone numbers from the datafile, where Florida
+  is in the State line, and is sorted by city, or only those in a certain
+  city."
+
+(Phil W) Sheesh! dBaseIV it is becoming!  Sounds pretty good, Tony. CRDFIL
+  has been quite a popular program, and the enhancements will be well-received,
+  too, I suspect. Well its about time to call it a CO.  Any last minute Q's or
+  C's?
+
+(Jeff S) which DL is CRDFIL in?
+
+(Phil W) DL 4
+
+(Jeff S) Thanks
+
+(Phil W) Anyone else? Ok, I hereby declare these proceeding closed. Tks for
+  coming and read Denny's extensive transcript to miss all you missed! Bye all.
+
+(Sysop Tony) Thanks Phil.  Bye.
+
+(Jeff S) bye
+
+
+List of Participants:
+
+  71266,125   Phil W
+  71706,260   GENE MCGARR
+  72216,512   gene
+  72300,3645  Ron
+  72407,3224  Marty T
+  74136,2520  BOB WILSON
+  75755,1312  Jeff S
+  76317,350   DaveR
+  76672,2222  arnie s
+  76701,40    Sysop Denny
+  76703,4062  Sysop Tony

@@ -1,0 +1,155 @@
+Documentation for NDX100.TD2 & NDX200.TD2/v1.2
+==============================================
+joel dinda
+[75725,1134]
+Checksum for NDX100: 167,891
+Checksum for NDX200: 168,757
+
+
+NDXxxx.TD2 creates an index of files stored on TDD2 diskettes.  The program
+generates 2 files: one (INDEX.DO) contains the names, lengths, and diskettes
+(including Bank indications) for every file indexed; the other (FREE.DO)
+contains information about each diskette's usage (specifically, FREE tells how
+many file names you've used and how many sectors you've filled).  INDEX helps
+you locate files (assuming you can recall what the names mean), while FREE
+helps keep track of your resources.
+
+NDX100 works with M100 or T102; NDX200 works with T200.  Both work with Tandy's
+(200k) Portable Drive 2; FLOPPY must be installed.  Neither version works with
+the original TDD.
+
+NDX100 works with SORTHI.100, available from this Forum's DL7; NDX200 works
+with SORTHI.RTN, which is in DL10.  These machine-language sorts are *not*
+required but are recommended.
+
+The program's got one interesting trick:  It writes a disk name on Directory
+0:, and checks to see if it's there.
+
+Two Preliminary Notes
+---------------------
+NDX attempts to read TDD1 diskettes, if given the opportunity; the results are
+unsatisfactory..  This harmless error can be easily avoided.
+
+If you object to NDX writing on your diskette, the feature can be either
+defeated or disabled.  This is explained below.
+
+Operating Instructions
+----------------------
+This program works best if the only RAM files resident are FLOPPY, NDXxxx,
+SORTHI.CO (not required), and the two files NDX creates.
+
+<Esc>ape exits from *any* prompt.
+
+NDXxxx.TD2 begins by checking to see if its two files are resident in RAM.  If
+they are, it asks if you wish to overwrite them; you'll have to judge that for
+yourself.
+      The option exists because I've learned that I find reasons to leave the
+      program, do something else, then return and finish the index.
+
+Next you're asked to insert the diskette.
+
+NDX checks the diskette for a diskette name; if it doesn't find one, it asks
+you for one.  Your diskette name cannot be longer than 9 characters but can be
+shorter.  I've found a place to store the name (Bank 0:, beginning at 1270)
+which seems to be harmless.  Your continued use of the diskette will not be
+affected in any way.
+      Usage note:  A short diskette name will permit you to create an index for
+      more diskettes; on the other hand, you may have some difficulty locating
+      the diskette if you normally call it "Telcom" but choose to label it A08.
+      Up to you...
+
+After the name has been entered, the program asks you to verify that it's
+correct (you'll also get this prompt if a name is located on the diskette).  A
+<N>o response returns to the previous prompt.
+
+After you've indicated your satisfaction with the diskette name, the program
+reads the diskette's directories and copies the pertinent information to the
+files.  I've attempted to make the display interesting.
+
+After it's read the diskette, NDX inquires whether you wish to <I>ndex another
+diskette or to <Q>uit.  If you respond with <I>, most of this routine repeats. 
+<Q> checks for the sort program; if it finds SORTHI, NDX initiates the sort.
+      Worth keeping in mind:  <Esc>ape avoids the sort routine....
+
+Error Traps
+-----------
+I've tried to trap errors reasonably.  You should only see these:
+
+"Diskette Error" means the diskette wasn't in the drive.  The program returns
+to the "Insert Diskette" prompt; you should check the diskette and try again. 
+If the error repeats itself, the diskette's probably defective.
+
+"Drive Error" means the program couldn't get the drive to respond.  Since this
+can usually be easily fixed, this also returns to the "Insert Diskette" prompt.
+
+"Defective Diskette" means just that; NDX couldn't read it.  Hold on to the
+disk; a file recovery program is on my projects list.
+
+"Error 7 in [line]" means you've run out of room.  This leads to a program
+crash and cannot easily be recovered.  You should inspect both FREE.DO and
+INDEX.DO to determine whether the last (few) entries should be clipped from the
+files.  If you can make more room, you should do so after fixing the files. 
+You can restart the program without harming things by answering <A>ppend at the
+"Overwrite" prompt.
+
+If you find any other errors, please contact me.  Thanks.
+      I'm especially interested in Error 99.  If you find one, please let me
+      know what you think was the cause.
+
+
+Sorting & Printing
+------------------
+The sort routine is recommended, not required.  While the files this program
+creates are more useful when sorted, RAM can be saved (and a larger INDEX
+created) if the sort is done separately.  (If you choose a separate sort, line
+19 can be deleted; line 17's ON-GOSUB should be modified so <Q> jumps to 22,
+not 19.)  SORTHI will work just as well if run independently.  (T200 users, I'm
+told, should use SORTHI.200 [also DL10] for this purpose instead of
+SORTHI.RTN.)
+
+SORTHI is a fairly fast sort, but it takes time to sort a large file.  If
+you've something else to do, this is a good time to do it.
+
+After the files have been sorted, they can be printed by any method you prefer.
+
+Programmer's notes
+------------------
+While this program's not based on Don Zeikel's LILDEX and LILDOS, it owes its
+inspiration to them.  Thanks, Don.
+
+My thanks, also, to Phil Wheeler & Tony Anderson for their comments on version
+1.0, and for their suggestions about the sort options.
+
+BIBPWR [DL4, also new this week] is *much* more ambitious than this program. 
+All I'm trying to do is create a list.  Obviously there are several approaches
+to the problem of keeping track of diskette files.
+
+As noted above, this program inserts a nine-character name on the diskette; the
+name is stored beginning at byte 1270 in the 0: directory sector.  As also
+noted, this name gets ignored by TDD2's operating software; unless you reformat
+or ERASE the diskette, the name will still be there next time you run NDX.
+      If this is the only program using this device, all we've got is a
+      gimmick.  But, all in all, a useful gimmick.
+      
+      If you'd rather I not write names on your diskettes, you can defeat this
+      feature by write-protecting them before using this program.  Or you can
+      just delete line 15 from the program.
+
+NDXxxx.TD2 can read a TDD1 diskette.  Unfortunately, it believes it will
+discover a directory on Sector 1; this misguided faith, sad to report, leads it
+to report nonsense to the INDEX and FREE files.  This error is harmless.
+
+While I've no particular plans to do so, this program could fairly easily be
+converted to run with Powr-DOS.  Either of two approaches is possible:  A
+straight conversion (DSKO$ for CALL Z) would permit diskette naming using
+P-DOS/TDD1, but that's probably overkill.  A conversion using LFILES TO but
+preserving the interface would have been appealing before I upgraded drives,
+but isn't worth my trouble just now; this version would probably be shorter
+*and* reduce the (quite considerable) RAM overhead.  This appears to be a more
+difficult project.  Anyone interested in either project is more than welcome to
+them.  Either way:  Beware the code which assumes a second directory.
+
+Take care, all.  Now I gotta find out where all my files have hid....
+joel dinda
+[75725,1134]
+18/20july88

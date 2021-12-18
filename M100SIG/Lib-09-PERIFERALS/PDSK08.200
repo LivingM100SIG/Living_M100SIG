@@ -1,0 +1,41 @@
+
+PDSK08.200
+
+Converted, transcribed and tweaked as necessary by Tony Anderson, 76703,4062.
+September 1988
+
+      (C) 1985 Acroatix Inc.
+Released for exclusive distribution on CompuServe's Model 100 Forum.  All other
+rights reserved.
+
+
+This program, and it's companion ML program PD-MPL.CO (PDSK10.200) is not
+documented in the manual and is unmentioned in subsequent newsletters.
+
+Apparently it is designed to run a specially relocated version of POWR-DISK in
+the 200 which does not conflict with access to, or use of the built-in MSPLAN
+spreadsheet program.  Generally, MSPLAN creates pseudo-.CO files in RAM just
+below the normal MAXRAM address, 61104.  When Power-Disk is loaded and active,
+it moves the MAXRAM pointer to 58960, and MSPLAN assumes that it's normal work
+area is being used for something else, and won't let you enter to develop
+another spreadsheet.  Apparently, PD-MPL.CO loads at 57498, which is 1462 bytes
+lower than the normal loading address.  This would leave a buffer between
+POWR-DISK and real MAXRAM which might be usable by MSPLAN.
+
+There is also a TIP file in Library 9 which describes how to remove MSPLAN from
+the menu in any bank, thus eliminating the source of the problem.  Simply use
+one bank exclusively for Power-Disk, and leave MSPLAN available in the other
+two banks.  The problem was originally discovered with FLOPPY.CO, but since
+Power-Disk presents the same problem, it is cured by the same solution. (See
+TDDTIP.004)
+
+
+
+0 ' MPLAN.BA  (C) 1985 Acroatix Inc.
+10 IFMAXRAM<=57498THENLFILESMENU
+20 ONERRORGOTO500:LOADM":pd-mpl.co",F
+30 LFILESOFF:CLEAR100,57498:RUNM"pd-mpl":KILL"pd-mpl.co":LFILESMENU
+500 PRINT:IFERR=67RESUME30ELSEIFERR=52ORERR>58ORERR=18THENPRINT"Need a readable disk containing PD-MPL.":PRINT"Insert it and ";:GOSUB520:RESUMEELSEIFERR=7THENPRINT"Out of Memory":GOSUB520:LFILESMENU
+510 BEEP:PRINT"Error";ERR:GOSUB520:RESUME40
+520 PRINT"Press Space Bar";
+530 A$=INPUT$(1):IFA$<>" "THEN530ELSERETURN

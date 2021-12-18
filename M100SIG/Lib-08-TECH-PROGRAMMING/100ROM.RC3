@@ -1,0 +1,516 @@
+
+
+                     ------------------------
+                     | Model 100 System Map |
+                     ------------------------
+ROM: Part III
+                          Copyright 1985
+                     Revision Date: 09/30/85
+                   Compiled and Researched by:
+                       Robert D. Covington
+            Systems Information Management Consultants
+      [Not associated with The Covington Group, N. Y., N. Y.]
+
+    This document may be duplicated and distributed free of
+charge to any individuals who desire it.  Any duplications of
+this document, however, must inluce all of the information
+contained here-in, with no deletions or changes.
+    The author and distributors of this document make no 
+expressed or implied warrantees as to the validity of the 
+information contained here in.
+
+
+2943H -  LEN Function
+
+294FH -  ASC Function
+
+295FH -  CHR$ Function
+
+296DH -  STRING$ Function
+
+298EH -  SPACE$ Function
+
+29ABH -  LEFT$ Function
+
+29DCH -  RIGHT$ Function
+
+29E6H -  MID$ Function
+
+2A07H -  VAL Function
+
+2A37H -  INSTR Function
+
+2B4CH -  FRE Function
+
+2B69H -  Double precision subtract (FAC1=FAC1-FAC2).
+         Entry:
+             FAC1 - First double precision number
+             FAC2 - Second double precision number
+         Exit:
+             FAC1 - Result of operation
+               All other registers destroyed
+
+2B78H -  Double precision addition (FAC1=FAC1+FAC2).
+         Entry:
+             FAC1 - First double precision number
+             FAC2 - Second double precision number
+         Exit:
+             FAC1 - Result of operation
+               All other registers destroyed
+
+2C4FH -  Add the BCD number in the buffer pointed to by HL to the BCD 
+        number in the buffer pointed to by DE leaving the result in 
+        the buffer pointed to by DE.  Since no decimals are 
+        significant, numbers must be padded with zeros for place 
+        holders.  B contains the precision (number of bytes) of the 
+        numbers added.
+         Entry:
+               HL - Points to the end of the first BCD number buffer
+               DE - Points to the end of the second BCD number buffer
+                B - Number of bytes to add (2 times the number of 
+                    digits added)
+         Exit:
+          HL & DE - Decremented past last byte of buffer
+                B = 0
+                A - Destroyed
+
+2CFFH -  Double precision multiply (FAC1=FAC1*FAC2)
+         Entry:
+             FAC1 - First double precision number
+             FAC2 - Second double precision number
+         Exit:
+             FAC1 - Result of operation
+               All other registers destroyed
+
+2DC7H -  Double precision divide (FAC1=FAC1/FAC2)
+         Entry:
+             FAC1 - Double precision numerator
+             FAC2 - Double precision denominator
+         Exit:
+             FAC1 - Result of operation
+               All other registers destroyed
+
+2EE6H -  Move the memory pointed to by HL to the memory pointed to by 
+        DE for C bytes.  HL and DE are decremented on each cycle of 
+        the move.
+         Entry:
+               HL - Points to end of source memory
+               DE - Points to end of destination memory
+                C - Number of bytes to move
+         Exit:
+          HL & DE - Decremented past last byte moved
+                A - Destroyed
+
+2EEFH -  COS Function
+         Entry:
+             FAC1 - Angle in radians
+         Exit:
+             FAC1 - Result of COSine
+
+2F09H -  SIN Function
+         Entry:
+             FAC1 - Angle in radians
+         Exit:
+             FAC1 - Result of SINe
+
+2F58H -  TAN Function
+         Entry:
+             FAC1 - Angle in radians
+         Exit:
+             FAC1 - Result of TANgent
+
+2F71H -  ATN Function
+         Entry:
+             FAC1 - TANgent value
+         Exit:
+             FAC1 - Angle in radians
+
+2FCFH -  LOG Function
+         Entry:
+             FAC1 - LOG value
+         Exit:
+             FAC1 - Result of LOG
+
+305AH -  SQR Function
+         Entry:
+             FAC1 - Number to find square root of
+         Exit:
+             FAC1 - Square root of number
+
+30A4H -  EXP Function
+         Entry:
+             FAC1 - Value for EXP
+         Exit:
+             FAC1 - Natural exponent result
+
+313EH -  RND Function
+
+31A0H -  Double precision square of FAC1 (FAC1=FAC1 squared)
+         Entry:
+           FAC1 - Double precision number to square
+         Exit:
+           FAC1 - Result of FAC1 squared
+               All other registers destroyed
+
+31B5H -  Move FAC1 to FAC2
+         Exit:
+               All registers destroyed
+
+31B8H -  Move the floating point buffer pointed to by HL to FAC2.
+         Entry:
+               HL - Points to 8 byte floating point buffer
+         Exit:
+               All registers destroyed
+
+31C1H -  Move FAC2 to FAC1
+         Exit:
+               All registers destroyed
+
+31C4H -  Move the 8 byte floating point accumulator pointed to by HL 
+        to FAC1
+         Entry:
+               HL - Points to start of source memory
+         Exit:
+               All registers destroyed
+
+31CAH -  Move FAC1 to the 8 byte floating point accumulator pointed to 
+        by HL.
+         Entry:
+               HL - Points to start of buffer for FAC1
+         Exit:
+               All registers destroyed
+
+322EH -  Push FAC2 on stack
+         Exit:
+               All registers destroyed
+
+3234H -  Push FAC1 on stack
+         Exit:
+               All registers destroyed
+
+3245H -  Pop FAC2 off stack
+        Exit:
+           FAC2 - Floating point value POPed off stack
+               All registers destroyed
+
+324BH -  Pop FAC1 off stack
+         Exit:
+           FAC1 - Floating point value POPed off stack
+               All registers destroyed
+
+33DCH -  RST 30H routine
+
+33F2H -  ABS Function
+
+3407H -  SGN Function
+
+3422H -  PUSH the single precision value in FAC1 onto the stack
+         Exit:
+               DE - Destroyed
+
+342FH -  Load the 4 byte number pointed to by HL into FAC1.  The 
+        buffer pointed to by HL reverses the two words prior to 
+        storing them into FAC1
+         Entry:
+               HL - 4 byte number that will be put in FAC1 in reverse 
+                    order
+         Exit:
+               HL - Incremented past last byte moved
+               All other registers destroyed
+
+3432H -  Load the single precision value in BCDE into FAC1
+         Entry:
+             BCDE - Single precision number
+         Exit:
+               BC & DE destroyed
+
+343DH -  Load the single precision value in FAC1 into BCDE
+         Exit:
+             BCDE - Single precision number from FAC1
+               HL - Destroyed
+
+3447H -  Load 4 byte single precision buffer pointed to by HL  into 
+        BCDE.
+         Entry:
+               HL - Points to the buffer containing the 4 byte single 
+                    precision number
+         Exit:
+             BCDE - Floating point number that is in the buffer 
+                    pointed to by HL
+
+3450H -  Load the 4 byte number pointed to by HL into DEBC (note 
+        reverse order!!).
+         Entry:
+               HL - Points to the buffer containing the 4 byte single 
+                    precision number
+         Exit:
+             DEBC - Floating point number that is in the buffer 
+                    pointed to by HL
+
+3459H -  Move the single precision floating point number in FAC1 to 
+        the buffer pointed to by HL.
+         Entry:
+               HL - Points to destination buffer for single precision 
+                    FAC1 (4 bytes)
+         Exit:
+               HL - Incremented past last byte moved
+               DE - Destroyed
+                B - Destroyed
+
+3461H -  Move the buffer pointed to by HL to FAC2.  The number of 
+        bytes transfered depends on the current precision in FB65H.
+         Entry:
+               HL - Points to source buffer for floating point number
+         Exit:
+               HL - Incremented past last byte transfered
+               All other registers destroyed
+
+3469H -  Move the memory pointed to by DE to the memory pointed to by 
+        HL for B number of bytes.  HL and DE are incremented on each 
+        byte moved.
+         Entry:
+               DE - Points to start of source memory
+               HL - Points to start of destination memory
+                B - Number of bytes to move
+         Exit:
+          HL & DE - Incremented past last byte transfered
+            A & B - Destroyed
+
+3472H -  Move the memory pointed to by DE to the memory pointed to by 
+        HL for B number of bytes.  HL and DE are decremented on each 
+        byte moved.
+         Entry:
+               DE - Points to end of source memory
+               HL - Points to end of destination memory
+                B - Number of bytes to move
+         Exit:
+          HL & DE - Decremented past the last byte transfered
+            A & B - Destroyed
+
+3498H -  Compare the single precision number in BCDE with FAC1.
+         Entry:
+             BCDE - First single precision number
+             FAC1 - Second single precision number
+         Exit:
+               HL - Destroyed
+                A = 255 (-1) if BCDE>FAC1
+                    1 if BCDE<FAC1
+                    0 if BCDE=FAC1
+           Z flag - Set if BCDE=FAC1
+           S flag - Set (M) if BCDE>FAC1
+
+34C2H -  Compare the signed integer in DE to the signed integer in HL.
+         Entry:
+               HL - First integer to compare
+               DE - Second integer to compare
+         Exit:
+                A = 255 (-1) if DE>HL
+                    1 if DE<HL
+                    0 if DE=HL
+           Z flag - Set if DE=HL
+           S flag - Set (M) if DE>HL
+
+34FAH -  Compare the double precision number in FAC1 to the double 
+        precision number in FAC2.
+         Entry:
+             FAC1 - First double precision value to compare
+             FAC2 - Second double precision value to compare
+         Exit:
+                A = 255 (-1) if FAC1>FAC2
+                    1 if FAC1<FAC2
+                    0 if FAC1=FAC2
+           Z flag - Set if FAC1=FAC2
+           S flag - Set (M) if FAC1>FAC2
+
+3501H -  CINT Function.  Convert floating point number in FAC1 to an 
+        integer.
+         Entry:
+             FAC1 - Floating point number to convert
+         Exit:
+               HL - Converted signed integer in FAC1
+             FAC1 - Converted to an integer
+
+3510H -  Load the signed integer in HL into FAC1
+         Entry:
+               HL - Signed integer to put in FAC1
+         Exit:
+                A = 2
+
+352AH -  CSNG Function. Convert the number in FAC1 to a single 
+        precision value.
+         Entry:
+             FAC1 - Number to convert
+         Exit:
+             FAC1 - Converted single precision number
+
+3540H -  Convert the signed integer in FAC1 to single precision.
+         Entry:
+             FAC1 - Contains signed integer to convert
+         Exit:
+             FAC1 - Converted single precision number
+
+3543H -  Convert the signed integer in HL to a single precision number 
+        in FAC1.
+         Entry:
+               HL - Contains signed integer to convert
+         Exit:
+             FAC1 - Converted single precision number
+
+35BAH -  CDBL function.  Convert the number in FAC1 to a double 
+        precision floating point number.
+         Entry:
+             FAC1 - Number to convert to double precision
+         Exit:
+             FAC1 - Converted double precision number
+
+3645H -  FIX Function
+
+3654H -  INT Function.  Find the integer portion of the floating point 
+        number in FAC1.
+         Entry:
+             FAC1 - Floating point number
+         Exit:
+             FAC1 - Integer portion of floating point number
+
+36F8H -  Subtract the signed integer in HL from the signed integer in 
+        DE.
+         Entry:
+               HL - First number to subtract
+               DE - Second number to subtract
+         Exit:
+             FAC1 - Result of subtract
+               HL - Integer result of subtract
+
+3704H -  Add the signed integer in HL to the signed integer in DE.  If 
+        the result is greater than 32767, the result is converted 
+        into single precision.
+         Entry:
+               HL - First number to add
+               DE - Second number to add
+         Exit:
+             FAC1 - Result of addition
+               HL - Integer result of addition
+
+3725H -  Multiply the signed integer in HL by the signed integer in 
+        DE.  If the result is greater than 32767, the result is 
+        converted into single precision.
+         Entry:
+               HL - First integer to multiply
+               DE - Second integer to multiply
+         Exit:
+             FAC1 - Result of multiplication
+               HL - Integer result of multiplication
+
+377EH -  Divide the signed integer in DE by the signed integer in HL.
+         Entry:
+               HL - Integer Numerator
+               DE - Integer Denominator
+         Exit:
+             FAC1 - Result of division
+
+37F4H -  Add the single precision numbers in FAC1 and BCDE 
+        (FAC1=FAC1+BCDE)
+         Entry:
+             FAC1 - First single precision number
+             BCDE - Second single precision number
+         Exit:
+             FAC1 - Result of single precision addition
+
+37F7H -  Add the single precision numbers in FAC1 and FAC2 
+        (FAC1=FAC1+FAC2).
+         Entry:
+             FAC1 - First single precision number
+             FAC2 - Second single precision number
+         Exit:
+             FAC1 - Result of single precision addition
+
+37FDH -  Subtract the single precision numbers in FAC1 and BCDE 
+        (FAC1=FAC1-BCDE)
+         Entry:
+             FAC1 - First single precision number
+             BCDE - Second single precision number
+         Exit:
+             FAC1 - Result of subtract
+
+3803H -  Multiply the single precision numbers in FAC1 and BCDE  
+        (FAC1=FAC1*BCDE)
+         Entry:
+             FAC1 - First single precision number
+             BCDE - Second single precision number
+         Exit:
+             FAC1 - Result of multiply
+
+3806H -  Multiply the single precision numbers in FAC1 and FAC2  
+        (FAC1=FAC1*FAC2)
+         Entry:
+             FAC1 - First single precision number
+             FAC2 - Second single precision number
+         Exit:
+             FAC1 - Result of multiply
+
+380EH -  Single precision divide (FAC1=BCDE/FAC1)
+         Entry:
+             BCDE - Single precision numerator
+             FAC1 - Single precision denominator
+         Exit:
+             FAC1 - Result of divide
+
+3827H -  Load FAC2 with the single precision number in BCDE.
+         Entry:
+             BCDE - Single precision number
+         Exit:
+             FAC2 - Copy of single precision number
+               HL - Destroyed
+
+3840H -  Convert the ASCII number pointed to by HL to its double 
+        precision equivalent.
+         Entry:
+               HL - Points to buffer with ASCII number
+         Exit:
+             FAC1 - Value of ASCII number
+               All registers destroyed
+
+39D4H -  Print HL in ASCII form at the current cursor position
+         Entry:
+               HL - Contains 16 bit binary number to print
+         Exit:
+               All registers destroyed
+
+39E8H -  Convert the binary number in FAC1 to ASCII
+         Entry:
+               HL - Points to the start of the buffer where the ASCII 
+                    number will be stored
+             FAC1 - Binary Number
+         Exit:
+               All registers destroyed
+
+39ECH -  Convert the binary number in FAC1 to ASCII.  This routine 
+        will format the ASCII output with the same parameters offered 
+        by BASIC's PRINT USING statement.
+         Entry:
+                A - Bit configuration for PRINT USING options
+                    Bit:
+                        0 - Exponential notation
+                        1 - Not used (reset)
+                        2 - Sign (+ or -) follows ASCII number
+                        3 - Sign (+ or -) preceeds number
+                        4 - Print leading '$'
+                        5 - Asterisks fill
+                        6 - Print commas every third digit
+                        7 - Set, allow print using formating
+                            Reset, do no formating on number
+                B - Number of digits to the left of the decimal 
+                    point.  This value is used for placeholder filling
+                C - Number of digits to the right of the decimal 
+                    point.   This value is used for placeholder 
+                    filling
+               HL - Start of receiving buffer for ASCII number
+             FAC1 - Binary number to convert
+         Exit:
+               All registers destroyed
+
+3D7FH -  Single precision exponential function
+
+3D8EH -  Double precision exponential function
+
+3DF7H -  Integer exponential function

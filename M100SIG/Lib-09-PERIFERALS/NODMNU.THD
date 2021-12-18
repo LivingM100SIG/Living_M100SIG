@@ -1,0 +1,138 @@
+
+        (c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Carmen Paone
+To: ALL
+
+        I'm working on a menu idea for a utility for the Node DataPac.
+        The BA program resides in the 100's RAM and is used to call CO, BA, DO
+files from banked RAM, using calls to the DataPac by VARPTR.
+        My program works fine, but I hate the menu display. I thought about
+emulating the Model 100 menu, but that can be confusing for the user.
+        I'm looking for a truly different menu style _ just for the sake of
+variety.
+        I have this idea in which a list would pop up at the push of an F key,
+and then you would select an item in the list by placing the widebar cursor
+over it, hit ENTER and the CO or BA program would be called from the Node
+Datapac.
+        I have no trouble creating the pop-up lists, but I'm having writing
+code to get the item under the widebar cursor to be called from the PAC.
+        I have looked through the libraries for hints on cursor control ( if
+that's the right term) but haven't found just what I want.
+
+		- 0 -
+
+Fm: Paul Globman
+To: Carmen Paone
+
+Carmen - it seems that you are just doing what the Datapac ROM does, except
+you want to do it from BASIC and use ROM calls.
+
+What's wrong with just using the Node ROM menu?  You cursor select the DO, BA
+or CO program and press enter.  How will your program differ from the ROM
+menu?  If the difference is quite minor, then why duplicate ROM program in
+basic?
+
+		- 0 -
+
+Fm: Carmen Paone
+To: Paul Globman
+
+        Right, Paul, at first there seems to be uneeded duplication. However,
+my main purpose for using the BA program is to call CO prgrams from banked RAM
+with the following code:
+
+        0 Call 63013,8
+        1 H$="hex.co"
+        2 CALL63013,13,VARPTR(H$)
+        3 CALL63013,23,VARPTR(H$)
+        4 CLEAR256,61997:LOADM"HEX": KILL"HEX.CO":CALL61997
+
+        In this way, I can clear space for the CO programs and then run
+them right from the DATAPAC rather than copying them to main RAM, and then
+clearing space for them.
+        Of course, caling BA programs from banked ram is no problem with the
+Call 63013,22, VARPTR format.
+        I'm sure this too seems like wated effort to you, but I have been
+toying with the VARPTR concept and am trying to use it in different ways.
+
+		- 0 -
+
+Fm: Tony Anderson
+To: Carmen Paone
+
+The program ROMENU.SHL in Lib. 8, shows how to move the cursor around a
+menu-like screen, and use the cursor position to do something else.  You need
+only couple that with the program that reads the Node directory, put the
+directory names into an array, "page" the menu display, and do the Node CALLs
+to load and run the program - if that's the approach you want to follow.
+
+A nice side-benefit of this approach is that when the .CO program ends, it can
+return you to the menu shell program again.  I used that technique in RUNXCM
+in Lib. 10, to run James Yi's Xmodem TELCOM module from the Node, and jump
+back into TELCOM.  I named the module "XMO.CO" and store it in the Node.
+Here's an example:
+
+10 CALL61162,8
+11 S$="XMO.CO"
+12 CALL61162,13,VARPTR(S$)
+13 CALL61162,23,VARPTR(S$)
+20 CLEAR256,56386:LOADM"xmo":KILL"XMO.CO":CALL56386
+100 CLEAR256,MAXRAM
+110 CALL25454
+
+Note that it clears the XMO.CO program out of HIMEM before it jumps back to
+TELCOM, too.  This is also specific to the 200 with Power-Disk resident.
+
+
+		- 0 -
+
+Fm: Carmen Paone
+To: Tony Anderson
+
+        The ROM shell program is one I missed in my search of the libraries. I
+download it and give it a close look.
+        I assume your code in the message was for the 200. Is the call listed
+at the bottom for Telcom, or what?
+
+		- 0 -
+
+Fm: Tony Anderson
+To: Carmen Paone
+
+Yes - that CALL jumps to TELCOM, and is for the 200 only.
+
+		- 0 -
+
+Fm: Paul Globman
+To: Carmen Paone
+
+Assuming you know the HIMEM address to clear, you can...
+
+        0 Call 63013,8
+        1 CLEAR256,61997
+        2 H$="hex.co"
+        3 CALL63013,22,VARPTR(H$)
+
+This is the same as a RUNM H$ and you don't have to COPY/LOADM/KILL the
+program as a RAM file.
+
+The "22" command works for CO files as well as BA programs but you must clear
+HIMEM first.
+
+Now once you have this little basic "loader" you can run it directly from the
+Node ROM menu, and save yourself the hassle of writing a BASIC _menu_ program.
+
+BTW, I don't consider the effort wasted if you gain knowledge in the process.
+The opening of files cross bank (in the T200) is done in much the same way,
+when using XBASIC or XOS-C.
+
+		- 0 -
+
+Starting message #: 24176   Starting date: 14-Apr-90  07:52:38
+ Participants:
+Carmen Paone 72677,42
+Paul Globman 72227,1661
+Tony Anderson 76703,4062

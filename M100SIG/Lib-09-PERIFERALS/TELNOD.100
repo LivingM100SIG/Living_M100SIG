@@ -1,0 +1,32 @@
+
+TELNOD.100 by Paul Globman
+           Copyright (c) 1990
+-----------------------------
+TELNOD.100 requires RAMDSK.CO (see RAMDSK.PRD in DL13) and enhances TELCOM
+so that the TERM F7 key will give the user access to the Node Datapac via
+RAMDSK.CO.
+
+When you run TELNOD.BA you will go to TELCOM as if you had selected TELCOM
+from the Menu.  Dial and log on as usual and once on-line, use F7 when it is
+necessary to move files between RAM and Datapac.
+
+From the RAMDSK menu, press F1(Term) to get back on-line.  To prevent the
+accidental use of F7 from TELCOM (when RAMDSK.CO is not installed) TELNOD.BA
+removes TELCOM from the menu so your only access to TELCOM is via TELNOD.BA.
+
+If you want to restore TELCOM to the menu for use without RAMDSK, go into
+BASIC and type...
+
+    LOAD"TELNOD"<enter>
+    RUN5<enter>
+
+This will restore TELCOM to the menu and "unhook" the F7 key.
+
+See file TELNOD.CMD in DL10 for usgae tips.
+-----------------------------------------------------------------------------
+0 'TELNOD.100 (c) 1990 by Paul Globman
+1 CLEAR0,61669:LOADM"RAMDSK"
+2 POKE63864,184:POKE64270,238:POKE64271,240:POKE61742,229:POKE61743,240:POKE62799,84:POKE62801,114:POKE62802,109
+3 FORX=0TO11:READY:POKE61669+X,Y:NEXT:CLS:CALL20806
+4 DATA 205,68,66,205,49,66,205,85,84,205,58,66
+5 POKE63864,176:POKE64270,243:POKE64271,127:CLEAR0,MAXRAM:MENU

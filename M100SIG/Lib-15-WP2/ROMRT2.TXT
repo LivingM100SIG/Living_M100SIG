@@ -1,0 +1,183 @@
+ 
+      Programming the WP-2: Return of the ROM routines
+ 
+   While writing HEXEDIT, I accumulated about 15 pages of notes
+pertaining to the WP-2's file access ROM routines.  The Service
+Manual is extremely lacking in it's explanation of these
+routines.  I found it necessary to disassemble large chunks of
+the BIOS to fill in the holes and reconcile the errors.
+   Listed below are the routine names, entry points, Service
+Manual page listings, and comments for 10 more ROM routines. 
+After the routine listings, I have included some notes on FCB
+structure, memory files vs. non-memory files, and some
+"unlisted" routines.
+ 
+CALLFAR: (RST 30H) p. D-4
+  This routine is mainly for calling a routine in one slot (ROM
+  bank) from another slot, but it can be used from RAM as well,
+  saving the space required to change slots before and after the
+  call.  Because it's a restart and not a call, the entire
+  instruction (including 3 data bytes) is only 4 bytes long.
+  For example, the object code for calling address 6DC3H in slot
+  1 is F7 01 C3 6D.
+ 
+CMPHLDE: (RST 20H) p. D-6
+  Another space saver, but the result table in the Service
+  Manual is wrong.  It should read:
+     Z set:   HL=DE
+     Z reset: HL<>DE (not equal)
+     C set:   HL<DE  (less than)
+     C reset: HL>=DE (greater than or equal)
+ 
+OPEN: (188H) p. D-9
+  OPEN, READ, WRITE, and CLOSE are generally used for non-memory
+  files.  You can open a memory file and READ from it, but you
+  can't write to it.
+  OPEN is necessary before using READ or WRITE.  There is an
+  error in the entry condition for A.  It should read:
+     A = 0: Make a new file in write mode
+         1: Open an existing file in read/write mode
+         2: Open a file in read mode
+  I don't know where they came up with "append-write mode".
+  Anyway, trying to open an existing file with A = 0 or trying
+  to open a new file with A = 1 or 2 will return an error.
+  Trying to READ from a file opened with A = 0 or WRITE to a
+  file opened with A = 2 will return an error at the time of
+  the READ or WRITE.
+  See also FCB STRUCTURE, below.
+ 
+READ: (18BH) p. D-10
+  This routine will read the current record of an open file.
+  The Service Manual list "A = read byte" as an exit condition.
+  I think that's supposed to mean # of bytes read (which will be
+  128, except for the last record if file length is not evenly
+  divisible by 128), but due to a programming glitch, this is
+  what it turns out to be:
+     For all records except the last record, A = 128
+     For the last record, A = 128 + # of bytes in last record,
+                              or 0 if there are 128 bytes.
+  I doubt this was intentional, but it is a handy way of
+  detecting the last record.
+  READ and WRITE both automatically increment the current record
+  pointer (see FCB STRUCTURE).
+ 
+WRITE: (18EH) p. D-10
+  This routine will write 128 bytes to the current record of a
+  file.  Note that if you want to READ a record, edit it, then
+  WRITE it back to the file, you must decrement the current
+  record pointer before the WRITE. (see FCB STRUCTURE)
+ 
+CLOSE: (191H) p. D-10
+  This routine is a disaster.  The entry condition for DE is not
+  only missing, but due to a programming bug (one that would be
+  very simple to fix if it wasn't burned into ROM), it is also
+  non-functional.  I'm pretty sure DE was supposed to be the
+  original length of the file when opened (which is stupid in
+  itself - that's something that should go in the FCB), so that
+  CLOSE could deallocate any blocks no longer in the file (see
+  Expansion Memory, in another file).  I suggest you set DE to 0
+  to keep the CLOSE routine from bombing.
+ 
+MALLOC: (170H) p. D-7
+  MALLOC, MCHGSIZE, MFREE, MCLOSE, and MNAME are used for memory
+  files.  Memory files are not organized in records.  They are
+  stored in memory whole.
+  MALLOC will open an existing file and return it's position in
+  HL, and length in DE (in 32 byte units), or it will open an
+  unnamed block containing all free space.  Note that on entry,
+  HL points to a file name (or is 0 for free space), not an
+  entire FCB.
+ 
+MCHGSIZE: (173H) p. D-7
+  This one's explained well enough in the Manual, but I'd like
+  to take this opportunity to express my utter disgust at the
+  capitalization scheme of the word mALLOC, and especial the
+  past tense form mALLOCed - yuck.
+ 
+MFREE: (176H) p. D-8 and
+MCLOSE: (17CH) p. D-8
+  Both of these routines will close the opened block, but MFREE
+  will return the space to free memory, in effect deleting the
+  file.  If you CLOSE the block without naming it, the space
+  will not be returned to free memory, and you will be left with
+  a useless file that you can't open (a reset will free up that
+  space, but will also wipe out any other files you have in
+  memory).
+ 
+FCB STRUCTURE:
+ 
+   In order to access a non-memory file, you need to set up an
+FCB (which I imagine stands for file control block).  An FCB
+requires 32 bytes, 13 of which specify the device and filename,
+and 19 of which are filled in by the OPEN routine and used by
+the other routines.  This is the format of an open FCB:
+ 
+  Location                    Description
+  --------                  ----------------------------
+  START+00 d                device - 1 byte
+       +01 FILENAME.EXT     filename - 12 bytes
+       +0D ll               length (in bytes) - 2 bytes
+       +0F r                current record - 1 byte
+       +10 xx               (device dependent) - 2 bytes
+       +12 m                mode - 1 byte
+       +13 xxxxxxxxxxxxx    ?? - 13 bytes
+ 
+ device: d = 01H for memory       mode: m = 00H for write
+             02H for RAM disk               01H for read/write
+             03H for memory card            02H for read
+             11H for diskette               (see OPEN routine)
+ 
+   The current record pointer (r) is your ticket to random
+access files.  Whereas the SEEK routine enables you to move the
+pointer, it is cumbersome to use and deals with position, not
+record #.  To read a specific record, load the current record
+pointer with the desired record # and READ.
+   This one byte pointer also limits file size to 32K, since the
+highest record # possible is 255.
+ 
+MEMORY AND NON-MEMORY FILES:
+ 
+   To an end user, memory files and non-memory files look
+alike, except that you can only work on memory files.  On the
+programming end, however, the two are completely different. 
+Unless you only want to read a file, you must use a separate set
+of file-access routines for memory files.  You can only have one
+file in memory open at a time.  And you must take care never to
+write past the end of the file before changing the size to make
+it bigger (which, of course, means that you won't be writing
+past the end of the file...) or else some nasty things will
+happen.
+   RAM disk, memory card, and diskette files don't have these
+limitations - you can even have the same file open twice, if you
+like (although I wouldn't suggest it).  On the other hand, you
+don't have the entire file in front of you at the same time.  In
+the end, trying to write applications that treat both file types
+as equal is not easy.  You wind up with the limitations of both
+formats.
+ 
+"UNLISTED" ROUTINES
+ 
+   I ran across a few simple routines that weren't worth listing
+in the Service Manual, but could save a little space:
+A call to 1740H will multiply A by 128 and put the result in HL.
+This is useful when working with 128 byte records.  A call to
+5557H in slot 1 (use CALLFAR) will convert A to upper-case if it
+is a lower-case character (if not, it will be left alone).
+   And a call to 5428H in slot 1 will input a device and
+filename and set up an FCB at location 96A3H (but will not OPEN
+the file).  This is the routine used by Telcom for uploads and
+downloads, and will return a carry flag if <ESC> was pushed.
+There is a minor bug in this routine that makes it return a
+carry flag if the filename's extension is three characters long
+and ends with an upper-case letter.
+   The Files application also contains a few routines that can
+be used whole or in pieces.  The Files routine starts at 546FH
+in slot 0 if you want to check it out.  The subroutine at 5F40H
+is the main workhorse, and can be used whole.  It maintains the
+list of files on the screen.  The subroutines at 5F35H, 47EBH,
+and 56F6H are also useful.  Further details, as well as the
+source code for my implementation of these routines in HEXEDIT,
+are available should anyone be interested.
+ 
+   Michael F. Klar - 4 Fleetwood Dr. - Somerville, NJ 08876
+ 

@@ -1,0 +1,39 @@
+GPRINT.BA is a program that can be used for configuring the gemini 10X printer
+The program has 4 modes of operation;
+   1 - Configure Printer - allows the setting of print font, line feed value
+       character width, type style, print type, right & left margins*, first
+       line printed*, perf skip, Uni-dir print, and print with paper out.
+
+       * These values should be left at default if using "Format Print"
+
+   2 - Envelope Mode - Allows addressing of buisness and letter size envelopes.
+       Line 400 allows you to set a default return address. Default addresses
+       can be over-ridden simply by typing in a new line. Comma's can be
+       used on addresses. BKSP is supported.
+
+   3 - Quick Print - Opens a .DO file and prints contents sequentially.
+
+   4 - Format Print - Opens a .DO file and prints contents. Formats output -
+       Right justifies (ragged left), sets right, left, top, and bottom margins.
+       >> Text should be entered in the .DO file. Carriage returns should only
+          be entered where desired (i.e. end of paragraph, to add blank lines,
+          etc.)
+       Variables for setting margins are set in line 2; L=left margin, R=right
+       margin, T=blank lines on top, B=page lenght.
+
+Imbedding Printer Control Codes:
+  Format Print allows imbedded printer control codes in text. The Codes are:
+   &0& Form feed
+   &1& Select italic character set
+   &2& Select normal Character set
+   &3& Select underlined print
+   &4& Cancel underlined print
+   &5& Select double-wide print
+   &6& Cancel double-wide print
+   &7& Select super-script
+   &8& Select sub-script
+   &9& Cancel super/sub-script
+
+ To use simply enter code in .DO file. The actual code characters will not be
+printed. The gemini printer executes control codes on recieving a carriage
+return, therefore it is not possible to select & cancel a code in the same line.

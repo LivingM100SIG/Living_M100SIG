@@ -1,0 +1,283 @@
+POWR-DISK Owner's Manual
+
+	Name	     Format	   Comment
+
+	BLAH.BA	     BLAH  BA	   Space padded
+	D.CO	     D     CO	   Space padded
+	LFILES.DO    LFILESDO	   Not padded
+
+[Note that periods are not included - ed.]
+
+The best way to get the "address" is with VARPTR.  If you don't know how this
+is done, adhere to the following example, where the file "GRUNT.CO" is prepared
+for output:
+
+								Manual Page 16
+								--------------
+
+	10 B$ = "GRUNT CO"
+	20 B = VARPTR(B$)
+	30 CALL MAXRAM+3, 1, PEEK(B+1) + 256*PEEK(B+2)
+
+
+CALL MAXRAM+6, len, address
+
+This call allows you to read data from a TDD file, previously opened with
+MAXRAM+3 with a "mode" of 3.  "Len" is the number of characters to read, which
+must be in the range from 1 to 255; "address" is the destination memory
+location for the characters.  [similar to a block move in memory - ed.]  Be
+warned that if you use a STRING variable, it must be large enough to receive
+the characters; this CALL won't change the variable length.  For example, to
+read 25 characters into B$:
+
+	40 B$ = SPACE$(25) : '  Allocate space
+	50 B = VARPTR(B$)
+	60 X = PEEK(B+1) + 256*PEEK(B+2)
+	70 CALL MAXRAM+6, 25, X
+
+
+CALL MAXRAM+9, len, address
+
+This call allows you to write to a previously opened file.  You must precede
+any writes with a CALL to MAXRAM+3, with a "mode" of 1 or 2.  "Len" can be up
+to 255 (0 is illegal); "address" marks the beginning of the characters to
+write.  For example, to write the contents of B$ to a file use the following
+procedure:
+
+	100 B$ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  [or whatever...]
+	110 B = VARPTR(B$) : X = PEEK(B+1) + 256*PEEK(B+2)
+	120 CALL MAXRAM+9, PEEK(B), X
+
+
+CALL MAXRAM+12
+
+This command sets the COM settings on the computer to communicate with the TDD
+(98N1D).  It's unlikely that this call would be necessary unless you were
+attempting to set up a telecommunications program that simultaneously uses the
+TDD and the computer's internal modem.
+POWR-DISK Owner's Manual
+								Manual Page 17
+								--------------
+
+CALL MAXRAM+15, cmd
+
+This call sends a single-code command to the TDD.  In the context of the
+currently supported calls, the only sensible value for "cmd" is 2, which closes
+a file.  Your programs should perform a "CALL MAXRAM+15, 2" after any file
+input/output using the supported calls.  If you forget, files opened for output
+will not be changed properly.
+
+
+CALL MAXRAM+15,6  [command documented in the POWR-DISK Newsletter after the
+original software release - ed.]
+
+This call will format new diskettes, or reformat, and completely erase existing
+data from a previously used diskette.  To use the command safely, first go into
+BASIC and use the LFILES command to determine whether the diskette currently
+has data on it, by showing the disk directory.  If you get an ?IO Error, the
+disk is unformatted and you can proceed.  Or be sure to use a brand-new, unfor-
+matted disk.  Type the following command:
+
+	CALL MAXRAM+15,6 <ENTER>
+
+Immediately the red LED light will come on, and the drive will begin formatting
+the diskette, erasing any pre-existing data.  When BASIC returns the "Ok"
+prompt, the formatting is complete and the LFILES command will indicate 79
+sectors free.
+
+
+Error Codes
+
+POWR-DISK returns error codes when something goes wrong with TDD interaction.
+Below is a list of error numbers, along with a brief description of each. NOTE:
+These errors will print out in BASIC unless you use the ERROR statement, which
+will print out "?UE Error" for any error number greater than 58.
+
+No. Code  Explanation
+
+59   NR   RS-232 Not Ready.  This error code usually occurs if the TDD is
+          turned off or disconnected. (Yes, we know that the description is the
+          same as "No Resume".)
+
+60   DN   Drive not responding.  This error happens most often when an earlier
+          operation ended unusually.  The best solution is usually to turn the
+          TDD off, then back on. [if another device is connected to the RS-232
+          port, a ?DN error in response to the LFILES command can be
+          interpreted as a "No Drive" error - ed.]
+
+61   CM   Communications error.  Your computer and TDD use a system of checks
+          to make sure no errors in transmission occur.  If you get a CM error,
+          check the cable for snugness at both ends, and try again.
+
+62   DA   Drive done early.  This error should never occur unless you attempt
+          to read past the end of a disk file.  It can happen when using the
+          CALL MAXRAM+6 function.
+POWR-DISK Owner's Manual
+
+No.  Code  Explanation
+
+63   WP   Disk is Write Protected.  You are attempting to write to a disk with
+          the data protection tab open, protecting the disk data by preventing
+          writing to the disk.
+
+								Manual Page 18
+								--------------
+
+64   DF   Disk Full.  You have exhausted the capacity of the TDD disk, either
+          by using more than 79 sectors, or by creating more than 40 files on
+          the disk. [also by attempting to write more than 64K to a file - ed.]
+
+65   ND   No Disk.  There is no disk in the drive.  This differs from the DN
+          error above.
+
+66   HT   "Hard Trouble".  This error covers any miscellaneous problems with
+          the TDD.  It rarely occurs except when using the CALL functions.
+
+67   AE   File already exists.  You are attempting to overwrite an existing
+          file with the SAVEM or LOADM,F commands.
+
+In addition to the above errors, the IO Error (#18) can signify a damaged or
+unformatted disk, and the FF Error (#52) means that you are trying to access a
+non-existent disk file.
+
+								Manual Page 19
+								--------------
+
+			     Section Five
+		 Using Other Machine Language Programs
+
+POWR-DISK comprises about 2,000 bytes of machine language (m/l) code.  As
+Appendix B discusses, the natural location for all m/l programs tends to be in
+the same place, the area of memory just below the system default MAXRAM.  Con-
+sequently, there are some considerations you must make when running other m/l
+programs like FLOPPY.CO or TMPC.
+
+Further, some BASIC programs and ROM programs (such as Interactive Solutions
+for the Model 100) use the memory locations occupied by POWR-DISK as a "scratch
+pad" when they are running; consequently, they corrupt POWR-DISK as it comes in
+POWR-D.CO.  If you use such a product, you must also take precautions when
+using POWR-DISK.  Fortunately, the TDD and POWR-DISK software can accommodate
+just about any of these programs conveniently.
+
+
+Checking for Possible Conflicts
+
+In candor, it is unlikely that a m/l application will not conflict with POWR-
+DISK.  In most cases, you will have to modify either POWR-DISK or the m/l
+program so that they can run together.  However, it is worthwhile to check for
+a conflict anyway, since the information you gain is useful for solving any
+problems later.
+
+For m/l programs, you should determine the TOP and END addresses.  There are
+several ways to do this:
+POWR-DISK Owner's Manual
+
+1.  If the program comes on a cassette tape, use CLOADM to load the file into
+    BASIC. (NOTE: It's highly recommended to turn LFILES OFF before doing this.
+    See the discussion in Section One.)  The command will display the TOP, END,
+    and EXE values just before loading.
+
+2.  If the file exists already on a disk or in RAM, use the [F6] key (Info) in
+    MENU.BA to display the values.  See the discussion of MENU.BA in Section
+    Two for more detail.
+
+								Manual Page 20
+								--------------
+
+Note that neither of these techniques may work, for various reasons.  If you
+are confused about how to determine the TOP and END values for a particular
+application, consult a friend who knows some machine language.
+
+If the END value is less than MAXRAM when POWR-DISK is active [default load of
+POWR-D.CO is 58960 -ed.] there is some chance that there is simply no conflict.
+However, do not try running the application with POWR-DISK on, until you have
+saved all important files.  There is a distinct chance that something will go
+awry.
+
+
+Running Relocated Programs
+
+Some m/l programs can be relocated.  When this is possible, the program docu-
+mentation usually explains the procedure. If you want to relocate a m/l program
+below POWR-DISK you must determine the offset for the program's relocation; you
+should use the difference in MAXRAM with POWR-DISK on and off.
+
+Example 1:  Determining MAXRAM values, starting with POWR-DISK loaded
+
+	PRINT MAXRAM <ENTER>
+	 58960
+	Ok
+	LFILES OFF:PRINT MAXRAM <ENTER>
+	 61104
+	Ok
+	CALL 58960 <ENTER>
+	Ok
+	PRINT 61104-58960
+	 2144
+	Ok
+
+The above example assumes that POWR-DISK is loaded right under the computer's
+default MAXRAM at 61104.  If you have other m/l programs loaded, these values
+may be different.  The CALL value should be identical to the MAXRAM address
+when POWR-DISK is loaded and operational.  In the example above, the "offset"
+is 2144.  When you relocate most m/l programs, you will want to lower their TOP
+and END addresses by 2144.
+
+Once you have relocated a program, you can access it directly from the disk
+without ever loading a CO file into RAM.
+POWR-DISK Owner's Manual
+								Manual Page 21
+								--------------
+
+The RUNM command, with POWR-DISK active, will access the program directly.  The
+most convenient way to use a relocated program is with a small BASIC load
+module that clears the necessary memory, then runs the program.
+
+Example 2:  Running a relocated Program
+
+LAPWRD is a m/l print formatter available for the Model 100.  It is supplied to
+the customer on cassette tape.  The TOP and END values can be obtained from the
+tape with the CLOADM command in BASIC.  [Below is an example of relocating the
+Model 100 version of LAPWRD; addresses would be different for a 200 version]
+
+	LFILES OFF:CLOADM"CAS:" <ENTER>
+	TOP: 59675
+	END: 62960
+	EXE: 60561
+	?OM Error
+	Ok
+	RUNM"POWR-D" <ENTER>
+	TOP: 60850
+	END: 62806
+	EXE: 60850
+	Ok
+
+Notice that the above version of POWR-DISK has an offset of 2110 bytes (Model
+100 default MAXRAM of 62960 - 60850).
+
+Note that POWR-DISK was turned off before trying a CLOADM, and that POWR-D.CO
+was present in RAM to restore POWR-DISK after the attempt.  From this exercise,
+we learn that LAPWRD and POWR-DISK use conflicting memory locations.
+
+However, LAPWRD is generously supplied with a relocator.  Without going into
+detail, assume in the example above that LAPWRD is relocated with an offset of
+2110 bytes (so TOP would be 57565; 59675 - 2110), then can be saved into a file
+LAPWRD.CO on the disk.  The following BASIC program can then be written to run
+LAPWRD from the disk:
+
+	10 CLEAR 0, 57565 : RUNM":LAPWRD" <ENTER>
+
+Save this statement into a BASIC program which appears on the main menu; then
+LAPWRD is available from the disk with the minimum RAM overhead and maximum
+convenience.  [Running the program directly from the disk eliminates the image
+copy which appears on the menu, thus saving the space allocated to that image
+file. - ed.]
+
+								Manual Page 22
+								--------------
+
+Relocating POWR-DISK
+
+When another application cannot be relocated, it is necessary to relocate POWR-
+DISK to accommodate the other application.  The BASIC program, RELOC.BA is
+available to accomplish the relocation.  [See PDSK11.200 -ed.]

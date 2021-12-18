@@ -1,0 +1,254 @@
+KYO-2.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+
+The Kyotronic 85 continues to be a hot topic on the Forum -- even though
+there were only 1000 of them imported, according to one report.  This
+activity has been recognized by establishing a new Subtopic and Data Library
+section (S 17/DL 17) for the Kyotronic 85.  The messages in this file deal
+with a variety of issues, from technical issues and adding linefeeds to
+printer output to the pros-and-cons of the Kyo85 vs. the M100/102/200.
+
+
+Message range: 145293 to 145771
+Dates: 4/11/87 to 4/17/87
+
+
+
+***TECHNICAL INFORMATION***
+
+Fm: Jay McCaslin 71500,3505
+To: All
+
+Is there anyone else on this sig who is using the Kyoceros (Kyotronics) 85
+computer? Is there anyone who might be able to give information about ROM calls
+or memory addresses?
+
+By the way, this machine does a great job of running any Model 100 software
+that isn't machine specific to the Model 100. Such as: PRINT.QIK, SUB.100,
+AMORT.100, ETC.
+
+
+Fm: Phil Wheeler 71266,125
+To: Jay McCaslin 71500,3505
+
+Not much here but some.  Check the files KYO85.INF & KY.THD (DL 13).
+
+
+Fm: Henderson 74275,460
+To: Frank Thrash
+
+Found ROM addresses for Kyo, don't really know if you are interested or if this
+would be helpful but here they are. from a review by Luft Pfeiff. Files:  7943,
+CLS: 16909, Devices: 20640, TELECOM: 20721, TERM: 20877, ADRS: 22643, SCHDL:
+22650, TEXT: 23286, MaxROM: 31949, SysRAM: 62960.
+  Mind you, I am still trying to get my modem to work with it.  I realize that
+the feelings here are primarily negative, but for what I use it for ( writing
+in the field and dumping to PC for printing) I love the little guy. Darbi
+
+
+Fm: Neil Wick 71056,613
+To: FRANK W. THRASH 75666,1246
+
+  There is a little info in the March issue of Pico magazine.  Addresses
+comparisons are given for the M100 and KC-85 for ten example ROM locations.
+There is also a 2-page review which you might find interesting.
+
+
+Fm: Brian J. Dooley 75146,3212
+To: Phil Wheeler 71266,125
+
+I want to write something that does a full "as is" core dump. Probably adapt
+the document dump utility (name unknown)
+
+
+Fm: Phil Wheeler 71266,125
+To: Brian J. Dooley 75146,3212
+
+You may want to try DISASM.PW1 in DL 8.  I think it will run on the Kyo, and
+can be used to diassemble the Kyo85 ROM for fun -- and if you say to put the
+output to COM:88N1E you should be able to capture it on a PC. Chunks should be
+small -- say 1000h bytes per segment (32 pieces).
+
+If you mean a dump of RAM to recover things, there are some programs here.
+Try BRO RECOVR in DL 7 and see what comes up.
+
+
+Fm: ANTIC PUBLISHING 76703,2000
+To: Henderson 74275,460 (X)
+
+I too am interested in wringing everything out of the Kyo that it has.  I
+bought it to use as a remote keyboard for my main computer (an Atari) and am
+ver happy with it.  I like the superb Model 100 keyboard which it has.
+
+I would much like to use the Address program which apparently is in the ROM. I
+tried to CALL the addresses listed but got error messages.  Can you help me get
+into this code?
+
+
+Fm: Henderson 74275,460
+To: ANTIC PUBLISHING 76703,2000
+
+Charles, sure, no problem.  First go to TEXT and type in a name and address
+ You need only one to start.  Then save the file as "adrs.do", this is only
+file name to use.  Return to MENU, go to BASIC and type "0 call 22643"return "1
+run"return.  Then save this with a name like Addrss.ba.  This puts it in the
+main MENU.  Then just slip the Menu cursor over Addrss.ba and hit enter and you
+have Address.  Schedule is done with "Note.Do" and Call 22650.
+
+
+***A LINEFEED UTILITY***
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Tony, the April PICO has an article which includes Hugo's code for LF set up -
+- and has the patches to install the LF patch in a Kyo 85!  Alas, the patch to
+remove it (important at times) is not included.  But I can re-create it if some
+helpful Kyo owner will (before installing any patch!) do:
+
+ print peek(64236),peek(64237)
+
+while in BASIC and put the results in a message.  Then we can re-create the
+full printer LF patch for a SIG program.  No info on the TELCOM LF patch, but
+generally that one is not needed.
+
+
+Fm: Henderson 74275,460
+To: Phil Wheeler 71266,125
+
+Printing peek(64236) gives 163.  Printing peek(64237) gives 124. Hope this
+helps.  I am going out to find the magazine right now.  Darbi BTW, what does
+this all mean?
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Is that location a real jump, or just a RTN in the vector table?  What is it in
+the Model 100?
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Well, it seems to be the same structure as the M100:
+
+ Print jump vector: M100 = 64228; Ky85 = 64236
+ LPT continue in ROM: M100 = 32675; Ky85 = 31907 (normal jump)
+
+with the jump redirected to the new code in the F8 area by the jump in Line 5
+and patched back to its normal ROM path by line 6.
+
+This code is exactly the same as FIXLF.HF1 (DL 7), except for changes in the
+ROM/RAM addresses.  BTW -- Hugo created this at my request, after I had
+discovered that Text Power 100 (first version) clashed with the LF patch I was
+then using.
+
+It should be noted that the current PICO uses Hugo's code (with credit given)
+in a program to initialize the computer ("A Basic Initiator" -- and has address
+changes for other computers, including the Kyo85, etc..  The author is Luft
+Pfeiff, who did the review of the Kyotronic 85 in the March issue.  but he does
+not include the part of the program which allows toggling the patch, an
+important feature for some users.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+There is an "interesting" thought tossed out in the April PICO re adapting disk
+drives to the KY85.  In response to a letter form a KY85n owner, the editor
+says: "As to adding disk drives, why go to all that work?  Why not just adapt
+J. K. Heilman's Disk Manager program to the KC-85.  That way you can use the
+Tandy PDD."
+
+Whew! Not only would you need the (commented) source of DSKMGR.100, but you
+would need a rather complete ROM map of the Ky85.  I suspect we are a long way
+from getting DSKMGR to run on the '200 and the NEC 8201 -- computers we know a
+lot more about.  Fascinating!
+
+
+Fm: Phil Wheeler 71266,125
+To: Henderson 74275,460
+
+Thanks for the info -- the result is LFEED.KYO in DL 15.
+
+How it works is a long story.  The two bytes at 64236/64237 (in the Kyo) are
+where the print jump vector is stored.  Normally it jumps back ino RAM.  But we
+can intercept it and direct it to a short program which adds a linefeed (
+stored in the function key RAM area, in this case).
+
+For more info, read LFUTL.INF & LFUTL.DES in DL 7.
+
+
+Fm: John Maio 76012,2252
+To: ALL
+
+I have a Kyosonics 85 (which I use primarily as a packet radio terminal) and
+can report that the program LFEED.KYO listed in DL 15 works just fine.
+
+Also, DL Liquidators said they plan to offer a battery-powered disk dirve for
+the '85 in the next month or so. They are also evaluating a bubble memory
+"SUPEROM" for use with the KYO. No details available.
+
+
+***PROS-AND-CONS OF THE KYO85***
+
+Fm: Brian J. Dooley 75146,3212
+To: Henderson 74275,460
+
+Had to comment on that. I also have a Kyo, and love it. I am a high volume tech
+writer, and now do EVERYTHING on the machine. Can carry it with, and upload to
+office WP system. Carry it with me at all times, and transfer material via null
+modem to my Compaq, or, via a $25 Tandy <teehee> 300 baud external modem with
+no problem. Have checked and adapted numerous Basic programs--only the reverse
+date stamp is a (very tiny) problem. Am working on the machine code problem. I
+just don't see why all the negative comments. The expansion "problem" is a
+joke...by the time real expansion is wanted, ALL of these machines will be
+dated...and I've only spent $200!
+
+
+Fm: Phil Wheeler 71266,125
+To: Brian J. Dooley 75146,3212
+
+Well, BJ, *real* expansion is here, for the Model 100 et al.  I'm banging this
+out on a M100 with 256K RAM and Sardine (neat WP with spell checker in ROM).
+And there are all the other things (e.g., disk drives with OS, etc.).
+
+All is not to belittle the Kyo -- but many will find the more expensive
+machines, with expansion goodies, a better buy.  But for many applications/
+users, the Kyo will be super.
+
+
+Fm: Brian J. Dooley 75146,3212
+To: Phil Wheeler 71266,125
+
+Just read the Kyo files. On expansion, as with C-64, by the time you've added
+the etceteras, you've paid more than for a PC (+) class unit. For the normal
+purposes of such a machine, it is an excellent buy.
+
+
+Fm: Phil Wheeler 71266,125
+To: Brian J. Dooley 75146,3212
+
+Well, it's all in what you want. Many find an expanded M100/102/200 *more*
+valuable than a PC portable.  I have both, and the M100 is with me more while
+traveling.  On price: some of the expansions are getting to be reasonable
+-example is the Node RAMPAC for the 102 (32K plugh in pack at $49, or $139 for
+three).
+
+For my money, a well-supported machine (in terms of hardware and even free m/l
+software here) is worth the extra money -- as is the built in modem. Admittedly
+a very personal and application-dependent choice (and I do like to keep my
+expansion options open).
+
+The article in the March PICO says that only 1000 were imported.  True?  If so,
+we seem to have a good percentage of them here!
+
+BTW -- if I didn't have two M100's and a Tosh, I'd buy a Kyo, just for the
+challenge of seeing how far it can be extended -- an early M100 challenge which
+has been largely realized!
+
+

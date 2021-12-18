@@ -1,0 +1,1182 @@
+;ADSM.SR2 - 2nd part
+;Append this to part 1, or LINK it.
+
+L23	CPI	1
+	JZ	L24
+	CPI	3
+	JZ	L25
+	CPI	$B
+	JZ	L25
+	CPI	9
+	JZ	L25
+	CPI	8
+	JNZ	L26
+	CmP	b
+	JZ	L25
+	MOV	A,B
+	xrI	40
+	CmP	b
+	jc	getopc
+L26	MOV	A,B
+	ANI	$C0
+	CPI	64
+	JNZ	L28
+	CALL	GetHIC
+	JMP	GetLR
+L28	CPI	$80
+	JNZ	Getopc
+	MOV	A,B
+	ANI	$F8
+	CALL	Getopc+1
+GetLR	MOV	A,B
+	ANI	7
+	JMP	GetLrg
+Getopc	MOV	A,B
+	MOV	C,A
+	LXI	D,MncDat
+L32	LDAX	D
+	CPI	32
+	JNZ	L30
+	INX	D
+	INX	D
+	INX	D
+L30	LHLD	Ppos1
+	MVI	M,9
+L31	LDAX	D
+	INX	H
+	MOV	M,A
+	INX	D
+	CPI	4
+	JNC	L31
+	STA	OpLen
+	MVI	M,9
+	LDAX	D
+	CMP	C
+	STC
+	jz	put0+1
+	INX	D
+	LDAX	D
+	CPI	32
+	JC	L29
+	CPI	96
+	JC	L32
+L29	INX	D
+	JMP	L32
+
+L25	CALL	Getopc+1
+SP	CALL	GetXR
+	MVI	M,'S'
+	INX	H
+	MVI	M,'P'
+	JMP	Put0+1
+L24	CALL	L25
+	JMP	InsC
+GetOXR	CALL	Getopc+1
+GetXR	MOV	A,B
+	RRC
+	RRC
+	RRC
+	ANI	6
+	CPI	6
+	RZ
+	POP	D
+GetLrg	LXI	D,Regdat-2
+	inr	a
+	ani	7
+L106	inx	d
+	inx	d
+	dcr	a
+	jp	l106
+	LDAX	D
+Put0	MOV	M,A
+	INX	H
+	SHLD	Ppos1
+	mvi	m,0
+	RET
+
+ResPp	push	h
+	LXI	H,Bufr
+	call	Put0+2
+	pop	h
+	ret
+
+
+Disasm	LXI	H,obprmt
+	call	orgfil
+	lxi	h,bufr
+	push	h
+	xchg
+	call	sep
+	jm	filinp
+numinp	pop	d
+	lxi	h,0
+	push	h
+	CALL	Cnvnum
+	push	h
+	push	h
+	CALL	Cnvnum
+	pop	d
+	jmp	l33
+filinp	pop	h
+	call	fmtfnm
+	CALL	FindCO
+	JZ	fferr
+	lhld	varspc
+	push	h
+	XCHG
+	CALL	coparm
+	INX	H
+	INX	H
+	push	h
+	mov	h,d
+	mov	l,e
+	dad	b
+	dcx	h
+l33	shld	fp0
+	xchg
+	shld	mp0
+	shld	mp1
+
+	lxi	h,ouprmt+1
+	call	inpfnm
+	call	openfl
+
+	pop	h
+	shld	fp1
+	xchg
+	pop	h
+	shld	comove
+	call	movco
+	xchg
+
+;Store Labels
+	lhld	mp0
+	mov	b,h
+	mov	c,l
+	lhld	fp0
+	lda	mode
+	ora	a
+	jnz	dmloop
+	push	h
+	dsub	b
+	dad	d
+recLbl	push	h
+	push	d
+	ldax	d
+	Call	Getmnc-3
+	pop	d
+	inx	d
+	lda	oplen
+	cpi	3
+	jnz	Not3
+	lhlx
+	mov	b,h
+	mov	c,l
+	lhld	mp0
+	dcx	h
+	dsub	b
+	jnc	NIR
+	Lhld	fp0
+	dsub	b
+	jc	NIR
+	push	d
+	call	Addlbl
+	mov	a,d
+	pop	d
+NIR	inx	d
+Not3	dcr	a
+	cnz	InxD
+	pop	h
+	rst	3
+	jnc	reclbl
+
+	pop	h
+DmLoop	push	h
+	call	movco
+	push	h
+	push	h
+	mov	a,m
+	call	GetMnc
+	lda	OpLen
+	cpi	3
+	mov	c,a
+	mov	b,a
+	pop	d
+	jc	k90
+	inx	d
+	lhlx
+	push	b
+	call	chklbl
+	pop	b
+	mvi	a,'L'
+	jc	k100
+k90	mvi	a,$FF
+k100	push	psw
+	lhld	mp1
+	push	h
+	lda	mode
+	ora	a
+	jnz	dsmins
+L75	dcr	c
+	jz	dsmins
+	inx	h
+	push	h
+	push	b
+	call	Chklbl
+	pop	b
+	pop	h
+	jnc	L75
+	mov	a,b
+	sta	eof
+
+dsmins	pop	h
+	call	ChkLbl
+	lxi	h,lnint
+	mvi	b,'L'
+	mvi	c,7
+	jc	k11
+	mvi	b,'I'
+	dcr	m
+	jm	k11
+	mvi	b,0
+	mov	c,m
+k11	mov	m,c
+	pop	a
+	mov	c,a
+	pop	h
+	call	DsmLin
+	lda	eof
+	dcr	a
+	cp	end+1
+StoLn	Call	WrLn
+	call	incptr
+	lhld	mp1
+	xchg
+	pop	h
+	rst	3
+	jnc	DmLoop
+	jmp	clob
+
+movco	lhld	comove
+	mov	b,h
+	mov	c,l
+	inr	h
+	dcr	h
+	jz	dontmv
+	lhld	varspc
+	shld	comove
+	dsub	b
+	mov	b,h
+	mov	c,l
+dontmv	lhld	fp1
+	dad	b
+set2	shld	fp1
+	ret
+
+WrLn	lxi	d,bufr
+wrchr	ldax	d
+	inx	d
+	ora	a
+
+	if	m,2
+	push	d
+	endif
+
+	push	a
+	cnz	wrbyt
+	pop	a
+
+	if	m,2
+	pop	d
+	endif
+
+	jnz	wrchr
+
+	mvi	a,13
+	call	wrbyt
+	mvi	a,10
+	call	wrbyt
+Breakp	lda	pkgff
+	ani	3
+	rz
+	cpi	2
+	jc	breakp
+	jmp	reent
+
+	if	m,2
+wrbyt	lhld	bnk1
+	inr	l
+	jz	writio
+	cpi	26
+	rz
+	lhld	num0
+	mov	m,a
+	inx	h
+	shld	num0
+	lxi	b,lcd
+	dsub	b
+	mov	a,l
+	inr	l
+	Rnz
+svlo	sta	dlen
+	mvi	e,0
+	jmp	inzlp
+	endif
+
+Addlbl	call	chklbl+2
+	rc
+	dmov	d,sp+0
+	dcr	d
+	rst	3
+	jnc	OMerr
+	mvi	m,3
+	inx	h
+	mov	m,c
+	inx	h
+	mov	m,b
+	inx	h
+	jmp	updvpt+3
+
+ChkLbl	mov	b,h
+	mov	c,l
+	lhld	Varspc
+L74	mov	a,m
+	ora	a
+	rz
+	sui	2
+	mov	e,a
+	mvi	d,0
+	dad	d
+	xchg
+	lhlx
+	dsub	b
+	xchg
+	stc
+	rz
+	inx	h
+	inx	h
+	jmp	L74
+
+	mvi	a,' '
+ByCh	mvi	h,0
+	PUSH	PSW
+	CALL	ascwd+3
+	POP	PSW
+	jmp	Put0
+
+DsmLin	push	b
+	push	h
+	mov	a,b
+	LHLD	mp1
+	call	mlbl
+	mvi	a,':'
+	cnz	put0
+	lhld	ppos1
+	LDA	eof
+	ORA	A
+	pop	d
+	JNZ	makDB
+	lda	mode
+	ora	a
+	pop	b
+	jnz	makcmt
+	push	b
+	ldax	d
+	push	d
+	CALL	GetMnc
+	POP	D
+	LDA	OpLen
+	cpi	1
+	pop	b
+	jz	makcmt
+	push	psw
+	push	d
+	INX	D
+	LHLX
+	sui	3
+	cma
+	ana	h
+	mov	h,a
+	mov	a,c
+	call	mlbl+3
+	pop	d
+	pop	psw
+	jmp	makcmt
+
+mlbl	call	respp
+	ora	a
+	rz
+	push	h
+	push	psw
+	call	chklbl
+	xchg
+	lhld	ppos1
+	xchg
+	jc	nl
+nnl	pop	psw
+	xchg
+	cp	put0
+	pop	h
+	push	psw
+	call	ascwd+3
+	pop	psw
+	rm
+	dcx	h
+	mov	a,m
+	cpi	'H'
+	cnz	inxh
+	inr	a
+	jmp	put0+2
+nl	mov	c,a
+	mvi	b,0
+	dsub	b
+	mov	a,m
+	cpi	3
+	jz	nnl
+	lxi	b,null
+	call	gln
+	mov	m,a
+	pop	psw
+pop	pop	b
+	ret
+
+IP	MOV	A,L
+	STA	L56+1
+L56	IN	0
+	MOV	L,A
+	mvi	h,0
+
+PrnWd	lxi	b,prnbfr
+	push	b
+;Convert number to ASCII
+AscWd	call	respp
+	SHLD	Num1
+	LDA	Base
+	CPI	2
+	JNC	L40
+	MVI	A,2
+	STA	Base
+L40	MOV	C,A
+	mvi	b,0
+	MOV	D,A
+L41	LXI	H,0
+	MOV	A,D
+L42	DAD	B
+	JC	L43
+	DCR	A
+	JNZ	L42
+	MOV	B,H
+	MOV	C,L
+	JMP	L41
+L43	LXI	H,Put0+1
+	PUSH	H
+	xra	a
+	PUSH	PSW
+L45	MVI	A,$FF
+	LHLD	Num1
+L46	INR	A
+	DSUB	B
+	JNC	L46
+	DAD	B
+	SHLD	Num1
+	mov	e,a
+	POP	PSW
+	mov	h,a
+	add	e
+	adi	$ff
+	mov	a,h
+	PUSH	PSW
+	mov	a,e
+	CPI	$A
+	JC	L47
+	ADI	7
+l47	ADI	48
+	LHLD	Ppos1
+	MOV	M,A
+	inx	h
+	pop	psw
+	cc	inra
+	push	psw
+	cc	put0+2
+	MOV	A,C
+	DCR	A
+	ORA	B
+	JZ	L49
+	MOV	H,B
+	MOV	L,C
+	MOV	C,D
+	MVI	B,0
+	LXI	D,$FFFF
+L50	INX	D
+	DSUB	B
+	JNC	L50
+	MOV	B,D
+	MOV	D,C
+	MOV	C,E
+	JMP	L45
+L49	POP	b
+	MOV	A,D
+	cpi	10
+	dcx	h
+	rz
+	inx	h
+	MVI	M,'Q'
+	CPI	8
+	RZ
+	MVI	M,'B'
+	CPI	2
+	RZ
+	mvi	m,'#'
+	CPI	16
+	rnz
+	dcr	b
+	dcr	b
+	jp	hs
+	dcx	h
+	mov	a,m
+	mvi	m,'0'
+	inx	h
+	mov	m,a
+	inx	h
+hs	mvi	m,'H'
+	ret
+
+Link	push	d
+k62	inx	d
+	call	tst1
+	jnz	k62
+	xra	a
+	stax	d
+	sta	ifcnt
+	inr	a
+	sta	eof
+	pop	h
+	jmp	openfl+2
+
+Re	XCHG
+	CALL	ResPp
+	LHLX
+	PUSH	H
+	mvi	a,','
+	Call	ByCh
+	Pop	h
+	push	h
+	mov	l,h
+	CALL	ByCh-2
+	pop	h
+	call	ascwd+3
+	JMP	prnbfr
+
+MakDB	pop	b
+	MVI	M,9
+	INX	H
+	MVI	M,'D'
+	INX	H
+	MVI	M,'B'
+	INX	H
+	mvi	a,1
+makcmt	push	h
+	lhld	mp1
+	mov	b,h
+	mov	c,l
+	lhld	fp0
+	dsub	b
+	inr	h
+	dcr	h
+	jnz	k15+1
+	dcr	a
+	cmp	l
+	jc	k15
+	mov	a,l
+k15	inr	a
+	sta	oplen
+	mov	b,a
+	pop	h
+	lda	eof
+	mov	c,a
+	ora	a
+	lda	cdb
+	push	psw
+	jnz	anumc
+	rar
+	rar
+	jnc	achrc
+
+anumc	push	d
+	push	b
+	MVI	M,9
+	inx	h
+	mvi	m,';'
+	cc	inxh
+l52	shld	ppos1
+	PUSH	b
+	PUSH	D
+	LHLX
+	CALL	ByCh-2
+	POP	D
+	pop	b
+	lda	base
+	sui	16
+	jnz	k99
+	dcx	h
+	cmp	c
+	cz	dcxh
+k99	inx	d
+	DCR	b
+	JNZ	l52
+	ora	a
+	cnz	dcxh
+	pop	b
+	pop	d
+
+achrc	pop	psw
+	rar
+	jnc	put0+2
+	Mvi	M,9
+	inx	h
+	mvi	m,';'
+	rar
+	jnc	l53
+	mov	a,c
+	ora	a
+	jz	l53+1
+l53	inx	h
+	lda	mode
+	ora	a
+	LDAX	D
+	jnz	gphok
+	ani	127
+gphok	cpi	127
+	mvi	c,'.'
+	jz	l54+1
+	CPI	32
+	JNC	L54
+	mvi	m,'^'
+	inx	h
+	adi	64
+l54	mov	c,a
+	MOV	M,c
+	INX	d
+	DCR	B
+	JNZ	L53
+	jmp	put0+1
+
+md	MOV	A,L
+	STA	Base
+	ret
+
+cd	MOV	A,L
+	STA	Mode
+	RET
+
+WR	PUSH	H
+	CALL	Cnvnum
+	POP	D
+	MOV	A,L
+	STAX	D
+	MOV	A,H
+	ORA	A
+	RZ
+	INX	D
+	STAX	D
+	RET
+
+OP	MOV	A,L
+	STA	L55+1
+	CALL	Cnvnum
+	MOV	A,L
+L55	OUT	0
+	RET
+
+Cnv	jp	L83
+	mov	a,l
+	cpi	32
+	jnc	k35
+	mvi	a,'^'
+	rst	4
+	mov	a,l
+	adi	64
+k35	rst	4
+	jmp	CrLFc
+
+L83	PUSH	H
+	CALL	Cnvnum
+	MOV	A,L
+	LXI	H,Base
+	MOV	C,M
+	MOV	M,A
+	POP	H
+	PUSH	B
+	CALL	PrnWd
+	POP	h
+	jmp	md
+
+find	call	read
+	dcx	h
+	lxi	d,bufr+254
+	mov	b,c
+	call	mvhcd
+	mov	c,b
+	lhld	adrptr
+q2	push	b
+	push	d
+	push	h
+q1	inx	d
+	ldax	d
+	cmp	m
+	jnz	nexadr
+	inx	h
+	dcr	c
+	jnz	q1
+	pop	h
+	push	h
+	call	prnwd
+	call	breakp
+nexadr	pop	h
+	pop	d
+	pop	b
+	inx	h
+	mov	a,h
+	ora	l
+	jnz	q2
+	ret
+
+Read	lxi	h,bufr
+	call	Read2
+	inr	c
+	dcr	c
+	rnz
+	jmp	moerr
+
+Read2	lxi	b,0
+k97	dcx	d
+	call	sep
+	rm
+L62	ldax	d
+	cpi	'''
+	jnz	Number
+	inx	d
+	inx	d
+	ldax	d
+	dcx	d
+	cpi	'''
+	jnz	quote
+	dcx	d
+Number	push	b
+	push	h
+	call	Cnvnum
+	mov	b,h
+	mov	c,l
+	pop	h
+	mov	m,c
+	inx	h
+	mov	m,b
+	pop	b
+	inr	c
+	inr	m
+	dcr	m
+	jz	k97
+	inx	h
+	inr	c
+	jmp	k97
+
+quote	ldax	d
+	inx	d
+	mov	m,a
+	ora	a
+	rz
+	cpi	'''
+	jz	k97
+	inx	h
+	inr	c
+	jmp	quote
+
+Move	push	h
+	call	Cnvnum
+	pop	b
+	push	h
+	push	b
+	dsub	b
+	inx	h
+	push	h
+	push	psw
+	call	Cnvnum
+	pop	psw
+	pop	d
+	pop	b
+	jc	overr
+	dsub	b
+	jc	Less
+	dad	b
+	dad	d
+	dcx	h
+	mov	b,d
+	mov	c,e
+	xchg
+	pop	h
+	jmp	MvHBCD
+Less	dad	b
+	xchg
+	push	b
+	mov	b,h
+	mov	c,l
+	pop	h
+	pop	psw
+	jmp	mvhbci
+
+smb	xchg
+	lxi	d,flnmb
+	call	storg
+	lxi	h,ouprmt
+	call	inpfnm
+	call	openfl
+	lhld	varspc
+	shld	comove
+ns	mov	a,m
+	ora	a
+	jz	clob
+	push	h
+	lxi	d,Bufr
+	lxi	b,flnmb
+	call	gln
+	jnz	nout
+	mvi	m,9
+	inx	h
+	mvi	m,'E'
+	inx	h
+	mvi	m,'Q'
+	inx	h
+	mvi	m,'U'
+	inx	h
+	mvi	m,9
+	inx	h
+	shld	Ppos1
+	inx	d
+	lhlx
+	call	ascWd+3
+	call	wrln
+nout	call	movco
+	pop	h
+	dad	b
+	mov	c,m
+	mvi	b,0
+	dad	b
+	jmp	ns
+
+gln	mov	a,m
+	sui	3
+cmplb	inx	h
+	push	psw
+	ldax	b
+	ora	a
+	jz	igc
+	inx	b
+	call	caps
+	cmp	m
+	jnz	pop
+igc	mov	a,m
+	stax	d
+	inx	d
+	pop	psw
+	dcr	a
+	jnz	cmplb
+	xchg
+	ret
+
+dd	mov	a,l
+	sta	cdb
+	ret
+
+fix	lxi	b,rfix
+	mov	a,l
+	ani	7
+	mov	l,a
+	mvi	h,0
+	dad	b
+	push	h
+	call	cnvnum
+	mov	a,l
+	pop	h
+	mov	m,a
+	ret
+
+GO	push	h
+	cp	cnvnum
+	mov	e,h
+	mov	d,l
+	push	d
+	mov	d,h
+	mov	e,l
+	mov	b,h
+	mov	c,l
+	pop	psw
+	ret
+
+if	mvi	a,1
+	sta	ifnum
+	call	cnvnum
+	push	h
+	call	cnvnum
+	pop	b
+	dsub	b
+	xchg
+incif	lxi	h,ifnum
+	mvi	m,0
+	mov	a,d
+	ora	e
+	dcx	h
+	inr	m
+	dcx	h
+	mov	m,a
+	ret
+
+InDat	DB	32
+_0	dw	Com
+	DB	'DB',2
+_20	Dw	db
+	DB	'DW',1
+	Dw	dw
+	Db	'DM',2
+_19	Dw	dm
+	DB	'DS',1
+	Dw	ds
+	DB	'ORG',1
+	Dw	org
+	db	'ENT',1
+	dw	ent
+	db	'IF',2
+_40	dw	if
+eistr	db	'ENDIF',2
+_1	dw	endif
+	db	'FIX',1
+	dw	fix
+	db	'DD',1
+	dw	dd
+	db	'MENU',2
+	if	m=2
+	dw	menu
+	endif
+	if	m=1
+_41	dw	exit
+	endif
+	db	'SMB',4
+_2	dw	smb
+	db	'DEL',2
+_3	dw	del
+	db	'MOVE',1
+	dw	move
+	db	'FIND',4
+_5	dw	find
+	Db	'GET',3
+_6	dw	PrnWd
+	db	'CNV',3
+_7	Dw	cnv
+	DB	'GO',1
+	Dw	go
+	DB	'RE',3
+_9	Dw	re
+	DB	'WR',1
+	dw	wr
+	DB	'MD',1
+	Dw	md
+	db	'CD',1
+	dw	cd
+	DB	'ASM',4
+_13	Dw	asmble
+	DB	'DSM',4
+_14	Dw	disasm
+	DB	'OP',1
+	Dw	op
+	db	'IP',3
+_16	dw	ip
+	DB	'SET',1
+	Dw	set
+	db	'LINK',2
+_18	dw	link
+	db	'END',2
+_21	Dw	end
+
+
+MncDat	DB	32
+_22	Dw	mov
+	DB	'MOV',1
+	DB	$40,8
+	db	32
+_23	dw	mvi
+	DB	'MVI',2
+	DB	6,8
+	DB	32
+_24	Dw	RegInc
+	DB	'ORA',1
+	DB	$B0,1
+	DB	'INR',1
+	DB	4,8
+	DB	'DCR',1
+	DB	5,8
+	DB	'XRA',1
+	DB	$A8,1
+	DB	'CMP',1
+	DB	$B8,1
+	db	'ADD',1
+	DB	$80,1
+	DB	'ADC',1
+	DB	$88,1
+	DB	'SUB',1
+	DB	$90,1
+	DB	'SBB',1
+	DB	$98,1
+	DB	'ANA',1
+	DB	$A0,1
+	DB	32
+_25	dw	lxi
+	DB	'LXI',3
+	DB	1,16
+	db	32
+_26	Dw	xeg
+	DB	'PUSH',1
+	DB	$C5,16
+	DB	'POP',1
+	DB	$C1,16
+	DB	'LDAX',1
+	DB	10,16
+	DB	'STAX',1
+	DB	2,16
+	DB	'DAD',1
+	DB	9,16
+	DB	'INX',1
+	DB	3,16
+	DB	'DCX',1
+	DB	$B,16
+	DB	32
+_27	dw	rst
+	DB	'RST',1
+	DB	$C7,8
+	DB	32
+_28	dw	opr+3
+	db	'JNZ',3,$C2
+	db	'JZ',3,$CA
+	db	'JMP',3,$c3
+	db	'RET',1,$C9
+	db	'CALL',3,$CD
+	DB	'LHLD',3,$2A
+	DB	'SHLD',3,$22
+	DB	'XCHG',1,$EB
+	db	'DSUB',1,8
+	db	'LHLX',1,$ED
+	db	'SHLX',1,$D9
+	db	'JNC',3,$D2
+	db	'JC',3,$DA
+	db	'RNZ',1,$C0
+	db	'RZ',1,$C8
+	db	'RNC',1,$D0
+	db	'RC',1,$D8
+	DB	'LDA',3,$3A
+	DB	'STA',3,$32
+	db	'CNZ',3,$C4
+	db	'CZ',3,$CC
+	db	'JP',3,$F2
+	db	'JM',3,$FA
+	db	'CNC',3,$D4
+	db	'CC',3,$DC
+	DB	'CPI',2,$fe
+	DB	'ANI',2,$e6
+	DB	'RLC',1,7
+	DB	'RRC',1,15
+	DB	'RAL',1,$17
+	DB	'RAR',1,$1f
+	DB	'ADI',2,$C6
+	DB	'ACI',2,$ce
+	DB	'SUI',2,$d6
+	DB	'SBI',2,$de
+	DB	'XRI',2,$ee
+	DB	'ORI',2,$f6
+	db	'DESP',2,$38
+	db	'DEHL',2,$28
+	DB	'CMC',1,$3F
+	DB	'STC',1,$37
+	db	'LHLI',1,$ed
+	db	'SHLI',1,$d9
+	db	'HLMBC',1,8
+	DB	'CMA',1,$2F
+	db	'PCHL',1,$E9
+	db	'CP',3,$F4
+	db	'CM',3,$FC
+	db	'RP',1,$F0
+	db	'RM',1,$F8
+	db	'OUT',2,$D3
+	db	'IN',2,$DB
+	db	'DI',1,$F3
+	db	'EI',1,$FB
+	db	'XTHL',1,$E3
+	db	'SPHL',1,$F9
+	db	'NOP',1,0
+	db	'RIM',1,$20
+	db	'SIM',1,$30
+	db	'RHR',1,$10
+	db	'RDL',1,$18
+	db	'JPO',3,$E2
+	db	'JPE',3,$EA
+	db	'CPO',3,$E4
+	db	'CPE',3,$EC
+	db	'RPO',1,$E0
+	db	'RPE',1,$E8
+	db	'JND',3,$DD
+	db	'JD',3,$FD
+	db	'DAA',1,$27
+	db	'HLT',1,$76
+	db	'???',1,203
+	db	32
+_29	dw	dmov
+	db	'DMOV',2,$28
+
+ermsg	db	9,'ERROR ',0
+soprmt	db	10 'Source File',0
+obprmt	db	10 'Object File',0
+ouprmt	db	10 'Output File',0
+
+Regdat	db	'A',7,'B',0,'C',1,'D',2,'E',3,'H',4,'L',5,'M',6,$ff
+NumDat	db	$B,'D',9,'O',9,'Q',3,'B',0
+Dbldat	db	'A',3,'B',0,'D',1,'H',2,'P',3,'S',3,$FF
+
+Fnk	db	32,'Find',160
+	db	32,'Asm',141
+	db	32,'Dsm',141
+	db	32,'DD',160
+	db	32,'Get',160
+	db	32,'Cnv',160
+	db	32,'Set',160
+	db	32,'Menu',141
+
+;---Variables---
+ifef	db	0
+ifcnt	db	0
+ifnum	db	0
+ocnt	db	0
+Eof	db	0
+lnint	db	0
+Pass	db	0
+fp0	dw	0
+mp0	dw	0
+mp1	dw	0
+fp1	dw	0
+Mode	db	0
+modeb	db	0
+Base	db	16
+Ppos1	dw	0
+OpLen	db	0
+OpCd	db	0
+Num0	dw	0
+Num1	dw	0
+num2	dw	0
+prvsgn	db	0
+Adrptr	dw	wkspc
+comove	dw	0
+cdb	db	1
+flnmc	dm	NOTES
+	ds	10
+rfix	db	1,2,1,1,1,1,1,2
+flnma	ds	15
+flnmb	ds	15
+Trptr	db	0
+Trace	ds	32
+	END

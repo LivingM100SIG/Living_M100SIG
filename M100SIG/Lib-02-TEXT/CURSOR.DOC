@@ -1,0 +1,85 @@
+  CURSOR.CO is a machine language program that allows you to view upto 80 
+colums of text in window of 60 columns by 10 lines on your Model 100.  This 
+means 600 characters can be displayed at one time, almost as much as the Tandy 
+200.  Compare this with the normal 40 characters by 8 lines which can only 
+display 320 characters.
+  CURSOR.CO is a second generation of VIEW.CO.  Cursor allows you to look at 
+your text as it will be printed and allows you to edit the file.  It is 2839 
+Bytes and can be relocated.  The display is readable and easy to use.  It has 
+full uppercase and lowercase characters with descenders.  Characters below CHR$
+(32) and above CHR$(125) are shown as CHR$(255).  Cursor will word wrap on 
+characters of Dash [-] and below.  It was written to supplement pixel-mapping, 
+helping to find formatting errors and to correct them.  I do not advocate 
+writing a book with Cursor but you can save a lot of paper by using it to look 
+at a file before printing.  Cursor supports insert and overtype and you can 
+delete characters.  At any time you can enter the Model 100's text editor and 
+when done return directly to Cursor.  Cut and Paste is not supported, as the 
+Tcomp INKEY$ instruction has a problem with Paste.  The basic driver is used to
+set HIMEM and word wrap.  As most people use a favorite word wrap setting, it 
+can be permanently embedded in Cursor and the driver can be completly omited.
+ The basic driver is:
+
+10 T=60127
+20 CLEAR128,T:LOADM"Cursor":INPUT" Width ";W:IFW>80THENRUN
+30 POKEHIMEM+2832,W:CALLHIMEM
+
+   Note: Just copy this with the text editor and paste into basic and Save as 
+CURSOR.BA.
+
+  To permanently embedded your favorite word wrap setting into Cursor you can 
+use the following program (word wrap is currently set at 60):
+
+10 T=60127
+20 CLEAR128,T:LOADM"Cursor":INPUT" Width ";W:IFW>80THENRUN
+30 POKEHIMEM+2832,W:SAVEM "Cursor",HIMEM,HIMEM+2832,HIMEM
+
+  Now you'll only need the driver when you want to use a different setting.
+
+  When you run Cursor you'll see the files in memory and then be asked for a 
+File.  Enter a valid file name (without extension) and press enter.  If you 
+enter a bad file or no file name Cursor will return you to the Main Menu.  The 
+screen will clear and display the first screen of text.  At the top left corner
+there will be a small flashing cursor (hence the name.).  Cursor starts up in 
+the insert mode.
+     [CTRL-V] Toggles between insert and overwrite modes.  The cursor is a 
+little larger when in overwrite.  Whenever a character is input, the whole 
+screen is rewritten.  However the you do not have to wait on the screen.  Type 
+as fast as you like.  Cursor will keep up.  (If Cursor was a 60*8 screen, the 
+whole screen would not need to be rewritten, what do you think?)
+     Backspace and delete work normally.  The arrow key work almost normally.  
+If you press [Up Arrow] while the cursor is on the top line, the cursor will 
+move to the top of the file.  If you press [Down Arrow] while the cursor is on 
+the bottom line the cursor will move to the "next page".
+     [SHIFT UP] Moves to top of the page.
+     [SHIFT DOWN] Moves to the last character on the page.
+     [SHIFT RIGHT] Moves to the character after the next space to the right.
+     [SHIFT LEFT] Moves to the character before the next space to the left.
+     [CTRL UP] Moves to the top of the file.
+     [CTRL DOWN] Moves to the next page.
+     [CTRL LEFT] Moves to the start of line.
+     [CTRL RIGHT] Moves to the end of line.
+     [F8] and [ESC] Return to the Main Menu.
+     [F4] Takes you into the text file you working on.  When you exit text you 
+will be returned to Cursor.
+
+     Note that the last line of the current screen is the first line of the 
+next screen.
+   Convert CURSOR.RLC to CURSOR.CO with RLCLDR.BA in the Utilities Data 
+Library.  Download CURSOR.RLC as CURSOR.DO (6277 bytes).  Be sure to BACKUP ALL
+FILES IN RAM!  Edit the file to remove the garbage in the beginning and end of 
+the file.  Run RLCLDR.BA, press #1 and type 'CURSOR'.  Enter a start of 60127 (
+See the documentation for RLCLDR if you want to change the address, if you do 
+be sure to change the value of 'T' in line 10 of basic loaders.)  Return to 
+this documentation file and using Copy and Paste, make a copy of the small 
+basic program in this documentation file.  Go into basic and press PASTE.  Save
+the file as CURSOR.BA.
+  I was surprised with the response of VIEW.  And with request for the source 
+code.  Most of this program was compiled with TCOMP.BA however unlike VIEW the 
+basic source code will not run on its own, due to the number of M/L support 
+routines.
+  Problems
+  If you have any problems send me Email as I travel a lot and may not be on 
+the Sig for months at any given time.
+  Fred Edelkamp
+   [70506,223]
+

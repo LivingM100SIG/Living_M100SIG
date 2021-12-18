@@ -1,0 +1,97 @@
+DMP220 -- Graphics Dump to CGP-220
+
+Copyright 1983  Michael M Rubenstein
+
+DMP220 dumps the TRS-80 Model 100
+screen, complete with graphics, to a
+TRS-80 CGP-220 printer.  DMP220 is
+designed to be incorporated in BASIC
+programs.
+
+Two versions are available -- a BASIC
+version and a machine language version.
+
+
+Including BASIC Version in Programs
+
+A BASIC program using DMP220 must
+
+    1.	not have any line numbers
+	greater than 64999
+
+    2.	not use the variables HH%, II%,
+	JJ%, KK%, or LL%
+
+DMP220 must be an ASCII file in RAM,
+on cassette (CSAVEd with the "A"
+option), or read in from the RS232 or
+modem interface.  To combine with your
+BASIC program, use one of the commands
+
+    MERGE "DMP220"
+    MERGE "CAS:DMP220"
+    MERGE "COM:xxxxE"  (xxxx is the
+			RS232 spec)
+    MERGE "MDM:xxxE"   (xxx is the
+			modem spec)
+
+as appropriate.
+
+
+Using BASIC version
+
+The initialization routine must be
+executed exactly once, before any
+use of the screen print routine, by
+
+    GOSUB 65000
+
+To print the screen, use the statement
+
+    GOSUB 65100
+
+
+Installing Machine Language Version
+
+The machine language version is
+distributed in hex format.  To install
+it, first load DMP220.HEX onto the
+model 100 (as a .DO file).  Then run
+HEXLDR.  Respond to the request for
+file name with
+
+    DMP220
+
+There will be a pause for several
+seconds while HEXLDR creates the
+DMP220.CO.
+
+
+Using Machine Language Version
+
+To use the machine language version,
+you must first reserve space for it
+with the statement
+
+    CLEAR 256,61936
+
+(of course the first number is the
+string space required and may need to
+be changed for your application.)
+
+Then load the .CO file with
+
+   LOADM "DMP220"
+
+Now at any point, the screen may be
+printed by
+
+   CALL 61936
+
+When done, the space used by DMP220
+may be recovered by
+
+   CLEAR 256,MAXRAM
+
+
+<End of Document>

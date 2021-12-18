@@ -1,0 +1,30 @@
+10 'Program RESLAB.100 prints a set of       standard value resistance labels        to be attached to parts bins.           Three sheets of labels, four wide       by nine long (3/8" X 1,"),              required.                          
+15 'Written by R.L. Banks 06/30/87          Copyright 1987 R.L.Banks                Available for personal use ONLY by      members of CIS M100 SIG members.        Commercial rights reserved.         
+20 CLS:PRINT:PRINT:PRINT:PRINT:PRINT"     Insert 10 Pitch print wheel."
+30 PRINT:PRINT"      Feed one sheet of labels."
+40 PRINT:PRINT"   Press any key to start printout."
+45 A$=INKEY$:IFA$=""THEN45
+50 DIMV(12),V$(12):FORX=1TO12:READV(X):NEXTX
+60 FORY=1TO9
+70 ONYGOSUB500,600,700,800,900,1000,1100,1200,1300
+80 LPRINT" ";V$(1);" Ohms";TAB(15);V$(2);" Ohms";TAB(28);V$(3);" Ohms";TAB(41);V$(4);" Ohms";:LPRINTCHR$(16);:LPRINTCHR$(27);:LPRINTCHR$(16);:LPRINTCHR$(28)
+90 LPRINT:LPRINT:LPRINT" ";V$(5);" Ohms";TAB(15);V$(6);" Ohms";TAB(28);V$(7);" Ohms";TAB(41);V$(8);" Ohms";:LPRINTCHR$(16);:LPRINTCHR$(27);:LPRINTCHR$(16);:LPRINTCHR$(28)
+100 LPRINT:LPRINT:LPRINT" ";V$(9);" Ohms";TAB(15);V$(10);" Ohms";TAB(28);V$(11);" Ohms";TAB(41);V$(12);:IFV$(12)=" 1"THENLPRINT" Ohm"ELSELPRINT" Ohms";:LPRINTCHR$(16);:LPRINTCHR$(27);:LPRINTCHR$(16);:LPRINTCHR$(28)
+120 NEXTY
+130 END
+500 RESTORE5000:FORX=1TO12:READV(X):V(X)=V(X)/10:V$(X)=STR$(V(X)):NEXTX:RETURN
+600 RESTORE5000:FORX=1TO12:READV(X):V$(X)=STR$(V(X)):NEXTX:LPRINT:RETURN
+700 RESTORE5000:FORX=1TO12:READV(X):V(X)=V(X)*10:V$(X)=STR$(V(X)):NEXTX:LPRINT:RETURN
+800 RESTORE5000:FORX=1TO12:READV(X):V(X)=V(X)*100:V$(X)=STR$(V(X)):NEXTX
+810 CLS:PRINT:PRINT"      Insert Next Sheet of Labels.":A$="":PRINT:PRINT"   Press any key to continue printout."
+820 A$=INKEY$:IFA$=""THEN820
+830 RETURN
+900 RESTORE5000:FORX=1TO12:READV(X):V(X)=V(X):V$(X)=STR$(V(X))+CHR$(75):NEXTX:LPRINT:RETURN
+1000 RESTORE5000:FORX=1TO12:READV(X):V(X)=V(X)*10:V$(X)=STR$(V(X))+CHR$(75):NEXTX:LPRINT:RETURN
+1100 RESTORE5000:FORX=1TO12:READV(X):V(X)=V(X)*100:V$(X)=STR$(V(X))+CHR$(75):NEXTX
+1110 CLS:PRINT:PRINT"      Insert Next Sheet of Labels.":A$="":PRINT:PRINT"   Press a key to finish the printout."
+1120 A$=INKEY$:IFA$=""THEN820
+1130 RETURN
+1200 RESTORE5000:FORX=1TO12:READV(X):V(X)=V(X):V$(X)=STR$(V(X))+CHR$(77):NEXTX:LPRINT:RETURN
+1300 RESTORE5000:FORX=1TO12:READV(X):V(X)=V(X)*10:V$(X)=STR$(V(X))+CHR$(77):NEXTX:LPRINT:RETURN
+5000 DATA 1.2,1.5,2.2,2.7,3.3,3.9,4.7,5.6,6.8,7.5,8.2,10

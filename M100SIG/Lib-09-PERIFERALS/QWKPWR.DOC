@@ -1,0 +1,125 @@
+		                  QWKPWR.100
+                 A POWR-DOS menu program for the 100/102
+-
+     QWKPWR is a BASIC, cursor file select utility for operating POWR-DOS that 
+is 1/4 the size of DMENU.BA (only 751 bytes) with the speed and "feel" of a .CO
+program (3 times as fast as DMENU.BA). It doesn't use any RAM other than it's 
+own living space and doesn't need any extra RAM files for temp storage: and it 
+does NOT require ANY file name typing!
+     It saves and loads RAM or DISK files; it will erase DISK files; it prompts
+for and will append or overwrite existing DISK or RAM files; and it will run 
+.BA or .CO (if you've CLEARed RAM beforehand) programs from DISK. It will also 
+let you "Preview" the first 240 bytes of .DO files and will print a list of 
+DISK files.
+     To keep size to a minimum, QWKPWR doesn't KILL RAM files, won't overwrite 
+RAM .BA files, won't RUN RAM files, won't auto-CLEAR .CO running space (except 
+as noted below), and won't multiple-load files. (Hey, it's only 751 bytes!)
+-
+     Download QWKPWR.DOC (this file), and QWKPWR.100 as .DO files. Checksum 
+QWKPWR.DO and LOAD and SAVE a .BA version. (POWR-DOS must be installed of 
+course.)
+-
+     Selection of QWKPWR from the main menu will set all the POWR-DOS "hooks" 
+and display it's mini-menu. Use either UPPER or lower case letters.
+-
+          R displays visible RAM files and sizes
+          D displays DISK files and sizes
+          L will Lprint a list of the DISK's files and sizes. (Be sure a 
+printer is connected and ready.)
+          F shows free RAM and DISK space 
+          M returns to the computer MENU
+-
+     NOTE: There is no error trapping except for printing the error and line 
+number, but that will happen "softly" and won't trash files first if you 
+carefully manage RAM and DISK space. Use the "F" key at the entry menu often. 
+Because of QWKPWR's size and speed, it IS possible to loose a file if you try 
+to append more info to a DISK .DO file than DISK space available or if you 
+ERASE a DISK file before you're certain of a good RAM load or vice-versa. These
+potential problems are certainly not unique to QWKPWR, but all the error 
+checking needed for every possible contingency produces DMENU.BA: a fine 
+program, but ponderous in every-day use compared to QWKPWR.
+-
+ To SAVE a file from RAM to DISK:
+     Press R. You will see your visible RAM files display 7 at a time. Use the 
+Spacebar to page through your files. (If you decide NOT to save any RAM files 
+then just keep pressing the Spacebar to restart QWKPWR.) After the page with 
+the file you want to save to DISK displays, press SHIFT/BREAK. This will put a 
+<R next to the top entry (R for RAM). Now use the Spacebar to select the file 
+to be SAVEd to DISK: press <ENTER> (or ESC to re-run). If this is a new file to
+your DISK you will then see a >D to tell you the SAVE is taking place. If the 
+file already exists on your DISK you will be prompted O/A/M? Press O to 
+Overwrite the existing file or A to Append (.DO files ONLY). You will then see 
+a O>D or A>D, the SAVE will take place and QWKPWR restarts.
+-
+ To LOAD a file from DISK to RAM:
+     Press D. You will see your DISK files display 7 at a time. Use the 
+Spacebar to page through your files. (If you decide NOT to load any DISK files 
+then just keep pressing the Spacebar to restart QWKPWR.) After the page with 
+the file you want to load to RAM displays, press SHIFT/BREAK. This will put a <
+D next to the top entry (D for DISK). Now use the Spacebar to select the file 
+to be LOADed to RAM: press <ENTER> (or ESC to re-run). You will now be asked  L
+/R/E/P/M? 
+          L will try to LOAD the file. If RAM is clear of a file by that name 
+then you will see >R signifying that the file is being LOADed. If the file 
+already exists in RAM you will be prompted O/M? Press O to Overwrite ONLY 
+existing RAM .CO or .DO files. You will then see O>R or A>R to tell you the 
+LOAD is taking place. (QWKPWR won't overwrite RAM .BA files but will BEEP, 
+display R/.BA, and END. YOU must first kill or re-name the RAM .BA file and re-
+run QWKPWR.) QWKPWR will restart after loading .DO or .CO files but a .BA file 
+will require you to re-run QWKPWR manually.
+          R will run .BA and .BA/.DO files directly from your DISK.  CO files 
+can also be run from DISK if running space has been CLEARed before using 
+QWKPWR. You can also add CLEAR code to line 1 of QWKPWR to CLEARXXX,XXXXX for 
+any regularly used HIMEM value.
+          E will ERASE the selected DISK file after prompting for confirmation.
+Answer Y to continue: any other key will abort and re-run QWKPWR.
+          P lets you "preview" the first 240 bytes of a .DO file and then re-
+displays the mini-menu.
+          M returns to QWKPWR's mini-menu.
+-
+-
+     I am indebted to Wilson Van Alst for byte-fighting my original 800+ byte 
+version down to it's present 751 byte fightin' trim and for careful editing of 
+my original ideas. I have found QWKPWR to be fast, smooth and accurate. The 
+original design objective was "do everything in 800 bytes or less". I run an 
+invisible version from F7, set up with the following code: KEY7,"DSK"+CHR$(24)+
+"RUN"+CHR$(34)+"QWKPWR"+CHR$(13). 
+     The only M/L call used is "scroll-off". Occasionaly the SHIFT/BREAK 
+routine will cause a "BREAK IN LINE..." error 18, (I'm not certain why), but 
+just type CONT <ENTER> or re-run QWKPWR. If you don't like the BEEP you can 
+delete it from the beginning of line 1.
+-
+QWKSAV.BA
+-
+     Instead of uploading the following code as a separate program I've 
+included it here as a "bonus". I use it regularly to back-up a RAM-full of 
+files to a buffer disk from time to time just in case... Checksum as a .DO file
+is 17,755 and it takes just 178 bytes as a stand-alone .BA. It probably arrived
+with Cr's as part of this .DOC but EDIT them to leave only FOUR lines of code 
+0, 2, 4 & 6. 
+-
+0 CLS:DEFSTRF:FORX=63919TO64128STEP11:IFPEEK(X)=0THEN6ELSEFORY=3TO10:F=F+CHR$(
+PEEK(X+Y)):NEXT:T=PEEK(X+9):IFT>68ORT<66THEN6ELSEF=LEFT$(F,6)+"."+RIGHT$(F,2)
+:CLS:PRINT@130,"Saving: "F
+2 IFDSKI$(":"+F)>0THENKILL":"+F
+4 SAVEM":"+F
+6 F="":NEXT:BEEP:MENU
+-
+-
+     When you run it from the main menu it will save to disk all active RAM 
+files, visible or not, and automatically overwrite any from a previous back-up 
+with the same name. It won't save any files whose extension doesn't begin with 
+B, C, or D so "powr-dos" and RAM files without extensions will be bypassed.
+-
+-
+     I hope you find QWKPWR and QWKSAV as useful as I have. QWKPWR would be 
+smaller as a CO program but there are some operational advantages to a 
+"floating" .BA prgm. (Unless we could squeeze it into the ALT/LCD buffer.)
+-
+v7
+Randy Hess
+73267,552
+5/8/88
+Omaha, Ne.
+WATS 800-228-3309
+

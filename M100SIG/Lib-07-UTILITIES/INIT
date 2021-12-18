@@ -1,0 +1,13 @@
+0 CLS:PRINT:PRINT" Press any key to EDIT this program.     For instructions, read lines 10 through 12.  You must know the Password and set other defaults before you run INIT+.";:Y$=INPUT$(1):CLS:EDIT
+1 POKE63056,128:FORL=64268TO64271:READN:POKEL,N:NEXT:READN$:FORL=1TO5:POKE63066+L,ASC(MID$(N$,L)):NEXT:READP$,N$:DATE$=LEFT$(DATE$,6)+N$:CLOSE:CALL17061,,23366:KEY6,"edit":KEY7,"cls"+CHR$(13):IFINKEY$<>""THEN5
+2 SCREEN,0:IPL"init+.ba":POWEROFF,RESUME:PRINT:PRINT"  Your Name Here    & Phone Number":X=0:BEEP:N$="
+3 Y$=INKEY$:IFY$<>CHR$(13)THENN$=N$+Y$:X=X+1:IFX<999THEN3ELSE2
+4 IFN$<>P$THEN2
+5 POKE63056,0:IPL:MENU
+6 DATA172,126,58,31:'sets F6=Bytes Free  & F7=Files in TELCOM
+7 DATA M7I1E:'STATus (use CAPS)
+8 DATA abc:'Password (any length)
+9 DATA 85:'this year
+10 'Line 8 contains the PASSWORD; 7 the  TELCOM STATus; and 9 the Year.  Line 1  resets the Function Keys & sets F6 to   "edit" and F7 to "cls<ENTER>". Change   to suit your setup. F6 in TELCOM is set to "Bytes Free" and F7 to "Files".
+11 'Put your name & phone number in line 2. When you finish editing the defaults delete line 0 to Run (and 10 through 12 to conserve bytes). When you run INIT+  immediately press any key to return to  the Menu else the Password mode powers  off.
+12 'If the power goes off, turn the      power switch off and then on, and type  in the Password and <ENTER> (you have   about 18 seconds before the power goes  off).  Be sure to write your password   somewhere.-James A. McGreevy 70206,1115

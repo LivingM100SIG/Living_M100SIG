@@ -1,0 +1,25 @@
+14 '**Notes on Label Printing Routine**
+15 '  As written, it should be compatible with Star/Gemini & RS printers
+16 '  To customize for other printers, change graphics characters in lines 81 & 82
+17 '  Use Char List from M100 manual and match to your printer's list
+18 '  Variable names are:
+19 '  TL=Top Left,CB=Center Bar,TR=Top Right,SB=Side Bar,BL=Bottom Left,BR=Bottom Right
+34 CLOSE:LINEINPUT"Print Disk Label? ";R$:IF(ASC(R$)AND223)=89THEN80ELSE100
+79 '
+80 IF(INP(187)AND6)<>2THENPRINT" Turn Printer <<ON>>";:GOTO80
+81 TL$=CHR$(240):CB$=CHR$(241):TR$=CHR$(242)
+82 SB$=CHR$(245):BL$=CHR$(246):BR$=CHR$(247)
+83 LPRINTCHR$(27)"@":LC=1:SP$="   -.-    ":LPRINTCHR$(15):'<-- sets compressed print
+84 OPEN"DSKTMP.DO"FORINPUTAS1
+85 LPRINTTL$STRING$(41,CB$)TR$
+86 LN$="":LN$=SB$+" "
+87 FORI=1TO4:LINEINPUT#1,A$:IFLEFT$(A$,1)=" "THEN90
+88 LN$=LN$+LEFT$(A$,10):NEXTI
+89 LPRINTLN$SB$:LC=LC+1:GOTO86
+90 T=I:FORI=TTO4:LN$=LN$+SP$:NEXTI:LPRINTLN$SB$:LC=LC+1
+91 IFLC=11THEN94
+92 FORI=LCTO10:LPRINTSB$" "SP$SP$SP$SP$SB$:NEXTI
+94 LPRINTSB$" "DATE$" "TIME$"     ";:LPRINTUSING"######";FT*1280;
+95 LPRINT" Bytes Free "SB$
+96 LPRINTBL$STRING$(41,CB$)BR$
+100 CLOSE:MAXFILES=0:END

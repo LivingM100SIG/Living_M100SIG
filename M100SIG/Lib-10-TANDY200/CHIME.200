@@ -1,0 +1,30 @@
+CHIME.200 - Plays decaying volume chime through the internal buzzer.
+
+I'm not sure how it works, but by varying the duty cycle of the square
+ wave generated, volume control effect is achived; shorter the period of off 
+cycle, lower the volume.
+
+Run this to produce CHIME.CO:
+
+5 CLEAR256:READF$,T:IFT<=MAXRAMTHENCLEAR256,T:READF$,T
+6 READE,X:PRINTF$;T;E;X:M=T:S$="":R=0
+7 IFM>ETHENSAVEMF$,T,E,X:MENUELSEIFS$=""THENREADS$
+8 H=ASC(MID$(S$,1))-64:IFH<16THENN=H*16+ASC(MID$(S$,2))-64:S$=MID$(S$,3)ELSER=H-16:S$=MID$(S$,2)
+9 POKEM,N:M=M+1:IFRTHENR=R-1:GOTO9ELSE7
+10 DATAchime,63574,63737,63574,BAANCLLCNLOHAN@@CB@@AGPAHOOBJFAOHNKBJENOHKNPMENEGKLMMBOHDHLMIFOHNAMA@IMJHGOHAELHCJFCOHHCEOLCFHOH
+11 DATAM@SKNPLCFKOHBJENOHDDDMBJELOH@@PKNCNBNMCKJNNB@MH_]MCKJEDEMGJKCAKLBLEOHGHKA@KLBIIOHLIBAF@OHDN@F@@GGBAJBOH@INKBAMHPMINK@HDO
+12 DATA@INKBAMCKJMILIOCGMCBELOHGLCBENOHLMFDOHOKLI
+
+Run CHIME.CO to hear a chime.  CHIME.CO runs in AltLCD buffer.
+
+To vary the tone and length of chime, run this and provide pitch and duration
+ values.  Range of pitch and duration are 0 to 255.
+
+10 INPUT "Pitch";P
+20 INPUT "Duration";D
+30 LOADM "chime"
+35 S=63577
+40 CALL S,,P+D*256
+70 GOTO 10
+
+

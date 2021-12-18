@@ -1,0 +1,19 @@
+0 ' PWRTEL.100
+1 ' Can be used anytime COM:STATS must      be reset, but especially useful
+2 ' For users of POWER DISK, electing       not to use MENU.BA
+3 ' No need to change STATS (98N1D)         after using DOS to M7I1E
+4 ' Works exactly like Built-in TELCOM..    because it is (CALL 20806)
+5 ' Resets STATS to M7I1E,20pps and when    in TERM mode enables
+6 ' <F6> = Bytes Free  <F7> = RAM files     <F6> doesn't work while downloading
+7 ' Erases TELCOM from Main Menu.
+8 ' Delete REM lines.  N.B. (I use this     as a one line program)
+9 ' Save as "TELCOM.BA"
+10 'Use TELCOM.BA as you would any other    program, whenever TELCOM is desired
+15 '
+20 POKE63864,184:POKE63019,20
+25 POKE63066,1
+30 FORA=63067TO63071:READB:POKEA,B
+40 NEXT:DATA77,55,73,49,69
+50 FORI=-1268TO-1265:READX
+60 POKEI,X:NEXT:DATA172,126,58,31
+70 CALL20806

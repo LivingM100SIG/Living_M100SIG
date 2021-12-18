@@ -1,0 +1,85 @@
+Tandy Disk Drive Menu - Patches for Tandy 200 (revised 11/21/85)
+By Steve Zimmerman, 73226,3504
+Public Domain - feel free to use or change as you wish!
+
+  The program in TDDTIP.005 can be modified for the Tandy 200 in two ways - one 
+gives an 8-line format (as on the Model 100, using the top half of the screen, 
+and the other uses the full display. The two programs below will patch the DOS 
+in high memory. Just run FLOPPY.CO as you normally would, key F8 (menu) from the
+DOS menu and return to the main menu, and run either of the programs you have 
+keyed in from below.
+
+  At this point, from Basic, you can CALL 57500 to see if the new DOS menu is 
+working as it should. If it is, then kill FLOPPY.CO. To save your patched DOS as
+FLOPPY.CO (or whatever), enter Basic, and type:
+
+SAVEM"FLOPPY.CO",57500,60918,57500
+
+and press <enter>.  Wow! You now have a NEW version of FLOPPY.CO which you can 
+save to disk. (This is much easier than the hand-modifying method referred to in
+TDDTIP.005 - and besides, I don't know how to do it that way!) Keep this copy as
+your working copy.
+
+  I also recommend the 11-byte program in TDDTIP.001 as an alternative to 
+keeping FLOPPY.CO in both high and low memory.
+
+  I keep my modified FLOPPY.CO in one ram bank, and use the DISK.BA program to 
+call the DOS in my other two banks.  With this method, I can use MSPLAN in the 
+bank with FLOPPY.CO, and not have to worry about corrupting the DOS (and, it 
+seems to work fine with sheets I've created AFTER loading the DOS and setting 
+HIMEM to 57500!). Of course, I only have about 12 K for worksheets, but you 
+can't have everything...
+
+0  REM  For Labels on Line 8, T200!
+10 CLEAR300
+20 A$="Disk File Manager  Ver.01.00.00"+CHR$(13)+STRING$(7,CHR$(10))+"File Load 
+Save Bkup Kill Name Frmt Menu"+STRING$(60,CHR$(0))
+25 REM ...+STRING$(x,chr$...--x is number of lines down to print labels
+30 A=57718:FOR X=1 TO 138
+40 POKE A+X,ASC(MID$(A$,X,1)):NEXT X
+50 POKE 57555,5:POKE 57556,6
+55 REM first poke is row #, second is column # to print bytes free at
+60 POKE 57587,5:POKE 57588,28
+65 REM first poke is row #, second is column # to print time at
+70 CLEAR256,57500:MENU
+(checksum 37268)
+
+0  REM  For Labels on Line 16, T200!
+10 CLEAR300
+20 A$="Disk File Manager  Ver.01.00.00"+CHR$(13)+STRING$(15,CHR$(10))+"File Load
+Save Bkup Kill Name Frmt Menu"+STRING$(60,CHR$(0))
+25 REM ...+STRING$(x,chr$...--x is number of lines down to print labels
+30 A=57718:FOR X=1 TO 138
+40 POKE A+X,ASC(MID$(A$,X,1)):NEXT X
+50 POKE 57555,8:POKE 57556,6
+55 REM first poke is row #, second is column # to print bytes free at
+60 POKE 57587,8:POKE 57588,28
+65 REM first poke is row #, second is column # to print time at
+70 CLEAR256,57500:MENU
+(checksum 37368)
+
+  To change the position of the starting line (Disk File Manager...), change 
+Line 20 to:
+
+20 A$=CHR$(10)+" Disk File Manager  V.01.00.01"+CHR$(13)+STRING$(14,CHR$(10))+
+"File Load Save Bkup Kill Name Frmt Menu"+STRING$(60,CHR$(0))
+
+This will change the checksum of the second program listed above to 37663.  I 
+tried this because I don't like the label stuck up in the upper-left corner of 
+the screen.  You can make any changes you wish in the A$ string as long as you 
+don't change the total length - this string goes into the addresses from 57719 
+to 57856, and other screen messages begin IMMEDIATELY thereafter.  If you 
+overwrite those messages, there just MAY be problems...
+
+  After disassembling the DOS to find the addresses for these routines in the 
+200, I've come to the conclusion that Tandy DID NOT come up with relocatable 
+code for these routines - FLOPPY_SYS on the Utility disk is so large because it 
+has BOTH routines and TWO loaders in it - one for the M100 and one for the T200!
+Of course, I could be wrong here, but the difference in addresses of the 
+routines and the differences in the ROM addresses being CALLed would seem to 
+preclude the DOS being in relocatable code for each system.
+
+  Feel free to use and expand on these.
+
+               >>>Steve
+

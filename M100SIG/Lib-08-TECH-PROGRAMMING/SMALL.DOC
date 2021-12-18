@@ -1,0 +1,184 @@
+DISS.BA
+Copyright 1985, James M. Irwin
+All Rights Reserved
+
+Compuserve ID: 72346,1020
+
+
+DISS.BA is an ultra-compact (1.3K) BASIC disassembler for the Model 100 or
+TANDY 200.  It allows disassembly to the Screen or Printer.  With a slight
+modification, you can send the output to RAM or cassette if you desire. 
+Because all PEEKS,POKES, and CALLS are in decimal, this disassembler operates
+only in decimal.  You certainly can add a hex conversion routine if you like.
+
+The program will run with as little as 1.1K free, but runs better with about
+1.7K free.  But the beauty of the program is that it only takes 1.3K while it's
+not running!  DISS.BA stays in my computers almost all the time.  I can't do
+that with a larger program.
+
+I defined the RST instructions with their actual call address.  An Intel RST 2
+is RST 16 in this disassembler.  Similarly, RST 7 is RST 56 here.  Also, in the
+Tandy ROM, a RST 56 always uses the next byte.  So the disassembler assumes RST
+56 does that, too.
+
+PROGRAM OPERATION:
+
+Download SMALL.DIS and load it into BASIC.  (I assume anyone interested in this
+program knows how to do that.  If you need help, send me a message or E-Mail.)
+CAUTION:  Most of the program lines are longer than 79 characters.  The program
+has lines 1-12 in it.  Delete all the stray carriage returns before loading
+into BASIC.  The listing below will help you find the ends of the program
+lines.
+
+After loading, save the program as DISS.BA (or anything that you like).  Run
+the program from the main menu just like any other BASIC program. After the
+program starts to run, there will be about a 5 second delay while the program
+is initializing.  Then the prompt "Start?" will appear.  Enter the starting
+address of your disassembly.  Then the prompt "Print?" will appear.  Enter a Y
+if you want to print.  Otherwise, just press ENTER and the output will go to
+the screen.
+
+OPTIONS WHILE PROGRAM IS RUNNING:
+
+When sending output to the screen, the program waits for a keypress before
+going to the next screen of information.  Printer output is continuous except
+for a form feed between pages.  At any time, pressing "R" goes immediately to
+the "Start?" prompt.  Then you can enter a new address for disassembly. 
+Pressing "M" or F8 exits the program and goes to the main menu.
+
+The program needs a "garbage collection" about every 100 locations of
+disassembly.  This causes the program to pause for a few seconds.  You can
+increase the time between garbage collections by increasing the CLEAR statement
+in line 1.
+
+The program has been severely compressed to make it so small.  It's very
+difficult to follow.  So I exploded the listing for you and gave a line-by-line
+description of the program. 
+The two modifications for TANDY 200 are described below as well.
+
+If anyone has any ideas to compress this further, then let me know and I will
+UPL a new version.  Enjoy!!
+
+Jim Irwin
+
+
+1 CLEAR 1500:
+     DEFSTR N-S:
+     DIM N(255):
+     GOSUB 9
+
+Line 1 dimensions string space, defines string variables, dimensions N for all
+the mnemonics, and executes the subroutine that defines the mnemonics.  Change
+CLEAR1500 to CLEAR1000 if you are short on memory.
+
+2 R="":
+     CLS:
+     INPUT "Start";I:
+     M=7:
+     O="LCD:":
+     INPUT"Print";S:
+     IF S="P" OR S="p" THEN O="LPT:":
+     M=49
+
+Line 2 initializes things.  For TANDY 200 use, change M=7 to M=15.
+
+3 OPEN O FOR OUTPUT AS 1:
+     L=0:
+     CALL 16959:
+     CLS
+
+Line 3 opens output file.  For TANDY 200, change CALL16959 to CALL20318
+(prevents scrolling).  You may modify OPENO to OPEN"name" if you want the
+output to go someplace other than the screen or printer.
+
+4 GOSUB5:
+     B=VAL(N(A)):
+     IF B=0 THEN S=N(A):
+     GOSUB 7:
+     GOTO 4 ELSE S=MID$(N(A),2)
+       +STR$(256*(B-1)*PEEK(I+2)
+       +PEEK(I+1)):
+     GOSUB 7:
+     S="":
+     FOR C=1 TO B:
+     GOSUB 5:
+     GOSUB 7:
+     NEXT:
+     GOTO 4
+
+Line 4 does all the work.  GOSUB5 gets the value of the current memory
+location.  N(A) is the mnemonic for that value.  
+If the mnemonic is preceded by a 1 or 2 (see DATA statements 9-11), then the
+VAL(N(A)) will be 1 or 2.  Otherwise, the VAL(N(A)) will be zero.  If the
+VAL(N(A)) is not zero, then the mnemonic requires data from the next 1 or 2
+memory locations.  The ELSES=MID$.... line sets that up.  If B is 2 then you
+will get a 2-byte value.  If B is one, then B-1 is zero, and that results in a
+1-byte value.  The FOR...NEXT loop simply prints the memory address, contents,
+and the CHR$(contents).  Again, it will go thru the loop once or twice
+depending on the value of B.
+
+5 A=PEEK(I):
+     Q="":
+     IF A>32 AND A<127 THEN Q=CHR$(A)
+
+Line 5 gets the contents of the current memory location.  Q becomes the CHR$(A)
+as long as A is at least 33 but less than 127.
+
+6 IF R="R" OR R="r" THEN CLOSE:
+     GOTO 2:
+     ELSE IF R="M" OR R="m" THEN MENU
+     ELSE RETURN
+
+Check R to see if you want a new Start Address or if you want to return to
+MENU.
+
+7 R=INKEY$:
+     PRINT#1,USING"#####   ###
+        \          \  !";I,A,S,Q:
+     I=I+1:
+     L=L+1:
+     IF L>M THEN L=0:
+     IF O="LCD:" THEN R=INPUT$(1):CLS
+     ELSE LPRINT CHR$(12);
+
+Gets R.  Prints Mnemonic.  I is current address, A is contents of I, S is the
+mnemonic, and Q is the CHR$(A).  L is the line counter.  If the counter is
+greater than M, then two things can happen.  If output is to the screen, then
+the program waits for a keypress.  If the output is to the printer, then a Form
+Feed command, CHR$(12), is sent to the printer to get to the next page.  No
+pausing between pages.  Add R=INKEY$(1) to the end of line 7 if you want to
+pause between pages.
+
+8 RETURN
+
+Lines 9-11 are just long DATA statements defining the 8085 mnemonics.  You can
+get those from the actual program, so I didn't list them here.  To help you
+find extra carriage returns:
+
+Line  9 ends with 1MVI D
+Line 10 ends with INR L
+Line 11 ends with CMP
+
+
+12 FOR I=0 TO 63:
+     READ N(I),N(I+192):
+     NEXT:
+     S="BCDEHLMA":
+     K=64:
+     FOR I=1 TO 8:
+     READ R:
+     FOR J=1 TO 8:
+     N(K)="MOV "+MID$(S,I,1)
+       +","+MID$(S,J,1):
+     N(K+64)=R+" "+MID$(S,J,1):
+     K=K+1:
+     NEXT:
+     NEXT:
+     N(118)="HLT":
+     RETURN
+
+Line 12 sets up all the mnemonics.  First, it just reads all the mnemonics in
+data statements 9-11.  Then it sets up the MOV, ADD, SUB, etc, mnemonics using
+the FOR...NEXT loops.  118 would be MOV M,M but Intel chose to make that the
+HALT command.  So I define N(118) and return.
+

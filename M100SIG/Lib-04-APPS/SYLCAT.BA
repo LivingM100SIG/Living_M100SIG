@@ -1,0 +1,202 @@
+SYLCAT.BA by Paul Globman
+          Copyright (c) 1990
+
+A categorical syllogism consists of three sentences, two of which are premises,
+and the third being the conclusion inferred by the premises.
+
+All sentences in the syllogism must be of form A,E,I, or O type sentences.
+
+  A:all  S is P      E:no S is P
+  I:some S is P      O:some S is not P
+
+You must first provide two premises.  If the premises are properly formed then
+you will be prompted for a conclusion.  If the conclusion is valid (based upon
+the premises), the program will confirm the validity.
+
+OPERATION
+---------
+The prompt for a premise is... P->
+
+A premise is a simple sentence in the form shown above.  
+
+<quantifier> <noun phrase> is <noun phrase>.
+
+If the sentence is not in that form, you will hear a BEEP and be prompted
+again.  If the sentence does not begin with the word "all", "some", or "no"
+then the word "all" will be assumed and inserted.  So the sentence...
+
+ "whales are mammals" will become "all whales are mammals".
+
+If the predicate noun phrase begins with the word "not", the quantifier will be
+modified when possible.  For example...
+
+"men are not gods" will become "no men are gods"
+
+"no whales are not mammals" will become "all whales are mammals"
+
+"some mammals are not whales" will remain "some mammals are not whales"
+
+
+After entering two premises, they are analyzed and if they are found to lack
+the qualities that will lead to a conclusion, then a BEEP will sound and an
+appropriate error message is displayed.
+
+Such errors might be ...
+
+A) two negative premises...
+
+ No students are wage earners
+ Some wage earners are not voters
+
+B) lack of a "middle term"...
+
+ All wild horses are free spirits
+ Some spirits are not tangible objects
+   (spirits <> free spirits)
+
+C) failure to distribute the "middle term"....
+
+ All bananas are yellow fruit
+ Some yellow fruit are poisonous fruit
+
+
+CONCLUSION
+----------
+If the two premises are acceptable then you are prompted for a conclusion...
+
+ C->
+
+The conclusion is examined, converted in form (if necessary), and checked for
+validity.  Some errors may be...
+
+D) negative conclusion required or unsupported.
+
+E) a "term" is distributed in the conclusion without having been distributed in
+the premise.
+
+F) a "term" in conclusion was not referenced in premise.
+
+If there are no errors in logic, and the conclusion is valid, then the program
+announces "Valid conclusion!"
+
+LOGIC
+-----
+I did not use any of the esoteric logic operatives that BASIC makes available.
+The testing is done thru brute force by looking at all possibilities.
+
+SUGGESTIONS
+-----------
+Language can often be quite cumbersome so I recommend the use of mnemonics for
+noun phrases.
+
+ "All bananas are yellow fruit" can be entered as "All B are YF"
+
+The program allows upper or lower case input, but it is converted to lower case
+for evaluation.  The verb "is" can be used instead of "are".
+
+COMMENTS
+--------
+This program was written to simulate the results offered by Venn diagrams. The
+syllogism to be considered must be in the form of a "categorical" syllogism.
+
+The "hypothetical" syllogism is not considered.  This instruction file is not
+a logic course replacement and discussion of "middle term", "subject term",
+"predicate term", "quantifiers", and "distribution" is left to reference books
+on the topic of LOGIC.
+
+
+1 REM SYLCAT.BA by Paul Globman
+2 REM        Copyright (c) 1990
+5 CLEAR 512
+6 PRINT "-----------------------------"
+10 GOSUB 500:GOSUB 600:X1$=X$
+15 Q1$=Q$:S1$=S$:C1$=C$:P1$=P$:T1=T
+20 GOSUB 500:GOSUB 600:X2$=X$
+25 Q2$=Q$:S2$=S$:C2$=C$:P2$=P$:T2=T
+30 PRINT:PRINT "P->"X1$:PRINT "P->"X2$
+35 GOSUB 100:GOSUB 200
+40 GOSUB 510:GOSUB 600:X3$=X$:PRINT
+45 Q3$=Q$:S3$=S$:C3$=C$:P3$=P$:T3=T
+50 GOSUB 450:GOSUB 300:GOSUB 400
+99 PRINT"Valid conclusion!":RUN
+100 REM ----------- middle term test
+105 IF (S1$=S2$) AND (P1$<>P2$) THEN 135
+110 IF (S1$=P2$) AND (P1$<>S2$) THEN 140
+115 IF (P1$=S2$) AND (S1$<>P2$) THEN 145
+120 IF (P1$=P2$) AND (S1$<>S2$) THEN 150
+125 PRINT "no valid middle term"
+130 GOTO 480
+135 IF T1<3 OR T2<3 THEN RETURN ELSE 155
+140 IF T1<3 OR T2 MOD 2=0 THEN RETURN ELSE 155
+145 IF T1 MOD 2=0 OR T2<3 THEN RETURN ELSE 155
+150 IF T1 MOD 2=0 OR T2 MOD 2=0 THEN RETURN
+155 PRINT "middle term not distributed
+160 GOTO 480
+200 REM --------- double negative test
+210 IF T1 MOD 2=1 THEN RETURN
+220 IF T2 MOD 2=1 THEN RETURN
+230 PRINT "two negative premises"
+240 GOTO 480
+300 REM ----- negative conclusion test
+310 IF (T1+T2+T3) MOD 2=1 THEN RETURN
+320 PRINT:PRINT "negative conclusion ";
+330 IF (T1+T2) MOD 2=0 THEN 350
+340 PRINT "required":GOTO 360
+350 PRINT "unsupported"
+360 GOTO 480
+400 REM ------------ distribution test
+405 IF T3=3 THEN RETURN
+410 IF T3=1 THEN 425
+412 IF T3=2 THEN GOSUB 415:GOTO 425
+415 IF P3$=S1$ AND T1<3 THEN RETURN
+417 IF P3$=S2$ AND T2<3 THEN RETURN
+420 IF P3$=P1$ AND T1 MOD 2=0 THEN RETURN
+422 IF P3$=P2$ AND T2 MOD 2=0 THEN RETURN
+423 GOTO 445
+425 IF S3$=S1$ AND T1<3 THEN RETURN
+427 IF S3$=S2$ AND T2<3 THEN RETURN
+430 IF S3$=P1$ AND T1 MOD 2=0 THEN RETURN
+432 IF S3$=P2$ AND T2 MOD 2=0 THEN RETURN
+445 PRINT "no prior distribution"
+446 GOTO 480
+450 REM ----------- verify final terms
+455 IF (S3$<>S1$) AND (S3$<>P1$) AND (S3$<>S2$) AND (S3$<>P2$) THEN 470
+460 IF (P3$<>S1$) AND (P3$<>P1$) AND (P3$<>S2$) AND (P3$<>P2$) THEN 470
+465 RETURN
+470 PRINT "term in conclusion was not"
+475 PRINT "  referenced in premise"
+480 BEEP:RUN
+500 REM --------------- get input
+505 LINE INPUT "P->";X$:RETURN
+510 LINE INPUT "C->";X$:RETURN
+515 LINE INPUT "-->";X$:RETURN
+600 REM -------- Parse the sentence X$
+605 X=INSTR(1,X$," ")
+607 GOSUB 800
+610 Q$=LEFT$(X$,X):IF Q$="all " THEN 625
+615 IF Q$="some " OR Q$="no " THEN 625
+620 X$="all "+X$:GOTO 605
+625 X$=RIGHT$(X$,LEN(X$)-LEN(Q$))
+630 C$=" is ":X=INSTR(1,X$,C$)
+635 IF X>0 THEN 650
+640 C$=" are ":X=INSTR(1,X$,C$)
+645 IF X=0 THEN BEEP:GOSUB 515:GOTO 600
+650 S$=LEFT$(X$,X-1)
+655 P$=RIGHT$(X$,LEN(X$)-LEN(S$+C$))
+660 IF LEFT$(P$,4)<>"not " THEN 685
+665 P$=RIGHT$(P$,LEN(P$)-4)
+670 IF Q$="all " THEN Q$="no ":GOTO 685
+675 IF Q$="no " THEN Q$="all ":GOTO 685
+680 C$=C$+"not "
+685 X$=Q$+S$+C$+P$
+690 IF Q$="all " THEN T=1:RETURN
+695 IF Q$="no " THEN T=2:RETURN
+700 IF LEN(C$)>5 THEN T=4:RETURN
+705 T=3:RETURN
+800 REM ------------ U/L CASE SENSITIVE
+805 FOR I = 1 TO LEN(X$)
+810 L$=MID$(X$,I,1)
+820 IF L$=" " OR L$=>"a" THEN 840
+830 L$=CHR$(32+ASC(L$)):MID$(X$,I)=L$
+840 NEXT:RETURN
+

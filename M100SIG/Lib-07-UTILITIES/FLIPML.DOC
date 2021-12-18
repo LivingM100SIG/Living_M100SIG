@@ -1,0 +1,269 @@
+ DOCUMENTATION FOR FLIPML.100
+ ============================
+ Joel Dinda [75725,1134]
+ CHECKSUM: 97,466
+ 
+ 
+ FLIPML.100 is a Model 100 utility program in BASIC for people with two or
+ more machine language programs trying to share high memory.  The most
+ important features of the program are:
+ 
+ ** Accidental loading and execution of Machine Language programs is made
+ less likely, as only a loaded and executable program is visible on the menu. 
+ This makes it unlikely that a program copy will be accidentally destroyed, or
+ that the machine will be inadvertantly cold started.
+ 
+ ** Only one copy of any Machine Language program is in memory at any given
+ time; if it's above HIMEM, there's no duplicate copy cluttering the menu and
+ wasting RAM.
+ 
+ 
+ Using FLIPML.100:
+ -----------------
+ 
+ When run, FLIPML checks to see if any program or file is loaded above HIMEM;
+ if such a file is loaded and FLIPML can identify it (see below: "Setup
+ Procedures") the file is removed from above HIMEM, replaced on the Model 100
+ menu/directory, and hidden from view.
+ 
+ If FLIPML cannot recognize the file above HIMEM, it tells you that and gives
+ you the opportunity to escape.  The prompt ends "Quit?"; acceptable responses
+ are <Y>es or <ESC>ape (both of which exit to the menu), or <N>o (which
+ destroys the file above HIMEM and continues to the next prompt).
+ 
+ FLIPML continues by searching the directory for files it can recognize
+ (again; see "Setup").  As it finds each, it asks if you wish to load the
+ file.  Acceptable responses to the "Load?" prompt are <Y>es (loads the
+ program and exits FLIPML), <N>o (searches for another file), <V>isible (makes
+ the file visible on the menu and continues to search for available files),
+ and <ESC>ape (exits to the menu).
+ 
+ A <Y>es response to the "Load?" prompt accomplishes the following:  HIMEM is
+ reset to accomodate the new file; the file is loaded above HIMEM; a 7 byte
+ "driver" program is created (named "xxxxx<.CO") to begin execution of the
+ program; and the file is deleted from the directory of your Model 100.
+ 
+ If no file is loaded after all identifiable files have been checked, FLIPML
+ enquires whether you'd like to look at them again.  <Y>es repeats the list of
+ available files; <N>o and <ESC>ape exit to the main menu.
+ 
+ 
+ Setup Procedures:
+ -----------------
+ 
+ Although use of the the program is pretty simple, you'll have to customize
+ the file information in the DATA statements at the end of the program (Lines
+ 20 and greater).  FLIPML can only recognize and load programs it's been told
+
+
+
+
+
+
+
+
+
+
+
+ 01/12/85
+ Page 2 
+
+
+ to look for.  The information I've posted is for files I use; since that's
+ hardly likely to match yours, you'll want to delete my information and
+ substitute yours.
+ 
+ FLIPML needs four pieces of information to load or unload a file -- a name,
+ and the three addresses BASIC displays when you LOADM (or CLOADM) a machine
+ language program.  (See "Notes", below, if you find you've a program with no
+ EXE: address.)  These must be present in the DATA statement(s) at the end of
+ FLIPML (lines 20 and any which follow), and must be in this order:  Name, END
+ address, TOP address, and EXE address.
+ 
+ The data statements should look something like this:
+ 
+ 20 DATA PRINT,60416,62959,60416
+ 
+ --Note especially that the file name is in upper case and that there is no
+ .CO extension!  I could have written the program to correct these "errors",
+ but that would have taken more code and wasted RAM.  Better that you put the
+ correct information into DATA.
+ 
+ The last entry in the DATA statements should be:
+ 
+ END,0,0,0
+ 
+ --but see, again, "Notes".
+ 
+ Please note: Since FLIPML searches only for the files listed in the DATA
+ statements, it will ignore any machine language programs you've not mentioned
+ there, even if present in the directory.  It will, moreover, fail to
+ recognize any files you call by one name in the DATA statements and by
+ another name on the directory (say, a print formatter called EPSON in DATA
+ and PRINT on the directory.)
+ 
+ After you've put the correct information into the DATA statements, you can
+ safely hide the .CO files from sight on your Model 100's menu.  FLIPML can be
+ used for this purpose (first load the .CO program, then unload it) or some
+ other utility program can be used for the purpose (I generally use UNVISI.LG1
+ from DL4, but there's no reason you can't use another.)
+ 
+ 
+ Notes, Comments, & Cautions:
+ ----------------------------
+ 
+ ** While this program is reasonably safe to use, it is not designed to
+ capture every conceivable operator error and shouldn't be expected to do so. 
+ Since every known problem leaves at least one copy of the M/L file in memory,
+ either above HIMEM or on the menu, recovering from problems should be
+ feasible in almost all cases.  But please be aware that the program can be
+ forced to destroy files completely if used carelessly.
+ 
+ ** Although this program works with every executable machine language
+ program I've access to, there is some reason to believe that it will fail to
+
+
+
+
+
+
+
+
+
+
+
+ 01/12/85
+ Page 3 
+
+
+ properly load some files.  If you should discover such a file, I'd much
+ appreciate a note telling what file failed to load, and how the program
+ behaved.  Thanks.
+ 
+ ** It's best to put the files you use most often first in the DATA line(s). 
+ Otherwise you'll have to skip through the others to reach them, each time you
+ want to load.
+ 
+ ** FLIPML.100 is as compact as I can make it without revising its logic or
+ removing one feature or another.  The copy I'm using takes up 980 bytes and
+ looks for four files; this was approximately my design objective.  RAM
+ overhead is 600 bytes (almost half of that a file buffer) PLUS THE SIZE OF
+ ANY FILE YOU LOAD OR UNLOAD.  If you've not left enough room, FLIPML will
+ stop execution with an "Error 7 in line..." message.
+ 
+ ** Please be aware that FLIPML creates a temporary document file named
+ TEMP.DO.
+ 
+ ** FLIPML is capable of recognizing multiple versions of the same program --
+ say, a print formatter set up for two different printers -- provided that
+ they've different names; ie, call one TANDY.CO and the other NEC.CO.
+ 
+ ** If the "xxxxx<.CO" driver program has been deleted, FLIPML will not
+ recognize the program loaded above HIMEM and will give you the "Unknown file
+ loaded" prompt.  The file above HIMEM can be recovered in the usual fashion;
+ ie, go to BASIC and type:
+ 
+ SAVEM"filenm",END address, TOP address, EXE address [NUMBERS!]
+ 
+ --ie: The information in the DATA statements.
+ 
+ ** The same SAVEM technique can be used if for some reason you want both to
+ use a machine language program and to have it available on the menu (perhaps
+ you're using J.K. Heilman's DSKMGR and want to "Sval".)  Another possibility
+ is to make the program <V>isible with FLIPML and to manually reset HIMEM with
+ an appropriate CLEAR in BASIC, then to just run it from the menu.
+ 
+ ** Saving bytes:  Feel free to remove the REMark, unless you're passing it
+ along to someone else (say on a BBS).  The prompts could be shortened, but
+ would be less informative.  The best place to save, though, is in the DATA
+ statements.  The posted copy's version is easy to read, but uses more RAM
+ than necessary.  The following DATA line is legal---
+ 
+ 20 DATADISK,60700,62801,60700,PRINT,60416,62959,60416,,,,
+ 
+ --and does everything necessary including flag the END (thus the empty
+ commas).
+ 
+ ** Regarding the three addresses necessary for the .CO files:  TOP: is
+ (curiously enough) the bottom address for the file, when loaded; almost
+ always it is the same as HIMEM when the file's loaded (FLIPML assumes this,
+ by the way).  END: is the highest address occupied by the program's code, and
+
+
+
+
+
+
+
+
+
+
+
+ 01/12/85
+ Page 4 
+
+
+ is usually (but far from unfailingly) equal to MAXRAM-1.  EXE: is the normal
+ entry point for the program (ie, the address to CALL from BASIC), and is
+ usually (not always) the same as TOP: (HIMEM).
+ 
+ ** FLIPML must know the EXE: address to properly load a file.  A file
+ without an EXE: address either is not executable (might be a data file, for
+ instance), has more than one entry point (SUBLIB fits this decription), or
+ has the entry point disguised.  I'm aware of one commercial product with
+ whose copy protection disguises the entry point; while I'm unwilling to
+ explain how to break the protection scheme, be assured that it can be easily
+ done.
+ 
+ ** The "Unknown file loaded" prompt permits you to exit the FLIPML without
+ removing the unknown program, and identify the problem instead of rashly
+ continuing.  The following possibilities occur to me:  +The file's name in
+ DATA is different from the name on the directory.  +The file loaded was
+ loaded without using FLIPML; such files may be either truly unknown or simply
+ not recognized because the driver is absent.  +HIMEM might have been reset by
+ some program (perhaps you used BREAK to exit it).  +I'm sure there are other
+ possibilities.  Please tell me if you find one.
+ 
+ ** The crucial code in this program is based on larry gensch's UNVISI.  In
+ particular, I prefer his directory search routine to any other I've seen;
+ line 6 of FLIPML is a careful revision of that routine.  Truly marvelous
+ code.
+ 
+ ** The keyboard buffer tricks were learned by studying routines by Jesse Bob
+ Overholt and Rick Perry.  Many thanks to both.
+ 
+ ** Like everyone else, I learned about the 7 byte program drivers from Jim
+ Irwin.
+ 
+ ** I want to express my great gratitude to Phil Wheeler for his thoughtful
+ responses to my questions.  Although I didn't see fit to implement all of his
+ suggestions, I appreciated and considered them.  And without the suggestions
+ I did implement, FLIP would be a rather different program.  Thanks.
+ 
+ 
+ Finally:
+ -------
+ 
+ I mainly write programs because I need them; this is certainly no exception.
+ I share it here on the assumption that I'm not the only Model 100 user with
+ HIMEM crowded.  Questions and comments are always welcome, of course.  Hope
+ you find FLIP useful.
+ 
+ joel dinda
+ LSJA-Access/TBBS
+ 517-482-8144
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

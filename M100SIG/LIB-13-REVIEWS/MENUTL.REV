@@ -1,0 +1,78 @@
+Men-U-tility
+(c) Custom Software
+1308 Western
+Wellington KS  67152
+(316) 326-6197
+
+
+Review by J.K. Heilman [71216,1375]
+
+
+
+   Although the Model 100 is a marvel of features in a small package, some
+compromises were necessary.  Many routine file/system management commands were
+either left out entirely or made accessable only through BASIC program
+routines.
+  A minor objection to be sure but it can be very frustrating, particularly for
+the computer novice.
+
+   Custom Software has tried to fill in some of the gaps with a compact
+machine-language program which supplements the M100's Main Menu with nine new
+functions that can be accessed with one-key ease.  Men-U-tility comes on
+cassette in two parts - a BASIC loader program and a data file which the loader
+accesses automatically to generate the actual machine code program (about 1.9K
+bytes). Through the loader, Men-U-tility is fully relocatable to any address
+the user chooses, thereby reducing the likelihood of conflict with other .CO
+programs. The tape is packaged with a spiral-bound User's Manual which clearly
+explains how to load the program and how to use its features.
+
+   When Men-U-tility is installed, the Microsoft copyright notice on the top
+line of the M100's Main Menu is replaced with the number of free bytes in the
+machine and the size in bytes of the file the cursor is on.  The bottom line
+shows a set of eight new functions which are accessed by pressing the
+corresponding key (F1-F8).
+
+   The first four act upon the file currently highlighted by the cursor.  They
+are 1) "Name", which allows the user to rename the file; 2) "Kill", which
+deletes the file from memory; 3) "Prnt", which prompts for several basic format
+settings and then sends the file to the parallel port for printing, and; 4)
+"Invi", which allows the user to remove the file from the menu without deleting
+it from memory.  "Invi" can be very useful if you use BASIC driver programs to
+run, allocate and deallocate space for .CO programs.  The .CO file name can be
+made 'invisible' to ensure the .BA program is used to access it.
+  (NOTE:  Making a file 'invisible' does not release a directory slot.  The
+directory can hold a maximum of 26 names, including the built-in programs,
+system buffers and 'invisible' files.)
+   F5, F6, and F7 allow the user to reset the day, date, and time respectively.
+F8, "Alrm", prompts for a time and will set off an alarm at that time no matter
+what mode the computer is in, however, the computer must be turned on for
+"Alrm" to work.
+
+   Men-U-tility only needs to be entered once and replaces the Main Menu until
+the program is turned off.  This can be accomplished two ways: 1) by pressing
+CODE-O which will return to the normal Main Menu, or 2) by responding "Y" when
+asked "Remove Men-U-tility?".  The system asks the question any time the user
+tries to access a .CO file from the Menu.  This is a safety feature to avoid
+any .CO conflicts which might cause the computer to cold-start.  Users of the
+LUCID spreadsheet ROM may be surprised to see this question pop up when they
+try to access .CA files from the Menu.  Because LUCID uses a .CO file format
+for its spreadsheets, Men-U-tility treats them like machine code files,
+however, there is no conflict between the two programs.
+
+   To further protect the program from accidental erasure, Men-U-tility resets
+MAXRAM to an address below itself.  This change can come in very handy if you
+normally use BASIC driver programs for other .CO programs.  By including a
+program line which checks the value of MAXRAM, overwrites and cold-starts can
+be avoided.  For example, [1 IF MAXRAM <> 62960 THEN PRINT "Men-U-tility
+Installed": GOTO 1] could prevent a very aggravating accident.  When Men-U-
+tility is turned off, MAXRAM is returned to its previous address.  (NOTE: DVI
+users should enter "?MAXRAM" in BASIC mode and use that answer in place of
+62960 in the line above.)
+
+   Men-U-tility performs very well and has enough error traps to protect most
+users from potential problems.  It would have been nice to see an option in
+"Prnt" to keep the M100 from stripping out the line feeds.  Day, Date and Time
+could have been combined under one key, leaving room for other more commonly
+used commands like CLOAD and CSAVE but Men-U-tility as delivered is an
+excellent, inexpensive package to help manage many of the day-to-day
+housekeeping chores of the Model 100.

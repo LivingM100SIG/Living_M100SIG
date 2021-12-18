@@ -1,0 +1,204 @@
+BBS200.doc
+
+This Network, called SoftMail, is a full featured BBS that allows up to 30
+members to "Message" each other day and night.  It features full Password
+Access and Message Privacy;  while new Callers may simply enter "NEW" as the
+password and be directed to an area where they may leave an inquiry, regular
+Members have three tries to give their own private Password in order to Log On.
+Once successfully "In", callers have the ability to Check for Messages, to
+review the "Address List", to Edit and Send Messages (with automatic line
+wrap), to Receive Mail, to Page and enter a "Chat Mode" with the Sysop (that's
+YOU, the System Operator!) while online, and to Log-off with an accounting of
+how long they were connected.  A "Help" feature is also included, which you may
+write and place in RAM as "ALL01Z.DO".
+
+The Menus within the SoftMail are easy, self-explanatory, and only require
+touch-selection.  For the Sysop there are extra features;  Four function keys
+allow him or her to  1) Enter "Chat Mode" at any time with the Caller, to
+2) Interrupt program execution and give a "HOST OFF" message to irresponsible
+"twit" callers, to  3) Provide a warning that the System will go down in two
+minutes, and to  4) simply have the screen show who is Online.  SoftMail keeps
+a full record of who called, the date and time, how long they were online, and
+what messages they retrieved, sent, and deleted.  This record, called
+"SYSDFZ.DO", can be reviewed remotely by the Sysop.  In addition, the Program
+features full error trapping, and will even "kick" persistent error makers off
+the system!
+
+During Menu input, SoftMail will convert lower case to upper case so that there
+will be no errors in Command or File recognition. In the event of a "sleepy"
+caller who dawdles more than two minutes without doing anything, the BBS will
+even hang up automatically and reset itself!
+
+Unlike other remote BBS's, which in effect allow the Caller's keyboard to
+duplicate the Host's Console, SoftMail treats external input/output as a remote
+File, and the BASIC BBS Program stays in full control at all times, with the
+Host's LCD Screen only showing significant Menu selections and input as the
+Caller writes messages.
+
+
+BUT IT'S SO SMALL!
+
+Now, you ask, why network with a 200?
+
+There are a number of reasons why the 200 is a PERFECT choice:
+
+1)  Because it has no moving parts to wear out, no disks to replace; all
+messages (and the hidden Log file SYSDF) are maintained in RAM, designated as
+BBS Files by the suffix "Z.DO".
+
+2)  By using the "INPUT$" command for all input, the System is able to avoid
+sabotage or interruption through a hostile Control-C or "BREAK" command invoked
+by a Caller.
+
+3)  The size of the 200 makes it highly suitable for applications which need a
+full BBS without wanting to have to endure the complexity and size of other
+systems.
+
+4)  Because everything is in RAM, it is instantly accessible for review by the
+SYSOP.  Responses can be written from the HOST side by simply using the TEXT
+program (inserting carriage returns) and labelling the messages with Titles
+that the BBS can recognize.
+
+5)  Since it is a non-mechanical system, there is no need to fear a "runaway"
+computer, disk drives smoking into oblivion.  Using the IPL feature, the BBS
+can even survive power outages.
+
+6)  Power failures won't crash the system.
+
+7)  Finally, it's just plain fun to have so much going on so simply in such a
+compact little package!!
+
+
+GETTING IT TOGETHER:
+
+Get an auto answer modem and your own phone line.
+
+Download and Save the program as "BBS.BA".
+
+1: Using IPL, instruct your 200 to execute BBS in case of power interruption.
+2: Create a "Greetings file" and save it to RAM as "ALL01Z.DO". This will greet new users s they log onto the board.
+3: Create a "HELP file" and save it to RAM as "HLPDFZ.DO".  This is the message that will be listed to the caller if he or she presses "HLP" from the
+Menu.  It will also be listed from within the BBS Directory ("CHK") and may be
+retrieved in that manner as well.
+
+Be sure to set up your Caller and Password Files in Lines 1000-1004, being sure
+to follow the designated format, i.e., a Two-Digit Number for the Member, one
+space, the Member's Name, followed by a comma, and then the 3 letter Password
+pertaining to that Member.  You may also wish to adjust Gosub 80 to include
+Commands which your particular Modem requires to actually disconnect the phone
+upon Logoff or "Denied Access."  Furthermore, Program Line 4 is optional and
+only serves to initialize a modem; you may want to delete it if you don't need
+it.
+
+Connect an auto-answer modem to the RS-232 port (Important: Set your modem for
+non-verbose, "Quiet" mode, no echo,  and with auto-answer enabled).  Plug
+everything in, and run the Program!  After a few seconds, you'll hear a "Beep",
+the screen will clear, show the current Files, state "Awaiting at:" the set up
+(or reset-up) time, give the current memory space remaining, and (once you've
+had the first caller) show who was the last person online!
+
+When someone calls (try it!!) they'll be prompted to press an Asterisk (this
+gets things going--the Host screen will state "BUSY" and the four Function Key
+options will be displayed).  They will then be asked for their Password and be
+sent to the Main Menu.  A special memory "Peek" technique allows for a review
+of BBS-related Mail.  When the caller presses "C" for Checking Mail, he or she
+will be shown the Messages that are BBS Files.
+
+The program only displays Messages (Files) with the flag of "$$$##Z.DO".  BBS
+Messages always follow the format of the left three characters matching the
+Caller's name or initials, and the next two characters being digits
+representing the Message Number.  The Caller never sees the "Z.DO" as it is
+always added discreetly by the System.
+
+The special Log File "SYSDFZ.DO" is not displayed, but the SYSOP always knows
+it's there, and can retrieve it from a remote location (and erase it to restore
+memory) at any time.  If the thought  of a RAM-based log makes you nervous,
+simply hook a printer up and change Line 11 to:
+
+11 OPEN "LPT:" FOR OUTPUT AS 4:RETURN
+
+
+As a key to the symbols, the SYSDF File shows  "#" who called and when;
+"<" messages retrieved,  "0" erased, or  ">" sent; and  "=" Logoff with usage
+time.  An  "nle" entry indicates a denied access situation, and  "time" means
+the caller got disconnected by the BBS due to overdue input.  A  "?" denotes a
+BBS error recorded, and a  "[" indicates that the program incurred the same
+error twice and started all over.  This will probably only happen if some
+"clever" caller tries to zap you with a Control-Z!!
+
+Callers may write to anyone but can only retrieve their own messages or those
+addressed to "ALL".  The SYSOP, however, can retrieve and delete anything.
+Furthermore, while anyone can originate an "ALL" message, only the SYSOP can
+delete one.
+
+The EDIT features of the BBS are fun--play with them!  They will allow a
+line-by-line review, adding a line, editing a portion of a line, and deleting a
+line.  Once a person elects to return to the Main Menu, they are asked if they
+want to "Send" the Message.  They may answer either way; if they do not "Send"
+it immediately, they may go back "Down" to the "Work Desk" at a later point and
+send the Message then, or they may start another Message (or just Log Off, with
+the System forgetting that anything ever happened).
+
+If and when you purchase a Disk/Video Interface, you may wish to expand the BBS
+to include other Services, related Programs which could be on Disk and
+"Chained" Online.  For example, my current BBS features access to any number of
+Adventure Games which Callers may dial up and play.
+
+Happy Telecomputing!!
+
+
+Chuck Buchanan
+
+72335,1301 (use easymail)
+
+
+
+SAMPLE <ALL01> HELP FILE:
+-------------------------
+
+
+
+Welcome to the Model-200
+EBBS, providing 24 Hour/Day
+Communications Networking!!
+
+
+SoftMail is now running on a
+
+
+    < TRS Model 200 !! >
+
+
+For MENU Selections you need
+only PRESS the KEY; do NOT use
+<enter> unless entering Mail
+Titles or inputting numbers.
+
+Use Ctrl-S to Stop Display;
+Ctrl-Q to Start again...
+
+Throughout, the AT Key  <@>
+functions as an ESCAPE Key--
+You may press <@> at any prompt
+and you will go to the PREVIOUS
+Menu.  From the Top Menu, the
+<@> will Log you Off.
+
+Use <Chk> to see if you have
+any MAIL; if so, the Title's
+LEFT 3 Letters will match those
+of your Name or Initials.
+Enter that plus the two Digits.
+
+
+Please be sure to Log Off
+before hanging up...
+
+
+Happy Telecomputing !!!
+
+
+Sincerely,
+
+Your Friendly Local Sysop!
+

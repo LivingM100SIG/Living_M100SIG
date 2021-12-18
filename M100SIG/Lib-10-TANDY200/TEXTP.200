@@ -1,0 +1,68 @@
+1 'TEXT+ data file and installer loader for 200.
+2 '2/17/90
+3 'Copyright (c)1990 by James Yi [73327,1653]
+4 'Read TEXTP.DOC
+10 CLEAR99:GOSUB20
+15 F$="TXPINS.CO":F=0:GOSUB30
+16 A=0:GOSUB40
+19 END
+20 PRINT"11 seconds..":FORN=63580TO63822:P=P+2:IFP>LEN(D$)THENREADD$:P=1
+24 D=(ASC(MID$(D$,P,1))-65)*16+ASC(MID$(D$,P+1,1))-65:POKEN,D:C=C+D:NEXT:IFC=34996THENRETURN
+28 GOSUB45:PRINT"loader.  Can't continue.":END
+30 PRINT"End address for ";F$;:A=-1:INPUT" (Press ENTER for just below HIMEM)";A
+40 CALL63580,F,A:F=F+1:E=PEEK(63574):IFETHENPRINT"Warning - ";:GOSUB45ELSEPRINT"Loaded ";
+44 CALL4556,,63302:PRINT".CO":RETURN
+45 PRINT"Bad checksum on ";:BEEP:RETURN
+50 DATA MGDADCFGPIDCFHPIOFCKGHOPOLONCLCCFKPICBEGPHFHMNNCPICBPLPEMNNCPIOBNFAIMKKLPICDAIMCIJPICKLEOOOFCKPNPEEEENOBAIOFBBPLPEONEEEN
+55 DATA OBNJAICCFIPIOLCKPPPEHMLFMKKLPIBJCCPPPEMNGCCMMNKGCLMEMOCKMNGCCMMNGGDAMNKGCLOLMNKBEBCDCDNBMNNFPIDCEMPHMNPHPIJCDCFGPIMJABAG
+60 DATA AAMFOFMNPHPIOBHHEHHKNKOLPICLEOOLCKFIPIAJNJOLCDIAAPFHCDMBALHILBMCNFPIMJNFFEMNBEPJPOCKNCAPPJNGCFFHAPAPOGMAFPMNBEPJNGDALDNG
+65 DATA GLBINBMJCKFKPIHOLHMKCHPJHOPOCJCDCCFKPIMADODKMJABAFAAAJHONGIDMCEDPJCDLOMKCKPJABFGPIAKLHMKEDPJDKFHPIJGACCDHOMKBIPJLHMCEDPJ
+70 DATA MDCHPJ
+100 DATA0#o$3#k#d#i#n$SQ$iq$SQ#SkV#=!H&G|#OZX#=!J&G#<!<&BD#<$P&G8V&A5#1&CP@V#=$N&G|l&C8!H&B<@~~#5~i$Z5!=&A~~#Ev`J-!6&B~X~~#5i$
+101 DATA Z5!X&A#G#=v`LP8#9q,0s#>#_#hL08E$],|$<aXsDL#Qk#Y#;#M$?]#<!8$L#=$9]#<a&F.k&B|#abqs8!B#M8$=#G.7#F8V&A3.#G#F8!9$B#<$?&G8!
+102 DATA 9$B8b}R8"o{i#m5$d&Ai#i5M&Bi$4-t&B#<$`&G8d&A#<!1&G8d&A#<$X&G8d&A.M&B#<$`&G8X&B87|.A&B8!C$]E$_&BP|$<aXtD|!P&GXtD|!R&GXt
+103 DATA D|!T&GXtD|!V&GXtD|!L&GXtD|!N&GXtD|$I&GXtD|;&GX$W!P5$]&BtDL4#E$I&G#_#h|$<aXsD#E$N&G8E$]#<!G$D.>&B#<i&F.>&B#<!9&G.>&B#<
+104 DATA #c&G.>&B#<!P]qk$YP#<!U&BP@4L-2&BP#>#>#>8X&BLo8]#F-!M&B$S!B3#<0&F8!9$B#Y#IR#<#K&G8!9$B8b}#E!H&Gd#E!J&G#=#OZ4ys$Y#>R$Ti
+105 DATA n#Y#I7#;kx-Z&B.#9ki$c+@0#SqX#>#i#>#a#E$N&Gs,<#Z!)4|!4&D8!H&B#<$`&G8V&A5#O&B@8t#G#=$K&G#<T&F8!9$BL8!<#\#>#>#=!L&GV#=!X
+106 DATA &GVt#F#a#F#is#=!N&G#<!1&G8V&A-$0&C|kkV#=;&G#<kk#=$I&G#E!0]#=$N&Glmk8#[&B#Qj#>#Qj#>#=6&G8X&D8#A&E8$Z&E#E4&G#=8&G#E0&G#
+107 DATA =2&G#E!P&G#>#=!T&G#E!R&G#>#=!V&G#E,&G#_#h|!L&GXtD|!X&GXtD#U?&G!B-!Q&C#E4&Gt#=6&G8X&DE#a&D8!I&D-p&D8#A&E8$Z&E#E!R&G#i#
+108 DATA >wx5w&D$9#>$1#>P#E0&G#4N$9#>$1#>NP#E2&G#4$U!B#^<-k&D#U<&G!B5l&DXp#U=&G-j&C#U>&G$JDL.9&C#<H&G8!7&D#Y!J#M?&G#b#E!P&G#i#
+109 DATA >wx5!2&C$9#>$1#>P#E0&G#4<op5#F&DX~~@P#E!V&G$9#>$1#>#>#>#=!V&G#E2&G#4VLDL.#2&D#E6&Glnk8#[&Bqn8,$8|!0]X#>D#E$K&GVqv#<$M
+110 DATA &G8!B#M#Y#F#M$?]#E8&G#=$9]#>#>#>P|v`XND<#>#7#8#Y$Z-$b&D#Y#G#8$N#>$M#>$R#E$I&GV#<c&G8#M#N.n&Bi$[4P#<p&H$9#1k#O#<@&G8#M
+111 DATA #NL.7|#E;&G$W!P38<&D`8<&D$)G#1t$V#M=&GB8"o{#M>&G#=;&G\i$44$Yiu#>-<&D$Yi#Y-<&D$Y#>i$6-I&D#FBC8"o{!B4#E!N&GVX#=,&G$W!P#
+112 DATA R3@V#E!X&G#4#=*&G<~~X#=.&G~~V#=!P&G8#6&E#=!R&G8#6&E#=!N&G$Y#>!B3#X#>#>#>.#7&E#E6&G#=4&G!J#M)&G#E!X&G#_#h#E4&Gs#=0&G#E
+113 DATA !L&GV#E.&G#4#FP#5~8$T&FAnE$4&E`8#n&F5$R&E~\#We$9&E~LJ=#`&E#E!P&G#iV~wx38#n&F~~~~-$E&El\L8$E&F.#K&E#<Q&G8!7&D#E6&G#Y#?
+114 DATA R8#D&F#<V&G87|#E,&G8v#b#<\&G87|#E)&G#Ak8v#b8#Y#j#U#1h#)E!F&E#E,&GPV#E)&G#AkP#4#_#h#E6&G8#[&B,w#Q$Z#>x-3&E#FV,#E!L&G@8
+115 DATA #1$^<#E.&G#4@P#5~8$T&FAnE_&E`8#n&FE]&ED\~#Wed&E~LJ=J&E<#E,&G#4#F#5~!B-#?&FPX$W!@#W-#5&F#<ok#4V.#>&F$=$F#F8#D&F8#`#jLJ
+116 DATA =o&F4`$W8#R&F$X8#R&F8#9k\4`zzzz8#a&F\`8#a&F\4QziuE#j&F1r1#KR4X#_#h#E!X&G#Fs#Z!)C#E*&GsC#E0&Gt$X!B4#<)&G#O5!B&B#E4&G#>
+117 DATA #=4&G4i#[E$c&FA+=$a&F#Yl41#[@$)Qn#b$V!C#)#)#<!@&F$)#1k#4$Yrrzzp]!6&FQn<4$8$@$0$@$8$@$0$@$X$@$Q$@$X$@$Q$@`$B$P$J!P$B!P
+118 DATA $J$P$B$P$B$P$B$P$Ju#m$@$H$J$Q$@#;$<$=$J$Q$@#;$A$D$G$@#C$N#D#;$<$I$?#;$O$M$T#;$<$B$<$D$Ik#d$I$N$O$<$G$G$D$I$B#I#Ik#m$@
+119 DATA $H$J$Q$@$?k$1$@$>$O$J$M#;#?#a#P#K#]#;$C$<$N#;$=$@$@$I#;$H$J$?$D$A$D$@$?#V#;$M$@$H$J$Q$<$G#;$D$N#;$P$I$N$<$A$@k#k$M$@$
+120 DATA N$N#;$<$I$T#;$F$@$T#;$O$J#;$@$S$D$O#Irk#K$N#;$P$I$@$G$D$H$D$I$<$O$<$=$G$@k#^$<$I$>$@$G$G$@$?k#^$G$@$<$I#;$P$K#Zkkkkk$
+121 DATA ckk#o#`$3#o#F#;#I#I#o$3#k#d#i#n#^#j#o$3#k#_#\#o#^#j#;$H$D$N$N$D$I$Bk#o$3#k#^#a#b#_#j#_$D$M$@$>$O$J$M$T#;$A$P$G$Gkkkkk
+122 DATA kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk#h$J$?$P$G$@#;k#;$N$F$D$K$K$@$?k#;$<$O#;k#n$D$U$@#Uk#;#k$<$?$N#Uk#o$J$O$<$G#;$N$D
+123 DATA $U$@#U#;kk$R
+200 DATA1#o$3#k#_#\#o$SQ<rkk.!NQ#<jj$ZP#E#kaV#6#6Xl!1$N!Js#<0R#a$R#>$K+#F#P#6#6Xl!D$Ns+#<-QD8jj8jj#U1R!B+#M!Kb.jj8#E#E#YuR.!8$
+201 DATA L8jj.jj#M5Z`8?$T8jj\E!WQ#b#U#1h#j#U6Zi#6$S5#7Ri$Z5DWi#;EgQ-dQ.jj81$R!B3i#53i$Z3.jj#<!LR#>$YQ$Z!SEjQ!Y/*Q$Sit5dQi{5YQ8
+202 DATA jj.!Y$Ni#65$[W8"o{#<#]R8jj8jj8jj8jj8jj8jj8jj8jj.EQ$YYl$RY!4#<+R$RP8$_$T#EqZN8!2$TL.!6#jLP#UqZ8#k$[.u$Q8$WR=$MR8v$Q.$\
+203 DATA $Q#=)ZP8#f$[.u$QP#Yl8$^$\LJ#Z;P8$T$\LJ4P#E#m[#_#hLs40PtP#_#h#E#0a#>s#_#hL<8#1$^V#F#=#0a#>,.#f$Rq$bu$fx$i#0!2#4!5#)kjj
+204 DATA kkkjjkki$2+N#<MR4|MR#<w]#5!Y3$R8#O$].jjkjjkki#j+N#<#FS4`8$K$Q8A$\8#O$]|$P$O@#U#FS#);$Yi#53ix-yS#>$Y#Fiu3\\$R#>.#B$P#U
+205 DATA #FS!<#)$S=WR8$F$O8#O$]#F.v$Qkjjlki#\+N#<$BS4#U$BS!D#)$S;#<#6$Siz5#eSi#0+#<#J$SN8)$Q8$?$R8$=#G|!;]X#Y#5!Y#>-$5S#FD.!5$
+206 DATA Skjjkki#]+L8$_$T8#O$]P#<7$T|u[@8V$T<#>#O#P#R5$O$T8!R$T<@8!6S=$S$T<0$;$D8jj.$H$T@P#E#m[JL5!)$K#6P@#58"o{#j8~{!T~#>5!CS
+207 DATA !B,L5$N$K$4#k.!7Si#n+L8$_$T8#O$]V#E8Z$W!P#E#0aV/$d$S#=Gb#=KbV#=Ib!J$B$J#=Cb#=Eb#<7$T|u[@8V$T<#>$Y!B5#YU8!MU#=Mb#<TU|!
+208 DATA Kb@8V$T<#>8!MU#=Ob#<+U#UoV8#jU#MoV#<4U#UnV8#jU#MnV#EKb#F#UnV#j#>V#EIb#FJE#3U#U#1h#JQ$\5#3U#<u[@#5wx-!VU8"o{#b8~{!S~#>
+209 DATA 5#fTL!B-#OT#=Kb#6#ECb#>#=Cb#UoV!B5!8T@8!AUL#=8Z#=)Z#EKb8jj8$_$T#UqZ#M#^a#<cU#Yv8#jU#EKb5#KT#EObPV#EMbJE!UT#]#fs#_#h#E
+210 DATA Kb#4$T!B/jj.5TV#]#fs#_#h#EKb#48cT-$_U|EbX#>D#EKb|!Kb,$T#\!B/!U#\#UoV!B5#JTP!J$B$J#=8Z#EKb#U#^a8#k$[L.#JTP#E#0aP#>!J!Y
+211 DATA Eq#1v$S!L-hT#=#0aVL,Ps#_#hnL.#<$^8$oU#EKbP8v$Q#<JU8!2$T#ECb8v#b#<<U87|#EEb8v#b.u$QL#E8Z$W!P5#6U8!AU#E)Z.#9U1#i`8!2$T\
+212 DATA R#b#YsR8b}in5#XU#jix$S5$[U$Ti#;#Y#i5$[U$T8"o{i#i5$[Ui$4-$6URA#i4L8$oU#<$m$O8!2$T8b}.#6U#UoV!B-!AU$B$J#=8Z#EKb.#f$[8)$
+213 DATA Q#E)Z8v$Q.$K$Q@8!R$T,Vs#F4#b$Y.$3T#k$<$P$N$@#Zkjj#^$<$N$@#Zkjjt#m$@$K$G$<$>$@$?#U#;kjj#a$J$P$I$?#U#;kjj#m$@$K$G$<$>$@
+214 DATA $H$@$I$O#Ukjj#m$@$K$G$<$>$@#Zkjjkv#U#1h#)=J$S8$K$Q8$=#G8#O$]#=)ZP#_#h#=8Z#E!;]!J!Y#>5#=V#F|#Ke@PsN#j#b$Y}A#55#ZV#>~w-
+215 DATA #LVo!L5$4V#=!;]#F#o$8s$T,`8#<$^,#><8!U#\.#4V\\8$@$].jji#^+L#<6V$Y`8jj\#<uZ!A3.2#j#U6V#<uZ!A3#O8#O$]P#EqZP#<!QV8!7$TLP
+216 DATA $G$B8v#b#<!WV87|LP$B8v#b#<.V87|LN8jj8v#b#<uZ#PL.!6#j$3#U#;kjjt$4#U#;kjjt#k#U#;kjjklit-tWL8b}8#@WC5QV@8#O$]8#=W<D48#)W
+217 DATA yu#b|jjs~=ZV#]#f$B$J#Yt|!6WtD~~~~~#X-hV48#@WCLXV#E#m[#4CV#E#0aJCV.jj#E#0a.jji#KCi#U#ZCA#K$)rr$^$)!J$2#<!1W#4V!P4#UBW#
+218 DATA );8#)WP#E=W#_#hLs5$OW#=3W#E8W#_#h#Yu|!1WXsE$HW5$HWt@V#E3W#4<DV#Cp#X-$7W8#)W#==W|8W.GV#<}$OP#E8W#=!1W4i#o+N#<BW4kjjjjk
+219 DATA jjjjkjjjjkjjjjkjjjjkjjjjkjjjjkjjjjkjjjjkjjjjkjjkkkjjkkkjjkkkjjlk#E8Z$W!P5d$O8$d$SPV#]#fs#_#h!J$B$J#=8ZLP8!1R.$6R#jl#U
+220 DATA lr!1Rkk$WRkk$ARkk#]Rkk$hRkk$7Rkk$6Rkk~#CR2R!>Q)R#FROReQWRWQ#0S#IR#HS#2R#PS#LR$DS#OR,S!XQpV#RR$<V!AQ$QV#UR7V5Q#WW!LQ$O
+221 DATA W+Q$_W#)R$[W#XR$fWLQDW#8k#3km2R!C!7)R!C!7nHR$7R3RlkMRkk#dk#_knOR!C!7WR$Q$O#0S$Q$OmPRlk#FSkk#Wk#Rkm#HS!C!7#PS!C!7m#ISl
+222 DATA k$BSkk$3k$3kl$DS!C!7m!1S$WR$ESkk#_mjll,S!C!7n!PT!1R$_T$AR-Skk$7k$7klpVJ$Sl$)V$6R$Fk$0km$<V!C!7$QV!C!7o6Vkk$FV#]R!DV$h
+223 DATA R$=Vlkxl2kq7V!C!7#WW!C!7$OW!C!7$_W!C!7$[W}$O$fW!C!7o#8W$AR#>W$hR$gWlkBWkk#;k#;klDWd$Om_W!1RbW$6Rkk#il$j

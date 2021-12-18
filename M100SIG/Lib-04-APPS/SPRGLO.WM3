@@ -1,0 +1,109 @@
+SPRGLO.WM3 - Description & Glossary for SPREAD.WM3  06/19/84
+			by Woods Martin
+
+	SPREAD is a BASIC program from the Model 100 Special
+Interest Group (SIG) database on Compuserve.  It is derived from
+the MiniVC project which has been one of the most popular
+programs on the SIG.  The original concept was by Terry Dettman
+with enhancements by Don Hergert, Gary Bender, Chris Young and
+Joel Hassel.  I got involved and as ad hoc coordinator rewrote
+the program, making the command syntax more VisiCalc-like and
+adding insert, delete, replicate and data transfer.  SPREAD goes
+beyond MiniVC by adding @COUNT and @TYP functions used in
+statistical analysis, a header line entry command, better error
+reporting and an improved display.
+	An added bonus is that SPREAD fully supports the Tandy Disk
+Video Interface (DVI) in a totally transparent manner.  If the
+DVI is available SPREAD will use it, allowing toggling between
+40 and 80 character display and permitting Model Files to be
+stored on and retrieved from the disk.  If there is no DVI,
+SPREAD will use the LCD display.  No program changes are
+required.
+	SPREAD runs somewhat faster than MiniVC and takes less
+memory; even so a 24K or 32K Model 100 with 16185 bytes of
+memory for code, arrays and string space is needed using single
+precision.  Double precision requires 17925 bytes.  This allows
+models of 4 columns by 101 rows or 26 columns by 16 rows for a
+total of over 400 Elements.  If memory is available, the number
+of rows can be increased.  If possible, additional free memory
+should be available for RAM storage of model files but this is
+not essential since input or output from or to cassette, disk or
+the RS232 port is supported.
+
+	 		DOWNLOADING
+
+	First, be sure you have 12000 bytes of memory available.
+When you are logged into Compuserve, type GO M100SIG.  Read the
+MI file for tips and then go to the XA2 database and type BRO
+SPREAD.  Download per TELCOM instructions.  On a 24K machine,
+you will have to save the DO file to cassette, disk or RS232,
+kill it from RAM, and then LOAD it back under BASIC.  Then type
+F3 SPREAD ENTER to save the tokenized program to RAM memory.
+(Since SPREAD is a long program, you may want to use the XMODEM
+program in XA1 for error free downloading.)
+
+
+--- Appendix II - GLOSSARY --------------------------------
+
+SHEET
+	Workspace consisting of Elements organized into columns and
+	rows.
+ELEMENT			   
+	The intersection of a Column and a Row such as A0 D35 P6.  An
+	Element can be empty or contain the Definition of a Label,
+	Value or Formula.
+DEFINITION
+	Information (up to 255 characters) entered into an Element and
+	shown on the Command Line when the Element is accessed.
+COLUMN
+	Horizontal Element locations lettered from A to Z.
+ROW
+	Vertical Element locations numbered from 0 to 100.
+SHEET SIZE
+	The maximum column (cm) and row (rm) intersection permitted by
+	the program -- shown by the /M command.
+MODEL
+	Text and numeric data entered into the sheet.
+MODEL FILE
+	A Model 100 .DO file stored in RAM memory or on another device
+	by the /SS command containing Definitions, location and format
+	for each Element of the model.  Calculation order and global
+	format are also stored.
+DATA FILE
+	A Model 100 .DO file stored in RAM memory or on another device
+	by the /S#S command containing Label and Value Definitions for
+	the Elements of a chosen section of the model.  Formula
+	Definitions are converted to values before storage.  Relative
+	Element locations are stored so that a data file saved from
+	one Model can be loaded into a different location in another.
+	Similar to DIF files used by VisiCalc but not compatible with
+	them.  (SPREAD can be modified to use standard DIF files but
+	they occupy over twice the memory and do not retain Element
+	format.)
+MODEL SIZE
+	The largest column and row used by the model -- must not be
+	greater than Sheet Size.
+DISPLAY
+	Text or Value displayed in the Element location (limited to 9
+	characters).  The current Element is displayed in reverse.
+COMMAND LINE
+	The top line of the screen.
+ULC - Upper left corner of screen.  Used to indicate mode 
+	(In>, Ed>, !) or Element Definition (L>, V>, F>).
+ER - Element register.  Immediately below ULC.  Displays the 
+	coordinates of the current Element.
+LABEL      L>Definition
+	The Definition is text which is Displayed as entered.
+VALUE      V>Definition
+	The Definition is a constant numeric value which is Displayed
+	according to Element format.
+FORMULA    F>Definition
+	The Definition is an expression containing arithmetic
+	operators, functions, and/or references to other Elements.
+	The value of the expression is Displayed according to Element
+	format.
+FORMAT
+	Value and Formula Elements can be displayed as integers, with
+	1 to 7 decimal places or in scientific notation.  If the
+	selected format cannot be displayed in 9 characters,
+	scientific notation will be used automatically.

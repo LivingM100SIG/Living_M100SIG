@@ -1,0 +1,80 @@
+DBASE.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The subject of thses messages is how to export a 102 (or 100, 200, etc.)
+into dBase III.  Some of the issues are identified, a recommendation is
+given and success is reported.  Alas -- this is not always the case!
+
+Message range: 147772 to 148219
+Dates: 5/11/87 to 5/18/87
+
+Fm: PAUL HARLE 73107,406
+To: all
+
+I'd like to transfer ASCII files into a format readable by dBase III plus.  I"m
+creating the files with a 102 and now I've found that dBase won't accept ASCII
+files; looks like it will only import pfs files, SDF, SYSYLK files, and some
+other format specific files. Please advise to this ID or to 74116,2670 via
+EasyPlex. Is there any program that the 102 can use to transfer or modify the
+ASCII files into a dBase readable format (or a program for MSDOS machines.
+
+
+Fm: Will Linden 72737,2150
+To: PAUL HARLE 73107,406
+
+  What kind of files are you trying to tansfer? "SDF" (System Delimited Format)
+is quite simple:items separated by commas, character data in quotes-- in other
+words, quite similar to both Basic DATA statements, and the way in wich the
+portables output data with PRINT#. As far as I know, a file created with PRINT#
+statments should be accepted as "SDF".
+
+
+Fm: Tom Morehouse 74116,2670
+To: Will Linden 72737,2150
+
+Thanks for the quick response!  I'm trying to import a database file created on
+the 102 where fields are separated with commas, records separated with CR's.
+Whenever I try to USE the ascii file I've created, dbase response "Not a dBase
+file".  If I can't import the 102's ascii file into dbase, I guess I can't use
+the 102 as a portable data accumulator...Help!
+
+
+Fm: Eiji Miura 76703,4311
+To: PAUL HARLE 73107,406
+
+What format is your ASCCI data file?  If it has each field separated by commas
+or the data is in columnar format, then you can use APPEND command. First,
+create a database file (with dBIII) with the field you need; then, use APPEND
+FROM (filename) DELIMITED command if the fields are separated by commas, use
+APPEND FROM (filename) SDF if it's in columnar format. This works with dBase
+III, but I haven't tried dBase III PLUS. Let me know how it works.
+
+p.s.  If each field in the ASCII file is separated by some other characters,
+use APPEND FROM (filename) DELIMITED WITH "n" where n is the character
+separating fields.
+
+
+Fm: Martin Schiff 74405,1076
+To: Tom Morehouse 74116,2670
+
+Here are the steps you need to solve your problem:
+
+        1.  Create a database in dBASE with fields that match the field
+            lengths of your data fields on the 102, and in the same
+            order
+        2.  Transfer the file to the pc that runs dBASE from the 102
+        3.  USE <the file you created>
+        4.  APPEND FROM <the model 102 file name with extension> DELIMITED
+
+You cannot USE anything but a dBASE file, but you can APPEND it to a dBASE file
+which you have previously created and used.
+
+
+Fm: Tom Morehouse 74116,2670
+To: Martin Schiff 74405,1076
+
+Thanks for your help; appending from the ascii file delimited works perfectly.
+You are a gentleman and a scholar.
+

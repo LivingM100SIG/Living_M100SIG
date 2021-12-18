@@ -1,0 +1,177 @@
+SORT.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Rick Perry's SORT.LDR (DL4) has lead to a number of variants, including
+SORT.200 for the Tandy 200.  The messages in this file deal with use of
+SORT.200 from within another program (TODO), creating a resident/menu copy
+of SORT.CO, and other arcane issues.
+
+Message range: 156119 to 156176
+Dates: 9/1/87 to 9/2/87
+
+
+Sb: #Your SORT 200 program
+Fm: GARY DAVIS 72256,2551
+To: Tony Anderson 76703,4062
+
+        As usual...HELP!  Be advised that I LOVE your SORT.200! I use it to
+sort my NOTE.DO file that I use with my highly modified TODO. However, I'd like
+to streamline things even more!
+        Instead of exiting TODO and running the 2,131 byte SORT.BA program
+separately, I would like to use SORT.BA to one-time create SORT.CO and just
+leave it in place. Then, after entering new dates, etc. into NOTE.DO via TODO,
+would like to be able to "CALL" SORT.CO from the TODO program, have it do its
+sort, and return me to the TODO display with all entries properly sorted.
+        My problem? I can't figure out how your SORT.BA gets past line 110 and
+gets to line 117 after it executes line 109! That may not be important,
+however, although I'm curious.
+        I guess what I REALLY need to know is: How do I create SORT.CO so that
+it is THERE on the main menu; how do I "implant" it to ALWAYS sort NOTE.DO; how
+do I then CALL it from TODO.BA and then have it return me to the applicable
+location back within the TODO program?
+        Sorry to be such a pest, but I'm actually kinda proud of what I have
+done to modify Mr. Karnow's 200 modification of Mr. Pearsall's TODO.100 and
+would like to continue to make it even better, at least for my uses.
+        Any help you can provide to the above is muchly 'ppreciated! Sure wish
+I could use MAGIC to do all this!
+
+
+Fm: Tony Anderson 76703,4062
+To: GARY DAVIS 72256,2551
+
+Thanks for the plaudits, but it's really Rick Perry's program, ported over for
+the 200 by me, with some long-distance help from Rick. ...
+
+When the program (any program) does a SAVEM (as in line 109), it terminates the
+run of the program. Stop, fini!  The trick is that you stuff a "CLEAR (CR)
+RUN117 (CR)" command in the keyboard buffer (earlier in line 109), so that when
+the .CO version is saved to the menu, the program returns to BASIC, and the
+keyboard is dumped to the interpreter, which takes the command as new keyboard
+input and executes the program starting at line 117.  This techinique is
+detailed in the file PGMTIP.007 (DL8).
+
+Rick's original technique picks the filename to sort out of the line input
+buffer, which is embedded in ML code IN the code.  It can be changed, with some
+effort, and you may have to, to be able to call the routine from another
+program... But you can start by deleting the Kill command from line 124.  That
+will leave SORT.CO on your menu, where it can be loaded into high RAM, and
+probably used from there... you may have to poke your NOTE.DO file name into
+the input buffer, and you may also have to figure a way to keep from
+terminating the program and going back to the menu.  It would probably be some
+variation of lines 117 to 124.
+
+Believe me, converting the program won't be an easy task, especially if you're
+not familiar with machine language.  Rick used three different techniques in
+this program; the pure machine language sort, calling it with a VARPTR
+statement which returns back to the program once completed; and picking up the
+filename from the input buffer instead of using some variation of
+A$="FILENAME.DO".  Makes it a little more complex than checksum programs.
+
+I always use it stand-alone; but there was a 100 version callable from a
+program once.  Was available here for a time, but has since been deleted. -
+Lack of interest.  I'll see if I still have a copy. It might help.
+
+
+Fm: GARY DAVIS 72256,2551
+To: Tony Anderson 76703,4062
+
+        MANY thanks for prompt and most explicit reply! I'll do some experiments
+and see wot happens!
+        Maybe I'll just to all the deletions necessary and still run SORT as a
+separate program outside of TODO but have it in high mem all the time so as to
+save valuable Model 200 ram space!
+
+
+Fm: Tony Anderson 76703,4062
+To: GARY DAVIS 72256,2551
+
+I've located a paper copy of the sort version that worked with a dedicated
+file, and sure enough, it pokes the filename into the input buffer before
+running, as a substitute for the input statement.  I no longer seem to have the
+program on disk, so will send you a copy of the program on paper so you can see
+how it works.
+
+The file recovery program you indicate will work on the 200, but you should
+change the addresses involved to those of the 200... Make it FOR A=40166 TO
+61104.
+
+
+Fm: GARY DAVIS 72256,2551
+To: Tony Anderson 76703,4062
+
+        O.K., many thanks and will look forward to receiving it. In the mean-
+time, see my following message!
+
+
+Fm: GARY DAVIS 72256,2551
+To: Tony Anderson 76703,4062
+
+        Many thanks for the info. Here's what I did:
+        After entering the last appointment, the TODO program goes to 700,
+which is merely RUN. I first used your suggestion to "create" SORT.CO, which
+now resides in high ram taking up only 202 bytes.
+        I then added a total of only 106 bytes to TODO by having the following:
+
+230 CLOSE:GOSUB910:LOADM"sort":DEFINTJ
+240 PRINT@402,"Name of file:";:INPUTA$
+250 PRINT @442,"Now Sorting File..."
+260 J=0:CALLHIMEM+5,0,VARPTR(J)
+270 GOTO700
+        The GOSUB 910 is merely a line to clear a portion of the screen within
+the calendar. Then I merely input "NOTE" and it does its thing! The GOTO 700
+then runs the program and all entries appear in proper order.
+        So, I saved a net of 1,786 bytes. Now if only I could figure a
+"shortcut" so as to not have to input the name of the "NOTE" file, but as you
+said that would probably take machine language programming and I should probaly
+be happy with what I now have!
+
+
+Fm: Tony Anderson 76703,4062
+To: GARY DAVIS 72256,2551
+
+Well, you're close to having the exact technique you want.  The key will be
+changes in lines 117 to 124 to make it poke the filename into the buffer, run
+the program, and return to the calling program.
+
+The following is extracted from the dedicated program, with address changes for
+the 200... you can try it... no guarantees, though...
+
+117 CLS:MAXFILES=1:CLEAR256, *
+118 LOADM"SORT":DEFINTJ:A$="NOTE"
+119 FORA=1TOLEN(A$)
+120 POKE 61295+A,ASC(MID$(A$,A)):NEXT
+121 POKE 61295+A,0
+122 CLS:PRINT@130,"Now Sorting file..."
+123 J=0:CALLHIMEM+5,0,VARPTR(J)
+124 ' JOB FINISHED, RETURN
+
+You'll have to determine the address indicated by the asterisk, above... it's
+the loading address of SORT.CO, and I don't know what it is in your machine.
+Looks like all you really need is lines 118 through 123... the rest you've
+figured out for yourself.
+
+Hmph... now you don't get a letter from me.  (grin)
+
+
+Fm: GARY DAVIS 72256,2551
+To: Tony Anderson 76703,4062
+
+        O.K., I'll give it a try and we'll see what happens. Will let you know
+later this evening!
+
+
+Fm: GARY DAVIS 72256,2551
+To: Tony Anderson 76703,4062
+
+        Many thanks!  It worked, or so it did after driving me crazy for a few
+minutes!
+        Kept giving me a TM error; then I realized that the beginning of the
+main program has: DEFSTR A-M! So, I changed your "A" in the equation to "Q" and
+it works perfectly!
+        As usual you have given this amateur just what he needed to fulfill his
+wishes and for that I thank you. This latest change only added 35 bytes to the
+program, bringing its TOTAL to only 2594!
+        Thanks again....and just think: I saved you the price of the postage
+stamp! <DOUBLE GRIN>.

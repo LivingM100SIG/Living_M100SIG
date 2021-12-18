@@ -1,0 +1,79 @@
+10 '4/27/89  CSE 1.0
+15 'Copyright 1989 Mike Audleman (73577,3041) Distribution restricted to Model 100 Forum members
+20 CLS:WIDTH80:SCREEN1
+30 CLEAR256:MAXFILES=2:CLS:DEFDBLA-Z:FORX=0TO10:READQM(X):NEXT
+35 GOTO1000
+40 GOSUB800:PRINT:PRINT"Compute Ported Reflex Enclosure":PRINT:A=1:GOTO50
+45 GOSUB800:PRINT:PRINT"Compute Acoustic Suspention Enclosure":PRINT:A=3
+50 PRINT:PRINT"Enter these Specifications about the Speaker:"
+60 INPUT"Diameter ";D:INPUT"Fs (in Hertz, Hz) ";FS:INPUT"Vas (in Cubic Feet) ";VA:INPUT"Qts ";QT
+80 OPEN"f$$$#"FOROUTPUTAS2:PRINT#2,D,FS,VA,QT,P,A:CLOSE2
+90 CLOSE:OPEN"LCD:"FOROUTPUTAS1:PRINT#1,CHR$(12)STRING$(5,10)chr$(152)chr$(153)"=Qb ":PRINT#1,chr$(155)chr$(154)"=Vb & F3dB";
+100 GOSUB530:QB=1:IFA>2THENX=0:X1=0:X2=0:Y1=0:LINE(0,0)-(239,61),1,B:LINE(0,35)-(80,61),1,B:M=-1:Y=0:FORQB=.5TO1.5STEP.05
+110 GOSUB 490:GOSUB450:IFXZ=0ANDVB>0THENXZ=240/VB
+120 X3=F3:X4=VB*XZ:IFX3<0THENX3=0ELSEIFX3>239THENX3=239
+130 IFX4<0THENX4=0ELSEIFX4>239THENX4=239
+140 IFMTHENIFY>35AND(X4<80ORX3<80)THENLINE(1,35)-(80,60),0,BF:M=0
+150 LINE(X1,Y0)-(X4,Y):LINE(X2,Y0)-(X3,Y)
+160 X1=X4:X2=X3:Y0=Y:Y=Y+3
+170 IFA>2THENNEXTELSEQB=1:GOTO220
+180 IFPTHENLPRINT:LOADM"xcopy":CALL64704
+190 OPEN"f$$$#"FORINPUTAS2:INPUT#2,D,FS,VA,QT,P,A:CLOSE2:KILL"f$$$#.do":RESTORE:FORX=0TO10:READQM(X):NEXT
+200 IFPTHENLPRINTCHR$(27)CHR$(19)CHR$(12)
+210 INPUT "Enter Qb you wish to use (.5-1.5) ";QB
+220 P1=P:P=0:GOSUB530:GOSUB490:GOSUB450:P=P1
+230 GOSUB 700
+240 PRINT"Table will step Width and Height or Depth of box"
+250 INPUT"Wish to step (H)eight, (D)epth or (Q)uit";A$:A=INSTR("HhDdQq",A$):IFA>4THENRUNELSEIFA=0THEN220
+260 INPUT"Enter Starting,Ending dimentions (in Inches)";S,E
+270 IFA<3THENIF(S<D+1ORE<D+1)THENPRINT"Start/End Must be at least "D+1" inches.":GOTO220ELSEIFE<=STHENPRINT"End must be Larger than Start!":GOTO220
+280 INPUT"Enter Starting,Ending dimentions for Width (in Inches)";WS,WE
+290 IF(WS<D+1ORWE<D+1)THENPRINT"Start/End Must be at least "D+1" inches.":GOTO220ELSEIFWE<=WSTHENPRINT"End must be Larger than Start!":GOTO220
+330 PRINT"   IN^3     Ft^3     W     D     H   Ratio W-D-H  Optimum is 1-.6-1.6"
+340 IFPTHENLPRINT"   IN^3     Ft^3     W     D     H   Ratio W-D-H  Optimum is 1-.6-1.6"
+350 VB=VB*1728:FORW=WSTOWE:FORX=STOE:IFA>2THENH=VB/(W*X):DE=XELSEDE=VB/(W*X):H=X
+360 VI=W*H*DE:VF=VI/1728:RD=DE/W:RH=H/W
+370 PRINTUSING"#####.##  ###.###  ##.## ##.## ##.## #.# #.# #.#";VI,VF,W,DE,H,(W/W),RD,RH;
+380 IFPTHENLPRINTUSING"#####.##  ###.###  ##.## ##.## ##.## #.# #.# #.#";VI,VF,W,DE,H,(W/W),RD,RH;
+390 IF RD>=.5ANDRD<=.7ANDRH>=1.5ANDRH<=1.7THENBEEP:PRINT"<<-Optimum Size";:IFPTHENLPRINT"<<-Optimum Size";:GOTO410
+400 IF(RD>=.4ANDRD<=.8)AND(RH>=1.4ANDRH<=1.8)THENBEEP:PRINT"<<-Near Optimum Size";:IFPTHENLPRINT"<<-Near Optimum Size";
+410 PRINT:IFPTHENLPRINT
+420 NEXTX,W:IFPTHENLPRINTCHR$(12)
+430 INPUT"Press Enter to Continue";A$:RUN
+440 END
+450 IFVB<=0THENRETURN
+460 PRINTUSING"#.## ###.###  ###.###   ###.###  ###.###  ###.###  ##.##  ##.##  ##.##";QB,VB,QR,VR,FB,F3,W,DE,H
+470 IFNOTPTHENRETURN
+480 LPRINTUSING"#.## ###.###  ###.###   ###.###  ###.###  ###.###  ##.##  ##.##  ##.##";QB,VB,QR,VR,FB,F3,W,DE,H:RETURN
+490 QR=QB/QT:VR=(QR*QR)-1:IFVR=0THENVB=0ELSEVB=VA/VR
+500 IFA>2THENFB=QR*FS:F3=FB*QM((QB*10)-5)ELSEVB=(QT^2.87)*15*VA:F3=(QT^-1.4)*.26*FS:FB=(QT^-.9)*.42*FS
+510 IFVB<=0THEN520ELSES=VB^(1/3):W=S*1.0137003325955:DE=W*.6*12:H=W*1.6*12:W=W*12
+520 RETURN
+530 CLS:PRINT"Diameter="D", Qts="QT", Fs="FS", Vas="VA", Qts="QT
+540 PRINT"Qb=Q of Box     Vb=Volume of Box   Qr=Ratio Between Qb & Qts"
+550 PRINT"Vr=Volume Ratio Fsb=Box Res. Freq  F3dB=3 dB Cutoff Freq"
+560 PRINT       "Qb     Vb       Qr        Vr      Fsb      F3dB      W      D      H"
+570 IFNOTPTHENRETURN
+580 LPRINT"Diameter="D", Qts="QT", Fs="FS", Vas="VA", Qts="QT
+590 LPRINT"Qb=Q of Box     Vb=Volume of Box   Qr=Ratio Between Qb & Qts"
+600 LPRINT"Vr=Volume Ratio Fsb=Box Res. Freq  F3dB=3 dB Cutoff Freq":PRINT
+610 LPRINT       "Qb     Vb       Qr        Vr      Fsb      F3dB      W      D      H"
+620 RETURN
+630 DATA1.55,1.22,1,.9,.83,.79,.76,.74,.72,.71,.70
+700 PRINT"A square box of "INT(VB*1000)/1000" cubic feet will be "INT((S*12)*100)/100CHR$(8)CHR$(34)" on a side."
+710 IFPTHENLPRINT"A square box of "INT(VB*1000)/1000" cubic feet will be "INT((S*12)*100)/100CHR$(8)CHR$(34)" on a side."
+720 PRINTUSING"Optimum Dimentions are ###.##W ###.##D ###.##H for ###.### cubic feet.";W,DE,H,(W*DE*H)/1728
+730 IFPTHENLPRINTUSING"Optimum Dimentions are ###.##W ###.##D ###.##H for ###.### cubic feet.";W,DE,H,(W*DE*H)/1728
+740 RETURN
+800 CLS:PRINT:PRINT"Custom Speaker Enclosures 1.0  Mike Audleman, Apr 27,1989":RETURN
+1000 GOSUB800:PRINT"  1 - Compute Ported Reflex Enclosure":PRINT"  2 - Compute Acoustic Suspention Enclosure":PRINT"  3 - Compute Volume of an Enclosure":PRINT"  4 - Compute Golden Ratio for a Specific Volume"
+1010 PRINT:PRINT"1 & 2 you provide speaker specs and computer calculates size & volume of box.":PRINT"3 & 4 you provide box size and the computer calculates other box information.":PRINT:PRINT"Enter >";
+1020 A$=INKEY$:IFA$=""THEN1020
+1030 A=INSTR("1234M"+CHR$(13),A$):IFA<=0THENBEEP:GOTO1020
+1040 IFA>4THENMENU
+1050 PRINTA$:A$="":INPUT"Send to Printer also (y/N) ";A$:IFINSTR("Yy",A$)THENP=-1ELSEP=0
+1060 ONAGOTO40,45,2000,3000:RUN
+2000 GOSUB800:PRINT:PRINT"Compute Volume of an Enclosure":PRINT:PRINT:INPUT"Enter the Width,Depth, & Height of box (in inches)";W,DE,H
+2010 VB=W*DE*H:PRINTUSING"Volume of box is ##,###.## cubic inches or #,###.### cubic feet.";VB,VB/1728:GOTO430
+3000 GOSUB800:PRINT:PRINT"Compute Golden Ratio for Given Volume":PRINT:PRINT:INPUT"Enter Volume of box in cubic feet (ft^3=in^3/1728) ";VB:GOSUB510
+3010 GOSUB700:GOTO430

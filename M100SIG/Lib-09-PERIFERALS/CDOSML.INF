@@ -1,0 +1,201 @@
+How to access the Chipmunk from  machine language.
+(C) 1985 Don Corbitt 73216,1022.  For personal use only.
+;This short
+; document shows how to read and write
+; any sector on the disk, and hints on
+; how to do more advanced functions
+; (at your own risk, I haven't tried 
+; them yet...)
+;Your assembly language program should
+; look like this - 
+
+;SimpleProg, by Don Corbitt, Feb 21, 1985
+;Read and write sector 7 of track 3
+sector	equ	7
+track	equ	3
+crtc	equ	66
+srsect	equ	1
+swsect	equ	2
+errors	equ	045dh
+	;BASIC error handler routine
+start:	mvi	d,track	;set track
+	mvi	e,sector ;set sector
+	lxi	h,mybuff ;store here
+	mvi	c,srsect ;do read
+	rst	7	;jump to CDOS
+	db	crtc	; routines
+	jc	errors	;if error abort
+;just performed read, now write it back
+	mvi	d,track
+	mvi	e,sector
+	lxi	h,mybuff
+	mvi	c,swsect
+	rst	7
+	db	crtc
+	jc	errors
+	ret		;done successfully
+mybuff	ds	256	;save data here
+	end	start
+;End of simpleprogram.
+
+
+
+;For those of you that like looking at
+; source code, this is the part of CDOS
+; that handles jumping to the proper
+; routine based on the contents of C.
+;(C) 1984 Holmes Engineering.
+; Used with permission. 
+;(Yeah, I wrote it, but they were paying me at the time, so it's their's)
+hcrtc:	;hook for crt close - unused.  
+	;This is an entry point to CDOS
+	; routines
+	push	h
+	lxi	h,ctable
+	mvi	b,0
+	push	psw
+	;save status of carry ???
+	dad	b
+	dad	b
+	push	d
+	xchg
+	lhlx
+	;hl <- address of routine
+	pop	d
+	pop	psw
+	;restore flags
+	xthl
+	;restore hl, push address of routine
+	ret
+
+ctable:	dw	read1
+	;The read1 command sends the
+	; command byte in register A
+	; to the 1770 Floppy Disk 
+	; Controller.  This is for
+	; things such as seeks, etc.
+	;If error, then carry set and
+	; error number in register e.
+	dw	srsect
+	;Subroutine to Read a Sector
+	; will read the sector found in 	; register E, on track D, 
+and
+	; store the information at HL. 
+	;If there is an error, it will
+	; retry several times before
+	; returning with carry set and
+	; the error number in E.
+	dw	swsect
+	;Subroutine to Write a Sector
+	; Same as srsect, except it
+	; writes.
+	dw	read
+	;any read type - special -
+	; (could be read track, for 
+	; example...)
+	dw	write
+	;any write type - special -
+	; (could be write track, for
+	; example...)
+
+And now, for a short explanation of CDOS disk allocation, for those of you 
+who missed PRDIR.BA, etc.
+	CDOS Disk Format
+Tracks			80 (0-79)
+Sectors per track	18 (1-18)
+Bytes per sector	256
+Total capacity		368640 bytes
+Overhead for directory	1536 bytes
+Free space		367104 bytes
+Allocation method	Clusters
+Cluster size		6 sectors (1.5K)
+Cluster count		240 (0-239)
+
+Cluster math - converting from cluster numbers to track/sector and back.  
+Given a cluster C, what is the track T and first sector S?
+T=INT(C/3) (0,1,2=0, 3,4,5=1...)
+S=(C MOD 3)*6 + 1 (0=1, 2=13, 3=1...)
+Cluster 0 is track 00, sectors 1-6.
+C=(T*3) + ((S-1) DIV 6)
+Track 79 Sector 18 gives cluster 239.
+
+The allocation table (track 00, sector 5 (copy in sector 6)) keeps track of
+which clusters are empty, part of a file, part of a folder, or bad.  I will
+be using hexadecimal notation in this section.
+	Allocation table
+Cluster empty		00
+Not last in file	01-EF
+Last cluster in file	F1-F6
+Folder or directory	F0
+Marked bad in format	FE
+Reserved		F7-FD,FF
+As an example, if a file is 5000 bytes long, it would be stored as follows.
+  5000/256=20 sectors (19.53 rounded up).  20/6=4 clusters (3.33 rounded up
+).  If this file was allocated to clusters 4,5,6 and 7, the allocation 
+table would look like this
+
+Allocation table	Contains
+	4		05
+	5		06
+	6		07
+	7		F2
+
+Each byte in the allocation table points to the next cluster in the file, 
+except for the last one, which contains (F0 + sectors used).  This says 
+that all of clusters 4,5 and 6 are full, while only the first two sectors 
+of cluster 7 are being used.  (To find out how many bytes of the last 
+sector of cluster 7 are being used, look at the directory entry for the 
+file, the value LsbLen - least significant byte of file length.)
+
+IMPORTANT NOTE! - To increase performance, CDOS keeps a copy of the 
+allocation table in RAM at all times.  This is only read when a new disk is
+inserted, or disk power is turned on.  If you modify the allocation table 
+on disk, be sure to have the user remove the disk and reinsert it before 
+saving any files.  If this isn't done, CDOS will update the disk with the 
+old copy of the allocation table stored in RAM.
+
+	Directory structure
+dirtyp	1	file type and in use
+filnm3	9	file name and extension
+lsblen	1	low byte of file length
+clustr	1	starting track/sector
+creatd	2	date created
+modifd	2	date last modified
+xtra	2	unused bytes
+	-------
+	- 18 bytes
+;entry 0 for self and parent directory, next 12 entries for files and 
+folders
+The filnm3 of entry 0 shows the disk name if in the main directory, or the 
+folder name if in a folder.  The clustr of entry 0 contains the cluster of 
+a parent folder.  Thus if you are down three levels of folders, and wish to
+go up one, just change the current folder to the folder in this clustr.
+
+Things to do (that I don't have time to)...
+Rename disk files - just change the name in the folder, adding blanks as 
+needed.
+Move files from one folder to another.  Copy the directory information from
+one folder.  Set the filetype byte of the old folder to 0.  Insert the 
+directory information in the new folder.
+Rename folders.  You have to change the name two places, in the parent 
+directory or folder (same as renaming a file) and also in directory entry 0
+of the folder itself.
+Change disk name.  Just change bytes 2 through 10 of sector 1, track 0.
+Backup disk.  Read allocation table.  Only copy clusters that are being 
+used.
+
+To the best of my knowledge, this information is accurate.  However, when 
+doing things I describe for the first time, write protect all you important
+disks, and keep them in another room.  I almost ruined my copy of the CDOS 
+source, when I forgot to remove it from the drive before doing an 
+experiment!  If you have any problems, feel free to ask me questions.  I 
+will feel free to answer any I have time for.  Note - I am not currently on
+the Holmes Engineering payroll, I have returned to school to get my CS 
+degree.  If I don't respond immediately, please be patient.  I wrote this 
+to encourage the development of third party software for my computer (see, 
+just a selfish reason after all...<grin>).  Good luck, and let me know how 
+it comes out.
+	Don Corbitt 73216,1022
+	Provo, UT (801) 377-6833
+	Feb 21, 1985
+

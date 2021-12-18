@@ -1,0 +1,54 @@
+SEARCH.CO by Paul Globman
+Copyright (c) 1985,1989
+
+To create SEARCH.CO just run the BASIC loader.
+
+SEARCH.CO will find the locations of a defined byte sequence and display the 
+addresses where the sequence is found.
+
+To use SEARCH.CO you must run a small basic program which defines the byte 
+sequence.  Such a program may be as simple as...
+
+1 LOADM"SEARCH"
+2 INPUT"Find";X$
+3 CALL 63900,,VARPTR(X$)
+
+This is fine if the string you are searching for is an ASCII string that can be typed in at the keyboard.
+
+Suppose you are looking for all occurrences of CALL 20353.  Then line 2
+would be...
+
+2 X$=CHR$(205)+CHR$(20353MOD256)+CHR$(20353\256):REM CHR$(205)=CALL(op code)
+
+
+Other variations of line 2 can be used to define the sequence of bytes you 
+want to search for.  For example GOSUB 4, where you would define a subroutine 
+to generate X$, using DATA statements or an input loop.
+
+SEARCH.CO will examine all of memory, from address 0 to address 65535, and 
+will display locations of exact matches as:
+
+ in xxxxx  in xxxxx  in xxxxx  in xxxxx
+
+where xxxxx is the decimal address of the matched byte sequence.
+
+
+1 '************************
+2 '*  SEARCH.CO           *
+3 '*    by Paul Globman   *
+4 '*  Copyright (c) 1985  *
+5 '************************
+10 FOR I = 63900 TO 63944 
+20 READ X:POKE I,X:SM=SM+X
+30 NEXT
+40 IF SM = 6705 THEN 60
+50 PRINT"error in data":STOP
+60 SAVEM"SEARCH.CO", 63900,63944
+1000 DATA 78,35,235,237,235,33,0
+1010 DATA 0,205,62,79,197,213,229
+1020 DATA 205,17,110,225,209,193,204
+1030 DATA 188,249,35,124,181,194,167
+1040 DATA 249,195,62,79,197,213,229
+1050 DATA 205,3,71,205,30,0,225
+1060 DATA 209,193,201
+1070 REM       END OF DATA

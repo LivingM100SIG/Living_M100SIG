@@ -1,0 +1,321 @@
+1 DIMZ$(5)
+2 DIMM$(5)
+3 PR$="####.##%"
+4 V$="$$#,###,###,###.##"
+5 I$="###.##%"
+6 KEYOFF
+7 I2$="##"
+8 DEFDBLJ,B,R,A,Q,P,T
+9 Z=-1:CLS
+10 PRINT"(1) Future Value of Investment"
+11 PRINT"(2) Future Value of Regular Deposits"
+12 PRINT"(3) Deposits Required for Future Value"
+13 PRINT"(4) Withdrawals From Investment"
+14 PRINT"(5) Minimum Investment for Income":GOSUB30
+15 PRINT"(6) Income From Investments"
+16 PRINT"(7) Nominal Interest Rates"
+17 PRINT"(8) Effective Interest Rates"
+18 PRINT"(9) Earned Interest Table"
+19 PRINT"(10) Annual Depreciation Rate":GOSUB30
+20 PRINT"(11) Depreciated Investment"
+21 PRINT"(12) Salvage Value Year End"
+22 PRINT"(13) Discounted Commercial Paper"
+23 PRINT"(14) Loan Principal"
+24 PRINT"(15) Loan Payment Schedules":GOSUB30
+25 PRINT"(16) Final Loan Payments"
+26 PRINT"(17) Remaining Loan Balance"
+27 PRINT"(18) Loan Repayment Periods"
+28 PRINT"(19) Loan Interest Paid"
+29 PRINT"(20) Mortgage Amortization Table":GOSUB30:GOTO9
+30 PRINT:PRINT"Select a Program..":INPUT"(99 to Exit <ENTER> For More)";Z:IFZ=<0THENCLS:RETURN
+31 IFZ=99THEN321
+32 ONZGOTO36,47,57,71,82,93,104,113,121,131,141,155,171
+33 IFZ=>14THENZ1=Z-13
+34 ONZ1GOTO187,199,217,237,258,270,281
+35 GOTO9
+36 CLS
+37 PRINT"FUTURE VALUE OF INVESTMENT":PRINT"Enter:"
+38 INPUT"Initial Value of Investment: ";P
+39 INPUT"Nominal Interest Rate: ";I
+40 INPUT"Number of Compounding Periods Each Year: ";N
+41 INPUT"Number of Years for the Investment: ";Y
+42 I=I/N/100
+43 T=P*(I+1)^(N*Y)
+44 CLS:PRINT"Future Value of This Investment is: ";:PRINTUSINGV$;T
+45 PRINT:INPUT"Another Calculation (Y or N):";Y$
+46 IFY$="Y" ORY$="y"THEN36ELSE9
+47 CLS:PRINT"FUTURE VALUE OF REGULAR DEPOSITS-ANNUITY":PRINT"Enter:"
+48 INPUT"Amount of Regular Deposit: ";R
+49 INPUT"Nominal Interest Rate: ";I
+50 INPUT"Number of Deposits Each Year: ";N
+51 INPUT"Number of Years: ";Y
+52 I=I/N/100
+53 T=R*((I+1)^(N*Y)-1)/I
+54 CLS:PRINT"VALUE IS: ";:PRINTUSINGV$;T
+55 PRINT:INPUT"Another Calculation (Y or N):";Y$
+56 IFY$="Y" ORY$="y"THEN47ELSECLS:GOTO9
+57 CLS
+58 PRINT"VALUE OF ANNUITY OR SAVINGS ACCOUNT":PRINT"Enter:"
+59 INPUT"Desired Future Value: ";T
+60 INPUT"Nominal Interest Rate: ";I
+61 INPUT"Number of Deposits Per Year: ";N
+62 INPUT"The Number of Years: ";Y
+63 I=I/N/100
+64 R=T*I/((I+1)^(N*Y)-1)
+65 R$=STR$(R):T$=STR$(T)
+66 L1=LEN(R$):L2=LEN(T$)
+67 CLS:PRINT"Regular deposits of: ";
+68 PRINTUSINGV$;R;:PRINT" will yield:";:PRINTUSINGV$;T:PRINT" in: ";Y;" years"
+69 PRINT:INPUT"Another Calculation (Y or N):";Y$
+70 IFY$="Y" ORY$="y"THEN57ELSE9
+71 CLS:PRINT"REGULAR WITHDRAWALS FROM AN INVESTMENT":PRINT"Enter:"
+72 INPUT"The amount of your initial investment: ";P
+73 INPUT"Nominal interest rate: ";I
+74 INPUT"The number of withdrawals each year: ";N
+75 INPUT"The number of years: ";Y
+76 I=I/N/100
+77 R=P*(I/((I+1)^(N*Y)-1)+I)
+78 CLS:PRINT"You may withdraw: ";:PRINTUSINGV$;R;
+79 PRINT" from your account: ";N:PRINT"times per year for :";Y;" years without reducing your initial investment"
+80 PRINT:INPUT"Another calculation (Y or N):";Y$
+81 IFY$="Y" ORY$="y"THEN71ELSE9
+82 CLS:PRINT"INVESTMENT REQUIRED TO PROVIDE FUTURE VALUE":PRINT"Enter:"
+83 INPUT"Amount you wish to end up with: ";T
+84 INPUT"The number of compounding periods each year: ";N
+85 INPUT"The number of years for this investment: ";Y
+86 INPUT"The nominal interest rate: ";I
+87 I1=I
+88 I=I/N/100
+89 P=T/(I+1)^(N*Y)
+90 CLS:PRINT"You must invest: ";:PRINTUSINGV$;P;:PRINT" to yield: ";:PRINTUSINGV$;T
+91 PRINT:INPUT"Another Calculation (Y or N)";Y$
+92 IFY$="Y" ORY$="y"THEN82ELSE9
+93 CLS:PRINT"MINIMUM INVESTMENT FOR INCOME":PRINT"Enter:"
+94 INPUT"Number of withdrawals each year: ";N
+95 INPUT"Amount of each withdrawal: ";R
+96 INPUT"The nominal interest rate: ";I
+97 INPUT"Withdrawal to occur for how many years: ";Y
+98 I1=I
+99 I=I/100
+100 P=R*N/I*(1-1/((1+I/N)^(N*Y)))
+101 CLS:PRINT"A minimum investment of: ";:PRINTUSINGV$;P;:PRINT" will yield your desired return"
+102 PRINT:INPUT"Another calculation (Y or N):";Y$
+103 IFY$="Y" ORY$="y"THEN93ELSE9
+104 CLS:PRINT"NOMINAL INTEREST ON INVESTMENTS:":PRINT"Enter:"
+105 INPUT"The amount of the principal: ";P
+106 INPUT"Total amount of investment: ";T
+107 INPUT"The number of years of the investment: ";Y
+108 INPUT"The compounding periods each year: ";N
+109 I2=N*((T/P)^(1/(N*Y))-1)*100
+110 CLS:PRINT" nominal interest rate for the above parameters is: ";:PRINTI2;
+111 PRINT:INPUT"Another Calculation (Y or N)";Y$
+112 IFY$="Y" ORY$="y"THEN104ELSE9
+113 CLS:PRINT"EFFECTIVE INTEREST ON INVESTMENTS";:PRINT"Enter:"
+114 INPUT"The amount of the initial investment";P
+115 INPUT"The desired future value: ";T
+116 INPUT"The life of the investment in years";Y
+117 A=((T/P)^(1/Y)-1)*100
+118 CLS:PRINT"The effective annual interest rate of the investment is:";:PRINTUSINGPR$;A
+119 PRINT:INPUT"Another Calculation (Y or N):";Y$
+120 IFY$="Y" ORY$="y"THEN113ELSE9
+121 CLS
+122 PRINT"INTEREST TABLE FOR INVESTMENT":PRINT"ENTER:"
+123 INPUT"How Many Years for Investment";Y
+124 INPUT"Number of Compounding periods per Year";N:N1=N*Y
+125 INPUT"Interest Rate";I:I=(I/100)/N
+126 INPUT"Principal";P
+127 IE=((P*(1+I)^N1)-P)
+128 PRINTUSINGV$;P;:PRINT" Invested for";Y;"Years will Yield";USINGV$;IE
+129 PRINT:INPUT"Another calculation (Y or N):";Y$
+130 IFY$="Y" ORY$="y"THEN121ELSEGOTO9
+131 CLS
+132 PRINT"DEPRECIATION RATE OF AN INVESTMENT":PRINT"Enter:"
+133 INPUT"The Original Price of the Item";P
+134 INPUT"The Resale Price of the Item";T
+135 INPUT"The Item's Life in Years";Y
+136 D=100*(1-(T/P)^(1/Y))
+137 CLS:PRINT"You Purchased This Item for:";:PRINTUSINGV$;P;:PRINT" and Sold it ";:PRINTUSINGI2$;Y;:PRINT" Years Later-"
+138 PRINT": ";:PRINTUSINGV$;T;:PRINT", the Actual Depreciation Rate is: ";:PRINTUSINGPR$;D
+139 PRINT:INPUT"Another calculation (Y or N):";Y$
+140 IFY$="Y" ORY$="y"THEN131ELSE9
+141 CLS
+142 PRINT"DEPRECIATED WITHIN A YEAR":PRINT"Enter:"
+143 INPUT"The Original Price of the Item:";P
+144 INPUT"What Percent do you want to Depreciate";I
+145 I=I/100
+146 PRINT:FORY%=1TOK%
+147 D=P*I*(1-I)^(Y%-1)
+148 PRINT" #";Y%;"Depreciation is $";D:PRINT
+149 X=X+1:IFX=5THENX=0
+150 PRINT"RETURN FOR MORE":INPUTX$:PRINT
+151 IFD>=2THENNEXTY%
+152 PRINT:INPUT"Another Calculation (Y/N)";Y$
+153 IFY$="Y" ORY$="y"THENGOSUB316:GOTO141
+154 GOTO9
+155 CLS
+156 PRINT"THE SALVAGE VALUE"
+157 PRINT"   OF AN ITEM...":PRINT"Enter:"
+158 INPUT"The Original  rice of the Item";P
+159 INPUT"The Item's Depreciation Rate";I
+160 K%=100
+161 FORY%=1TOK%
+162 S=P*(1-I/100)^Y%
+163 CLS:PRINT" #";Y%;"Salvage Value is $";S
+164 PRINT
+165 X=X+1:IFX=5THENX=0
+166 PRINT"RETURN FOR MORE":INPUTX$:PRINT
+167 IFS>=2THENNEXTY%
+168 PRINT:INPUT"Another Calculation (Y/N)";Y$
+169 IFY$="Y" ORY$="y"THENGOSUB316:GOTO155
+170 GOTO9
+171 CLS:PRINT"THE NET COST OF DISCOUNTED"
+172 PRINT"           PAPER.."
+173 PRINT"Enter:"
+174 INPUT"The Future Value of the Note";T
+175 INPUT"The Discount Rate";D
+176 INPUT"The Number of Days to Maturity";N
+177 D=D/100
+178 D1=T*D*N/360
+179 CLS:PRINT"You Purchase a Note Worth $";T
+180 PRINT"        Due in";N;"Days"
+181 PRINT" a Discount Rate of";D*100;"Percent,"
+182 PRINT" Discount Amount Will Be $";D1
+183 PRINT" the Cost Will be $";T-D1;" ."
+184 PRINT:INPUT"Another Calculation (Y/N)";Y$
+185 IFY$="Y" ORY$="y"THENGOSUB316:GOTO171
+186 GOTO9
+187 CLS:
+188 PRINTTAB(5)"PRINCIPAL ON A LOAN"
+189 PRINT"Enter:"
+190 INPUT"How Many Payments do You Make Each Year";N
+191 INPUT"Amount of each Payment";R
+192 INPUT"Loan Annual Interest Rate";I
+193 INPUT"Life of the Loan in Years";Y
+194 P=R*N*(1-1/((I/100)/N+1)^(N*Y))/(I/100)
+195 CLS:PRINT" principal on this loan is: ";USING"$$#,###,###.##";P
+196 PRINT:INPUT"Another Calculation (Y/N)";Y$
+197 IFY$="Y" ORY$="y"THENGOSUB316:GOTO187
+198 GOTO9
+199 CLS
+200 PRINT"PAYMENT ON A LOAN.."
+201 PRINT"Enter:"
+202 PRINT"Life of the Loan in Years"
+203 INPUTY
+204 INPUT"Annual Interest Rate ";I
+205 INPUT"How Many Payments Do You Make Each Year";N
+206 INPUT"Loan Principal Amount";P
+207 PRINT:PRINT:R=((I/100)*P/N)/(1-1/((I/100)/N+1)^(N*Y))
+208 I1=I
+209 CLS:PRINT" payments of ";USING"$$#,###,###.##";R;
+210 PRINT" made ";N;" times each year"
+211 PRINT" required to satisfy"
+212 PRINT" loan of ";USING"$$#,###,###.##";P;:PRINT" for a period of ";USING"###";Y;:PRINT" years"
+213 PRINT" an interest rate of";I1;" percent per annum."
+214 PRINT:INPUT"Another Calculation (Y/N)";Y$
+215 IFY$="Y" ORY$="y"THENGOSUB316:GOTO199
+216 GOTO9
+217 CLS:
+218 PRINTTAB(5)"LAST PAYMENT ON A LOAN"
+219 PRINT"Enter:"
+220 INPUT"Life of the Loan in Years";Y
+221 INPUT"Annual Interest Rate";I
+222 INPUT"Amount of Each Regular Payment";R
+223 INPUT"How Many Payments Do You Make Each Year";N
+224 INPUT"Amount of the Loan Principal";P
+225 PRINT:I1=I:I=I/100:BO=P
+226 IFN*Y>100THENCLS:PRINTTAB(5)"** WORKING THE PROBLEM **"
+227 FORK=1TON*Y
+228 I2=INT((BO*I/N)*100+.5)/100
+229 A=R-I2
+230 BO=BO-A
+231 NEXTK
+232 CLS:PRINTLASTPAYMENTFORTHISLOAN," 
+233 PRINT" be $";INT((R+BO)*100+.5)/100
+234 PRINT:INPUT"Another Calculation (Y/N)";Y$
+235 IFY$="Y" ORY$="y"THENGOSUB316:GOTO217
+236 GOTO9
+237 CLS
+238 PRINT"BALANCE ON A LOAN"
+239 PRINT"Enter:"
+240 INPUT"Number of Payments Made Each Year";N
+241 INPUT"Annual Interest Rate";I
+242 INPUT"Amount of Each Payment";R
+243 INPUT"Amount of the Loan Principal";P
+244 PRINT"The Last Payment Made ,"
+245 INPUT"(PAYMENT #, YEAR # )";N1,Y
+246 CLS:PRINT"** WORKING ON PROBLEM **"
+247 I=I/100
+248 BO=P
+249 FORJ1%=1TON*(Y-1)+N1
+250 I1=INT((BO*I/N)*100+.5)/100
+251 A=R-I1
+252 BO=BO-A
+253 NEXTJ1%
+254 CLS:PRINT"Remaining Balance is $";INT(BO*100+.5)/100
+255 PRINT:INPUT"Another Calculation (Y/N)";Y$
+256 IFY$="Y" ORY$="y"THENGOSUB316:GOTO237
+257 GOTO9
+258 CLS
+259 PRINTTAB(5)"THE TERM OF A LOAN"
+260 PRINT"Enter:"
+261 INPUT"Number of Payments Each Year";N
+262 INPUT"Annual Interest Rate";I
+263 INPUT"Amount of Each Regular Payment";R
+264 INPUT"Amount of the Loan Principal";P
+265 Y=-(LOG(1-(P*(I/100))/(N*R))/(LOG(1+I/100/N)*N))
+266 CLS:PRINT"Term of";INT(Y*10+.5)/10;"Years Will Satisfy This Loan."
+267 PRINT:INPUT"Another Calculation (Y/N)";Y$
+268 IFY$="Y" ORY$="y"THENGOSUB316:GOTO258
+269 GOTO9
+270 CLS:
+271 PRINT"ANNUAL INTEREST RATE ON A LOAN"
+272 PRINT"Enter:"
+273 INPUT"Life of the Loan in Years";Y
+274 INPUT"Number of Payments per Year";N:N=N*Y
+275 INPUT"Interest Rate";I:I=(I/12)/100
+276 INPUT"Principal";P
+277 NP=N*P:F=1-((1+I)^-N):F=F/I:F=F^-1:F=F*NP:IP=F-P
+278 CLS:PRINT"Total Interest is";USINGV$;IP:PRINT"On This Loan"
+279 INPUT"Another Calculation? (Y or N)";Y$
+280 IFY$="Y" ORY$="y"THEN270ELSE9
+281 CLS
+282 PRINT"MORTGAGE AMORTIZATION TABLE"
+283 PRINT"INTEREST PAYMENTS..."
+284 PRINT"Enter:"
+285 C=0
+286 INPUT"Amount of Loan";A
+287 INPUT"Amount of Interest in Percent";J
+288 INPUT"Nunber of Years";N
+289 J=J/100
+290 N=N*12:I=J/12:B=1+I:R=A*I/(1-1/B^N)
+291 PRINT"Amount per Payment =";USING"$$,###,###.##";R
+292 Q=(R*N-A)
+293 PRINT"Interest=";USING"$$,###,###.##";Q
+294 PRINT"Begin Listing Hit Any Key...":F=0
+295 A$=INKEY$
+296 IFA$=""THEN295
+297 PRINT:B=A
+298 GOSUB316
+299 PRINT" P# INTEREST   PRINCIPAL    BALANCE"
+300 C=C+1:L=B*I:P=R-L:B=B-P:IFB<0THENB=0
+301 PRINTUSING"###";C;:PRINTUSING"$$#,###.##";L;P;:PRINTUSING"$$#,###,###.##";B
+302 F=F+1
+303 IFF=6THEN309
+304 IFN>CTHEN300
+305 D=R+B
+306 PRINT"Last Payment was...";USING"$$,###,###.##";D
+307 INPUT"Another Calculation (Y/N)";Y$
+308 IFY$="Y" ORY$="y"THEN281ELSE9
+309 PRINT"HIT <ENTER> TO CONTINUE,<ESC> TO STOP";
+310 A$=INKEY$:IFA$=""THEN310ELSECLS
+311 IFA$=CHR$(27)THENGOSUB316:GOTO307
+312 PRINT
+313 F=0
+314 GOSUB316
+315 GOTO299
+316 CLS:RETURN
+317 CLS:RETURN
+318 CLS:PRINT:RETURN
+319 PRINT:PRINT:RETURN
+320 STOP
+321 CLS:MENU

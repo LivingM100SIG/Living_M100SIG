@@ -1,0 +1,136 @@
+PICTUR.BA/PICTUR.CO for the Model 100
+By Jim Irwin - 72346,1020
+Memory Required: 600 bytes (Program)
+                 Up to 10K (Picture)
+Files needed: PICTUR.LDR; PICTUR.BAS
+
+PICTUR is a Machine Language processor for the FBI Ten-Most-Wanted pictures and
+the on-line Weather maps.  (At the CIS "!" prompt, GO TEN for FBI pictures or 
+GO AWX-4 for weather maps).  It uses a 320 byte BASIC program (PICTUR.BA) to 
+access a 260 byte Machine Language program (PICTUR.CO).  It also gives you the 
+choice of simply displaying pictures or actually printing them.  As far as I 
+know, any parallel printer supporting 8-pin bit image graphics can be used.  
+Those printers supporting only 7-pin graphics cannot be used.  But you can 
+still have fun with this program using the Display mode.  Perhaps to the point 
+of contemplating a new printer!
+
+BASIC processors take 7-8 minutes (or more) to do this.  Using this program and
+dumping to my Star SG-15 printer (with 16K buffer) takes about 27 seconds.  
+Using just the display mode takes only a few seconds.  That's the advantage of 
+M/L as opposed to BASIC!
+
+LOADING PICTUR.CO
+=================
+
+To load PICTUR into your computer, download PICTUR.LDR first.  That's a program
+used to create PICTUR.CO -- the M/L file that does all the work.  When it's 
+used, PICTUR.CO operates in the TELCOM previous screen buffer area (64704-65023
+).  Therefore, it won't interfere with any other M/L programs you may be 
+running!
+
+After downloading PICTUR.LDR, clean up any garbage from the beginning or end of
+the file.  Then load it into BASIC and run it.  After about 10 seconds, the 
+message "PICTUR.CO created" or "Checksum Error" will appear.  If you get the 
+first message, then the load was OK.  Delete PICTUR.LDR.  You don't need it any
+more.  If you get the second message, then there is some garbage in the HEX 
+data statements.  Look them over, or download PICTUR.LDR again.
+
+LOADING PICTUR.BA
+=================
+
+After PICTUR.CO has been successfully created, then you're ready for 
+PICTUR.BAS.  This is a BASIC program used to ask for the file name, and asks if
+you want to Display or Print the picture.  This, too, could have been done in M
+/L but then the program would not have fit in the TELCOM area and would have 
+interferred with other M/L programs.  Also, by using BASIC, it makes it easy 
+for the user to plug in different printer control codes.  Hopefully, anyone can
+modify the program for their particular printer.  That's why I used a BASIC 
+interface to a M/L program.
+
+Similar to LDR, download PICTUR.BAS and clean up leading and trailing garbage. 
+Load the program into BASIC and then save as PICTUR.BA.  You now have all the 
+tools you need to display/print FBI pictures or weather maps!
+
+CUSTOMIZING PICTUR.BA
+=====================
+
+Lines 2 and 3 of PICTUR.BA are used to hold printer control codes.  Line 2 sets
+Y$ equal to the control sequence used to set 1/9 line spacing for your printer 
+(8/72, 16/144, or 24/216 are the same thing).  For my Star SG-15:
+
+2 Y$=CHR$(27)+"3"+CHR$(24)
+
+Your printer probably needs something different, so edit line 2 and put your 
+control codes in there.  If you set graphic line spacing via a dip switch, 
+simply make line 2 as Y$="" and then the program will be fine.
+
+Line 3 sets Z$ equal to the control sequence used to send graphics data to your
+printer.  The program sends 480 characters per line.  Typically, this command 
+is of the form:
+
+ESC "K" n1 n2
+
+where n1 and n2 represent the number of graphics characters to be sent.  n2 is 
+usually in multiples of 256 and n1 is the remainder.  For 480 characters, n2 is
+INT(480/256)=1 and the remainder is 480-256=224.  So, for my SG-15, the command
+is ESC K 224 1.  In BASIC this becomes:
+
+Z$=CHR$(27)+"K"+CHR$(224)+CHR$(1)+CHR$(0)
+
+Please note the CHR$(0) at the end of the line.  The M/L routine uses that as a
+marker for the end of the control characters.  Make sure you have the CHR$(0) 
+at the end of your string.  Otherwise, your printer may do some strange stuff!
+
+RUNNING PICTUR.BA
+=================
+
+To run the program, access it from the main menu just like any other file.  You
+will be asked for "Picture?" at which time you enter the file name where the 
+picture data is stored.  After that, you will be asked "<D>isp or <P>rint?"  
+Enter D for display, or P for print.  Lower case is OK, too.  If you just hit 
+ENTER, you will automatically go to the display mode.
+
+Even after customizing PICTUR.BA you may find some weird stuff going on with 
+the print-out.  If so, read on!
+
+CUSTOMIZING PICTUR.CO
+=====================
+
+Some printers work backwards from others -- that is, some want a bit to be on 
+to fire a pin, others want the bit to be off to fire it.  If your printer image
+comes out in reverse video, go to BASIC and do this:
+
+LOADM"PICTUR"
+POKE 64904,47
+SAVEM"PICTUR",64706,64968
+
+If you want to change it back, change the poke to POKE 64904,0.  Of course, if 
+you want to play with reverse video images, this will do the job!
+
+One other printer consideration:  The order of pin firing.  Some printers 
+assign bit 0 to the TOP of 8 pins, others assign bit 0 to the bottom pin.  The 
+program is set up for printers having Bit 0 at the bottom.  If you get images 
+that look like each line is upside down, then your printer works the opposite 
+from mine.  To switch things around, run this little BASIC program after 
+PICTUR.CO has been loaded:
+
+0 LOADM"PICTUR"
+1 DATA 3,12,15,48,51,60,63,192,195,204,207,240,243,252
+2 FOR I=64954TO64967:READ D:POKE I,D:NEXT
+3 SAVEM"PICTUR",64706,64968
+
+
+
+CREDITS
+=======
+
+This program is based on Bill Templeton's PIX100.DMP which was based on PIX.M10
+by William D. Elkins.  The screen dump is a modification of the one I sell thru
+Portable Basics.  Thanks to Bill T. and Ralph Cooper for helping test this.
+
+Be sure to leave me a message if you want help implementing this program.  It's
+not very useful, but it sure is fun!!
+
+Jim Irwin
+72346,1020
+

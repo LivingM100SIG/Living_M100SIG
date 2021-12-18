@@ -1,0 +1,60 @@
+    This is a re-write of the EP4V2.100 submitted by Richard Helman 70536,1061.
+With the exception of line spacing and page numbering all formating controls 
+can be imbedded within the body of the text.
+.
+    Both margins can be reset at any time along with page length (5-60 lines). 
+Up to ten tabs stops can be specified [must be in ascending sequence no check 
+is made].  Tabbing is performed using the <TAB> key itself rather than a multiple 
+key sequence.
+.
+    Inorder to prevent transmitting data faster than the EP44 can process 
+it the data is formated into approximately two print line groups.  Also transmit 
+speed is limited to 300 baud.
+.
+    A new feature added to the program is a graphic representation of the 
+format of the printed page.  This display is generated during the formating 
+process.  If you wish to check the layout of your document before making a 
+hardcopy do not active the EP44.
+.
+    Tokenized the program is 3,558 bytes long.  The documentation for the 
+formating control codes is contained in DATA statments at the end of the program. 
+If you delete lines 500-580 the program shrinks to approx. 2,861 bytes.  [Also 
+change 210 to a RETURN and delete 211-290]  To improve performance the CLEAR 
+statement is set to 2,000, minimum size is 600.
+.
+.
+PROGRAM NOTES:
+.
+. LINE# DESCRIPTION
+. ----- -----------
+. 14    Space inserter for tab stop
+. 16    Format cntrl parser
+. 210   Documentation displayer
+. 300   Setup info fetcher
+. 400   Tab set reader
+.
+. VAR   DESCRIPTION
+. ---   -----------
+. NP$   Page number switch
+. RV$   Reverse video on
+. NV$   Referse video off
+. A     Input char from .DO file
+. AA    Input char for parser
+. AB    Tab char
+. AC    Format codes
+. AR    <CR>
+. B     Current line being formated
+. BB    Transmission string
+. C     Skip blank switch
+. DS    Double space switch
+. L     Page length
+. LL    Work
+. LM    Left margin
+. M     Work
+. ML    Work
+. N     # of printable char in B
+. PL    # of lines printed
+. V     Current page #
+. Y     Total char printed
+
+

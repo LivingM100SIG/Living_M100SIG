@@ -1,0 +1,97 @@
+December 30, 1985
+
+Re: locating M/L utilities
+
+One of the first activities I had planned for my new Model 100 was to logon to
+C'Serve and join the "M100SIG".  Having been a member of the LDOS, Heath and
+IBM Sig's for quite some time, I was certain I would meet new friends and just
+as certain that I would find a printer "filter" program to save me from the
+dread of "DIPswitchitis", brought on by having one MSDOS computer, one CP/M
+machine and two TRS-80's (4P and 100) sharing 2 printers.
+
+I was not disappointed, the needed programs (and friends) were there.  Suddenly
+though, shadows of my old Model III days appeared.  The "filter" programs for
+the 100 loaded M/L routines into high RAM, just below the system "housekeeping"
+memory.
+
+This method results in a real possibility of conflict between these routines
+and other machine language programs attempting to use the same memory
+addresses.  Corruption of the filter program will cause any attempted printer
+output to crash the system, a disasterous occurance in the Model 100's RAM file
+system.
+
+One program minimized the chances of this happening by "stuffing" the filter
+routine into the function key definition buffer for <F8>.  This protects it
+from being overlayed by other M/L programs, but leaves it open to
+discombobulation by programs which redefine the function keys.
+
+These concerns prompted me to search for a more secure memory location for the
+filter routine, one in which it would be safe from the intrusion of other
+programs.  An old BASIC trick is to load such routines into "REM" statements in
+the first line of a BASIC source code, and I thought that perhaps this sort of
+approach would work on the 100.
+
+As I set out to examine the pointers used by BASIC to locate source code (aided
+by Robert Covington's splendid disassembly of the M100 system), I found that
+the first BASIC program saved to RAM is always located at an address
+corresponding to the beginning of RAM memory +1.  This is location 32769 in my
+32K machine, and would be at 57345 (8K), 49153 (16K) or 40961 (24K).
+
+Eureka!!!  Although other files are constantly being shuffled about in RAM (as
+programs and documents are saved and killed), the first BASIC program saved
+will always stay in this same location.
+
+So, by creating and saving a "dummy" program, then POKEing the appropriate
+bytes into it, you can have a machine language routine permanently resident in
+memory, and completely protected from invasion by alien programs.
+
+There are two caveats to this technique (aren't there always!).  First, is that
+your M/L routine cannot be longer than 254 bytes, the maximum length of a BASIC
+program line minus one byte for the REM token.  Secondly, the routine cannot
+have any null bytes ("0" data bytes or NOP instructions).  This restriction is
+due to what seems to be a "re-packing" of saved BASIC sources done by the ROM
+file managment routines.  Apparently, the ROM code maintaining the file
+structure rescans BASIC source files during the restructuring of RAM as files
+are saved and deleted.  This is done to reset the "nextline" pointers of
+BASIC's linked list format so that they represent a file's new RAM location.
+
+As you may know, the end of a BASIC line is indicated by a single null byte. 
+If your M/L routine contains a zero byte, the ROM "re-pack" routine will assume
+that byte to be the "end of line", and set the next two bytes as a pointer to
+the next line of code or end of program.  This of course corrupts the M/L
+routine.
+
+The code length restriction (254 bytes) could be circumvented if necessary, by
+using a jump instruction at the end of one "line" which would transfer control
+to M/L code in the next BASIC line.  The null byte problem cannot be overcome,
+and must be programmed around.
+
+The "dummy" program can be further protected by setting bit 3 of the file's
+directory header byte making the file "invisable" on the MENU directory screen.
+
+The short BASIC program found in the file "MLPFLT.BA" must be loaded and
+executed with no other BASIC programs saved in memory.  When run, it will poke
+a machine language printer linefeed filter into it's own line 10, and then
+reset the "LPT:" handler's RAM vector so hat a C/R (chr$(13)) sent to the
+printer will be followed by a linefeed (chr$(10)).
+
+It is absolutely necessary that this program be run with no other BASIC (".BA")
+programs saved in RAM.  After the program has run, delete lines 20-130 and then
+save the remaining, altered line 10 as "LPTLF.BA".  See the comments of line
+120 for RAMsize specific changes.
+
+The filter can be disabled in either of two ways.  The first would be to reset
+the RAM vector pointer to it's original contents ("POKE 64228,243:POKE
+64229,127").  The second (and my favorite) is to simply "POKE SA,201", using
+the value of SA corresponding to your RAMsize.  Re-enable the filter via "POKE
+SA,254".  This second procedure simply replaces the "CPI" instruction of the
+first M/L line with a "RET" opcode, effectively disabling the filter.
+
+That's it, I hope that you find the info presented here to be of use, and hope
+that I haven't bored you to death with my long winded explanations.  If you
+have any questions, give a yell here or via E-mail.
+
+
+Cliff Knight
+71106,1153
+

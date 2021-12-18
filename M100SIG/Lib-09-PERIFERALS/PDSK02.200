@@ -1,0 +1,1559 @@
+
+
+
+               PPPPPPPP     OOOOOOO    WW           WW   RRRRRRRR
+               PP     PP   OOOOOOOOO   WW           WW   RR     RR
+               PP     PP   OO     OO   WW           WW   RR     RR
+               PPPPPPPP    OO     OO   WW    WWW    WW   RRRRRRRR   =====
+               PP          OO     OO   WW   WW WW   WW   RR  RR     =====
+               PP          OO     OO   WW   WW WW   WW   RR    RR
+               PP          OOOOOOOOO    WW  WW WW  WW    RR     RR
+               PP           OOOOOOO      WWWW   WWWW     RR      RR
+            
+                    DDDDDDD      IIIIII     SSSSSSS     KK   KK
+                    DD    DD     IIIIII    SS     SS    KK  KK
+                    DD     DD      II      SS           KK KK
+                    DD     DD      II       SSSSSSS     KKKK
+                    DD     DD      II             SS    KK KK
+                    DD     DD      II             SS    KK  KK
+                    DD    DD     IIIIII    SS     SS    KK   KK
+                    DDDDDDD      IIIIII     SSSSSSS     KK    KK
+
+
+
+
+
+                             P O W E R  -  D I S K
+           
+           
+           
+                    Power for the Tandy Portable Disk Drive
+           
+           
+                                 Owner's Manual 
+           
+           
+           
+           
+
+           
+           
+           
+           
+           
+           
+           
+           
+                   Transcribed By Tony Anderson [76703,4062] 
+               Exclusively for CompuServe Model 100 Forum Members 
+           
+
+
+            
+                         (C) 1985 Acroatix Incorporated 
+                               All Rights Reserved
+
+
+
+
+
+
+
+
+                                   POWR-DISK
+
+                                      for
+
+                          The Tandy Portable Disk Drive
+
+
+                            A Supplement to FLOPPY.CO
+
+
+
+
+
+                              Acroatix Incorporated
+
+
+
+
+
+
+
+                       Copyright (C) 1985 by Acroatix Inc.
+                               All Rights Reserved
+
+
+                                     NOTICE
+
+	Acroatix Incorporated  shall have no liability  to any customer or
+	use  with  respect to  any loss,  damage,  or liability  caused by
+	POWR-DISK, including but not limited to loss of data, interruption
+	of service, or loss of business or profits.
+
+	If you are  sufficiently jolted by  this disclaimer,  we recommend
+	that you save all files  before first loading  POWR-DISK, and that
+	you use it  with care  until you  feel sure  that it  will perform
+	reliably in your machine.
+
+
+	                        Table of Contents
+
+                Section One:
+	        Getting Started................................1
+		    Notes for the Expert.......................1
+		    Removing POWR-DISK.........................2
+
+		Section Two:
+		Using MENU.BA..................................3
+
+		Section Three:
+		Using POWR-DISK without MENU.BA................6
+		    Convenient Access from TEXT................6
+		    Convenient Access from BASIC...............7
+
+		Section Four:
+		BASIC Command Extensions.......................9
+		    LFILES.....................................9
+		    LFILES TO "fname".........................10
+		    LFILES OFF................................10
+		    LFILES MENU...............................11
+		    LOADM ":fname"............................11
+		    LOADM ":fname.xx",F.......................11
+		    OPEN ":fname".............................12
+		    SAVEM ":fname"............................12
+
+		Running BASIC programs with POWR-DISK.........13
+		Machine-language calls to POWR-DISK...........14
+		Error Codes...................................17
+
+		Section Five:
+		Using Other Machine-Language Programs.........19
+		    Checking for Possible Conflicts...........19
+		    Running Relocated Programs................20
+		    Relocating POWR-DISK......................22
+
+		Appendix A:
+		The Tandy Portable Disk Drive.................25
+
+		Appendix B:
+		Machine Language Programs in Tandy Laptops....28
+
+	Editorial note: Original manual was printed with 52 column lines,
+	and 51 lines per page. In order to accommodate standard 80-column
+	printers,  some material has been reformatted,  and some pages of
+	this transcription contain  material that appeared on two or more
+	pages of  the original manual.  Page numbers  in the  upper right
+	corner of each page refer to the pages in the original manual.
+
+     Occasional editorial comment will be  found inside [square brackets]
+
+				 Tony Anderson
+				September  1988
+
+POWR-DISK Owner's Manual					Manual Page 1
+								-------------
+
+			      Section One
+			   Getting Started
+
+CAUTION: Read through this entire section at least once before proceeding. You
+may save yourself time and trouble.  In this manual, material in UPPER CASE
+letters indicates something you type into the computer; <ENTER> means pressing
+the ENTER key; and function keys are shows as [F1], [F2], etc.
+
+If you have never used a disk drive before, you may want to read Appendix A,
+which explains some basic concepts of the Tandy portable disk drive. You may
+want to skim over this appendix in any case.
+
+[Instructions are for loading from the original Utility disk. Forum users can
+skip down to "Notes for the Expert User" section. - ed.]
+
+POWR-DISK is a supplement to FLOPPY.CO. In order to load POWR-DISK, you must
+use FLOPPY.CO to get started.  Here is the simplest way:
+
+1.  Run FLOPPY.CO.  If you haven't loaded FLOPPY, follow the directions given
+    with the Tandy Portable Disk Drive (called TDD in this manual.)
+
+2.  Press [F2], "Load".  Answer the prompt, "File name on disk:" with
+    POWR-D.CO <ENTER>.  Press ENTER again, after the prompt, "File name in
+    RAM".
+
+3.  Press [F2] again.  This time, load in the file, START.BA from the disk.
+
+4.  Press [F8] to exit FLOPPY.CO.
+
+5.  Run START.BA. When it finishes, POWR-DISK is operational and MENU.BA is
+    available for your use.
+
+Notes for the Expert User:
+
+This section describes the startup procedure in more technical terms.  The
+POWR-DISK code comes packaged in [an assembly language] file, POWR-D.CO.  The
+file loads into the area directly below the computer's default MAXRAM (system
+memory boundary).  Running it changes some RAM hooks to add extra functionality
+to BASIC and TEXT.  In addition, MAXRAM itself gets lowered to protect the
+POWR-DISK code from accidental clears.  So, once POWR-D.CO has been run, the
+file itself can be removed from memory without danger.
+
+								Manual Page 2
+								-------------
+
+The program START.BA simply runs POWR-D.CO, deletes the [menu] file, sets
+HIMEM to the new MAXRAM, loads MENU.BA from the disk, and removes FLOPPY.CO
+from memory.  Errors can occur in START.BA if FLOPPY.CO does not exist, etc.,
+but once POWR-D.CO has been run, POWR-DISK is safely in place.
+
+If you are working in an environment with frequent cold-starts (such as
+assembly language development), it is wise to keep a copy of POWR-D.CO on
+cassette tape, where it can be reloaded more easily than using dip switches,
+IPL.BA, etc.  It may seem ironic, but the cassette is supported in the ROM, so
+support for it won't evaporate with a cold-start.
+POWR-DISK Owner's Manual
+
+Removing POWR-DISK
+
+You will have only infrequent occasions to remove POWR-DISK.  With the
+relocation techniques discussed in Section Five, you can leave POWR-DISK active
+virtually all the time.  However, if you ever want to remove it, use the
+following BASIC command:
+
+	LFILES OFF : CLEAR 0, MAXRAM : MENU <ENTER>
+
+Be certain that you can restore POWR-DISK before you disable it.  (The simplest
+way to be sure is to have POWR-D.CO and START.BA in RAM before doing the LFILES
+OFF.)  Otherwise, you may be forced to start from the very beginning and load
+FLOPPY.CO from your Tandy Utility Diskette.
+
+[Forum versions of the two necessary files, START.BA and POWR-D.CO (in hex
+format) may be downloaded from the forum's library whenever needed; the hex
+file converted with HXFER.200, and you're ready to load.  Both START.BA and
+POWR-D.CO are contained in the single file, PDSK03.200 in Library 9. - ed.]
+
+								Manual Page 3
+								-------------
+
+				 Section Two
+				Using MENU.BA
+
+MENU.BA is a utility program, written in BASIC, to simplify file transfers to
+and from the TDD.  You can get by without MENU.BA; POWR-DISK allows you to save
+and retrieve files from the TDD in BASIC or TEXT.  However, MENU.BA allows you
+to examine the disk and RAM contents and to move files back and forth without
+typing filenames.
+
+[One problem with all menu-type programs is that they consume RAM space; it is
+recommended that users learn to use direct commands to access disk functions,
+and use menu-type programs only when needed, not as a regular practice. - ed.]
+
+To run MENU.BA, simply put the wide cursor bar over it from the main menu, and
+press <ENTER>.  After a few seconds, a display similar to the one below will
+appear:
+
+	        ----------------------------------------
+	       |Src:RAM  Type:DO  Free: 1444  Len: 1798 |
+	       |12/20/85 14:35:39                       |
+	       |EPS     ADRS    M-CMD   MAN2    R0      |
+	       |R4      TASK    MSG0                    |
+	       |                                        |
+	       |                                        |
+	       |TDD  Save Sel  BA   Kill Info      Menu |
+		----------------------------------------
+POWR-DISK Owner's Manual
+
+The information has the following significance:
+
+Src:  The source of the files on the display. If Src is RAM, then you are
+      examining your computer's memory; if Src is TDD, you are examining the
+      disk contents.
+
+Type: The type extension of the files displayed. MENU.BA shows .DO files
+      separately from .CO and .BA files. (This is why the file names appear
+      without extensions -- they are all the same type.)  If you have files
+      with odd extensions, like .DA or .CA, they will appear with .DO or .CO
+      files respectively, but they will retain their correct extensions.
+
+Free: The number of bytes free (RAM) or the number of SECTORS free (TDD).
+
+Len:  The length of the file that the cursor bar is placed over, in bytes. You
+      can see the length of any file simply by moving the cursor bar over the
+      filename.
+
+								Manual Page 4
+								-------------
+
+The arrow keys move the wide cursor bar over the displayed file names similar
+to the computer's main menu.  In addition, there are eight functions available
+through the function keys:
+
+[F1]  Change source.  If "Src" is RAM, [F1] changes it to TDD, and vice versa.
+
+[F2]  Load or Save.  If "Src" is RAM, [F2] SAVES a file to the TDD; if "Src"
+      is TDD, [F2] LOADS a file into RAM.
+
+[F3]  Select.  It is possible to request most file operations for more than one
+      file.  [F3] will cause a file to stay selected even after you move the
+      cursor elsewhere.  Pressing [F3] twice in succession clears any previous
+      selects; pressing [F3] three times in succession selects EVERY file.
+      [Load ALL or Save ALL effect - ed.]
+
+[F4]  Change extension type.  MENU.BA shows DO, BA, or CO files separately;
+      pressing [F4] displays files with another type of extension, depending on
+      what is currently displayed.
+
+[F5]  Kill.  Kills selected file(s) from TDD or RAM.  [Be careful with the [F3]
+      "tagging" option in conjunction with this! - ed.]
+
+[F6]  Info.  Display information about the selected file.  For DO and BA files,
+      you see the first 40 characters in the file.  (For BASIC programs, the
+      results will look unfamiliar because of the "tokenized" keywords.)  For
+      CO files, you see the TOP, END, and EXE values.
+
+[F7]  Page.  This key is active only when there are more files of the selected
+      type than will fit on the screen.  Then, [F7] moves to an alternate page
+      to show the remaining files.
+
+[F8]  Menu.  Exit from MENU.BA to the computer's main menu.
+
+Prompts:  Whenever a Load, Save or Kill operation will remove or change a file,
+either in RAM or on the TDD, MENU.BA will "prompt" you to confirm the command.
+POWR-DISK Owner's Manual
+								Manual Page 5
+								-------------
+
+For example, if you press [F5] with "MEMO" selected, MENU.BA will prompt,
+
+	"Kill MEMO  .DO?"
+
+The prompt protects you against accidental keystrokes.  Remember that Load and
+Save operations will only prompt you if you are overwriting an existing file.
+
+Selecting Multiple Files:
+
+One convenience of MENU.BA is your ability to Load, Save, or Kill more than one
+file at a time.  The [F3] key allows you to select more than one file; all
+selected files are then affected by [F2] or [F5].  For example, consider the
+LCD screen previously shown.  If the wide cursor bar is over the EPS file, and
+you press [F3] to select it, then right arrow, the wide cursor bar will then
+cover two file names, EPS and ADRS.  If you press [F2] to Load or Save those
+files, you will receive the prompt:
+
+	"Do all (y/n/q)?"
+
+If you press Y or N, MENU.BA will use that response for any prompts that appear
+during the combined operation.  If you press Q, MENU.BA will stop at each
+subsequent prompt for your response.
+
+								Manual Page 6
+								-------------
+
+			     Section Three
+		    Using POWR-DISK without MENU.BA
+
+Although MENU.BA is adequate for most file storage and retrieval, there are two
+reasons to access the disk without it: convenience and memory.  When you leave
+MENU.BA in RAM, you have 3.5K less RAM to work with.
+
+
+Convenient Access from TEXT
+
+When editing a file with the TEXT program, you can save a copy to the TDD
+simply by pressing [F3].  When you do, the prompt:
+
+	"Save to:"
+
+will appear.  Respond with the name for the TDD file, preceded by a colon
+(":").  You need not add the ".DO" extension, POWR-DISK will add it.  There are
+two things to keep in mind:
+
+1.  If there is a file already on the disk with the same name, you will get NO
+    INDICATION; POWR-DISK will simply overwrite the old copy. [useful for fast
+    saves of a progressing document, or saving the same file with updated
+    information after editing - ed.]
+
+2.  You can save a file under a different name on the disk than the file you
+    are editing.  For example, if you are editing a file called "A.DO", and
+POWR-DISK Owner's Manual
+
+    you respond ":B" to the "Save to:" prompt, the file will be saved to a new
+    file named "B.DO".  Similarly, if you are editing "PART1.DO", you can save
+    the updated file as ":PART2", or whatever name you may choose.
+
+WARNING:  Disk access from TEXT is convenient, but dangerous!  If you work on
+one file (e.g., "REPO.DO") for a long time, you can get into the habit of
+pressing [F3] :REPO <ENTER>.  You may realize too late that you have just over-
+written your prize report with a totally different file.
+
+Similarly, you can press [F2] to load TDD files into TEXT.  The computer will
+give a "Load from:" prompt.  Respond with the file name preceded by a colon.
+Once again, the ".DO" extension is not necessary.  [In TEXT, ".DO" is assumed.
+In BASIC, ".BA" is assumed - ed.]
+
+On files you load into TEXT from the TDD, POWR-DISK will INSERT the text at
+the cursor location, just as if the disk file's contents had been typed from
+the keyboard.  For example, consider a text file with a single sentence:
+
+								Manual Page 7
+								-------------
+
+	"The Rain in Spain falls on the plain."
+
+Suppose further, that the cursor is blinking over the "o" in the word "on"; and
+further suppose that you have a file on disk called MAINLY.DO which contains a
+single word, "mainly" followed by a space, and without a carriage return.  If
+you press [F2] and type  :MAINLY <ENTER>, POWR-DISK will load the contents of
+the disk file at the cursor location, and the screen display will become:
+
+	"The Rain in Spain falls mainly on the plain."
+
+(Think you got it?)  This "insert" feature is useful for concatenating files
+and inserting repetitive material into documents. [similar to a disk-based
+paste buffer which can be loaded into any portion of a document - ed.]
+
+
+Convenient Access from BASIC
+
+BASIC programmers are familiar with the SAVE command, which allows them to name
+a program on the main menu.  Putting a colon (":") in front of a file name
+allows you to save programs to the TDD.  The procedure resembles that for
+accessing DO files from TEXT, as described above.
+
+If you want to load in a BASIC program from the TDD without using MENU.BA, the
+simplest procedure is to use LOAD to retrieve the program from the TDD, then
+SAVE to give it a name in RAM.  For example, to load CHART.BA from the disk,
+use the following sequence:
+
+	Load ":CHART <ENTER>
+	Ok
+	Save "CHART <ENTER>
+	Ok
+
+[In all BASIC commands, a space between parts of the command is optional - ed.]
+POWR-DISK Owner's Manual 
+
+Normally, the BASIC function keys are set so that you can type the following:
+
+	[F2] :CHART <ENTER>
+	[F3] CHART <ENTER>
+
+Note that you may easily name a file differently in RAM, than on the TDD when
+loading in this manner.  If you are going to run a program only once, you can
+load it, and run it, in one step:
+
+								Manual Page 8
+								-------------
+
+	RUN ":CHART <ENTER>
+
+However, after running it, it may be necessary to use the BASIC NEW command to
+clear out the memory in the BASIC "unnamed program" buffer.
+
+								Manual Page 9
+								-------------
+
+			     Section Four
+		       BASIC Command Extensions
+
+POWR-DISK enhances 12 different BASIC commands.  Some commands work exactly as
+they do without POWR-DISK, except that TDD files may be accessed by putting the
+extension ":" or "0:" in front of the file name.
+
+	LOAD "0:fname"			MERGE "0:fname"
+	SAVE "0:fname"			CLOSE #n  (When #n is a disk file)
+	KILL "0:fname"			INPUT #n (When #n is a disk file)
+	RUN "0:fname"			PRINT #n (When #n is a disk file)
+	RUNM "0:fname"
+
+Other commands require more explanation.  Either they have entirely new
+functions, or new options related to the TDD.
+
+
+LFILES
+
+The LFILES command provides information about files on the TDD to the screen.
+Each file name appears on its own line with the length of the file in bytes.
+[LFILES displays the disk directory with files listed in alphabetic order - ed]
+
+You may note that BA and DO files are slightly larger in RAM than on disk.  DO
+files by one byte, and BA files by 2 bytes.  This is normal; it's the END OF
+FILE markers that are added to the file when it's loaded into RAM.
+
+LFILES also tells you the number of free sectors on the disk.  The number of
+free sectors is more meaningful than the number of bytes, because all files, no
+matter how small they may be in RAM, require at least one disk sector.  (See
+the discussion of sectors in Appendix A.)  An empty disk has 79 free sectors.
+[The disk directory also uses 1 sector; there are actually 80 sectors on the
+disk. Each sector holds 1280 bytes. - ed.]
+POWR-DISK Owner's Manual
+
+								Manual Page 10
+								--------------
+
+Example:
+
+	LFILES <ENTER>
+	JRF   .DO   1124
+	SAVALL.CO   3322
+	TEST1 .BA    119
+	   74 Sectors Free
+	Press space bar to continue
+	<space>
+	Ok
+
+In this example, JRF.DO would require 1125 bytes in RAM, and TEST1.BA would
+require 121 bytes in RAM.  LFILES stops the listing after each 15 lines and at
+the end, to give you time to examine the listing.  At the prompt, "Press space
+bar to continue", simply press the space bar to continue the listing or to
+terminate it at the end. You can also escape the listing mode or terminate it
+by pressing "Shift-Break" (pressing the SHIFT key and the Break/Pause button at
+the same time).  This always reports an "I/O error".
+
+
+LFILES TO "fname"
+
+You can send the LFILES listing to the printer, or to a RAM file, with the TO
+option.  If "fname" is "LPT:" the listing will go to the printer.  If "fname"
+is a file name, that file will be created and the listing will be sent to it.
+Any previous contents of an existing RAM file will be lost; there is no report
+that you are about to overwrite an existing RAM file.  The .DO extension is not
+required as part of "fname", .DO is assumed.  Any other extension will be
+changed to ".DO".
+
+The LFILES output sent to LPT: or a RAM file is identical to that on the screen
+except that the computer will not prompt for "Press space bar to continue"; the
+entire list is sent to the destination.
+
+
+LFILES OFF
+
+This command removes POWR-DISK system commands and resets MAXRAM to its default
+value.  However, it does not change HIMEM (see the discussion in Appendix B),
+so you can save the POWR-DISK code to a .CO file with the SAVEM command in
+BASIC, or with MENU.BA.
+
+Once you have entered LFILES OFF, none of the POWR-DISK features will work
+until you turn on POWR-DISK again, using the instructions in "Getting Started".
+Further, if you have any other RAM hooks in place (the Bar-Code reader, for
+example), the LFILES OFF command will also deactivate them.
+
+								Manual Page 11
+								--------------
+
+LFILES MENU
+
+Using any of the TDD features in POWR-DISK changes TELCOM status to 98N1DNN.
+POWR-DISK Owner's Manual
+
+However, if you return to the main menu from BASIC with LFILES MENU, your
+original TELCOM status will be restored to its previous setting.
+
+
+LOADM ":fname"
+
+LOADM works just as the standard LOADM command except that it accepts the
+extensions ":" and "0:" to access TDD files.
+
+WARNING:  Although LOADM will not load a file that has a START below HIMEM,
+there is no guarantee that it will not overwrite POWR-DISK or the system
+memory.  Therefore, BE CAREFUL, or you may coldstart your computer and lose all
+your files.
+
+Example:
+
+	LOADM "0:GLUG" <ENTER>
+	TOP: 56000
+	END: 58000
+	EXE: 56000
+	Ok
+
+The command loads a file called GLUG.CO from the TDD into it's executing
+location.
+
+
+LOADM ":fname.xx",F
+
+Adding the extension ",F" to the end of a LOADM command allows you to load any
+files directly from the TDD disk to RAM.  LOADM creates RAM files with the same
+names [and extensions] that they have on disk.
+
+[Note that a filename extension ("xx" above) is mandatory, and can be either
+.BA, .DO, or .CO.  The file matching the filename and extension is loaded into
+RAM in the form specified by the extension.  See below examples -ed.]
+
+Examples:
+
+	LOADM":B",F <ENTER>
+	?FF Error
+	Ok
+
+								Manual Page 12
+								--------------
+
+You must specify an extension; there is no default filename extension in this
+type of load.
+
+	LOADM":B.DO",F <ENTER>
+	?AE Error
+	Ok
+
+You cannot overwrite a file that already exists in RAM.  "AE" stands for
+"Already Exists".  [You can kill a RAM file, and reload it from disk with the
+following command sequence:]
+POWR-DISK Owner's Manual
+
+	KILL "B.DO" : LOADM ":B.DO",F <ENTER>
+	Ok
+
+This sequence of commands [kills the copy of B.DO in RAM, then] reloads a new
+copy from the TDD into RAM.  If B.DO did not exist in RAM, the KILL command
+would not have been necessary.
+
+[This feature is useful for loading a "skeleton copy" of a form into RAM,
+editing the form, adding or changing data, printing or saving the resulting
+changes, then reloading a fresh copy of the form to repeat the process with new
+or different data. - ed.]
+
+
+OPEN ":fname" FOR (INPUT/OUTPUT/APPEND) AS n
+
+This command works exactly as the OPEN command without POWR-DISK, except that
+you may specify TDD files for sequential access from BASIC.
+
+WARNING:  Once a TDD file has been opened, you cannot open another TDD file,
+nor should you use other POWR-DISK commands until you close the opened file.
+There is no protection against your doing so, but the opened file (if for
+output or append) will not be successfully modified.  A file opened for input
+will be inaccessible if you use other POWR-DISK commands [that do not relate to
+input from, or output to, the open file.]
+
+
+SAVEM ":fname",START, END (,EXE)
+SAVEM ":fname.xx"
+
+The SAVEM command works exactly as it does without POWR-DISK, except that you
+can also use it to save RAM images of other file types directly to the TDD.
+
+When you enter a SAVEM command without the START, END, or EXE addresses, the
+command saves existing [non-CO] files in RAM directly to the TDD.  The filename
+must include the extension, and the file cannot already exist on the TDD disk
+or an AE error will result.  (Note that this command performs the opposite
+function of the LOADM":fname.xx",F command.
+
+								Manual Page 13
+								--------------
+
+Examples:  [first three supplied by editor]
+
+	SAVEM":RIP",58085,58960,58085 <ENTER>
+	Ok
+
+Creates a .CO file named RIP.CO on disk, and saves the RAM image from 58085 to
+58960, along with the TOP, END, and EXE addresses to the file.
+
+	SAVEM":TAM.DO" <ENTER>
+	Ok
+
+Creates TAM.DO on disk, and saves the RAM file with the same name to the disk.
+
+	SAVEM":REPORT.BA" <ENTER>
+	Ok
+POWR-DISK Owner's Manual
+
+Creates REPORT.BA on disk, and saves the program of the same name to the disk.
+
+
+	SAVEM":B.DO" <ENTER>
+	?AE Error
+	Ok
+
+Indicates the file already exists on the disk, and you cannot overwrite it. You
+may kill the file from disk first, then save it:
+
+	KILL":B.DO" : SAVEM":B.DO" <ENTER>
+	Ok
+
+
+Running BASIC programs with POWR-DISK commands
+
+Several BASIC commands have side effects when a program executes them.  As a
+rule, the Tandy manuals almost totally ignore these side effects, leaving the
+curious programmer to discover them by accident and aggravation.  In general,
+there are two types of side effects:
+
+1.  Some commands reset all variables, DEF designations, and DIMensions.  An
+    example is CLEAR (which is documented to do so).  Other examples are LOADM
+    and RUNM, (which are not documented to clear variables).  These commands
+    have another side effect: they reset all FOR/NEXT loops and all GOSUB
+    return addresses [the stack].  In other words, these commands cannot appear
+    in subroutines or in FOR/NEXT loops without resulting in errors.
+
+2.  Other commands halt program execution.  Examples are EDIT, LOAD, and SAVE.
+    Normally, these commands also reset all the variables as well, but at least
+    one command (SAVEM) halts the program WITHOUT resetting the variables.
+
+Nearly every file-related command stops program execution.  The Tandy laptop
+designers obviously thought that users would only use LOAD, SAVE, etc., as
+direct commands from the BASIC "Ok" prompt.  However, there are powerful
+incentives to automate some of these functions, especially with the TDD.
+
+								Manual Page 14
+								--------------
+
+In general, POWR-DISK extensions do not change the behavior of the file-related
+commands.  However, because the Tandy manuals do not concisely document their
+effects, here is a summary:
+
+Command	  Effect
+
+LOAD	  Stops execution and clears all variables
+
+LOADM	  Clears all variables
+
+SAVE	  Stops program execution. Saving to BA files clears all variables;
+	  saving to DO files (ASCII saves) does not clear variables
+
+SAVEM	  Stops program execution, but does not clear variables
+POWR-DISK Owner's Manual
+
+POWR-DISK extensions are designed to provide the minimum possible disruption to
+a running program.  The LOADM command with the ",F" extension does not stop
+program execution or reset variables unless a BASIC file is loaded, in which
+case program execution stops and all variables are reset.  However in any case,
+LOADM with the ",F" extension always resets FOR/NEXT loops and the GOSUB stack.
+
+SAVEM by file to the TDD neither stops execution nor clears variable values.
+
+[There may be differences in LOADM and SAVEM effects between the 100 and 200
+versions of POWR-DISK - ed.]
+
+
+Machine-language CALLS to POWR-DISK
+
+There are two types of calls that BASIC programs or machine language programs
+can make to POWR-DISK:
+
+1.  There are five [six] supported calls, as described further below.  These
+calls will always be available regardless of POWR-DISK revisions; they will be
+at constant locations relative to POWR-DISK regardless of relocations.
+
+2.  There are a number of unsupported calls available, primarily for machine
+language applications.  These could change entirely, with another revision of
+
+								Manual Page 15
+								--------------
+
+POWR-DISK.  For the intrepid and curious, a program map is available [See the
+file PDSK15.200 - ed.] on the utility disk.  This map also documents the subset
+of TDD abilities used by POWR-DISK.
+
+The supported calls allow a BASIC or machine language program to access TDD
+files beyond the capabilities of OPEN, PRINT#, and INPUT#. In the documentation
+below, each call appears as it would be accessed from BASIC; refer to the Tandy
+CALL documentation to see an equivalence to machine language.
+
+CALL MAXRAM
+
+Resets the POWR-DISK functions assuming the program has not been overwritten or
+corrupted.  This call should not be necessary unless the RAM hooks have been
+changed, which should never happen in normal operation. [If LFILES OFF was used
+to disconnect the hooks, CALL MAXRAM cannot restore them; CALL HIMEM will, if
+done immediately before any other conflicting actions are taken. - ed.]
+
+CALL MAXRAM+3, mode, address
+
+Opens the file, whose name is pointed to by "address".  Legal values for "mode"
+are 1 (output - new files only), 2 (append to existing file), and 3 (input from
+an existing file).  If you try to open a file with an impossible mode (i.e.,
+output to an existing file, or input from a non-existing file), an ?HT Error
+will occur.
+
+The filename pointed to by "address" should be in the RAM directory format,
+[six alpha-numeric characters, left justified, and two characters, right
+justified, which specify the file type. Filenames with less than six characters
+must be padded with spaces,] as in the following examples:
+POWR-DISK Owner's Manual
+
+	Name	     Format	   Comment
+
+	BLAH.BA	     BLAH  BA	   Space padded
+	D.CO	     D     CO	   Space padded
+	LFILES.DO    LFILESDO	   Not padded
+
+[Note that periods are not included - ed.]
+
+The best way to get the "address" is with VARPTR.  If you don't know how this
+is done, adhere to the following example, where the file "GRUNT.CO" is prepared
+for output:
+
+								Manual Page 16
+								--------------
+
+	10 B$ = "GRUNT CO"
+	20 B = VARPTR(B$)
+	30 CALL MAXRAM+3, 1, PEEK(B+1) + 256*PEEK(B+2)
+
+
+CALL MAXRAM+6, len, address
+
+This call allows you to read data from a TDD file, previously opened with
+MAXRAM+3 with a "mode" of 3.  "Len" is the number of characters to read, which
+must be in the range from 1 to 255; "address" is the destination memory
+location for the characters.  [similar to a block move in memory - ed.]  Be
+warned that if you use a STRING variable, it must be large enough to receive
+the characters; this CALL won't change the variable length.  For example, to
+read 25 characters into B$:
+
+	40 B$ = SPACE$(25) : '  Allocate space
+	50 B = VARPTR(B$)
+	60 X = PEEK(B+1) + 256*PEEK(B+2)
+	70 CALL MAXRAM+6, 25, X
+
+
+CALL MAXRAM+9, len, address
+
+This call allows you to write to a previously opened file.  You must precede
+any writes with a CALL to MAXRAM+3, with a "mode" of 1 or 2.  "Len" can be up
+to 255 (0 is illegal); "address" marks the beginning of the characters to
+write.  For example, to write the contents of B$ to a file use the following
+procedure:
+
+	100 B$ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  [or whatever...]
+	110 B = VARPTR(B$) : X = PEEK(B+1) + 256*PEEK(B+2)
+	120 CALL MAXRAM+9, PEEK(B), X
+
+
+CALL MAXRAM+12
+
+This command sets the COM settings on the computer to communicate with the TDD
+(98N1D).  It's unlikely that this call would be necessary unless you were
+attempting to set up a telecommunications program that simultaneously uses the
+TDD and the computer's internal modem.
+POWR-DISK Owner's Manual
+								Manual Page 17
+								--------------
+
+CALL MAXRAM+15, cmd
+
+This call sends a single-code command to the TDD.  In the context of the
+currently supported calls, the only sensible value for "cmd" is 2, which closes
+a file.  Your programs should perform a "CALL MAXRAM+15, 2" after any file
+input/output using the supported calls.  If you forget, files opened for output
+will not be changed properly.
+
+
+CALL MAXRAM+15,6  [command documented in the POWR-DISK Newsletter after the
+original software release - ed.]
+
+This call will format new diskettes, or reformat, and completely erase existing
+data from a previously used diskette.  To use the command safely, first go into
+BASIC and use the LFILES command to determine whether the diskette currently
+has data on it, by showing the disk directory.  If you get an ?IO Error, the
+disk is unformatted and you can proceed.  Or be sure to use a brand-new, unfor-
+matted disk.  Type the following command:
+
+	CALL MAXRAM+15,6 <ENTER>
+
+Immediately the red LED light will come on, and the drive will begin formatting
+the diskette, erasing any pre-existing data.  When BASIC returns the "Ok"
+prompt, the formatting is complete and the LFILES command will indicate 79
+sectors free.
+
+
+Error Codes
+
+POWR-DISK returns error codes when something goes wrong with TDD interaction.
+Below is a list of error numbers, along with a brief description of each. NOTE:
+These errors will print out in BASIC unless you use the ERROR statement, which
+will print out "?UE Error" for any error number greater than 58.
+
+No. Code  Explanation
+
+59   NR   RS-232 Not Ready.  This error code usually occurs if the TDD is
+          turned off or disconnected. (Yes, we know that the description is the
+          same as "No Resume".)
+
+60   DN   Drive not responding.  This error happens most often when an earlier
+          operation ended unusually.  The best solution is usually to turn the
+          TDD off, then back on. [if another device is connected to the RS-232
+          port, a ?DN error in response to the LFILES command can be
+          interpreted as a "No Drive" error - ed.]
+
+61   CM   Communications error.  Your computer and TDD use a system of checks
+          to make sure no errors in transmission occur.  If you get a CM error,
+          check the cable for snugness at both ends, and try again.
+
+62   DA   Drive done early.  This error should never occur unless you attempt
+          to read past the end of a disk file.  It can happen when using the
+          CALL MAXRAM+6 function.
+POWR-DISK Owner's Manual
+
+No.  Code  Explanation
+
+63   WP   Disk is Write Protected.  You are attempting to write to a disk with
+          the data protection tab open, protecting the disk data by preventing
+          writing to the disk.
+
+								Manual Page 18
+								--------------
+
+64   DF   Disk Full.  You have exhausted the capacity of the TDD disk, either
+          by using more than 79 sectors, or by creating more than 40 files on
+          the disk. [also by attempting to write more than 64K to a file - ed.]
+
+65   ND   No Disk.  There is no disk in the drive.  This differs from the DN
+          error above.
+
+66   HT   "Hard Trouble".  This error covers any miscellaneous problems with
+          the TDD.  It rarely occurs except when using the CALL functions.
+
+67   AE   File already exists.  You are attempting to overwrite an existing
+          file with the SAVEM or LOADM,F commands.
+
+In addition to the above errors, the IO Error (#18) can signify a damaged or
+unformatted disk, and the FF Error (#52) means that you are trying to access a
+non-existent disk file.
+
+								Manual Page 19
+								--------------
+
+			     Section Five
+		 Using Other Machine Language Programs
+
+POWR-DISK comprises about 2,000 bytes of machine language (m/l) code.  As
+Appendix B discusses, the natural location for all m/l programs tends to be in
+the same place, the area of memory just below the system default MAXRAM.  Con-
+sequently, there are some considerations you must make when running other m/l
+programs like FLOPPY.CO or TMPC.
+
+Further, some BASIC programs and ROM programs (such as Interactive Solutions
+for the Model 100) use the memory locations occupied by POWR-DISK as a "scratch
+pad" when they are running; consequently, they corrupt POWR-DISK as it comes in
+POWR-D.CO.  If you use such a product, you must also take precautions when
+using POWR-DISK.  Fortunately, the TDD and POWR-DISK software can accommodate
+just about any of these programs conveniently.
+
+
+Checking for Possible Conflicts
+
+In candor, it is unlikely that a m/l application will not conflict with POWR-
+DISK.  In most cases, you will have to modify either POWR-DISK or the m/l
+program so that they can run together.  However, it is worthwhile to check for
+a conflict anyway, since the information you gain is useful for solving any
+problems later.
+
+For m/l programs, you should determine the TOP and END addresses.  There are
+several ways to do this:
+POWR-DISK Owner's Manual
+
+1.  If the program comes on a cassette tape, use CLOADM to load the file into
+    BASIC. (NOTE: It's highly recommended to turn LFILES OFF before doing this.
+    See the discussion in Section One.)  The command will display the TOP, END,
+    and EXE values just before loading.
+
+2.  If the file exists already on a disk or in RAM, use the [F6] key (Info) in
+    MENU.BA to display the values.  See the discussion of MENU.BA in Section
+    Two for more detail.
+
+								Manual Page 20
+								--------------
+
+Note that neither of these techniques may work, for various reasons.  If you
+are confused about how to determine the TOP and END values for a particular
+application, consult a friend who knows some machine language.
+
+If the END value is less than MAXRAM when POWR-DISK is active [default load of
+POWR-D.CO is 58960 -ed.] there is some chance that there is simply no conflict.
+However, do not try running the application with POWR-DISK on, until you have
+saved all important files.  There is a distinct chance that something will go
+awry.
+
+
+Running Relocated Programs
+
+Some m/l programs can be relocated.  When this is possible, the program docu-
+mentation usually explains the procedure. If you want to relocate a m/l program
+below POWR-DISK you must determine the offset for the program's relocation; you
+should use the difference in MAXRAM with POWR-DISK on and off.
+
+Example 1:  Determining MAXRAM values, starting with POWR-DISK loaded
+
+	PRINT MAXRAM <ENTER>
+	 58960
+	Ok
+	LFILES OFF:PRINT MAXRAM <ENTER>
+	 61104
+	Ok
+	CALL 58960 <ENTER>
+	Ok
+	PRINT 61104-58960
+	 2144
+	Ok
+
+The above example assumes that POWR-DISK is loaded right under the computer's
+default MAXRAM at 61104.  If you have other m/l programs loaded, these values
+may be different.  The CALL value should be identical to the MAXRAM address
+when POWR-DISK is loaded and operational.  In the example above, the "offset"
+is 2144.  When you relocate most m/l programs, you will want to lower their TOP
+and END addresses by 2144.
+
+Once you have relocated a program, you can access it directly from the disk
+without ever loading a CO file into RAM.
+POWR-DISK Owner's Manual
+								Manual Page 21
+								--------------
+
+The RUNM command, with POWR-DISK active, will access the program directly.  The
+most convenient way to use a relocated program is with a small BASIC load
+module that clears the necessary memory, then runs the program.
+
+Example 2:  Running a relocated Program
+
+LAPWRD is a m/l print formatter available for the Model 100.  It is supplied to
+the customer on cassette tape.  The TOP and END values can be obtained from the
+tape with the CLOADM command in BASIC.  [Below is an example of relocating the
+Model 100 version of LAPWRD; addresses would be different for a 200 version]
+
+	LFILES OFF:CLOADM"CAS:" <ENTER>
+	TOP: 59675
+	END: 62960
+	EXE: 60561
+	?OM Error
+	Ok
+	RUNM"POWR-D" <ENTER>
+	TOP: 60850
+	END: 62806
+	EXE: 60850
+	Ok
+
+Notice that the above version of POWR-DISK has an offset of 2110 bytes (Model
+100 default MAXRAM of 62960 - 60850).
+
+Note that POWR-DISK was turned off before trying a CLOADM, and that POWR-D.CO
+was present in RAM to restore POWR-DISK after the attempt.  From this exercise,
+we learn that LAPWRD and POWR-DISK use conflicting memory locations.
+
+However, LAPWRD is generously supplied with a relocator.  Without going into
+detail, assume in the example above that LAPWRD is relocated with an offset of
+2110 bytes (so TOP would be 57565; 59675 - 2110), then can be saved into a file
+LAPWRD.CO on the disk.  The following BASIC program can then be written to run
+LAPWRD from the disk:
+
+	10 CLEAR 0, 57565 : RUNM":LAPWRD" <ENTER>
+
+Save this statement into a BASIC program which appears on the main menu; then
+LAPWRD is available from the disk with the minimum RAM overhead and maximum
+convenience.  [Running the program directly from the disk eliminates the image
+copy which appears on the menu, thus saving the space allocated to that image
+file. - ed.]
+
+								Manual Page 22
+								--------------
+
+Relocating POWR-DISK
+
+When another application cannot be relocated, it is necessary to relocate POWR-
+DISK to accommodate the other application.  The BASIC program, RELOC.BA is
+available to accomplish the relocation.  [See PDSK11.200 -ed.]
+POWR-DISK Owner's Manual
+
+Example 3:  Determining offset of the program you can't relocate:
+
+Assume a program such as TMPC, a time management program, which loads at 51287.
+Since the Tandy 200's default value of MAXRAM is 61104, the offset needed by
+RELOC.BA to create a TMPC-compatible version of POWR-DISK, is 9817.
+
+Load RELOC.BA from the disk and run it.  You will need about 3000 bytes free at
+run time.  RELOC.BA asks the following questions:
+
+1.  What is the offset?  Enter the value previously determined, 9817.
+
+2.  What name do you want for the relocated version?  We suggest names such
+    as PDTMPC.CO for a TMPC-compatible version, etc.
+
+Once you have relocated POWR-DISK, you can create a BASIC program to load in
+the relocated version, then run the other application program directly from
+disk.  With such a BASIC program, you can run nearly any application conven-
+iently regardless of conflicts with the original version of POWR-DISK.
+
+								Manual Page 23
+								--------------
+
+Example 4:  Relocating POWR-DISK for simultaneous use with FLOPPY.CO
+
+[Why would anyone WANT two DOS's in their machine, one of which is decidedly
+inferior (FLOPPY)? -- It was originally felt that you still needed FLOPPY.CO
+in order to format disks; but as shown above, disks can be formatted with a
+direct CALL to POWR-DISK routines.
+
+A second thought was that you needed to be able to use FLOPPY, in order to load
+POWR-DISK.  While that may have been true to original users who had the system
+Utility Disk, it's not true for users who can download copies of the program
+from CompuServe's Model 100 Forum Library.  Consequently, the below information
+on relocating POWR-DISK to operate below FLOPPY.CO is presented as a curiosity,
+and information of interest, but which will probably never be used.
+
+Once POWR-DISK is installed, the only valid reason to use FLOPPY.CO would be
+the use of its disk backup capability.  - ed.]
+
+FLOPPY.CO, the access program supplied with the TDD, is still necessary, even
+with POWR-DISK, to format diskettes and make backup copies.  However, the Tandy
+200 version has a TOP address of 57500 and a presumed END at 61103, which would
+totally overwrite POWR-DISK.  Further, there is no relocator for FLOPPY.CO.
+
+POWR-DISK can be relocated below FLOPPY.  The necessary offset is 61104-57500,
+or 3604 bytes.  When running RELO.BA, use an offset of 3604 and name the new
+version PD-FLP.  [An already relocated version is available in the file
+PDSK09.200 -ed.]
+
+Then the following BASIC program, called FLOPPY.BA, can run FLOPPY directly off
+the disk without losing POWR-DISK functions:
+
+	10 CLEAR 0, 57500 : LOADM"PD-FLP.CO",F
+	20 LFILES OFF:RUNM"PD-FLP"
+	30 KILL"PD-FLP.CO":RUNM":FLOPPY"
+POWR-DISK Owner's Manual
+
+NOTE: FLOPPY.BA and RESTOR.BA are available on the Utility disk.  [and in the
+files PDSK07.200 and PDSK13.200, respectively - ed.]  You can use FLOPPY.BA any
+time you want to run FLOPPY.CO.  However, since there is no copy of FLOPPY.CO
+on the POWR-DISK Utility disk, you must transfer FLOPPY.BA to another disk of
+your own that has a copy of FLOPPY.CO on it.  The numbers in the disk files may
+differ from those given above, in which case THE DISK FILES ARE CORRECT.
+
+Once you are finished using a relocated POWR-DISK, you can free up the RAM
+space it occupies by running RESTOR.BA, which is the following BASIC program:
+
+								Manual Page 24
+								--------------
+
+	10 LOADM":POWR-D.CO",F
+	20 LFILES OFF:CLEAR 0,58960:RUNM"POWR-D"
+	30 KILL"POWR-D.CO":LFILES MENU
+
+To run RESTOR.BA without errors, there must be a copy of POWR-D.CO on the disk
+and none in RAM.  It is a simple matter to set up a disk to run an application
+by providing it with the necessary copies of POWR-D.CO and relocated versions
+of POWR-DISK, along with the application.
+
+								Manual Page 25
+								--------------
+
+			       Appendix "A"
+		      The Tandy Portable Disk Drive
+
+Entire books could be written on the subject of disk drives, but this short
+appendix describes only a few matters of prudence and simple curiosity.
+
+The 3-1/2 inch Diskette
+
+Technology has advanced considerably in diskettes for personal computers.  The
+diskettes used in the TDD have more potential storage capacity than 5-1/4 inch
+diskettes (which are still the standard for desktop personal computers), yet
+require less than half the [surface] area.  A 3-1/2 inch diskette holds about
+100 Kbytes of data when used in the TDD; other disk drives can squeeze as much
+as 720 Kbytes onto the same diskettes.
+
+[Actually, the diskette contains 79 sectors available to the user, each sector
+holding 1280 bytes.  If each sector were filled to capacity, the diskette would
+store 101,120 bytes, or 98.75 Kbytes, given a "K" in computerese is 1024 bytes.
+- ed.]
+
+Further, the 3-1/2 inch diskette is a decided step forward in ruggedness and
+reliability.  No part of the magnetic surface is exposed, as a spring-loaded
+metal cover conceals the "window" in the hard plastic case.  Be warned however,
+that these diskettes are not hermetically sealed: avoid dust and dirt; do not
+leave diskettes scattered on a desktop under papers, etc.; and do not carry
+them in pockets of clothing that sheds (sports jackets, etc.), [or in hip
+pockets where they are subject to breakage.]  The other constant enemy of
+diskette data are magnetic fields. The wordless warnings on diskette boxes show
+horseshoe magnets, "keep away from magnets"; but remember that loudspeakers,
+motors, telephones, and office paper-clip holders all contain magnets.  You
+needn't be paranoid, but don't be careless, either.
+POWR-DISK Owner's Manual
+
+The Disk-Drive Hardware
+
+The TDD comprises two basic moving parts; the motor and the head.  The motor
+keeps the diskette spinning at a constant rate.  The head glides over the
+diskette to read and write the data.  The head can be in one of 40 different
+positions, relative to the edge of the diskette; each of these 40 positions is
+called a "track".  If you examine the magnetic surface of a used diskette, you
+may be able to distinguish the lines of the tracks from friction with the head.
+
+[Each "track" contains two "sectors". The "head" touches the top surface of the
+disk, on the side away from the round "hub" protruding from the center of the
+case, and can be seen by looking into the open disk access slot in the front of
+the drive, using a flashlight. - ed.]
+
+								Manual Page 26
+								--------------
+
+Diskettes must be "formatted" before the drive can successfully read or write
+data. Formatting uses up some of the diskette's storage ability for magnetic
+timing marks, so that the drive controller hardware can determine where on the
+track the head is, at any point.  After formatting, there are 1280 bytes for
+data storage left on each sector of the diskette.  (Other drives, with more
+storage capacity, simply squeeze more bytes into the same size track.) We
+recommend formatting an entire box of diskettes as soon as they are purchased,
+making them ready for immediate use, and leaving no question as to whether a
+diskette is ready to store new files.
+
+The TDD operating system
+
+It may surprise you that the TDD has software built into it - and contains both
+RAM and ROM hardware - in order to control the disk hardware.  The TDD is known
+as an "intelligent" disk drive, since it decides on its own which tracks are
+available and which are already full; whether a file with a certain name exists
+on the disk, etc.  Thus, the POWR-DISK software merely sends codes conforming
+to those rules which allow the computer and the drive to communicate.
+
+[The "DOS" is really a communications program, not a disk controlling, Disk
+Operating System - ed.]
+
+There are advantages and disadvantages to this arrangement.  The principal
+advantage is that code in the computer requires less room.  The principal
+disadvantage is that the disk drive is more or less limited by its internal
+operating system to what its designers originally intended for its end use. In
+this case, this limitation means that the files on the TDD must be primarily
+sequential, rather than random access.  You cannot change the middle part of a
+file with sequential access without rewriting the entire file. [ed changes]
+
+There are several other interesting observations about the TDD operating
+system:
+
+-  The TDD O/S uses a "directory" to keep track of files on a diskette.  Every
+diskette has a directory, which resides on the outside track, and uses one
+"sector".  Thus an "empty" diskette holds 79 accessible sectors (of 1280 bytes
+each, for a total of 101,120 bytes).
+POWR-DISK Owner's Manual
+
+- The directory cannot hold more than 40 names, limiting the diskette to 40
+files maximum, regardless of individual file sizes.
+
+- [Each file is limited in size to 64K, the equivalent of 65536 bytes, or 52
+sectors (26 tracks). - ed.]
+
+- Each file uses at least one sector, no matter how small the file may be.
+
+- The TDD does not create "empty" files, i.e., files of zero length.  If you
+open a file for output and fail to write to it, it will not appear in the disk
+directory after closing it.
+
+- The TDD can only deal with one file at a time, whether for input or output.
+[So you cannot open one file for input and another for output, a common disk
+drive capability. - ed.]
+
+- TDD file names can be longer than six characters plus an extension.  The
+actual limit appears to be something more like 15 characters, which can also
+include lower case letters.  However, POWR-DISK limits names to six characters
+for compatibility with FLOPPY.CO [and the computer's operating system.]
+
+								Manual Page 28
+								--------------
+
+			     Appendix "B"
+	       Machine Language Files in Tandy Laptops
+
+Tandy laptop users are faced with two choices: either accept mediocre perform-
+ance, or learn how to best use their machine's limited resources.  Most users
+don't get far without having to learn some basic facts about how the Model 100
+or Tandy 200 manages the scarcest resource, RAM space.
+
+
+RAM Organization
+
+The Model 100/200's memory is divided into a number of "bytes".  You can think
+of a byte as a single character.  Each byte holds a value from 0 to 255.  The
+number of bytes depends on the machine and amount of memory; if there is more
+than one bank of RAM, the banks are almost completely independent.
+
+Each byte within a bank has a unique address, which is a number between 32768
+and 65535.  Depending on the amount of RAM installed, and the machine, not all
+the addresses are capable of "remembering" data (the bytes) stored to them.
+In the 200, some of these addresses are part of the ROM. (Read-Only Memory)
+However, the 8192 addresses from 57344 to 65535 are always valid RAM addresses
+in either machine.  A good number of the top portion (3K for the 100, about 5K
+for the 200) are reserved as a "scratch pad" area for the ROM, and are called
+"Reserved System Memory".  The file names that appear on the main menu, as well
+as numerous other bits of data, are stored in this area.
+
+The remainder of RAM is available for user data: BASIC programs, .CO programs,
+DOcument files, variable storage, etc.  BASIC can tell you the lowest address
+of the reserved system memory; the value of MAXRAM returns that address.
+POWR-DISK Owner's Manual
+
+The Model 100 and Tandy 200 have different values for MAXRAM.  Diagrammatically,
+it helps to visualize RAM memory in "neighborhoods".
+
+								Manual Page 29
+								--------------
+
+	 ================  Top Address = 65535
+	|                |
+	|    Reserved    |
+	|     System     |
+	|     Memory     |
+	|                |
+	|================| MAXRAM  100 = 62960
+	|                |         200 = 61104
+	|  User Memory   |
+	| (Files, etc.)  |
+	|                |
+	 ================  Lowest RAM address 100/24K = 40960
+					      100/32K = 32768
+					      200/24K = 40960
+
+A much more detailed chart could also show the relative locations of BA, DO,
+and CO files; the location of the PASTE buffer, etc.  Everything changeable
+that the computer "knows", resides somewhere in system memory or user memory.
+
+
+Machine Language Memory Usage
+
+Machine-language programs for the Model 100/200 must always run from the same
+addresses.  In other words, it is insufficient to specify that they reside
+"somewhere" in user memory.  The designers of the 100/200 operating systems
+made provision for fixed locations: "high memory".  There is a boundary pointer
+called HIMEM, that is equal to, or lower than MAXRAM.  No files, variables, or
+data will reside there, since it is reserved for machine language programs.
+Unless you (or a program) changes HIMEM, it is set the same as MAXRAM.  The
+CLEAR command can change the HIMEM value [allowing for programs of different
+sizes to run in this reserved area, and to "kill" such programs.]
+
+Because the Model 100/200's RAM is scarce nearly every machine language program
+uses the exact same locations, those directly below MAXRAM, for their "running
+position" in memory.  It is possible to design two or more specific machine
+language programs to share the reserved memory area, but it is impossible to do
+this in general.  As a result if you want to run more than one machine language
+program, [unless you can relocate one or the other,] you are out of luck.
+
+Diagrammatically, HIMEM appears as follows:
+
+								Manual Page 30
+								--------------
+
+
+[Chart on following page... - ed.]
+POWR-DISK Owner's Manual
+
+	 ================  Top Address = 65535
+	|                |
+	|    Reserved    |
+	|     System     |
+	|     Memory     |
+	|                |
+	|================| MAXRAM  100 = 62960
+	|                |         200 = 61104
+	|    Reserved    |
+	|     Memory     |
+	|                |
+	|================  Value of HIMEM set by CLEAR statement
+	|                |
+	|      User      |
+	|     Memory     |
+	|  (Files, etc.) |
+	|                |
+	 ================  Lowest RAM address
+
+
+CO Files
+
+[There are various interpretations of the meaning of "CO".  Some writers say
+this is an acronym for "Command", some say it stands for "Compiled".  The POWR-
+DISK manual uses "Command", which is unsatisfactory to the editor, so I changed
+it! - ed.]
+
+The Model 100/200's designers anticipated the clashing of machine language
+programs.  They created .CO files.  A CO file exists in user memory with other
+files and never clashes, but it cannot be "run" like a BASIC program.  Instead
+it is like a "snapshot" of the reserved memory area, containing a non-executing
+image (copy) of a runnable machine language program.  When you select a CO file
+on the main menu and press <ENTER>, the computer (1) copies the "snapshot" into
+the reserved memory area, and (2) begins execution of that copy.
+
+[The "snapshot" image is not required while the program is executing. - ed.]
+
+On the Tandy 200, spreadsheet files are also CO files.  This confuses the issue
+because they are not "programs".  This appendix does not discuss the makeup of
+the spreadsheet CO files used by MSPLAN.
+
+There are some implications to CO files:
+								Manual Page 31
+								--------------
+
+- HIMEM must be set low enough to load the CO file into reserved memory before
+running it.  If it is not, the computer will just beep at you, and return to
+the main menu.
+
+- In order to run a CO file from the menu, you must have enough memory to store
+it TWICE: once in the CO file, and once in the reserved memory area.  [A 2500
+byte CO file will use 5000 bytes while it is actually loaded and running. ...
+FLOPPY.CO at slightly over 3500 bytes, actually uses up more than 7000 bytes of
+RAM space when executing, if it is also left stored in the image file, where it
+appears on the menu. - ed.]
+POWR-DISK Owner's Manual
+
+- Once a CO file has been copied into the reserved memory area, it is often
+possible to remove the CO file image that appears on the menu, and still
+execute the program.
+
+[POWR-D.CO, once loaded and operational with the START.BA program, can be
+removed from RAM with the Kill command, and in fact, the abbreviated version of
+START.BA in PDSK03.200 does just that; removing both POWR-D.CO and START.BA
+after POWR-DISK is loaded and operational. -ed.]
+
+
+Enter POWR-DISK
+
+In some respects, POWR-DISK confuses the RAM management issue even further,
+because it lowers MAXRAM when it is active to protect itself, so that the CLEAR
+command in BASIC cannot wipe it out.  Diagrammatically, the memory with POWR-
+DISK installed, looks like this:
+
+	 ================  Top Address = 65535
+	|                |
+	|    Reserved    |
+	|     System     |
+	|     Memory     |
+	|                |
+	|================| Default MAXRAM  100 = 62960
+	|                |         	   200 = 61104
+	|   POWR-DISK    |
+	|                |
+	|================| NEW MAXRAM
+	|                |
+	|    Reserved    |
+	|     Memory     |
+	|                |
+	|================| HIMEM
+	|                |
+	|      User      |
+	|     Memory     |
+	|  (Files, etc.) |
+	|                |
+	 ================  Lowest RAM address
+
+For dealing with most BASIC program, lowering MAXRAM is a good technique.  How-
+ever, machine language programs cannot recognize a different MAXRAM or run in
+other locations.  Thus, it becomes necessary to relocate either the other m/l
+program, or, when this is not possible, relocate POWR-DISK.
+
+								Manual Page 32
+								--------------
+
+Relocation actually changes a machine language program to run in different
+addresses.  A program so relocated can reside in the reserved memory area in
+the diagram above.  The CO file does not need to sit in RAM, since POWR-DISK
+can copy it directly from the TDD into reserved memory -- a feat beyond the
+capabilities of FLOPPY.CO.
+
+Further, when dealing with machine language programs that cannot be relocated,
+POWR-DISK Owner's Manual
+
+POWR-DISK itself can be relocated.  Diagrammatically, the memory then looks as
+follows:
+
+	 ================  Top Address = 65535
+	|                |
+	|    Reserved    |
+	|     System     |
+	|     Memory     |
+	|                |
+	|================| Default MAXRAM  100 = 62960
+	|                |         200 = 61104
+	|    Machine     |
+	|    Language    | <-- POWR-DISK was here
+	|    Program     |       |
+	|                |       |
+	|================|       |
+	|                |       |
+	|   POWR-DISK    | <-- Relocated to here
+	|                |
+	|================| New (Relocated) MAXRAM
+	|                |
+	|      User      |
+	|     Memory     |
+	|      Area      |
+	|                |
+	 ================  Lowest RAM address
+
+Note that the HIMEM address is usually the same as MAXRAM when POWR-DISK has
+been relocated, so there is no reserved memory area visible -- but there still
+could be.  The machine language program sitting above POWR-DISK does not "know"
+that MAXRAM has been moved lower; it runs thinking that it is in the reserved
+memory area.
+
+This subject is complex; if you are lost, don't worry.  If you have difficulty
+accommodating a machine language program for use with POWR-DISK, ask a knowled-
+geable friend or [leave a message on the Model 100 Forum message board].
+
+
+
+			   [End of POWR-DISK Manual.]
+
+[Acroatix also sent out a newsletter to registered owners of the POWR-DISK
+program, which offered tips and general ideas on use of the program, as well as
+advising customers of updates, update policy, and discussing new software that
+was available.  As far as I know, only one issue of the newsletter was ever
+produced.
+
+Significant comments from the Newsletter will be found in the next file in this
+series. - ed.]
+
+POWR-DISK Owner's Manual
+								Newsletter
+								----------
+
+Acroatix Inc., produced at least one POWR-DISK Newsletter, which was mailed to
+registered owners of the POWR-DISK software.  The newsletter was dated May 15,
+1986, and consisted of two 8.5 x 11 sheets, printed on both sides.  Much of the
+material discussed various software upgrades that were available to owners of
+TMPC, and other Acroatix software.  Information of use to owners of POWR-DISK
+has been extracted and reproduced in this file. - ed.
+
+
+MENU.BA Upgrade for the Tandy 200
+
+The Tandy 200 version of MENU.BA is undergoing some significant changes as we
+publish this newsletter.  All copies of POWR-DISK sent out after July 1st will
+have the changed incorporated.  If you are a Tandy 200 customer and want to
+update your copy of MENU.BA, we plan to have the new copy available as of July
+1.  (Upgrade policy explained)
+
+[We have no indication whether the version of MENU.BA released to the forum is
+the early or the upgraded version.  Since Acroatix is no longer supporting the
+product, there is no way to obtain an upgraded copy. - ed.]
+
+
+Mysterious QFWFQ.DO File
+
+When you attempt to view the TDD directory and there is no disk in the drive,
+or the drive isn't connected, or there are other errors, you will find an empty
+file in RAM named QFWFQ.DO.  You can delete this file without problems.  It is
+a residual file created by MENU.BA.  If you do not delete it, MENU.BA will, the
+next time you successfully use [F1] to view the TDD contents.
+
+
+Error #55
+
+If you get this error while running MENU.BA, it is almost certainly because you
+are using Super ROM. Most likely to happen with the Model 100.
+
+
+Error #51
+
+If you get this error, change line 1 of MENU.BA to read:
+
+	1 MAXFILES=1 : CLEAR 1000 : GOTO 24
+
+Tandy 200 owners should change GOTO 24 to GOTO 25.
+
+
+Error #9
+
+This problem should occur only with the 200 version.  If it does, send your
+diskette in for an upgrade.  [Leave message on forum message board, and we'll
+try to figure it out. - ed.]
+
+

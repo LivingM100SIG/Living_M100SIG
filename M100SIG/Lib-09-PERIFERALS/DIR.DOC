@@ -1,0 +1,58 @@
+DIR creates a more convenient directory for diskettes than that of DISK BASIC
+on the RS DVI. Here's how to use it:
+
+1. Read DIR.DVI and Rick Perry's SORT.LDR from DL7. Convert both to BASIC (see
+   DOWNLD.HLP in XA0 if you're not sure how) and run SORT.LDR to create SORT.CO.
+   DIR will not need SORT.BA or SORT.LDR; you can delete them.
+
+2. Create a .DO file (using TEXT) with four carriage returns in it and store it
+   on the DVI as "DIRECT" (i.e., hit F3, then enter 0:DIRECT). This creates a
+   dummy directory, which DIR needs to get started. You can KILL the RAM file
+   after you've created 0:DIRECT.
+
+3. Run DIR. It will prompt you for comments on each disk file and on the disk;
+   comment length is limited only by print line length (for 80 columns, it's
+   37 characters). I use the disk comment field to store a disk number and
+   description.
+
+   DIR creates a .DO file called "DIRECT" and stores it on disk; you may delete
+   it from RAM (see notes below).
+
+4. To print a directory, simply press "p" or "P" when asked. The directory
+   lists the file name, Data/Program/Machine language designator, date & time
+   posted, bytes, and comments. Its heading tells when it was printed, and
+   contains the disk comment field. It ends with a "TOTAL BYTES" figure.
+
+NOTE WELL: Files in the directory appear in alpha order, thanks to Rick's SORT.
+The directory name arrays (A() and B()) are DIMensioned for 55 entries in line
+  20; change to suit.
+
+Each time you run DIR, it checks the diskette directory and compares it with
+DIRECT. DIR prompts you for comments on newly-added files, and deletes ones 
+that no longer appear in the diskette directory. You need not print the
+ directory. If you do print it, a copy of DIRECT.DO is left in RAM. Line one
+ contains [date printed],[time printed],disk comments; the rest of the
+ directory looks like this:
+
+	Bytes	Field
+	_____	_________________________________________
+	1-9	File name
+	10	CHR$(128) for .BA; CHR$(01) (not visible) for .CO
+	10-17	Date created (9-16 for .DO files)
+	18-25	Time created (17-24 for .DO files)
+	26+	Comments (25+ for .
+
+You may modify DIRECT.DO and store it on disk; there is nothing you can do to 
+it that will hurt your data. At worst, DIR will halt with a "beyond end-of-
+file" error, if you erase DIRECT.DO's contents entirely before storing it. 
+If that happens, just go back to step 1, above.
+
+Your comment field can be 225 characters long, but it will "wrap" to the next
+ line on your printer if its length exceeds 35.
+
+If you don't want DIRECT.DO to be created, simply "REM out" lines 243,
+ 245, and 250.
+
+Please let me know if you have any difficulties with DIR.
+
+                                                       <<Joel Orr, 72126,1613>>

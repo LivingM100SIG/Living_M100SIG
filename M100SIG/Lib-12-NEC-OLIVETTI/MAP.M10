@@ -1,0 +1,207 @@
+Olivetti M10 Reserved RAM Memory Map
+by Terry Kepner
+Copyright (c) 1985, All Rights Reserved
+
+To the best of my knowledge all this information is correct, but no claim
+is made as to the absolute accuracy of the data. USE AT YOUR OWN RISK!
+
+If you should discover some more tidbits about the memory of the
+Olivetti M10, please drop me a line via EMAIL and I will update this
+map for the benefit of everyone (messages leave the SIG so fast, I might
+not see your note before it drops off the system).
+
+------------------------------------------------------------------------------
+                Olivetti M10 Reserved RAM Memory Map
+------------------------------------------------------------------------------
+Adrss  byte     Explanation
+
+----------------CODE FROM HERE TO 63020 IS THE SAME AS TRS-80 Model 100
+62960   77 - M  Beginning of Reserved RAM.
+62964  240 -    HIMEM - low byte.
+62965  245 -          - high byte.
+62966  201 -    Return followed by two zero bytes.
+62969  251 -    RAM vector for RST 5.5.
+62972  201 -    RAM vector for RST 6.5. (Return followed by two zero bytes).
+62975  201 -    RAM vector for RST 7.5. (Return followed by two zero bytes).
+62978  195 -    Jump to 5176 (Power off, returns to program on powerup).
+62981   62 - >  Code to check for Expansion ROM at powerup,
+                extends to 63011.
+63012  243 -    Expansion ROM entry code,
+                extends to 63018.
+63019    1 -    TELCOM dialing pulses-per-second: 1= 10pps, 20=20pps.
+63020  201 -    Return followed by two zero bytes.
+----------------All locations from 63023 and above are offset from the
+                Model 100 memory map by three locations.  That is, the
+                data stored at 63021 on the Model 100 is at 63024 on the
+                Olivetti M10.
+63027    0 -    Basic KEY ON command flag.  ON=1, OFF=0.
+63028    0 -      locations 63028 to 63035 indicate which function keys
+63029    0 -      are enabled, Enabled=1, Disabled=0.
+63030    0 -    -  F3
+63031    0 -    -  F4
+63032    0 -    -  F5
+63033    0 -    -  F6
+63034    0 -    -  F7
+63035    0 -    -  F8
+63036    8 -    Next vertical print position (0-8).
+63037    1 -    Next horizontal print position (0-40).
+63038    8 -    Number of active lines (0-8).
+63039   40 - (  Number of active columns (0-40).
+63040    0 -    Label line flag; 0=unused, 255=used.
+63041    0 -    Inhibits return to first line if not zero.
+63043    8 -    Current cursor line.
+63044    1 -    Current horizontal print position.
+63051    0 -    Reverse video if not zero.
+63052   60 - <  Width used for printing in TEXT, in decimal.
+63053   54 - 6  Width used for printing in TEXT, in ASCII - high digit.
+63054   48 - 0    /                                       -  low digit.
+63055    0 -     / used for one's position if printing over 99 columns.
+63056    0 -    /  zero byte to terminate this ASCII string field.
+63057   55 - 7  x pixel set.
+63058  179 -    y pixel set.
+63059    0 -    BREAK key control - 128 disables BREAK, CONTROL-C,
+                Function Keys.
+63066  100 - d   Current automatic POWER OFF value.
+63067  255 -     TELCOM - Full Duplex=255, Half Duplex=0.
+63068    0 -     TELCOM - Echo on=255, Echo off=0.
+63069    0 -     TELCOM - send linefeed with carriage-return - ON=1, OFF=0.
+                        - use 255 to send CR/LF to Macintosh.
+63070   52 - 4   TELCOM - Baud rate.
+63071   55 - 7   TELCOM - Word length.
+63072   69 - E   TELCOM - Parity.
+63073   49 - 1   TELCOM - Stop bits.
+63074   69 - E   TELCOM - XON/XOFF control.
+63075  195 -     Code for machine language jump, always 195.
+63076   78 - N   Call target address - low byte.
+63077   81 - Q   /                   - high byte.
+63093   18 -    Last Error Code returned.
+63095    0 -    Value of LPOS.
+63096    0 -    Output flag, 1=printer, 0=display.
+63099  216 -    Top of Available RAM - low byte.
+63100  242 -    /                    - high byte.
+63101   30 -    Current BASIC line number, in decimal        - low numbers.
+63102    0 -    / 65535 stored here if no program is running - high numbers.
+63103    9 -    Start of current BASIC program - low byte.
+63104  165 -    /                              - high byte.
+63107   58 - :  End of statement marker, either ":" or 0.
+63108  137 -    General purpose input buffer:
+63109    0 -       Basic programs start at 63108.
+63110    0 -       Direct Mode input starts at 63112.
+63111    0 -       extends to 63365 (257 and 253 bytes, respectively).
+63371    0 -     Value of POS.
+63372   70 - F   BASIC Function key definitions, each key has
+63373  105 - i     16 available slots, ends at 63499.
+63374  108 - l   F1 - 63372
+63375  101 - e   F2 - 63388
+63376  115 - s   F3 - 63404
+63377   13 -     F4 - 63420
+63378    0 -     F5 - 63436
+63379    0 -     F6 - 63452
+63380    0 -     F7 - 63468
+63381    0 -     F8 - 63484
+63500    2 - 
+63501   70 - F   BASIC Function table repeats... ends at 63628.
+63502  105 - i   F1 - 63501
+63503  108 - l   F2 - 63517
+63504  101 - e   F3 - 63533
+63505  115 - s   F4 - 63549
+63506   13 -     F5 - 63565
+63507    0 -     F6 - 63581
+63508    0 -     F7 - 63597
+63509    0 -     F8 - 63613
+63639   49 - 1   Temporary storage buffer for BASIC, TEXT, and TELCOM.
+63640   48 - 0     extends to 63778.
+63788    4 -    Day of month - low digit.
+63789    1 -    /            - high digit.
+63790    6 -    Day of Week (0-6).
+63791    1 -    Current Month (1-12).
+63792    0 -    Current year - low digit.
+63793    0 -    /            - high digit.
+63794   13 -    Timer - counts down from 125.
+63795   12 -    /     - counts down from 12.
+63796  100 - d  Powerdown count down value.
+63797    0 -    / in decimal, low number first.
+63798    0 -    Seconds - low digit.
+63799    1 -    /       - high digit.
+63800    0 -    Minutes - low digit.
+63801    0 -    /       - high digit.
+63802    9 -    Hours - low digit.
+63803    1 -    /     - high digit.
+63804    4 -    Date - low digit.
+63805    1 -    /    - high digit.
+63806    6 -    Day of week (1-7).
+63807    1 -    Month - (1-12).
+63808    0 -    Time set by the Basic ON... TIME$ statement,
+63809    0 -        / in reverse order.
+63810    0 -       /
+63811    2 -      /
+63812    6 -     /
+63813    0 -    /
+63814    0 -    COM ON/OFF flag.
+63815    0 -     / Address of COM ON routine - low byte.
+63816    0 -    /                            - high byte.
+63817    0 -    TIME$ ON/OFF flag.
+63818    0 -     / Address of TIME$ ON routine - low byte.
+63819    0 -    /                              - high byte.
+63821    0 -    On/off flags for the function keys, 3 bytes/key.
+63822    0 -      extends to 63844.
+--------------- Olivetti M10 Menu -------------------------------------
+63845  176 -    Program type                  192=TEXT file.
+63846   78 - N  File Address - low byte       184=invisible.
+63847  108 - l               - high byte      176=ROM program.
+63848   66 - B  Start Program name
+           128=BASIC program.
+63849   65 - A        /                         0=Unused entry
+63850   83 - S       /
+63851   73 - I      /
+63852   67 - C     /
+63853   32 -      /
+63854   32 -     /
+63855    0 -    /
+63856  176 -    TEXT    - 63856
+63857  243 -    TELCOM  - 63867
+63858   93 - ]  ADDRSS  - 63878
+63859   84 - T  SCHEDL  - 63889
+63860   69 - E  Suzuki  - 63900 - address of BASIC program not saved to RAM.
+63861   88 - X  Hayashi - 63911 - address of end of documents area.
+63862   84 - T  Current program statistics - 63922
+63863   32 -    Entry  1 - 63933
+63864   32 -    Entry  2 - 63944
+63865   32 -    Entry  3 - 63955
+63866    0 -    Entry  4 - 63966
+63867  176 -    Enrty  5 - 63977
+63868   78 - N  Entry  6 - 63988
+63869   81 - Q  Entry  7 - 63999
+63870   84 - T  Entry  8 - 64010
+63871   69 - E  Entry  9 - 64021
+63872   76 - L  Entry 10 - 64032
+63873   67 - C  Entry 11 - 64043
+63874   79 - O  Entry 12 - 64054
+63875   77 - M  Entry 13 - 64065
+63876   32 -    Entry 14 - 64076
+63877    0 -    Entry 15 - 64087
+63878  184 -    Entry 16 - 64098
+63879  112 - p  Entry 17 - 64109
+63880   91 - [  Entry 18 - 64120
+63881   65 - A  Entry 19 - 64131
+63882   68 - D   extends to 64141
+64167   64 - @  Equals 255 if Optional ROM is installed.
+64168   65 - A  Optional ROM name for MENU, extends to 64176.
+64177    0 -    Label line flag, Enabled=1, Disabled=0.
+64178  109 - m  Name of IPL program goes here, extends to 64185.
+64179  101 - e        /
+64180  109 - m       /
+64181  115 - s      /
+64182   99 - c     /
+64183  110 - n    /
+64184   13 -     /
+64185    0 -    / Zero byte terminates this ASCII string.
+64904   74 - J  Start of date and time stored in ASCII, extends to 64928.
+64905   97 - a    Used in MENU, not for DATE$ or TIME$.
+65024   79 - O  Start of LCD screen memory, extends to 65343.
+65348    0 -    SOUND flag, On=0, Off=175.
+65349    0 -    Cassette ON/OFF flag.
+
+Terry Kepner, Technical Editor, Pico Magazine, PPN 74666,615
+
+

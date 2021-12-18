@@ -1,0 +1,39 @@
+Copyright 1987 Phil Wheeler
+
+Documentation for DISASM.PW2
+----------------------------
+
+Most Model 100/102 disassemblers require that you load the program
+into its running location in memory, and then tell the
+disassembler what address range to disassemble.  This can be
+inconvenient in some instances. If you have a machine language
+program already loaded, it may conflict with the program you wish
+to disassemble.  Or you may wish to disassemble to a disk drive,
+using an operating system (such as CDOS or TS-DOS) which resides
+where the program to be disassembled loads. Another example is a
+CO program assembled with an ORG of 0 for the purpose of building
+a relocating Basic loader.
+
+DISASM.PW2 is a version of DISASM.PW1 which disassembles CO files
+in their menu location, eliminating the need to load them to their
+running location.  You supply the name of the file, and DISASM.PW2
+finds it, calculates the start and end addresses, and disassembles
+it in its menu-stored location.  The resulting disassembly is the
+same as that from DISASM.PW1.
+
+The disassembly can be directed to any legal device -- with one
+major exception: You cannot use DISASM.PW2 to disassemble to a RAM
+file.  Well, you can, but the result will be the assembly language
+equivalent of gibberish.  This is because the creation of a new
+RAM file pushes other files (including the CO file disassembled)
+around on the menu;  I haven't (yet) figured out how to make the
+disassembler follow a moving target!  So if you need a RAM copy of
+the disassembly , load the CO program and use DISASM.PW1.
+
+Modification of the file directory address data in
+line 450 appears to be all that's need to make this program
+run on the Tandy 200.
+
+Phil Wheeler
+71266,125
+27 May 1987

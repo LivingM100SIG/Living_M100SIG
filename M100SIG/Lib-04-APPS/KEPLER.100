@@ -1,0 +1,248 @@
+1 REM KEPLER copyright (c) 1988, Don Sakers
+2 REM Distribution permitted.
+3 REM A program to create habitable worlds and planetary systems for the
+4 REM science-fiction writer. Read KEPLER.DOC
+5 SEC=VAL(RIGHT$(TIME$,2))
+6 FOR I=1 TO SEC:DUMMY=RND(1):NEXT I
+10 DIM PL(14),M(14),C$(14),Z(14),D(14),W(14),G(14),R(14),I(14)
+12 CLS
+13 PRINT:PRINT "   Kepler: A World-Processing Program"
+14 PRINT:PRINT
+15 PRINT "       Copyright (c) 1988, Don Sakers"
+16 PRINT
+17 PRINT"     Hit any key to begin."
+18 A$=INKEY$
+19 IF A$="" THEN 18
+22 CLS:PRINT"  Please name the planet"
+23 INPUT P$
+24 CLS:PRINT" 1- Kepler Chooses a Star"
+25 PRINT " 2- You Specify a Star"
+26 INPUT C1
+27 IF C1=2 GOTO 250
+28 PRINT:PRINT:PRINT "Choose the Star's Spectral Class"
+29 PRINT:PRINT "     B  A  F  G  K  M"
+30 PRINT "   <--HOTTER  COOLER-->"
+31 INPUT S$
+32 IF S$="b" THEN 40
+33 IF S$="a" THEN 43
+34 IF S$="f" THEN 46
+35 IF S$="g" THEN 49
+36 IF S$="k" THEN 52
+37 IF S$="m" THEN 55
+38 GOTO 28
+40 MS=INT((RND(1)*13)+4)
+41 LS=INT(RND(1)*9000)*1000
+42 GOTO 58
+43 MS=(RND(1)*2.4)+1.6
+44 LS=(RND(1)*995)+5
+45 GOTO 58
+46 MS=(RND(1)*.4)+1.2
+47 LS=(RND(1)*3.9)+1.1
+48 GOTO 58
+49 MS=(RND(1)*.45)+.75
+50 LS=(RND(1)*.6)+.5
+51 GOTO 58
+52 MS=(RND(1)*.45)+.3
+53 LS=(RND(1)*.4)+.1
+54 GOTO 58 
+55 MS=(RND(1)*.25)+.05
+56 LS=(RND(1)*.099)+.001
+57 GOTO 58
+58 CLS:PRINT" 1- Kepler Generates a Habitable Planet"
+59 PRINT " 2- You Specify a Pre-Created Planet"
+60 INPUT C2
+61 IF C2=2 THEN 261
+62 I=(RND(1)*1.7)+.3
+63 CLS:PRINT "Stellar Mass:     ";MS
+64 PRINT "Stellar Luminosity";LS
+65 PRINT "  Planetary Irradiation:";I
+66 PRINT "  (Earth = 1)"
+67 INPUT "Does this look right";A$
+68 IF A$="y" THEN 70
+69 INPUT "     What value would you like";I
+70 DS=SQR(LS/I):DP=DS*149.6:CLS
+71 PRINT "Distance of ";P$;" from star: "
+72 PRINT " ";DS;" A.U."
+73 PRINT " ";DP;" million kilometers"
+74 PRINT:PRINT "Does that look right?  (y or n)"
+75 INPUT A$
+76 IF A$="y" THEN 85
+77 PRINT "Choose a new distance, please"
+78 INPUT "Distance in A.U.";DS
+79 I=LS/DS^2:DP=DS*149.6:CLS
+80 PRINT "New Irrandiation:";I
+81 PRINT "Distance: ";DS;" A.U."
+82 PRINT "          ";DP;" million kilometers"
+83 PRINT:INPUT "Does irradiation look right (y or n)";A$
+84 IF A$="n" THEN PRINT "We'd better start over...":GOTO 30
+85 P=SQR(DS^3):YY=P*(1/MS^2):YD=YY*365.26
+86 CLS:PRINT"Period of revolution:"
+87 PRINT"  ";YY;" Terran years"
+88 PRINT"  ";YD;" Terran days"
+89 PRINT:INPUT "Shall we continue";A$
+90 IF A$="y" THEN 92
+91 PRINT:PRINT" We will anyway."
+92 PRINT:INPUT"Do you want to pick the surface gravity (y or n)";A$
+93 IF A$="y" THEN 111
+94 DI=RND(1)+.5
+95 CLS:PRINT "Diameter of ";P$;":"
+96 PRINT " ";DI
+97 PRINT " (Earth = 1)":PRINT
+98 INPUT "Does this look right (y or n)";A$
+99 IF A$="y" THEN 101
+100 PRINT:INPUT "Specify new diameter (Earth = 1)";DI
+101 QW=(RND(1)*3.5)+3.5:QE=QW/5.5
+102 CLS:PRINT "Density of ";P$;":"
+103 PRINT " ";QW;" Grams/cubic centimeter"
+104 PRINT " ";QE;" Times Earth"
+105 ME=QE*DI^3:G=DI*QE
+106 PRINT "Mass: ";ME;" times Earth":PRINT
+107 PRINT "Surface gravity: ";G;" gees"
+108 INPUT "Does the gravity look right (y or n)";A$
+109 IF A$="n" THEN 111
+110 GOTO 118
+111 INPUT "What gravity, please";G
+112 QW=(RND(1)*3.5)+3.5:QE=QW/5.5
+113 CLS:PRINT "Density of ";P$;":"
+114 PRINT " ";QW;" Grams/cubic centimeter"
+115 PRINT " ";QE;" Times Earth":DI=G/QE
+116 PRINT "Diameter: ";DI;"  (Earth = 1)"
+117 ME=QE*DI^3:PRINT "     Mass: ";ME;" times Earth"
+118 INPUT "     Input length of day (hours)";LD
+119 YP=YD*24/LD:CLS:PRINT "     Local year is ";YP;" local days."
+120 PRINT:PRINT "Printing into PLANET.DO"
+121 OPEN "PLANET.DO" FOR APPEND AS #1
+122 PRINT #1,"Name: ";P$
+123 PRINT #1,"Star type:"
+124 PRINT #1,"   Luminosity (Sol = 1): ";LS
+125 PRINT #1,"   Mass (Sol = 1): ";MS
+126 PRINT #1,"Distance from star: "
+127 PRINT #1,"     ";DS;" A.U."
+128 PRINT #1,"     ";DP;" million kilometers"
+129 PRINT #1,"Total irradiation (Terra = 1): ";I
+130 PRINT #1,"Revolution:"
+131 PRINT #1,"     ";YY;" Terran years"
+132 PRINT #1,"     ";YD;" Terran days"
+133 PRINT #1,"     ";YP;" Local days"
+134 PRINT #1,"Diameter:"
+135 PRINT #1,"     ";DI;" (Earth = 1)":DK=DI*12756
+136 PRINT #1,"     ";DK;" kilometers"
+137 PRINT #1,"Mass: ";ME;" times Earth"
+138 PRINT #1,"Density:"
+139 PRINT #1,"     ";QW;" g/cc"
+140 PRINT #1,"     ";QE;" times Earth"
+141 PRINT #1,"Surface gravity: ";G;" gees"
+142 PRINT #1,"Length of day: ";LD;" hours"
+143 PRINT #1,"**********"
+149 CLS:INPUT"Shall we do the rest of the system (y or n)";A$
+150 IF A$="n" THEN 240
+151 PRINT "Calculating..."
+152 PN=INT((RND(1)*3)+1)
+153 IF PN>1 THEN 156
+154 B=DS/.3
+155 GOTO 163
+156 IF PN>2 THEN 159
+157 B=DS/.7
+158 GOTO 163
+159 IF PN>3 THEN 162
+160 B=DS
+161 GOTO 163
+162 B=DS/1.6
+163 J=.04:U=.0044:NP=INT((RND(1)*11)+3)
+165 IF NP>=PN THEN 167
+166 PN=NP:B=DS:IF PN>3 THEN B=DS/1.6
+167 FOR Y=1 TO NP
+168 IF Y=1 THEN PL(Y)=.4*B:GOTO 170
+169 PL(Y)=((2^(Y-2)*3+4)/10)*B
+170 IF Y=PN THEN 204
+171 I(Y)=LS/PL(Y)^2
+172 IF I(Y)<U THEN 195
+173 IF I(Y)<J THEN 207
+174 C$(Y)="Rocky"
+175 M(Y)=(RND(1)*2.99)+.01
+176 Z(Y)=(SQR(PL(Y)^3))/MS^2
+177 W(Y)=(RND(1)*.9)+.6
+178 D(Y)=2*((M(Y)/(W(Y)*3.1415926#))^(1/3))
+179 G(Y)=D(Y)*W(Y)
+180 X=INT((RND(1)*9)+1)
+181 IF X=1 THEN R(Y)=Z(Y)*365*24:GOTO 185
+182 IF X=2 THEN R(Y)=-Z(Y)*365*24:GOTO 185
+183 IF X=3 THEN R(Y)=2/3*Z(Y)*362*24:GOTO 185
+184 R(Y)=(RND(1)*32)+15
+185 IF G(Y)>2 THEN 193
+186 IR=LS/(PL(Y)^2)
+187 IF IR>2 THEN 193
+188 IF IR<.3 THEN 193
+189 X=INT((RND(1)*2)+1)
+190 IF X>2 THEN 193
+191 IF X>1 THEN C$(Y)="Venus-Type":GOTO 193
+192 C$(Y)="Habitable"
+193 NEXT Y  
+194 GOTO 224
+195 X=INT((RND(1)*5)+1)
+196 IF X=1 THEN 174
+197 C$(Y)="Methane giant"
+198 M(Y)=INT((RND(1)*20)+5)
+199 Z(Y)=(SQR(PL(Y)^3))/MS^2
+200 W(Y)=(RND(1)*.2)+.2
+201 D(Y)=2*((M(Y)/(W(Y)*3.1415926#))^(1/3))
+202 G(Y)=D(Y)*W(Y):R(Y)=(RND(1)*10)+20
+203 GOTO 193
+204 M(Y)=ME:C$(Y)="Habitable: "+P$
+205 Z(Y)=YY:D(Y)=DI:W(Y)=QE:G(Y)=G:R(Y)=LD
+206 GOTO 193
+207 X=INT((RND(1)*9)+1)
+208 IF X=1 THEN 174
+209 C$(Y)="Jovian"
+210 M(Y)=INT((RND(1)*450)+50)
+211 IF M(Y)<200 THEN 214
+212 IF M(Y-1)>3 THEN 214
+213 GOSUB 218
+214 Z(Y)=(SQR(PL(Y)^3))/MS^2
+215 W(Y)=(RND(1)*.15)+.1
+216 D(Y)=2*((M(Y)/(W(Y)*3.1415926#))^(1/3))
+217 G(Y)=D(Y)*W(Y):R(Y)=(RND(1)*4)+9:GOTO 193
+218 C$(Y-1)="Asteroid Belt"
+219 M(Y-1)=.0001:W(Y-1)=.0001:G(Y-1)=.0001:R(Y-1)=0:D(Y-1)=.0001
+220 RETURN
+224 FOR Y=1 TO NP
+225 PRINT "Printing planet";Y;"into PLANET.DO"
+226 PRINT #1, "_____________________________"
+227 PRINT #1, "Planet #";Y;" of ";NP
+228 PRINT #1, "Composition: ";C$(Y)
+229 PRINT #1, " Distance from star (A.U.): ";PL(Y)
+230 PRINT #1, " Mass (Terra = 1): ";M(Y)
+231 PRINT #1, " Period of revolution (Terra = 1): ";Z(Y)
+232 IF Z(Y)>2 THEN Q=Z(Y)*365.26:PRINT #1, "     (";Q;" Terran days)"
+233 PRINT #1, " Diameter (Terra = 1): ";D(Y)
+234 PRINT #1, " Density (Terra = 1): ";W(Y)
+235 PRINT #1, " Surface Gravity: ";G(Y);" gees"
+236 PRINT #1, " Rotation (hours): ";R(Y)
+237 I(Y)=LS/(PL(Y)^2)
+238 PRINT #1, " Irradiation (Terra = 1): ";I(Y)
+239 NEXT Y
+240 CLS
+241 INPUT "     That was fun. Want to do another (y or n)";A$
+242 IF A$="y" THEN 22
+243 END
+250 CLS
+251 PRINT "CLASS   MASS    LUMINOSITY"
+252 PRINT "  B     4-17   1,000-10,000"
+253 PRINT "  A   1.6-4.0      5-1,000"
+254 PRINT "  F   1.2-1.6    1.1-5.0"
+255 PRINT "  G  0.75-1.2    0.5-1.1"
+256 PRINT "  K   0.3-0.75   0.1-0.5"
+257 PRINT "  M  0.05-0.3  0.001-0.1"
+258 INPUT "Stellar Mass (Sol = 1)";MS
+259 INPUT "Stellar luminosity (Sol = 1)";LS
+260 GOTO 58
+261 CLS
+262 INPUT "What irradiation";I
+263 INPUT "Distance from star (million kilometers)";DP
+264 DS=DP/149.6:P=SQR(DS^3):YY=P*(1/MS^2):YD=YY*365.26
+265 INPUT "Diameter (Earth = 1)";DI
+266 INPUT "Density (g/cc) [Earth = 5.5]";QW
+267 QE=QW/5.5:ME=QE*DI^3:PRINT "Mass is ";ME;" times Earth"
+268 INPUT "Surface gravity";G
+269 GOTO 118
+

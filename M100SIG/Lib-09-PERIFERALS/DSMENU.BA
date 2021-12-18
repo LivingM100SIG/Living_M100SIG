@@ -1,0 +1,37 @@
+0'    **** DSKMGR.BA **** 
+1'by DOUG MAYFIELD (74106,761) for use
+2'with DSKMGR.100 v2.01 by J.K.HEILMAN
+3'see programs and DOC's on this SIG
+4'for information on how to configure
+5'and use these programs. To prevent
+6'possible problems I would advise
+7'making DSKMGR.CO, and its utilitys
+8'invisible with CHANGE.BA on DL4 so
+9'they are not accidently accessed from
+10'the main menu. Rename the DSKMGR
+11'program and its utilitys to names
+12'used in lines 110-130. You are free
+13'to make any changes in this code,
+14'particually size reduction. I am new
+15'to programming, this is my first
+16'M100 effort. All lines under 100 may
+17'removed in your working copy to save
+18'RAM. Thanks to J.K.Heilman for his
+19'great DSKMGR series of programs.
+100 CLS:PRINT"             DISK MANAGER MENU"
+101 PRINT:PRINT"<1> RUN 'DSKMGR.CO' (without utilitys)"
+102 PRINT"<2> ADD 'FORMAT'     <3> ADD 'SAVE ALL'"
+103 PRINT"<4> *future use*     <5> *future use*"
+104 PRINT"<6> *future use*     <7> *future use*"
+105 PRINT:INPUT"ENTER NUMBER OF SELECTION  <ENTER> ";X
+106 IF X<1 THEN BEEP:GOTO100
+107 IF X>7 THEN BEEP:GOTO100
+108 ONXGOTO 110,120,130,140,150,160,170
+110 CLEAR256,60700: RUNM"DSKMGR.CO"
+120 CLEAR 0,60200:LOADM"DSKFMT":RUNM"DSKMGR"
+130 CLEAR0,60600:LOADM"DSKSVL":RUNM"DSKMGR"
+140 BEEP:GOTO100 'TO ADD FUTURE MODULES
+150 BEEP:GOTO100 'TO ADD FUTURE MODULES
+160 BEEP:GOTO100 'TO ADD FUTURE MODULES
+170 BEEP:GOTO100 'TO ADD FUTURE MODULES
+200 END 

@@ -1,0 +1,26 @@
+5 'SCROLL.200 by James Yi/73327,1653/Sept.27,86
+10 'Scroll up dot by dot
+90 FORL=0TO25:PRINT@600,:NEXT:'Clear scren
+100 S=PEEK(65196)+PEEK(65197)*256:'Top left Screen position
+110 S=(S+3072)MOD8192:'Make line 0 appear at line 17
+140 FORL=0TO7:'Scroll 8 rows at a time
+142 IFINKEY$<>""THEN190
+145 IF L=0THENREADM$:IFM$="end"THEN180ELSEPRINT@0,M$+SPACE$(40-LEN(M$));:GOTO150:'Print a line of message
+147 FORW=0TO48:NEXT
+150 S=S+40:S=SMOD8192:A=S-INT(S/256)*256:B=S/256:'Add 40(40 bytes in a line) to the pointer
+155 OUT255,8:OUT254,A:OUT255,9:OUT254,B:'Send this value to the LCD
+160 NEXT:'Completely scroll up a character
+165 P=PEEK(65196)+PEEK(65197)*256:P=(P+320)MOD8192:A=P-INT(P/256)*256:B=P/256:POKE65196,A:POKE65197,B:'Next print position
+170 GOTO140
+180 RESTORE:GOTO145
+190 OUT255,8:OUT254,PEEK(65196):OUT255,9:OUT254,PEEK(65197):END:'Return to normal position
+200 DATA As you can see screen scrolls up dot by,dot.  The trick is done by assigning
+210 DATAdifferent values to the screen locator,of the Tandy 200's LCD unit.  It can be,altered so that any one of 8 byte
+220 DATAportion of any character on any position,on the screen can be displayed anywhere,else without moving it.
+230 DATA The position of the byte that is,displayed at the top left corner of the,screen is in addresses 65196 and 65197.
+240 DATA  There are 8192 bytes of graphics data,in LCD and any one byte can take the
+250 DATAtop left corner position by sending a,value of 0 to 8191 via OUT statement,                                      .
+255 DATAEnter your own message in data lines,A line consists of 40 characters.
+260 DATA Press any key to end.,----------------------------------------
+270 DATA end
+

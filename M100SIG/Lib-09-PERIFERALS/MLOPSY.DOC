@@ -1,0 +1,59 @@
+
+Using Powr-Disk, CDOS, and Disk-Power Operating Systems on the Model 100.
+---------------------------------------------------------------------------
+By John Shadel [73537,775]
+
+Now that there are many Disk operating systems available for the Model 100, it 
+seems logical to be able to use any number of them to achieve the desired 
+results using the Model 100. If you are like myself, and more than one Disk 
+Operating system, you may like features from some depending on the design of 
+the DOS, as well as the applications which are found here on the SIG. Some of 
+the systems have greater support due to the fact that they have been out for 
+some time, while still others are very new. Problems can result when trying to 
+use more than one DOS due to the use of certain areas of memory by different 
+programs. The Hook table, starting at >FADA and continuing through >FB48 seems 
+to be the major area of concern. Also in the case of Disk-Power by Ultrasoft 
+Innovations, the DOS cannot be removed from the RAM of the Model 100 except by 
+causing a Cold Start, or renaming the program (not possible in Basic). In the 
+case of Power-Disk by Acrotix, and CDOS by PCSG, the DOS can be removed through
+the command LFILES OFF, which resets the hook table in both programs. Power-
+Disk however does not clear high memory. 
+
+CDOS and Power-Disk are designed somewhat differently than Disk-Power, in that 
+they reside in high memory, and can be removed when desired. Disk-Power on the 
+other hand is designed to permanently reside in the memory normally used by 
+Text files and Basic Programs, and has been designed to not be recognized by 
+the Basic Interpreter by commands which deal with the RAM (such as KILL,RENAME 
+etc.). The initial settings used by Disk-Power in the Hook table are lost when 
+the other DOS's are run, and Disk-Power does provide a way to reset them. The 
+only method available for running Disk-Power again was to reload it using the 
+supplied programs included on the diskette (which requires the RAM to be clear 
+of all programs except for the loader programs.)
+
+ Disk-Power does not allow itself to be cleared from memory, as the authors 
+felt that the DOS should be permanently stored in memory. This is a good 
+feature because it is impossable to accidently erase the DOS and have to go 
+through the pain of loading FLOPPY.CO, but becomes a problem when Powr-Disk or 
+CDOS have been run and then are disabled, and you wish to run Disk-Power again.
+Because the hook table has not been set back to way Disk-Power initially set 
+it, a cold start will result. 
+
+In order to remedy this situation, I have written MLOPSY.BA. This program 
+allows you to choose what operating system you which to run, and then does 
+various error checking to be sure that the option you have chosen can be run. 
+It has only been implemented for Disk-Power, Power-Disk, and CDOS since these 
+are the DOS's which I own, but probably can be modified to work with TS-DOS 
+also. In this way, I have been able to run Power-Disk, Disk-Power, and CDOS 
+without any cold starts or other problems. The program erases Power-Disk from 
+low memory when it is installed to save on space, and restores it when another 
+DOS is loaded. Be careful to not clear high memory before it is restored, or 
+you will have to get it back from your backup copy. CDOS already clears the 
+copy in low-memory out, and Disk-Power as mentioned above does not allow itself
+to be removed. Error checking is done for missing DOS's, and appropriate 
+messages are displayed to aid in using the program. If you have any questions, 
+please E-mail me. My number is [73537,775], and I am usually on the system 
+every week or so. Please Enjoy and feel free to modify or use this program in 
+any way.
+
+
+

@@ -1,0 +1,46 @@
+
+PDSK11.200
+
+Converted, transcribed and tweaked as necessary by Tony Anderson, 76703,4062.
+September 1988
+
+      (C) 1985 Acroatix Inc.
+Released for exclusive distribution on CompuServe's Model 100 Forum.  All other
+rights reserved.
+
+
+This is a BASIC relocator that will build a relocated version of Power-Disk at
+whatever RAM address you choose. It requires that you have POWR.CO (PDSK15.200)
+and RELO.DO (PDSK12.200) on a disk and loaded in the drive.  Note: POWR.CO, not
+POWR-D.CO from the PDSK05 file.
+
+It also assumes you have a working version of Power-Disk already operating in
+the computer.  This is required because the program below reads in two files
+from the disk, in order to create the relocated version.
+
+
+
+
+10 'POWR-DISK RELOCATOR (C) ACROATIX INC 1985
+12 PRINT"Press Space Bar when a POWR-DISK":PRINT"Customer Disk or a disk containing":PRINT"RELO.DO and POWR.CO is in the TDD"
+15 B$=INPUT$(1):IFB$<>" "THEN15
+18 ONERRORGOTO550:A$="RELO.DO":LOADM":"+A$,F:A$="POWR.CO":LOADM":"+A$,F
+20 CLS:PRINT@51,"POWR-DISK Relocator"
+30 PRINT:PRINT"WARNING:  Use only with instructions":PRINT"provided with POWR-DISK.  Use with care!";
+40 CLEAR256:DEFSTRA-G:DEFINTI-N
+50 CC="kMMn#^#Vk"+CHR$(34)+"0w@!"+CHR$(34)+"0wI"
+60 OPEN"RELO.DO"FORINPUTAS1
+70 PRINT:INPUT"Offset from default Maximum RAM";O:O=-O:INPUT#1,F:INPUT#1,L:GOSUB210
+80 N=256:Z=32768:X=T:AQ=CHR$(34)
+90 PRINTTAB(6);"This number must reach 219.";
+100 NN=NN+1:PRINT@280,NN;:Y=PEEK(X)+N*PEEK(X+1)+O
+110 POKEX,(Y-Z)AND255:POKEX+1,INT(Y/N)
+120 IFEOF(1)THEN130ELSEI=ASC(INPUT$(1,1))-32:X=X+I:GOTO100
+130 PRINT:PRINT"MAXRAM is";58960+O:PRINT"CO file values:":PRINT"TOP:";58960+O:PRINT"END:";60944+O:PRINT"EXE:";58960+O:PRINT"M/L Programs safe starting at";61104+O
+140 PRINT"Name for relocated POWR-DISK (no .CO):":LINEINPUTA$:NAME"POWR.CO"ASA$+".CO"
+150 CLOSE 1:KILL"relo.do"
+190 LFILES MENU
+200 X=PEEK(V+1)+256*PEEK(V+2):RETURN
+210 C=F+".CO"+CHR$(0):V=VARPTR(C):GOSUB200:Y=X:V=VARPTR(CC):GOSUB200:CALLX,0,Y:T=PEEK(63408)+256*PEEK(63409):IFT=65535THENPRINTF;" not found!":END
+220 RETURN
+550 IFERR=67THENKILLA$:RESUMEELSEPRINT"Err";ERR;"  ERL";ERL:ERROR ERR

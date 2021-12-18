@@ -1,0 +1,35 @@
+PWRDSW
+
+Jay Holovacs
+74756,413
+
+Several procedures for dealing with memory conflicts with machine language 
+programs and POWR-D software have been suggested in the user manual as well as 
+in Acroatix newsletter.
+
+All these are quite workable, but the simple program which follows is my 
+favorite for convenience and simplicity.  As long as the ML program in question
+does not require disk access through POWR-D (Floppy provides its own access of 
+course), rather than worry about relocating it is easier to simply store POWR-D
+out of the way.  PWRDSW is a short program which can be kept in ram at all 
+times.  Selecting it from the menu will alternately enable and disable POWR-D 
+as required.
+
+For example, to use Floppy, load it directly to ram with the ',F' option, run 
+PWRDSW to disable POWR-D, and use Floppy as required.  When done, kill Floppy 
+and run PWRDSW once again to restore POWR-D features.
+
+(According to the documentation, the CALL MAXRAM+12 in line 40 should not 
+normally be necessary, however I have had trouble at times with the LFILES OFF 
+and LFILES MENU commands when Floppy has been run, this call seems to resolve 
+the problem.)
+
+
+
+5 IF MAXRAM=62960 THEN 40'R4/27/86
+20 LFILESOFF:PRINT @124,"POWR-DISK DISABLED...":PRINT" Reset HIMEM as required...":KEY8,"Menu"+CHR$(13)
+21 SAVEM"POWR-D",60850,62806,60850:END
+40 CLEAR 100,60850:KEY8,"LfilesMenu"+CHR$(13):RUNM"POWR-D":KILL"POWR-D.CO":CALLMAXRAM+12
+50 CLS:PRINT@124,"POWR-DISK operational...hit enter"
+60 LINE INPUT R$:LFILESMENU
+

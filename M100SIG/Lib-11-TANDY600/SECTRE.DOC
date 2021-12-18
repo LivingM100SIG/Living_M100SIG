@@ -1,0 +1,119 @@
+                                   SECTREAD
+
+     SECTREAD is a BASIC utility program to read 512-byte sectors directly
+from a 3-1/2" disk in drive A: using HH/OS system interrupt &H57 (87
+decimal), as described in the Tandy 600 Programmers Reference Guide.
+
+     SECTREAD calls routines in the UTILTY.LIB library file, and that
+library file must be present in RAM.
+
+     SECTREAD creates a temporary file, "sector.tmp", in order to use the
+512 byte file I/O buffer for storage of the sector data.  The UTILTY.LIB
+DSVARPTR routine obtains the RAM location of this 512 byte buffer, and the
+DBSYSINT routine uses the buffer address as the transfer address for disk
+sector data.  The file is closed and killed when the program is
+terminated.
+
+     To use SECTREAD, place a disk in drive A:, and RUN the program from
+BASIC.  SECTREAD will display the program name and version, followed by
+the message, "Initializing (30 seconds)".  Roughly 30 seconds later, the
+program will prompt for the "Absolute Sector Number" which you wish to
+have displayed.
+
+     The disk sector number must be entered in decimal, and should be
+limited to the range: 0<=sector<=719.  The program DOES NOT validate the
+sector number, although entering a number LESS THAN ZERO will end the
+program.  Requesting a sector greater than the maximum absolute sector
+number on the disk will cause an error.
+
+     The 512-byte sector information is displayed in hex and in ASCII.
+The leftmost side of the display contains the absolute sector number, the
+track number and the relative sector number (i.e. the sector within the
+track, range 0-8) in hex.  The first column to the right contains the
+offset within the sector, followed by sixteen columns of two-digit hex
+numbers which represent the contents of individual bytes within the
+sector.  The hex columns are followed by an ASCII representation of the
+same data.  Two examples follow:
+
+          Tandy 600 Boot Sector (Track 0, Sector 0)
+
+     000  00 00 00 54 61 6E 64 79 36 30 30 00 02 02 01 00   ...Tandy600.....
+     010  02 70 00 D0 02 F8 02 00 09 00 01 00 00 00 90 90   .p..............
+ABS  020  00 00 00 00 00 00 00 00 00 00 00 00 00 00 2B 0C   ..............+.
+SEC  030  41 24 14 00 00 00 00 00 32 00 00 00 B2 0D 02 00   A$......2.......
+000  040  00 08 14 00 14 00 7C 1D A8 09 7C 1D A8 09 41 24   ......|...|...A$
+     050  41 24 AD 0C B1 E5 03 F2 AE 09 00 00 AE 09 00 00   A$..............
+     060  00 00 00 00 C4 03 01 80 5E 0B 00 00 00 00 00 00   ........^.......
+TRK  070  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+000  080  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+     090  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+     0A0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+REL  0B0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+SEC  0C0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+000  0D0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+     0E0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+     0F0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+
+          Tandy 600 Directory Sector (Track 0, Sector 5)
+
+     000  46 4F 52 4D 41 54 20 20 21 36 30 00 00 00 00 00   FORMAT  !60.....
+     010  00 00 00 00 00 00 12 99 AA 0A 02 00 00 06 00 00   ................
+ABS  020  49 4E 53 54 41 4C 4C 20 21 37 30 20 00 00 00 00   INSTALL !70 ....
+SEC  030  00 00 00 00 00 00 28 7A CE 0A 04 00 00 04 00 00   ......(z........
+005  040  44 49 53 4B 43 4F 50 59 21 39 30 20 00 00 00 00   DISKCOPY!90 ....
+     050  00 00 00 00 00 00 04 7A CE 0A 05 00 80 07 00 00   .......z........
+     060  50 52 49 4E 54 45 52 20 44 56 52 20 00 00 00 00   PRINTER DVR ....
+TRK  070  00 00 00 00 00 00 B0 9A 21 0A 07 00 3D 00 00 00   ........!...=...
+000  080  44 42 43 41 4C 4C 53 20 4C 49 42 00 00 00 00 00   DBCALLS LIB.....
+     090  00 00 00 00 00 00 79 85 93 0A 08 00 00 0C 00 00   ......y.........
+     0A0  42 41 53 49 43 20 20 20 21 35 35 00 00 00 00 00   BASIC   !55.....
+REL  0B0  00 00 00 00 00 00 5C 51 9A 0A 0B 00 CD 84 00 00   ......\Q........
+SEC  0C0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+005  0D0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+     0E0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+     0F0  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00   ................
+
+     Tandy 600 3-1/2" disks are organized into 80 tracks, numbered 0
+through 79.  Each track contains nine sectors, numbered 0 through 8.  Each
+sector contains 512 bytes.  There are 720 absolute sectors on the disk,
+numbered 0 through 719.
+
+     Track 0 Sector 0 (absolute sector 0) is the boot sector, and may
+contain a bootstrap loader for the 600.  This is what loads if you perform
+an "uncooperative system boot" (ESC/ALT/LABEL at power-on or reset).
+
+     Track 0 Sectors 1 through 4 (absolute sectors 1 through 4) contain
+the File Allocation Tables (FAT's).
+
+     Track 0 Sectors 5 through 11 (absolute sectors 5 through 11) contain
+the disk's directory entries.  The directory entries may be used to
+determine the absolute sector locations of the various files on the disk.
+Each 32-byte directory entry contains the following information:
+
+     Offset    Length         Content
+     --------------------------------------------------
+      &H00       08.     Filename
+      &H08       03.     File extension
+      &H0B       11.     ???
+      &H16       04.     Date and Time of File Creation
+      &H1A       02.   * Starting location of file
+      &H1C       02.     Length of file in bytes
+      &H1E       02.     ???
+
+*  The starting location of a file is a cluster number (or whatever the
+MSDOS term is).  The absolute sector may be calculated by the following
+formula:
+
+     (Cluster Number x Cluster Size) + Offset = Absolute sector
+
+                              or
+
+     (Cluster Number x 2) + 8 = Absolute sector number
+
+
+
+/
+//
+
+
+ex

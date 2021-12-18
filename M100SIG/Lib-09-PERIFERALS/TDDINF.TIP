@@ -1,0 +1,187 @@
+The TDD-2 (Tandy Portable Disk Drive - version 2) is currently the only disk
+drive still available for use with the Tandy line of portable computers, the
+Model 100/102 and Tandy 200.  This is a captured message thread discussing some
+aspects of it's technical capabilities.
+
+
+Fm: Craig Lovell 73030,425
+To: sysop (X)
+
+     I am thinking about purchasing a TDD2 for my 32K Tandy 102, but I haven't
+been able to find the information I need about the drive. I have browsed many
+of the files in the Review library, but haven't been able to find what I need
+to know. So, I have several questions:
+
+ 1:   Is there any special reason that
+      the TDD2 will only hold 200K? The
+      3 1/2" drives normally format to
+      at least 720K.
+ 2:   What about the 40 file per bank
+      limit? Is that a hardware or soft-
+      ware limitation?
+ 3:   Has anyone been able to exceed
+      these limitations?
+
+     I plan to use the drive as a more reliable, faster alternative to
+cassette archive storage; at least for now.
+
+     Any help/information you can give me would be greatly appreciated.
+
+          Thanks,
+          Craig Lovell
+
+
+Fm: Tony Anderson 76703,4062
+To: Craig Lovell 73030,425
+
+The amount of storage space on a disk/disk-drive combination is determined by
+many technical factors.  In the case of the TDD's it is based on the following:
+
+1. The drive is single-sided; it uses only one side of the disk.
+
+2. The hardware limits the disk to 40 "tracks".
+
+3. In the original design, the software formats each track into two "sectors",
+each sector capable of storing 1280 bytes of data.
+
+4. 40 x 2 x 1280 = 102,400 bytes, what is called a 100K disk; the TDD-1.
+
+5. 1 sector is reserved for a disk directory.  102,400 - 1280 = 101,120 bytes
+actually available to the user.
+
+6. In the TDD-2, the data is written in "double density", twice as many sectors
+are written in the 40 tracks.  40 x 2 x 1280 x 2 = 204,800 bytes.
+
+7. The disk directory stores a file's name, it's storage location, size, and
+some other data.  The TDD-1's directory stores data for 40 files; the data for
+40 files, in one sector.  To accomodate more files, the TDD-2 uses a second
+sector as a second file directory, pointing towards another 40 files.
+
+In order to maintain disk read compatibility, the TDD-2 writes the directories
+in single density, and uses double density on the rest of the disk for data
+storage.  This allows the TDD-2 to read the directories of the TDD-1 disks.
+
+204,800 - 2 sectors (2 x 1280) = 202,240 bytes available to the user.
+
+If the disk were double-sided, this would be (204,800 + 202,240) 407,040, or a
+400K storage capacity per disk.  Not too dissimilar from what is available with
+several other machines with a 3.5 inch disk.  The difference is that they have
+double-sided capability, the TDD does not - no second head, and no software
+instruction set.  720K requires that the disk and drive be capable of double-
+sided, quad density data storage, or the ability to write more tracks on the
+disk, which would mean smaller components, closer tolerances, and less overall
+ruggedness in portable applications. - You wouldn't be able to throw it in your
+briefcase and carry it to the Sahara desert, and expect it to work.
+
+Why not?  Well, to begin with, the TDD was originally designed as a data
+storage device for an electronic typewriter.  It is/was made by Brother
+Industries in Japan, and it's design was very simple - receive, store, and
+retrieve data sent to it by an electronic typewriter.  Very simple demands.
+Being an "intelligent" storage device, with the actual operating system on a
+ROM in the drive itself, it could be command driven from any device that could
+connect to it through an RS-232 port - thus making it usable with any of the
+Brother line of typewriters with an appropriate interface.
+
+So in order to make it into a disk drive for the "hot" Model 100 line of
+computers, all Tandy/Radio Shack had to do was get a program that would reside
+in the computer, which would send the proper commands to the drive to make it
+do it's thing... after all, the computer already HAD that interface - through
+the RS-232 port.
+
+The disk drive itself, at least the early versions, cost about $40 each in the
+quantity Tandy was prepared to buy them in.  Tandy grossly underestimated the
+market, and in fact, the first order of 50,000 units was a sell-out almost as
+soon as it hit the stores.  They immediately placed a second order, but had to
+wait several months for them to arrive.  Given the pricing structure, and the
+original design, it was not possible to make a "compatible with anything else"
+disk drive.  They were not going for compatibility - they relied on adapting
+the existing Brother design; and in fact, only viewed the disk drive as a disk-
+based replacement for cassette use, which would allow faster access to files,
+and be more reliable.  They never envisioned its use as a fully functional,
+fully capable disk drive, and did nothing to develop or implement a real DOS
+for the drive. - Another example of Tandy's failure to realize the capabilities
+of what they had available.
+
+
+On your second question, why the 40 file limit; each filename, along with the
+location and size of the file is stored in 32 bytes in the directory sector.
+40 x 32 = 1280, thus filling the sector.  To get more files listed in the
+directory, you need to use more sectors.  Thus the TDD-2's use of two sectors
+to store two directories.
+
+
+On your third question, the TDD-1 can be formatted into different sector
+arrangements - the TDD-2 cannot.  With the TDD-1 you can have sectors as small
+as 64 bytes; 1580 of them.  But 64 x 1580 = 101,120, the same amount of data
+storage space, just broken up into many smaller bites.  But the software in the
+ROM that writes the disk directory cannot deal with that number of sectors, so
+the technique is only good for externally controlled random-access software.
+
+Traveling Software released a program that took advantage of that capability
+soon after the TDD-1 was released.  It is called TS-RANDOM.  It was not overly
+popular, and is no longer available.  My guess is that there are few users of
+the Tandy portables who needed random-access capabilities in a 100K disk drive
+for use with a computer that was limited to 28K of RAM space. - Few people
+needed a 24 carat gold carrying case for a garden shovel.
+
+Four enterprising programmers envisioned greater capabilities with the TDD-1,
+and developped alternate DOS's for use with the disk drive... after all, the
+real DOS was in the drive on a ROM chip - all we had to do was write a program
+that would send the correct command to the drive, and it would do whatever it
+was told to do.  The very first of these programs, which we loosely call a
+"DOS", was a rewritten version of Tandy's file manager software, called DSKMGR.
+It had the same limitations as Tandy's file manager software, it was basically
+designed to load and save whole files to and from the disk.
+
+The first really capable DOS that actually operated like a "real" DOS, was
+Power-Disk, by Ed Geise of Acroatix, Inc.  It has since been released into the
+public domain, although Ed still holds the copyright, and a version for Tandy
+200 users is in our library 9.
+
+Then came Traveling Software's TS-DOS, now discontinued, and Hugo Ferraya's
+Disk-Power, sold through UltraSoft Innovations, originally based in Canada.
+About here, in the release sequence, came TS-RANDOM.
+
+These DOS's gave the user a read/write capability directly to the disk files,
+more like the capability of "real DOS's" for other computers, and have become
+more-or-less standard for any serious users of the Tandy portables.
+
+Ed Geise subsequently developped POWR-DOS, a second generation of POWER-DISK,
+and included many disk utilities and supporting programs which offered much
+greater latitude in use of the rather basic, primitive TDD.  Still talking
+about the TDD-1 here.  A whole series of utilities were developed, including
+many which were published on this forum, and which are still available in
+Library 9.
+
+POWR-DOS was subsequently released for public access, and a 100/102 version is
+currently available in Library 9. - Tandy 200 users continue to use Power-Disk,
+since no version of POWR-DOS for the 200 has ever been located.
+
+Acroatix left the portable support market shortly after releasing these DOS's
+for public access, and no versions specific to the TDD-2, which took advantage
+of the second disk directory were ever developed.
+
+Traveling Software and UltraSoft eventually developed versions of their DOS
+programs that could access both disk directories, and were therefore fully
+usable with the TDD-2.  The Traveling Software version, TS-DOS 4.0 is now
+discontinued.  So only UltraSoft has a DOS that works fully with the TDD-2,
+accessing both disk directories, and allowing the user to store up to 80 files
+in that 200K of disk space.
+
+But many users have found that the original DOS's, those written for use with
+the TDD-1, will still work with the TDD-2 (except for the random-access version
+TS-RANDOM).  But being written for the TDD-1, the programs only know how to
+locate and read the first directory sector on the disk.  Thus, such programs
+can only find 40 files on the disk - either to read them, or create them.  But
+due to a good bit of luck, they can still use all 200K of the storage space on
+the disk -- as long as they create no more than 40 files.
+
+Those who have TDD-1 drives, can upgrade to a TDD-2, and have full access to
+the files, except that they cannot write to those files, or save additional
+files on the same disk due to the format differences between the TDD-1 and the
+TDD-2.  But the TDD-2 can read from those TDD-1 files just fine.  So it's
+apparent that the TDD-2 has the capability of reading either single or double-
+density data, but it can only write in double-density, on disks that were
+formatted in double density; i.e. disks that were formatted in a TDD-2.
+
+A TDD-1 cannot read or write to disks that were formatted on a TDD-2.

@@ -1,0 +1,70 @@
+	INTRODUCTION
+
+    FORMAT.100 provides formatted printouts of .DO files. It is suitable for magazine articles, letters, and similar tasks 
+which do not require special layout control or footnoting. It is specifically written for the Brother CE-50 typewriter/printer,
+but it can be easily adapted to other parallel port printers (details under "Customizing").
+
+	FEATURES
+
+    FORMAT.100 prints at 30 CPS. It supports first-page addressing and titlng, page heading and numbering. With the CE-50, it 
+provides underlining and backspace/overstrike. FORMAT.100 also has a 'Preview' function, which displays a pixel-map of the page
+layout on the Model 100 screen.
+
+	USING FORMAT.100
+
+    I've loaded FORMAT.100 exactly as I use it, to guarantee you have a functioning program. You'll first want to change the 
+address and phone number (see Customizing). Let's assume you've done so.
+    FORMAT.100 uses ordinary ASCII text files. GRPH-1 is the CE-50 backspace command, and UNDERLINE <_> toggles the underline 
+print mode on and off. Examples: to print an interobang ("!" over "?"), type QUESTION-MARK, GRPH-1, EXCLAMATION POINT. _The_ 
+first and last words of this sentence have been _underlined_. Otherwise, type your text in normal fashion: use <ENTER> only to 
+force a line feed, such as for a new paragraph.
+    FORMAT.100 first prompts you for the name of the file to print out. It asks six questions:
+
+1) DO YOU WANT TO PREVIEW? The default setting feeds the text to the printer. Type <y> if you want the text pixel-mapped to the
+screen.
+2) HOW MANY CHARACTERS TO A LINE? No default. If previewing, limit this to no more than 120. NOTE: FORMAT.100 works like a 
+human typist-- it starts to look for a word break several characters before a line's end (see Customize). Long words are NOT 
+word-wrapped to the next line.
+3) HOW MANY LINES ON A PAGE? No default. This must be less than 63, when previewing.
+4) WHAT NAME DO YOU WANT TO USE? Default <ENTER> skips the address. Any other response will be printed in front of your 
+address, at the top of page 1.
+5) WHAT SHOULD THE TITLE READ? Default <ENTER> skips the title. Anything else is printed as the title between the address line 
+and the main text.
+    If you default both the name and title, FORMAT.100 prints text starting right where the printer carriage is, with no extra 
+line feeds. You can use this to append a second text file directly following the first printout.
+6) WHAT SHOULD THE OTHER PAGE HEADINGS READ? <ENTER> prints "page xx". Anything else will be printed on the same line just 
+before "page xx".
+
+    FORMAT.100 then starts printing at 30 CPS. At the end of page 1, it beeps, while displaying "PLEASE CHANGE PAPER: Press 'c'
+to continue". Don't press <c> until you've put in a new sheet of paper! Other keys have no effect.
+    'Preview' draws a page-sized box on the screen, with tics every five spaces and lines. Wherever there's a printing 
+character, FORMAT.100 draws a pixel. At the same time, the text being printed is shown on the right half of the screen. Blank 
+lines have a single pixel at the far left.
+
+    NOTE: Previewing is very slow. If you just want a line count, the companion program HYPHEN.100 will do that much faster.
+
+	CUSTOMIZING
+
+    Line 20000 contains the address and phone number. Replace these with yours. 20500 puts the information on two lines, for 
+narrow pages, 'cause it looks prettier. Adjust the width (62) for your address. Delete 20500-20300 to disable this feature.
+    FORMAT.100 starts to look for a break four characters before line-end. If you want to change that, replace the '4' in line 
+2300 with your preference. Be sure to make the same change in HYPHEN.100.
+    ESC+R and ESC+E turn CE-50 underlining on and off. If line 800 sees <_> it Gosubs to 4000, which toggles FL and appends the
+appropriate control sequence to TY$, the output string. It also adds 2 to US (max. line length) (see lines 700,200) to 
+compensate. If your printer works differently, you can change lines 150, 4000, and 4100 accordingly, or you can delete 800, 
+4000-4200 to eliminate the feature entirely.
+    The pixel-mapper (6000-6800) looks for ESC and GRPH-1. Line 6700 backsteps the display by two pixels, to compensate for non
+-printing characters. Line 6300 skips over ESC, in the text display. You'll need to adapt or delete accordingly for your 
+printer.
+
+    For those who really like to hack, here are program sections by line number:
+    100-400: Initialize and head up the first page.
+    500-1000: Main routine. Get characters and add them to TY$.
+    1200-1550: Control pagination and headings.
+    1600-1800: Print out the end of the document.
+    2000-2800: Set options
+    4000-4200: Control underlining.
+    5000-5500: Printout or layout of preview screen.
+    6000-6900: Pixel mapper.
+    20000-on:Name and address headings.
+

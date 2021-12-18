@@ -1,0 +1,244 @@
+GRMPRT.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Making printers do what we want is often a challenging and frustrating
+enterprize.  This thread file deals with an instance that concluded
+successfully (I think!).  The question dealt with how to type German
+characters (umlauts and sz) on the Model 10/102/200 and have them come out
+correctly on an Epson (and, later, IBM) printer.  The result was the
+messages in this file, and the programs GRMXLT.BA & GRMCVT.100.
+
+Message range: 147043 to 147409
+Dates: 5/2/87 to 5/7/87
+
+
+Fm: James Knowlton 73117,553
+To: All
+
+I recently bought an Epson-compat. printer (the NLQ PRINTer) to print
+word-processed documents I write on my M100 Many of these are in German.  The
+M100 produces German characters with no problem, but the printer ignores them,
+substituting numbers for the German letters.  I tried the programs and files in
+DL2 devoted to Epson printers, but I had no sucess, probably because I have no
+idea how to use them.  I would  really appreciate it if someone who understands
+how to print German with an M100and an Epson-compat. would send me a message
+via EMAIL. Thanks
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+Several problems.  One is that the M100 fonts beyond 127d will be different
+than most printers.  And printer compatibility is often not total -- and if the
+compatibility covers all the formatting codes, it's pretty good. Graphics
+compatibility is not always as advertized.
+
+You MAY find a solution; or you may have to write some sort of transation
+program to get from M100 symbols to the same representation in the printer. If
+you can upload fonts to this particular printer, that may be a solution.
+
+Might help if you state the brand (maker) of the printer.  "NLQ PRINT" is not
+one i've heard of -- except as a generic characterization.  With more info,
+there is a good chance that someone here will be able to help.
+
+
+Fm: James Knowlton 73117,553
+To: Phil Wheeler [ 71266,125
+
+Thanks a lot for the response. The printers name is, indeed, NLQ PRINTer
+(spelled just like that).  It's codes are identical to the Epson's.  And I
+really only need 7 characters translated
+ So how do I make such a translator program?  You have probably already noticed
+that I am an amateur computer user. Is it something I could write in BASIC?  It
+may also be important that I use the Ultimate ROM II.  I'd sure appreciate a
+response. Thanks again.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+James, there are some programs I did last year that may start you in the right
+direction.  CHRXLT.BA (& .DOC) in DL7 is a user-progranmable (via data
+statements) translator.  TW2WS.BA/DOC in DL7 specializes this to translate
+T-WORD files in to Wordstar files in a limited way.  And MONTOR.100/DOC in DL8
+lets you take a look at the files in hex as they are stored in memory, so you
+can see control codes and other non-printing characters -- useful in finding
+out what is really happening when working on such projects (and MONTOR can be
+used to directly patch the files in memory, making it a bit dangerous!).
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+James, I doubt if all printers called Epson compatible handle International
+symbols the same way.  But, for info and genral concepts, here is what my
+Citizen MSP-20 and my Epson RX-80 do.  First of all, they have special
+international character sets (11 of them). To put them in the German set, send
+CHR$(27)"R"CHR$(2) to the printer.  Then the following equivalences apply:
+
+
+  German Symbol    M100 LCD ASCII   ASCII to LPT:     Reqd Conversion
+  -------------    --------------   -------------     ---------------
+  Umlaut A         177 (CODE-A)      91 (was [)          177 to 91
+  Umlaut O         178 (CODE-O)      92 (was \)          178 to 92
+  Umlaut U         179 (CODE-U)      93 (was ])          179 to 93
+  Umlaut a         182 (CODE-a)     123 (was {)          182 to 123
+  Umlaut o         183 (CODE-o)     124 (was |)          183 to 124
+  Umlaut u         184 (CODE-u)     125 (was })          184 to 125
+     ss            185 (CODE-S)     126 (was ~)          185 to 126
+
+To print these symbols with my printer, I could either pre-convert the text
+file (via a program like CHRXLT.BA, DL7) or write a program which simply does
+the conversion and prints the file out the port.  I far prefer the first of
+these, because you can then use T-WORD for the printing and formatting process.
+Note that you also need to issue the set-string to put the printer in the
+German mode prior to printing (can do with a T-WORD font code, I imagine).
+
+Note that you do lose the use of the symbols [ \ ] { | } ~.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+James, I've written a program which *may* work for your printer (it does work
+with both of mine).  See GRMXLT.BA in DL2.  It implements the data in my
+previous message.  Let me know if it works with your printer.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+James, in DL2 is a more exotic and faster solution to your prolbem (well, to
+some problem!). Do BRO GRMCVT and you will find it.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+On what other computer can you hack together a utility which runs without any
+external software so quickly? Truly nifty, these machines!
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+And quick, too!  They're ideal for whipping up short programs to deal with
+specific problems. I like it!  I like it!
+
+
+Sb: #GRMXLT.BA
+Fm: James Knowlton 73117,553
+To: Phil Wheeler [ 71266,125
+
+Phil, you are a miracle worker.  Finally, after a panicky week my new printer
+generated German characters.  All of them, from the umlauts to the "SZ" (German
+beta).  So your program did the trick many, many thanks for your help.  I
+really appreciate it.
+
+
+Sb: #147256-GRMXLT.BA
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+For files of 1000 bytes or bigger, GRMCVT.100 is the way to go.  It will
+process a 3K file in about one second, once loaded.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+GRMCVT.100 will solve the large files problem.  It converts in place -actually
+changing the bytes in your original file while it sits unsuspectingly in
+memory.  NO added RAM is needed.  BUT -- make a backup if you plan additional
+editting -- since you cannot convert back (a future version may do that -- if
+there is interest).
+
+
+Fm: James Knowlton 73117,553
+To: Phil Wheeler 71266,125
+
+Thanks for the info.  I tried GRMCVT.100.  It sure does the trick--and fast.
+One more thing occured to me while I was reading through my printer manual:
+There is a second character set invoked by ESC 6 that has all the european
+(incl. Greek) characters.  Alas, since my only printer experience is with
+Tandy printers which list decimals codes, I have no idea how to interpret
+them and make them work for the M100. With a little luck they will not
+require '[' and ']'--characters I often need for my work. Thanks again for
+the help. Jim Knowlton
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+Yes, ESC-6 puts you in the IBM mode (works on only one of my two printers).
+That gives some different translations.  Modifying GRMXLT for this would be
+easy (change the numbers in the second data statement -- duck soup!).  In fact,
+a short mod to GRMCVT (in terms of a set of pokes after the data statements
+have been loaded) would also be easy [but a little more trouble to dope out].
+Let me know if you want to go this way, and I will do a patch file -- or a new
+version for IBM printers.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+James, the following patches will let you use the IBM Graphics 2 mode -- as you
+suggested you would prefer.
+
+     a) Patch for GRMXLT.BA
+
+Replace line 120 by:
+
+120 DATA 142, 153, 154, 132, 148, 129, 225
+
+     b) Patch for GRMCVT.100
+
+Replace line 12 by:
+
+
+ 12 NEXT:POKE X+26,142:POKE X+36,153:POKE X+46,154:POKE X+56,132:
+ POKE X+66,148:POKE X+76,129:POKE X+86,225
+
+(the carriage return between '132:' and 'POKE' must be removed).
+
+
+Fm: James Knowlton 73117,553
+To: Phil Wheeler 71266,125
+
+Phil, Many thanks for your patches to GRMCVT.100.  I'll give them a try and let
+you know how I make out. I was surprised to hear that ESC 6 is IBM mode.  My
+printer manual ignores that fact, referring to it as "character mode 2." Thanks
+again for the help. Jim Knowlton
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+Yes, seems to be an IBM-only mode "Chaacter Set 2".
+
+
+Fm: James Knowlton 73117,553
+To: Phil Wheeler 71266,125
+
+Thanks for your most recent message.  I tried your patch.First I sent ESC 6 via
+Basi The printer screamed in protest and then printed the German words with no
+German characters.  It left the spaces blank. Maybe character set 2 is not the
+IBM graphics mode? Jim Knowlton 1
+
+
+Fm: Phil Wheeler 71266,125
+To: James Knowlton 73117,553
+
+Well -- let's see.  Did you put the printer in the IBM mode first?  And did you
+do 'LPRINT CHR$(27)"6"'?  ESC 6 only puts the printer in the right mode if you
+are emulating an IBM printter, but not if you are looking like an Epson.
+Usuallyit is put in the IBM mode by one of the DIP swithches -but some printers
+will let you do it by software as an alternative.  There are commands which
+work only in one mode or the other, commands which do different things, as a
+function of mode -- and commands which work the same, either way.
+
+Chech your manual and see if the decimal codes for the German chars are thge
+ones I used (e.g., in the Basic data statement for GRMXLT.  If they are, it
+should work -- otherwise problems!

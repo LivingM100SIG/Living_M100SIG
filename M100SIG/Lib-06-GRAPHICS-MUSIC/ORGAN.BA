@@ -1,0 +1,88 @@
+10 'Organ -- slow Basic version
+11 ' Public Domain, by Mark Lutton,
+12 ' 73106,1627,     12/8/84
+13 'To understand this, you have to
+14 'read "Hidden Powers of the TRS-80
+15 'Model 100" by Christopher L. Morgan
+16 '(1984, The Waite Group).
+20 'Note:  There is a delay after you hit a key because of the slowness
+21 'of the keyboard input routine.   Someday I will rewrite this in
+22 'machine language and make it faster.
+23 'Think of this as an experimental version.
+25 'Also note that this plays around with the innards of the machine.
+26 'Be careful if you fiddle with this, and save all your
+27 'important files first!
+100 ' set up data
+110 DEFINT A-Z:DIM S(1,71)
+120 FOR I=0 TO 71:READ S(0,I):S(1,I)=S(0,I)/4
+130 NEXT I
+180 CLS:PRINT "                 Organ"
+181 PRINT "       (Hit shift-break to quit)"
+182 PRINT "     z - / lower octave white keys"
+183 PRINT "     a - ; lower octave black keys"
+184 PRINT "     q - [ next octave white keys"
+185 PRINT "     1 - + black keys"
+186 PRINT "     <SHIFT> jumps up 2 octaves."
+190 CALL 30300:'bg task off
+199 'get key pressed
+200 B0=A0:B1=A1:B2=A2:B3=A3:B4=A4:B5=A5:B6=A6:B7=A7:B8=A8
+210 X=INP(186)
+220 OUT 186,X OR 1
+230 OUT 185,254:A0=INP(232)
+240 OUT 185,253:A1=INP(232)
+250 OUT 185,251:A2=INP(232)
+260 OUT 185,247:A3=INP(232)
+270 OUT 185,239:A4=INP(232)
+280 OUT 185,223:A5=INP(232)
+290 OUT 185,191:A6=INP(232)
+300 OUT 185,127:A7=INP(232)
+305 X=INP(186)
+310 OUT 185,255
+320 OUT 186,X AND 254
+330 A8=INP(232)
+390 'any change?
+400 IF A0=B0 AND A1=B1 AND A2=B2 AND A3=B3 AND A4=B4 AND A5=B5 AND A6=B6 AND A7=B7 AND A8=B8 THEN 200
+410 'break pressed?
+420 IF A8 = 126 THEN 8900
+430 'shift, caps lock?
+440 IF (A8 AND 33)=33 THEN S1=0:ELSE S1=1
+500 'which key?
+510 K=0:IF A0<>255 THEN A9=A0:GOTO 600
+520 K=8:IF A1<>255 THEN A9=A1:GOTO 600
+530 K=16:IF A2<>255 THEN A9=A2:GOTO 600
+540 K=24:IF A3<>255 THEN A9=A3:GOTO 600
+550 K=32:IF A4<>255 THEN A9=A4:GOTO 600
+560 K=40:IF A5<>255 THEN A9=A5:GOTO 600
+570 K=48:IF A6<>255 THEN A9=A6:GOTO 600
+580 K=56:IF A7<>255 THEN A9=A7:GOTO 600
+590 IF (A8 AND 2) =2THEN K=-1:ELSE K=65
+595 GOTO 700
+600 IFA9AND128THEN610:ELSEK=K+7:GOTO700
+610 IFA9AND64THEN620:ELSEK=K+6:GOTO 700
+620 IFA9AND32THEN630:ELSEK=K+5:GOTO 700
+630 IFA9AND16THEN640:ELSEK=K+4:GOTO 700
+640 IFA9AND8THEN650:ELSEK=K+3:GOTO 700
+650 IFA9AND4THEN660:ELSEK=K+2:GOTO 700
+660 IFA9AND2THEN700:ELSEK=K+1:GOTO 700
+699 'got key number, now make sound
+700 IF K>-1 THEN 710:
+705 OUT 186,(INP(186)AND223)OR 4:GOTO 200
+710 D=S(S1,K):IF D=0 THEN 705
+713 OUT 188,(D MOD 256)
+715 OUT 189,((D/256) AND 127) OR 64
+720 OUT 184,195
+730 OUT 186,(INP(186) AND 219) OR 32
+740 GOTO 200
+8900 CLS:PRINT "Goodbye.";'bg task on
+8910 IF INKEY$ <> "" THEN 8910:'flush buffer
+8999 END
+9000 DATA 9394,8368,7456,7032,6269,5586,4976,4433
+9010 DATA 9952,8866,7900,0,6642,5918,5272,0
+9020 DATA 4697,4184,3728,3516,3134,2793,2488,2348
+9030 DATA 2092,1864,1758,3950,0,4697,4184,3728
+9040 DATA 4976,4433,3950,0,3321,2959,2636,0
+9050 DATA 2216,1975,0,1660,0,0,0,0
+9060 DATA 0,1567,11172,12538,0,0,0,0
+9070 DATA 0,0,0,0,0,0,0,0
+9080 DATA 0,10544,0,0,0,0,0,0
+9999 'end of ORGAN.

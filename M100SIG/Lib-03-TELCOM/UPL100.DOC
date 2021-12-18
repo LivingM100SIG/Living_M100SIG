@@ -1,0 +1,116 @@
+              UPL100 Model 100 Upload Utility
+                 for the TRS-80 Model I/III
+
+Version 1.0
+Aug  1 83
+Copyright (c) 1983 Morris Jones
+Permission  granted to copy for non-commercial use  provided 
+credit is given to the original author.   No changes may  be 
+made to this document without permission from the author.
+
+     UPL100 supports continuous stream file uploads from any 
+terminal  that  supports XON/XOFF  handshaking,  i.e.,  will 
+pause  the data transmission when the host sends XOFF (ASCII 
+X'13') and resume when the host sends XON (ASCII X'11').  No 
+checksums or other verification is provided by this protocol.
+
+     UPL100  is provided in source form for EDTASM,  and  is 
+independent of DOS used.
+
+Features:
+
+o    Aborts  after two minutes without receiving  data  from 
+     the remote.
+o    Aborts on loss of carrier.
+o    Local  filename  to receive the upload is specified  on 
+     the command line.
+o    Uses  memory from 5200H to 6FFFH to allow running  from 
+     within a BASIC program (under Newdos/80).
+o    Remote operator ends the upload by pressing control-D.
+o    System  operator  can abort the upload by pressing  the 
+     BREAK key.
+o    Supports 300 or 1200 baud transfers with no lost data.
+o    Allows for slow reaction time by the remote on an  XOFF 
+     by sending 10 NULL characters after an XOFF.  Up to ten 
+     additional  bytes  of data may be received  before  the 
+     remote must stop sending.
+o    Timeout  is  measured by checking the real  time  clock 
+     instead of a count loop.
+o    Simple  changes  to the source to modify any  of  these 
+     features.
+
+     UPL100  was  written to be used from a  bulletin  board 
+system  for  uploading  files from  the  TRS-80  Model  100, 
+although  the  method is applicable to many other  terminals 
+and terminal emulation programs.
+
+     Under  Newdos/80,   for  example,  UPL100  may  be  run 
+directly from within BASIC.  For example:
+
+LINEINPUT"Type the filename you with to upload: ";FN$
+CMD"UPL100 "+FN$
+
+This  will execute UPL100 and return to BASIC  execution  at 
+the line following the CMD statement.
+
+     The  remote operator (and the system operator) receives 
+the message:
+
+     UPL100 by Morris Jones
+     Version 1.0 Aug  1 83
+
+     Ready for Upload --
+     Press control-D when finished
+
+The  remote then begins sending data to the host.   Data  is 
+buffered  until an almost full buffer  condition,  when  the 
+host  sends XOFF and ten NULL characters,  allowing time for 
+the  remote to stop sending.   The buffer is written to  the 
+disk file,  reinitialized, and an XOFF is sent to the remote 
+to indicate that it may resume transmission.
+
+     At the conclusion of the data transmission,  the remote 
+operator  should  press control-D.   UPL100 then  sends  the 
+message:
+     One moment . . .
+followed by
+     File Upload Complete
+
+     During  the data transmission the received data is  not 
+echoed to the remote.
+
+*** Important Note ***
+     Message  strings sent by UPL100 are duplicated  to  the 
+serial port and to the console (video screen) of the TRS-80, 
+so if the video DCB has been redirected to send video output 
+to the serial port, the remote operator will see each letter 
+twice:
+     UUPPLL110000  bbyy  MMoorriissss  JJoonneess
+Video  redirection should be disabled before UPL100 is  run, 
+or  the source should be modified at routine SERSTR so  that 
+string  data  is  not  duplicated to both  serial  port  and 
+console.
+
+Error conditions:
+     A  lost  carrier will cause UPL100 to abort  without  a 
+message.
+     Timeout  occurs if no data is received from the  remote 
+for two minutes.
+     A file write error causes UPL100 to abort.  With no way 
+for  UPL100  to instruct the remote that the upload must  be 
+aborted, it is likely that considerable garbage data will be 
+received from the remote after UPL100 has aborted.
+
+Error messages:
+     ABORT -- No File Specified
+     ABORT -- Disk File Error
+     ABORT -- Timeout
+
+.pa
+     Please send all modifications, suggestions, and correc-
+tions to this program to:
+     Morris Jones
+     PO Box 641
+     Forest Knolls, CA  94933
+     Bulletin board: (415) 488-9145
+

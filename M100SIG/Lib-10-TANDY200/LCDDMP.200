@@ -1,0 +1,27 @@
+0 'This program will dump the M200 SCREEN to a DMP-130 printer,
+1 'including graphics created with PSET or LINE commands.
+2 'Printer codes are explained in the lines where used to help for changes
+3 'for other printers.
+4 'To understand the OUT and INP codes used, refer to LCDIO.200 in DL4.
+5 'MANY THANKS TO James Yi/73327,1653 FOR HIS TUTORIAL ON LCD200 SECRETS
+6 'Make this program a subroutine of a larger program by changing line numbers.
+7 'Rem can be deleted to make it faster.
+8 '
+9 '            LUC BOUCHARD
+10 '            73327,2320
+11 '
+15 LPRINTCHR$(18) 'put printer in graphic mode
+20 LPRINTCHR$(27);CHR$(21) 'set for carriage return only
+30 LPRINTCHR$(27);CHR$(85);CHR$(0) 'unidirectional printing for better alignment
+40 L=PEEK(65196):M=PEEK(65197)
+50 OUT255,10:OUT254,L:OUT255,11:OUT254,M:OUT255,13:BY=INP(254)
+65 CO=0
+70 FORC=0TO5119 'bytes to print=40COLx128LINES
+80 BY=INP(254) 'get byte
+90 FORBI=0TO5 'print 6 bits/byte starting at lsb
+100 IF(BY AND 2^BI)/2^BI THEN LPRINTCHR$(129);ELSE LPRINTCHR$(128); 'print each bit
+105 NEXTBI
+110 CO=CO+1:IF CO>39 THEN CO=0 :LPRINTCHR$(27);CHR$(50) ' LF=1/72"
+130 NEXTC
+135 LPRINTCHR$(30) 'return printer to normal mode
+

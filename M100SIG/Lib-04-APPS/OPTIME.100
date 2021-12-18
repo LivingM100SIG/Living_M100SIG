@@ -1,0 +1,58 @@
+Copyright 1987 Frank Kienast
+
+This text file contains two programs.
+The first is SETUP.BA - used to start
+up the runtime clock.  The second is
+OPHRS.BA - when run, it tells the total
+number of operating hours since SETUP
+was run.  To use these programs, first
+use the paste buffer to save each as a
+separate .DO file.  Then load them into
+BASIC.  To start the clock, run SETUP.
+You should immediately get the OK 
+prompt back.  Now you can run OPHRS 
+any time you want to get the total
+number of hours (to the nearest 0.01
+hour) that you have used your
+computer.  SETUP can be KILLed,
+and OPHRS can also be deleted when not
+being used if desired - the clock will
+continue keeping time.  To reset the
+clock to zero, simply run SETUP again.
+
+NOTE: The clock uses the top 60 bytes 
+of memory.  Be sure you don't have any
+machine language (.CO) programs in this
+area before running SETUP.
+
+Direct any questions to [73327,3073].
+
+
+0 REM SETUP.BA - sets up runtime clock
+1 REM written by Frank Kienast
+2 REM Compuserve user [73327,3073]
+3 REM July, 1987
+5 CLEAR 255,62900
+10 FOR I=62901 TO 62924
+20 READ N
+30 POKE I,N
+40 NEXT I
+52 POKE 62951,0:POKE 62952,0:POKE 62953,0:POKE 62954,0
+54 POKE 62976,181:POKE 62977,245:POKE 62975,195
+61 DATA 245,229,205,191,245,225,241,201
+62 DATA 0,0
+63 DATA 33,231,245,52,192,35,52,192,35,52,192,35,52,201
+99 END
+
+
+0 REM OPHRS.BA - tells usage time
+1 REM written by Frank Kienast
+2 REM Compuserve user [73327,3073]
+3 REM July, 1987
+5 CLS:PRINT:PRINT:PRINT
+10 SND=PEEK(62952)+256*PEEK(62953)+65536*PEEK(62954)
+20 HRS=SND/3600
+40 PRINT USING"####.##";HRS;
+50 PRINT" hours of operation."
+60 PRINT
+99 END

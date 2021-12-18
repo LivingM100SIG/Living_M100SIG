@@ -1,0 +1,15 @@
+FLIP.TD2 -- Fred Edelkamp [70506,223]
+ This is a 190 byte BASIC program that will switch the two directories on the
+TDD2 using FLOPPY (2). The main use for this program is to allow POWR-DOS
+access to the second directory.
+ To use this utility find the BASIC lines at the end of this file and CUT
+and PASTE it into BASIC. Save it under the name FLIP.BA Then to use place the
+disk in the drive, place the cursor over FLIP.BA and press enter. a few seconds
+ later the program will return to the Main Menu and BANK #0 and BANK #1 will
+be flipped. The program does have error checking and should have no side
+effects other then temporary use of memory from 57408 to 59999.
+
+The BASIC program:
+
+0 CLEAR99,57408:?"Dir Flip":FORY=3TO4:Z=58704:FORX=ZTOZ+2:READJ:POKEX,J:NEXTX:CALL62297,Y,Z:IFPEEK(Z)>1THENPRINT"Error":END
+1 W=HIMEM:FORX=WTOW+2:READJ:POKEX,J:NEXTX:CALL62297,Y,W:NEXTY:CLEAR99,60000:MENU:DATA84,229,0,68,224,1,84,229,1,68,224,0:'Flip

@@ -1,0 +1,99 @@
+REM Simple preprocessor. Public domain. Author: Tim Peters; CIS 72227,2416
+/#str 2E3 -- # bytes CLEAR'ed
+/stdim 9  -- symbol table DIM
+
+/clc /    -- control-line char
+/lbrac [  -- symbol-ref start char
+/rbrac ]  -- symbol-ref end char
+
+maxfiles=2:clear[#str]:defint a-z:goto[begin]
+
+/getLine -- i$=next line from #1; il++
+lineinput#1,i$:il=il+1:?@41,"In  line"il;:return
+
+/lookup -- look for s$ in ST
+/ if found, l>0 & v$ has value
+/ if not, l=0
+t$=z$+s$+o$
+for k=0 to s
+ l=instr(s$(k),t$)
+ if l then l=l+len(t$):v$=mid$(s$(k),l,instr(l,s$(k),z$)-l):k=s
+next:return
+
+/addSym -- add s$,v$ to ST
+gosub[lookup]
+if l then cls:?rv$s$nv$" already has value "rv$v$nv$:goto[gripe]
+if len(s$)+len(v$)+len(s$(s))>253 then s=s+1:s$(s)=z$
+s$(s)=z$+s$+o$+v$+s$(s):return
+
+/do1 -- pass 1 guts
+/ skip comment & text lines
+if i$="" or left$(i$,2)="[clc] "then return
+if left$(i$,1)<>"[clc]" then ol=ol+1:return
+
+/ a control line; strip comment
+i=instr(i$,"--"):if i then i$=left$(i$,i-1)
+
+/ strip trailing blanks
+j=len(i$):for i=j to 1 step -1
+if mid$(i$,i,1)<>" " then if i=j then else i$=left$(i$,i) else next
+
+/ have "/sym" or "/sym val"
+/ determine which & add to ST
+i=instr(i$," ")
+if i then v$=mid$(i$,i+1):i=i-2 else v$=mid$(str$(ol+1),2):i=len(i$)-1
+s$=mid$(i$,2,i):goto[addSym]
+
+/do2 -- pass 2 guts
+/ skip comment & control lines
+?"of"im:if i$="" then return
+if left$(i$,1)="[clc]" then return
+
+/ have text line; print line #
+ol=ol+1:?@81,"Out line"ol"of"om:?#2,mid$(str$(ol),2);
+
+/ replace symbols
+i=0
+/loop -- invariant: i$(1..i) printed
+i=i+1:j=instr(i,i$,"[lbrac]")
+if j then ?#2,mid$(i$,i,j-i); else ?#2,mid$(i$,i):return
+
+/ j=pos(lbrac); set i=pos(rbrac)
+i=instr(j,i$,"[rbrac]"):if i=0 then[rbracMissing]
+
+/ replace i$(j..i)
+s$=mid$(i$,j+1,i-j-1):gosub[lookup]:if l then ?#2,v$;:goto[loop]
+
+/ sym not found
+cls:?"Symbol unknown:":?left$(i$,j)rv$s$nv$mid$(i$,i):gosub[gripe]
+/ echo the mystery symbol
+?#2,"[lbrac]"s$"[rbrac]";:goto[loop]
+
+/rbracMissing
+?#2,mid$(i$,j):cls:?"Missing [rbrac]:"
+?left$(i$,j-1)rv$mid$(i$,j)nv$
+
+/gripe
+beep:?:?"In line"il:?"Hit key or BREAK"input$(1):cls:return
+
+/begin
+dim i,j,i$,s$([stdim])
+z$=chr$(0):o$=chr$(1):s$(0)=z$
+/ ST fmt: {0 sym 1 value} 0
+cls:files:input"Source file";f$
+open f$ for input as 1
+cls:rv$=chr$(27)+"p":nv$=chr$(27)+"q"
+
+/ Pass 1: build symbol table
+for x=0 to -1 step -1
+ gosub[getLine]:gosub[do1]:x=eof(1)
+next
+
+cls:im=il:om=ol:il=0:ol=0
+close:open f$ for input as 1:open"XX"for output as 2
+
+/ Pass 2: substitute values
+for x=0 to -1 step -1
+ gosub[getLine]:gosub[do2]:x=eof(1)
+next
+close:end

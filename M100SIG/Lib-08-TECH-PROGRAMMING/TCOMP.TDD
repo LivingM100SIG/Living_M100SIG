@@ -1,0 +1,113 @@
+TCOMP.TDD
+ 
+   This is the promised TDD version of TCOMP.DVI.  It works similar to TCOMP.DVI in the method by which it extracts the BASIC program from the disk drive.
+   A couple of lines had to be added to catch the End Of File. This is most prominent in line 100. Line 7400 is a correction applied to TCOMP.DVI and carried over to TCOMP.TDD.
+   Follow these instructions to modify TCOMP.DVI to work with the TDD:
+ 
+ 1)  Save TCOMP.TDD on RAM: using 'SAVE"TCOMPA",A'
+ 
+ 2)  Load TCOMP.DVI from wherever it is stored (RAM:, CAS:, 0:)
+ 
+ 3)  Delete lines 7000-7100
+     Delete lines 8000-8099
+ 
+ 4)  Apply the fix like this:  'MERGE"TCOMPA"'
+ 
+ 5)  Save the new TCOMP.TDD:   'SAVE"0:TCOMP.BA"'
+ 
+ 6)  Run TCOMP.TDD using TEST.TCM stored on disk to verify operation.
+ 
+   And that's it!!!
+ 
+The programming
+===============
+   This section is for those of you who have a Chipmunk and wish to convert TCOMP.TDD to run on it.
+   Located In the program are 3 calls to machine language programs. These calls are:
+  1) CALL MAXRAM+3, param#1, param#2
+     This call opens up a file for output, append or input, the file whose name is pointed to by param#2.
+     Param#1 must be a value of 1 for output, 2 for append, or 3 for input.
+     Param#2 points to the name of the file to be opened and must be 8 characters long (ie. "TEST.BA" looks like "TEST  BA").
+ 
+  2) CALL MAXRAM+6,param#1,param#2
+     This call loads into a buffer (which is param#1 in length) the data from disk previously opened (by CALL MAXRAM+3). Param#2 is a pointer pointing to the beginning of the buffer.
+ 
+  3) CALL MAXRAM+15,2
+     This closes the opened file on the TDD.
+ 
+   If you know the calls in the Chipmunk O/S and their format, there should be no problem performing the conversion. Compare TCOMP.121, .DVI, and .TDD and notice how I modified .121; The lines to look at are 8000-8099, and 7040-7060. I tried to keep it obvious, however, what is obvious to some is obscure to others. My biggest thing is neatness, so there shouldn't be any problems.
+ 
+TCOMP.TDD merge file:
+100 IF EN AND Q>=LEN(ZZ$)-2 THEN 200
+102 GOSUB 1: Z0=ZZ: Q=Q+1: Z0=ZZ: GOSUB 1: Q=Q+1: IF Z0+ZZ THEN NL=NL+1: GOSUB 1: Q=Q+1: Z0=ZZ: GOSUB 1: Q=Q+1: L(NL)=Z0+ZZ*256: M(NL)=M: PRINT@16,L(NL)"="M  ELSE 200
+7000 CLS: PRINT "TCOMP.121.TDD - Tiny Basic Compiler": PRINT "Using POWR-Disk ver 100.1.1": PRINT
+7010 EX=0:INPUT"Starting Address";EX:IFEX=0THENMENU
+7011 IFEX>MAXRAMTHENPRINT"That is above MAXRAM":BEEP:GOTO7010
+7020 ON ERROR GOTO 7300
+7021 CLEAR 800,EX: DEFSNG A-Z: DEFINT G,I,J,N,P,R: DEFSTR C
+7022 ON ERROR GOTO 7300
+7023 DIM P,C,R,Q,M,V,L(200),M(200),S%(21),S(21),U%(10),U(10),V$(50),V(50),A%(1000),A(1000),X(3)
+7030 Z=MAXRAM:INPUT"Ending Address";Z:IFZ>MAXRAMORZ<HIMEMTHEN7030
+7035 ON ERROR GOTO 7400
+7040 CS="": INPUT "Source .BA File on TDD:";CS: IF CS="" THEN MENU
+7041 FORI=1TOLEN(CS):P=ASC(MID$(CS,I)):IFP>96ANDP<123THENMID$(CS,I,1)=CHR$(P-32)
+7042 NEXT: IF INSTR(CS,"0:")<>0 THEN CS=MID$(CS,INSTR(CS,"0:"))
+7043 ZZ=INSTR(CS,".BA"): IF ZZ=0 THEN CS=CS+".BA": GOTO 7043
+7044 IF LEN(CS)>9 THEN PRINT "Error in file name": BEEP: GOTO 7040
+7045 CS=LEFT$(CS,ZZ-1)+SPACE$(6-ZZ+1)+"BA"
+7050 LFILES TO "qfwfq.do"
+7051 OPEN "qfwfq" FOR INPUT AS 1: ZZ=0: Z1$=LEFT$(CS,6)+"."+RIGHT$(CS,2)
+7052 IF EOF(1) THEN 7058
+7053 LINE INPUT#1,CZ: ZZ=ZZ+1
+7054 IF LEFT$(CZ,9)<>Z1$ THEN 7052
+7055 ' found!!!
+7056 CLOSE 1
+7057 KILL"qfwfq.do": GOTO 7060
+7058 CLOSE 1: CLS: PRINT "File not found":BEEP: OPEN "qfwfq" FOR INPUT AS 1: FOR I7=1 TO ZZ-1: INPUT#1,ZZ$: PRINT LEFT$(ZZ$,9)" ";: NEXT I7: CLOSE 1: PRINT
+7059 KILL"qfwfq.do": LINE INPUT "Press [RETURN] to continue";ZZ$: GOTO 7040
+7060 INPUT"Object .CO File";CO
+7062 IF INSTR(CO,".")<>0 THEN PRINT ".CO extension assumed": BEEP: CO=CO+".CO"
+7064 IF LEN(CO)>9 THEN BEEP: PRINT ".CO file name too long": GOTO 7060
+7070 Q=1: EX=HIMEM: M=EX: VT=Z
+7071 C=".DP":GOSUB7210:C=".FP":GOSUB7210:C=".FS":VT=VT-38:GOSUB7210:C=".RN":GOSUB7210
+7072 RESTORE9910:GOSUB7200:CX=C:GOSUB7200:CM=C:GOSUB7200:CP=C
+7090 CLS: PRINT "Compiling BASIC:": V=0: GOSUB 6: CS%=VARPTR(CS): CALL MAXRAM+3,3,PEEK(CS%+1)+256*PEEK(CS%+2)' open CS for input
+7092 ZZ$=SPACE$(200): ZZ=VARPTR(ZZ$): CALL MAXRAM+6,PEEK(ZZ),PEEK(ZZ+1)+256*PEEK(ZZ+2)' get 200 bytes
+7094 OPEN "qfwfq" FOR OUTPUT AS 1: CLOSE 1: KILL"qfwfq.do"
+7099 GOTO 100
+7400 BEEP: PRINT "SYSTEM ERROR #";ERR;"OCCURED IN LINE #";ERL
+7410 IF ERR>=59 AND ERR<=67 THEN PRINT "Check error codes and descriptions on   page -17- of the POWR-Disk manual.
+7490 END
+7520 IF CO<>"" THEN SAVEM "0:"+CO+".CO",EX,Z,EX
+8000 REM   read char
+8002 IF Q<1 THEN PRINT"Compiler error: too many reverse reads": END
+8010 IF Q<=LEN(ZZ$) THEN ZZ=ASC(MID$(ZZ$,Q,1)): GOTO 8099
+8020 IF EN THEN PRINT "Unexpected END of SOURCE file.": ZZ=0: GOTO 8099
+8030 ON ERROR GOTO 8090
+8040 Z9$=STRING$(100,0): Z9=VARPTR(Z9$)
+8050 CALL MAXRAM+6, PEEK(Z9), PEEK(Z9+1)+256*PEEK(Z9+2)' get 100 bytes
+8055 ON ERROR GOTO 7400
+8060 ZZ$=RIGHT$(ZZ$,100)+Z9$
+8070 Q=101
+8080 GOTO 8010
+8090 CALL MAXRAM+15,2' close CS
+8092 EN=NOT 0
+8094 Z9$=LEFT$(Z9$,INSTR(Z9$,STRING$(2,0))+2)
+8096 RESUME 8055
+8099 RETURN
+ 
+CHECKSUM:193,735  (On above code)
+ 
+Final notes
+===========
+  1)  This program should work with subsequent versions of POWR-D. I used only the calls that Acroatix has promised to maintain from rev to rev.
+  2)  This program creates and destroys a ram file named "QWFWQ.DO" - if you should have such a file in ram, it WILL be lost. This is the same file as used by "MENU.BA" on the "POWR-DISK Owner's Disk" so there should be no conflict nor problems.
+ 
+ 
+	Happy  compiling!!!
+ 
+ 
+               +-------------+
+               | Robert Toft |
+               | [74716,476] |
+               +-------------+
+ 

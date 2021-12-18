@@ -1,0 +1,35 @@
+100 'NM-OFF.BA (Nautical Miles Off)
+101 '13-JUL-86  By Dave Pedigo
+102 '
+110 CLS:PRINT@42,"This program will find the distance":PRINT"  from a fixed object at the time of":PRINT"  the 2nd of two bearings taken from a":PRINT"  moving vessel on a steady course."
+120 PRINT"  The closest approach to the fixed":PRINT"  object will also be determined.":GOSUB1000
+130 CLS:PRINT@80,"  You may enter the required headings":PRINT"  and bearings referenced to either":PRINT"  true north or magnetic north, but":PRINT"  your references must be consistant.":GOSUB1000
+140 CLS:PRINT@82,"Enter your vessel's course ";:INPUTC:IF(C<0)OR(C>=360)GOTO140
+150 PRINT@162,"Enter 1st bearing to object ";:INPUTB:IF(B<0)OR(B>360)GOTO150ELSE:GOSUB2000:M=B:X=R:H=Q:J=P
+160 CLS:PRINT@82,"Enter 2nd bearing to object ";:INPUTB:IF(B<0)OR(B>360)GOTO160ELSE:GOSUB2000:N=B:Y=R:I=Q:K=P
+170 Z=M-N:IFZ<0THENZ=Z+360ELSE:IFZ=180THENCLS:PRINT@82,"You have either already plowed":PRINT"  through your reference object, OR":PRINT"  you have mis-read your compass !!":GOSUB 1000:GOTO140
+180 PRINT@162,"Enter the distance your vessel has":PRINT"  traveled between bearings ";:INPUTD:IFD<0GOTO180
+190 IFD=0THENCLS:BEEP:PRINT@82,"If you vessel has not moved, this":PRINT"  program cannot perform the required":PRINT"  calculations.":GOSUB1000:GOTO140
+200 F=ABS(D*SIN(X)/SIN(Y-X))
+210 G=ABS(F*SIN(Y))
+220 P$=" ##.## "
+230 CLS:PRINT@42,"The object was"USINGP$;F;:PRINT"miles away":PRINT" when the second bearing was taken.":PRINT@162,;
+240 IFHXORITHENGOSUB500
+250 IFHANDITHENGOSUB600
+260 IFJTHENGOSUB700
+270 IFKTHENGOSUB800
+280 GOSUB1000:MENU:END
+500 PRINT"You were"USING P$;G;:PRINT"miles from the":PRINT"  object when it was abeam your vessel.":RETURN
+600 PRINT"You will be"USING P$;G;:PRINT"miles from the":PRINT"  object when it is abeam your vessel":PRINT"  if you continue your present course.":RETURN
+700 PRINT"You were"USING P$;G;:PRINT"miles from the":PRINT"  object, and closest to it when you":PRINT"  made the first bearing.":RETURN
+800 PRINT"  You are now heading away.":RETURN
+1000 PRINT@293,"Continue (Y/N)";:I$=INKEY$:IF(I$="N")OR(I$="n")THENMENUELSEIF(I$="Y")OR(I$="y")THENRETURNELSE1000
+2000 B=B-C
+2010 IF(B<0)THENB=B+360
+2020 IF(B=0)OR(B=180)THEN3000
+2030 P=(B=90)OR(B=270)
+2040 Q=(B<90)OR(B>270)
+2050 R=B*0.0174533
+2060 RETURN
+3000 CLS:PRINT@82,"It can only be determined that you":PRINT"  are heading
+either directly towards":PRINT"  OR directly away from the object.":GOSUB1000:GOTO140

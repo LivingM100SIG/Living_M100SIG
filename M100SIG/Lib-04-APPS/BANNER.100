@@ -1,0 +1,67 @@
+10 REM Banner.100 version 1.0.  7/4/86 by Mark Lutton.  Public Domain
+12 REM Happy Birthday Miss Liberty!
+14 REM Public Domain.  Do what you will with this.
+16 REM For Model 100 only.  This uses the character matrix in the ROM.
+17 REM Characters 0-31 aren't printable.
+18 REM Chars 32-127 start at B1=30481, 5 bytes per char (6th all 0 is implied).
+19 REM Chars 128-255 start at B2=30960, 6 bytes per char.  Each letter is
+20 REM 8 high by 6 wide.
+50 MAXFILES=2:DIM B(8)
+60 B1=30481:B2=30960
+100 CLS:PRINT "    BANNER.100 v1.0 by Mark Lutton    ":PRINT
+110 PRINT "This program will print a banner on your printer or to any file.  The text of"
+120 PRINT "the banner must be in a file."
+130 PRINT:GOSUB 4990
+140 CLS:FILES:LINE INPUT "Input file? ";F1$:IF F1$="" THEN 140
+150 LINE INPUT "Output file (ENTER for LPT:)? ";F2$:IF F2$="" THEN F2$="LPT:"
+160 CLS:PRINT "Banner prints sideways on your printer, thus height expansion depends on the "
+170 PRINT"printer's width.  Each character is 8   positions high.  Height expansion of 10 will fill an 80-column print line.":PRINT:GOSUB 4990
+180 CLS: PRINT"Screen pixels are square but most       printers print 10 characters per inch   and 6 lines per inch."
+190 PRINT "Width expansion should be 3/5 of height expansion, or 4/5 if printing 8 lines  per inch."
+200 H=10:W=6:INPUT "Height expansion (ENTER for 10)";H:INPUT "Width expansion (ENTER for 6)";W
+210 CLS:PRINT "Character used for printing must be one that your printer can print.  It might  not look on the printer like it does on the screen."
+220 C$="":INPUT "Character to use for printing (ENTER to print each character with itself)";C$
+230 IF LEN(C$) > 1 THEN C$=LEFT$(C$,1)
+240 LM=1:INPUT"Left margin for printer(ENTER for 1)";LM:IF LM<1 THEN LM=1
+250 R$="":INPUT "Print line feed after each line";R$: R1$=LEFT$(R$,1):IF R1$="Y" OR R1$="y" THEN LF=1:ELSE IF R1$="N" OR R1$="n" THEN LF=0:ELSE GOTO 250
+260 CLS:PRINT "If you are using the maximum width of   your printer, and your printer does an  automatic return at the last column,    resulting in double-spacing, answer     the next question 'Y'.
+270 R$="":INPUT "Suppress return in last column";R$: R1$=LEFT$(R$,1):IF R1$="Y" OR R1$="y" THEN EL=0:ELSE IF R1$="N" OR R1$="n" THEN EL=1:ELSE GOTO 270
+299 REM open the files
+300 OPEN F1$ FOR INPUT AS 1:OPEN F2$ FOR OUTPUT AS 2
+399 REM main loop -- once for each char in file
+400 IF EOF(1) THEN 8000
+410 L$=INPUT$(1,1):L=ASC(L$):REM if less than 32 then print blank lines
+420 IF L<32 THEN FOR I = 1 TO W*6:GOSUB 5100:NEXT I:GOTO 400
+430 REM print one character.
+435 IF C$="" THEN L1$=L$:ELSE L1$=C$:REM char to print
+440 IF L<128 THEN BS=B1+(L-32)*5:S=5:ELSE BS=B2+(L-128)*6:S=6
+450 FOR I=1 TO S:REM unpack s bytes
+460 K=PEEK(BS)
+470 B(0)=K AND 128:B(1)=K AND 64:B(2)=K AND 32:B(3)=K AND 16:B(4)=K AND 8:B(5)=K AND 4:B(6)=K AND 2:B(7)=K AND 1
+480 FOR J = 1 TO W:REM print w lines for this byte
+490 IF LM>1 THEN FOR K = 1 TO LM:PRINT #2," ";:NEXT K:REM left margin
+500 FOR K = 0 TO 7:REM print 8 bits of matrix
+510 FOR I1 = 1 TO H:REM height expansion
+520 IF B(K) THEN PRINT #2,L1$;:ELSE PRINT #2," ";
+530 NEXT I1
+540 NEXT K
+550 IF EL THEN GOSUB 5100:REM return at end of line
+560 NEXT J
+570 BS=BS+1:NEXT I:REM next byte
+580 REM for chars less than 128, skip a pixel width
+590 IF S=5 THEN FOR I=1 TO W:GOSUB 5100:NEXT I
+600 GOTO 400:REM next character from file.
+4990 PRINT "        Hit any key to continue."
+5000 A$=INKEY$:IF A$="" THEN 5000:ELSE RETURN
+5100 PRINT #2,
+5110 IF LF THEN PRINT #2,CHR$(10);
+5120 RETURN
+8000 CLOSE 1,2:END
+9000 REM VARIABLES:
+9010 REM H = height expansion.  W = width expansion
+9020 REM B1 = base addr of chr$(32) matrix in rom.. B2 = same for chr$(128)
+9030 REM LF = add line feed. C$ = char to use for printing; if "" then use each character in file.  L1$=C$ or L$ to actually print.
+9035 REM el = Do a return at end of line
+9040 LM = LEFT MARGIN FOR PRINTING.  L$ = A CHARACTER FROM FILE FOR MAIN LOOP. L = ASC VERSION
+9050 R$, R1$ = VARIABLES FOR YES/NO RESPONSES.
+9060 I,J,K:  ITERATION VARIABLES.

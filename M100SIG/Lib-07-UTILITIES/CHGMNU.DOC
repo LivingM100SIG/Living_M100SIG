@@ -1,0 +1,80 @@
+                              CHGMNU.BA
+                              ---------
+-
+     CHGMNU.BA is a MENU utility for the M100/102 and T200 which lets you 
+customize your main MENU four ways:
+     -You can rename any of four built-in ROM routines: TEXT, TELCOM, ADDRSS, 
+and SCHEDL.
+     -You can keep their names but change the addresses stored in the MENU to 
+CALL some other appropriate stored .CO or ROM routine.*
+     -You can change both name AND address and avoid wasting fixed, "top line" 
+MENU space for unused "factory" routines. This also reclaims RAM file slots 
+lost to "CALL" programs that wander around the MENU as you add and kill files. 
+
+     -You can make any of the "factory" programs invisible on the Main MENU.
+-
+     CHGMNU.BA works by coding a new name and/or address into your choice of 
+the four MENU locations used by TEXT, TELCOM, ADDRSS or SCHDEL. The changes 
+will remain in place until YOU change them by re-running CHGMNU or a Cold 
+Start, whichever comes first. (CHGMNU includes a routine to restore the default
+values WITHOUT a Cold Start if you prefer.) There's no need to keep CHGMNU in 
+RAM: just keep it handy for use now and then as your MENU needs change. It is 
+simple to use but, as with all CO/ML CALL coding, you MUST follow the 
+instructions!
+     Download CHGMNU.DOC (this file), CHGMNU.BA, edit the flotsam, and CHECKSUM
+IT! Save a .BA version for future use. Cursor select CHGMNU.BA from the Main 
+MENU.
+     After you've read ALL of these instructions answer Y to the first prompt. 
+To Change one of these MENU references press C. To Restore the four "factory" 
+names and addresses press R. 
+     To rename or readdress any of the four built-in MENU locations press C. To
+change a file's visibility on the main MENU press V. (Any of the files that are
+currently invisible will display in reverse video.)
+     If you press C then choose T, E, A or S (which correspond to the 
+"original" entries). Type the new SIX character name, (symbols and spaces are 
+OK), and press <ENTER>. Now CAREFULLY enter the address where you would 
+normally CALL your routine and press <ENTER>.
+     (If you're ONLY renaming the built-in routines press <ENTER> for the 
+default address. For safety reasons, if you're changing the name of an ALREADY 
+re-named slot, pressing ENTER here will reinstall the factory address 
+previously called at that location. You should therefore re-enter your "custom"
+address along with the "new" name.) Your entries will then be displayed for 
+final review. (DOUBLE CHECK THE ADDRESS! It MUST be either the address that 
+displays next to the "Exe:" label when you LOADM the program to be called or 
+some other DOCUMENTED entry point!) If you are satisfied then press Y, 
+otherwise N.
+    * NOTE: THIS NEW MENU ENTRY WON'T DO ANYTHING BUT CALL AN ADDRESS! IT 
+DOESN'T CLEAR ANY RAM, NOR DOES IT LOAD THE PROGRAM! IT WILL ONLY CALL AN 
+ADDRESS!  IF THE ADDRESS YOU HAVE ENTERED IS *NOT* A PERMANENTLY STORED .CO or 
+ROM ROUTINE YOU RISK A COLD START SHOULD YOU SELECT IT FROM THE MAIN MENU!
+     CHGMNU will now return you to the Change/Restore prompt: choose C or R to 
+continue or, if you're finished, press <ENTER> for MENU. When you return to the
+main MENU you will see your "custom" name in place of the "factory" name. When 
+you cursor select that name you will jump to the address you specified. CHGMNU 
+only changes one location at a time. Continue in CHGMNU if you have other 
+routines to enter.
+     If you pressed V, then by pressing T, E, A or S you will make that 
+routine's MENU entry invisible. It can, of course, still be used by CALLing it 
+from BASIC or a program. If you want to repeat the process for another routine 
+simply press "C", "V" again at the entry menu. To make them visible again 
+follow the same procedure: selecting the corresponding entry "toggles" it's 
+visibility. Picking Restore at the first menu will clear all custom code and 
+restore all factory names and addresses.
+-
+-----------------------------------------------------------------------------
+     That's all there is to it. I have used it to: add DSKMGR to the "top line"
+instead of ADDRSS which I never use; change the address for TEXT to run through
+TXT-OV first, (A permanently stored version, NOT the Alt/LCD version!); change 
+"TELCOM" to XMODEM to jump directly to XMDPW5 etc. I'm certain other options 
+will occur to you. Remember to carefully manage RAM to protect any .CO programs
+which you CALL from your custom MENU. If you select a program from your custom 
+MENU that ain't there it's the same as CALLing an unloaded program: usually a 
+certain COLD START! 
+     I found the seed for this idea in ADSMTR.DOC by James Yi. I hope you find 
+it useful too!
+-
+Randy Hess 
+[73267,552]
+Omaha, Ne
+WATS 800-228-3309
+

@@ -1,0 +1,374 @@
+
+
+                     ------------------------
+                     | Model 100 System Map |
+                     ------------------------
+
+                          Copyright 1985
+                     Revision Date: 09/30/85
+                   Compiled and Researched by:
+                       Robert D. Covington
+            Systems Information Management Consultants
+      [Not associated with The Covington Group, N. Y., N. Y.]
+
+    This document may be duplicated and distributed free of
+charge to any individuals who desire it.  Any duplications of
+this document, however, must inluce all of the information
+contained here-in, with no deletions or changes.
+    The author and distributors of this document make no 
+expressed or implied warrantees as to the validity of the 
+information contained here in.
+
+                      - Model 100 RAM Memory Map -
+
+F5F4H -  Himem (2)
+
+F5F9H -  RST 5.5 RAM vector (3)  Used for BCR interrupt
+
+F5FCH -  RST 6.5 RAM vector (3)  Used for UART interrupt (Called)
+
+F5FFH -  RST 7.5 RAM vector (3)  Used for Timer interrupt (Called)
+
+F602H -  RAM vector for TRAP interrupt (3) (1431H)
+
+F62AH -  Option ROM flag (0-no option ROM)
+
+F62BH -  Dial speed (1=10pps, 2=20pps)
+
+F630H -  Start of 8 byte table for each function key status (1=on,
+         0=off)
+
+F639H -  Cursor row (1-8)
+
+F63AH -  Cursor column (1-40)
+
+F63BH -  Number of active rows (1-8)
+
+F63CH -  Number of active columns on screen (1-40)
+
+F63DH -  Label line/8th line protect status (0=off)
+
+F63EH -  Scroll disable flag (0-allow scrolling)
+
+F63FH -  Cursor status (0-off, 1-on)
+
+F640H -  Cursor row (1-8)
+
+F641H -  Cursor Column (1-40)
+
+F646H -  ESCape mode flag for RST 20H (0-normal video, not zero-ESCape 
+         mode)
+
+F648H -  Reverse video switch (0=off)
+
+F64EH -  X coordinate of last graphic point plotted
+
+F64FH -  Y coordinate of last graphic point plotted
+
+F656H -  Power off exit condition switch (0-return control back to 
+        program on power up, 1-return to menu on power up)
+
+F658H -  Full/half duplex switch (0-half duplex)
+
+F65AH -  Auto linefeed on RS232 output switch (0-auto linefeed option 
+        off, not zero-automatically send a linefeed after every 
+        carriage return)
+
+F65BH -  Start of textual RS232 parameter setting buffer.   This 
+        buffer is normally used to store the STAT setting for TELCOM 
+        (5)
+
+F660H -  Self modifying address called on CALL statement
+
+F661H -  Address last called (2)
+
+F667H -  Called on OUT statement
+
+F66AH -  Called on INP function
+
+F672H -  Error code of last error
+
+F674H -  Line printer head position
+
+F675H -  Output device for RST 20H (0=screen, 1=printer)
+
+F678H -  Start of string buffer for BASIC (2)
+
+F67AH -  Current executing line number, FFFFH if no program running. 
+        (2)
+
+F67CH -  Start of BASIC program pointer (2)
+
+F680H -  End of statement marker ':' or null
+
+F685H -  Start of keyboard buffer used by the keyboard line input 
+        routine at 4644H.
+
+F788H -  Current horizontal position of cursor (0-39)
+
+F789H -  Function key definition area (128)
+
+F80AH -  Function key definition area used by BASIC (128)
+
+F88CH -  End of used RAM for permanent storage (does not include 
+        variables, paste buffer, etc.) (2)
+
+F923H -  Seconds (ones)
+
+F924H -  Seconds (tens)
+
+F925H -  Minutes (ones)
+
+F926H -  Minutes (tens)
+
+F927H -  Hours (ones)
+
+F928H -  Hours (tens)
+
+F929H -  Date (ones)
+
+F92AH -  Date (tens)
+
+F92BH -  Day code (0=Sunday, 1=Monday, etc.)
+
+F92CH -  Current month (1-12)
+
+F92DH -  Year (ones)
+
+F92EH -  Year (tens)
+
+F933H -  Seconds (ones)
+
+F934H -  Seconds (tens)
+
+F935H -  Minutes (ones)
+
+F936H -  Minutes (tens)
+
+F937H -  Hours (ones)
+
+F938H -  Hours (tens)
+
+F939H -  Date (ones)
+
+F93AH -  Date (tens)
+
+F93BH -  Day (0=Sunday, 1=Monday, etc.)
+
+F93DH -  Time for ON TIME interrupt (SSMMHH) (6)
+
+F944H -  On Com flag (0=off, 255=on)
+
+F945H -  Address of On Com routine (2)
+
+F947H -  On time flag (0=off, 255=on)
+
+F948H -  Address of on time routine (2)
+
+F94AH -  Function key vector table (24)
+           First byte - On/off status
+         Next 2 bytes - Vector address
+
+F962H -  Start of RAM directory
+        Byte 1 - Directory flags.  A 255 specifies the end of the 
+                 directory.
+               Bit 7 - Set if valid entry
+                   6 - Set for .DO file
+                   5 - Set for .CO file
+                   4 - Set for ROM file
+                   3 - Set for invisible file
+           2-3 - Address of file
+          4-11 - Eight byte filename.  Filename must have extention 
+                 right justified and filename left justified.  Any 
+                 gaps should be filled with spaces (ex. "ADD.DO" 
+                 should be "ADD   DO")
+
+F99AH -  Address of current BASIC program not saved (Suzuki) (2)
+
+F9A5H -  Start of Paste buffer (Hayashi) (2)
+
+FAACH -  ASCII character last output to printer
+
+FAADH -  Label line enable flag (0=not enabled)
+
+FAAEH -  Contents of port 0A8H
+
+FAAFH -  Start of IPL filename (8)
+
+FABAH -  Address where last BASIC list started (2)
+
+FABEH -  Storage for stack pointer on power up/down for continued 
+        program execution after a power down (2)
+
+FAC0H -  Lowest RAM memory address used by system (8000H for a 32k 
+        system) (2)
+
+FAC9H -  Offset of last RST 38H call
+
+FAD0H -  Length of last program loaded or saved on tape
+
+FADAH -  Start of RST 38H vector table (256)
+
+FAE2H -  LCD character output RAM vector for 20H routine.  The address 
+        at this location is called everytime a character is sent to 
+        the LCD (note:This routine is called at 4317H). (2)
+
+FAE4H -  Printer output RAM vector.  The 2 byte address at this 
+        location is called everytime a character is output to the 
+        printer via the routine at 1470H. (2)
+
+FB00H -  EOF function RAM vector.   The 2 byte address at this 
+        location is called evertime an EOF function is performed. (2)
+
+FB0CH -  TERM F6 RAM vector (2)
+
+FB0EH -  TERM F7 RAM vector (2)
+
+FB14H -  WIDTH statement RAM vector.  (2)
+
+FB1AH -  CRT open routine RAM vector (2)
+
+FB1EH -  CRT output file routine RAM vector (2)
+
+FB20H -  WAND Open routine RAM vector (2)
+
+FB22H -  WAND Close routine RAM vector (2)
+
+FB24H -  WAND Get routine RAM vector (2)
+
+FB26H -  WAND Special I/O routine vector (2)
+
+FB28H -  LOF function routine RAM vector (2)
+
+FB2AH -  LOC function routine RAM vector (2)
+
+FB2CH -  LFILES statement routine RAM vector (2)
+
+FB2EH -  DSKI$ routine RAM vector (2)
+
+FB30H -  DSKO$ routine RAM vector (2)
+
+FB64H -  Create/Locate switch for variables used in the main 
+        evaluation routine (Locate=0, Create>0).
+
+FB65H -  Type of last variable used (2-Integer, 3-String, 4-Single 
+        Precision, 5-Double Precision)
+
+FB67H -  Start address for file buffer area (2)
+
+FB94H -  Line number of current data statement
+
+FB96H -  0 if no FOR/NEXT loop in progress
+
+FB99H -  Address of last variable assigned via a LET instruction.  
+        This address points to the variable description table as with 
+        a VARPTR(variable) instruction.
+
+FB9BH -  Pointer to most recent or currently running line (2).  This 
+        address points to the actual text skipping the line number 
+        and spaces.
+
+FB9DH -  Stack pointer value used by BASIC to reinitialize the stack.  
+        This memory pointer is updated after each instruction by the 
+        routine at 0804H. (2)
+
+FB9FH -  Line number of last error (2)
+
+FBA1H -  Most recent used or entered line number (2)
+
+FBA3H -  Pointer of where error occured (2)
+
+FBA5H -  Address of ON ERROR routine (2)
+
+FBAAH -  Line where last break, END, or STOP occured (2)
+
+FBACH -  Address where program stoped on last break, END, or STOP (2)
+
+FBAEH -  Pointer to the start of the DO files and end of the BA files. 
+        (2)
+
+FBB0H -  Pointer to the start of CO files (2)
+
+FBB2H -  Pointer to the start of variable table (2)
+
+FBB4H -  Pointer to the start of array table (2)
+
+FBB6H -  Pointer to the start of the systems unused memory (2)
+
+FBB8H -  Address where DATA search will begin on next READ statement 
+        (2)
+
+FBBAH -  26 byte table for default variable types declared by the DEF 
+        statement.   Each entry corresponds to one of the letters 
+        A-Z.   The contents of each entry are 2 for an integer, 3 for 
+        a string, 4 for a single precision number, and 8 for a double 
+        precision number. (26)
+
+FC18H -  Start of FAC1 for single (4) and double (8) precision number 
+        (8)
+
+FC1AH -  Start of FAC1 for integers (2)
+
+FC69H -  Start for FAC2 for single (4) and double (8) precision numbers
+
+FC6BH -  Start of FAC2 for integers (2)
+
+FC82H -  Maximum number of open files (Maxfiles) (1)
+
+FC83H -  Pointer to the 30 byte file number description pointer 
+        table-2.  Each entry of the table points to the actual file 
+        description table (same as VARPTR(#x)).
+
+FC8CH -  Pointer to the file description table for the last file used 
+        (2)
+
+FC93H -  Filename of current BASIC program (6)
+
+FC9CH -  Filename of last program loaded from tape (6)
+
+FCC0H -  Start of alternate LCD character buffer (320)
+
+FDFFH -  End of alternate LCD character buffer
+
+FE00H -  Start of LCD memory (320)
+
+FF40H -  End of LCD memory
+
+FF42H -  XON/XOFF enable flag.  If this byte is 0, XON/XOFFs are not 
+        significant for RS232 operations.  If this byte is greater 
+        than 0, XON/XOFFs are treated as normal.
+
+FF43H -  RS232 initialization status (0-deactivated, >0- activated)
+
+FF44H -  Sound flag (0=on) (1)
+
+FF45H -  Contents of port 0E8H (1)
+
+FF46H -  Start of 64 character RS232 buffer (64)
+
+FF86H -  Number of characters in the RS232 buffer (FF46H).  When this 
+        number reaches 40, a control S is automatically sent by the 
+        system.
+
+FF8AH -  Status of control S (1-Control S has been pressed, 0-no 
+        control S is active).
+
+FF8BH -  8155 UART baud rate generator baud rate timer value (2)
+
+FF8EH -  High or low cassette level trigger flag for 6FDBH (1)
+
+FF97H -  8 bits for storing space, del, tab, esc, paste, label, print, 
+        and enter key recognition.
+
+
+FF98H -  8 bits for storing function key recognition
+
+FFA2H -  8 bits for storing shift, ctrl, grph, code, num, and caps 
+        lock.
+
+FFAAH -  Number of characters in keyboard buffer.
+
+FFABH -  Start of keyboard typeahead buffer (32)
+
+FFECH -  Start of 5 byte table describing the bit pattern currently 
+        under the cursor (5)

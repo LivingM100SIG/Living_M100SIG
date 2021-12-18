@@ -1,0 +1,171 @@
+          Chapter 3              Using DMENU.BA               Page 20
+
+
+          Once you have indicated which files are to be killed, DMENU
+          will kill them all one by one.  Note that DMENU cannot kill
+          itself, so it is safe to select it to be killed.
+
+          The procedure to load or save multiple files resembles the
+          procedure for killing them.  The difference is that the first
+          question DMENU will ask is "Overwrite all (y/n/a)?"  This
+          question refers only to files that must be overwritten (i.e.,
+          files already in RAM when you are loading, or files already
+          on disk when you are saving.)  DMENU loads all other files
+          automatically, without prompts.  Thus, your answer has
+          slightly different significance:
+
+
+             * "y" Means to load or save all the selected files whether
+               they already exist in RAM or on disk, respectively, or
+               not.
+
+             * "n" Means to load or save only those files that do not
+               already exist in RAM or on disk, respectively.
+
+             * "a" Means to ask before overwriting any file.  DMENU
+               will never ask about files that do not involve
+               overwriting.
+
+          After this question, DMENU will check all the files to see if
+          an overwrite is necessary.  Depending on whether you answered
+          y, n, or a, it will either automatically overwrite an
+          existing file, skip it, or ask you.  "Ask" is usually the
+          safest option.
+
+
+                           Running Programs from DMENU
+
+          You can run BAsic or COmmand files directly from DMENU. 
+          Simply move the widebar cursor over the file name and press
+          [ENTER].  Exactly what happens depends on the situation.
+
+          BAsic files in RAM will run from DMENU exactly as they will
+          from your computer's main menu.  In other words, when source
+          is RAM, pressing [ENTER] over a BASIC file is exactly the
+          same as pressing [F8], moving the cursor to the BASIC file on
+          your computer's menu, and pressing [ENTER]. You save a few
+          keystrokes when you do it from DMENU.
+          Chapter 3              Using DMENU.BA               Page 21
+
+
+          If you press [ENTER] to run a BAsic file on disk, DMENU will
+          load the file first into the unnamed program area.  The BAsic
+          program will then be in RAM, but it will not appear on any
+          menu; it will be one of the invisible "memory eaters"
+          discussed in Chapter 2.  If you plan on running a program
+          several times, it is probably better to load the BAsic file
+          into RAM first, then run it from RAM.  There is no extra
+          memory required, and you will be able to see the program on
+          the menu after running it.  However, for small programs you
+          wish to run only once, pressing [ENTER] to load them from
+          disk and run them is a convenient shortcut.
+
+          COmmand files are more complex because memory must often be
+          reserved before they can be run.  If there is sufficient
+          memory reserved to run a COmmand file, DMENU will run it
+          without changing the amount of reserved memory.  If there is
+          not enough memory reserved, DMENU will reserve just enough to
+          run the COmmand file, then run it.  If you do not understand
+          the intricacies of COmmand files, you may want to refer to
+          Appendix B
+
+          In general, you save memory by running COmmand files directly
+          from the disk using the [ENTER] key.  THis is because DMENU
+          can move the COmmand file directly from the disk into the
+          reserved area, where it runs.  In any case, however, you will
+          almost certainly have some memory reserved, which is one of
+          the "memory eaters" discussed in Chapter 2.  You will
+          probably want to recover this memory eventually.
+
+
+                            Examining Document Files
+
+          There are times when you may wish to examine a DOcument
+          file's contents without going into TEXT.  If you move the
+          widebar cursor over a DOcument file (either in RAM or on
+          disk), DMENU will display its contents one screen at a time. 
+          There is no "word wrap".  At the end of each screen, DMENU
+          asks, "More?"  Answer with a "y" for the next screen of the
+          file, or "n" to return to the menu display.
+          Chapter 3              Using DMENU.BA               Page 22
+
+
+                               Errors and Recovery
+
+          Errors in DMENU can occur in either phase, the "menu" phase
+          or the "command" phase.  Each phase has its own
+          characteristic errors and recoveries.
+
+
+                            Errors in the Menu Phase
+
+          You cannot run DMENU unless there are at least 1,100 bytes
+          showing free on your computer's menu.  The precise
+          requirement varies slightly depending on a variety of
+          factors.  If there is insufficient memory to run, DMENU will
+          show an ?OM error message on the message line, wait for you
+          to press a key, and return you to your computer's menu.
+
+          You also must have room for at least one more file in your
+          RAM directory for DMENU to work.  It creates a temporary file
+          as it is running; if there is no room for that file, you will
+          get a #57 error.  When this happens, you must remove one
+          file, no matter how small, from RAM before DMENU will work.
+
+          On rare occasions, the PASTE buffer will exhaust the memory
+          while you are in the menu phase.  If you run DMENU with very
+          few bytes free, it is possible that there are enough bytes
+          free to display the files, but not enough to hold the
+          commands in the paste buffer.  When this a=happens, you will
+          get an ?OM error message and find yourself at the main menu. 
+          If you were performing an operation on multiple files, you
+          may have better luck if you try doing the operation one at a
+          time.
+
+          The only other errors that can happen in the menu phase of
+          DMENU are disk related.  These errors generally mean that the
+          disk is full or write protected, or that the drive is
+          disconnected or malfunctioning.  See Chapter 8 for a complete
+          list of disk-related errors.
+          Chapter 3              Using DMENU.BA               Page 23
+
+
+                           Errors in the Command Phase
+
+          In the command phase, an error does not halt execution;
+          instead, the PASTE buffer moves on to the next command. The
+          errors appear as a normal BASIC error message. An example:
+
+
+          Kill"0:BB    .DO"
+          ?WP Error
+          Savem":BB    .DO"
+          ?AE Error
+          Clear:Gosub2:u= 2:t= 0:goto24
+
+
+          This sequence would occur if you tried to overwrite BB.DO to
+          a write-protected diskette.  The one danger of command-phase
+          errors is that you might not notice them - you might think
+          that you have updated a disk file, when in fact you have not. 
+          For this reason, you should generally watch the command-phase
+          execution to check for errors.
+
+          THere are two types of errors in the command phase:
+          disk-related, and RAM-related.  Disk-related commands usually
+          indicate that the disk is full or write protected. 
+          Occasionally there may be an ?IO error, indicating a bad
+          disk, or some other problem; usually, if DMENU makes it to
+          the command phase without errors, there will be no problems
+          with the disk, except write-protection or a full diskette. 
+          RAM-related errors include ?OM and ?FL, which occur when the
+          free space or the directory are exhausted, respectively. 
+          Also, an ?FC error will occur if you try to Kill DMENU
+          itself, and an ?AE error will occur if you try to overwrite
+          DMENU from the disk.
+
+          Occasionally, the execution phase will prevent the menu phase
+          from starting again.  This happens when you fill the memory
+          too full in the execution stage, so much so that there isn't
+          room to run the menu phase anymore.
+

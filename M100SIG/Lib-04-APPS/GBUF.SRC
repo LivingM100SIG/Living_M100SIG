@@ -1,0 +1,50 @@
+GBUF.SRC
+George Flanders [73300,2272]
+March 4, 1988
+
+Some folks have asked for the source code involved in writing the graphic image to a RAM buffer, and then being able to restore it by reading the buffer. The following is that source. Although at first glance it might appear that the code only consumes 54 bytes, note that the buffer 'GRFX' uses 1,920 bytes; extending through DAA4/55972. If you're planning to relocate it, bear in mind that you'll need to reserve 1,973 bytes between HIMEM and MAXRAM for the code plus buffer. This source may have to be edited for syntax specific to your assembler: e.g., colons after the labels; "0" in front of hex addresses that start with letters, eliminating the "$" and ending with "H" instead; and whatever. Two ROM routines called: $765C disables "background task" interrupts while the row/column position is polled, and $7432 reads the six bytes at the current row/column and copies their values in the buffer position pointed to by the HL pair. Programmable addresses $FFF4 and $FFF5 hold the current screen row and column, respectively.
+
+	ORG	$D2F0	;54000
+WRITE	XRA	A	;CALL54000 writes to the buffer
+	JMP	COPY
+READ	MVI	A,$01	;CALL54004 reads from the buffer
+COPY	STA	DREG+1
+	LXI	H,GRFX	;point HL to the start of the buffer
+	XRA	A
+ROW	STA	$FFF4
+	XRA	A
+COL	STA	$FFF5
+	PUSH	H	;save buffer position on the stack
+	CALL	$765C	;disable interrupts
+DREG	MVI	D,$00	;D register holds 0 on write, 1 on read
+			;depending on where you enter
+			;the subroutine
+	CALL	$7432	;Copy the six bytes at current
+			;row/column to six memory bytes
+			;pointed to by HL
+	POP	H	;retrieve buffer position
+	LXI	B,$06
+	DAD	B	;and increment it six bytes
+	LDA	$FFF5	;get column
+	INR	A	;increment it
+	CPI	$28	;40 columns yet?
+	JNZ	COL	;no, do the next column in this row
+	LDA	$FFF4	;get row
+	CPI	$07	;last row yet?
+	RZ		;yes, return from subroutine
+	INR	A	;no, not yet - increment it
+	JMP	ROW	;do the next row
+GRFX	DS	$780	;Buffer to hold the graphic screen
+	END
+
+If you don't intend to modify the starting address for this routine, maybe you'd appreciate a ready-made BASIC loader that gets the job done without the sometimes frustrating task of running a .CO file and then PEEKing to get the related DATA. Here's such a loader:
+
+1 CLEAR256,54000
+2 FORI=54000TO54052:READA:POKEI,A:NEXT
+3 'Put in your graphic program
+4 'When you want to save the image, include the command CALL54000
+5 'Do any on-screen prompting, etc., even clear the screen - doesn't matter
+6 'When you want to restore the image, use the command CALL54004
+1000 DATA175,195,246,210,62,1,50,9,211,33,37,211,175,50,244,255,175,50,245,255,229,205,92,118,22,0,205,50,116,225,1,6,0,9,58,245,255,60,254,40,194,1,211,58,244,255,254,7,200,60,195,253,210
+
+Have fun!

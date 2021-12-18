@@ -1,0 +1,16 @@
+0 'GETUM.CHP - Retrieve Chipmunk Files
+1 'by Bill Templeton [75655,1056]  5/85
+2 'prints output to RAM:DISK.DO
+3 CLEAR512:E$=CHR$(27):R$=E$+"p":N$=E$+"q
+4 OPEN"disk"FORAPPENDAS1
+5 CLS:PRINT@45,R$" Retrieving Chipmunk Files "N$
+6 ONERRORGOTO14
+7 PRINT@93,"Track (0-79):";:INPUTT
+8 PRINT@127,"From Sector (1-18):";:INPUTX
+9 PRINT@169,"To Sector (1-18):";:INPUTY
+10 FORS=XTOY:P$=DSKI$(0,T,S,0):Q$=DSKI$(0,T,S,1)
+11 PRINT@253,R$" Working..."N$:PRINT#1,
+12 PRINT#1,P$;Q$;
+13 NEXT:MENU
+14 IFERRTHENPRINT@253,"Error ="ERR
+15 PRINT#1,"<<<Error>>>";:RESUMENEXT

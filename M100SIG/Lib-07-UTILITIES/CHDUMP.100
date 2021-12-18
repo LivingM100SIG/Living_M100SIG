@@ -1,0 +1,87 @@
+10 REM---------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3---------4---------5---------6---------7---------8---------9---------0---------1---------2---------3---------4
+20 PRINT "CHDUMP.BA":PRINT "Copyright 1990 Tri-Mike Network East"
+30 PRINT "by MJ Nugent, Jr.":PRINT "All rights reserved"
+40 PRINT "Installing ..."
+50 '--- m/l size, variables ---
+60 READ D,KB,WH,F$,SZ,DA,FL,LL
+70 '--- locate pgm in RAM ---
+80 PRG=PEEK(WH)+256*PEEK(WH+1)
+90 '--- set line 10 pointer ---
+100 X=0:L10=PRG+5+X
+110 P0=PEEK(PRG)+256*PEEK(PRG+1)
+120 '--- install m/l in line ---
+130 BASE=L10:J=SZ:GOSUB 360
+140 '--- find pgm dir entry ---
+150 A$="":FOR I=3 TO 10:A$=A$+CHR$(PEEK(D+I)):NEXT
+160 IF A$<>F$ OR PEEK(D)<>128 THEN D=D+11:GOTO 150
+170 'store dir attrib adr in pgm ---
+180 MSB=INT(D/256):LSB=D-MSB*256:IF MSB=0 OR LSB=0 THEN 480
+190 POKE L10+DA,LSB:POKE L10+DA+1,MSB
+200 '--- set up to kill these lines ---
+210 OPEN "KILLER.DO" FOR OUTPUT AS 1
+220 FOR I=FL TO LL STEP 10
+230 PRINT #1,STR$(I)
+240 NEXT
+250 CLOSE
+260 '--- stuff cmds into kb buffer ---
+270 A$="KILL"+CHR$(34)+"KILLER.DO"+CHR$(34)+CHR$(13)+"MENU"+CHR$(13)
+280 FOR I=1 TO LEN(A$)
+290   POKE KB+2*I,ASC(MID$(A$,I,1))
+300   POKE KB+1+2*I,0
+310 NEXT
+320 POKE KB+1,I-1
+330 '--- waste lines, end install ---
+340 MERGE "KILLER.DO"
+350 '--- install/relocate m/l ---
+360 FOR I=0 TO J
+370   PTR=BASE+I
+380   READ A:IF A=>0 THEN 440
+390   READ A,B:REL=A+256*B
+400   FX=REL+L10
+410   B=INT(FX/256):A=FX-B*256
+420   IF A=0 OR B=0 OR A=13 OR B=13 THEN 480
+430   POKE PTR+1,B:I=I+1
+440   POKE PTR,A
+450 NEXT
+460 RETURN
+470 '--- load error ---
+480 BEEP:PRINT "Load Error!"
+490 END
+500 '--- d,kb,wh,f$,sz,da,fl,ll ---
+510 DATA 63842,65449,63100,"CHDUMPBA",239,14,20,860
+520 '--- line 10 m/l code ---
+530 DATA 17, 222, 250, 237, 229, 33, -1, 34
+540 DATA 0, 217, 225, 34, -1, 6, 0, 33
+550 DATA 255, 255, 126, 238, 8, 119, 40, 3
+560 DATA 26, 238, 104, 18, 33, 106, 249, 126
+570 DATA 238, 11, 119, 201, 245, 33, -1, 59
+580 DATA 0, 229, 58, 151, 255, 254, 8, 192
+590 DATA 58, 153, 255, 254, 8, 202, -1, 0
+600 DATA 0, 254, 4, 192, 195, -1, 61, 0
+610 DATA 241, 201, 219, 187, 230, 6, 238, 2
+620 DATA 194, 41, 66, 62, 1, 50, 117, 246
+630 DATA 33, -1, 209, 0, 205, 177, 39, 175
+640 DATA 50, 244, 255, 205, -1, 108, 0, 58
+650 DATA 244, 255, 60, 254, 8, 194, -1, 82
+660 DATA 0, 33, -1, 221, 0, 205, 177, 39
+670 DATA 175, 50, 117, 246, 201, 205, -1, 111
+680 DATA 0, 33, -1, 216, 0, 205, 177, 39
+690 DATA 175, 50, 245, 255, 33, 192, 252, 229
+700 DATA 205, 92, 118, 175, 87, 205, 50, 116
+710 DATA 209, 6, 6, 26, 197, 213, 95, 175
+720 DATA 87, 46, 16, 103, 205, -1, 193, 0
+730 DATA 125, 183, 202, -1, 163, 0, 17, -1
+740 DATA 224, 0, 131, 95, 210, -1, 162, 0
+750 DATA 20, 26, 231, 231, 231, 209, 19, 193
+760 DATA 5, 194, -1, 136, 0, 58, 245, 255
+770 DATA 60, 254, 40, 194, -1, 118, 0, 62
+780 DATA 13, 231, 62, 1, 238, 129, 50, -1
+790 DATA 186, 0, 201, 58, -1, 186, 0, 183
+800 DATA 250, -1, 203, 0, 195, 223, 55, 205
+810 DATA 126, 55, 195, 1, 53, 27, 108, 10
+820 DATA 27, 51, 24, 34, 27, 76, 208, 2
+830 DATA 34, 27, 64, 13, 34, 192, 48, 240
+840 DATA 12, 204, 60, 252, 3, 195, 51, 243
+850 DATA 15, 207, 63, 255
+860 '--- turn CHDUMP on/off ---
+870 CALLPEEK(63100)+256*PEEK(63101)+5:MENU

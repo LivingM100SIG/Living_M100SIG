@@ -1,0 +1,21 @@
+0  '"HEXDEC.BA" -- PCW - 1/10/86
+1  'Converts two-column hex table to
+2  'four-column hex-dec table.  Input
+3  'table lines must be formatted
+4  'as HHHH<tab>HHHH (all caps);
+5  'Pad HHHH with leading zeros as 
+6  'needed.  Used to create MAP100.200
+7  'file in DL8
+8  '
+10 CLS:MAXFILES=2:CLEAR256:DEFSTRA-H:DIMO(4):E=CHR$(27):GOTO60
+20 IFEOF(1)THEN50
+25 LINEINPUT#1,A
+30 C=MID$(A,1,4):C1=C:GOSUB80:O1=O
+35 C=MID$(A,6,4):C2=C:GOSUB80:O2=O
+40 PRINT#2,USING "\  \\\\  \\\#####\\#####";C1,CHR$(9),C2,CHR$(9),O1,CHR$(9),O2
+45 GOTO20
+50 MAXFILES=1:MENU
+60 FILES:PRINTE"pFile to Convert"E"q <CR to end>";:INPUTF:IFF=""THEN50ELSEPRINTE"pFile to Output "E"q            ";:INPUTG
+70 OPENFFORINPUTAS1:OPENGFOROUTPUTAS2:CLS:PRINT@130,"Working...":GOTO20
+80 J=1:FORI=1TO4:O(I)=0:NEXT:FORI=1TO4:O(I)=ASC(MID$(C,J,1))-48:IFO(I)>9THENO(I)=O(I)-7
+90 J=J+1:NEXT:O=4096*O(1)+256*O(2)+16*O(3)+O(4):RETURN

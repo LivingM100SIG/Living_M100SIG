@@ -1,0 +1,47 @@
+1 PRINT"Read gprint.doc first":STOP
+2 'GPRINT.100 by Russ Villanueva.
+3 '13May84       [70526,1434]
+4 'The files used for this program are made with the "GRFX.100" program
+5 'The figures drawn by this program can be printed on the Radio shack 
+6 'printer cgp-115.
+7 'so far the only functions allowed
+8 'are: 2) draw line, 3) draw box,
+9 '6) draw circle
+10 'draw box filled was not used due to
+11 'the amount of time it used and the
+12 'density wasted pen life.
+1000 CLS:MAXFILES=1:CLEAR600
+1001 ONERRORGOTO1999
+1002 DEFINTA-W,Z:DEFSNGX,Y
+1010 CLS:PRINT"Printer not hooked-up!"
+1020 LPRINTCHR$(18):LPRINT"A":CLS:LPRINTCHR$(18):LPRINT"I"
+1024 INPUT"GRFX.BA File to print";F$:OPENF$FORINPUTAS1
+1030 IFEOF(1)THENLPRINT"H":LPRINT"A":END
+1032 BEEP:INPUT#1,A,B,C,D,E:A$=STR$(A)+","+STR$(-B):B$=STR$(C)+","+STR$(-D)
+1034 ONEGOSUB1100,1200,1300,1400,1500,1600
+1039 GOTO1030
+1100 RETURN'lprinta$:return
+1200 LPRINT"M";A$:LPRINT"D"+A$+","+B$:LPRINT"R0,0":RETURN'drawline
+1300 '------------------------'draw box
+1302 LPRINT"M";A$
+1304 LPRINT"D"+STR$(C)+","+STR$(-B)
+1306 LPRINT"D"+B$
+1308 LPRINT"D"+STR$(A)+","+STR$(-D)
+1310 LPRINT"D"+A$
+1312 RETURN
+1400 RETURN'draw box filled
+1500 RETURN'erase box filled
+1600 '----------------------draw circle
+1620 X3=ABS(C-A)+.0001:Y3=ABS(D-B)+.0001
+1622 XA=SQR(X3^2+Y3^2):YA=0
+1626 Y3=ABS(Y3*90/ATN(3D13))
+1650 FORYA=0TO360STEP60/XA*2:Y3=YA*ATN(3D13)/90:M=XA*COS(Y3)+A+J
+1651 N=XA*SIN(Y3)+B+K
+1652 IFM<0ORM>480THEN NEXT:BEEP:RETURN
+1654 IFN<-999ORN>999THEN NEXT:BEEP:RETURN
+1656 B$=STR$(M)+","+STR$(-N)
+1658 IFYA<5THENLPRINT"M";B$
+1660 LPRINT"D"+B$
+1666 NEXT:RETURN
+1999 LPRINT"A":PRINT"ERROR in line";ERL:END
+

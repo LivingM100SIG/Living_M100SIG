@@ -1,0 +1,68 @@
+How to get, LOAD and SAVE the editor for FIG4TH.100.
+Download the files MATCH&.SCR, EDITR1.SCR and EDITR2.SCR and convert them to 
+.CO files with CHANGE.BA then save them to the TDD.  Why not start a fresh new 
+disk for your FIG4TH system and the screens for it?
+-->FIRST, READ THE TDD/RAMDISK INFORMATION, TDDRAM.FIG<--
+When you see the symbol (CR) in these instructions press the ENTER key at that 
+point to cause the computer to begin its action.
+Clear out as much of memory as you can, you'll need it to use FIG4TH.  The 
+uppermost 5K will not be used by FIG4TH so that programs like Diskmanager can 
+be left there and the system memory won't be written over.
+Write a little BASIC program: 1 CLS: SCREEN 0,0: CALL 41219 (CR) and SAVE it 
+with the name FORTH.BA.  Note this enters at the WARM start location.  Use this
+to get into FIG4TH after you have initially cold started the system.  That way 
+you won't bomb out any additions to FORTH you may have in memory.
+Load FIG4TH into memory from the TDD, get into BASIC, type CLEAR 100,41216 (CR)
+. If you got an OM error message you will need to clean out more room in RAM.  
+Now type CALL 41216 (CR) to COLD start FIG4TH.  In FORTH type -8 OFFSET ! EMPTY
+-BUFFERS HEX E000 C00 ERASE BYE (CR) to clear out the in-memory disk blocks and
+buffers and return to the M100 MENU.
+KILL FIG4TH.CO and then bring in MATCH&.CO from the TDD.  Put the widebar 
+cursor over MATCH& then (CR), you'll return to the MENU momentarily.  This 
+enters the screens in the file MATCH& into their "disk blocks" in memory.  Run 
+FORTH.BA to re-enter FIG4TH.  Type 1 LOAD to cause FIG4TH to compile the string
+MATCH words and 2SWAP and 2DROP from the screens into the dictionary.  To see a
+list of words in the dictionary type VLIST (CR).  You can stop the scrolling 
+anytime by hitting space.  Type BYE to return to the MENU.
+Now kill MATCH& and load EDITR1.CO and EDITR2.CO into memory.  As you did 
+above, place the widebar cursor on EDITR1 and hit enter.  Run FORTH to re-enter
+FIG4TH.  Type 1 LOAD (CR) to compile the first half of the editor (this takes a
+while) and then BYE (CR) to return to the MENU.  Repeat for EDITR2.  (Don't 
+fool around between loading the first half and returning to the MENU 'cause you
+will be in the EDITOR vocabulary with it only partly compiled - you may bomb 
+the system.)  Now that you've got it all in, type EDITOR (CR) and VLIST (CR) to
+see all the words that you've compiled.  You can stop the scrolling anytime by 
+hitting space.  Type 1 LIST to see what a screen looks like.
+You can protect the entire new system from the rigors of a cold start by 
+performing the actions listed below.
+FORTH DECIMAL (CR)
+LATEST 12 +ORIGIN ! (CR) ( TOP NFA)
+HERE   28 +ORIGIN ! (CR) ( FENCE )
+HERE   30 +ORIGIN ! (CR) ( DP )
+' EDITOR 6 + 32 +ORIGIN ! (CR) ( VOC-LINK )
+HERE   FENCE !
+  You'll make a new FIG4TH that can be cold started etc., but, will be way too 
+big to save to the TDD since it's bigger than the RAM below your new HIMEM.  
+The M100 system WILL allow you to save it to tape tho!  To find the upper 
+boundry of the block of memory you want to save,in FIG4TH type DECIMAL HERE U. 
+(CR) (The number [49262?] will be the first available memory location in the 
+dictionary.)  Then, in BASIC, (do your thing with the tape recorder to set it 
+up for saving a program) type CSAVEM"FIG4TH",41216,<the value from HERE>,41216 
+(CR).  Now you'll have a full figFORTH with EDITOR on tape that you can reload 
+into memory any time you need it.  You don't need to save the unused space 
+above the dictionary, the user variables, buffers, etc. since they will all be 
+reestablished by COLD when you CALL 41216.
+
+BUG REPORT - fair warning!
+1) Fig remembers which screens are in its buffers.  Due to the manner that this
+is done fig thinks that the first disk block (128 char) of screen 1 is in 
+memory after a cold start, a warm start, EMPTY-BUFFERS etc..  This means that 1
+LIST will often show the first two lines as blank when they are not.  If you 2 
+LIST 3 LIST (or something similar) you'll fill the internal buffers with 
+something other than screen one then 1 LIST will work fine.  LOAD  will 
+misbehave in a similar fashion.
+2) This is not exactly the same editor that is described in "Starting FORTH" 
+although its very close.  "S" works differently here.  "M" has a bug that I 
+haven't yet identified.
+GoFORTH and enjoy!   Dave Rowell
+

@@ -1,0 +1,255 @@
+XBASIC.200 by Paul Globman [72227,1661]
+           copyright (c) 1988
+
+XBASIC.CO is under 500 bytes and runs in the alternate LCD 
+buffer, so it will not overwrite DOS, or other .CO files 
+that are being used.  Once the BASIC program has executed 
+the LOADM"XBASIC" command, the all of the routines can be 
+accessed with the following call:
+
+    CALL 63600,CMD [,VARPTR(X$)]
+
+The commands are: 0 - CLOSE FILE
+                  1 - OPEN FOR INPUT
+                  2 - OPEN FOR APPEND
+                  3 - READ X$
+                  4 - WRITE X$
+                  5 - CHAIN FILE
+                  6 - DISPLAY FILES
+
+XBASIC does internal error checking and will beep if there 
+is a problem.  XBASIC will not execute the wrong instruction
+and offers the BASIC programmer a result descriptor byte so 
+the BASIC program can trap and handle problems.
+
+The result descriptor (RD) byte is at 63605, and can be 
+PEEKED either before or after a CALL to XBASIC.  There is 
+also an address pointer for the opened file at 63603 and 
+63604, in the LSD/MSD format.
+
+
+THE COMMANDS
+
+
+CLOSE FILE.... CALL 63600,0
+
+This command sets RD=0 and can be CALLED at anytime.  This 
+also sets the address pointer to 0.
+
+
+OPEN READ..... F$="2:FILE"
+               :CALL 63600,1,VARPTR(F$)
+
+This command will first check the RD, and if RD=0 then it is
+OK to OPEN.  The OPEN READ command sets RD=1 and sets an 
+address pointer to the beginning of FILE.DO in bank #2.
+
+If RD<>0 then it is NOT OK to OPEN (already open).  A BEEP 
+is sent and the open file is closed (RD set to 0).
+
+
+OPEN WRITE.... F$="2:FILE"
+               :CALL 63600,2,VARPTR(F$)
+
+This command will first check the RD, and if RD=0 then it is
+OK to OPEN.  The OPEN WRITE command sets RD=2 and sets an 
+address pointer to the end of FILE.DO in bank #2.
+
+If RD<>0 then it is NOT OK to OPEN (already open).  A BEEP 
+is sent and the open file is closed (RD set to 0).
+
+READ.......... X$=""
+               :CALL 63600,3,VARPTR(X$)
+
+This command will first check the RD, and if RD=1 then it is
+OK to READ.  The READ command leaves RD=1 unless an EOF CHR$
+(26) is found.  If an EOF is found then RD is set to 17.  
+When XBASIC returns from this CALL, X$ is set to the data 
+that was read.  The data read is from the address indicated 
+by the pointer to the next CR, to an EOF character, or 255 
+bytes.  Whichever comes first.  The address pointer is moved
+appropriately to the end of the data just read from FILE.DO 
+in bank #2.
+
+If RD<>1 then it is NOT OK to READ.  Perhaps EOF was 
+encountered in the previous READ, or maybe the file was 
+opened for output.  A BEEP is sent and no read will take 
+place.  The RD is not altered so the user can inspect the 
+byte to see why a BEEP occurred.
+
+WRITE......... X$="data"
+               :CALL 63600,4,VARPTR(X$)
+
+This command will first check the RD, and if RD=2 then it is
+OK to WRITE.  The WRITE command leaves RD=2 unless an OM? 
+condition is found in the destination bank.  If an OM? is 
+found then RD is set to 18 and the WRITE does not occur.  
+
+When XBASIC returns from this CALL, X$ is appended to the 
+data file that was opened for output.  X$ is written to the 
+address indicated by the pointer (end of file).  The address
+pointer is moved appropriately to the new end of the data 
+file in bank #2.  CR's are not automatically added.
+
+If RD<>2 then it is NOT OK to WRITE.  Perhaps OM? was 
+encountered in the previous WRITE, or maybe the file was 
+opened for input.  A BEEP is sent and no write will take 
+place.  The RD is not altered so the user can inspect the 
+byte to see why a BEEP occurred.
+
+
+CHAIN......... BNK=2
+               :IPL"FILE.BA"
+               :CALL 63600,5,BNK
+
+This command will jump to bank (BNK) and execute FILE.BA.  
+This is the only command that does NOT want the bank to be 
+part of the filename.  The file indicated by IPL must have a
+file extension.  You can CHAIN to a .DO file and that would 
+be like switching banks and jumping into TEXT to edit the 
+specified file.
+
+
+FILES......... BNK=2:CALL 63600,6,BNK
+
+This command will display the files in bank (BNK) #2.
+
+These commands should not always be used to address the 
+current bank where the  standard Basic commands (OPEN, 
+PRINT#, etc.) can be used.  These commands offer new 
+horizons for the T200 Basic programmer.
+
+I've included a couple of sample programs to illustrate the 
+usability of XBASIC.
+
+REATST.BA is an example of using XBASIC to read from another
+bank.  At the prompt enter the file you wish to duplicate.  
+That file will be copied to the current bank.
+
+WRITST.BA is an example of using XBASIC to write to another 
+bank.  At the "Client" prompt, enter a name (use CAPS only).
+  WRITST will write the name to CLIENT.DO in either bank #1,
+#2, or #3.  WRITST.BA determines which bank to write to, 
+then opens the file for READING.  Names are read and when 
+the proper position is found for the current entry, the RD 
+byte is changed so a write operation can be performed.  This
+keeps CLIENT.DO in each bank sorted upon data insertion.
+
+The apt Basic programmer could also develop RANDOM access to
+data files, as well as the sequential access we are now 
+accustomed to.  XBASIC.CO provides all the functions needed 
+to create some pretty sophisticated applications.
+
+
+1 '************************
+2 '*  XBASIC.CO           *
+3 '*    by Paul Globman   *
+4 '*  Copyright (c) 1988  *
+5 '************************
+10 FOR I = 63572 TO 64043 
+20 READ X:POKE I,X:SM=SM+X
+30 NEXT
+40 IF SM = 65761 THEN 60
+50 PRINT"error in data":STOP
+60 SAVEM"XBASIC.CO",63572,64043
+1000 DATA 197,6,0,213,86,227,205,176
+1010 DATA 155,209,235,193,35,19,11,121
+1020 DATA 176,194,84,248,201,243,205,177
+1030 DATA 155,251,122,201,195,118,248,0
+1040 DATA 0,0,167,202,184,248,254,6
+1050 DATA 202,230,249,254,5,202,172,249
+1060 DATA 254,4,202,194,248,254,3,202
+1070 DATA 98,249,71,58,117,248,167,194
+1080 DATA 181,248,120,50,17,249,50,117
+1090 DATA 248,205,198,249,35,35,95,205
+1100 DATA 202,90,33,70,247,17,70,247
+1110 DATA 1,6,0,205,84,248,195,229
+1120 DATA 248,205,69,79,33,0,0,34
+1130 DATA 115,248,34,116,248,201,50,17
+1140 DATA 249,58,117,248,254,2,194,69
+1150 DATA 79,229,126,254,0,111,38,0
+1160 DATA 34,48,249,225,200,35,235,237
+1170 DATA 34,75,249,42,115,248,34,45
+1180 DATA 249,243,219,216,230,12,50,54
+1190 DATA 249,56,0,235,34,58,249,33
+1200 DATA 254,248,84,93,1,59,0,205
+1210 DATA 84,248,62,0,211,216,71,58
+1220 DATA 54,249,184,202,16,249,49,156
+1230 DATA 249,205,71,76,62,0,254,4
+1240 DATA 202,44,249,254,2,33,76,247
+1250 DATA 54,68,35,54,79,245,205,124
+1260 DATA 45,241,204,104,130,195,53,249
+1270 DATA 33,0,0,1,255,255,205,168
+1280 DATA 130,62,0,211,216,49,0,0
+1290 DATA 245,58,17,249,254,4,194,82
+1300 DATA 249,241,218,88,249,235,33,0
+1310 DATA 0,205,84,248,235,245,241,34
+1320 DATA 115,248,251,201,205,69,79,62
+1330 DATA 18,50,117,248,251,201,58,117
+1340 DATA 248,254,1,194,69,79,243,229
+1350 DATA 58,255,248,71,14,1,17,112
+1360 DATA 239,42,115,248,43,35,213,197
+1370 DATA 205,177,155,122,193,209,254,26
+1380 DATA 202,164,249,254,13,202,147,249
+1390 DATA 18,19,12,194,121,249,43,35
+1400 DATA 35,34,115,248,121,61,225,119
+1410 DATA 35,235,33,112,239,217,251,201
+1420 DATA 62,17,50,117,248,195,149,249
+1430 DATA 243,125,205,213,249,33,221,244
+1440 DATA 229,209,1,11,0,205,84,248
+1450 DATA 205,26,28,58,86,248,79,195
+1460 DATA 144,155,126,61,61,35,235,237
+1470 DATA 245,126,214,48,205,213,249,241
+1480 DATA 201,71,62,1,135,5,194,216
+1490 DATA 249,230,12,50,255,248,50,86
+1500 DATA 248,201,125,205,213,249,71,33
+1510 DATA 181,242,205,105,248,254,255,200
+1520 DATA 254,240,202,254,249,230,128,194
+1530 DATA 5,250,17,11,0,25,195,238
+1540 DATA 249,205,30,0,35,35,35,205
+1550 DATA 105,248,231,62,8,61,202,35
+1560 DATA 250,50,16,250,254,2,194,10
+1570 DATA 250,62,46,231,195,10,250,62
+1580 DATA 8,50,16,250,35,195,238,249 
+1590 REM    END OF DATA
+
+
+
+0 REM REATST.BA
+10 INPUT"x:file";F$
+15 F$=LEFT$(F$+"      ",8)
+20 F1$=RIGHT$(F$,6)
+30 OPEN F1$ FOR OUTPUTAS1
+40 LOADM"XBASIC":CALL63600,1,VARPTR(F$)
+50 X$="":CALL63600,3,VARPTR(X$)
+60 PRINT#1,X$;
+70 IF PEEK(63605)=17 THEN MENU
+75 PRINT".";
+80 IF LEN(X$)<>255THENPRINT#1,""
+90 GOTO50
+
+
+
+
+
+10 'WRITST.BA by Paul Globman
+20 ' get input data and determine bank
+30 CLS:PRINT:INPUT"Client";CL$
+40 IF(ASC(CL$)AND223)=ASC(CL$)THEN60
+50 BEEP:PRINT"use CAPS only please"
+55 FORI=1TO399:NEXT:RUN
+60 IF CL$<"I"THENBNK=1:GOTO90
+70 IF CL$=>"Q"THEN BNK=3:GOTO90
+80 BNK=2
+90 CL1$=CL$+CHR$(13)+CHR$(10)
+100 ' open file and locate position
+110 F$=CHR$(BNK+48)+":CLIENT"
+120 LOADM"XBASIC":CALL63600,1,VARPTR(F$)
+130 P1=PEEK(63603):P2=PEEK(63604)
+140 X$="":CALL63600,3,VARPTR(X$)
+150 IF PEEK(63605)=17 THEN 180
+160 IF X$<CL$ THEN 130
+170 ' write data into place
+180 POKE63603,P1:POKE63604,P2:POKE63605,2
+190 CALL 63600,4,VARPTR(CL1$)
+200 RUN

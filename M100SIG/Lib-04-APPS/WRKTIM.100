@@ -1,0 +1,67 @@
+
+5'FEEL FREE TO CHANGE THIS PROGRAM
+7'(ESPECIALLY EXPRESSIONS USED IN PRINTS)
+10'WRKTIM.BA (calculate working time and $$) JL 15 fev.86
+20'DO$: file name without .DO
+30'CO$: comments lines
+40'TI$: separator 19 "-"
+50'LF$: line from file
+60'FE%: flag 1=sum $$ and close file
+70'PC$: first char of last line from file (>:begin/<:end)
+80'CL$: client's name
+90'TH!: $$ per hour
+100'TD$: beginning time of a work session
+110'HF% et MF%: hour and minute of session's end time
+120'HD% et MD%: hour and minute of session's beginning time
+130'H% et M%: hour and minute of session's time
+140'HO!: $$ for this session
+150'ST! et GT!: sub-total and total after file's closing
+160'RQ$: answer to a question
+170TI$="-------------------"
+180CLS:PRINT"Free-lens Working Time":PRINTTI$;"---"
+190PRINT:PRINT"(to close a file, enter: $)":PRINT
+200INPUT"File";DO$:IFDO$="$"THENFE%=1:PRINT"Close which ";:GOTO200
+210ONERRORGOTO290:OPENDO$FORINPUTAS1:ONERRORGOTO0
+220INPUT#1,CL$,TH!:PRINT"Client's name: ";CL$:PRINTUSING"Pay per hour:$$###.##";TH!
+230IFFE%THENINPUT"Close that file (y/n)";RQ$:IFRQ$<>"n"ANDRQ$<>"N"THEN530ELSEEND
+240IFNOTEOF(1)THENLINEINPUT#1,LF$:GOTO240
+250CLOSE1:PC$=LEFT$(LF$,1)
+260IFPC$=">"THENINPUT"Close this session (y/n)";RQ$:IFRQ$<>"n"ANDRQ$<>"N"THEN340ELSEEND
+270IFPC$="<"THENINPUT"Open a session (y/n)";RQ$:IFRQ$<>"n"ANDRQ$<>"N"THEN480ELSEEND
+280BEEP:PRINT"Bad file...":STOP
+290'new file
+300IFERR<>52THENBEEP:PRINT"Error #";ERR:STOP
+310INPUT"Open a new file (y/n)";RQ$:IFRQ$="n"ORRQ$="N"THENEND
+320INPUT"Client's name";CL$:INPUT"Pay per hour";TH!
+330OPENDO$FOROUTPUTAS1:PRINT#1,CL$:PRINT#1,TH!:GOTO500
+340'session's end
+350OPENDO$FORAPPENDAS1:PRINT#1,TI$
+360PRINTTI$;TI$,"Comments ( <enter> to end) :",TI$;TI$
+370CO$="":INPUTCO$:IFCO$>""THENPRINT#1,CO$:GOTO370
+380PRINT#1,TI$
+390TD$=RIGHT$(LF$,8):PRINT"Begin: ";TD$:PRINT"End:   ";TIME$
+400HF%=VAL(TIME$):MF%=VAL(MID$(TIME$,4,2)):HD%=VAL(TD$):MD%=VAL(MID$(TD$,4,2))
+410IFHF%<HD%THENHF%=HF%+24
+420IFMF%<MD%THENMF%=MF%+60:HF%=HF%-1
+430H%=HF%-HD%:M%=MF%-MD%
+440HO!=((H%*60)+M%)/60*TH!
+450PRINTUSING"Time: ##h##m";H%,M%:PRINTUSING"Pay: $$###.##";HO!
+460PRINT#1,"End:   ";TIME$:PRINT#1,USING"Time: ##h##m";H%,M%:PRINT#1,USING"<Pay:$$####.##";HO!
+470CLOSE1:PRINT"Have a good time!":END
+480'session's beginning
+490OPENDO$FORAPPENDAS1
+500PRINT"Date:  ";DATE$:PRINT"Begin: ";TIME$
+510PRINT#1,TI$;TI$:PRINT#1,"Date:   ";DATE$:PRINT#1,">Begin: ";TIME$
+520CLOSE1:PRINT"Have good work!":END
+530'session's closing
+540IFEOF(1)THEN570ELSELINEINPUT#1,LF$:IFLEFT$(LF$,1)<>"<"THEN540
+550ST!=VAL(MID$(LF$,INSTR(6,LF$,"$")+1,100)):GT!=GT!+ST!
+560PRINTUSING"+ $$####.## = $$#####.##";ST!,GT!:GOTO540
+570IFLEFT$(LF$,1)<>"<"THENBEEP:PRINT"First, close the last session...":END
+580PRINTUSING"Total:  $$#####.##";GT!
+590PRINT"Closed the ";DATE$;" at ";TIME$
+600CLOSE1:OPENDO$FORAPPENDAS1
+610PRINT#1,TI$;TI$:PRINT#1,TI$;TI$
+620PRINT#1,USING"Total: $$#####.##";GT!
+630PRINT#1,"Closed the ";DATE$;" at ";TIME$
+640CLOSE1:END

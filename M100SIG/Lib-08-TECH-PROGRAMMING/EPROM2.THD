@@ -1,0 +1,296 @@
+EPROM2.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The Model 100/102/200 are designed to accept an auxilary ROM.  Several
+commercial ROM's are available (e.g., Super ROM and Ultimate ROM II) and
+have been proven popular -- and there are custom ROM burning services
+advertized.  It is possible to "roll your own", and users here have done so.
+These messages discuss technical issues involved -- while EPROM1.THD focuses
+more on the application involved.
+
+Message range: 166981 to 167160
+Dates: 4/4/88 to 4/8/88
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Stan Wong 70346,1267
+
+Do you think there is sufficient demand that you could justify such a
+labor-intensive process for small quantities of chips?  I had wondered how you
+adapted the eproms for the Molex socket...it looks like it would be an
+extremely delicate process.
+
+Actually, I've been pursuing a different line entirely.  I've been storing
+files on the eproms in a Psion Organiser, and loading them back into my 102 on
+demand.  It's such a nice solution to secure storage on the road that I'm
+sending Portable 100 an article about it in a day or so. The Psion has Xmodem
+protocol, so I guess I could even send .CO files if I had something like Xtel
+that can handle binary files.
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Stan Wong 70346,1267
+
+This is somewhat off the subject, but I'd like your comments on the
+feasibility/difficulty of making an adapter to permit two molex roms to reside
+in my 102. There seems to be enough room in the rom compartment, and it would
+really be convenient for me.  But can you speculate on what roadblocks I might
+be up against if I were to attempt it?  <STS>
+
+
+Fm: Stan Wong 70346,1267
+To: SCOTT T. SCHAD 73720,1166
+
+1) On the subject of the EPROM, Tandy sells an adapter board which you then
+solder the EPROM to.  It looks exactly like the PCSG products you see
+advertised.  The board is about $7.50.
+
+2) As for programming the EPROMs, I have access to several programmers at work.
+Programmers for an IBM PC are about $250 and up.  I have written a program
+called MOTOHX.100 in DL7 which converts an area of memory to Motorola S-Records
+for the EPROM programmer I use.  It is intended primarily for .CO files.
+
+3) I'll be glad to program EPROMs for you and others if we can work out the
+what and hows.  I can supply the EPROMs and the Tandy adapters (or supply the
+reference if you want to get them).  I just shudder at the soldering work
+because I'm a klutz (I don't do it often enough so I go through a large
+learning curve each time I get out the old "iron.").
+
+4) Two roms may fit in the compartment but I'm not sure how to mechanize it
+except through the system bus.  Someone has written a file called TWO.ROM or
+something like that describing how he put two roms in his M102.  It required
+cutting traces and soldering of the main board <shudder>.
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Stan Wong 70346,1267
+
+I guess I should read those Tandy catalogs more closely!  That's suprising they
+sel l the small circuit board required.  The soldering is so delicate I would
+be hestitant to try it too.  TWO.ROM is now on my "look-up" list.  But I would
+rather swap roms in and out intead of risking damage to the main board.
+
+Perhaps another approach is needed.  How large an eprom can the Tandy accept?
+Are 64K possible?  Could two roms be combined into one?  I suppose that might
+border on copyright infringement, if two commercial roms were combined.  It's
+just that I refuse to do without my CLEUSEAU rom but still need a macho
+text-formatter like T-Word.  Maybe I'll just get the DISK POWER program in ram
+and forget about hardware mods.  As you have indicated, making an eprom is one
+thing, but getting it to coexist with the M100 o/s is something else entirely.
+
+
+Fm: Ran Talbott 70506,60
+To: Stan Wong 70346,1267
+
+Getting a BASIC program to run from ROM _might_ be possible,  but I doubt it,
+since the BASIC interpreter code is "swapped out" to access the option ROM.
+
+If you're concerned about the vagaries of soldering EPROMs into carriers,  you
+should be able to find people who'll do it for 50 cents each,  if not less.
+
+
+Fm: Ran Talbott 70506,60
+To: SCOTT T. SCHAD 73720,1166
+
+You could merge the two ROMs into one.  You'd need a special adapter board that
+would allow you to hook up a switch to select one "virtual ROM" or the other.
+
+As long as you retain ownership of the original ROMs and don't use them in
+another machine,  there's no problem with copyright if you make a new ROM that
+combines the two.  This is legally equivalent to copying programs from a floppy
+to a hard disk for use on a PC.  Selling or otherwise transferring the
+"combined" ROM _would_ be a copyright infringement (if you sold it as part of a
+package that included the original ROMs,  it _might_ be legally OK:  you'd have
+to ask a lawyer.  Ethically,  I'd have no problem with it,  if I knew the buyer
+was using it the same way I had).
+
+If you signed any knid of license agreement for the ROMs,  you may have given
+up some of your rights,  so you'd have to check with a lawyer.
+
+
+Fm: Stan Wong 70346,1267
+To: SCOTT T. SCHAD 73720,1166
+
+The M100/M102 can only accept a 32Kx8 EPROM.  This is the size of the Basic
+ROM.  The size is dictated by the addressing limitation of the 80C85 processor.
+Since it is an 8-bit processor, it can only address 64K bytes of memory.  Tandy
+chose to divide this into 32K RAM and 32K ROM.  The EPROM I have been using is
+a 27C256 part which is a CMOS 32Kx8 (256K bits) part.
+
+There is a product called the SAFE from PG Designs which will hold up to 8
+roms, 4 Tandy style and 4 EPROM style roms.  It costs $129.  It fits on the
+bottom of the M100 and doesn't take up much room.  I now have two purchased
+roms (Cleuseau/ROM2 being one of them) and plan to add my own EPROMs.
+
+As far is combining other roms are concerned, if there is space left at the end
+of a commercial rom, it can be copied to the EPROM, and then your code added to
+the end of it.  Copyrights would be a problem but for personal use I don't
+think anyone would complain.  I have scheduled a low-priority project to copy
+commercial roms into EPROM for backup purposes.  It drives me nuts to think
+that some of these roms I have may not be supported in the future and
+replacements hard or impossible to come by.
+
+
+Fm: Stan Wong 70346,1267
+To: Ran Talbott 70506,60
+
+You are right.  I don't think a Basic program would execute directly from the
+option rom.  What I had in mind was to store the Basic program in option rom,
+then read it into ram, adjust the line number addresses, make a directory
+entry, and then run it from ram.  An alternative would be to find a compiler
+(probably on a PC) which would compile rom-able machine code. According to Phil
+Wheeler, typical PC Basic compilers assume a larger machine and include all
+sorts of overhead.  Still, I'm sure that there is a commercial product out
+there that will do this.  I wonder how PCSG and TS do it?
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Ran Talbott 70506,60
+
+Sounds to me like legally one would be in the clear.  But I'm not sure I would
+want to swtich between roms to use them.  Instant-on has its advantages. <STS>
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Stan Wong 70346,1267
+
+Is the PCSG "SAFE" the same item that Traveling Software calls the 8-Rom Pac?
+Software-switched, and all that? <STS>
+
+
+Fm: Paul Globman 72227,1661
+To: SCOTT T. SCHAD 73720,1166
+
+SAFE is made by PG Design Electronics (not PCSG).
+
+The TSI 8 ROM Pak is actually SAFE with five ROMs installed.
+
+
+Fm: Stan Wong 70346,1267
+To: SCOTT T. SCHAD 73720,1166
+
+The TSI 8-Rompack is the PGD SAFE with Sardine and TS-DOS installed. SAFE has
+4-EPROM sockets and 4-Tandy style rom sockets.  With the TSI version, Sardine
+occupies the 4-EPROM sockets and TS-DOS one of the Molex sockets.  If you want
+to do your own EPROMs then you either need to forgo Sardine or make up an EPROM
+with the little circuit board I mentioned earlier.
+
+I prefer to try and use the SAFE EPROM sockets since you can reprogram the
+EPROM.  In the Tandy-style rom socket, once soldered the EPROM is now useless
+if you want a change.
+
+The SAFE is electronically switched as you mentioned.  There is a review
+SAFE.REV in DL13.  I don't own one yet so my opinions are based upon ads and
+reviews.
+
+
+Fm: Stan Wong 70346,1267
+To: SCOTT T. SCHAD 73720,1166
+
+Back to your idea of a math rom,  I can't gauge the market appeal for such an
+item but if you think that it's worth doing then I have some stuff that can
+help you (completed and in development).  The issue in my mind right now is not
+IF it can be done but how slick you want it.
+
+Right now I don't see any way of coding the math routines in anything other
+than m/l.  A Basic compiler for the M100 doesn't exist except that the TCOMP
+program might work.  Another possiblity would be a Basic compiler for a Z80
+machine.  The resulting m/l code could then be inspected and cleaned up for the
+M100.
+
+I'm trying to figure out how the user would invoke the math functions from
+Basic.  Everything I've thought of so far is sort of a kludge. The problem is
+to figure out a general purpose method that encompasses interactive Basic as
+well as programmed Basic.  Ideally you would like to be able to embed the
+functions as part of a Basic expression.
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Stan Wong 70346,1267
+
+I getcha now.  The SAFE is the way to go because it can take the standard
+eproms.  I'll look for the DL review file.  <STS>
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Stan Wong 70346,1267
+
+I've been "hacking" recently on an old HP86 desktop with a CP/M card installed.
+The card basically is just a Z-80 that takes over from the native BASIC-only
+O/S of the computer itself.  Your idea of creating the code for a Z-80 and then
+cleaning-it up for the 8085 is quite interesting to me.  Lots of C/PM
+assemblers and cross-compilers are out there, and I've even considered one
+other approach:  there are more Z-80 Forth implementations that you can shake a
+stick at.  Some support cross-compilation for 8085's, and turnkeying the code
+to strip out the un-needed part of the Forth kernel.  I'm going to do some
+further checking on the "Forth" dimension before I come to my senses and
+realize machine language is the only way to attempt it.
+
+I don't know if this is of any interest to you, but I recently learned there is
+a product called "Media master" that can read/write over 200 different CP/M
+formats from a standard PC.  It's $50 and I've got the address here somewhere.
+
+Working with the old CP/M system is just a "for grins" hobby of mine, but it
+has made be realize that computers may have since become more complicated than
+the HP86 and Tandy 102..but not necessarily more sophisticated.  Those older
+guys packed a lot of m/l smarts into that 64K address space...<STS>
+
+
+Fm: Ran Talbott 70506,60
+To: Stan Wong 70346,1267
+
+Phil's right:  PC-oriented products think that a ROM is something you use to
+boot your hard disk with,  and 32K is a good size for a screen buffer.<grin>
+
+Back when I was thinking seriously about developing M100 products,  I decided
+that the best way to start without a big investment was to use Software
+Toolworks' C compiler on my CP/M system.  It produces 8080 assembler source, so
+you can fiddle with it if needed,  and the code is supposed to be ROMable.
+
+
+Fm: Ran Talbott 70506,60
+To: Stan Wong 70346,1267
+
+There are a couple of possible paths for making "re-programmable" ROMs in the
+Tandy adapter.
+
+First,  if the Vpp and CE lines are brought out to the adapter's "pins",  you
+can make an adapter using a Molex socket to plug the chip into a standard
+programmer.
+
+Failing that,  as long as the CE and OE lines aren't shorted on the board, you
+could use a test clip with a ribbon cable (and a DIP connector on the other
+end) to connnect the chip to a programmer.
+
+
+Fm: Stan Wong 70346,1267
+To: SCOTT T. SCHAD 73720,1166
+
+1) Media Master is a fine product which I use at work and at home. I have a DEC
+Rainbow copy and an IBM PC copy.  The IBM PC copy is used to read Kaypro
+diskettes.  It's worth the money ($40 for PC version). The company is
+Intersecting Concepts, Thousand Oaks, CA.  I also own the Code Blue product.
+All are great products, very nicely done.
+
+2) Ran Talbott has a better idea if you can generate 8080 code instead of Z-80
+code.  It should be more compatible with the 8085.
+
+3) Forth is worth pursuing, especially if there is a way to cross-compile to
+the 8085.  It's better to program in a high level language whenever possible.
+
+4) As soon as I wrap up a couple of projects, I'll get back into the EPROM
+project again.  For info on the SAFE, contact Paul Globman via email.
+
+
+Fm: Stan Wong 70346,1267
+To: Ran Talbott 70506,60
+
+Making an adapter consisting of a Molex socket with wires coming out to a
+28-pin header was my original thought but I like your idea of a test
+clip/ribbon cable better.  I'll have to check one of blank circuit boards I
+have to check if CE/OE aren't shorted.
+
+I'll try and find the parts I have (I put them away for now since I have
+shelved the EPROM project for the time being).

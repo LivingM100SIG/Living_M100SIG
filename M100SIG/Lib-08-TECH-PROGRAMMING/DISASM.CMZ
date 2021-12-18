@@ -1,0 +1,34 @@
+0'
+1'8085 DISASSEMBLER 03/28/86
+2'
+3'Martin Zimmerman CIS:72757,3076
+4'
+5'Comments invited
+6'
+7'NOTE:Press "ESC" to enter
+8'     a new Start Address
+9'
+10DIMB$(255),B%(255):H$="0123456789ABCDEF":FORA=0TO255:READB$(A),B%(A):NEXTA
+20INPUT"Start Address ";S:?
+30?USING"##### ";S;:O=PEEK(S):?B$(O);:S=S+1:IFB%(O)=2THEN?USING"###";PEEK(S);:S=S+1
+40IFB%(O)=3THEN?USING"#####";PEEK(S)+256*PEEK(S+1);:S=S+2
+50?TAB(20);:SS=S-B%(O):OO=FIX(SS/256):GOSUB80:OO=SS-256*OO:GOSUB80:?" ";B$(O);:IFB%(O)>1THENOO=PEEK(S-1):GOSUB80:IFB%(O)=3THENOO=PEEK(S-2):GOSUB80
+60?:IFINKEY$=CHR$(27)THEN?:GOTO20
+70GOTO30
+80?MID$(H$,1+OO\16,1);MID$(H$,1+OOMOD16,1);:RETURN
+10000DATA"NOP",1,"LXI  B,",3,"STAX B",1,"INX  B",1,"INR  B",1,"INR  B",1,"MVI  B,",2,"RLC",1,"",1,"DAD  B",1,"LDAX B",1,"DCX  B",1,"INR  C",1,"DCR  C",1,"MVI  C,",2,"RRC",1
+10001DATA"",1,"LXI  D,",3,"STAX D",1,"INX  D",1,"INR  D",1,"DCR  D",1,"MVI  D,",2,"RAL",1,"",1,"DAD  D",1,"LDAX D",1,"DCX  D",1,"INR  E",1,"DCR E",1,"MVI  E,",2,"RAR",1
+10002DATA"RIM",1,"LXI  H,",3,"SHLD ",3,"INX  H",1,"INR  H",1,"DCR  H",1,"MVI H,",2,"DAA",1,"",1,"DAD  H",1,"LHLD ",3,"DCX  H",1,"INR  L",1,"DCR  L",1,"MVI  L,",2,"CMA",1
+10003DATA"SIM",1,"LXI SP,",3,"STA  ",3,"INX SP",1,"INR  M",1,"DCR  M",1,"MVI  M,",2,"STC",1,"",1,"DAD SP",1,"LDA  ",3,"DCX SP",1,"INR  A",1,"DCR  A",1,"MVI  A,",2,"CMC",1
+10004DATA"MOV  B,B",1,"MOV  B,C",1,"MOV  B,D",1,"MOV  B,E",1,"MOV  B,H",1,"MOV  B,L",1,"MOV  B,M",1,"MOV  B,A",1,"MOV  C,B",1,"MOV  C,C",1,"MOV  C,D",1,"MOV  C,E",1,"MOV  C,H",1,"MOV  C,L",1,"MOV  C,M",1,"MOV  C,A",1
+10005DATA"MOV  D,B",1,"MOV  D,C",1,"MOV  D,D",1,"MOV  D,E",1,"MOV  D,H",1,"MOV  D,L",1,"MOV  D,M",1,"MOV  D,A",1,"MOV  E,B",1,"MOV  E,C",1,"MOV  E,D",1,"MOV  E,E",1,"MOV  E,H",1,"MOV  E,L",1,"MOV  E,M",1,"MOV  E,A",1
+10006DATA"MOV  H,B",1,"MOV  H,C",1,"MOV  H,D",1,"MOV  H,E",1,"MOV  H,H",1,"MOV  H,L",1,"MOV  H,M",1,"MOV  H,A",1,"MOV  L,B",1,"MOV  L,C",1,"MOV  L,D",1,"MOV  L,E",1,"MOV  L,H",1,"MOV  L,L",1,"MOV  L,M",1,"MOV  L,A",1
+10007DATA"MOV  M,B",1,"MOV  M,C",1,"MOV  M,D",1,"MOV  M,E",1,"MOV  M,H",1,"MOV  M,L",1,"HLT",1,"MOV  M,A",1,"MOV  A,B",1,"MOV  A,C",1,"MOV  A,D",1,"MOV  A,E",1,"MOV  A,H",1,"MOV  A,L",1,"MOV  A,M",1,"MOV  A,A",1
+10008DATA"ADD  B",1,"ADD  C",1,"ADD  D",1,"ADD  E",1,"ADD  H",1,"ADD  L",1,"ADD  M",1,"ADD  A",1,"ADC  B",1,"ADC  C",1,"ADC  D",1,"ADC  E",1,"ADC  H",1,"ADC  L",1,"ADC  M",1,"ADC  A",1
+10009DATA"SUB  B",1,"SUB  C",1,"SUB  D",1,"SUB  E",1,"SUB  H",1,"SUB  L",1,"SUB  M",1,"SUB  A",1,"SBB  B",1,"SBB  C",1,"SBB  D",1,"SBB  E",1,"SBB  H",1,"SBB  L",1,"SBB  M",1,"SBB  A",1
+10010DATA"ANA  B",1,"ANA  C",1,"ANA  D",1,"ANA  E",1,"ANA  H",1,"ANA  L",1,"ANA  M",1,"ANA  A",1,"XRA  B",1,"XRA  C",1,"XRA  D",1,"XRA  E",1,"XRA  H",1,"XRA  L",1,"XRA  M",1,"XRA  A",1
+10011DATA"ORA  B",1,"ORA  C",1,"ORA  D",1,"ORA  E",1,"ORA  H",1,"ORA  L",1,"ORA  M",1,"ORA  A",1,"CMP  B",1,"CMP  C",1,"CMP  D",1,"CMP  E",1,"CMP  H",1,"CMP  L",1,"CMP  M",1,"CMP  A",1
+10012DATA"RNZ",1,"POP  B",1,"JNZ  ",3,"JMP  ",3,"CNZ  ",3,"PUSH B",1,"ADI  ",2,"RST  0",1,"RZ",1,"RET",1,"JZ   ",3,"",1,"CZ   ",3,"CALL ",3,"ACI  ",2,"RST  1",1
+10013DATA"RNC",1,"POP  D",1,"JNC  ",3,"OUT  ",2,"CNC  ",3,"PUSH D",1,"SUI  ",2,"RST  2",1,"RC",1,"",1,"JC   ",3,"IN   ",2,"CC   ",3,"",1,"SBI  ",2,"RST  3",1
+10014DATA"RPO",1,"POP  H",1,"JPO  ",3,"XTHL",1,"CPO  ",3,"PUSH H",1,"ANI  ",2,"RST  4",1,"RPE",1,"PCHL",1,"JPE  ",3,"XCHG",1,"CPE  ",3,"",1,"XRI  ",2,"RST  5",1
+10015DATA"RP",1,"POP  PSW",1,"JP   ",3,"DI",1,"CP   ",3,"PUSH PSW",1,"ORI  ",2,"RST  6",1,"RM",1,"SPHL",1,"JM   ",3,"EI",1,"CM   ",3,"",1,"CPI  ",2,"RST  7",1

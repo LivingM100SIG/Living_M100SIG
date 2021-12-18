@@ -1,0 +1,1327 @@
+ 
+
+
+
+
+
+
+
+
+                      User Documentation
+
+                           <<< >>>
+
+            St. Petersburg Police SPADAS Projects
+               FLORIDA TRAFFIC ACCIDENT REPORT
+                  BPSM Grant 86-07-TR-310-03
+                  BPSM Grant 87-12-TR-310-02
+
+                 St. Petersburg Accident Data
+             Acceleration System and Diagraming
+
+                           <<< >>>
+
+                         Version 3.02
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  Portable Computer Project
+               St Petersburg Police Department
+
+                         January 1988
+
+
+            St. Petersburg Police SPADAS Projects
+               FLORIDA TRAFFIC ACCIDENT REPORT
+                  BPSM Grant 86-07-TR-310-03
+                  BPSM Grant 87-12-TR-310-02
+                 St. Petersburg Accident Data
+                Acceleration System/Diagraming
+
+
+
+SPADAS and SPADASII, each written as stand-alone
+programs, have been integrated to use the same program
+in order to generate a complete accident report.
+
+
+
+                      NOTE TO USERS
+
+There are currently different versions of the SPADAS
+developed programs.  There is a RAM-resident version and
+a ROM-resident version.  The ROM version allows more
+room for RAM report storage and contains more features
+which are unchangeable by the user.  The RAM version has
+less available space for report storage.  The features
+are similar and, additionally, allows the user to change
+(customize) the data information in the program.
+
+The program's development is an on-going process and
+some of the following information may not function as
+described or may function in a slightly different
+manner.
+
+
+The DIAGRAMING portion of the program is described in a
+separate supplemental document fulling detailing its
+operation and use.
+
+
+
+
+             ST PETERSBURG POLICE DEPARTMENT
+                PORTABLE COMPUTER PROJECT
+                     DECEMBER - 1987
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+INTRODUCTION
+
+For several years, the St. Petersburg Police Department
+has been using portable lap-top computers to gather data
+and generate police reports.  Use of these computers has
+resulted in more complete reports and more thorough
+investigations.
+
+The SPADAS project extended the scope of the use of the
+portable computer to include the gathering of data and
+the generation of motor vehicle accident reports.
+
+SPADASII carries the process one step farther,
+generating accident diagrams from data provided in the
+accident report. This documentation addresses the
+integration of both programs into one application.
+
+The project effectively replaces the following forms
+currently in use:
+
+      HSMV 90003 (REV. 1/86)S Formerly FHP 3
+      HSMV 90004 (REV. 1/86)S Formerly FHP 3A
+      HSMV 90005 (REV. 3/86)S
+
+and effectively gathers the information required on the
+following form:
+
+      HSMV 90006 (REV. 1/86)S
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BASIC OVERVIEW
+
+SPADAS.BA (hereafter referred to as the "program") has
+many features built into its user interface.  The
+program generates "modules" of information selected from
+a main Caption Checklist.  These modules are assembled
+in a logical and compelling order to make a complete
+report.
+
+A "free-text" narrative section is added to the end of
+the assembled modules using the Model 100/102's built in
+TEXT editor.
+
+Using data entered in the DIAGRAM module, the program
+then constructs an intersection (within constraints
+defined by the physical size of the viewing area and
+limited memory) and allows either freehand drawing or
+the insertion of icons representing motor vehicles.
+
+The completed report can then be transferred to another
+computer via modem or direct-connect serial interface,
+or directed to a printer where the report and diagram
+are printed out.
+
+As you will see, the input into each module is carefully
+controlled and validated.  Many entries are controlled
+by forced choice tables which contain suggested and/or
+suitable responses for a data request.  The initial
+choice presented to the user is also controlled, making
+a common entry easy and efficient to input. The table is
+easily modified by the user in RAM versions of the
+program..
+
+The user is informed, via messages displayed at a
+consistent location, as to the type of input that is
+appropriate.  After the entry, the response is
+validated.  Many operations are completed with a single
+keystroke.
+
+Some responses are calculated by the program, as in the
+age of a person being computed from the date of birth
+provided by the user.  Other frequently used information
+is maintained in an ASCII file (AGENCY.DO), read by the
+program, and displayed as a possible response.  A single
+keystroke accepts this response or allows the user to
+enter another response.  The program is designed to be
+both easy to use and attentive to the need to gather and
+maintain data with a high degree of integrity.
+
+
+
+
+
+
+
+
+FILE MANAGEMENT SCREEN
+
+The user should have the SPADAS.BA program and the
+AGENCY.DO program available for loading into the
+computer.  Because of the different programs, loading
+the program will depend upon the version you have
+available.  Follow the instructions in the appropriate
+manuals to load the program and file from either
+cassette tape or disk.  Users with the ROM version
+should follow instructions supplied with that version.
+
+Once the program and file have been loaded into the
+computer, run the program named SPADAS.BA.  The user is
+then presented with a screen similar to the one
+displayed below.
+
+       ษออออออออออออออออออออออออออออออออออออออออป
+       บ                            Bytes 3911  บ
+       บSPADAS.BA*  A     .DO   C     .DO       บ
+       บG     .DO   Z     .DO   AGENCY.DO       บ
+       บ                                        บ
+       บ                                        บ
+       บ                                        บ
+       บ                                        บ
+       บName Text Copy Send Free Draw List Exit บ
+       ศออออออออออออออออออออออออออออออออออออออออผ
+         [F1] [F2] [F3] [F4] [F5] [F6] [F7] [F8]
+
+
+The upper right corner entry indicates the amount of RAM
+memory currently available to the user.  This screen
+indicates which files have already been created
+(identified by the .DO extension), and the program
+currently in use (identified by the *).  At this point,
+the user has the opportunity to perform any of the
+operations referenced by the function keys.
+
+The reports generated by the program are identified by a
+single alpha character, i.e., A through Z.  The document
+AGENCY.DO contains information about the program user
+which is read into the report when appropriate.  This
+file MUST be present in the proper format. The bottom
+"command line" is in reverse video.
+
+The following section describes the different operations
+of the function keys.
+
+
+
+
+
+
+
+
+
+
+FUNCTION KEY OPERATIONS:
+
+NAME [F1] ---- Presents the user with a list of files
+similar to the file management screen and asks for a
+file name.  Note the command line, which says (File
+Name?  A-Z).  Entering a single alpha character will
+open that file (i.e., name the report) and proceed to
+the module menu screen.  NOTE: You can also enter an
+alpha character directly, instead of depressing [1] and
+accomplish the same result, i.e., open a file and
+proceed to the module menu screen.
+
+TEXT [F2] ---- Presents the user again with a list of
+files similar to the file management screen.  In the
+upper left corner is a prompt which asks "File to edit?"
+and the command line tells the user what to do.  Type
+the name of the file (without the .DO extension) that
+you wish to edit and press <ENTER>.  This action will
+exit the program and go to the top of the file you
+entered.  For your convenience, pressing <CTRL><Down
+Arrow> or <CTRL><Z> will then place you at the end of
+the file.  The user can then enter text (for example, to
+add a narrative to a report) using the TEXT processing
+capabilities of the Model 100/102.
+
+COPY [F3] ---- Presents a list of files and prompts the
+user for a file to copy FROM.  A file MUST be present
+from which to copy.  Once selected, the user is prompted
+for the file to copy TO.  If not present, the file will
+be created.  If the file is present, the file will be
+appended to.  This function can be very useful in
+certain situations.
+
+SEND [F4] ---- Presents a list of files and prompts the
+user for a file to send.  A single alpha character entry
+selects the file, which will then be "sent" out the RS-
+232C port of the computer.  The current parameters are
+set at 87E1D (9600 baud, 7 bits, Even parity, 1 Stop Bit
+and XON/XOFF disabled).
+
+FREE [F5] ---- Presents the user with a list of files
+similar to the file management screen.  The command line
+says (Erase A-Z).  Entering a single alpha character
+will ERASE (or "KILL") the file from memory.  Use this
+function only when you want to remove the file from the
+computer.  You CANNOT retrieve the file once it is
+"killed".  You will then return to the File Management
+Screen.  If a diagram is associated with the report
+(denoted with an asterisk after the letter, i.e.,
+A*.DO), BOTH files will be deleted with a single
+keystroke.  If you need to delete either one of the two
+related files (NOT BOTH), you must go into BASIC and
+type the command KILL "filename.ext".
+
+
+
+DRAW [F6] ---- this operation allows the user to print a
+diagram.  The user is first presented with a list of
+files and is prompted with the file to print.  The
+DIAGRAM files are indicated by an asterisk after the
+alpha character.  A printer should be attached to the
+computer and loaded with paper.  A single alpha
+keystroke will select the "car" file and initiate the
+drawing of the diagram.
+
+LIST [F7] ---- presents a list of files and prompts the
+user for a file to print.  A single alpha character
+entry selects the file, which will be sent to a printer
+connected to the PRINTER port.  The output is formatted
+for a better printed result.  The headings and prompts
+are printed in boldface type and the leading line
+numbers are omitted.
+
+NOTE: The LIST function currently supports a printer in
+IBM mode set to 10 CPI in non-proportional print.  Any
+problems with the output of the LIST function may be
+caused by improper switch settings or printer
+incompatibility.  A common error can be easily corrected
+by simply restarting the printer.  Until a problem can
+be corrected, the file can be printed from the document
+itself.  The DIAGRAM portion of the report cannot be
+printed from the document and requires a specific
+printing routine generated by the program.
+
+QUIT [F8] ---- this function appears when Name, Text,
+Copy, Send, Free, Draw  or List are selected.  Pressing
+this key allows the user to cancel the selected function
+and return to the previous menu.
+
+EXIT [F8] ---- Pressing this function key will exit the
+program and return you to the main menu.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+MODULE SELECTION
+
+Once a document is selected, the program presents a
+Caption Checklist screen as shown below:
+
+       ษออออออออออออออออออออออออออออออออออออออออป
+       บ[File F]    Caption Checklist      9326 บ
+       บ                                        บ
+       บ 1.ACCIDENT  5.TRAILER      9.PASSENGER บ
+       บ 2.UPDATE    6.PROPERTY    10.WITNESS   บ
+       บ 3.FACTORS   7.PEDESTRIAN  11.CLOSING   บ
+       บ 4.VEHICLE   8.DRIVER      12.DIAGRAM   บ
+       บ                                        บ
+       บName Text Copy Send Free Draw List Exit บ
+       ศออออออออออออออออออออออออออออออออออออออออผ
+         [F1] [F2] [F3] [F4] [F5] [F6] [F7] [F8]
+
+The entry in the upper left corner of the screen, File
+F, indicates the open document, i.e., the report being
+written (F).  The check list presents "modules"
+available to the user to build reports. The command
+line, a familiar and valuable link between the user and
+the program, is again in reverse video at the bottom of
+the screen.  Note that a reverse video "bar" covers one
+of the 12 listed captions on the screen.
+
+The function keys listed on the command line operate as
+previously described.
+
+The highlight can be moved by one of three methods:
+
+          1. Spacebar (forward) or BKSP (backwards)
+          2. Entering the FIRST ALPHA CHARACTER of the
+             caption
+          3. Entering the caption's NUMERIC indicator
+
+          Note the "wrapping" feature of the movements.
+          The user never finds himself at a "dead end".
+          Also, if two captions share an alpha or
+          numeric character (in the case of Vehicle-
+          Violation or 1-10), the program will advance
+          to the first and then to the next entry when
+          the same key is again pressed.  Note again the
+          wrapping feature and the single-keystroke
+          entry by the user in the last two methods.
+
+The modules listed in this version of the program are
+the modules necessary to complete a Florida Traffic
+Accident Report.  Screens, forced choice tables, and
+prompts can easily be "customized" for individual needs
+in the RAM version of the program.
+
+
+
+
+
+ACCIDENT and UPDATE are headings for the report, be it
+an original or a follow-up (Update) report.  The
+CLOSING module ends the report with the user's name and
+other identifying information taken from the AGENCY.DO
+file.  The actual modules listed in the Caption
+Checklist have been adapted to the specific reporting
+requirements of the Bureau of Public Safety Management.
+
+The following discussion of the program's handling of
+a module is representative of the handling of any of the
+modules selected by the user.  Although the number of
+screens and types of prompts may vary from one module to
+the next, the basic handling of the screens is similar.
+
+The order in which modules are presented on the screen
+implies an order in which they should be completed,
+however, the individual user can complete them in any
+order desired. An ACCIDENT caption (#1) is typically
+entered before a VEHICLE or other caption.
+
+The DIAGRAM module is typically the final caption
+entered in a report, especially since data gathered in
+other modules is required in the construction of a
+diagram (If this data is not available, the user is
+presented with a blank diagraming area and allowed to
+create the diagram "freehand").  The modules can be
+repeated as often as necessary before adding the next
+module.  Certain modules allow the user to repeat it
+without printing another heading to the file.  This will
+occur in modules 5, 6, 9 and 10.  If a reported accident
+involves several vehicles or numerous people, each
+person is identified in a separate module according to
+his or her involvement.
+
+There are many benefits to this type of data entry.
+Information can be quickly located within any module
+within any printed report.  Since the information is
+highly structured, data can be extracted for use within
+related information processing systems.  Responses are
+uniform.  The novice or unfamiliar user can complete a
+detailed report with little difficulty.  The familiar
+user (at one time the "novice"), can utilize the many
+"short-cuts" and single keystrokes to complete the same
+complex report in a more timely manner.
+
+Let's now see how a module operates within the
+program...
+
+
+
+
+
+
+
+
+
+MODULE SCREEN DISPLAY
+
+The following is the first screen presented when the
+ACCIDENT caption is selected from the Caption Checklist:
+
+       ษออออออออออออออออออออออออออออออออออออออออป
+       บ[ACCIDENT ]      Report          |01|07|บ
+       บ      HSMV:ฑ________                    บ
+       บ    Number:_______                      บ
+       บ    Prefix:SP87                         บ
+       บ    Agency:ST PETERSBURG POLICE         บ
+       บ   NCIC ID:FLO521400                    บ
+       บ                                        บ
+       บFile Back   (Numeric Fill)    Skip Menu บ
+       ศออออออออออออออออออออออออออออออออออออออออผ
+         [F1] [F2] [F3] [F4] [F5] [F6] [F7] [F8]
+
+The bracketed word in the upper left corner of the
+screen is the module which the user selected.  The entry
+"Report" in the center of the upper line identifies this
+screen and often gives further information about the
+type of entries within the screen.  This is called the
+"screen title".  The two numbers in the upper right
+corner indicate that this is the first (01) screen of a
+total of seven (7) screens in this module.
+
+The area between the top and bottom lines (five lines on
+this screen with a maximum of six on any one screen) is
+the data entry area.  The display to the left of the
+colon (:) is the prompt for the entry.  To the right of
+the colon, the user types in his response, or accepts a
+default answer (if presented) with a single keystroke.
+
+Note that upon first viewing this screen, a single
+reverse video block is covering the first position of
+the first entry.  This is the first entry to be dealt
+with by the user and is referred to as the "cursor
+position".  The familiar reverse video command line is
+again present.  The center entry in the line is the
+user's "window" to the program.  This area either tells
+the user what the program is doing or informs the user
+of the type of input the program expects.
+
+The command line has also changed in that it now
+displays different functions associated with some of the
+function [F?] keys.  Explanations of the functions of
+these keys will be presented later in this
+documentation.
+
+
+
+
+
+
+
+
+MODULE DATA ENTRY
+
+Here again is the first screen of the ACCIDENT module:
+
+       ษออออออออออออออออออออออออออออออออออออออออป
+       บ[ACCIDENT ]      Report          |01|07|บ
+       บ      HSMV:ฑ________                    บ
+       บ    Number:_______                      บ
+       บ    Prefix:SP87                         บ
+       บ    Agency:ST PETERSBURG POLICE         บ
+       บ   NCIC ID:FLO521400                    บ
+       บ                                        บ
+       บFile Back   (Numeric Fill)    Skip Menu บ
+       ศออออออออออออออออออออออออออออออออออออออออผ
+         [F1] [F2] [F3] [F4] [F5] [F6] [F7] [F8]
+
+Three of the four entries are already present.  These
+entries were read by the program from the AGENCY.DO file
+and entered into the screen on the correct data line,
+waiting to be accepted or changed by the user.  The user
+did not have to manually enter this data but does have
+to press the <ENTER> key to accept it.
+
+The first entry (HSMV) is a (Numeric Fill) field,
+indicating that all spaces must be filled with numeric
+characters only. This entry is the Highway Safety Motor
+Vehicle accident report number.
+
+The next entry on this screen is for the Number, the
+local agency report number.  It can also be filled with
+numeric characters.  It does not HAVE to be filled, as
+the previous entry did, and any unused digits will be
+filled with zeros to the left of the number entered.
+
+The third field (Prefix) asks for a report number
+prefix, the two character agency prefix followed by a
+two digit year.  The default that is presented was read
+in from AGENCY.DO. The program will accept, as indicated
+by the command line, any alphanumeric characters.
+
+The fourth prompt is the Agency.  The command line
+indicates that the appropriate entry for this line is
+(Alphanumeric), indicating that a mixture of alphabetic
+and numeric characters will be accepted.  Depressing
+<ENTER> will accept this entry and move on to the next
+data entry.  If for some reason this is not the desired
+entry, the first alphabetic or numeric key pressed by
+the user will delete the entry and present a line
+indicating how many characters will be accepted.  Upon
+filling the spaces, the command line will display
+(ENTER), indicating it is ready to accept the line
+entry.  No additional characters will be accepted and
+any attempts to enter additional characters will be
+answered with a BEEP.
+
+
+The final entry on the screen is for the NCIC ID.  This
+is the unique ORI number assigned to each agency.  This
+number has also been stored and obtained from the
+AGENCY.DO file.
+
+When the last field is completed and the <ENTER> key is
+pressed, the program will ask (Correct? Y/N).  If all
+the entries on the screen are satisfactorily completed,
+the user need only press the "Y" key or the <ENTER> key.
+The information from this screen is then appended to the
+file that was opened at the beginning of the session. If
+one or more of the entries on the screen is
+unacceptable, striking the "N" key will start the
+process again from the first field on the screen.
+Pressing any key other than "Y", "N", or <ENTER> will be
+ignored.
+
+When the screen is accepted and the information written
+to the file, the program automatically presents the next
+screen of information associated with the chosen module.
+A screen similar to the one below will be presented.
+
+       ษออออออออออออออออออออออออออออออออออออออออป
+       บ[ACCIDENT ]  Date of Accident    |02|07|บ
+       บ       Day:TUE                          บ
+       บ      Date:111787                       บ
+       บ      Time:_______                      บ
+       บ  Notified:_______                      บ
+       บ   Arrived:_______                      บ
+       บ                                        บ
+       บFile Back   (Choice |02|08|)  Skip Menu บ
+       ศออออออออออออออออออออออออออออออออออออออออผ
+         [F1] [F2] [F3] [F4] [F5] [F6] [F7] [F8]
+
+The upper left corner of the screen indicates that this
+screen is part of the ACCIDENT module. The upper right
+corner shows that this is the second of seven screens.
+
+The user will note a slight difference in the appearance
+of this screen from the previous screen.  In addition to
+the bottom command line appearing in reverse video, the
+data entry area of the first prompt is also displayed in
+reverse video.  This indicates that this is a "forced
+choice" field.  This information is also provided in the
+command line, which indicates that this is choice two of
+eight possible choices (seven days of the week plus
+"UNK").  The program defaults to the current day of the
+week as taken from the system maintained day, date, time
+functions.
+
+If the day displayed is the appropriate one, the user
+need only press the <ENTER> key to accept that answer.
+If the displayed day is not the appropriate one, the
+selection can be changed in a number of ways.
+
+
+Pressing the spacebar displays the next day, as arranged
+in the forced choice table associated with this screen.
+The days can be arranged in any order, but in this
+program they are in sequential order. Pressing the BKSP
+(backspace) key displays the previous choice in the
+table.  Pressing any alpha key causes the program to
+search for the first occurrence of that key in the first
+letter of the words in the table.  If the pressed key is
+not present in any of the words in the table, no change
+is made in the displayed answer.  The command line,
+however, does display (Searching) to indicate that
+a process is being performed.  If the pressed key is
+found in the table, the word associated with the key is
+displayed on the highlighted line.  The command line
+also reflects the relative number of that choice.  When
+the correct answer is displayed, pressing the <ENTER>
+key accepts that choice and advances to the next field.
+
+The handling of a FORCED CHOICE TABLE is similar
+throughout the program.  The method of moving about
+within a table and selecting a choice is the same.  If
+the user selects OTHER (present in many forced choice
+tables) and presses <ENTER>, the field is cleared and
+filled with underscores.  This permits the user to type
+in his own entry in alphanumeric characters.  This is to
+allow for the many instances where it may not be
+possible for the user to anticipate all possible
+choices, or restrictions imposed by limited memory
+precludes using an extensive forced choice table.
+
+The next field is for a date. The program displays the
+current date, again from the system maintained
+functions.  This date can be accepted with the <ENTER>
+key or changed by entering valid numeric characters in
+the format listed on the command line.  After the
+<ENTER> key is pressed, the program verifies the entry,
+rejecting any entry where there are too many days in the
+month or too many months in the year.
+
+The next field is for the time of the accident.  The
+command line indicates the format for the entry.  Four
+numbers must be entered followed by a space and then
+either AM or PM.  The "twelve-hour" time format is
+required.  For example, if the accident occurred at 1030
+hours military time, the correct entry would be 1030 AM.
+If the accident occurred at 1545 hours military time,
+the correct entry would be 0345 PM.
+
+When all the fields on this screen have been filled, the
+program again asks if the displayed data is correct. An
+affirmative answer writes this data to the file and
+presents the next screen, if there is one.
+
+
+
+
+Having worked through the first two screens of the
+ACCIDENT module, the basic concept of the program can,
+hopefully, be understood.  To exhibit all screens of all
+modules and explain each data entry field would be both
+time-consuming and redundant.  Also note the additional
+function key operations available while in the screen.
+The following section explains the operation of these
+keys.
+
+As has been demonstrated, there are four primary sources
+of data when completing a report: data from AGENCY.DO;
+data from system maintained functions; data from forced
+choice tables; and data from keyboard input.  Regardless
+of the source of the data, the program validates the
+data and accepts only data of the type defined for a
+particular field.
+
+After the completion of the last screen in a module, the
+user returns to the Caption Checklist.  If the user
+wishes to repeat a module, it is re-selected.  Certain
+modules will ask the user if there is "Another? Y/N".
+This allows the user to make additional entries without
+returning to the Caption Checklist.  This type of
+repetition also does not repeat the header of the module
+in the file.  Suppose you encountered three passengers
+in Vehicle One.  After the PASSENGER module was selected
+and completed for the first time, the user would answer
+"Y" to the "Another?" prompt.  The program returns to
+the first screen of the PASSENGER module.  The module is
+completed three times, at which time a "N" is entered at
+the prompt and the user returns to the Caption
+Checklist.  In the file, there would be a single
+PASSENGER heading with three individuals listed as
+passengers in Vehicle One.
+
+The program keeps the user informed at all times.
+Errors, if made by the user, are "trapped" and the user
+can always continue.  Each screen of entries is reviewed
+before being added to the stored report file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION KEYS
+
+From within a module screen:
+
+[1] File - accepts the entire screen and writes it to
+           the file.  Calling this function eliminates
+           the needs to accept each field entry and then
+           accept the screen.  This convenience is most
+           noticed in the CLOSING module, as most of the
+           information is obtained from the AGENCY.DO
+           file.
+
+[2] Back - returns to the previous screen without
+           writing the current screen to the file.  No
+           action is taken if the user is in the first
+           screen of the module (except for a BEEP).
+
+[7] Skip - goes to the next screen in the module without
+           writing the current screen to the file.  No
+           action is taken if the user is in the last
+           screen of the module (except for a BEEP).
+
+[8] Menu - returns the user to the Caption Check List
+           without writing the current screen to the
+           file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SCREEN FUNCTIONS
+
+Once you have successfully completed a screen and are
+familiar with the basic concept of the program, you can
+utilize other editing functions available to you.  All
+of the function key operations and editing commands are
+detailed in Appendices A-C.  Here is a sample of the
+usage of a few of the more useful functions and
+commands:
+
+The File function [F1] from a screen enables you to
+enter the entire screen without accepting each line and
+then entering "Y" when asked if correct.  Pressing File
+writes the ENTIRE screen to the file as it appears on
+the screen.  For example, a more efficient way to enter
+the first screen in the ACCIDENT module would have been
+to press F2 after the first two questions had been
+answered.
+
+Each entry must be completed and cannot be bypassed by
+pressing ENTER.  If the information is not available or
+not required, pressing TAB will bypass the question but
+place underscores in the document.  You cannot
+accidentally skip a question; a "blank" answer, in
+effect, is a response from you.
+
+If you happen to have completed two of the four screens
+in the first module (having written them to the
+document) and are interrupted, you can enter Menu and
+then Exit to exit the program.  When you are ready to
+continue completing the report, you simply open the same
+file, select the module you were completing and then
+press GRPH 3 at the first screen.  This action takes you
+directly to screen 3 of that module.  You could also
+press Skip twice.  Pressing Skip or Back does NOT cause
+the screen to be written to the file.
+
+These examples illustrate some of the power of the
+program.  Every effort has been made to make the program
+efficient and easy to use.  By looking through the
+appendices, you can easily get many ideas.  You should
+try the many functions and commands to get familiar with
+the power of the program.
+
+
+
+
+
+
+
+
+
+
+
+
+
+COMPLETING AN ACCIDENT REPORT
+
+Completing a Florida Traffic Accident Report is simply a
+matter of assembling the modules in an ordered fashion
+using as many (or as few) as needed.  All the modules
+necessary to complete a report are included in the
+program Caption Checklist.  All the information gathered
+by completing the appropriate modules meets or exceeds
+the data requirements of the Department of Highway
+Safety and Motor Vehicles and the Bureau of Highway
+Safety Management.
+
+A typical accident report requires an ACCIDENT, FACTORS,
+CLOSING and at least one VEHICLE module.  The inclusion
+of other modules is dependent on their need.
+
+A typical update report requires an UPDATE and CLOSING
+module.  The inclusion of other modules, again, is
+dependent on their need.
+
+Narrative is added by using the TEXT processor included
+with the Model 100\102 computer.  The narrative is added
+below the NARRATIVE heading which follows the CLOSING
+module.
+
+A general outline for an accident report is as follows:
+
+   ACCIDENT and FACTORS module
+   VEHICLE module and associated modules
+   PEDESTRIAN module if applicable
+   Subsequent VEHICLE and associated modules
+   PROPERTY module(s) if applicable
+   WITNESS module(s) if applicable
+   CLOSING module
+
+   DIAGRAM module if appropriate
+
+
+
+
+Following is a flow-type chart which outlines in a
+visual manner the module choice selection process.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PRINTING THE REPORT
+
+
+The portable computer has a "port" on the back of the
+unit labelled PRINTER.  A cable attached to the printer
+should have a plug which fits into this port. Carefully
+plug the cable into the computer with the side labelled
+TOP up.  The cable only fits one way and should not be
+forced.  Forcing the cable may bend one or more of the
+pins in the port.
+
+Once the cable is connected, turn the printer on.
+
+
+There are two methods of printing the reports:
+
+FROM WITHIN THE PROGRAM...
+
+While at the main menu of the program, select the List
+function.  The program will prompt for a file name and,
+once entered, will print the report.
+
+The report will be printed without the line numbers and
+the bracketed words (which modify, or explain, the
+answer) will be printed in boldface type.
+
+FROM WITHIN THE DOCUMENT...
+
+Go into the document by placing the cursor bar over the
+document at the MAIN MENU.  For example, move the cursor
+bar over A.DO and press ENTER.  You will be at the top
+of the file.  Press and hold down the SHIFT key and
+press the small function key labelled PRINT.  A prompt
+(Width:80) is printed in the lower left corner of the
+screen.  Press ENTER and the file will be printed.
+
+
+NOTE: The above described method of printing will NOT
+work when printing a diagram.  Refer to the Diagraming
+section for further information.
+
+Further information and details on printer operation can
+be found in the appropriate manuals.
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION KEYS
+
+From File Management and Caption Checklist screens:
+
+[1] Name - presents a list of files and prompts the user to
+           create a file.  If the file already exists, it
+           will open the file for further input.  When chosen
+           from the Caption Check List screen, it allows the
+           user to change reports.  The file in use is shown
+           in the upper left corner of the Caption Check List
+           screen.
+
+[2] Text - presents a list of files and prompts the user for
+           the file to edit.  The user must enter a single
+           alpha character followed by <ENTER>.  Once
+           selected, the user leaves the program and goes to
+           the TOP of the report selected.  Entering <CTRL>
+           DOWN ARROW or <CTRL> Z will take the user to the
+           END of that file, ready to add text.
+
+[4] Send - presents a list of files and prompts the user for
+           a file to send.  A single alpha character entry
+           selects the file, which will then be "sent" out
+           the RS-232C port of the computer.  The current
+           parameters are set at 87E1D (9600 baud, 7 bits,
+           Even parity, 1 Stop Bit and XON/XOFF disabled).
+
+[5] Free - presents a list of files and prompts for a file to
+           erase.  A single alpha character entry selects the
+           file and deletes it from memory.  The function is
+           called through the program with the "Kill"
+           command.
+
+[7] Prnt - presents a list of files and prompts the user for
+           a file to print.  A single alpha character entry
+           selects the file, which will be sent to a printer
+           connected to the PRINTER port.  The output is
+           formatted for a better printed result.  The
+           headings and prompts are printed in boldface type
+           and the leading line numbers are omitted.
+
+[8] Quit - this function appears when Name, Send, Free or
+           Prnt are selected.  Pressing this key allows the
+           user to cancel the selected function and return to
+           the previous menu.
+
+[8] Menu - returns to the MAIN MENU
+
+
+
+
+
+
+
+
+
+FUNCTION KEY OPERATIONS:
+
+NAME [F1] ---- Presents the user with a list of files similar
+to the file management screen and asks for a file name.  Note
+the command line, which says (File Name?  A-Z).  Entering a
+single alpha character will open that file (i.e., name the
+report) and proceed to the module menu screen.  NOTE: You can
+also enter an alpha character directly, instead of depressing
+[1] and accomplish the same result, i.e., open a file and
+proceed to the module menu screen.
+
+TEXT [F2] ---- Presents the user again with a list of files
+similar to the file management screen.  In the upper left
+corner is a prompt which asks "File to edit?" and the command
+line tells the user what to do.  Type the name of the file
+(without the .DO extension) that you wish to edit and press
+<ENTER>.  This action will exit the program and go to the top
+of the file you entered.  For your convenience, pressing
+<CTRL><Down Arrow> or <CTRL><Z> will then place you at the
+end of the file.  The user can then enter text (for example,
+to add a narrative to a report) using the TEXT processing
+capabilities of the Model 100/102.
+
+COPY [F3] ---- Presents a list of files and prompts the user
+for a file to copy FROM.  A file MUST be present from which
+to copy.  Once selected, the user is prompted for the file to
+copy TO.  If not present, the file will be created.  If the
+file is present, the file will be appended to.  This function
+can be very useful in certain situations.
+
+SEND [F4] ---- Presents a list of files and prompts the user
+for a file to send.  A single alpha character entry selects
+the file, which will then be "sent" out the RS-232C port of
+the computer.  The current parameters are set at 87E1D (9600
+baud, 7 bits, Even parity, 1 Stop Bit and XON/XOFF disabled).
+
+FREE [F5] ---- Presents the user with a list of files similar
+to the file management screen.  The command line says (Erase
+A-Z).  Entering a single alpha character will ERASE (or
+"KILL") the file from memory.  Use this function only when
+you want to remove the file from the computer.  You CANNOT
+retrieve the file once it is "killed".  You will then return
+to the File Management Screen.  If a diagram is associated
+with the report (denoted with an asterisk after the letter,
+i.e., A*.DO), BOTH files will be deleted with a single
+keystroke.  If you need to delete either one of the two
+related files (NOT BOTH), you must go into BASIC and type the
+command KILL "filename.ext".
+
+
+DRAW [F6] ---- this operation allows the user to print a
+diagram.  The user is first presented with a list of files
+and is prompted with the file to print.  The DIAGRAM files
+are indicated by an asterisk after the alpha character.  A
+printer should be attached to the computer and loaded with
+paper.  A single alpha keystroke will select the "car" file
+and initiate the drawing of the diagram.
+
+LIST [F7] ---- presents a list of files and prompts the user
+for a file to print.  A single alpha character entry selects
+the file, which will be sent to a printer connected to the
+PRINTER port.  The output is formatted for a better printed
+result.  The headings and prompts are printed in boldface
+type and the leading line numbers are omitted.
+
+NOTE: The LIST function currently supports a printer in IBM
+mode set to 10 CPI in non-proportional print.  Any problems
+with the output of the LIST function may be caused by
+improper switch settings or printer incompatibility.  A
+common error can be easily corrected by simply restarting the
+printer.  Until a problem can be corrected, the file can be
+printed from the document itself.  The DIAGRAM portion of the
+report cannot be printed from the document and requires a
+specific printing routine generated by the program.
+
+QUIT [F8] ---- this function appears when Name, Text, Copy,
+Send, Free, Draw or List are selected.  Pressing this key
+allows the user to cancel the selected function and return to
+the previous menu.
+
+EXIT [F8] ---- Pressing this function key will exit the
+program and return you to the main menu.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION KEYS
+
+From within a module screen:
+
+[1] File - accepts the entire screen and writes it to the
+           file.  Calling this function eliminates the needs
+           to accept each field entry and then accept the
+           screen.  This convenience is most noticed in the
+           SIGNATURE module, as most of the information is
+           obtained from the AGENCY.DO file.
+
+[2] Back - returns to the previous screen without writing the
+           current screen to the file.  No action is taken if
+           the user is in the first screen of the module
+           (except for a BEEP).
+
+[7] Skip - goes to the next screen in the module without
+           writing the current screen to the file.  No action
+           is taken if the user is in the last screen of the
+           module (except for a BEEP).
+
+[8] Quit - returns the user to the Caption Checklist without
+           writing the current screen to the file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EDIT COMMANDS
+
+From within a module screen:
+
+TAB key -  Depressing this key advances to the next field and
+           displays a default answer obtained from AGENCY.DO,
+           if any, in the by-passed field.  If there is no
+           default answer, underscores are re-displayed.
+
+DOWN ARROW - has the same effect as the TAB key except that
+           it will not advance past the last field as will
+           the TAB key.
+
+UP ARROW - backs up to the previous field. Use of this key
+           can be useful when it is necessary to correct a
+           field without going through the entire screen.
+
+Shift UP ARROW - backs up to the first field from any field
+on the screen.
+
+Shift DOWN ARROW - advances to the last field from any field.
+
+Shift LEFT ARROW - same as FUNCTION KEY [1] - Back
+
+Shift RIGHT ARROW - same as FUNCTION KEY [7] - Skip
+
+CTRL LEFT ARROW - goes to the first screen in a module
+           without writing the current screen to the file.
+
+CTRL RIGHT ARROW - goes to the last screen in a module
+           without writing the current screen to the file.
+
+GRPH <0...9> - depressing the GRPH key followed by a number
+           results in going directly to the screen of that
+           number within the module (if it exists).  For
+           example, depressing GRPH <4> will result in going
+           to the fourth screen in a module with at least
+           four screens.  Note: 0 goes to the tenth screen.
+           This is useful in returning to a specific screen
+           within a module when a previous report writing
+           session had been interrupted.
+
+ENTER -    accepts a default entry in a field
+
+SPACEBAR - enters the system date or time in an appropriate
+           field.  If this entry is incorrect, check the
+           system date and time and change if necessary.
+
+DEL -      forces a blank entry (fills the field length with
+           underscores) in the field.
+
+
+
+
+
+
+AGENCY.DO File
+
+File Contents           Description
+
+ST PETERSBURG POLICE    Agency Name
+FLO521400               Agency ORI Number
+J D SAVAGE              User Name
+OFF                     Rank
+099999                  ID Number
+P A T                   Assigned Unit
+221A                    Assigned Zone
+813                     Area Code
+8937541                 Phone
+0800                    Work hours
+1600                    Work hours
+SAT                     Day Off
+SUN                     Day Off
+63                      Code
+SP87                    Report Prefix
+**                      Reserved
+M Q McGOUGH             Supervisor
+SGT                     Supervisor's Rank
+999999                  Supervisor's ID Number
+00                      Numeric default
+01                      Numeric default
+
+
+The AGENCY.DO file must be present in the above format to
+correctly function within the program.  Each item in the
+above left column must occupy its own line in the order
+listed.
+
+If AGENCY.DO is not present or in its proper format, the
+program will not cease to execute.  It will cause the field
+to be alphanumeric and fill it with empty spaces or whatever
+is in its position in the file.  If the user notices an entry
+is incorrect or empty, the field can be corrected from within
+the screen.  The AGENCY.DO file should then be checked for
+problems and edited when appropriate.

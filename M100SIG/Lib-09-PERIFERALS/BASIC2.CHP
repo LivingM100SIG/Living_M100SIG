@@ -1,0 +1,330 @@
+
+
+
+
+        DATA FILES
+
+            A data file is a collection of organized, related data
+        used to store information.  Previously we've talked about
+        files that were either program code or documents.  But files
+        can also store data that is used in programs.  Sort of like
+        data statements external to the program.  The amount of data
+        that's available this way is greatly increased, because we're
+        not restricted to the amount of memory in our computer.  CDOS
+        extends the entire set of sequential file handling statements
+        available in the built-in Microsoft BASIC to include files
+        stored on disk, plus a new collection of more powerful random
+        access file handling statements.
+
+
+        FILE STRUCTURE: RECORDS AND FIELDS
+
+            Let's look at what constitutes a data file.  A file's main
+        subset of data is called a record.  In the programs and
+        documents we've worked with in BASIC and TEXT, a record is
+        equivalent to one line; that is, everything up to a carriage
+        return.  Unlike BASIC listings and documents, in a data file
+        each individual line or record contains the same type of
+        information as every other record in the file.
+
+            For example, in a name and address file, each record in
+        the file might contain these items: last name, first name,
+        street address, city, state, and zip code.  They appear in the
+        same order in each record.  Thus the program written to use
+        this data file reads individual records from the file and
+        finds the desired information contained in each record.  Sets
+        of data that contain the same type of information in each
+        record are called fields.  Here's a peek at the structure of a
+        typical data file...the rows are records and the columns are
+        fields:
+
+        last name  first name  street    city       state  zip
+
+        Groovy     George      High      Somewhere  CA     97111
+        Kent       Clark       Sooper    Metropolis NY     12002
+        Gurdy      Hurdy       Mellow    Desert     NM     54923
+        Hammer     Mike        Tough     New York   NY     10001
+
+            Each row (or each line) corresponds to one record in the
+        file.  So, the second record contains information on our
+        flying friend in the flashy pants.  The first field in the
+        second record contains "Kent".  The second field in the second
+        record contains "Clark", and so forth.  Of course, this can be
+        made about as simple or complex as your program needs
+        require.
+
+
+
+
+                                    - 7 -
+
+
+
+
+
+
+
+
+
+
+
+        SEQUENTIAL FILES
+
+            The only type of file handling provided by the built-in
+        Microsoft BASIC in the Model 100/200 is sequential file
+        handling.  There is just one way to find a particular record
+        in a file: start at the beginning of the file and read each
+        record in sequence until we come to the record that we want to
+        look at.  Likewise, if we want to create a new file we can
+        only start at the beginning and add records one after the
+        other in sequence.  And if we just want to add one record to
+        an already existing file, the only place it can be added is at
+        the end of the file.  That's why it's called sequential...we
+        can only do things in sequence, from beginning to end.
+        However, there's still quite a bit that can be done with
+        sequential file operations.  And CDOS enables us to do them
+        with the Chipmunk disk drive, thereby expanding the amount of
+        storage available and reducing the time and bother associated
+        with files on cassette.
+
+
+        CREATING A SEQUENTIAL FILE
+
+            Let's create and use a sequential file.  How about a
+        birthday and anniversary file?  That's something all absent-
+        minded programmers could use.  Our file will consist of each
+        person's name, his/her birthday or anniversary, a key of some
+        kind to tell us whether it's a birthday or anniversary, and
+        his/her favorite color, so we know what color socks or scarf
+        to buy.  Now for decision time: how will each record look?
+        Well, let's just set up a table like in the name and address
+        example above.  That's basically what a file is...a table.
+
+            Last Name    First Name    Key    Date    Color
+
+            So far, so good.  But more decisions await.  How about
+        data types?  That is, are the entries going to consist of
+        numbers or strings?  And if numbers, are they integers, single
+        precision, or double precision?  (Please refer to the BASIC
+        manual section on Data Types.)  In our file, it'll be easiest
+        to just make all the entries strings.  And we can use a B or
+        an A as our key for birthday or anniversary.  Here are the
+        variable names we'll use: LN$ for Last Name, FN$ for First
+        Name, KY$ for Key, DT$ for Date, and CL$ for Color.
+
+            We create the file the same way a RAM file or CAS file is
+        created: we OPEN it for OUTPUT.  Keep in mind that if the
+        filename we use is already present on disk in the folder we
+        have open, it will be erased.
+
+            10 OPEN "0:BDAY.DO" FOR OUTPUT AS 1
+
+
+
+
+                                    - 8 -
+
+
+
+
+
+
+
+
+
+
+
+            Now let's enter the data into the file.  A simple loop
+        with a terminating condition of a blank line on an input
+        prompt will do.  The data is placed into the file with the
+        PRINT # statement.  Here's the program:
+
+            10 OPEN "0:BDAY.DO" FOR OUTPUT AS 1
+            20 LN$="":INPUT "Last Name";LN$:IF LN$="" THEN 100
+            30 INPUT "First Name";FN$
+            40 INPUT "Anniversary/Birthday Key  (A/B)";KY
+            50 INPUT "Date";DT$
+            60 INPUT "Color";CL$
+            70 PRINT #1,LN$,FN$,KY$,DT$,CL$
+            80 GOTO 20
+            100 CLOSE #1
+            110 END
+
+            Notice how all the variables are in one PRINT # statement
+        in line 70.  Why not just PRINT #1,LN$:PRINT #1,FN$:PRINT
+        #1,KY$:...etc?  Because each variable printed will be followed
+        by a carriage return, putting it on a new line, and thereby
+        making it harder to find the end of each record when the file
+        is read.  (And, it takes more code.)  As we'll see shortly,
+        it's best to keep all the fields in one record within one line
+        in the file.
+
+            Here, we've used commas between the variables.  Load the
+        file just created into TEXT and take a look at the data.
+        Where did all those spaces between fields come from?  Well,
+        when we use commas between variables in a PRINT # statement,
+        BASIC pads the space between variables with a fixed number of
+        spaces, unlike PRINTing to the screen (in which case it pads
+        with a variable number of spaces up to a certain width.)
+        Thus, the fields are very far apart and they waste a lot of
+        space in the file.  This certainly isn't desirable.  We can
+        get rid of the spaces by using semi-colons between variables:
+
+            70 PRINT #1,LN$;FN$;KY$;DT$;CL$
+
+            Try that and see what a record looks like now.  Now, there
+        are no spaces at all between fields!  How do we tell where one
+        field ends and another begins?  This becomes important when
+        reading the file.  We'll want to be able to easily separate
+        the fields and assign each to its own variable.  There are two
+        main approaches to this problem: fixed-length fields and field
+        delimiters.
+
+
+        FIXED-LENGTH FIELDS
+
+            One solution involves defining fixed-length fields.  If
+        each field is a certain length, it's easy to separate the
+
+
+
+                                    - 9 -
+
+
+
+
+
+
+
+
+
+
+
+        fields when reading the file. Knowing how long each field is,
+        a program can figure out where each begins and ends in
+        relation to the beginning of the record.  This can be done
+        with a LINE INPUT statement that assigns the contents of a
+        record to one variable, followed by string manipulation
+        statements that separate out individual fields and assign them
+        to their own variables.  When deciding how many characters to
+        allow for each field, take into account total record length as
+        well as individual field length.  When reading a record with a
+        LINE INPUT statement, the record length can't exceed 255
+        characters.  This is BASIC's limit for a string variable.
+
+            If we decide to allow ten characters for the Last Name
+        (LN$) field, how do we handle input that is longer than or
+        shorter than ten characters, as it most likely will be?  If
+        it's longer, we need to decide whether to just truncate (chop
+        off) the extra characters, or to warn the user of the
+        excessive length and prompt for a shorter input.  If we choose
+        to truncate long input, it seems reasonable to just take LN$ =
+        LEFT$(LN$,10).  However, we can't handle input shorter than
+        ten characters this way.  Short input must be padded with
+        spaces to make LN$ exactly ten characters in length.  We might
+        choose to add a statement something like
+        LN$=LN$+LEFT$("10spaces",10-LEN(LN$)).  This works, but it
+        involves a lot of coding for each variable.  There is a better
+        and easier way!
+
+            Fixed-length fields can be easily printed to a file with
+        the PRINT USING statement.  The PRINT USING statement formats
+        the output by printing listed variables at specified print
+        positions of specified length.  The back-slash character, "\",
+        is used to format strings.  Strings longer than the allowed
+        length are truncated, and strings shorter than the allowed
+        length are left-justified (printed at the left edge of the
+        column) and padded with spaces.  (We may still want to check
+        for excessive length and warn the user.)  Let's allow ten
+        characters for the last and first names, and eight characters
+        for the date and color.  The date will be in the format
+        "mm/dd/yy".  Unfortunately, since with a formatted print each
+        backslash also allots space for one character, the minimum
+        number of characters we can use for a string is two, and
+        therefore we have to use two characters for the key.  Here's
+        our revised birthday file program:
+
+            10 F$="\        \\        \\\\      \\      \"  ' format
+               string
+            20 OPEN "0:BDAY.DO" FOR OUTPUT AS 1  ' create new file
+            30 LN$="":INPUT "Last Name";LN$:IF LN$="" THEN 100
+               ' last name
+            40 INPUT "First Name";FN$  ' first name
+            50 INPUT "Birthday/Anniversary Key (A/B)";KY$  ' key
+
+
+
+                                    - 10 -
+
+
+
+
+
+
+
+
+
+
+
+            60 INPUT "Date";DT$  ' date
+            70 INPUT "Color";CL$  ' favorite color
+            80 PRINT #1, USING F$;LN$,FN$,KY$,DT$,CL$  ' formatted
+               print to file
+            90 GOTO 30  ' do it again
+            100 CLOSE #1  ' finished
+            110 END
+
+            Now load the file produced by this program into TEXT and
+        see how nicely the records and fields are set up.  This file
+        should be a snap to read when we want to look for some data in
+        it.
+
+            The PRINT USING statement makes it easy to mix strings and
+        numbers when printing to the file.  Just make sure that you
+        use the correct formatting character and allow enough room in
+        the field for the expected data.  (Numbers longer than the
+        field width alloted are prefixed with a %.)  Here's an example
+        that prints three fields: a name, an age, and a salary.  Age
+        and salary are integer variables:
+
+            10 F$="\            \###$$####"
+            100 PRINT #1, USING F$;NM$,AG,SA
+
+            Try this, and notice that salary appears in the file with
+        a dollar sign due to the "$" format character in its field.
+        Also, fields don't need spaces between because we know exactly
+        where each starts and ends.  Numbers are actually printed to a
+        sequential file as strings.  We could read the record produced
+        by the above print statement with a single string variable,
+        and use the techniques described in the next section for all-
+        string data.  If, in the program that uses this data, it's
+        more convenient to treat the data as numbers, the data that
+        represent numbers will have to be converted with the VAL
+        statement after reading from the file.
+
+            Don't use the sample programs here as models of
+        programming style!  For example, there's no entry error
+        checking.  The user could easily enter anything at the key
+        prompt and two characters of whatever he/she entered would be
+        printed to the file.  Likewise, there's no check to see if the
+        date is entered in the desired format.  Use these programs
+        only as examples of file handling technique, and fill in good
+        programming style where needed.
+
+
+
+
+
+
+
+
+
+
+                                    - 11 -
+
+
+
+
+
+
+

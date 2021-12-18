@@ -1,0 +1,195 @@
+This file contains 5 programs for setting up Epson dot-matrix printers.  
+Three are for the Tandy 200, and two others for the Model 100.  Basically, 
+they all do the same thing - LPRINT the printer codes according to the menu 
+item you select.
+
+PRINTR was the first one I wrote, for the Tandy 200.  It is also the longest,
+ and contains the "MOST" unnecessary bytes of code - for the title screen.  
+It developed into the RXSET programs - RXSET1 for the Model 100 and RXSET2 for
+ the Tandy 200.  I later purchased an FX-85 printer, and rewrote these into 
+FXSET1 and FXSET2.  FXSET2 is a little longer than it needs to be, due to the 
+fancier title, with the boxes and all.
+
+The main limit to this approach in the Model 100 is the 8-line screen.  This 
+allows a maximum of 16 menu items with no room for a title line, or 14 with a 
+title line.  The main limit is keeping the code to about 1K or less - I've 
+gotten it down to around 700 bytes in some examples, a reasonable size for a 
+handy utility program for the T200 or M100.
+
+Bear in mind that these are quick and dirty programs, and feel free to modify 
+them as necessary for your own make of printer.  Tandy 600 users can download 
+EPSET.600, which is in Basic program form for XMODEM download.  Checksums 
+for each are listed immediately after the programs.
+
+For the Tandy 200:
+
+1 ' PRINTR.200 1.1  APRIL 85
+2 'Copyright by Steve Zimmerman, CIS 73226,3504, DELPHI "STEVEZIM"
+3 'Lines 5 - 95 can be combined to save some bytes - feel free to modify as
+4 'you need for your printer.
+5 CLS:SCREEN0,0
+10 LINE(33,5)-(212,81),1,B:LINE(35,7)-(210,79),1,B
+15 LINE(37,9)-(208,77),1,B
+20 PRINT@90,"Printer Set-Up For The"
+25 PRINT@173,"Epson RX-80 F/T"
+30 PRINT@256,"TANDY 200":LINE(94,46)-(150,56),1,B
+35 PRINT@328,CHR$(171)+"1985 All rights reserved"
+40 FORT=1TO500:NEXTT
+45 CLS:PRINT"Press the letter shown to select a mode-";
+50 PRINT"-press <R>eset to cancel all selections."
+55 PRINT@124,"<E>  Emphasized":PRINT@164,"<D>  Double Strike"
+60 PRINT@204,"<X>  Expanded":PRINT@244,"<S>  Elite"
+65 PRINT@284,"<C>  Compressed":PRINT@324,"<8>  8 Lines/Inch"
+70 PRINT@364,"<I>  Italic":PRINT@404,"<P>  Paper-Out Off"
+75 PRINT@444,"<G>  Enable Graphics Set"
+80 PRINT@484,"<O>  Disable Graphics Set"
+85 PRINT@524,"<R>  Reset Printer"
+90 PRINT@564,"<M>  Return to Menu"
+100 PRINT@395,"< >";:PRINT@396,"";
+110  X$=INPUT$(1):PRINT@396,X$
+120 IFX$=""THEN100
+130 IFX$="E"ORX$="e"THENLPRINTCHR$(27);CHR$(69)
+140 IFX$="D"ORX$="d"THENLPRINTCHR$(27);CHR$(71)
+150 IFX$="X"ORX$="x"THENLPRINTCHR$(27);CHR$(87);CHR$(49)
+160 IFX$="S"ORX$="s"THENLPRINTCHR$(27);CHR$(77)
+170 IFX$="C"ORX$="c"THENLPRINTCHR$(15)
+180 IFX$="8"THENLPRINTCHR$(27);CHR$(48)
+190 IFX$="I"ORX$="i"THENLPRINTCHR$(27);CHR$(52)
+200 IFX$="P"ORX$="p"THENLPRINTCHR$(27);CHR$(56)
+220 IFX$="G"ORX$="g"THENLPRINTCHR$(27);CHR$(109);CHR$(4)
+230 IFX$="O"ORX$="o"THENLPRINTCHR$(27);CHR$(109);CHR$(0)
+240 IFX$="R"ORX$="r"THENLPRINTCHR$(27);CHR$(64)
+250 IFX$="M"ORX$="m"THENMENUELSE100
+
+Checksum: 107,889
+
+
+1 'RXSET.200 1.2 JULY 86
+2 'Copyright by Steve Zimmerman, CIS 73226,3504, DELPHI "STEVEZIM"
+3 'Lines 5 - 35 can be combined to save some bytes - feel free to modify as
+4 'you need for your printer.
+5 CLS:SCREEN0,0:PRINT@46,"Epson RX-80 F/T Printer Setup"
+10 PRINT@126,"<E>  Emphasized":PRINT@166,"<D>  Double Strike"
+15 PRINT@206,"<X>  Expanded":PRINT@246,"<S>  Elite"
+20 PRINT@286,"<C>  Compressed":PRINT@326,"<8>  8 Lines/Inch"
+25 PRINT@366,"<I>  Italic":PRINT@406,"<P>  Paper-Out Off"
+30 PRINT@446,"<G>  Enable Graphics Set":PRINT@486,"<O>  Disable Graphics Set"
+35 PRINT@526,"<R>  Reset Printer":PRINT@566,"<M>  Return to Menu"
+40 PRINT@395,"< >";:PRINT@396,"";:X$=INPUT$(1):PRINT@396,X$:IFX$=""THEN40
+50 IFX$="E"ORX$="e"THENLPRINTCHR$(27)"E"
+60 IFX$="D"ORX$="d"THENLPRINTCHR$(27)"G"
+70 IFX$="X"ORX$="x"THENLPRINTCHR$(27)"W1"
+80 IFX$="S"ORX$="s"THENLPRINTCHR$(27)"M"
+90 IFX$="C"ORX$="c"THENLPRINTCHR$(15)
+100 IFX$="8"THENLPRINTCHR$(27)"0"
+110 IFX$="I"ORX$="i"THENLPRINTCHR$(27)"4"
+120 IFX$="P"ORX$="p"THENLPRINTCHR$(27)"8"
+130 IFX$="G"ORX$="g"THENLPRINTCHR$(27)"m";CHR$(4)
+140 IFX$="O"ORX$="o"THENLPRINTCHR$(27)"m";CHR$(0)
+150 IFX$="R"ORX$="r"THENLPRINTCHR$(27)"@"
+160 IFX$="M"ORX$="m"THENMENUELSE40
+
+Checksum: 80,652
+
+
+1 'FXSET.200 1.2 JULY 86
+2 'Copyright by Steve Zimmerman, CIS 73226,3504, DELPHI "STEVEZIM"
+3 'Lines 5 - 45 can be combined to save some bytes - feel free to modify as
+4 'you need for your printer.
+5 CLS:SCREEN0,0:LINE(42,3)-(202,19),1,B:LINE(44,5)-(200,17),1,BF
+10 CALL20360:PRINT@48,"Epson FX-85 Printer Setup":CALL20365
+15 PRINT:PRINT"  <N>  NLQ (pica)   <L>  Proportional"
+20 PRINT"  <E>  Emphasized   <D>  Double Strike"
+25 PRINT"  <X>  Expanded     <S>  Elite"
+30 PRINT"  <C>  Compressed   <T>  Comp. Elite"
+35 PRINT"  <I>  Italics      <P>  Paper-Out Off"
+40 PRINT"  <8>  8 Lines/Inch <0>  10 Lines/Inch"
+45 PRINT"  <U>  Superscript  <R>  Reset Printer":PRINT"  <M>  Main Menu"
+50 PRINT@420,"< >";:PRINT@421,"";
+55 X$=INPUT$(1):PRINT@421,X$:IFX$=""THEN50
+60 IFX$="N"ORX$="n"THENLPRINTCHR$(27)"x1"
+70 IFX$="L"ORX$="l"THENLPRINTCHR$(27)"p1"
+80 IFX$="E"ORX$="e"THENLPRINTCHR$(27)"E"
+90 IFX$="D"ORX$="d"THENLPRINTCHR$(27)"G"
+100 IFX$="X"ORX$="x"THENLPRINTCHR$(27)"W1"
+110 IFX$="S"ORX$="s"THENLPRINTCHR$(27)"M"
+120 IFX$="C"ORX$="c"THENLPRINTCHR$(15)
+130 IFX$="T"ORX$="t"THENLPRINTCHR$(27)"M";CHR$(15)
+140 IFX$="I"ORX$="i"THENLPRINTCHR$(27)"4"
+150 IFX$="J"ORX$="j"THENLPRINTCHR$(27)"a3"
+160 IFX$="8"THENLPRINTCHR$(27)"0"
+170 IFX$="0"THENLPRINTCHR$(27)"1"
+180 IFX$="U"ORX$="u"THENLPRINTCHR$(27)"S0"
+190 IFX$="P"ORX$="p"THENLPRINTCHR$(27)"8"
+200 IFX$="R"ORX$="r"THENLPRINTCHR$(27)"@"
+210 IFX$="M"ORX$="m"THENMENUELSE50
+
+Checksum: 92,359
+
+
+For the Model 100;
+
+1 'RXSET.100 1.2 JULY 86
+2 'Copyright by Steve Zimmerman, CIS 73226,3504, DELPHI "STEVEZIM"
+3 'Lines 5 - 35 can be combined to save some bytes - feel free to modify as
+4 'you need for your printer.
+5 CLS:SCREEN0,0:PRINT@5,"Epson RX-80 F/T  Printer Setup"
+10 PRINT"  <E>  Emphasized  <D>  Double Strike"
+15 PRINT"  <X>  Expanded    <S>  Elite"
+20 PRINT"  <C>  Compressed  <8>  8 Lines/Inch"
+25 PRINT"  <I>  Italics     <P>  Paper-Out Off"
+30 PRINT"  <G>  Graphics On <O>  Graphics Off"
+35 PRINT"  <R>  Reset Prntr <M>  Main Menu"
+40 PRINT@276,"< >";:PRINT@277,"";
+50 X$=INPUT$(1):PRINT@277,X$:IFX$=""THEN40
+60 IFX$="E"ORX$="e"THENLPRINTCHR$(27);CHR$(69)
+70 IFX$="D"ORX$="d"THENLPRINTCHR$(27);CHR$(71)
+80 IFX$="X"ORX$="x"THENLPRINTCHR$(27);CHR$(87);CHR$(49)
+90 IFX$="S"ORX$="s"THENLPRINTCHR$(27);CHR$(77)
+100 IFX$="C"ORX$="c"THENLPRINTCHR$(15)
+110 IFX$="8"THENLPRINTCHR$(27);CHR$(48)
+120 IFX$="I"ORX$="i"THENLPRINTCHR$(27);CHR$(52)
+130 IFX$="P"ORX$="p"THENLPRINTCHR$(27);CHR$(56)
+140 IFX$="G"ORX$="g"THENLPRINTCHR$(27);CHR$(109);CHR$(4)
+150 IFX$="O"ORX$="o"THENLPRINTCHR$(27);CHR$(109);CHR$(0)
+160 IFX$="R"ORX$="r"THENLPRINTCHR$(27);CHR$(64):GOTO40
+170 IFX$="M"ORX$="m"THENMENUELSE40
+
+Checksum: 77,872
+
+
+1 'FXSET.100 1.2 JULY 86
+2 'Copyright by Steve Zimmerman, CIS 73226,3504, DELPHI "STEVEZIM"
+3 'Lines 5 - 35 can be combined to save some bytes - feel free to modify as
+4 'you need for your printer.
+5 CLS:SCREEN0,0:PRINT@7,"Epson FX-85 Printer Setup"
+10 PRINT"  <N>  NLQ (pica)   <L>  Proportional"
+15 PRINT"  <E>  Emphasized   <D>  Double Strike"
+20 PRINT"  <X>  Expanded     <S>  Elite"
+25 PRINT"  <C>  Compressed   <T>  Comp. Elite"
+30 PRINT"  <I>  Italics      <8>  8 Lines/Inch"
+35 PRINT"  <R>  Reset Prntr  <P>  Paper-Out Off":PRINT"  <M>  Main Menu"
+40 PRINT@300,"< >";:PRINT@301,"";
+50 X$=INPUT$(1):PRINT@301,X$:IFX$=""THEN40
+60 IFX$="N"ORX$="n"THENLPRINTCHR$(27)"x1"
+70 IFX$="L"ORX$="l"THENLPRINTCHR$(27)"p1"
+80 IFX$="E"ORX$="e"THENLPRINTCHR$(27)"E"
+90 IFX$="D"ORX$="d"THENLPRINTCHR$(27)"G"
+100 IFX$="X"ORX$="x"THENLPRINTCHR$(27)"W1"
+110 IFX$="S"ORX$="s"THENLPRINTCHR$(27)"M"
+120 IFX$="C"ORX$="c"THENLPRINTCHR$(15)
+130 IFX$="T"ORX$="t"THENLPRINTCHR$(27)"M";CHR$(15)
+140 IFX$="I"ORX$="i"THENLPRINTCHR$(27)"4"
+150 IFX$="8"THENLPRINTCHR$(27)"0"
+160 IFX$="P"ORX$="p"THENLPRINTCHR$(27)"8"
+170 IFX$="R"ORX$="r"THENLPRINTCHR$(27)"@"
+180 IFX$="M"ORX$="m"THENMENUELSE40
+
+Checksum: 77,135
+
+Have fun with these programs!
+
+Steve Zimmerman
+CIS 73226,3504
+DELPHI STEVEZIM
+

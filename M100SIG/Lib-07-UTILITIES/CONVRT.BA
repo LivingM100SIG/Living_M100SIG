@@ -1,0 +1,63 @@
+100 'CONVRT.BA Copyright 6/25/1989
+101 'by Wayne Talbot 70156,1575
+102 'CONVRT.BA Converts file to all UPPERCASE
+103 'or to all lowercase or to all Namecase 
+104 'or to ASM.BA acceptable files.
+105 'Output file is called "RESULT.DO" if the
+106 'program is interrupted with the "break"
+107 'key. Otherwise the new file overwrites 
+108 'the old file.
+109 'Namecase is all lowercase except the 
+110 'first letter of each word. (Useful for 
+111 'converting all caps database files.)
+112 '
+120 ON ERROR GOTO 125
+125 CLS:MAXFILES=2:Z$=CHR$(10)
+130 FILES:PRINT "WHICH FILE TO CONVERT";:INPUT I$
+140 IF RIGHT$(I$,3)=".CO" OR RIGHT$(I$,3)=".co" OR RIGHT$(I$,3)=".ba" OR RIGHT$(I$,3)=".BA" THEN GOTO141 ELSE GOTO142
+141 BEEP:CLS:PRINT"This program accepts ";CHR$(34);".DO";CHR$(34);" files only!":GOTO130
+142 IF RIGHT$(I$,3)=".do" THEN I$=LEFT$(I$,(LEN(I$)-3))+".DO"
+145 IF RIGHT$(I$,3)<>".DO" THEN I$=I$+".DO"
+150 OPEN "RESULT.DO" FOR OUTPUT AS 1
+160 OPEN I$ FOR INPUT AS 2
+170 CLS:PRINT:PRINT "How do you want the resulting file?"
+171 PRINT"	1. UPPERCASE"
+172 PRINT"	2. lowercase"
+173 PRINT"	3. Namecase"
+174 PRINT"	4. ASM.BA compatible file"
+175 INPUT"	5. Return to the main menu ";N
+200 'READ AND WRITE LOOP TILL "EOF"
+210	A$=INPUT$(1,2)
+220		ON N GOSUB 1000,1100,1300,1400,999
+240	PRINT A$;:PRINT#1,A$;
+250	IF EOF(2) THEN GOTO 990
+290 GOTO 200
+990 KILL I$
+995 NAME "RESULT.DO"ASI$
+999 BEEP:SOUND1221,33:BEEP:SOUND1221,33:BEEP:BEEP:BEEP:MENU
+1000 'CONVERT TO ALL UPPERCASE
+1010	IF ASC(A$)<97 OR ASC(A$)>122 THEN GOTO 1030
+1020	A$=CHR$(ASC(A$)-32)
+1030	Z$=A$
+1040 RETURN
+1100 'convert to all lowercase
+1101	IF ASC(A$)<65 OR ASC(A$)>90 THEN GOTO 1120
+1110	A$=CHR$(ASC(A$)+32)
+1120	Z$=A$
+1130 RETURN
+1300 'Convert To Namecase
+1305	IF ASC(Z$)<65 OR (ASC(Z$)>90 ANDASC(Z$)<97) OR (ASC(Z$)>122) THEN FL=1 ELSE FL=0
+1310	IF (ASC(A$)>64 AND ASC(A$)<91) AND FL=1 THEN GOTO1330
+1320	IF (ASC(A$)>=97 AND ASC(A$)<=122) AND FL=1 THEN A$=CHR$(ASC(A$)-32):GOTO 1330
+1325	IF ASC(A$)>=65 AND ASC(A$)<=90 THEN A$=CHR$(ASC(A$)+32)
+1330	Z$=A$
+1340 RETURN
+1400 'CONVERT TO ASM.BA ACCEPTABLE FILE
+1405	IF ASC(A$)<97 OR ASC(A$)>122 THEN GOTO 1411
+1410	A$=CHR$(ASC(A$)-32)
+1411	IF Z$=CHR$(10) AND A$=";" THEN A$="REM ."
+1414	IF A$=";" THEN A$="."
+1416	IF A$=":" THEN A$=" "
+1420	Z$=A$
+1430 RETURN
+

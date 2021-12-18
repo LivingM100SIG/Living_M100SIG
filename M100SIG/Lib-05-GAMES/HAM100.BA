@@ -1,0 +1,60 @@
+5 CLS:PRINT"PRESS A KEY"
+10 Z=RND(1):A$=INKEY$:IFA$=""THEN10
+100 D1=0:P1=0:Z=0:P=95:S=2800:H=3000:E=H-S:Y=3:A=H/Y:I=5:Q=1
+215 CLS:PRINT"Hammurabi;I beg to report":Z=Z+1
+217 PRINTUSING"Year ##: ### starved - ### came to city";Z,D,I
+218 P=P+I : IF Q>0 THEN 230
+228 P=INT(P/2)
+229 PRINT"*** Plague Struck !***";:GOSUB2000:PRINT@80,"";
+230 PRINTUSING"Population ####. City owns #### acres.";P,A
+235 PRINTUSING"Harvest was # bu/Ac - Rats ate #### bu";Y,E
+260 PRINTUSING"You have #####, bushels in storage. ";S
+270 IFZ=11THENINPUT"Press enter";Z$:GOTO860
+310 Y=INT(10*RND(1))+17
+312 PRINT"Land is selling at";Y;"bushels per acre"
+320 PRINT@240,"";:INPUT"How many acres will you buy";Q:IF Q<0 THEN 850
+322 IF Y*Q<=S THEN 330ELSEGOSUB710:GOTO320
+330 IFQ=0THEN340ELSEA=A+Q:S=S-Y*Q:C=0:GOTO 410
+340 GOSUB2010:INPUT"How many do you wish to sell";Q:IFQ<0THEN850
+342 IFA<=QTHENGOSUB720:GOTO340
+350 A=A-Q:S=S+Y*Q:C=0
+410 GOSUB2010:INPUT"How many will you feed the people";Q:IFQ<0THEN850
+420 IFQ>STHENGOSUB710:GOTO410
+430 S=S-Q:C=1
+440 PRINT@240,STRING$(79,32);:PRINT@240,"";:INPUT"How many do you wish to plant";D:IF D<0THEN 850ELSEIFD=0THEN510
+445 IFD>ATHENGOSUB720:GOTO440
+450 IFINT((D+1)/2)>STHENGOSUB710:GOTO440
+455 IFD<=10*PTHEN510
+460 PRINT@280,"There're only";P;"to tend the fields !";:GOSUB2000:GOTO440
+510 S=S-INT(D/2):GOSUB800
+515 Y=C:H=D*Y:E=0:GOSUB800
+522 IFINT(C/2)<>C/2THEN530
+525 E=INT(S/C)
+530 S=S-E+H:GOSUB 800
+533 I=INT(C*(20*A+S)/P/100+1)
+540 C=INT(Q/20)
+542 Q=INT(10*(2*RND(1)-.3)):IFP<CTHEND=0:GOTO215
+552 D=P-C:IFD>.45*PTHEN560
+553 P1=((Z-1)*P1+D*100/P)/Z
+555 P=P-D:D1=D1+D:GOTO215
+560 CLS:PRINT"You starved";D;"people in one year!"
+565 PRINT"Due to this extreme mismanagement you have not only been impeached, but shall he hung at noon!!"
+566 GOTO 990
+710 PRINT@280,"Hammurabi, Think again";:GOSUB2000
+711 PRINT@280,"You only have";S;"bushels of grain";:GOSUB2000:RETURN
+720 PRINT@280,"But sir! You only have";A;"acres!";:GOSUB2000:RETURN
+800 C=INT(RND(1)*5)+1:RETURN
+850 PRINT"Hammurabi ! I cannot do as you wish":GOTO990
+860 CLS:PRINT"In your 10 year term of office":PRINTUSING"##.# percent of the population died ";P1:PRINTUSING"per year. A total of ### people died !!";D1
+870 L=A/P:PRINT"You started with 10.0 acres per person"
+872 PRINTUSING"and ended with ##.#";L
+880 IF P1>33 OR L<7 THEN 565
+890 IF P1>10 OR L<9 THEN 940
+892 IF P1>3  OR L<10 THEN 960
+900 PRINT"Fantastic performance !!!":GOTO990
+940 PRINT"A Rather poor performance. You will be":PRINT"tarred & feathered on your way out":GOTO 990
+960 PRINT"Your performance wasn't bad. You may":PRINT"get re-elected !!."
+990 BEEP:PRINT"Again ?"; 
+1000 A$=INKEY$:IF A$="y"THEN CLS:RUNELSEIFA$=""THEN1000ELSEMENU
+2000 FORXX=1TO1200:NEXT
+2010 PRINT@240,STRING$(79,32);:PRINT@240,"";:RETURN

@@ -1,0 +1,72 @@
+XMADAY.200   copyright (c) 1989 
+               by Paul Globman
+                  Wilson Van Alst
+
+XMADAY.200 is the cross bank version of Wilson Van Alst's MAYDAY.200 and 
+incorporates Van's BRRSET.200 for resetting the DAY, DATE, and TIME.
+
+It was designed to recover .DO files that were lost to a system cold restart.
+
+The advantage of XMADAY over MAYDAY is that XMADAY does not have to be moved 
+into the recently cold started bank, thereby preserving RAM in that bank for
+data recovery.
+
+The program starts by requesting DAY, DATE, and TIME input.  A <CR> will 
+politely bypass the current prompt while an improper input will return to the 
+T200 menu.
+
+The final prompt "Destination Bank" requires the user to enter the bank to 
+be recovered.  A response other than "2" or "3" will be interpretted as "1".
+
+The program returns to the bank from which it was run, and upon entering the
+recovered bank, the file FOUND.DO will be on the menu, and will be 18500 bytes
+in size.
+
+The users should remove non ascii data from the beginning and end of this file
+before separating the individual .DO files.  The character GRPH-l is inserted
+between individual .DO files so you can use F1(Find) to locate the end of each 
+file.  Use CUT/PASTE to create new TEXT files for each block of text found 
+between the GRPH-l characters.
+
+Run the following BASIC loader program to create XMADAY.CO.
+
+1 '************************
+2 '*  XMADAY.CO           *
+3 '*    by Paul Globman   *
+4 '*  Copyright (c) 1989  *
+5 '************************
+10 FOR I = 63574 TO 63786 
+20 READ X:POKE I,X:SM=SM+X
+30 NEXT
+40 IF SM = 26972 THEN 60
+50 PRINT"error in data":STOP
+60 SAVEM"XMADAY.CO",63574,63786,63617
+1000 DATA 62,0,211,216,33,27,111,205
+1010 DATA 115,45,1,68,72,205,168,130
+1020 DATA 218,125,248,229,9,235,225,126
+1030 DATA 254,26,204,84,65,254,127,204
+1040 DATA 84,65,35,223,218,109,248,175
+1050 DATA 195,153,3,33,164,103,34,52
+1060 DATA 239,33,1,249,205,165,248,196
+1070 DATA 103,27,33,11,249,205,165,248
+1080 DATA 196,35,27,33,26,249,205,165
+1090 DATA 248,196,19,27,195,189,248,205
+1100 DATA 158,103,62,7,50,7,239,205
+1110 DATA 246,84,215,200,17,43,249,205
+1120 DATA 183,121,33,41,249,182,201,49
+1130 DATA 255,255,33,3,105,205,204,17
+1140 DATA 205,247,18,231,214,48,71,62
+1150 DATA 1,135,5,194,207,248,230,12
+1160 DATA 50,238,248,50,87,248,33,86
+1170 DATA 248,17,86,248,1,103,0,243
+1180 DATA 205,236,248,195,86,248,197,6
+1190 DATA 0,213,86,227,205,176,155,209
+1200 DATA 235,193,35,19,11,121,176,194
+1210 DATA 236,248,201,68,97,121,58,32
+1220 DATA 32,95,95,95,0,68,97,116
+1230 DATA 101,58,32,109,109,47,100,100
+1240 DATA 47,121,121,0,84,105,109,101
+1250 DATA 58,32,104,104,58,109,109,58
+1260 DATA 115,115,0,221,34
+1270 REM       END OF DATA
+

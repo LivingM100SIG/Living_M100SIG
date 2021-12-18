@@ -1,0 +1,40 @@
+    While being logged on, record the whole session to cassette, and reread it 
+later or download the files from the playback!  It is particularly useful if 
+you don't own a disk drive and there isn't enough memory to download a couple 
+of large files at one log-on.  This only works if you are using the built in 
+modem.
+
+  Here's how:
+1) Put a microphone at the earpiece of the telephone, start recording, and log 
+on.
+2) After logging off, stop the recorder, plug in the cassette connector to the 
+
+phone port, instead of cass port.
+3) Switch to acoustic coupler setting
+4) Go to TELCOM and press F4(terminal mode), or run the short basic program at
+ the end of this file.
+5)  Rewind to the beginning of the transmission, which is the carrier,
+ and play it.  If you have CCR-82 data recorder, set volume to 3 mark.
+  Experiment if you have an ordinary recorder.
+6) To capture files to ram, you must time yourself, since the incoming data 
+cannot wait for the File name? input.  You must know when data is coming and 
+ready the capture buffer before it 
+comes.
+
+
+
+Run this program as an alternative to TELCOM.  Its advantage is that it is 
+immune to Lost Carrier, so you can fast forward or rewind.
+
+
+10 MAXFILES=2
+15 ONERROR GOTO 110
+40 PRINT "Press 'D' to Download, 'A' to Abort."
+45 OPEN"MDM:7I1ENN"FORINPUTAS1
+50 K$=INKEY$:IFK$=""THENK$=" "ELSEIFK$="M"THENMENU
+55 IFINSTR("Dd",K$)THENCLOSE2:D=1:PRINT:INPUT"FILE NAME";F$:PRINT"Append? ";:R$=INPUT$(1):PRINTR$:IFINSTR("Yy",R$)THENOPENF$FORAPPENDAS2ELSEOPENF$FOROUTPUTAS2
+60 IFINSTR("Aa",K$)THEND=0:CLOSE2:PRINT:PRINT"Aborted."
+80 A$=INPUT$(1,1):IFDTHENPRINT#2,A$;
+90 PRINT A$;
+95 GOTO 50
+110 PRINT "Out of memory":CLOSE2:D=0:RESUME50

@@ -1,0 +1,34 @@
+	Ever get that dejavu feeling when you were running a program or playing
+a game that used the RND(1) function? The method normally used to add an 
+element of unpredictability involves a variation of the following simple 
+program:
+	
+	10 R=VAL(RIGHT$(TIME$,2))
+	20 FOR X=1 TO R
+	30 DUMMY=RND(1)
+	40 NEXT
+	
+	What this does is advance the RND function in the series <R> number of 
+times. But, the sequence generated is ALWAYS the same series of numbers. 
+
+	To alleviate the problem it is necessary to re-seed the initial 
+starting number to create a NEW series of pseudo-random numbers. This can be 
+done using the POKE function.
+
+	The random numbers for the M100 are stored in locations 64634 to 64640.
+For the Model 200 they are at 63277 to 63283. To re-seed these locations use 
+the following one-liners:
+
+For the M100:
+POKE 64634,PEEK(63791)
+
+FOR THE 200:
+POKE 63277,PEEK(61983)
+
+	By re-seeding the first address you will get 82 different series on the
+M100 and 97 on the 200. It also has the advantage of speeding up your program 
+because there will no longer be a time lag while the program loops through the 
+DUMMY routine.
+
+Note: The information for the M100 was originally provided by Larry Gensch.
+

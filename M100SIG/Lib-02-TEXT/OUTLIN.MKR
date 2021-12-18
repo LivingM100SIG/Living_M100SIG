@@ -1,0 +1,38 @@
+0 'Outline Maker v2.0 Converts IDEA! files into "properly" outlined output
+1 'program supplied "bare-bones" - enhance as you see fit...
+2 'suggestions: 1. output to RAM:file & edit it before printout
+3 '2. WARNING: do not exceed 6 levels of outline with program in present form-
+4 'add data statements to line 27-29 and change "6" in lines 10 & 20 if you
+5 'expect to use more than 6 levels of outline.
+6 'no copyright claimed on this program
+7 'problems? =-> [CASS].
+8 'I like the program the way it is but  I'll answer questions if you are
+9 'tailoring it for your needs.
+10 CLS:CLEAR512,MAXRAM:MAXFILES=2:DIMH$(6,26)
+20 FORA=1TO6:FORB=1TO26:READH$(A,B):NEXTB,A
+21 DATA1.,2.,3.,4.,5.,6.,7.,8.,9.,10.,11.,12.,13.,14.,15.,16.,17.,18.,19.,20.,21.,22.,23.,24.,25.,26.
+22 DATAA.,B.,C.,D.,E.,F.,G.,H.,I.,J.,K.,L.,M.,N.,O.,P.,Q.,R.,S.,T.,U.,V.,W.,X.,Y.,Z.
+23 DATA (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(21),(22),(23),(24),(25),(26)
+24 DATA (a),(b),(c),(d),(e),(f),(g),(h),(i),(j),(k),(l),(m),(n),(o),(p),(q),(r),(s),(t),(u),(v),(w),(x),(y),(z)
+25 DATA [1],[2],[3],[4],[5],[6],[7],[8],[9],[10],[11],[12],[13],[14],[15],[16],[17],[18],[19],[20],[21],[22],[23],[24],[25],[26]
+26 DATA [a],[b],[c],[d],[e],[f],[g],[h],[i],[j],[k],[l],[m],[n],[o],[p],[q],[r],[s],[t],[u],[v],[w],[x],[y],[z]
+27 'more data statements if you need more than 6 levels of outline
+28 'more data
+29 'more data
+30 'more data
+31 'more data
+32 'more data
+33 'more data
+34 'more data
+35 'more data
+70 INPUT"INPUT FILE ";FI$:INPUT"OUTPUT FILE ";FO$:OPENFI$FORINPUTAS1:OPENFO$FOROUTPUTAS2
+80 LINEINPUT#1,L$'FORMAT INTO HEADER...
+90 PRINT#2,L$
+100 IFEOF(1)THEN900ELSELINEINPUT#1,L$:IFL$=CHR$(255)THEN900
+110 A=VAL(LEFT$(L$,2)):L$=RIGHT$(L$,(LEN(L$)-2)):IFA<1ORA>6THENPRINTA;:STOP
+200 FORC=A+1TO6:B(C)=0:NEXTC:B(A)=B(A)+1:IFB(A)>26THENPRINTL$,B(A):STOP
+210 M$=H$(A,B(A)):L$=SPACE$(A*2)+M$+" "+L$
+220 PRINT".";
+230 PRINT#2,L$
+300 GOTO100
+900 CLOSE:BEEP:MENU

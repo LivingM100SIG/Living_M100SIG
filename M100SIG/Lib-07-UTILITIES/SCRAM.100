@@ -1,0 +1,35 @@
+0 'SCRAM.100 - File Encryption ver. 1.1 by Bob Willard [70425,1155]
+1 'This fully-prompted program scrambles and unscrambles text (.DO) files
+2 'in the Model 100.  An encoded file will be stored under the
+3 'first 3 characters of its filename plus ENC.DO (for encrypted).
+4 'The original file is killed when the encoding/decoding is completed.
+5 'The value of N in line 10 may be varied from 1-4 for different
+6 'encryption codes.  DO NOT EXCEED 4 FOR THE VALUE OF N.
+7 'Most common errors will be trapped, and ENC.DO is needed for decoding.
+8 'The program occupies 954 bytes without REM statements and
+9 'needs 2x the file size to be encoded/decoded to run.
+10 MAXFILES=2:DEFSTRA-M:DEFINTN-Z:N=4:A=CHR$(27):B=A+"p":C=A+"q":ONERRORGOTO50
+11 D=".DO":E="ENC.DO":CLS:PRINT@52,B;" THE SCRAMBLER ";C:PRINT
+12 PRINTTAB(10)B;"E";C;"ncode";TAB(25)B;"D";C;"ecode"
+13 PRINT@240,"Enter your choice in caps <E/D>"
+14 K=INKEY$:IFK<>"E"ANDK<>"D"THEN14
+15 IFK="E"THEN20ELSE30
+20 PRINT@277,D;:PRINT@240,"Enter filename for encoding: ";:INPUTF
+21 CLS:F=F+D:IFRIGHT$(F,6)=ETHEN60
+22 OPENFFORINPUTAS1:G=LEFT$(F,3)+E:OPENGFOROUTPUTAS2:GOSUB110
+23 K=INPUT$(1,1):X=ASC(K)+N:IFX>255THENX=X-255
+24 L=CHR$(X):PRINT#2,L;:IFEOF(1)THEN120ELSE23
+30 PRINT@277,D;:PRINT@240,"Enter filename for decoding: ";:INPUTF
+31 PRINT@271,"      ":PRINT@240,"Enter new (decoded) filename:";:INPUTG
+32 CLS:F=F+D:IFRIGHT$(F,6)<>ETHEN70
+33 OPENFFORINPUTAS1:G=G+D:OPENGFOROUTPUTAS2:GOSUB110
+34 K=INPUT$(1,1):X=ASC(K)-N:IFX<0THENX=X+255
+35 L=CHR$(X):PRINT#2,L;:IFEOF(1)THEN120ELSE34
+50 IFERR=52THENPRINTB;" File Not Found ";C:FILES:RESUME100
+55 CLS:PRINTB;" Error";ERR;"in line";ERL;C:CLOSE:STOP
+60 GOSUB80:PRINTTAB(6)"This file is already encoded":GOTO100
+70 GOSUB80:PRINTTAB(8)"This file is not encoded":GOTO100
+80 PRINT@135,B;" WARNING ";C:RETURN
+100 FORT=1TO5000:NEXT:GOTO11
+110 PRINT@127,B;" CREATING ";G;" FILE ";C:RETURN
+120 CLOSE:KILLF:MAXFILES=1:MENU

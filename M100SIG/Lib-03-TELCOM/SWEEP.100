@@ -1,0 +1,65 @@
+SWEEP is an m/l program that must be located at or above HIMEM.  However, the
+loader program allows you to select its location.  SWEEP is 228 bytes long.  
+Since SWEEP must be setup before entering Telcom, it must be adapted to the
+software you might be using for dialing and logging on before entering Telcom.
+
+PRELIMINARY INSTRUCTIONS:  Program Line 115.   Access to SWEEP.
+.If you do not use any special software and access TELCOM directly from the Main
+Menu or if your software brings you to Entry Mode, remove the 2nd line 115 from
+the program before loading it in.
+
+If your software brings you to Terminal Mode, remove the 1st line 115 or leave
+it in (in which case the 2nd line 115 will overwrite the 1st).
+
+If your software ends by CALL XXXXX, which is neither one of the two addresses
+mentionned, the hexadecimal expression of this address (low byte first) must be
+line 115 (instead of the 2 lines 115 shown in the program).
+
+Next, those accessing TELCOM from the Main Menu can use SWEEP.CO instead.  If
+sufficiently experienced, they can change TELCOM's address to that of SWEEP.
+One can also enter BASIC and type CALL XXXXX <CR> where XXXXX is the address of
+SWEEP.
+
+Those using a special software before accessing Telcom must change the CALLed
+address (at end of software) to that of SWEEP.
+
+LOADING INSTRUCTIONS
+.With the cut/paste method, move the program lines to a new .DO file.
+.Verify the checksum (= 92673), then adjust line 115 as explained in the
+PRELIMINARY INSTRUCTIONS.  Whatever you do, line 115 MUST contain no more, no
+less than 4 bytes of DATA.
+
+Next, go to BASIC and Load"XXXXXX",R.  XXXXXX stands for the .DO's file name. 
+No extension required. R will run the program, load SWEEP into the HIMEM area
+and return you to the Main Menu.  The menu will display SWEEP.CO which you can
+save or kill, as it is already loaded in at the address you chose. You can also
+save or kill the BA version of the DO file which is in the current BA file.
+
+Nothing more needs to be done.  You enter Telcom just as you did before.
+
+			==============================
+
+1 CLS:' *SWEEP* by Mike Kelton, CIS ID# 100325,1507     Dated: Dec. 12th,1994
+2 PRINT@89,CHR$(27)"K";:INPUT"Start address ";S:PRINT@170,CHR$(27)"J":
+3 IFS<32769ORS>62732THENBEEP:PRINT@170,"Not a valid address":GOTO2
+4 IFHIMEM<=STHEN6ELSEBEEP:PRINT@167,"Please set Himem to"S
+5 IFINKEY$=""THEN5ELSEMENU
+6 PRINT@168,"Your Himem set to"HIMEM:PRINT@248,"OK to continue ? (Y/N)";
+7 A$=INPUT$(1):IFA$=""THEN7ELSEA=ASC(A$)AND223:IFA=78THENMENUELSEIFA<>89THEN7
+8 PRINT@247,"Loading... Wait 8 seconds."
+10 DEFINTB,I,J:DEFSNGK,L:DIMK(16):H$="/0123456789ABCDEF":P=S:L=S-32768
+20 FORI=0TO16:READK(I):K(I)=L+K(I):NEXT
+30 FORJ=1TO6:READD$:FORI=1TOLEN(D$)STEP2:B=16*INSTR(H$,MID$(D$,I,1))+INSTR(H$,MID$(D$,I+1,1))-34
+40 IFB<0THENGOSUB70ELSEPOKEP,B
+50 P=P+1:NEXT:NEXT
+60 FORI=-86TO-76:READB:POKEI,B:NEXT:SAVEM"SWEEP",S,P-1,S
+70 B=B+17:POKEP,K(B)MOD256:P=P+1:POKEP,128+K(B)\256:RETURN
+100 DATA15,16,23,77,92,109,116,122,141,169,175,179,184,186,197,199,215
+110 DATA2AE2FA22/021/122E2FAC3
+115 DATA4651:REM Entry Mode
+115 DATA5554:REM Terminal Mode
+120 DATA21000022E2FA79C94F3AEEFDB7CA//380EED7CE6FDD65479C021ED14E3FE7FC82146F67ED61BCA/B79FE1BCA/BCDC5732A
+130 DATA39F6FE20DA/7CD/ECC/32239F6EBCD4074AF32F2FFC911C0FC2100FECDFB4521/4E5EBCDDF45CD5C76CD3875AF47D3FE0E
+140 DATA5FAFD3FF0DC2/678C640C2/5CD9E5A210101C911/2D5FE0DCA/9FE09CA/CFE08C2/ACD/8CA/ACD/D25C026282DC925C2/F
+150 DATAF1AF32F2FF77C9CD/D7C3DE607C2/CC90E20E5CD864571D1D5CDEE73E1243E2994C026013A3DF6C6089523C02E01C9
+200 DATA5,77,0,69,0,78,0,85,0,13,0

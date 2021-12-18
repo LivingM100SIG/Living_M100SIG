@@ -1,0 +1,244 @@
+0 ' Runs on M100 & RS DMP 120
+5 '(C) 1983, Kirk Woodward, unlimited use granted.
+10 'Invoicing Program *****************
+20 '                  * Kirk Woodward *
+30 '                  *3326 GreenAcres*
+40 '                  *AbileneTX 79605*
+50 '                  *   [70146,51]  *
+55 '                  *****************
+60 MAXFILES=1
+70 CLEAR 400
+80 D=0:CLS
+90 RN$=CHR$(27)+"p":NV$=CHR$(27)+"q"
+100 CLS:PRINT @  50 ,RN$;" INVOICE PROGRAM ";NV$
+112 PRINT "       *ENTER* takes you to the                PREPARE INVOICE section.
+113 LINE INPUT"                *L* permits loading and                 printing a FILE.";S$:CLS
+115 IF S$="L"OR S$="l" THEN 20000.
+170 PRINT"<1> Product/Service 1"
+180 PRINT"<2> Product/Service 2"
+190 PRINT"<3> Product/Service 3
+200 PRINT"<4> Product/Service 4
+210 PRINT"<5> Other"
+220 PRINT"<6> Product/Service 5
+230 INPUT "Select product to be billed by Number:";A:CLS
+235 IF A <1 OR A>6 THEN 170
+240 ON A GOTO 1000,2000,3000,4000,5000,6000
+250 LINE INPUT "Name:";A$
+255 GOSUB 7000
+260 LINE INPUT "Company: ";B$
+270 LINE INPUT "Address:";C$
+280 LINE INPUT "City:";D$ 
+285 LINE INPUT "State: ";D1$
+290 INPUT"ZIP: ";B
+300 INPUT"Customer ID Number: ";C
+305 LINE INPUT "Purchase Order: ";E$
+310 CLS:PRINT @ 10,RN$;" ";A$
+320 PRINT @ 40," ";B$
+330 PRINT @ 80, " ";C$
+340 PRINT @ 120," ";D$;",";D1$;" ";B
+350 PRINT @ 160," Customer ID: ";C
+360 PRINT@200," Purchase Order: ";E$
+365 PRINT" ";I2;I1$;NV$
+370 LINE INPUT "everything ok? (Y/N) <ENTER>=Y";Z$:CLS
+380 IF Z$="N"OR Z$="n" THEN 170
+385 GOSUB 30000
+390 PRINT:PRINT:LINE INPUT "Press <ENTER> when ready to print...";ZZ$:BEEP:CLS
+395 GOSUB 7000
+400 D=D+1:PRINT@82,"Printing";D;" of 3"
+410 LPRINT"                              qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+500 LPRINT CHR$(27);CHR$(14);"               COMPANY NAME GOES HERE  "
+505 LPRINT"               qqqqqqqqqqqqqqqqqqqqqqqq"
+510 LPRINT CHR$(27);CHR$(20);"                                                 Street Address  "
+520 LPRINT"                                             City State Zip"
+530 LPRINT"                                                   (915) 692-6826"
+540 LPRINT
+545 LPRINT TAB(38); STRING$(28,"*")
+550 LPRINT"                                      *         Slogan/Theme     *"
+560 LPRINT TAB(38); STRING$(28,"*")
+570 LPRINT CHR$(27);CHR$(15);CHR$(27);CHR$(19)
+580 LPRINT:LPRINT
+590 PRINT@82,"Printing";D;" of 3"
+600 LPRINTTAB(5)A$;TAB(45);"          Date: ";DATE$
+610 LPRINTTAB(5)B$;TAB(45);"Purchase Order: ";E$
+620 F$=DATE$:G$=RIGHT$(F$,2)
+630 'Line 620 Assembles an invoice number from the Date$, line 640 prints it.
+640 LPRINT TAB(5)C$;TAB(45)"Invoice Number: ";G$;D*1219
+650 LPRINTTAB(5)D$;", ";D1$;" ";B;TAB(45)" Shipping Date: ";K$
+655 LPRINT TAB(45) "      Customer: ";C
+660 LPRINT:LPRINT
+670 LPRINT STRING$(80,"q")
+680 LPRINT "Terms:  Cash";TAB(40)"Via:  First Class"
+690 LPRINT STRING$(80,"q")
+700 LPRINT
+710 LPRINT
+720 LPRINT"Ordered";TAB(10)"Shipped";TAB(20)"Description";TAB(55)"Each";TAB(70)"Total"
+730 LPRINT
+740 LPRINT TAB(5);USING "##";I1;:LPRINT TAB(15);USING "##";I2;:LPRINTTAB(20);I1$;
+742 LPRINTTAB(57);USING"###.##";I3;:LPRINTTAB(72)USING "###.##";I4
+750 LPRINT
+760 LPRINT TAB(20)"Shipping & Handling";:LPRINTTAB(72);USING"###.##";I5
+770 LPRINT
+780 LPRINT
+790 LPRINTTAB(47);"Sub Total:";:LPRINTTAB(72);USING"###.##";I6
+800 LPRINTTAB(47);"Sales Tax:";:LPRINTTAB(72);" 00.00"
+810 LPRINT:LPRINTTAB(47);"Total:";:LPRINTTAB(71);USING"$###.##";I8
+820 FORZZ=1TO10:LPRINT:NEXT
+824 LPRINT X1$:LPRINT X2$:LPRINT X3$:LPRINTX4$
+826 '============Here's where a D controlled print line, "FILE COPY", etc. should go
+828 FOR ZZ=1TO6:LPRINT:NEXT
+830 LPRINTSTRING$(80,"q")
+840 L$="Thank You For This Business!"
+850 L=LEN (L$):M=(80-L)/2
+860 LPRINTTAB(M);L$
+870 LPRINTSTRING$(80,"q")
+880 FORZZ=1TO7:LPRINT:NEXT
+890 IF D<3 THEN 400
+895 IF D=3 THEN GOSUB 10000
+900 PRINT"                                        Press <ENTER> to do another..."
+903 PRINT"<E> exits the program."
+905 PRINT
+910 LINE INPUT "                   ";Z$
+920 IF Z$="E" OR Z$="e" THEN MENU
+930 GOTO80
+1000 '"Product/Service 1" SECTION.
+1010 I1$="Product/Service 1"
+1020 I3=00.00'Insert price of Product/Service 1 here
+1030 PRINT"Product/Service 1"
+1040 PRINT
+1050 INPUT "Number shipped:";I2
+1055 INPUT "Shipping Charges ";I5
+1060 LINE INPUT"Shipping Date: ";K$
+1100 GOTO 250
+2000 'Product/Service 2 Section
+2010 I1$="Product/Service 2"
+2020 I3=00.00'Product/Service 2 price goes here
+2030 PRINT"Product/Service 2"
+2040 PRINT
+2050 INPUT "Number shipped:";I2
+2055 INPUT "Shipping Charges? ";I5
+2060 LINE INPUT"Shipping Date: ";K$
+2100 GOTO 250
+3000 'Product/Service 3 Section
+3010 I1$="Product/Service 3"
+3020 I3=00.00 'Product/Service 3 price goes here
+3030 PRINT"Product/Service 3"
+3040 PRINT
+3050 INPUT "Number shipped:";I2
+3055 INPUT "Shipping Charges? ";I5
+3060 LINE INPUT"Shipping Date: ";K$
+3100 GOTO 250
+4000 'Product/Service 4 Section
+4010 I1$="Product/Service 4"
+4020 I3=00.00'Product/Service 4 price goes here
+4030 PRINT"Product/Service 4"
+4040 PRINT
+4050 INPUT "Number shipped:";I2
+4055 INPUT "Shipping Charges? ";I5
+4060 LINE INPUT"Shipping Date: ";K$
+4070 GOTO250
+5000 '"OTHER SECTION"
+5005 LINE INPUT "PRODUCT: ";I1$
+5010 INPUT "PRICE: ";I3
+5020 CLS:'This line for permanent price otherwise Line 5010 & I3 sets price.
+5030 PRINTI1$;" @ $";I3
+5040 PRINT
+5050 INPUT "Number shipped:";I2
+5055 INPUT "Shipping Charges? ";I5
+5060 LINE INPUT"Shipping Date: ";K$
+5070 GOTO 250
+6000 '"FURTURE EXPANSION SECTION.
+6010 I1$="PRODUCT/SERVICE NAME HERE"
+6020 I3=0'PRICE HERE
+6030 PRINT"PRODUCT/SERVICE NAME HERE"
+6040 PRINT
+6050 INPUT "Number shipped:";I2
+6055 INPUT "Shipping Charges? ";I5
+6060 LINE INPUT"Shipping Date: ";K$
+6070 GOTO250
+7000 I1=I2:I4=I3*I1:I6=I4+I5
+7010 'HERE IS WHERE SALES TAX COULD BE ACTIVIATED IF NEEDED IN THE FUTURE...
+7012 'THE FORMULA WOULD BE: I7=(I6*.05)+.005(for state of Texas...5%) THE I7 
+7013 'VARIABLE WOULD NEED TO BE INSERTED IN THE PRINT/INPUT SUBROUTINES 
+7014 '(10000 & 20000)
+7020 I8=I6 'SALES TAX, I7, WOULD NEED TO BE ADDED HERE.
+7030 RETURN
+10000 'file creation subroutine
+10002 O$=LEFT$(A$,6)
+10004 OPEN "RAM:"+O$ FOR OUTPUT AS 1
+10006 PRINT@121,"Data Written to ";O$;".DO file"
+10008 PRINT #1,A$
+10010 PRINT#1,B$
+10020 PRINT#1,C$
+10030 PRINT#1,D$
+10035 PRINT#1,D1$
+10040 PRINT#1,E$
+10050 PRINT#1,K$
+10060 PRINT#1,F$
+10110 PRINT#1,USING "\                                \";I1$
+10130 PRINT#1,O$
+10140 PRINT#1,P$'   UNUSED AS OF 12/25/83
+10150 PRINT#1,R$'   UNUSED AS OF 12/25/83
+10160 PRINT#1,S$'   UNUSED AS OF 12/25/83
+10170 PRINT#1,T$'   UNUSED AS OF 12/25/83
+10200 PRINT#1,USING "\                                      \";X1$
+10210 PRINT#1,USING "\                                      \";X2$
+10220 PRINT#1,USING "\                                      \";X3$
+10230 PRINT#1,USING "\                                      \";X4$
+10240 PRINT#1,I1
+10250 PRINT#1,I2
+10260 PRINT#1,I3
+10270 PRINT#1,I4
+10280 PRINT#1,I5
+10290 PRINT#1,I6
+10300 PRINT#1,I8
+10310 PRINT#1,B
+10320 PRINT#1,C
+10330 CLOSE
+10340 RETURN
+20000 'FILE LOADING AREA
+20002 CLS:FILES
+20004 PRINT"Which file to load? ";
+20006 LINE INPUT R$
+20007 OPEN "RAM:"+R$ FOR INPUT AS 1
+20008 INPUT #1,A$
+20010 INPUT#1,B$
+20020 INPUT#1,C$
+20030 INPUT#1,D$
+20035 INPUT#1,D1$
+20040 INPUT#1,E$
+20050 INPUT#1,K$
+20060 INPUT#1,F$
+20110 INPUT#1,I1$
+20130 INPUT#1,O$
+20140 INPUT#1,P$'        unused 
+20150 INPUT#1,R$'        unused 
+20160 INPUT#1,S$'        unused 
+20170 INPUT#1,T$'        unused 
+20200 INPUT#1,X1$
+20210 INPUT#1,X2$
+20220 INPUT#1,X3$
+20230 INPUT#1,X4$
+20240 INPUT#1,I1
+20250 INPUT#1,I2
+20260 INPUT#1,I3
+20270 INPUT#1,I4
+20280 INPUT#1,I5
+20290 INPUT#1,I6
+20300 INPUT#1,I8
+20310 INPUT#1,B
+20320 INPUT#1,C
+20330 CLOSE
+20340 GOTO 390
+30000 CLS:PRINT:PRINT"    <ENTER> creates and prints             Remarks
+30003 PRINT "    on the invoice." 
+30005 PRINT"       <E> skips Remarks.":LINE INPUTZ$:CLS
+30010 IF Z$="E" OR Z$="e" THEN RETURN
+30020 PRINT RN$;" Remarks Section ";NV$
+30030 PRINT:PRINT"The limit is 38 characters per          each of four lines."
+30040 PRINT:PRINT"Remarks, Line "
+30050 LINEINPUT "1:";X1$
+30060 LINEINPUT "2:";X2$
+30070 LINEINPUT "3:";X3$
+30080 LINEINPUT "4:";X4$:CLS
+30130 RETURN
+

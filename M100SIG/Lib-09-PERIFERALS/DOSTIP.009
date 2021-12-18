@@ -1,0 +1,120 @@
+DOSTIP.009/Direct Sector Access using DSKO$
+===========================================
+joel dinda
+[75725,1134]
+
+Among Powr-DOS's many virtues is that it provides TDD1 users the capability to
+bypass the TDD file structure and access disk sectors directly.  The most
+obvious applications for this capability are utility programs (there are
+several such in this Library) and (random access?) database programs (aside:
+database programmers will have to write their own file-management routines, a
+matter this discussion ignores).  This file lists all-in-one-place those things
+someone writing such a program will need to know.
+
+First I'll talk about syntax, then I'll discuss some necessary concerns,
+finally I'll discuss some background matters.
+
+**WARNING:  This is an advanced and fairly specialized programming tip.  Only
+fairly experienced M100(etc) programmers will understand some of this
+discussion.  Lots of it is pretty opaque.  While it's not intended to
+intimidate, you've got to be writing a pretty sophisticated program to want to
+know these things.
+
+FLOPY2/TDD2 users/programmers will want to read TD2TIP.009.  Besides differing
+in technical details, that TIP includes some comparative information this file
+lacks.
+
+Syntax
+======
+The necessary command is:
+      DSKO$ Y,S,BF
+Where:
+      Y indicates the activity you wish to provoke.
+      
+      S indicates the diskette sector being transferred.
+      
+      BF indicates the RAM address reserved (by you) for the file transfer. 
+      (Call it a buffer [BF]; this is the lowest address [possibly HIMEM] in
+      the buffer.  I discuss this further below.)
+      
+Y options:
+-----------
+      0 attempts to read the diskette.
+      Anything else attempts to write to the diskette.
+      
+S options:
+-----------
+      Sector number you want to read from/write to RAM.
+      
+BF options:
+-----------
+      Any legal RAM address--but some are far better than others.  I'll return
+      to this momentarily.
+      
+Necessary Concerns:
+===================
+Is Powr-DOS there?
+------------------
+Check to see if Powr-DOS is actually installed.  The P-DOS command provided for
+this purpose is LFILES V:
+      0 ON ERROR GOTO 101:LFILESV:ON ERROR GOTO 100: ...
+      100 ... ELSE PRINT "Error"ERR"in line"ERL:PRINT "Press <Any
+      Key>":T$=INPUT$(1):LFILES MENU
+      101 BEEP:PRINT "No Powr-DOS":END
+Of uncertain significance:  Those of us who converted from Powr-Disk to
+Powr-DOS discovered that P-Disk doesn't handle LFILESV well.  I've decided
+that's not an important concern.
+
+Buffers
+-------
+Next create one or more buffers for your program's use.
+
+You'll need one buffer for each sector you intend to duplicate in RAM at any
+one time; the exact number will depend either upon the nature of your
+application or the amount of RAM available.  Each buffer will be 1292 bytes
+long; it should be locked in with some variation of the following instruction:
+      CLEAR256,HIMEM-(1292*(number of buffers))
+
+It is *always* good practice to restore HIMEM to its previous value when the
+program finishes; there are at least two workable schemes.  Folks who use
+MAXRAM instead of HIMEM in programs which overwrite high memory are despicable
+creatures; they should, at least, warn users that they're destroying files.
+
+Error Trapping
+--------------
+While Powr-DOS provides a fairly extensive set of error messages, most users
+only want to know whether the problem's in the drive or with the disk.  I've
+long used this sort of error trap with Powr-DOS programs:
+      99 ... ELSE IF ERR>62 AND ERR<66 THEN PRINT "Disk Error" ELSE IF ERR>58
+      AND ERR<67 THEN PRINT "Drive Error" ELSE PRINT "Error"ERR"in line"ERL
+      100 PRINT "Press <Any Key>": ...
+      
+Background
+==========
+Much of the technical information was obtained by studying the Powr-DOS manual,
+from hints left by Ed Giese of Acroatix on this SIG, and by systematic
+experimentation.  Some of the discussion follows from fairly extensive
+experience with Powr-DOS.
+
+Buffer Format:
+--------------
+The first 1280 bytes of the sector (actually, buffer) (call them BF+0 thru
+BF+1279) duplicate in RAM the information in the diskette sector.  Except for
+Sector 0 (the directory sector), this this could be anything (TDD1 doesn't
+inflict any format.)  Unless modified, Sector 0 conforms to the information in
+SECTR0.TDD, available from this Library.
+
+BF+1280 is the file vector:
+      0 means the sector's empty;
+      255 is an EOF marker; and
+      any other number indicates "file continues here".
+Since file deletions do *not* modify these vectors, these may be misleading.
+
+The remaining 11 bytes (BF+1281 thru BF+1291) are of unknown consequence.  They
+appear to always be zero; presumably they could contain information with
+meaning to the drive.
+
+
+Enough.  That should point you in the right direction....
+joel
+4july88

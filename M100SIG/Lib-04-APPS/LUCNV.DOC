@@ -1,0 +1,118 @@
+LUCNV.DOC
+LUCID FILE CONVERSION PROGRAM DOCUMENTATION
+
+    This program is designed to convert a Lucid spreadsheet file to a form 
+which can be uploaded for use on another spreadsheet program.  Specifically, 
+the Lucid file is converted to a VISICALC ASCII file.  This file can be 
+uploaded to another PC, and, in turn, can be converted to LOTUS 1-2-3 format. 
+This is what I use this program for.  I developed it to handle spreadsheets 
+developed on the M100, but which either grew too large for my 32K, or which 
+needed to be used on several PC's at work.
+     The program is in BASIC, and when it is executed the Lucid file to be 
+converted must be in RAM.  The output file can either be in RAM, if there's 
+room, or any other colon delimited file, such as CAS:, or, as I use it, a 0: 
+disk file.
+     All Lucid cell entries can be handled by the program, although some either
+don't have a VISICALC equivalent, or may operate differently.  Listed below are
+some known cautions:
+1.The Lucid REF function is converted to a text string.  There is no equivalent
+in either VISICALC or Lotus.
+2. TBL is converted to a combination of VLOOKUP and HLOOKUP which acts 
+similarly.  
+    2a. Note that Lucid and Lotus work differently for values between exact 
+figures in the lookup tables. Lucid goes to the next higher entry, while Lotus 
+goes to the lower bound entry.  
+    2b. Lotus needs the upper left corner filled.  
+    2c. A very important note is that you have to add, either on the Lucid 
+lookup table or in Lotus, a row after the last row of lookup values counting 
+the columns 1,2,3,... This is needed to make the one dimensional Lotus lookup 
+functions work like Lucid's two dimensional TBL function.  
+3. Lotus may not work the same for text entries referenced by equations.  
+4. Cell formulas are converted with lots of parentheses because VISICALC uses 
+left to right priority, not algebraic like Lucid and Lotus.  
+5.Finally, most formats from Lucid are ignored, so you'll have to fix them when
+the conversion is complete.
+     When you run the program, you'll be prompted for an output file type, ie 
+RAM:, CAS:, 0:, LCD:, LPT:. Then you'll be prompted for the Lucid file name.  
+If the program finds the .CA file, then, conversion will proceed.  Converted 
+cell entries are echoed to the screen.  The converted file will be named 
+XXXXXX.DO, where XXXXXX is the Lucid file name.  The converted statements will 
+be echoed to the screen.  
+     The file name finder is acknowledged as borrowed from another program, but
+I don't recall which one. 
+     Listed below is a formula listing for a sample spreadsheet and the 
+resulting converted file.  Good luck.
+
+
+    row/colA1B1                  C1          D1          E1          
+    +2       +5                  +4          +B2*C2                  
+    +3       this is a test file for lucid               id conversion
+    +4       +RND(5)             +INT(C2)    +SUM(B4:C4)             
+    +5       +TBL(B2,C2,B7:D11)  +EXP(B2)    +LOG(C5)                
+    +6       +(B2+C2*D2-C5/D5)/(B5)                                  
+    +7                           +0          +1000000                
+    +8       +2                  -1          -10                     
+    +9       +4                  +1          +10                     
+    +10      +6                  +2          +11                     
+    +11      +8                  +3          +12                     
+                                                                     
+
+     The listing following is the resulting .DO file which was created from 
+this file.
+
+>D11:/FD+12
+>C11:/FD+3
+>B11:/FD+8
+>A11:/FD+11
+>D10:/FD+11
+>C10:/FD+2
+>B10:/FD+6
+>A10:/FD+10
+>D9:/FD+10
+>C9:/FD+1
+>B9:/FD+4
+>A9:/FD+9
+>D8:/FD-10
+>C8:/FD-1
+>B8:/FD+2
+>A8:/FD+8
+>D7:/FD+1000000
+>C7:/FD+0
+>A7:/FD+7
+>B6:/FD+(B2+(C2*D2)-(C5/D5))/(B5)
+>A6:/FD+6
+>D5:/FD+@LN(C5)
+>C5:/FD+@EXP(B2)
+>B5:/FD+@VLOOKUP(B2,B7...D11,@HLOOKUP(C2,B7...D12,5))
+>A5:/FD+5
+>D4:/FD+@SUM(B4...C4)
+>C4:/FD+@INT(C2)
+>B4:/FD+(5)*@RAND
+>A4:/FD+4
+>E3:/FD"id conversion.
+>B3:/FD"this is a test file for lucid
+>A3:/FD+3
+>D2:/FD+B2*C2
+>C2:/FD+4
+>B2:/FD+5
+>A2:/FD+2
+>E1:/FD"E1
+>D1:/FD"D1
+>C1:/FD"C1
+>B1:/FD"B1
+>A1:/FD"row/colA1
+
+NOTE: After you've converted this to a Lotus worksheet file, you have to add 
+the following to make the table function operate properly:
+
+     cell     entry
+     ----     -----
+     B12      1
+     C12      2
+     D12      3
+
+Thanks to Phil Wheeler for all his help in getting this program uploaded and 
+checked out.
+
+Dave Lapinski
+

@@ -1,0 +1,184 @@
+Documentation for KEPLER
+Copyright (c) 1988, Don Sakers
+72517,526
+
+WHAT IS KEPLER?
+     KEPLER is a program written with the science fiction writer in mind. It 
+generates habitable planets and their planetary systems.
+
+HOW DO I USE IT?
+     The prompts are pretty self-explanatory. In the usual mode, KEPLER randomly
+generates specific values for a star and then a habitable planet. You are given 
+the opportunity to accept those values as generated, or to substitute values of 
+your own.
+
+NOTE: Many values are interrelated. A planet's year, for example, 
+depends on the mass of the star and the distance of the planet. Thus, you can 
+change mass and distance but _not_ the length of the year.
+
+Following are specific prompts [in brackets] and comments regarding your 
+responses.
+
+[Hit any key to begin]         Hit any key
+
+[Please name the planet]       Give it any name you want in ASCII  (alpha-
+numeric) characters
+
+[1- Kepler Chooses a Star
+ 2- You Specify a Star]
+                                 Under option 1, you give the star's spectral 
+class, KEPLER creates values to fit.
+                                 Under option 2, you give KEPLER values (i.e. 
+for a particular pre-existing or pre-created star (This is useful if [a] you 
+want to create a planet for Alpha Centauri, Canopus, Betelguese, etc. or [b] if 
+you have an already-created star and you want KEPLER to generate the planetary 
+system.)
+
+Suppose you pick #1:
+[Choose the Star's Spectral Class B A F G K M]    Choose one from these 
+alternatives. B stars are hotter and bluer, M stars are cooler and redder. The 
+Sun is a G star. (Most habitable worlds will probably be around F,G or K stars. 
+The extremes are included so that you can have some exceptional planets if you 
+wish. There is another spectral class ("O") beyond B, but it is very unlikely 
+that any O stars even h^Ba^Bv^Be^B planets.)
+
+[1- Kepler generates a habitable planet
+ 2- You specify a pre-created planet]
+                              Under option 1, KEPLER will randomly assign 
+values.
+                              Under option 2, you can give the values for a pre-
+existing or pre-created planet (i.e. if you have 
+a planet and you want KEPLER to design a planetary system)
+
+Assume you choose #1:
+[stellar mass xxx
+ stellar luminosity xxx
+ planetary irradiation xxx
+ Does this look right (y or n)?]
+     This is your first chance to accept or reject a value. Planetary 
+irradiation means the amount of energy the planet gets from its sun. Earth is 1.
+Higher values will be warmer, lower values colder. Choose y if the given value 
+suits your purposes, n to specify your own value.
+
+[Distance from star: xxx
+ Does that look right (y or n)?]
+     The given distance represents the correct figure for the given irradiation.
+Usually you will choose y in this case. Choosing n allows you to change the 
+distance...which will change the irradiation.
+
+[Period of revolution xxx
+ Shall we continue?]
+     Revolution is determined by the distance and the stellar mass. You get no 
+choice on this one. KEPLER is just trying to be polite.
+
+[Do you want to pick the surface gravity? (y or n)]
+     y=you specify a particular figure for surface gravity
+     n= KEPLER makes random choice based on diameter and density.
+
+[Diameter xxx Does this look right?]
+     Answer y if the planet is the size you want. Answering n allows you to 
+specify a particular size.
+
+[Density xxx  Mass xxx Surface gravity xxx Does the gravity look right (y or n)?
+]
+     Mass and density depend on surface gravity. Answer n to choose your own 
+value.
+
+It i^Bs^B possible to get yourself in a bind here, since mass, density and 
+surface gravity are all interrelated. If you try to change too many values, 
+KEPLER will tell you "I think we should start over."
+
+Usually, you will just want to accept the values given and work with them. If 
+you _must_ specify your own values, stick to o^Bn^Be^B of gravity, diameter and 
+density.
+
+[Input length of day (hours)?]
+     You're on your own with this one. Choose whatever you want.
+
+[Local year is xxx local days.]
+[Printing into PLANET.DO]
+Your work is over. KEPLER will now print the values for your planet into a 
+textfile called PLANET.DO.
+
+Suppose you choose #2 above: [You Specify a Star:]
+
+KEPLER will print a table of Class, Mass and Luminosity and then ask:
+[Stellar Mass (Sol = 1)?]
+     Enter a value. If you have values for a particular star, (which you might 
+find in an astronomy book) fine. If not, ranges are given in the table.
+
+[Stellar luminosity (Sol = 1)]
+     ditto
+
+You will then wind up at:
+[1- Kepler generates a habitable planet
+ 2- You specify a pre-created planet]
+
+
+Suppose you choose #2: [You Specify a pre-created planet]
+
+You will be asked:
+[What irradiation?]
+     Enter a value (Earth = 1)
+[Distance from star (million kilometers)?]
+     Enter a value (Earth = 149.6)
+[Diameter (Earth = 1)]
+     Enter a value
+[Density (g/cc)[Earth=5.5]]
+     Enter a value
+[Mass is xxx times Earth. Surface gravity?]
+     Enter a value
+[Input length of day (hours)?]
+     You're on your own
+
+In whatever case, you will eventually get to:
+
+[Local year is xxx local days. Printing into PLANET.DO]
+
+
+[Shall we do the rest of the system (y or n)?]
+     n means KEPLER will start over from the beginning.
+     y means KEPLER will create a planetary system of 4-12 planets, including 
+your world.
+     Planets will be of four types: Methane giant (like Uranus &       ^LNeptune
+), Jovian (like Jupiter & Saturn), Asteroids (like...uh...the Asteroids) or 
+Rocky (_not_ the Flying Squirrel). Rocky planets may also be Habitable or Venus-
+type.
+     Values given are: Type, distance from star, mass, period of revolution, 
+diameter, density, surface gravity, rotation and irradiation. (In the case of 
+Asteroids, most of these values don't apply and have been set to an arbitrary 
+.0001)
+     PROGRAM ASSUMPTIONS:
+     1. Planetary distances follow a Titius-Bode relationship.
+     2. Asteroids are always next orbit in from a supermassive Jovian.
+
+     OTHER CONSIDERATIONS:
+     Jovians, Methane Giants, Venus-types and Habitables form depending upon the
+irradiation at that distance. If a Rocky planet is at the right distance, it has
+a chance of being either Habitable or Venus-type. Rocky planets may form at any 
+distance.
+     Conditions for habitability:
+     Irradiation of 0.3-2.0
+     Gravity less than 2 gees
+
+You will see:
+[Calculating...
+ Printing planet 1 into PLANET.DO
+ Printing planet 2 into PLANET.DO
+ etc.]
+
+After the system prints, KEPLER will say:
+[That was fun. Want to do another (y or n)?]
+      y = restart program
+      n = stop
+
+DISCLAIMERS:
+     I am not a physicist, astronomer or programmer. This program works to the 
+best of my knowledge. However, I do not guarantee that the program or the 
+underlying mathematics are complete or correct. USE AT YOUR OWN RISK.
+     KEPLER is intended to give values that are illustrative rather than 
+rigorous (i.e. this is a _cold_, _massive_ planet with a _high_ surface gravity.
+) I am not responsible for any errors in figures used her...if you intend to use
+actual numbers from the program, please verify them or have a techie friend do 
+it for you.
+

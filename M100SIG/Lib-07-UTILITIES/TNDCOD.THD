@@ -1,0 +1,195 @@
+TNDCOD.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+These messages relate to modifying TNDCOD (Tandy's program to print bar
+codes) for use with a C. ITOH printer.  The last message gives a short
+referencelist of the control codes for the printer in question -- a
+useful piece of interest in itself.  This THD may continue; but I wanted
+to grab the technical reference data now!  The original message (question)
+is missing, but the intent (mod of program for this printer) is clear.
+  ** Added messages in this new version **
+
+Message range: 155321 to 156304
+Dates: 8/21/87 to 9/5/87
+
+
+Sb: #TNDCOD.MOD
+Fm: Neil Wick 71056,613
+To: Jeff Ray 72316,631
+
+  The IBM Proprinter is equivalent to an IBM Graphics Printer as far as I know.
+The graphics codes are the same ones used by Epson.
+  If the program is not giving you dot graphics I would suggest checking in the
+manual for dip-switch settings which may be necessary to put you in the proper
+mode.
+  What model do you have?  I don't remember if you said.
+                                                                      * Replies:
+
+Fm: Jeff Ray 72316,631
+To: Neil Wick 71056,613
+
+Neil, I have a C.ITOH Model 8510 (Prowritter).  It does have dot addressable
+graphics.  The command for dot graphics mode is => CHR$(27); CHR$(83);"n1 n2 n3
+n4"    where n1 - n4 is a four-digit number designating the number of dot
+collums.   Sure do appreciate any help.   jeff.
+
+
+Fm: Neil Wick 71056,613
+To: Jeff Ray 72316,631
+
+  That's one I'm not familiar with, so I have a few questions:
+  As I understand it, to send 10 graphics codes to the printer, send CHR$(27)
+;CHR$(83);"0010"; followed by the ten graphics bytes.  Is this right?
+  Do graphics codes range up to 255 (8 bits)?  Is the "1" bit at the top of the
+column and the "128" at the bottom?  Is more than one graphics density
+available (dots/line or dots/inch)?
+  Some of this is beyond what is necessary for bar codes, but I am gathering
+information for a "How to print graphics on various printers" file.  This will
+help those writing programs to make them available for different printer codes.
+  The program works very well--when it works.  Very few of my filenames seem to
+be acceptable to it (especially 6-character ones).  The problem seems to be
+intermitant, but I don't know what influences it.  I don't seem to have the 2
+files with similar names that you describe.
+
+
+Fm: Jeff Ray 72316,631
+To: Neil Wick 71056,613
+
+Neil, I'll get back with you about the printer commands after I consult with
+the printer's manual.   Sorry, but I'm not quite sure what you are refering to
+in the later part of your message.   thanks again,  jeff.
+
+
+Fm: Jeff Ray 72316,631
+To: Neil Wick 71056,613
+
+Neil I hope this answers your questions.
+.
+C. ITOH Model 8510 (Prowritter) Printer Codes:
+--------------------------------------------------------------
+These are some of the most used printer codes, there are many more.
+==Fonts==
+Pica (10 cpi/80 dots per in.), ESC N ==> CHR$(27);CHR$(78)
+Elite (12 cpi/96 dots per in.), ESC E ==> CHR$(27);CHR$(69)
+Compressed (17 cpi/136 dots per in.), ESC Q ==> CHR$(27);CHR$(81)
+Proportional (160 dots per in.), ESC P ==> CHR$(27);CHR$(80)
+=========
+Elongated Charaters ON, SO ==> CHR$(14)
+Elongated Charaters OFF, SI ==> Chr$(15)
+=========
+Boldface ON, ESC ! ==> CHR$(27);CHR$(33)
+Boldface OFF, ESC " ==> CHR$(27);CHR$(34)
+=========
+Custom Line Feed (nn = nn/144 in. space), ESC T, nn ==> CHR$(27);CHR$(84);"nn"
+1/6 in. Line Feed, ESC A ==> CHR$(27);CHR$(65)
+1/8 in. Line Feed, ESC B ==> CHR$(27);CHR$(66)
+=========
+=Dot Graphics Mode=
+ESC S, n1 n2 n3 n4 ==> CHR$(27);CHR$(83);"n1 n2 n3 n4"
+n1 - n4 is a four-digit number which designates the number of dot columns to be
+printed in graphics mode.
+=Dot Pattern Bits=
+LSB o 1
+    o 2
+    o 4
+    o 8
+    o 16
+    o 32
+    o 64
+MSB o 128
+    -----
+      255 Total - for a solid vertical bar, 0 for a blank vertical column
+.
+Example: LPRINT CHR$(27);CHR$(83);"0007";"255";"255";"0";"255";"0";"0";"255"
+This would print a series of seven vertical bars and spaces as follows: bar,
+bar, space, bar, space, space, bar. I hope this will be of help.
+
+
+Fm: Neil Wick 71056,613
+To: Jeff Ray 72316,631
+
+  There is something wrong with your example:
+LPRINT CHR$(27);CHR$(83);"0007";"255";"255";"0";"255";"0";"0";"255"
+  This appears to the printer as "0007255255025500255".  The printer can't know
+when one graphics byte ends and the next begins.  Probably it should be
+"0007";CHR$(255);CHR$(255);CHR$(0); . . .
+  Could you try this on the printer and make sure it works?
+
+
+Fm: Jeff Ray 72316,631
+To: Neil Wick 71056,613
+
+Neil, the example I gave you was almost identical to the one out of the manual.
+I only changed the bit pattern data. I will double check though.   jeff.
+
+
+Fm: Jeff Ray 72316,631
+To:  71056,613
+
+Neil, you were correct!  I should have looked closer at the example.
+It should be --->  LPRINT CHR$(27);CHR4(83);"0007";CHR$(255);CHR$(0)
+;CHR$(255);...
+.
+The actual example out of the manual is:
+10 LPRINT CHR$(27);CHR$(83);"0007";
+20 FOR I = 1 TO 7
+30 READ B:LPRINT CHR$(B);
+40 NEXT I
+50 LPRINT
+60 DATA 127, 37, 83, 97, 4, 0, 91
+.
+With the above loop you should get the pattern below:
+.
+.
+oooo..oo
+o.o...o.
+oo..o..o
+o.....o.
+o.o...oo
+oo.o...o
+o.oo..o.
+........
+.
+Thanks for your help!   jeff.
+
+
+Fm: Neil Wick 71056,613
+To: Jeff Ray 72316,631
+
+Sounds good.  I'll get back to you as soon as I can.
+
+
+Fm: Neil Wick 71056,613
+To: Jeff Ray 72316,631
+
+   OK, this ought to do it.  Make the following changes:
+.
+Program as supplied:    Change to:
+.
+In lines 45 and 140:
+CHR$(27);CHR$(19)       CHR$(27);"N"
+[Select 10 pitch]
+.
+In line 50:
+CHR$(27);CHR$(20)       CHR$(27);"Q"
+[Select condensed]
+CHR$(18)                CHR$(27);"S0030"
+[Select graphics mode]
+.
+In line 55:
+;CHR$(30)               [Delete this, including the ";"]
+[End graphics mode]
+.
+In line 125:
+STRING$(3,T)            STRING$(3,0)
+STRING$(6,T)            STRING$(6,0)
+.
+Add line 127 as follows:
+127 H(0)=CHR$(27)+"S0003"+H(0):H(1)=CHR$(27)+"S0001"+H(1):H(2)=CHR$(27)+"S0006"
++H(2):H(3)=CHR$(27)+"S0003"+H(3)
+.
+I think that should do it.  Let me know how it goes.  (This doesn't make for
+very efficient printout actually, but there's no other solution without
+completely re-writing the program.)

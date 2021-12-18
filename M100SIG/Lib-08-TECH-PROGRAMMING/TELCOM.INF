@@ -1,0 +1,82 @@
+Things you can do with the Model 100 and a friendly phone (See also PORTS.100)
+The Model 100 has two basic modes of serial communications, modem (phone) and 
+RS232 (to another computer, printer, external modem, etc).  Although you can 
+only transfer information in one mode at a time, both types can be active (I 
+think, haven't tried it yet).  I will be giving all examples in BASIC.  Good 
+luck.
+To read the positions of the two switches on the left of the model 100 (ANS/ORIG
+and DIR/ACP).
+10 BA=186:BB=187:CTS=16:DSR=32:MD=8
+20 OUT BA,INP(BA) OR MD ' Modem mode
+30 IF INP(BB) AND CTS THEN PRINT"ANS" ELSE PRINT"ORIG"
+40 IF INP(BB) AND DSR THEN PRINT"ACP" ELSE PRINT "DIR"
+Well, that was easy.  Let's see if we can read the pins of the RS232 port (see 
+appendix in manual for the specific pin number).
+10 BA=186:BB=187:CTS=16:DSR=32:MD=8:RS=255-MD
+20 OUT BA,INP(BA) AND RS ' RS232 mode
+30 PRINT"CTS=";:IF INP(BB) AND CTS THEN PRINT"1" ELSE PRINT"0"
+40 PRINT"DSR=";:IF INP(BB) AND DSR THEN PRINT"1" ELSE PRINT "0"
+Well, that's nice, but so what?  Would you like to control your modem (or 
+anything else that can use a weak +5v signal?)  You can change the voltages 
+output to DTR and RTS pins of the RS232 connector.  Like this - 
+10 BA=186:BB=187:CTS=16:DSR=32:MD=8
+15 RS=255-MD:DTR=64:RTS=128
+20 OUT BA,INP(BA) AND RS ' RS232 mode
+30 OUT BA,INP(BA) OR DTR ' Set DTR
+30 OUT BA,INP(BA) AND 255-DTR ' Reset DTR
+30 OUT BA,INP(BA) OR RTS ' Set RTS
+30 OUT BA,INP(BA) AND 255-RTS ' Reset RTS
+You won't see anything happen when you run these, unless you have some way of 
+finding out what voltages are present in the RS232 connector.  (By the way, 
+DON'T stick wires in there unless you are fairly sure what you are doing, it can
+be dangerous to your wallet.)
+Would you like to pick up the phone now? Childs play.
+10 A8=168:TL=1:ME=2:PS=64174
+20 POKE PS,PEEK(PS) OR TL
+30 OUT A8,PEEK(PS) ' Pick up phone
+If you ran the preceeding without reading this, you found that the phone was 
+picked up, and the only way to hang up was turning the M100 off and on again.  
+Perhaps you should have waited.
+10 A8=168:TL=1:ME=2:PS=64174
+20 POKE PS,PEEK(PS) AND 255-TL
+30 OUT A8,PEEK(PS) ' Hang up phone
+If you want to enable the modem chip, then do the following
+10 A8=168:TL=1:ME=2:PS=64174
+20 POKE PS,PEEK(PS) OR ME
+20 OUT A8,PEEK(PS) ' Enable modem
+To pick up the phone and enable modem, do
+10 A8=168:TL=1:ME=2:PS=64174
+20 POKE PS,TL OR ME
+20 OUT A8,PEEK(PS) ' Pick up phone, enable modem
+A simpler way to connect the phone line is by CALLing a ROM routine
+10 CN=20480
+20 CALL CN ' Connect phone and enable modem
+or call the routine with the parameters you want
+10 PH=21213:TL=1:ME=2
+20 CALL PH,TL OR ME ' Connect and modem
+20 CALL PH,TL ' Connect
+20 CALL PH,ME ' Enable modem
+20 CALL PH,0 ' Hang up
+Other goodies.  When in Modem mode, RTS controls the relay that does the pulse 
+phone dialing.  The number of chars waiting in the serial input buffer is found 
+in 65414.  (For example,
+PRINT INPUT$(PEEK(65414),1);
+.)  The ROM dialing routine checks to make sure that the current stat is Modem. 
+To set this, do a
+POKE 63067,ASC("M")
+To write a terminal program, it might help to open all files as COM files, then 
+change to MDM when time to dial
+10 CLEAR 1000:MAXFILES=3:OPEN "COM:37I1E" FOR INPUT AS 1
+20 OPEN "COM:37I1E" FOR OUTPUT AS 2
+30 BA=186:BB=187:ST=63067:MD=8:UC=65414:DL=21293:PH=21213
+40 OUT BA,INP(BA) OR MD ' Set modem
+50 POKE ST,ASC("M") ' Set status as mdm
+60 V=0:AD=0:N$="555-1111<>":V=VARPTR(N$):AD=PEEK(V+1)+PEEK(V+2)*256
+65 ON ERROR GOTO 200:PRINT CHR$(27)"P";
+70 CALL DL,0,AD
+80 IF PEEK(UC) THEN PRINT INPUT$(PEEK(UC),1);
+90 I$=INKEY$:IF I$<>"" THEN PRINT#2,I$;
+100 GOTO 80
+200 CALL PH,0 ' Hang up if error
+210 END
+

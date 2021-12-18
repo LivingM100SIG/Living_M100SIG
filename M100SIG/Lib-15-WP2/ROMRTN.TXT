@@ -1,0 +1,110 @@
+ 
+                WP-2 ROM Routines - Part 1
+ 
+   Thus far, I have used about 20 of the ROM routines listed in
+the WP-2 Service Manual, most having to do with input/output. 
+They are all described well enough to work with in the manual,
+but most of them have a few quirks.  So that you won't have to
+rediscover the wheel, here are some brief remarks on each
+routine I have used.
+   CLS, SETLOC, SETCURSORONOFF, and SETCURSORTYPE are all pretty
+straightforward as described, so I won't detail them further. 
+For the other routines, I have listed below the name, entry
+address (in hex), and page it can be found on in the Service
+Manual, followed by the necessary comments.
+ 
+SETCOLOR (0115) p. D-2
+  This one is pretty straightforward too, but if you use        
+  reverse-video in your program, remember to reset to normal    
+  when you exit the program.  Otherwise, the file menu will get 
+  a little messed up.
+ 
+CHARSENSE (0100) p. D-1 and
+CHARGET (0103) p. D-1
+  Use CHARSENSE if you want to get a character from the         
+  keyboard (or keyboard buffer), but don't want to wait if no   
+  key was pushed.  It will return the character if a key was    
+  pushed, but it will NOT delete it from the buffer.  To delete 
+  it from the buffer, call CHARGET.  Using CHARGET by itself    
+  will wait for a key to be pushed if the buffer is empty.
+ 
+CHAROUT (0118) p. D-2
+  This routine does not support ESC-sequences.  It also does not
+  support LF, CR, or BS, and I assume it doesn't support TAB.   
+  Instead, it displays the corresponding special character code 
+  (e.g. a musical note for CR).
+ 
+PUTCHAR (01A3) p. D-2
+  This one does support ESC-sequesces, but there seems to be a  
+  bug with ESC J.  As far as I can tell, the rest work fine.
+ 
+STROUT (011B) p. D-3
+  Also does not support CR/LF, which diminishes it usefulness   
+  somewhat.
+ 
+CHECKCNCL (0124) p. D-3
+  Checks whether ESC/CNCL is being held down at the time the    
+  routine is called, but will not delete the ESC/CNCL key from  
+  the keyboard buffer if it does find it being pushed.
+ 
+PRNOUT (0130) p. D-3 and
+PRNSTATUS (0133) p. D-3
+  PRNOUT cannot be used by itself.  First you must check if the 
+  printer is ready for data by calling PRSTATUS and wait if it  
+  is not.  This is a pain, but allows for better flexibility    
+  than if PROUT had the busy-check built in.
+ 
+CHGSLOT (0166) p. D-4
+  What is a slot?  Good question.  The manual uses the term many
+  times without a definition.  I assume it to mean a ROM bank,  
+  and changing slots means bank-selecting the 2nd 16K of memory 
+  (addressed 4000-7FFF).  Whatever you call it, if you do change
+  the slot, you must change it back to slot 0 before exiting the
+  program, or you will endure a cold reset.
+ 
+RSINIT (0140) p. D-4
+  The problem with RSINIT is that it doesn't use the settings in
+  the telecom setup menu.  Those setting are stored in memory,  
+  though.  I don't recall the exact location off the top of my  
+  head (somewhere in the BIOS work area).
+ 
+SENDDATA (0146) p. D-5
+  The problem with SENDDATA is that you have to call RSINIT     
+  first, and to do so you have to set the baud rate, etc.  Also,
+  I believe this routine will return an error if it doesn't get 
+  a RTS signal on the RS232C line (and won't send the character,
+  to boot).
+ 
+RSCLOSE (014C) p. D-5
+  This routine is a problem in itself, and has caused many a    
+  headache.  It is the cause of modems hanging up on exiting    
+  telecom.  It is also unnecessary.  I don't use it.  Once the  
+  RS232C port has been "closed", it must be initialized again   
+  (with RSINIT) before it can be used to send or receive data.
+ 
+LINEIN (01A6) p. D-6
+  I like this one.  Note that BC should be length + 1, not      
+  length, as specified in the Manual.  Also, either RETURN or   
+  ESC will exit the input, and whichever it was, it will be     
+  returned in the A register.  And if you set color to reverse  
+  before calling this routine, the input field will be          
+  highlighted (see HEXDUMP for an example of this).  As for the 
+  input itself, all characters are accepted, including the      
+  graphics characters and special characters, plus you can get  
+  control codes in by hitting ctrl-V then ctrl-whatever.  All   
+  the system applications use this input routine, so you can    
+  (for example) put a smiley-face in your filenames by hitting  
+  ctrl-V ctrl-B while inputing at the filename prompt.
+ 
+WAIT (01A0) p. D-11
+  This is a handy routine, but there is a typo in the           
+  description in the Manual.  The delay is in units of 1/10     
+  second, not 1/100 second.  Too bad - 1/100 second would be    
+  more usable.
+ 
+ 
+   That's it for now.  Next up are the file access routines.
+ 
+ 
+   Michael F. Klar - 4 Fleetwood Dr. - Somerville, NJ 08876
+ 

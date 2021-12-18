@@ -1,0 +1,53 @@
+1 ' Hi-Q Jump V1.02, written by Michael Martell [72737,120], based on an old peg-board game whose origins are unknown to the author
+2 ' Program (C) 1985 Butterhoof's Enterprises Software , all rights reserved.
+3 ' Permission to copy, use and distribute free copies granted to all Compuserve subscribers
+100 GOSUB 3200:GOSUB3500:GOSUB 2000:GOSUB6000:GOSUB1000:PRINT@30,CHR$(27)+"pHI-Q"+CHR$(27)+"q"
+200 IF MV>24 THEN GOSUB 5000
+205 PRINT@100,"";:INPUT"Location :";A$
+210 GOTO 2100
+300 PRINT@180,"Direction :";
+310 GOSUB 2500:D$=INKEY$:IF D$=""THENGOTO 310
+320 IF ASC(D$)<28 OR ASC(D$)>31THENGOTO310
+330 PRINT@192,D$(ASC(D$)-27);
+340 IF ASC(D$)=28 AND A>5 THENGOTO4000
+341 IF ASC(D$)=29 AND A<3 THENGOTO4000
+342 IF ASC(D$)=30 AND B<3 THENGOTO4000
+343 IF ASC(D$)=31 AND B>5 THENGOTO4000
+350 D1=ASC(D$)-27:D=D(D1):IFD1>2THEN360ELSEPRINT@220,"             ";:IFH(B,A+D)=79ANDH(B,A+D/2)=146THENH(B,A+D)=146:H(B,A+D/2)=79:H(B,A)=79:GOSUB1030:MV=MV+1:GOTO200ELSEBEEP:BEEP:BEEP:PRINT@220,"ILLEGAL Move";:GOTO200
+360 PRINT@220,"             ";:IFH(B+D,A)=79ANDH(B+D/2,A)=146THENH(B+D,A)=146:H(B+D/2,A)=79:H(B,A)=79:GOSUB1030:MV=MV+1:GOTO200ELSEBEEP:BEEP:BEEP:PRINT@220,"Illegal Move";:GOTO200
+1000 PRINT@0,"    A B C D E F G ":FOR T=1 TO 2:PRINT@(T*40),T;"      - -  ";:NEXT T
+1010 FOR T=3 TO 5:PRINT@(T*40),T;"  - - - - - -  ";:NEXT T
+1020 FOR T=6 TO 7:PRINT@(T*40),T;"      - -  ";:NEXT T
+1030 FOR T=1 TO 7:FOR T1=1 TO 7:PRINT@(T*40+2+T1*2),CHR$(H(T,T1));:NEXT T1,T
+1040 RETURN
+2000 DIM H(7,7):FORT=1TO7:FORT1=1TO7:H(T,T1)=146:NEXTT1,T:H(4,4)=79:FORT=1TO2:FORT1=1TO2:H(T,T1)=32:H(T+5,T1)=32:H(T,T1+5)=32:H(T+5,T1+5)=32:NEXTT1,T
+2010 X$=CHR$(27)+"p"+CHR$(146)+CHR$(27)+"q":RETURN
+2100 A=(ASC(LEFT$(A$,1))-64):B=VAL(RIGHT$(A$,1)):IFA>0THENPRINT@140,"                ";ELSE200
+2110 IF H(B,A)<>146 THEN PRINT@140,"Location Empty";:BEEP:BEEP:BEEP:GOTO 200
+2120 X=B*40+2+A*2:PRINT@X,X$;:BEEP:GOTO300
+2500 PRINT@X,CHR$(27)+"P";:FORT=1TO50:NEXTT:PRINT@X,CHR$(27)+"Q";:FORT=1TO50:NEXTT:RETURN
+3000 CLS:PRINT"                HI-Q Jump ":PRINT:PRINT" The rules to HI-Q are quite simple. Thegame begins with all holes filled with  pegs except the center. The object is tofinish with only the center hole full.":GOSUB3100
+3010 PRINT" This is done by jumping one peg over   another, one peg at a time, ending in an empty hole on the other side, removing the jumped peg. Jumps are permitted only horizontal or vertical, diagonal moves are not allowed.":GOSUB3100
+3020 PRINT "  To jump, ( ALL MOVES MUST BE JUMPS ), first specify the position of the peg to be moved by letter and number, such as A5. The machine will check for a peg in that location, and will flash the peg   you have selected, and beep.":GOSUB3100
+3030 PRINT"  Touch the arrow key for the direction you wish to move, and the machine will  check for a legal move, beep, and show  your new board. Anything other than a   legal move will get you a message and   return the prompt.":GOSUB3100
+3040 PRINT"   The play is simple, but strategy and planning will obtain the best results.  One word of warning :                   This game can be ADDICTIVE !!!  Enjoy!!":PRINT:PRINT"        Michael Martell [72737,120] ":GOSUB3100:CLS:RETURN
+3100 PRINT@288,"";:INPUT"Hit <ENTER> to continue ";DUMMY$:CLS:PRINT:RETURN
+3200 CLS:PRINT"              HI-Q Jump":PRINT:INPUT"Do you want instructions ";AN$:IF LEFT$(AN$,1)="Y"ORLEFT$(AN$,1)="y"THEN GOSUB 3000:RETURN ELSE CLS:RETURN
+3500 FORT=1TO4:READ D,E:D$(T)=CHR$(D):D(T)=E:NEXTT:DATA 154,2,155,-2,152,-2,153,2:RETURN
+4000 PRINT@220,"ILLEGAL MOVE";:BEEP:BEEP:BEEP:GOTO200
+5000 PM=0:FOR T=1 TO 7:FOR T1=1TO7
+5010 IF H(T,T1)<>146 THEN NEXT T1,T:GOTO 5100
+5020 IFT<6 THEN IF H(T+1,T1)=146 AND H(T+2,T1)=79 THEN PM=PM+1
+5021 IF T>2 THEN IF H(T-1,T1)=146 AND H(T-2,T1)=79 THEN PM=PM+1
+5022 IF T1<6 THEN IF H(T,T1+1)=146 AND H(T,T1+2)=79 THEN PM=PM+1
+5023 IF T1>2 THEN IF H(T,T1-1)=146 AND H(T,T1-2)=79 THEN PM=PM+1
+5030 NEXT T1,T
+5100 IF PM>0 THEN RETURN 
+5105 FOR T=1TO7:FOR T1=1TO7
+5110 IF H(T,T1)=146 THEN RP=RP+1:NEXT T1,TELSE NEXT T1,T
+5200 PRINT@100,SPACE$(15):PRINT@100,EX$(RP);:PRINT@180,SPACE$(15);:PRINT@180,"You have ";RP;:PRINT@220,"Pieces remaining";
+5210 PRINT@260,"Play Again (Y/N) ?";
+5220 A$=INKEY$:IF A$="" THEN 5220
+5230 IF A$="Y" THEN RUN ELSE MENU
+6000 FOR T=1 TO 8:READ EX$(T):NEXT T:RETURN
+6010 DATA CONGRATULATIONS !!,SO CLOSE !,NOT BAD..,A FAIR GAME,AN AVERAGE GAME,NOT EVEN CLOSE,YOU NEED PRACTICE,KEEP TRYING

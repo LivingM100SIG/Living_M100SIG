@@ -1,0 +1,181 @@
+DOWTDD.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Downloading to disk is a major improvement over having to rely on RAM
+storage for downloads -- paricularly if a 1200 baud modem is in use.  The
+Chipmunk (and DVI) disk drives are able to provide this capability.
+Unfortunately, the Tandy Portable Disk Drives (TDD & TDD2) suffer in this
+regard, due to their use of the RS-232 for interfacing with the computer.
+This file captures typical messages on this subject.
+
+
+Message range: 143330 to 144482
+Dates: 3/18/87 to 4/3/87
+
+
+Fm: kent hughes 76576,3060
+To: all
+
+hello all, need some quick help it at all possible I'm kind of a rookie (and
+noticeably new) but have just picked up an(old I think) tandy portable drive.
+THE QUESTION IS:
+     Can I download dl files and, while on line, dump to disk an entire file
+that may be larger than available ram??? Also, is there a place where I can get
+some assistance in downloading protocol?  Like, what is Compuserve 'A' and 'B'
+versus XMODEM ... I'm also looking for text editing assistance
+programs,spreadsheet and dbase type programs to help with organizing on this
+great little m100 - any help??
+
+
+Fm: Tony Anderson 76703,4062
+To: kent hughes 76576,3060
+
+In general, no you cannot download directly to the disk.  Has nothing to do
+with the drive, but with the fact that the computer has only one communication
+chip, and when it is being used for the modem operation, it cannot also
+communicate with the RS-232 port, where the disk drive is plugged in.
+
+Now the whereases and wherefores.... There are a number of ways to "simulate"
+the download to disk function, depending on how far you want to go technically,
+and how much you're willing to spend making it happen with a cheap disk drive.
+For the same amount of money invested, you could have bought a disk drive (the
+Chipmunk) which would download to disk with no problems.  Of course other
+limitations also involve which computer you are using; they all have different
+ways of working...
+
+Anyway, for starters, you can read the three files in DL3, DSKTRM.100,
+DSKTRM.DOC, and DSKTRM.CMT.  That's one approach.
+
+Then you can explore the idea of buying Disk-Power, an alternate DOS for the
+drive, and using it with acoustic cups.  See DISKOS.INF in DL13; the DPTIP
+series in DL9 (four files), and the DPUSER series in DL9 (another four files).
+
+If you have a Tandy 200, then Disk-Power seems the way to go, and Mel Snyder
+70136,1007 will definately contact you to extol the virtues of the 200/T
+
+I have personally recommended that folks get and use and external modem. In
+addition to greater speed, 1200 baud operation, with an external modem, you and
+put the modem on hold, while accessing the disk.  So you can download to a
+buffer file, then save the buffer file to the disk, then go back to the modem
+for more.  I do it all the time, with never any problems.
+
+Whatever you decide, and whatever your configuration, good luck...
+
+
+Fm: Tony Anderson 76703,4062
+To: LARRY R. 72516,475
+
+The TDD, and the TD2 plug into the RS-232 port of the computer.  The computer
+has only one communication chip, and when it is being used to communicate with
+the modem, it cannot also communicate with the RS-232 port.  Thus, it is
+physically impossible to upload from, or download to, the TDD disk, directly.
+Since it is impossible, there is no software which will do it for you.
+
+There have been reports that users with Disk-Power, one of the alternate DOS's
+for the TDD, have been able to download to disk, although the exact method is
+unclear to me.  But it has to do with how Disk-Power connects into the
+operating system hooks, and the fact that it can communicate with the RS-232
+port independently of the modem chip.  How, I don't know.  For some information
+on this, read the DPTIP and DPUSER series of files in DL9, a total of 8 files.
+
+You can also "simulate" the function by using an external modem to hold the
+connection, while you go offline to dump a RAM buffer to the disk; see DSKTRM
+in DL3, three files.
+
+However, if you buy an external modem, you can also disconnect from the modem,
+while it holds the line, and do whatever you want to with the disk.  Download
+to a RAM file, disconnect, save the file to the disk, reconnect, and get more
+of the stuff you're downloading.
+
+None of these options are truly satisfactory.  By the time you buy extra
+software, or extra hardware, or both, you will have as much invested in making
+your system "simulate" the function, as if you had bought a Chipmunk Disk Drive
+to begin with.  The Chipmunk does all that without the problems.
+
+
+Fm: Martin Zimmerman 72757,3076
+To: Tony Anderson 76703,4062
+
+        It is my understanding that the RS-232 port AND the modem chip are both
+connected to the same UART which then communicates with the Model 100.  There
+is a 'bit' on one of the output ports that switches the inputs.  Most of the
+DOS's I've seen for tle TDD-1 (and probably the TDD-2? I don't know I'm in
+CANADA, where they still have not introduced it...) seem to switch this, AND
+also send out the 'bit' that disconects the phone from the Model 100.  It is
+the disconecting that "hangs you up" not the switching.  I would have to
+believe that the modem chip can produce a carrier without having to 'talk' to
+the Model 100, after all that's what it does when I- no type, you- no type...
+If your software were to switch and NOT play with the phone relay, than all
+would be okay..... The procedure would be...
+
+Send ^S to host... Flip Dump data to TDD (at 19200 baud this would NOT take
+long...) Flip Send ^Q to host. Continue with whatever...
+
+
+Fm: Tony Anderson 76703,4062
+To: Martin Zimmerman 72757,3076
+
+The cause of the problem is known, and it's only partially the bit you
+indicate.  The other part is the code that responds to that bit in the
+background task, and opens the "connect" relay.
+
+There have been a number of people, who have indicated, "Oh, it's a simple
+problem to get around, we can do it in software..."  So far, NONE of them have
+ever been able to do it.  Apparently the resident code is designed so that you
+cannot talk to the RS-232 port, and have the modem connected to the phone line
+at the same time.
+
+We generally don't go into great detail when folks ask about it, since most
+folks don't understand the workings of the code anyway.  But, if you think you
+can see a way around the problem, then have at it!  It would be of great
+benefit to the TDD users to be able to download directly to disk, in any manner
+possible.
+
+I would think, that if you avoided the TELCOM code entirely, and wrote a whole
+new terminal emulator in assembly langauge, that you could get around the
+problem since you could avoid the "automatic disconnect" portion of the code.
+But I'm not up to writing such a program yet, so it's up to someone else with
+more smarts than I.
+
+
+Fm: Martin Zimmerman 72757,3076
+To: Tony Anderson 76703,4062
+
+Well, I have to agree that in theory it seems simple, but to actually write the
+code is a completely different matter.  I too am not up to that yet.  But I
+would be if I ever found out the command protocol for the TDD, then I would try
+to write a new TERMINAL program.  It would have to be in ML as nothing else on
+the 100 can 'talk' at a constant 19200 baud and not lose anything. If I ever do
+get around to it, then there would be no need for FLOPPY.CO to be resident for
+the terminal to work (with disk...)
+
+
+Fm: Mark Earle 73117,351
+To: All
+
+Wonder if there is a program to allow direct downloading from the internal
+modem to the PDD-2; and also once the file would be on the PDD-2, a way to read
+it, and/or print it, if the file was larger than the available M100
+memory.....?? Mark Earle 73117,351
+
+
+Fm: Tony Anderson 76703,4062
+To: Mark Earle 73117,351
+
+You cannot download directly to the TD2 because it connects to the RS-232 port.
+The computer has only one communication chip, and when it is being used to
+"talk" to the modem, it cannot also be used to "talk" to the RS-232 port and
+the disk drive.  No way has yet been found around this problem, except via
+"simulation, where you download to RAM, and via one scheme or another,
+disconnect from the modem line, and save the data to the disk, then go back for
+more.
+
+This requires, at the very least, a way to keep the communications line
+operational, meaning an external modem; and probably one of the alternate DOS's
+for the disk drive, which there are none of yet for the TD2.  See the 3 files
+named  DSKTRM in DL3 for starters, the DPUSER and DPTIP series of files in DL9,
+8 files.
+
+

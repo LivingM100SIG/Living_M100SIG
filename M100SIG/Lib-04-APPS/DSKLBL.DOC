@@ -1,0 +1,86 @@
+		DSKLBL.BA
+		---------
+
+	DSKLBL.BA is a stand-alone, no-DOS, Disk-label maker for use with the 
+M100/102/200 and Tandy Disk Drive 1. It permits you to quickly print labels for
+up to 15 disks per use.
+
+
+		SET-UP
+
+	Download DSKLBL.DOC (this file) and DSKLBL.BA: then edit the resulting 
+.DO files to remove any extra garbage.  Checksum DSKLBL.DO, then Load and Save 
+as DSKLBL.BA.
+	BEFORE you run it you MUST substitute YOUR 132 char (16.8/inch) code in
+line 24.  EXAMPLE: if the code for your printer is CHR$(27);"M" then line 24 
+would read;   
+
+	24 LPRINTCHR$(27);"M";'132 column code
+	(Remember to include the last semi-colon.)
+
+	If your printer is set for SKIP-OVER-PERF (SOP), a routine that 
+typically permits only 60 lines of print per page by automatically setting 3 
+line top and bottom margins, you MUST disable this feature while running DSKLBL
+because you'll need 65 lines for a 3 by 5 label print format. You can either do
+it manually or add the SOP "off" code to the end of line 2 and insert the SOP 
+"on" code just before "MENU" in line 16.
+
+
+		OPERATION
+
+	Running DSKLBL.BA is a snap. Cursor select it with at least 12000 free 
+RAM. When it has finished it's brief loading routine you'll be prompted for a 1
+to 6 character file name. 
+	Load the disk, type any combination of characters that your printer 
+will print and press <ENTER>. You'll see the file names flash by next to the 
+disk drive symbol and, when DSKLBL is done reading the disk, it's name will 
+display below the horizontal line and you'll be prompted for the next disk.
+	DSKLBL will automatically move to the "printing" prompts after you've 
+entered 15 disks or YOU can do so after fewer disks by simply pressing <ENTER> 
+at the name prompt. If your printer is ready you'll come to the "size" prompt. 
+DSKLBL will print your labels in one of two formats each time you print a label
+set.
+
+	"<S>tandard" will print 3 labels across and 5 down on standard 8 1/2" 
+by 11" plain or adhesive paper. Dotted lines are added in this format to 
+facilitate cutting the paper to make the labels.
+
+	"<L>abel" will print 1 across and 15 down and is set up for 1 15/16" by
+2 3/4" labels with only a blank line between labels. This format seems to be 
+the best for label "rolls" which would, of course, necessitate setting up the 
+printer to mechanically handle that format. Each new label begins 12 lines 
+below the last: 2" at 6 lines per inch. (Print 11 lines, skip one, begin again.
+)
+
+	After each label set is printed you'll be asked if you want to RE-PRINT
+the SAME labels. I included this option so you could "test" print one set, make
+sure it's the way you like it then re-print it for either a reference or 
+perhaps on adhesive paper. The "size" prompt is included in this routine so you
+can pick a different format each time. If you press "N" or "n" at the "repeat" 
+prompt you'll return to the main menu. To do the next batch of disks just re-
+run DSKLBL.
+
+	NOTE: If you use graphics characters in your file names then DSKLBL 
+will change any character with an ASCII value above 128 to a "^" (SHIFT 6). 
+This prevents weird things happening to your printer in the middle of a print 
+job! DSKLBL also removes the period between the file name and the extension and
+converts the extension to lower case so the labels are easier to read.
+
+--------------------------------------------------------------------------
+
+	CREDITS
+
+	This program would not have been possible without Wilson Van Alst's 
+unique FYLDOS routines which are available separately as FYLDOS.100 & 
+FYLDOS.200.
+	Van also contributed countless hours to Beta testing and array 
+management routines without which DSKLBL would still only be an idea.
+
+
+
+Randy Hess
+6/2/89
+Omaha, Nebraska
+73267,552
+
+

@@ -1,0 +1,29 @@
+0 CLEAR1000:MAXFILES=1:REM D-READ.DVI, Bill Berit 72126,2636
+1 PRINT"D-READ.DVI reads from DVI disks to CRT,LCD"
+2 PRINT"and can append to a .do file called DSKINF.DO"
+3 LINEINPUT"Press enter to continue and ^C to quit";X$
+5 CLS:INPUT"Drive 0 or 1 ";D
+6 INPUT"Start at Track 0 to 39 ";T
+7 INPUT"Do you want to append to a file Y/N";F$
+8  FORT=TTO39
+10 FORS=1TO18
+12 PRINT
+14 PRINT"Drive";D;"/track";T;"/sector";S;"/switch 0"
+16 PRINTDSKI$(D,T,S,0)
+18 PRINT
+20 PRINT"Drive";D;"/track";T;"/sector";S;"/switch 1"
+22 PRINTDSKI$(D,T,S,1)
+24 IFF$<>"Y"THEN44
+30 OPEN"DSKINF.DO"FORAPPENDAS1
+32 PRINT#1,""
+34 PRINT#1,"Drive";D;"/track";T;"/sector";S;"/switch 0"
+36 PRINT#1,DSKI$(D,T,S,0)
+38 PRINT#1,""
+40 PRINT#1,"Drive";D;"/track";T;"/sector";S;"/switch 1"
+42 PRINT#1,DSKI$(D,T,S,1)
+43 CLOSE1
+44 NEXTS
+46 NEXTT
+47 REM I don't know if the TRACK,SECTOR and SWITCH numbers are the real one's
+48 REM but they seem to be.
+

@@ -1,0 +1,69 @@
+Olivetti M10 TELCOM FUNCTIONS
+by Terry Kepner
+     Now that DAK has popularized the Olivetti M10 picocomputer 
+by selling it at bargain basement prices, here are are few 
+tidbits of information about the machine.
+     It is often useful to poke TELCOM status into memory from a 
+basic program, for example from a BASIC program that uses the RS-232 
+or modem port (otherwise you would have to go into TELCOM, set 
+the parameters, and then go to your BASIC telecommunications 
+program).  "Status" is held in RAM in locations 63070 to 63074, 
+in a five character field.  The leading character is the baud 
+rate, followed word length, parity mode, number of stop bits, and 
+XON/OFF status.  If you only want to change the baud rate, you 
+can use the direct command: POKE 63070,"M" (or the baud rate you 
+want to use).
+     If, for example, you want to reset TELCOM to modem status 
+before leaving a file transfer program, you could add this short 
+routine to your program:
+1000 REM  Pokes "M7I1E" into "Status"
+1010 FOR A = 63670 TO 63074
+1020 READ B : POKE A,B : NEXT
+1030 DATA 77,55,73,49,69
+1040 REM   M  7  I  1  E
+     The values in the DATA statement are the ASCII value of the 
+character you want to poke into memory.  Change the values in the 
+DATA statement to set any "Status" required.
+     In addition here are some other important TELCOM memory 
+locations, what they control, and the BASIC command you can use 
+to change them.  
+  POKE 63067,0 will set TELCOM to HALF DUPLEX mode.
+  POKE 63067,255 will set TELCOM to FULL DUPLEX mode.
+  POKE 63068,255 will set TELCOM to ECHO to printer.  
+(Turns ECHO on)
+  POKE 63068,0 will set TELCOM to not ECHO to printer.  
+(Turns ECHO off)
+  POKE 63019,1 will set TELCOM to use 10 pulses per 
+second when dialing phone numbers.
+  POKE 63019,20 will set TELCOM to use 20 pps when 
+dialing.
+  POKE 63069,1 will set TELCOM to send a LF (line feed) 
+with every CR (carriage return) when uploading files.
+  POKE 63069,0 will reset TELCOM to no LF after CR.
+
+     This last poke, POKE 63069,1, is necessary when 
+communicating with other Kyocera manufactured computers, such as 
+the NEC 8201, TRS-80 Model 100, and, of course, the Olivetti M10.  
+Also, some mainframe computers and printers require the 
+linefeed/carriage-return combination.  While the previous pokes 
+duplicate commands in TELCOM, this one has no equivalent, so you 
+MUST use the BASIC command to add or delete this feature from 
+TELCOM.  
+     Finally, you can make a direct jump from BASIC to TELCOM by 
+executing a CALL 20814.  When you exit TELCOM after 
+this call, you will go to the main menu and not back to BASIC.
+     A final word of warning: all these addresses are for the US 
+version of the Olivetti M10, the international version uses 
+different addresses.  The TELCOM status addresses in the 
+international version are four locations HIGHER, so change the 
+loop in line 1010 to read FOR A = 63074 TO 63078.  The 
+pokes, likewise, should also have four added to their addresses.  
+Because I don't have an international M10 version available to 
+me, I can't verify all of this information for that machine 
+(i.e., I have no idea of the execution address of TELCOM, or how 
+to find that information).
+
+Reprinted from Pico Magazine with their permission
+Copyright (c) 1985, still held by Pico Magzine
+-Terry Kepner, Technical Editor, Pico Magazine
+

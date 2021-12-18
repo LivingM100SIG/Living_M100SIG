@@ -1,0 +1,15 @@
+10 'killer  -- removes files from directory
+20 'if subscript is missing assumes ".DO"
+30 'CR without file name returns to menu
+40 'type RUN after erasing a basic file
+50 'copyright 1991 Stuart Middleton
+60 ' Compuserve address 72216.2764
+100 FILES
+110 INPUT "file to kill";A$
+120 IF A$="" THEN MENU
+130 IF LEN(A$)<3 THEN GOTO 140
+135 IF MID$(A$,(LEN(A$)-2),1)="." THEN GOTO 1000
+140 A$=A$+".DO"
+1000 KILL A$
+1005 A$=""
+1010 GOTO 100

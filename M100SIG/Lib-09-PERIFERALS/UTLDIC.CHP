@@ -1,0 +1,72 @@
+
+              UTLDIC.CHP
+
+     Chipmunk Dictionary Utilities
+
+    Copyright 1986 David W. Willman
+ Licensed for use only, Compuserve M100  Forum members.
+
+              REMDIC.BA
+
+This program takes a word list stored in the RAM file SUSPEC.DO and removes
+these words from the disk dictionary files DIC-AB.DO thru DIC-YZ.DO . The
+words within SUSPEC.DO must be spelled exactly as they appear in the disk
+dictionary files, each word on a seperate line with no blank lines in
+between, all small letters, but they need not be in alphabetical order.
+SUSPEC.DO is not automatically killed so it can be removed from back-up disks.
+
+0' REMDIC.CHP  Copyright 1986 David W. Willman
+10 CLEAR256:MAXFILES=3:CLS:PRINT:PRINT"Place Dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):ONERRORGOTO130:PRINT:OPEN"0:DIC-AB.DO"FORINPUTAS1:CLOSE:CLS:ONERRORGOTO150:OPEN"SUSPEC.DO"FORINPUTAS1:ONERRORGOTO180
+20 IFEOF(1)THENCLOSE:GOTO70ELSELINEINPUT#1,B$:GOSUB90:GOSUB100
+30 IFEOF(2)THENCLOSE2,3:GOSUB80:GOTO20ELSELINEINPUT#2,D$:IFB$=D$THEN30ELSEPRINT#3,D$:GOTO30
+70 MAXFILES=1:MENU
+80 KILLH$:NAME"0:TP-DIC.DO"ASH$:RETURN
+90 B=ASC(LEFT$(B$,1))-32:RETURN
+100 IFBAND1THENC$=CHR$(B)+CHR$(B+1)ELSEC$=CHR$(B-1)+CHR$(B)
+110 H$="0:DIC-"+C$+".DO":CLS:PRINT@80,"Deleting from file "H$:OPENH$FORINPUTAS2:OPEN"0:TP-DIC.DO"FOROUTPUTAS3:RETURN
+130 PRINT:IFERR=52THENPRINT"Dictionary disk not in drive."ELSEPRINT"Error #"ERR" in line #"ERL
+140 PRINT"Hit any key to continue.";:A$=INPUT$(1):IFERR<>52THEN170ELSERESUME10
+150 PRINT:IFERR=52THENPRINT"SUSPEC.DO file not found."ELSEPRINT"Error #"ERR" in line #"ERL
+160 PRINT"Hit any key to return to menu.";:A$=INPUT$(1)
+170 CLOSE:MAXFILES=1:MENU
+180 PRINT:PRINT"Error #"ERR" in line #"ERL:GOTO160
+
+
+             CRDICT.BA
+
+
+This program creates the blank dictionary files DIC-AB.DO thru DIC-YZ.DO
+on a formatted disk. If the file DIC-AB.DO already exists it will abort.
+
+0' CRDICT.CHP  Copyright 1986 David W. Willman
+10 CLS:PRINT:PRINT"Place dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):PRINT:ONERRORGOTO20:OPEN"0:DIC-AB.DO"FORINPUTAS1:PRINT"Dictionary files already exist.":CLOSE:END
+20 FORN=65TO89STEP2:H$="0:DIC-"+CHR$(N)+CHR$(N+1)+".DO":OPENH$FOROUTPUTAS1:CLOSE:NEXT:MENU
+
+
+
+              PRTDIC.BA
+
+This program prints the words in the specified dictionary disk file in a
+format of 4 words (max. 18 chars./word) per line and sends an ASCII 12 (top
+of forms) to the printer at the end of the file.
+
+0' PRTDIC.CHP  Copyright 1986 David W. Willman
+10 CLS:PRINT:PRINT"Place dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):H$="0:DIC-"
+20 CLS:PRINT:PRINT"Enter pair of letters of file :";
+25 A$=INKEY$:IFA$=""THEN25ELSEIFASC(A$)<>13THENH$=H$+A$:PRINTA$;:GOTO25ELSEPRINT:H$=H$+".DO":OPENH$FORINPUTAS1:LPRINT"Printing words in "H$;SPACE$(20);DATE$;SPACE$(5);TIME$:LPRINT:GOSUB30:CLOSE:LPRINTCHR$(12):MENU
+30 IFEOF(1)THENRETURNELSELINEINPUT#1,A$:GOSUB40:LPRINT"  "A$;:IFEOF(1)THENRETURNELSELINEINPUT#1,A$:GOSUB40:LPRINTA$;:IFEOF(1)THENRETURNELSELINEINPUT#1,A$:GOSUB40:LPRINTA$;:IFEOF(1)THENRETURNELSELINEINPUT#1,A$:GOSUB40:LPRINTA$:GOTO30
+40 IFLEN(A$)<19THENA$=A$+" ":GOTO40ELSEIFLEN(A$)>19THENA$=LEFT$(A$,19):RETURNELSERETURN
+
+
+
+             CNTDIC.BA
+
+This program will count & display the number of words in each of the disk
+dictionary files, as well as, the total number of words in the dictionary.
+(This program is Model 100 specific, due to PEEK in line 25)
+
+0' CNTDIC.CHP  Copyright 1986 David W. Willman   (MODEL 100 SPECIFIC!)
+10 CLS:PRINT:PRINT"Place dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):C=0:TC=0:
+20 CLS:FORN=65TO89STEP2:H$="0:DIC-"+CHR$(N)+CHR$(N+1)+".DO":OPENH$FORINPUTAS1:PRINT:PRINT"Counting words in "H$:PRINT"Words this file ="
+25 P=(PEEK(63033)-2)*40+17:GOSUB30:CLOSE:TC=TC+C:C=0:BEEP:NEXT:PRINT:PRINT"Total words ="TC:PRINT:PRINT"Hit any key to return to menu.";:A$=INPUT$(1):MENU
+30 IFEOF(1)THENRETURNELSELINEINPUT#1,A$:C=C+1:PRINT@P,C:GOTO30

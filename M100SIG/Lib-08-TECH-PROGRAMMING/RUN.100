@@ -1,0 +1,44 @@
+        RUN.100 by Paul Globman
+           Copyright (c) 1990
+
+Machine Language programs, which have a .CO file extension, require that the
+program load and run in a specific RAM location, for which the program was
+designed when it was written.  When you select a .CO program from the menu and
+try to run it, sometimes it will not run, and instead will BEEP and return 
+to the menu.
+
+This apparent failure will occur when the memory location that the program 
+needs to run at, is not properly reserved for the execution of the 
+program.  This is done to protect the computer so it doesn't load the .CO 
+program into an area of RAM that the computer is using for its own 
+"operating system" (ie. stack operations, file buffers, etc.).
+
+To overcome this problem, the correct amount of RAM can be reserved before 
+any attemp to run it.  Another option is to have a small BASIC program CLEAR 
+the appropriate RAM and then RUNM the program you want to run.  This would 
+require a "loader" program for each HIMEM .CO program you want to run.
+
+The solution to this problem is to have one "loader" program, which will adjust
+the reserved RAM, and run any .CO file.  This "loader" program (RUN.BA) is kept
+in RAM, and you put the cursor over the .CO file you want to run.  Instead of 
+pressing ENTER, you type RUN.BA <enter> (at the Select: prompt on the menu) and
+the .CO program under the cursor will run.
+
+This is very similar to KILL.BA, which allows you to cursor select a file on 
+the menu and type KILL to delete it.
+
+Save the following program as RUN.BA. 
+
+0 REM RUN.BA (c) 1990 by Paul Globman
+1 A=64929+2*PEEK(65006):A=PEEK(A)+256*PEEK(A+1):FORX=3TO8:F$=F$+CHR$(PEEK(A+X)):NEXT:R$="RUNM"+CHR$(34)+F$+CHR$(13)
+2 A=65450:POKEA,12:FORX=1TO12:POKEA+2*X,0:POKEA+2*X-1,ASC(MID$(R$,X)):NEXT:ONERRORGOTO3:LOADMF$
+3 CLEAR99,PEEK(64206)+256*PEEK(64207)
+
+
+RUN.BA is used to run HIMEM .CO programs only, and is NOT for ALTLCD programs 
+since ALTLCD programs do not require a reserved area of HIMEM to run in.
+
+A utility like CHANGE.BA can be used to remove the .BA extension from RUN.BA,
+so after selecting the .CO file from the menu, you only need to type RUN<cr>.
+
+

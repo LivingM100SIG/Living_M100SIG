@@ -1,0 +1,224 @@
+CDMCDC.DOC 14+ files by EVAN JONES to provide features listed below to CRDFIL
+programs.  Copyright 1988 Evan Jones POB 343 ANNANDALE VA. 22003
+
+Documentation for CRDMAC series of additions to the CRDFIL series of
+programs.  Files in this group include:
+
+    CRDMCD.ETJ    *CRDTXT.ETJ
+    CRDRDB.ETJ     CRDSRV.ETJ
+    CRD2XB.ETJ    *CDP3MC.ETJ
+   *CRDELM.ETJ    *CRDEL2.ETJ
+   *CDSCGR.ETJ     CDTMMC.ETJ
+    CRDDFS.ETJ     CDMCDC.DOC
+   *CDMCD2.DO2    *CRDEDM.ETJ
+
+ * These and additional files are documented by CDMCD2.DO2
+
+             FEATURES
+
+ * Macro capability in response to prompts
+ * Add any response to Macro list with one keystroke
+ * Move cursor on card to any selected prompt
+ * Reverse video display of responses or prompts
+ * Review entire card with responses and make changes or accept display
+ * Display entire or partial macro list with macro number then return to
+   current prompt
+ * Concatenation of responses including macros for any prompt
+ * All prompts on card displayed at once
+ * Card of any size can be created (larger than LCD size) with screen
+   scrolling through card
+ * Previous feature allows same card/data files/screens to be run on M100
+   or M200 with no alteration of program or files
+ * Remove any previously entered response with <BKSP> key
+ * Macro key can be used as enter key
+ * Mini - Relational Data File capability with Data File Coordinator
+   allowing up to 20 responses to be completed at once from previously
+   entered data in another data file
+ * Previous feature allows alternate macro lists or any data file can
+   become a macro list
+ * Supports cross bank I/O files using XBASIC on M200
+ * Typing over undesired response removes old response
+ * Program can be used to enter text allowing use of macros in this mode
+   so phrases common words etc. can be macroed in while writing text
+ * Same programs run on M100 M102 M200
+ * Compatible with most of CRDFIL series
+ * Last and probably least CRDFIL GRAPHICS use character set and
+   macros to create screen designs to introduce special data files
+
+HOW DOES ALL THIS WORK? - read on!
+
+First a note on MERGING
+
+Although some of the above are stand alone programs most are files that
+require merging into current programs to become operative.  Merging is done by
+having the base program such as CRDFIL.BA loaded into basic in your
+computer's RAM.  The text file to be merged should be in RAM and on the menu
+(it could be merged from disk with POWR-DOS however).  Next type MERGE"file
+name" and press <ENTER> where "file name" is the file to be merged such as
+"CRDMCD.DO".  Your computer should flash wait as file is being merged.  When ok
+is on screen merging is done and basic file can be renamed and merge or text
+file killed.
+
+NEXT EACH FILE WILL BE REVIEWED WITH DIRECTIONS
+
+CRDMCD.ETJ
+
+Suggested menu name is CRDMCD.DO
+Suggested program name CRDMAC.BA
+
+This file when merged with the basic CRDFIL.BA program provides the macro/
+screen scrolling capability.  The program operates as you would expect the
+original CRDFIL.BA program to operate (if unfamiliar with CRDFIL.BA see
+CRDFIL.DOC for instructions) with the following additions.  For screen
+scrolling in Display or Create mode use cursor keys.  A small arrow will appear
+at each prompt as you scroll through the card.  Pressing <ENTER> acts as like
+original program.  In add mode the cursor itself will move from prompt to
+prompt when cursor keys are pressed.
+
+In add mode pressing the <[> key at any prompt will move the screen to a macro
+menu.  Here you will be asked for a macro number.  If a number is entered
+the program will open the CRDMAC.DO file and look for an entry corresponding to
+that number -  which if found will be entered as the response for the prompt
+in which you first pressed <[>.  The CRDMAC.DO file is a separate file that
+is in RAM and on the menu as CRDMAC.DO.  An example of its format is as follows:
+
+Evan
+Jones
+POB 343
+Annandale VA. 22003
+
+In the above example macro or CRDMAC# 1 would be "Evan".  Number 2 "Jones" etc.
+A list should probably be kept of CRDMAC numbers while entering data for easy
+access.  Back to the CRDMAC menu. If at this point <H> is pushed the program
+will list CRDMAC #'s with corresponding responses.  The whole list can be gone
+through or press <S> to return.  At CRDMAC menu if <K> is pressed then a
+review of special key/functions is provided.  If <R> is pressed then you
+are returned to prompt.
+
+After completion of a response it can be entered to the CRDMAC.DO list by
+pushing F7.  This key also enters the response on card. It can then be called
+as a response via a macro number.  If at a prompt a number is entered and the
+<[> key pushed the program will look to the macro list for the response.  If a
+prompt is completed from keyboard and <[> is pressed the response is entered as
+if the <ENTER> key were pressed.
+
+The <TAB> key provides for concatenation of responses.  If the cursor is moved
+to the beginning of a response and <TAB> is pressed then the curser moves to the
+end of the response and the response can be added too with macro or keyboard.
+Concatenation remains in effect until enter is pressed.  The macro key <[>
+considers as new any entry since <TAB> was pushed or last macro added.  The
+<BKSP> acts as normal however if at the beginning of a response - if pushed it
+will erase entire response.  This is a handy feature but when concatenating if
+<BKSP> is pushed at beginning of next or concatenated entry entire response will
+be erased - experiment with it.  Also if cursor key is pushed in mid entry
+before <ENTER> key then response is erased.
+
+ Please familiarize yourself with these features.  They are easy to use and its
+tough to make a mistake that can't be easily corrected.  Happy CRDMacroing!
+
+CRDRDB.ETJ
+
+Suggested menu name CRDRDB.DO
+Suggested program name CRDRDB.BA
+
+This file is to be merged with CRDMAC.BA or with the original CRDFIL program
+after original has been merged with previous file CRDMCD.ETJ
+
+The resulting program after merging provides for a mini relational data file
+capability which I call Data File Coordinator.  The program operates as
+above with the additional feature of completing up to 20 responses by
+matching both prompts and responses of up to nine entries (usually one is
+sufficient).  This feature has many possibilities.  For example a customers
+name, address, etc. could be completed from another data file simply by
+entering a customer #.  Or you could have each card numbered (off screen
+ -  remember you can have cards larger than LCD display) and match that number
+to call up desired card info without ever displaying match number.  The entry
+to this process is as follows: at prompt enter response in this format
+!<file name>,<#>,<#>,/,<#>,<#>,<#>,<#> an example would look like this
+!CUSTID,2,3,/,6,8,9,10 where "!" identifies entry as data file
+coordinator. "CUSTID" is file name where data is stored (can be on disk using
+POWR-DOS if preceeded by : ie :CUSTID). Numbers before the "/" are the #'s of
+prompts and responses that must match exactly in both CUSTID and on current
+card.  If they match then program matches prompts of numbers after "/" on
+both CUSTID and current card. Again if matched then all responses for numbers
+after "/" are completed in current card from CUSDID.  The order of numbers
+doesn't matter.  The program will take up to nine #'s before the / and 20 #'s
+after. The cursor will end up at last number. The above can be entered after
+prompt or at CRDMAC menu.  Due to its length I don't recommend it be entered
+at prompt as some of it may still be left on card after responses are
+completed (the left over part displayed won't be stored however).  The best way
+to use the above format is to have the data file coordinator format called from
+the macro list. In other words if !CUSTID,1,/,3,4 is macro # 1 then at
+response #3 on current card simply type 1 then push the macro key <[> and
+responses for prompts 3 and 4 will be completed from CUSTID if all matches are
+correct. This is where the program can have some real power - up to 20
+responses can be completed with just 2 keystrokes and often the same data file
+coordinator response is used on card after card. While program is looking for
+matches the screen will display this "!!" flashing until responses are found
+
+If the data file coordinator response is in this format !<file name> for example
+as above "!CUSTID" then the program temporarily assigns CUSTID as the macro
+file and goes to the macro menu.  At this point a number can be entered or
+pushing <H> will review the file assigning CRDMAC or macro #'s. Following
+this review the program returns to the current prompt or CRDMAC menu and if a
+number is entered then for that entry the macro file is CUSTID.  After that
+the program will automatically return to CRDMAC as the macro file unless !CUSTID
+is called again.
+
+Happy Data File Coordinating!
+
+CRD2XB.ETJ
+
+Suggested menu name is CRD2XB.DO
+Suggested program name N/A
+
+When merged to resultant program after above files have been merged this
+addition provides M200 machines with cross bank input and output using
+XBASIC.CO.  The file format is as follows Bx:<file name> or B3:CUSTID.  B
+is a dummy charactor and could even be a space but must be there - x is the bank
+where file is located - the colon is XBASIC format as required and the file
+name is the file name.
+
+CRDSRV.ETJ
+
+Suggested menu name is CRDSRV.DO
+Suggested program name N/A
+
+This file when merged after any - all or any combination of above files have
+been merged to CRDFIL provides an additional menu choice adding reverse
+video.  Either responses or prompts or neither can be selected.  The only
+caution is that this should be the last file merged out of the above files.
+
+
+CDTMMC.ETJ
+
+Suggested menu name is CDTMMC.DO
+Suggested program name CRDTMP.BA
+
+This file when merged with CRDFIL.TMP or CRDTMP.BA Tony's template program
+allows templates of any size to be created (larger than LCD screen) Some
+other additions to Tony's program are listed in beginning remarks of
+CDTMMC.ETJ
+
+
+CRDDFS.ETJ
+
+Suggested menu name is CRDDFS.DO
+Suggested program name CRDDFS.BA
+
+See remark lines at beginning of file. Program loads lengthy files into RAM in
+sections for easier manipulation. Program keeps track of which sections
+have been loaded and continues loading sequentially when activated until entire
+file has been loaded
+
+
+CDMCD2.DO2
+
+Suggested menu name is CDMCD2.DO
+Suggested program name N/A
+
+This is the second document file with related info on "*" files above and
+other files as listed in CDMCD2.DO2
+
+
+

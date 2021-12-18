@@ -1,0 +1,191 @@
+;
+;
+; CRYPT.100 v3.1 
+;           -- encryption/decryption
+;              with m/l speed
+;
+; <see CRYPT.ADD for v3.1 revisions>
+;
+; c1987 by Jon  Diercks
+;	[73327,2353]
+;
+; shortened for Alt LCD buffer
+;
+	org	$fcc0
+;
+;rom/ram adresses
+;
+chkf	equ	$5aab	;ck file name in directory
+faddr	equ	$5ae3	;get file address
+beep	equ	$7662	;make a beep
+files	equ	$1f42	;list RAM: dir
+newln	equ	$4bb8	;send newline if necessary
+dnewln	equ	$5791	;disp <hl> on newline
+upcase	equ	$0fe9	;convert a to uppercase
+chget	equ	$12cb	;get char to a
+upget	equ	$5d64	;get upcase chr(chget+upcase)
+crlf	equ	$4222
+linput	equ	$4644	;line input
+;	<text placed at $f685
+;	 hl=$f684
+;	 c flag set if ^C abort>
+inputb	equ	$f685	;input buffer
+menu	equ	$5797
+;
+;
+;program starts here
+;
+;
+start	disp	welcom
+	ent	start
+;
+finput	call	files
+finp1	lxi	hl,file?
+	call	input
+	lxi	hl,inputb
+	dcx	hl
+;
+lp1	inx	hl	;ensure .do
+	mov	a,m
+	cpi	'.'
+	jz	do
+	ora	a
+	jnz	lp1
+;
+do	lxi	d,dotyp	;put in .DO extension
+	mvi	b,4
+	call	$3469	;ldir
+;
+	lxi	de,inputb
+	mvi	a,10
+	call	chkf	;file in dir?
+	jnz	finp2	;get it
+;
+goof	call	beep	;file not found
+	jmp	finp1	;try again
+;
+finp2	call	faddr	;hl=file start
+	shld	filept
+;
+kinput	lxi	hl,key?
+	call	input
+;following loop subtracts 64 from each
+; char in keyword, then checks to see
+; if it's valid.
+	lxi	hl,inputb
+	mvi	b,64
+kinp1	mov	a,m
+	ana	a	;done?
+	jz	minput
+	sub	b	;a=a-64
+	jz	goof2	;0 invalid
+	cpi	27	;>26 invalid
+	jnc	goof2
+	mov	m,a	;put it back
+	inx	hl
+	jmp	kinp1
+;
+goof2	call	beep
+	jmp	kinput	;try again
+;
+input	call	dnewln	;print prompt
+	call	linput
+	jc	menu	;^C abort
+	rst	2
+	jz	menu	;null input
+;
+	lxi	hl,inputb
+;
+makeup	mov	a,m	;switch <hl>-null to upper case
+	ana	a	;done?
+	rz
+	call	upcase
+	mov	m,a	;put upcase back where you got lc
+	inx	hl
+	jmp	makeup
+;
+minput	disp	e/d?
+minp1	call	upget
+	cpi	'E'
+	jnz	minp2
+	rst	4	;print E
+	sub	a	;encrypt
+	jmp	minp3
+minp2	cpi	'D'
+	jnz	minp1	;not d/e - try again
+	rst	4	;print D
+	sub	a	;decrypt mode
+	inr	a	;a=1
+minp3	sta	mode
+;
+gofrit	lxi	de,inputb	;key
+	lhld	filept	;file pointer
+gloop	mov	a,m	;get a char from file
+	cpi	26	;eof?
+	rz		;done
+	cpi	33
+	jc	go4	;skip if <=space
+	cpi	127
+	jnc	go4	;skip if >126
+	mov	c,a
+	ldax	de	;next key byte
+	ana	a	;end of key?
+	jnz	go1	;not yet
+	lxi	de,inputb	;start over
+	ldax	de
+go1	mov	b,a
+;now c contains character from file,
+; and b contains character from keyword
+; so add them together
+;first, find which mode
+;then the real fun begins!
+; have to mod a so that it's still
+; <127 and >32!
+	lda	mode
+	ana	a	;a=0=encrypt?
+	jz	go2	;yes
+	mov	a,c	;decrypt
+	sub	b
+	cpi	33	;if >33 then
+	jnc	go3	;go on else
+	adi	94	;mod 94
+	jmp	go3	;then go on
+go2	mov	a,c	;encrypt
+	add	b
+	cpi	127	;if <127 then
+	jc	go3	;go on else
+	sui	94	;mod 94
+go3	mov	m,a	;put char back
+	inx	de	;move fwd in key
+go4	inx	hl	;move fwd in file
+	jmp	gloop
+;
+;
+;
+;string constants
+;
+welcom	db	12	;^L = cls
+	db	27
+	dm	pCRYPT! - v3.1
+	db	27
+	dm	q
+	db	13
+	db	10
+	db	0
+file?	dm	File:
+	db	0
+key?	dm	Kwrd:
+	db	0
+e/d?	dm	<E>ncr or <D>ecr?
+	db	0
+dotyp	dm	.DO
+	db	0
+;
+;
+;variable space
+;
+mode	ds	1	;0=encrypt;1=decrypt
+filept	ds	2
+;store hl - file pointer
+;
+	end

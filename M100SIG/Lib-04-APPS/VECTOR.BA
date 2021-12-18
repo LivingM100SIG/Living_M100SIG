@@ -1,0 +1,35 @@
+1	'This runs on Tandy Model 100 with DVI at 80 columns.'
+2	'No tricks, so the basic should work on anything with'
+3	'a little tinkering.'
+4       '
+5 CLS:PRINT:PRINT:PRINT:PRINT:PRINT:PRINTTAB(20)"  Copyright 1987 by Martin Patton"
+10 PRINT:PRINTTAB(10);"This calculates the projection vector <p> of <b> on <a>."
+15 PRINT:PRINTTAB(25);"(up to ten components)":FOR I=1 TO 1500:NEXT I:CLS
+20 INPUT"Enter the number of components in vector <a>.";NA
+25 IF NA>10 THEN BEEP:PRINT "Can only do ten elements.":FOR I=1TO 300:NEXT I:GOTO 20
+30 CLS:PRINT"Vector <b> must have";NA;"components too.":FOR I=1TO800:NEXTI:PRINT
+35	 'S is a switch.  If zero, vector <a>, otherwiuse <b>.
+40 S=0:CLS:FOR I = 1 TO NA:PRINT"Enter <a> component number";I:INPUTA(I):NEXTI
+50 CLS: FOR I = 1 TO NA:PRINT"<a>";I;"=";A(I):NEXT I:PRINT
+60 PRINT"Is this correct":R$=INPUT$(1):IF INSTR("nN",R$) THEN GOSUB 300 ELSE GOTO 70
+65 GOTO 50
+70 S=1:CLS:FOR I = 1 TO NA:PRINT"Enter <b> component number";I:INPUTB(I):NEXTI
+80 CLS: FOR I = 1 TO NA:PRINT"<b>";I;"=";B(I):NEXT I:PRINT
+90 PRINT"Is this correct":R$=INPUT$(1):IF INSTR("nN",R$) THEN GOSUB 300 ELSE GOTO 100
+95 GOTO 80
+99	 'Calculate <a> dot <b>.
+100 AB=0:FOR I=1 TO NA:AB=AB+(A(I)*B(I)):NEXTI
+105      'Calculate <a> dot <a>.
+110 AA=0:FOR I=1 TO NA:AA=AA+(A(I)*A(I)):NEXTI
+115	 'Calculate <p>.
+118 CLS:PRINT:PRINT:PRINT:PRINT"The vectors are:":PRINT:PRINT
+120 FOR I=1 TO NA:P(I)=(AB/AA)*A(I)
+125 PRINTTAB(10)"<p>";I;"=";P(I);TAB(40);"<a>";I;"=";A(I);TAB(60);"<b>";I;"=";B(I):NEXT I
+130 MA=SQR(AA)
+140 PA=AB/MA:PRINT:PRINT:PRINT"The scalar component of <b> along <a> is";PA;".":PRINT:PRINT:PRINT
+145 PRINT"Would you like a printout?":R$=INPUT$(1):IF INSTR("yY",R$) THEN LCOPY ELSE GOTO 150 
+150 PRINT:PRINT:PRINT"Would you like to run again":R$=INPUT$(1)
+160 IF INSTR("Yy",R$) THEN GOTO 20 ELSE MENU 'restart.
+300 INPUT"Change which entry number";R:INPUT"Enter new value";NV
+310 IF S=0 THEN A(R)=NV:PRINT"<a>";R;"=";NV:RETURN
+320 IF S=1 THEN B(R)=NV:PRINT"<b>";R;"=";NV:RETURN

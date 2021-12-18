@@ -1,0 +1,32 @@
+INSTRUCTIONS FOR CHRDEF.BA
+
+Because the Model 100 character definitions are in ROM, it is not possible to 
+truly redefine a character for the screen display as is done with many other 
+computers.  While any configuration can be done with the PSET and PRESET 
+commands, this is slow, and the subroutine looping varies according to the 
+shape of the defined character.
+CHRDEF.BA addresses the pixels directly by means of the LCD drivers, addressing
+8 pixels at a time and the routine is unchanged no matter what the 
+configuration of the character.  Visually, the routine is virtually as fast as 
+the normal character print routines so is invisible to the program user.
+To use CHRDEF.BA, first merge this routine into your program.  Define each 
+character as a DATA line with six values.  The values are the decimal numbers 
+whose binary forms would mirror the on/off pixels of one vertical column of the
+character from bottom to top.  For example 128 (b=10000000) would have a single
+pixel on the bottom with the rest off, while 255 (b=11111111) would have all 8 
+pixels turned on. (Remember that each normal character is in a block 6 pixels 
+wide and 8 high.)
+To call CHRDEF.BA,RESTORE the DATA line for the character you want and 
+immediately GOSUB 64000; the character will be printed to the screen like any 
+normal character.  CHRDEF.BA uses the current cursor position and updates it, 
+therefore it can be used in conjunction with regular PRINT statements.  (ex. 
+PRINT A$;:RESTORE 510:GOSUB 64000:PRINT B$ will print all three items on one 
+line.)  So as to allow other text to follow it, CHRDEF.BA does not 
+automatically terminate a row (line); a final null PRINT will be needed if you 
+wish to use it at the end of a line.
+CHRDEF.BA specifically addresses LCD display, a graphics dump is necessary if 
+you wish to echo these definitions to your printer.
+If you have any comments, suggestions, etc. reach me at 74756,413--Jay Holovacs
+
+
+

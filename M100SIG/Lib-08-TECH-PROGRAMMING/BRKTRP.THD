@@ -1,0 +1,72 @@
+BRKTRP.THD
+        (c)1989 Golden Triangle, Inc.
+        (c)1989 Wilson Van Alst
+
+Fm: charlie kramer
+To: all
+
+How do I test and trap the control C and control S in a basic program? I am
+working on a basic program for the Model 100, want to send all control codes
+out the COM port to control an external device. I am using INKEY$ for keyboard
+input, but Control C breaks the program and Control S pauses the program. I am
+currently using Code C and Code S to do what I want but I would really like to
+be able type Control C and send it and type Control S and send it out the COM
+port (RS232).
+
+    =+=+=+=+=+=
+
+Fm: Tony Anderson
+To: charlie kramer
+
+That sort of thing is best done in machine language by hooking into the
+keyboard scanning routine and examining each character as it comes from the
+keyboard.  The technique is described in the file HOTKEY.DOC in Library 7, and
+there is an accompanying program, HOTKEY.100.
+
+But it can also be done, judiciously, in BASIC.  There is a drawback to doing
+it in BASIC, as will become apparent...
+
+First you have to disable the break and function keys by poking 128 to 63056,
+then your INKEY statement will trap both ^C and ^S.  But once disabled, the
+function keys won't work, and you can't abort the program with BREAK or ^C
+until you reenable them by poking 0 to 63056.  Here is a working example:
+
+10 POKE 63056,128  :             ' Disables BREAK and Function keys
+20 A$=INKEY$ : IF A$="" THEN 20 :' Get a keypress
+30 PRINT ASC(A$) :               ' Print the ascii value of the key pressed
+40 GOTO 20 "                     ' Go back for another
+
+In order to get out of this program, you have to press the reset button on the
+back of the machine.  That will probably return you to the menu, which will
+also reenable the break routines by resetting 63056 to 0.
+
+    =+=+=+=+=+=
+
+Fm: Wilson Van Alst
+To: charlie kramer
+
+Charlie,
+   On the assumption you're using the M100, poking a value of 128 to 63056 will
+disable ^C, ^S, and SHIFT/BREAK.  Unfortunately, it also knocks out response to
+the f-keys -- but you can't have everything.
+   Here's a short sampler:
+
+ 10 poke63056,128
+ 20 a$=inkey$:ifa$=""then20
+ 30 a=asc(a$)
+ 40 ifa=27thenend
+ 50 printa
+ 60 goto20
+
+   You can get out of the program with the <ESC> key.
+        Good luck,
+          Van
+
+    =+=+=+=+=+=
+
+
+Starting message #: 188765  Starting date: 15-Oct-89  06:52:52
+ Participants:
+charlie kramer 72307,355
+Tony Anderson 76703,4062
+Wilson Van Alst 76576,2735

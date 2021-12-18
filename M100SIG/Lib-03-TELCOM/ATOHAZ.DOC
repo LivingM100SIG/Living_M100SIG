@@ -1,0 +1,69 @@
+	This program will dial a number from your ADRS.DO file (or other
+specified file) using a Hayes compatible modem at 300, 1200 or 2400 bps. If it
+does not get a valid carrier, it will re-dial until it does get a valid carrier
+or it is manually interrupted. If it does get a valid carrier, it will execute
+the autolog string associated with that number (if any) and then go into
+TELCOM's TERM mode.
+
+			Selecting a dialing File
+	At the "Find:" prompt if you enter "Files" (no quotes!) you will be
+prompted for a file (prompt "File:") otherwise ADRS.DO will be used. If you
+haven't changed your function key definitions this may be done by pressin the
+F1 key. Otherwise you will have to enter the word by hand. Case doesn't matter.
+FILES, files, FiLEs, etc will all work.
+	The selected file will be used until you exit the program or
+successfully connect with a call.
+	The filename may be a disk file if you have a DVI, or Chipmunk. If you
+have a TD1 or TD2 you will need an operating system that lets you read disk
+files from BASIC to us a disk file as the dialing file.
+
+			Selecting a number to dial.
+	At the "Find:" prompt enter the name to search for. The first matching
+name will be displayed. If it is the number you want type a 3, 5, or 6 and the
+number will be dialed at that baud rate (3=300, 5=1200, 6=2400). If it wasn't
+the one you wanted, pressing the ESC key will return you to the prompt.
+Pressing any other key will continue the search.
+	If no matches are found, the program will return to the prompt.
+	If you wish to exit the program without dialing a number, enter "Menu"
+at the prompt. (if you haven't changed you function key definitions this may be
+done by pressing F8).
+
+			Dialing
+	After you have found the number you want, pressing 3, 5, or 6 will dial
+it. Do *NOT* press enter!!
+	The modem will dial the number at the indicated baud rate. The time
+will be displayed on the screen. If the modem connects and receives a valid
+carrier, a connect message will be displayed.
+	If the call does not complete, a line will be displayed consisting of:
+An attempt #, a message, and the time of the last attempt
+Each new attempt will overwrite this line.
+	Which messages will be displayed will depend on your modem. Here is a
+list of messages and which types of modems will display them:
+
+	message			300	1200	2400	aborts call?
+---------------------------------------------------------------------
+	connect			x	x	x		N
+	ring			x	x	x		N
+	no carrier		x	x	x		N
+	modem error		x	x	x		Y
+	connect 1200			x	x		N
+	no dial tone				x		Y
+	busy					x		N
+	no answer				x		N
+ reserved for future use			x		Y
+	connect 2400				x		N
+	ringing					x		N
+	voice					x		Y
+
+			Aborting a call
+	To abort a bialing attempt, press any key. At the end of the current attempt you will be returned to the prompt.
+
+				Setup
+	This program requires a small amount of setup for different modems.
+In line 78 there is a setup string for the modem "ATE1X6V0S0=0S7=20". It
+*should* work with all modems, but apparently doesn't. Therefore for 300 baud
+modems change X6 to X0. For 1200 baud modems change X6 to X1.
+	If you are tight for space, you can remove the lines for the message
+that don't apply to your modem (lines 10-22 are the messages). A 300 baud modem
+can remove lines 15-22. A 1200 can remove lines 16-22. In either case, remove
+the references from line 9 as well.

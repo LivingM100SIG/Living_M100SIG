@@ -1,0 +1,26 @@
+1 'FRACT.100 - Fractal Hacker's Kit
+2 'Mike Weiblen 72506,2072   052185
+3 'Adapted from "Fractals" by Peter Sorensen BYTE Sep 1984
+4 'Program by Greg Turk
+5 'For starters, try these settings:
+6 '	Lambda = 0,1	Scale = 2.5	(Dragon)
+7 '	Lambda = 3,0	Scale = .7	(Bubbles)
+8 '	Lambda = 1,0	Scale = 2.5	(Cloud)
+9 'and allow to run for a LONG time!
+10 CX=120:CY=32:X=.50001:Y=0
+30 INPUT"Lambda (X,Y)";LX,LY
+31 S=LX*LX+LY*LY:LX=4*LX/S:LY=-4*LY/S
+40 INPUT"Scale ";SC:SC=2*CY/SC
+50 PRINT"One moment please":FORI=1TO10:GOSUB1000:NEXT
+60 CLS:ONERRORGOTO999
+100 PSET(CX+SC*(X-.5),CY-SC*Y)
+110 GOSUB1000:GOTO100
+999 RESUME110
+1000 TX=X:TY=Y
+1010 X=TX*LX-TY*LY:Y=TX*LY+TY*LX
+1020 X=1-X:T=Y
+1022 S=SQR(X*X+Y*Y)
+1023 Y=SQR((S-X)/2):X=SQR((S+X)/2)
+1025 IFT<0THENX=-X
+1040 IFRND(1)<.5THENX=-X:Y=-Y
+1050 X=1-X:X=X/2:Y=Y/2:RETURN

@@ -1,0 +1,93 @@
+CDOS.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+CDOS is the operating systems for the Chipmunk disk drive, developed by
+Holmes and sold by PCSG.  It is know to be a complex and capable operating
+system -- which supports disk folders (subdirectories) and provides true
+random access operation.  Any information about CDOS is well worth saving.
+Here is a small thread of such messages.
+
+
+Message range: 145958 to 146013
+Dates: 4/19/87 to 4/19/87
+
+
+Fm: Grant S. Robertson 73337,1746
+To: ALL
+
+ALL <F5> (KILL) Key mod for CDOS
+   This is just an idea. I don't know exactly how to implement it just yet. I
+would like to intercept the KILL routine where it checks to see if the selected
+file is a ROM file. At that point I would like to insert a routine that goes
+through the directory and deactivates a certain subset of the listed files. Of
+course you don't want to deactivate the ROM files. But there are others you may
+want to keep also. The option ROM file would be one. e.g."Super" or "Write" How
+about BASIC programs you use all the time like MOVE.BA or a program I call
+RECNFG.BA which installs and removes my only two option ROMs, Super and
+Cleuseau+ROM2, redefining some of the function keys to make program editing
+easier when using Cleuseau.
+    What is needed is a way to mark the "keepers" in the directory so the new
+routine won't kill them also. This could be done using special extensions or by
+using one of the unused bits in the status byte. Before the latter method could
+be really useful it would have to be determined whether CDOS will store the
+status byte in the special form or change it back to the original form.
+    Naturally, before this routine could be written we have to find the proper
+hook to use. I'm guessing that this is not a standard M100 hook but a special
+CDOS one. This is where I really get over my head.
+    If you're like me you get tired of KILLing each file individually. But you
+know if you do a cold start you will have to reload all your utility programs,
+reset your TELCOM stats, and reinstal your option ROM. Depending on how much of
+this you've got to do it may not be worth it.
+    Let's get some ideas flowing and see if we can't save us all a few
+headaches.
+    Grant S. P.S. An "Are you absolutely positive? (Y/N)" message is a must.
+Don't you think?
+
+
+Fm: Denny Thomas 76703,444
+To: Grant S. Robertson 73337,1746
+
+  That is a good idea, and as a matter of fact, is implemented in Traveling
+Software's TS-DOS for the TDD. They use the ^T (CTRL T) key to "tag" a file for
+either killing, loading of saving. It works in all modes.
+
+The big hangup with CDOS is the way it loads the various parts of the operating
+system at different times. You really don't know what's in RAM at any given
+time and the routines are permanently stored in ROM on the drive. You could
+check each time to see if the proper chunk is in RAM and then do your stuff,
+but it seems hazardous at best.
+
+
+Fm: Grant S. Robertson 73337,1746
+To: Denny Thomas 76703,444
+
+    Let's hope that the hook for that function is always in the same place. At
+least when the CDOS menu is being displayed. That seems probable to me. Does
+any body know for sure? I've never played with hooks before but I have read
+some about them.
+    Grant P.S. That was about a fast reply, Denny. I was only away for about
+two hours to get some dinner. You must dream about Liquid Crystal Displays in
+your sleep.
+
+
+Sb: #145990-#KILL mod for CDOS
+Fm: Denny Thomas 76703,444
+To: Grant S. Robertson 73337,1746
+
+Hmmm....2 hours?....That slow?.....I'll have to work on that.
+
+The kill function is known to be paged in and out. It was confirmed when
+another subject came up, namely, being able to use certain functions while the
+Chipmunk is turned off. It was found that sometimes you could use Kill when the
+'Munk was turned off, and at other times, no go. The solution was to select the
+Kill function even if you don't do the actual kill and that will lock the
+routine into RAM. You could then turn off the Munk and use that function.
+
+It's unfortunate, but there has been very little information forthcomming about
+the internals of the Munk. The sum total of our knowledge is contained in DL9
+(see CHIPMK.CAT).
+
+
+

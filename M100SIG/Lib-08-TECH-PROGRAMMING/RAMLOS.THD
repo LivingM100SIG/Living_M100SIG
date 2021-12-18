@@ -1,0 +1,96 @@
+RAMLOS.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+New users are often puzzled when the amount of free memory is less than they
+expect.  In extreme cases, members have reported having less than 10K of
+memory free in a 32K machine with nothing on the menu!  This set of messages
+culminates in a tutorial on how to cure the problem.  In this regard, the
+files FILEN.100 (DL 7) and FILEN.200 (DL 10) are very helpful for memory
+management.  <<Updated 4/30/87>>
+
+
+Message range: 143365 to 146731
+Dates: 3/18/87 to 4/28/87
+
+
+Fm: Don Wallbaum 70007,1413
+To: Tony Anderson 76703,4062 
+
+BTW....what causes the memory loss???  Just onna those things??
+
+
+Fm: Tony Anderson 76703,4062
+To: Don Wallbaum 70007,1413 
+
+Any one of a number of things.  An unsaved BASIC program in the "NONAME"
+buffer; a scrap of data in the Paste Buffer; a bit of reserved RAM area due to
+HIMEM being moved; a misplaced number in the Reserved RAM area; the phase of
+the moon; etc...
+
+
+Fm: Don Wallbaum 70007,1413
+To: Tony Anderson 76703,4062 
+
+Ah, I _knew_ I shouldnt have mixed the eye of newt with the batwing tea I had!
+
+Anyway, for whatever reason, my RAM bank is back happily to 19590. thanx for
+the help.
+
+BTW -- am I correct in thinking a cold restart would have accomplished the same
+thing?  I saved the procedure, but Ive found that things lost on a disk are
+just as lost as paper lost in a filing cabinet.
+
+
+Fm: Tony Anderson 76703,4062
+To: Don Wallbaum 70007,1413
+
+Yeah, a cold start would have accomplished the same thing, unless there was
+something seriously wrong with the RAM chip.  But it's like getting surgery for
+a head cold; or swatting flies with a sledge-hammer.  A case of overkill,
+unless absolutely necessary and nothing else works.
+
+(cold starts have often been referred to as "computer brainwashing") (grin)
+
+Now, as to rationale,
+
+CLEAR empties the Paste Buffer and variable scratchpad
+NEW   empties the unnamed program Buffer
+MAXFILES=1 resets the internal I/O buffers to 1 (you could also set to zero,
+and recover use of an additional 256 bytes, but 1 is the default value, and
+many programs assume 1 buffer available for I/O
+CLEAR256,MAXRAM moves the HIMEM pointer back up to MAXRAM, killing any ML
+programs in high memory, or area reserved for a ML program. (sometimes we
+forget they're up there)
+
+(best of luck finding the info again, when you need it.) (grin)
+
+
+Fm: Don Wallbaum 70007,1413
+To: Tony Anderson 76703,4062
+
+Helpful as always.  thanx so much for the primer.
+
+
+Fm: Curtis Karnow 73047,3120
+To: [F] Tony Anderson  76703,406
+
+I know I've seen the answer around before., but I forgot to copy it: So here we
+go: where's my missing RAM? Adding up files don't total 19k+ on my T200. I've
+tried: CLEAR in basic; emptying the TEXT buffer; CLEAR 256,MAXRAM in BASIC
+(which I need to do, as I use TS_RAndom). What else? About 3k missing. which to
+we little folk seems like a lot....
+
+
+Fm: Tony Anderson 76703,4062
+To: Curtis Karnow 73047,3120
+
+There are also paste, editing and BASIC buffers that you need to clear, by
+going into BASIC and typing NEW; and there may be I/O buffers, which you can
+reclaim by setting MAXFILES back to the default value of 1, with MAXFILES=1
+
+There is also the 4K or so of reserved system RAM, which is used by the
+operating system to store flags, transients, and other such "scratchpad"
+things, which is not generally available for your use... that's why you get
+only 19.5K in a 24K machine.

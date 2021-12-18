@@ -1,0 +1,70 @@
+0 'PACE_M for marathons times H.Noel 5/88 V1.9 3/89
+1 MAXFILES=2
+5 DIM TM(30),TS$(30),TH(30),S(30)
+11 CLS:
+12 PRINT"PPPP AAAA CCCC EEE  For   MMMMM "CHR$(171)" 1988"
+13 PRINT"P  P A  A C    E    Your  M M M Namreka";"
+14 PRINT"PPPP AAAA C    EE MarathonM   M ProductsP    A  A C    E   Splits M   M Ver.1.9d";
+16 PRINT"P    A  A CCCC EEE  ====  M   M"
+22 R1=R1+1
+23 IF R1=1THENINPUT"Enter any distance in miles ";D$ ELSE D9$=D$:PRINT"Enter any distance in miles ("D")";:INPUT D$:IFD$=""THEND$=D9$
+24 D=VAL(D$):IF LEFT$(D$,1)="M" THEN MENU
+25 IF R1=1THENINPUT"Enter elapsed time hmm:ss ";T$ ELSE T9$=T$:PRINT "Enter elapsed time hmm:ss ("T$")";:INPUT T$:IF T$=""THENT$=T9$
+26 PRINT "              Please Wait";
+100 'break time down into H M S
+110 T1=INSTR(1,T$,":")
+111 IF T1=0 THEN PRINT:INPUT"***ERROR in the way you entered the time press return and try again";X:GOTO 11
+121 H=0:M=VAL(LEFT$(T$,T1-1)):S=VAL(RIGHT$(T$,2)):H=INT(M/100):M=M-(H*100)
+130 'reduce it to seconds.
+135 S=(S+(M*60)+(H*3600))/D
+140 'Setting the distance times
+141 FOR X=1 TO 26:S(X)=S*X:NEXT
+142 S(27)=S*3.1
+143 S(28)=S*6.2
+144 S(29)=S*13.1
+145 S(30)=S*26.2
+185 FOR X=1TO 30:GOSUB400:NEXT X
+300 CLS 
+305 OPEN "LCD:"FOR OUTPUT AS 1
+310 GOSUB 881
+312 CLOSE 1
+320 PRINT @ 0," ";
+322 A$=INKEY$:IF LEFT$(A$,1)="M" OR LEFT$(A$,1)="m" THEN MENU ELSE IF A$="R" OR A$="r" THEN GOTO 11 ELSE IFA$="I"ORA$="i"THEN GOTO 800 ELSE GOTO 322
+400 'second calculation routine
+401 S1=S(X)
+406 TH(X)=INT(S1/3600):S1=S1-(TH(X)*3600)
+410 TM(X)=INT(S1/60):S1=S1-(TM(X)*60)
+412 TS$(X)=RIGHT$(STR$(INT(S1+100)),2)
+413 TM(X)=TM(X)+(TH(X)*100)
+414 RETURN
+800 CLS: 
+806 PRINT "The file PACE_M.DO will be created or   added to with the last time chart when  you press the space bar for this screen.Later you can print that file out.  If" 
+807 PRINT "the printer is set to do expanded mode  when you print it makes the printout    easier to read.":GOSUB 995 
+809 PRINT :PRINT :PRINT :PRINT "         SAVING CHART TO PACE_M.DO" 
+810 OPEN "PACE_M.DO" FOR APPEND AS 1 
+815 GOSUB 880 
+816 PRINT #1," ":PRINT #1," " 
+817 CLOSE 1 
+820 CLS 
+821 PRINT "             HINTS & HELPS              hmm:ss stands for h=hour mm=minutes     ss=seconds the h and first m are        optional but you need at least 1:00 as" 
+822 PRINT "the lowest time.  When asked for dis-   tance on the initial screen you can     press F8 to return to the MENU." 
+823 GOSUB 995 
+830 PRINT "This program was developed to aid       runners in projecting their run times.  If you decide to keep or modify this    SHAREWARE program please send a develop-ment fee of $8 within 1 week to: H. Noel"; 
+832 PRINT "/1697 Sierra Bonita/Pasadena, CA 91104.":GOSUB 995 
+834 PRINT "Feel free to copy & distribute the      original program as is but please don't delete these SHAREWARE info screens     until you have paid the development" 
+836 PRINT "fee. The concept of SHAREWARE can createquality software at reasonable prices   for all of us.":GOSUB 995 
+837 PRINT "So keep the idea alive and food on my   table by sending in the $8.  After all  it's cheaper than the cost of a race.   A listing of other handy/non-complicated"; 
+839 PRINT "IBM/MAC/M100 running programs and other software (as well as upgrades) is       available upon request.   Happy trails.":GOSUB 995 
+840 GOTO 11 
+880 'PRINT CHART ROUTINE
+881 PRINT #1, USING" M)enu R)edo I)nfo|13 ###:\\|20 ###:\\";TM(13),TS$(13),TM(20),TS$(20)
+883 PRINT #1, USING"1 ###:\\|10K###:\\|HF ###:\\|21 ###:\\";TM(1),TS$(1),TM(28),TS$(28),TM(29),TS$(29),TM(21),TS$(21)
+885 PRINT #1, USING"2 ###:\\| 7 ###:\\|14 ###:\\|22 ###:\\";TM(2),TS$(2),TM(7),TS$(7),TM(14),TS$(14),TM(22),TS$(22)
+887 PRINT #1, USING"3 ###:\\| 8 ###:\\|15 ###:\\|23 ###:\\";TM(3),TS$(3),TM(8),TS$(8),TM(15),TS$(15),TM(23),TS$(23)
+889 PRINT #1, USING"5K###:\\| 9 ###:\\|16 ###:\\|24 ###:\\";TM(27),TS$(27),TM(9),TS$(9),TM(16),TS$(16),TM(24),TS$(24)
+891 PRINT #1, USING"4 ###:\\|10 ###:\\|17 ###:\\|25 ###:\\";TM(4),TS$(4),TM(10),TS$(10),TM(17),TS$(17),TM(25),TS$(25)
+892 PRINT #1, USING"5 ###:\\|11 ###:\\|18 ###:\\|26 ###:\\";TM(5),TS$(5),TM(11),TS$(11),TM(18),TS$(18),TM(26),TS$(26)
+894 PRINT #1, USING"6 ###:\\|12 ###:\\|19 ###:\\|MR ###:\\";TM(6),TS$(6),TM(12),TS$(12),TM(19),TS$(19),TM(30),TS$(30);
+895 RETURN
+995 PRINT @ 280,"    (Press the SPACE BAR to continue)";
+996 A$=INKEY$:IF A$=CHR$(32)THEN CLS:RETURN ELSE IF LEFT$(A$,1)="M" THEN MENU ELSE GOTO 996

@@ -1,0 +1,120 @@
+PWRTIP.002:  TINY.PWR
+==========
+joel dinda
+[75725,1134]
+
+
+TINY.PWR (one of the POWR-DOS files) is a *very small* file transfer utility
+for the Model 100/Tandy 102 and the TDD/TDD2.  IT DOES *NOT* REQUIRE POWR-DOS
+OR ANY OTHER OPERATING SYSTEM.  If that's what you need, this is the program
+you need.  TINY has only four commands -- LOAD, SAVE, KILL, & QUIT -- and
+isn't very friendly.  But it doesn't waste any bytes on features you don't
+intend to use.
+
+The advantage, of course, is that nearly all of your RAM remains available for
+other applications.
+
+One shortcoming:  Like all TDD1 "DOSses", TINY can only read the directory for
+Bank 0.  But if you need this program, that shouldn't be a problem.
+
+Although TINY was released by Acroatix with Powr-DOS, it is *not* really part
+of Powr-DOS and deserves a separate discussion.  This file contains that
+discussion.  Mostly, though, this file contains those excerpts from the
+Powr-DOS manual which pertain to TINY....
+
+
+Everything which follows, except for inserted comments, is direct from the
+manual:
+                                   ===========
+                                   USING TINY
+
+POWR-DOS takes up about 3,000 bytes; the loading process needs about 7,000
+bytes to work successfully.  In anticipation of possible memory problems, we
+provide TINY, a program which gives you access to the PDD using 800 bytes of
+memory [depends upon your loading procedure. joel].  TINY has limited
+functions; you will probably want to use it only when you load and save files
+too large to fit into RAM with POWR-DOS.
+
+      [TINY.PWR is a HIMEM-occupying machine-language program; if you convert
+      it using HXFER you can treat it like any other such program.  I've
+      skipped the loading instructions from the manual; use the following
+      instead:
+      
+      Remove any M/L programs above HIMEM.
+      
+      Type CLEAR0,62200 to reset HIMEM.
+      
+      Go to MENU.
+      
+      Move the widebar cursor to TINY.CO.
+      
+      Press <ENTER>.
+      
+      --Other loading routines are possible, if you understand them.  See
+      FLIPML.DOC in DL7 for a lengthy discussion.]
+      
+[Resuming:]  The TINY prompt appears as follows:
+
+> C FFFFFF.XX (C=KLSQ)
+>
+
+The prompt is designed to remind you of TINY's functions.  "C" stands for
+command (one of K, L, S, or Q), and the F's and X's help line up file names. 
+All TINY commands consist of a single letter, which stands for one of four
+commands:
+
+*L for Loading from disk;
+
+*S for Saving to disk;
+
+*K for Killing a disk file; and
+
+*Q for Quitting the program.
+
+All commands require a file name.  (Even "Q" may not work unless you enter a
+file name.)  The file name must line up with the F's and X's on the prompt. 
+So, for instance, to save a file named MEMO.DO to the disk, enter the following
+command:
+
+> C FFFFFF.XX (C=KLSQ)
+> S MEMO  .DO<Enter>
+
+Neither (L)oad nor (S)ave will overwrite an existing file.  If you try to
+overwrite a file either in RAM or on disk, you will get an "AE" (already
+exists) error.  If you are (S)aving to disk, use TINY to (K)ill the old disk
+file first, then try (S)aving i
+t again.  If you are (L)oading a RAM file and you get an AE error, you must
+(Q)uit TINY, kill the RAM file, then run TINY again to (L)oad the file.
+
+As you can see, TINY is a "no-frills" program.  It does have one convenience,
+however; it remembers the last file name you typed.  This can come in handy
+when overwriting files.  For example, if you wanted to replace MEMO.DO on the
+disk, with the MEMO.DO 
+in RAM, you could use the following sequence:
+
+> C FFFFFF.XX (C=KLSQ)
+> S MEMO  .DO
+AE err
+> C FFFFFF.XX (C=KLSQ)
+> K<Enter>
+> C FFFFFF.XX (C=KLSQ)
+> S<Enter>
+
+
+                                 ERRORS IN TINY
+TINY gives disk error codes corresponding to POWR-DOS codes.
+[these are the "new" codes:]
+       NR	59	RS232 Not Ready for Disk Access
+       DN	60	Drive not Responding
+       CM	61	Communications Error
+       DA	62	Drive Done Early
+       WP	63	Disk is Write Protected
+       DF	64	Disk is Full
+       ND	65	No Disk in Drive
+       HT	66	Miscellaneous Drive Trouble
+       AE	67	File already exists; can't overwrite
+                                   ==========
+That's complete documentation for the program.  I'm certain I'm not the only
+person who's found it useful.
+joel
+15jun88

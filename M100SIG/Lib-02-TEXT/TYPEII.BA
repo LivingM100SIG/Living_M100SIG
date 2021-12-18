@@ -1,0 +1,77 @@
+0 REM(C)1987 RONALD D. RICHE Version1.2x
+1 'This program is not to be sold without the permission of the author. It may be freely distributed as long as the copyright messages and the REMS remain intact.
+2 ' Please delete them for your own use. For a short explanation see the REMS at the end of the file.
+4 MAXFILES=2:DEFINTA-Z
+6 CLS:CLOSE:SCREEN 0,0:CLEAR800:ONERRORGOTO300
+7 PR$="":' <-Enter a printer setup string here if needed.
+8 L=66:S$="S":R=75:Z=5:OU$="Y":U$="N":AU=1:I$="P":RAM$="TYPE.DO":UP$="4":SX$="SNGLspace":O=0:E$=CHR$(27):BK$=CHR$(8):TB$=CHR$(9):RT$=CHR$(13):ND$="K<"
+10 PRINT" TYPE II  v1.2x  (c)1987 Ronald Riche"
+16 KEYON:PRINT@280,E$+"p Go  Page Outp Spce Left Rght Cent Exit"+E$+"q";:CALL16949
+30 ONKEYGOSUB48,158,34,108,44,130,102,88
+34 PRINT@40,E$+"p Send output to printer? *Y/N "+E$+"q"+E$+"K";:TMP$=INPUT$(1)
+35 IFTMP$=RT$THENOU$="Y":GOTO38
+36 IFTMP$="Y"ORTMP$="y"THENOU$="Y":GOTO38
+37 IFTMP$="N"ORTMP$="n"THENOU$="N":GOTO152:ELSESOUND1234,18:GOTO34
+38 PRINT@40,E$+"p Position paper.. Press ANY KEY "+E$+"q";:AN$=INPUT$(1):IF(INP(187)AND6)=2THENPRINT@0,E$+"K":GOTO148:ELSESOUND1174,18:PRINT@0," Printer not ready!!..Fix printer"+E$+"K":GOTO34
+40 IFS$="S"ORS$="s"THENL=L-1:GOTO50
+42 L=L-2:GOTO50
+44 PRINT@40,E$+"p New left margin or ENTER: "+E$+"q"+E$+"K ";:INPUTLE$:IFLE$=""THEN46:ELSEZ=VAL(LE$):IFZ>RORZ<0THENSOUND1234,18:GOTO44
+46 PRINT@40,E$+"p Out(+)/Indent(-)#: "+E$+"q"+E$+"K ";:INPUTOD$:O=VAL(OD$):IFZ-O<0ORZ-O>RTHENSOUND1234,18:OD$="":O=0:ELSEGOTO50
+48 CLS
+49 PRINT@121,RIGHT$(L$,37)+E$+ND$
+50 IFL<1THENSOUND2345,18:GOTO158:ELSEPRINT@1,RIGHT$(OLD$,33)+E$+"K":PRINT@40,E$"p TYPE:";L;"Lines to go      COLUMN="+E$+"q"+E$+"K":PRINT@201,SX$+SPACE$(19)+"LPT:on ";:PRINT@259,Z;:PRINT@264,R;:PRINT@240," (c)1987 -ronnie-";
+51 IFOU$="N"OROU$="n"THENPRINT@233,"off"+E$+"K";
+52 IFU$="Y"ORU$="y"THENPRINT@269,CHR$(34)+LEFT$(RAM$,9);:ELSEPRINT@269,E$+"K";
+54 KEYON:PRINT@80,FM$+E$+"K";
+56 Z$=SPACE$(Z-O):PRINT@75,LEN(Z$)+LEN(L$)-AD;
+57 XX$=INKEY$:IFXX$=""THEN57:ELSEXX=ASC(XX$):IFXX>31ANDXX<127THENL$=L$+XX$:GOTO200:ELSEIFXX=13THEN58:ELSEIFXX=8THEN192:ELSEIFXX=27THEN154:ELSEIFXX=127THEN196:ELSEIFXX=9THEN198:ELSESOUND300,18:GOTO57
+58 PRINT@80,E$"K Printing... ";
+59 GOSUB220:PRINT@120,E$+"K":IFOU$="Y"OROU$="y"THENLPRINTPR$;Z$;L$:IFS$<>"S"ANDS$<>"s"THENLPRINT
+60 IFU$="Y"ORU$="y"THEN61ELSE66
+61 IFL$=""THENPRINT#1,PR$:ELSEPRINT#1,PR$;Z$;L$
+62 IFS$<>"S"ANDS$<>"s"THENPRINT#1,""
+64 'END PRINT;CLEARVAR
+66 L$="":PR$="":O=0:AD=0:FM$="":PRINT@80,E$+"K";
+70 GOTO40
+88 PRINT@40,E$+"p  (R)estart or (M)enu: "+E$+"q"+E$+"K";:AN$=INPUT$(1)
+90 IFAN$="R"ORAN$="r"THENSOUND765,4:RUN0:ELSEIFAN$="M"ORAN$="m"THEN100:ELSESOUND1234,18:GOTO88
+100 CLOSE:CLEAR:CALL16954:MENU
+102 PRINT@40,E$+"p Enter text to be centered: "+E$+"q"+E$+"K":PRINT@121,E$+"K";:LINEINPUTCEN$:IFLEN(CEN$)>R-2THENBEEP:GOTO48
+104 C=INT(LEN(CEN$)/2):L$=SPACE$(INT((R-Z)/2)-C)+CEN$:CLS:GOTO58
+108 PRINT@40,E$+"p (S)ingle or (D)ouble spacing: "+E$+"q"+E$+"K";:TMP$=INPUT$(1):IFTMP$=RT$THEN110
+109 S$=TMP$:IFS$="S"ORS$="s"THENSX$="SNGLspace"ELSESX$="DUBLspace"
+110 GOTO50
+126 IFAN$="S"ORAN$="s"THENPR$=PR$+CHR$(15):R=R*2-1:Z=Z*2-1:FL=0:GOTO50:ELSE122
+130 PRINT@40,E$+"p New right margin or ENTER: "+E$+"q"+E$+"K ";:INPUTRI$:IFRI$=""THEN134
+132 R=VAL(RI$):IFR<Z-OORR<ZTHENSOUND1234,18:RI$="":GOTO130
+134 PRINT@161,E$+"K":GOTO50
+148 PRINT@40,E$+"p Send to a RAM/DISK file?   Y/N*: "+E$+"q"+E$+"K";:U$=INPUT$(1):IFU$=RT$THENU$="N":ELSEIFU$="Y"ORU$="y"THENGOTO152
+150 IFU$="N"ORU$="n"THENCLOSE#1:GOTO50:ELSESOUND1234,18:GOTO148
+152 PRINT@0,E$+"K":PRINT@40,E$+"p Closing file..."+E$+"q"+E$+"K";:CLOSE1:U$="Y":CLS:FILES:PRINT"Free memory=";:PRINTFRE(0):PRINT"[Name of .DO file]  <ENTER> == "+RAM$:INPUTRAM$
+153 OPENRAM$FORAPPENDAS1:GOTO48
+154 PRINT@0," ENTER (0) to exit"+E$+"K":PRINT@40,E$+"p How many lines up "+E$+"q Default= ";VAL(UP$);E$+"K";
+156 INPUTUP$:UP=VAL(UP$):IFUP>LTHENSOUND1234,8:GOTO156:ELSEIFUP<1THEN50ELSEL=L-UP:GOTO250
+158 PRINT@0,E$+"K":PRINT@40,E$+"p (N)ew page or (S)et line count:"+E$+"q"+E$+"K";
+159 AN$=INPUT$(1):IFAN$="N"ORAN$="n"THENL=66:GOTO50
+160 IFAN$="S"ORAN$="s"THENPRINT@0,E$+"K Enter new line count..":PRINT@40,E$+"K Current count=";L;:INPUTLN$:L=VAL(LN$):GOTO50
+162 SOUND1234,18:GOTO158
+192 IFLEN(L$)=0THENSOUND300,6:GOTO57:ELSEL$=LEFT$(L$,LEN(L$)-1):ZZ$="":GOTO200
+196 L$="":AD=0:GOTO200
+198 L$=L$+SPACE$(5)
+200 PRINT@75,LEN(L$)+LEN(Z$)-AD;:PRINT@121,RIGHT$(L$,37)+E$+ND$;:IFLEN(L$)>(R-LEN(Z$)-1)THENBEEP:GOTO57:ELSEGOTO57
+220 IFL$<>""THENOLD$=L$:RETURN:ELSERETURN
+230 PRINT@0," SELECT or <ENTER> to continue"+E$+"K":RETURN
+250 PRINT@40,E$"K":PRINT@63,E$"K Printing... ";:IFOU$="Y"OROU$="y"THENFORX=1TOUP:LPRINT:NEXT
+252 IFU$="Y"ORU$="y"THENFORX=1TOUP:PRINT#1,"":NEXT:GOTO50:ELSE50
+300 SOUND1678,24:IFERR=55THENRESUME152ELSECLS:PRINT@0,E$+"K Error ";ERR;" in line ";ERL;:PRINT@40,E$+"p Press any key to continue... "+E$+"q"+E$+"K";:TMP$=INPUT$(1):RESUME48
+1000 ' This is the basic program offered to the M100 SIG in thanks for the many fine programs that I have gotten and used there. 
+1001 ' If you want the complete package, with custom printer features and print macros just send $15.00 or more and your printer specs to:
+1003 ' Ronald D. Riche
+1004 ' 1700 Aycock St.
+1005 ' Arabi, LA 70032
+1006 ' I will send the complete package with the docs, three other versions, and a special version customized to your printer.
+1007 ' This version is pretty simple and should be self explanatory. The only editing keys available in the line editor are the DEL-BKSP (deletes one char) and SHIFT-DEL (kills whole line).
+1008 'Press ESC to feed multiple lines to the output. TAB always inserts 5 spaces. If your printer needs a setup string enter it as PR$ in line 7.
+1009 ' The program should work well with about any printer. Good luck and happy typing.
+1010 ' -ronnie-
+1011 ' ps TYPE II works fine with the PDD and PowrDOS

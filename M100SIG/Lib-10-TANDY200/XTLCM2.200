@@ -1,0 +1,43 @@
+XTLCM2.200 by Paul Globman [72227,1661]
+           copyright (C) 1988
+
+XTLCM2.200 is an auto-dialer program for a WorldPort 1200 modem (et. al.) that 
+keeps a record of successful logons and uses XBASIC.CO for multi-bank 
+operation.
+
+SETUP - The WP1200 must NOT rely upon DTR to stay active, so you must power 
+the WP1200 with an external power supply or open the WP1200 and set the DIP 
+switch 4 to the ON position (or both).
+
+Store XTLCM2.BA in bank #3 and run via F3(Cmd).  When you run XTLCM2.BA you 
+will see the familiar "Find" prompt, after which your first matched entry will
+be displayed.  Press ENTER to call or DOWN-ARROW for the next matched entry 
+(ESC to exit).  XTLCM2.BA will auto redial if BUSY or NO CARRIER, and upon 
+carrier detect (CONNECT) will beep for 2 seconds, auto-logon, remove itself 
+from RAM, and jump into the Tandy 200 TELCOM.
+
+This version of XTLCM2.BA should run in bank #1.  It looks for the ADRS.DO file
+in bank #3, and upon 'CONNECT' the program makes an entry into a file called 
+BBSLOG.DO, recording the date, time, and BBS called. BBSLOG.DO is stored in 
+bank #2.
+
+XTLCM2.BA can be easily modified if you want to set up the banks differently.  
+The bank for ADRS.DO is adjusted in line 3, and the bank for BBSLOG.DO is 
+adjusted in line 10.  XBASIC.CO is needed in bank #3.
+---------------------------------------
+0 REM XTLCM2.BA (c) by Paul Globman
+1 MAXFILES=2:CLEAR512,MAXRAM:IPL"":CALL41179:X$="3:XBASIC.CO":CALL63600,8,VARPTR(X$):DEFSTRA-F:DEFINTG-Z:DIMM(13)
+2 FORI=0TO12:READM(I):NEXT:F="COM:57I1ENN":CLS
+3 CALL63600,0:X$="3:ADRS":CALL63600,1,VARPTR(X$):LINEINPUT" Find: ";A:CALLVARPTR(M(0)),0,VARPTR(A)
+4 IFPEEK(63605)=17THEN3ELSED="":CALL63600,3,VARPTR(D):I=INSTR(D,":"):B=LEFT$(D,I):CALLVARPTR(M(0)),0,VARPTR(B)
+5 IFINSTR(B,A)THENJ=INSTR(I,D,"<"):IFJTHEN6ELSE4ELSE4
+6 C=LEFT$(D,J-1):PRINTC;:E=INPUT$(1):IFE=CHR$(27)THENMAXFILES=1:MENUELSEPRINT:IFE=CHR$(31)THEN4
+7 A3=MID$(C,I+1):A2=MID$(D,J+1):MID$(A2,LEN(A2))=CHR$(0)
+8 CLOSE:OPENFFORINPUTAS1:OPENFFOROUTPUTAS2:PRINT#2,"ATZ":CALL25102:PRINT"Command String: ";:PRINT#2,"ATX4S7=15DT"A3
+9 LINEINPUT#1,A:PRINTA:IFINSTR(A,"BUSY")ORINSTR(A,"NO ")THEN8ELSEIFINSTR(A,"CONNECT")=0THEN9
+10 FORI=1TO15:BEEP:NEXT:X$="2:BBSLOG":CALL63600,0:CALL63600,2,VARPTR(X$)
+11 X$=CHR$(13)+CHR$(10)+DAY$+" "+DATE$+" "+TIME$+" "+LEFT$(B,3)+":  ":CALL63600,4,VARPTR(X$):V=VARPTR(A2)
+12 CALL25301,0,PEEK(V+1)+256*PEEK(V+2):MAXFILES=0:M$="CALL25464"+CHR$(13):AD=64798:L=LEN(M$):POKEAD,L:FORI=1TOL
+13 M=ASC(MID$(M$,I,1)):POKEAD+2*I,0:POKEAD+2*I-1,M:NEXT:NEW
+14 DATA-18562,20424,32291,26147,4463,2,15821,6463,6865,5325,4624,3347,-5688
+15 REM     END OF DATA

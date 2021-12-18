@@ -1,0 +1,109 @@
+UR2LF.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+If you have Ultimate ROM II (aka UR-II and UR-2), and a printer that needs
+linefeeds added to the caarriage returns, this file tells how (and HOW NOT!)
+to get those linefeeds.
+
+Message range: 161913 to 162396
+Dates: 12/3/87 to 12/12/87
+
+
+Fm: CARL CASCADDAN 76672,544
+To: ALL
+
+HELP!!! I have the Ultimate Rom II chip in my 100 and need assistance with one
+of their wonderful (grin) programs: The TB-RPT program doesn't support sending
+a linefeed signal [CHR$(10)] to the printer. The T-Base book that came with the
+software says to change a line in the Basic program. The book was designed for
+the cassette-based version of the program. The chip-based version cannot be
+selected for edit or loaded from Basic for editing. Breaking into the program
+during execution rewards me with program lines followed by the "@" symbol and
+changing them has no effect. Has anyone out there ever hit this problem and
+licked it? I generally don't have the time in my job (USN Instructor) to print
+my report to a RAM:file and then dump it to the printer with T-Word which does
+support the linefeed. Any help on this would be greatly appreciated - I'm
+asking you-all first because it's early morning and Travelling Software will be
+closed by the time I roll outta bed today. (I also doubt a quick reply... But,
+having never used them...) Thanks, Mucho              Carl Cascaddan
+
+
+Fm: Tony Anderson 76703,4062
+To: CARL CASCADDAN 76672,544
+
+Have you tried installing Phil Wheeler's LFUTL program in the computer?  It
+installs a short ML routine and routes printer output through the routine
+automatically.  Everytime it sees a CR, it adds a LF.  Not sure if it will work
+with the UR-2, but it might.  See LFUTL.PW1, LFUTL.DES and LFUTL.INF in DL7.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+UR-2 (esp. T-Base or Idea!) + LFUTL = cold start! (documented in UR2TIP.002 in
+DL4).  UR-2 elements zap all f-key dfns at exit, a really dumb thing to do.
+
+That problem was the genisis of the LF adding routine that is in UTLTY*.BA
+(DL7).  This concept was devised by Jim Irwin and provided to solve the
+incompatibility.  It uses a menu slot, rathere than an F-key definition. the
+UTLTY programs let yo toggle FL by hitting F7 while in the program.
+
+
+Fm: Phil Wheeler 71266,125
+To: CARL CASCADDAN 76672,544
+
+
+LFUTL should not be used with UR-2 (see UR2TIP.001, DL4, for explanation).
+
+But -- get the program UTLTY3.BA (DL7).  It does a few other things, too -but
+includes a linefeed routine which is comapatible with T-Base. If you want even
+more goodies, try UTLTY1 or UTLTY2.  Get UTLTY.DOC for short usage info.
+
+If T-Base incorporates its own print routine, the LF will still not get added.
+But if it does not bypass the RST 7 print hook, then the LF will get added. In
+any case, it is safe to try UTLTY -- but not LFUTL (which will give a certain
+cold start AFTER leaviang either Idea! or T-Base).
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Ah!  Thanks.  What would we do without your fount of information?  Get lots
+more cold starts, I imagine.  Maybe we need to put that in a file that is
+easier to identify (UTLTY could be ANYTHING!) like UR2LF or something, and
+point to the right programs.  (hint hint)
+
+
+Fm: CARL CASCADDAN 76672,544
+To: Phil Wheeler 71266,125
+
+Thanks mucho, Phil...  UTLTY1.ba does the trick and is a great assist. Once
+again I know why I pay my CIS bill: access to the answer-man! May you have a
+good one.   TODAY!
+
+
+Fm: Neil Smith 76257,3227
+To: CARL CASCADDAN 76672,544
+
+Carl - UTLTY1.BA may still be best for you since it works on all programs, but
+you probably should know that LFs (and anything else the manuals say you can
+change) are changeable in the CONFIG.DO file.  (At least in the last UR-II I
+worked with.)  It's covered under "Modifying the Programs" in the little Quick
+Reference Guide.
+
+
+Fm: Phil Wheeler 71266,125
+To: Neil Smith 76257,3227
+
+By golly -- that DOES make sense, Neil!  Problem is, that's covered in the
+little "pamphlet" that came with the chip, not in the T-Base manual.  Wonder
+where that thing got to?
+
+
+Fm: Phil Wheeler 71266,125
+To: CARL CASCADDAN 76672,544
+
+Carl, Neil is right!  The info on how to do that is in the small "pamphlet"
+which came with UR-2 (I think; can't find mine!).

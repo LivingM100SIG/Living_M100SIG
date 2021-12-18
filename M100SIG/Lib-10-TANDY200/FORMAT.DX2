@@ -1,0 +1,291 @@
+          V.  Customizing FORMAT
+
+   Creating a New Printer File
+
+YOU can change some aspects of FORMAT using the FORMAT.BA program provided in 
+the FORMAT.200 file.  You can:
+        - assign new values to the Printer Set-up String which is sent to
+          your printer before each print job.
+        - customize PRINTER-SPECIFIC commands for your printer.
+        - choose whether you want all the print attribute "off" commands
+          sent before each print job.
+        - set the "D"ot plot "page width".
+
+You begin the customizing process by creating a carefully formatted .DO file 
+in TEXT which contains all of the characters and commands FORMAT uses to 
+process your documents.  Listed below is the EPSON/FX-80 file used to define 
+the print commands in the uploaded version of FORMAT.  You can copy these 34 
+lines to a new file named for YOUR application or you can begin a new file: 
+the file format must be followed exactly!
+
+FX-80
+8"page
+10,11,12,16,P/R/E/C fonts
+1,12,form feed
+149,GRPH/b
+2,27,69,Bold on
+2,27,70,Bold off
+132,GRPH/c
+1,15,condensed on (16/")
+3,18,27,77,condensed off/Elite on
+142,GRPH/i
+2,27,52,Italics on
+2,27,53,Italics off
+150,GRPH/n
+2,27,77,Normal/Elite on (12/")
+2,27,77,Normal/Elite off (off=on)
+128,GRPH/p
+2,27,80,Pica on (10/")
+2,27,77,Pica off (Elite on)
+137,GRPH/r
+2,27,12,pRoportional on
+3,27,112,0,pRoportional off
+139,GRPH/s
+3,27,83,0,Superscript on
+2,27,84,Superscript off
+145,GRPH/u
+3,27,45,1,Underline on
+3,27,45,0,Underline off
+148,GRPH/w
+1,14,Wide on
+1,20,Wide off
+131,GRPH/x
+3,27,83,1,Subscript on
+2,27,84,Subscript off
+
+
+Here is an explanation of each line and its function.  Note that all command 
+values are in "ASCII decimal" format, separated only by commas and followed by
+"descriptions".  Each line, except Lines 1 & 2, requires a description at 
+least one letter long, preceded by a comma, which begins with a letter and 
+contains NO commas.
+
+Each line ends with an <ENTER>.  "L" = how many values in command string.
+
+Command set Name
+Printed page width & description
+Pica,pRoportional,Elite,Condensed,description
+L,Printer Set-up String,description
+Graphics character ASCII value,description
+L,"On" code,description
+L,"Off" code,description
+Graphics character ASCII value,description
+L,"On" code,description
+L,"Off" code,description
+Graphics character ASCII value,description
+L,"On" code,description
+L,"Off" code,description
+ ...etc.
+
+
+The Printer Command Set Name  (Line 1)
+The FIRST file-line contains a 1-6 letter name for the command set.  This name
+will display in the "Print Format" window whenever FORMAT runs.  It MUST begin
+with a letter.
+
+
+Setting the Dot Plot Values  (Lines 2 & 3)
+The second and third file-lines contain the values which define the width of 
+the pixel box used in the"D"ot plotting routines.  The font values in the 
+third line are multiplied by the page size in the second line to determine how
+wide the plotted box is for each of the four font choices.
+
+Line TWO contains the width, in inches, of your printed page. This is 
+typically 8" - 8.5", but can be any value which, when multiplied by any font 
+value, would not exceed 237.  A brief description can be used.
+
+Line THREE contains the 4, comma-delimited values which correspond to FORMAT's
+four font menu choices: Pica, pRoportional, Elite and Condensed.  Pica is 
+usually 10 chr/inch and Elite, 12 chr/inch.  The pRoportional font is, by 
+definition, a variable number but 11 seems to work with a wide variety of 
+text.  Your printer manual and/or experience may dictate a different value.  
+If 11 does not produce an accurate pixel plot for your use then change it as 
+needed.  Printers also vary in the number of characters they print per inch in
+their "Condensed" mode: 15-17 are most often quoted: 16 is used here.  Enter 
+the value for your printer.  This line (3) must end with a brief description 
+beginning with a letter and separated from the fourth value with a comma.
+
+
+The Printer Set-up String  (Line 4)
+The FOURTH file-line is the Printer Set-up String.  This contains up to 24 
+command values which are sent to the printer immediately prior to each print 
+job.  In this example, the line begins with a "1" which is the number of 
+commands in the following string.  A form-feed, "12" is then sent.
+
+You may change this line as needed: remember the 24 value length limit.  You 
+may need to use the Printer Set-up String to enable "LF on CR" and/or disable 
+any "skip-over-perf" printer function.  Perhaps you prefer not to send a Form-
+Feed.  You may also prefer a different default print font or need to send 
+additional commands for other GLOBAL functions.  The Printer Set-up String,
+(Line 4), is the place to make these changes.
+
+If NO Printer Set-up String to be sent, enter ONLY a 0 (zero) on Line 4.
+
+
+The Print Commands
+FORMAT looks for graphics characters with an ASCII decimal value greater than 
+127 to know when to send a print attribute command string.  These print 
+commands operate as "paired" commands: the first occurrence will send the 
+attribute "on" code; the next occurrence will send the "off" code etc.
+
+The labels "On" and "Off" are referred to within quotation marks throughout 
+this document because they functionaly refer to which code is sent at 
+alternate occurrences of any specific print command: "On" first, "Off" second,
+"On" third etc.  This gives you the practical ability to send up to 20 
+different command sequences to your printer using only 10 print commands.
+
+YOU may choose what code is sent to the printer in each instance.  For 
+example: you might prefer to REPEAT the "On" code as the "Off" command for 
+font commands.  This could prevent losing track of the last command used in 
+large blocks of different font text.  Or you might want an "Off" command to 
+turn some other function "On": Pica "Off" could turn Elite "On" for instance. 
+(This is how FORMAT is uploaded.)  The choices are yours.
+
+Dig out your printer's manual and make a list of up to 10 print attributes 
+you'll be using along with the necessary ASCII decimal code sequences needed 
+to turn them "on" and "off".  Each command string can be up to, but no longer 
+than, 4 values long.
+
+If a crucial command set exceeds 4 values (but not 8), and it can't be put in 
+the Printer Set-up String or the file itself, you could use a print command 
+"pair" back-to-back wherever needed within the file.  For example:
+<GRPH><r><GRPH><r> could invoke some 5-8 value function like a different 
+margin setting.  Put the first part of the code in the "On" set and the second
+part in the "Off" set.
+
+Consult the TANDY manuals for unique and easy-to-remember <GRPH> or <CODE> 
+plus letter combinations which you'll insert in your documents to invoke each 
+print command.  Note each and its ASCII decimal value next to its 
+corresponding command set.  Do NOT choose <GRPH><l>, <GRPH><f> or <GRPH><=> 
+because these are reserved for the UNIVERSAL print commands.  (Also, <GRPH><e>
+is easily confused with the end-of-line marker used by TEXT.)
+
+On Line FIVE of your command file, enter the ASCII decimal value of the first 
+print command character: this MUST be a value greater than 127.  A simple 
+description can also be entered if desired.
+
+On Line SIX enter the number of values in the "on" command string which 
+follows, then the values, finally the description for the "on" code. (Each 
+separated with a comma: descriptions MUST begin with a letter.)
+
+On Line SEVEN enter the number of values in the "off" command string, command 
+string values, & "off" description.  
+
+Repeat the format used in Lines 5-7 for the next 9 sets.  Enter at least one 
+set and not more than 10 sets.  Your print command file must NOT exceed 34 
+lines!
+
+REVIEW your file for accuracy: FORMAT.BA will check its format but not 
+absolute values.  Particulary make certain that the first value in each 
+command string is the correct number of values in the command set, NOT 
+counting the first value itself.
+
+
+   Loading the New Printer File
+
+When you're ready to load the new printer file data into FORMAT.CO, make sure 
+that the print command file, FORMAT.CO and FORMAT.BA are on the same menu.  
+Now run FORMAT.BA: it will first check that the correct 1280 byte, FORMAT.CO 
+file is on the menu.  If OK, you'll be prompted to enter the name of your 
+print command file.
+
+FORMAT.BA then checks your command file format.  If all seems OK, it next 
+examines FORMAT.CO to see what printer code is currently installed.  You'll be
+shown the name of the existing printer code and prompted for approval to 
+overwrite that code.  If OK, press "Y" and FORMAT.BA will remove the previous 
+code and copy the new values from the print command file into FORMAT.CO: any 
+other keypress stops the load.
+
+
+The Initial "Off" Command Option
+FORMAT.BA completes its loading process by asking if you want all the "Off" 
+print command codes sent PRIOR to the Printer Set-up String with each print 
+job.  This option can be useful if it is inconvenient to manually clear your 
+printer after each print job.  You may not want to begin new documents with 
+print commands from the previous document still in effect. 
+
+If you choose this option, ALL the "Off" print commands will be sent to the 
+printer before each print request.  They're sent in the order they've been 
+entered in your print command file, and BEFORE the Printer Set-up String is 
+sent.  (It might be necessary to re-configure your Printer Set-up String to 
+account for some of these "off" commands.)
+
+
+FORMAT.BA errors
+If FORMAT.BA encounters an error, it will Beep and the error message will 
+display the problem: make a note of it.  FORMAT.BA will jump directly to your 
+print command file after pausing for a keypress.  Re-examine your print 
+command file, correct the error, exit the file with F8 and rerun FORMAT.BA.
+
+When you have successfully created your customized version of FORMAT.CO, save 
+it to a backup media.  Then back-up your print command file and print a copy 
+for reference when using FORMAT.  You're ready to run your customized version 
+of FORMAT.CO!
+
+
+         VI.  Important Operational Considerations
+
+Run Location
+FORMAT.CO MUST be on the menu and run by cursor selection.  It can NOT be 
+"run" from some other storage media such as disk, tape, DataPac, RamPac or 
+"cross-bank" using the XOS-C operating system: it must first be loaded into 
+the Bank you'll be using!
+
+
+Different Versions
+Although you may re-name different versions of FORMAT.CO for different 
+applications, only ONE copy/version of FORMAT.CO can be on the menu at any 
+given time.  Because of the way FORMAT operates, different versions in the 
+same RAM bank could be mistaken for each other and produce unreliable results:
+if you need to use multiple versions during the same session, simply run them 
+in different banks or swap different FORMAT versions into the running bank.
+
+
+Software Conflicts
+To prevent conflicts with other software and hardware routines, FORMAT 
+disables all "hooks" when it runs: including DOS, option ROMs and XOS-C.  When
+you've finished using FORMAT, you may have to re-hook or re-initialize some of
+these routines.  XOS-C users can simply enter BASIC and press F8.  Other 
+software will have a similar re-hook procedure.
+
+
+Printer Conventions
+FORMAT observes Tandy T200 convention and expects your printer to perform a 
+line-feed whenever it receives a carriage return: "LF on CR".  Either set your
+printer "dip" switches for this condition or modify the Printer Set-up String 
+to send the appropriate code.
+
+FORMAT also expects to be able to print on every line selected by the "Page 
+size:" prompt in the "Print Format" window.  Any "skip-over-perf" code must be
+disabled with either the printer's dip switches or the Printer Set-up String.
+
+
+Problems
+FORMAT.CO uses a number of different techniques to enable a 1280 byte program 
+to operate in the "safe" 476 bytes of the ALT/LCD buffer.  In the rare event 
+that FORMAT should "freeze" for any reason:
+        1.  Make certain your printer is attached, on-line, paper ready.
+        2.  Try <ESC>, <CTRL><C> and/or <SHIFT><BREAK> to return to your
+            file or menu.
+        3.  ONLY press <RESET> as a LAST resort: if <RESET> is needed then
+            immediately cursor select your file from the main menu and
+            ensure it's OK.  Then BACK IT UP and re-run FORMAT!
+
+
+                           ---- Acknowledgements ----
+
+The RST 7,12 'hook', central to FORMAT.CO, was probably first widely 
+publicized in LF-UTL.100/200.  Paul Globman further developed some innovative 
+techniques for this hook which are used with permission.
+
+Louis Self served as an eager "beta-tester" and suggested many good ideas.  
+After he spent long hours combatting my stubbornness, I incorporated most of 
+his ideas into the finished version.
+
+                                    --------
+
+Randy Hess
+73267,552
+Omaha, NE
+November, 1991
+

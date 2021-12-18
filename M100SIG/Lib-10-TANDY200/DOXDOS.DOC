@@ -1,0 +1,111 @@
+        ********   DOXDOS.200   ********
+        (c)1987, Wilson Van Alst
+                   [76576,2735]
+
+
+	---------- INTRODUCTION ----------
+   DOXDOS is designed for people who work a lot with document files and the 
+TDD.  It's intended to complement and improve TS-DOS from Traveling Software.
+   Although TS-DOS is a capable program, it requires a lot of memory -- about 
+5K in its "full" version.  It also lacks the ability to perform multiple 
+operations on multiple files.
+   DOXDOS offers those features, and it saves memory by using just the 2.7K 
+"resident" portion of TS-DOS.
+   With the "resident" portion installed (see your TS-DOS manual), you can get 
+rid of DOS200.CO.  You do not need to keep it in RAM -- or on the disks you are
+working with.
+
+	---------- RUNNING DOXDOS.200 ----------
+   Here's the fun part.  You'll see a screen that displays:
+
+        --time and date
+        --an indication that you are looking at RAM or 0: (disk) files
+        --a list of those files
+        --and the amount of free memory
+
+You also see a new set of function keys:
+
+        <1> ALT:  To toggle the display between RAM and disk.
+	<2> NAME: To rename files on either device.
+        <3> LPT:  To PRINT selected files, starting each new document on a 
+fresh page.
+        <4> KILL:  To KILL selected files, in RAM or on disk.
+        <5> XFER:  To TRANSFER selected files from RAM to disk or vice-versa.  
+This is done in the "Append" mode (see NOTES).
+.       <6> P&K:  To combine <3> an <4>.  PRINTs and KILLs the group of files 
+you select.
+        <7> X&K:  To combine <3> and <5>.  TRANSFERS selected files, then KILLS
+them from the memory they were in originally.
+        <8> MENU:  To re-set MAXFILES to 1 and return to the main menu.
+
+	---------- TRANSFER, PRINT, AND/OR KILL: ----------
+   Easy.  Whe you hit one of the F-Keys above, you are prompted for a list of 
+files.  Type the names *without* a .DO extension.  The file FRED.DO is entered 
+simply as FRED -- followed by the <ENTER> key.
+   After the last entry, hit <ENTER> again, and the computer does the rest.
+   When processing has finished, DOXDOS returns to its main display.
+   A 'beep' from DOXDOS while it's busy means one of two things:  it can't 
+locate a file you've selected, or it has run out of memory in the device yo're
+writing to.  In the former case, the program continues, and will advise you 
+later of the file(s) not found.  If you've run out of memory, the program stops
+and indicates which file was not fully transferred.
+   If you have mis-typed the name of a file, or if a transfer aborted because 
+you ran out of memory, you return to the main display with a list of the 
+entries not processed shown in reverse video.  (To see how this works, try to <
+KILL> a couple of non-existent files.)
+   In the case of a failure due to insufficient memory, the <XFER> will be 
+incomplete.  If you're moving a disk file to RAM, the "new" file will hold as 
+much of the original as memory permits.  Going the other way, the transfer 
+simply will not "take."  In either case, the original file will not be killed, 
+even if you selected <X&K>.  
+   The <XFER> function (including <X&K>) works in 'append' mode.  For an 
+explanation and instructions on modifying this, see NOTES.
+   When you select the <LPT> or <P&K> optios, DOXDOS sends a top-of-form 
+command to your printer at the end of every file -- so that each new file 
+begins on a new page.  See NOTES if you don't want this feature, or if you 
+printer doesn't recognize CHR$(12) as a top-of-form.
+
+	---------- NAME: ----------
+   The <F2> key at the main display produces a prompt of "Name,As?"  You 
+respond by typing the original name, a comma, and the new name, followed by <
+ENTER>.  As in other parts of DOXDOS, the names must NOT have a .DO extension.
+   If you forget to enter the comma and new file name before pressing <ENTER>, 
+you will see a "??" printed below the original prompt.  It messes up the 
+display temporarily, but does no harm.  Simply type the new file name and <
+ENTER>, and the file will be given a new title.
+   A caution on renaming disk files: you need 3K of free RAM in the T200 (a TS-
+DOS requirement).  There is no such requirement for renaming RAM files.
+   The rename feature is, frankly, a tack-on to the main program.  It is not 
+error-trapped.  If you try to rename a file that doesn't exist, or if you 
+attempt to rename a disk file without sufficient free RAM, DOXDOS will go 
+bananas, and you'll have to RUN the program from scratch.  No changes are made,
+however, to existing files or directories.
+
+	---------- NOTES ----------
+   For its size, this program does a lot.  There was a temptation to make it do
+more (to kill and/or transfer .BA and .CO files, for example), but I decided 
+the memory trade-off wasn't worth it.  (The power of DOXDOS lies in its ability
+to process groups of files; I find that I seldom deal with BASIC or .CO files 
+that way.)
+   On the other hand, DOXDOS could be shorter and still retain its principal 
+functions.  For those who want to squeeze, I'd suggest eliminating the rename 
+feature, the time-display, the 'RAM:/O:' indicator, and the various reverse-
+video display enhancements.  If you never make typo's, the error-trapping 
+routine could be eliminated as well.  With those changes, the size of the 
+program is reduced from about 670 bytes to less than 500 bytes.
+   If you don't want the top-of-form feature when you print, you can eliminate 
+line 18 of DOXDOS.  That will require one other change: in line 18 "THEN18" 
+should become "THEN19".
+   Finally, the <XFER> function in DOXDOS works in the 'Append' mode.  Let's 
+say you're transferring a file called FROG.DO from RAM to TDD.  If there is no 
+file by that name on the disk, the file is created.  But if you already have 
+FROG.DO on disk, the contents of FROG.DO in RAM are added to the bottom of the 
+disk file.  The alternative: near the end of line 15, change the word 'APPEND' 
+to 'OUTPUT'.  Then the file FROG.DO in RAM would replace (i.e., overwrite and 
+destroy) the existing FROG.DO on disk.
+
+Questions?  Changes you'd like to see?  Leave a message on the SIG.
+        Wilson Van Alst
+         [76576,2735]
+
+

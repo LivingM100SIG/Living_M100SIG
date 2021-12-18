@@ -1,0 +1,24 @@
+10 REM HEXMAK.BA
+15 REM 27 Oct 84
+20 DIM H$(16)
+30 H$(0)="0":H$(1)="1":H$(2)="2":H$(3)="3"
+40 H$(4)="4":H$(5)="5":H$(6)="6":H$(7)="7"
+50 H$(8)="8":H$(9)="9":H$(10)="A":H$(11)="B"
+60 H$(12)="C":H$(13)="D":H$(14)="E":H$(15)="F"
+70 CLS:INPUT"Enter beginning address";BA
+80 INPUT "Enter ending address";EA
+90 INPUT "Destination filename";F$
+92 OPENF$FOROUTPUTAS1
+95 I1=INT(BA/4096):I2=INT((BA-I1*4096)/256):I3=INT((BA-I1*4096-I2*256)/16):I4=BA-I1*4096-I2*256-I3*16
+96 A$=H$(I1)+H$(I2)+H$(I3)+H$(I4)+","
+97 PRINT#1,USING"\   \";A$;
+100 FORI=BA TOEA
+110 J=J+1:A=PEEK(I):PRINT@120,I;A;"  "
+120 A$=H$(INT(A/16))+H$(A-INT(A/16)*16)
+130 IF J=39 THENJ=0:PRINT#1,USING"\\";A$:GOTO150
+140 A$=A$+",":PRINT#1,USING"\ \";A$;
+150 NEXT
+160 A$="END":PRINT#1,USING"\ \";A$
+170 CLOSE
+180 END
+

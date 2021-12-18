@@ -1,0 +1,176 @@
+;Reseq.SRC-- source code for Reseq.200
+;James Yi 73327,1653
+;Copyright 1987
+
+;Initialize Variables
+;store starting value
+shl 65534:b=h:c=l
+;store stepping value
+ora a:rz;quit if step=0
+l=a:h=#0:shl 65532
+;reset pass counter
+xor a:sta 65529
+l=a:dec hl:shl 65530;mem needed=0
+
+;Chk if ln#>65529 might come up
+lhl 61287:xchg;location of current BA
+/.2
+hl=5:+bc:jc .18;>65529
+hl=[de:a=h:ora l:jz .4;chks out ok
+xchg;point to nx ln
+lhl 65532:+bc:b=h:c=l:jnc .2;ok so far
+/.18;ln# out of range
+e=#5:jmp 1160;exit by printing FC Error msg
+
+
+;Start main loop
+
+/.4
+;go to beg of file
+lhl 61287:xchg
+;See if 1st or 2nd pass
+lda 65529;pass counter
+inc a:sta 65529;inc it
+cmp #3;test for 2nd done
+jz .11;done, exit
+;0 or 1st pass - need extra memory?
+lhl 65530:inc h:dec h;<=0?
+jm .5;<=0 so not needed
+;memory needed, see if avail
+inc hl:b=h:c=l
+xchg:call 33448;ins
+e=#7:jc 1160;not enough memory
+call 33498;del, restore
+xchg
+;Enter next pass
+
+
+/.5
+;Go through the program find a token
+/.3;line by line
+call 36809;click buzzer
+;all done?
+hl=[de:a=h:ora l:jz .4;end of file
+;rem current ln working on
+inc de:inc de:hl=[de:shl 63058;printed along with two letter error code if it <> 65535
+;point to 1st chr in line
+inc de:inc de
+
+;get one chr and test it
+/.6:a=[de:inc de:ora a:jz .3;end of ln
+;if token, calculate new ln#
+hl=.19;token list
+;Is the token's argument a number?
+/.1:cmp m:inc hl:jz .7;yes
+inc m:dec m:jnz .1
+;none of these
+cmp #58;is it a two chr token then?
+jnz .6;no, not it either
+a=[de:cmp #145;yes?
+jnz .6;no
+inc de;yes
+
+
+/.7;Get val of ascii string
+;chk for spacing & numerical
+dec de
+/.17:xchg
+/.1:inc hl:a=m:cmp #32:jz .1
+dec hl:rst 2:jc .8;numeric argument
+xchg:jmp .6;argument is not numeric
+/.8;remember position of this argumt
+shl 65525
+dec hl:call 2327;get val(arg str$)
+xchg:shl 65523;save its val
+
+;Go through and find this line
+lhl 65534:b=h:c=l;resequenced ln# start
+lhl 61287:xchg;go to beg of file
+/.9;find a line
+;chk for eof
+hl=[de:a=h:ora l
+l=e:e=#8:jz 1270;end of file reached, line not found, exit with UL error
+e=l
+inc de:inc de:hl=[de;look at this line
+push de
+xchg:lhl 65523:rst 3;is this is it?
+pop de
+jz .10;found
+;not found, look at nx ln
+inc de:inc de
+call .16;point to nx ln
+;Calc resequenced ln#
+lhl 65532:+bc:b=h:c=l
+jmp .9
+
+
+/.10;Calc how many bytes more or less it will take to replace with new value
+
+;get str$ of resequenced ln#
+h=b:l=c:call 18187
+a=#13:rst 4
+
+;get string's len
+bc=6;len
+hl=63131;1st chr of the str$
+/.1:dec c:inc hl:a=m:cmp #32:jz .1;skip spc
+shl 65521;rem 1st chr addr
+push bc;rem len
+;calc difference in len
+lhl 65525;1st chr of argument
+/.1:dec c:rst 2:jc .1;point to last chr
+
+lhl 65530:+bc;add to memory needed
+a=c:ora a;test if diff is + or -
+;if +, more mem needed
+jp .12;more needed
+-bc:dec b:+bc;convrt to abs val
+/.12:shl 65530;update mem need
+pop de
+;If 2nd pass, resequence lines
+lda 65529:dec a:jz .13;1st pass
+
+lhl 63073:+bc:shl 63073;adjust .DO ptr
+
+lhl 65525;1st chr of arg str$
+push de;save str$ len
+jc .14;delete
+call 33448;insert:jmp .15
+/.14:a=c:xor #255:c=a:inc b:inc bc
+call 33498;del
+/.15:pop bc:xchg:lhl 65521
+call 15445;replace arg str$ with new str$
+
+/.13;check for ON goto ,,,,
+lhl 65525
+/.1:rst 2:jc .1;look at a non-num chr
+xchg:cmp #',':jz .17;if comma, more than one arg
+jmp .6;not ON, goto next token
+
+
+;If done, adjust line headers and exit
+
+/.11;adjust line header
+;from beg
+lhl 61287:xchg
+lhl 65534:b=h:c=l
+/.2
+hl=[de:a=h:ora l:jz 11362;if done, reset file ptrs, exit
+push de;rem prev header addr
+inc de:inc de
+a=c:[de=a:inc de:a=b:[de=a:inc de;resequence each line
+lhl 65532:+bc:b=h:c=l
+call .16;point to nx ln
+pop hl:m=e:inc hl:m=d;poke prev hdr with next line addr
+jmp .2
+
+
+/.16;point to end of line
+a=[de:inc de:ora a:jnz .16:ret
+
+/.19;token list
+/[136 140 205 149 139 137 165 166 147 0
+
+
+;<End of source>
+

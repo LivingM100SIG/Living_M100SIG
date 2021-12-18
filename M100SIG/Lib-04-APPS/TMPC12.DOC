@@ -1,0 +1,413 @@
+
+
+
+
+
+                          Reference Section Three: Screens
+
+
+
+                          Screen 14: Monthly Repeating Data
+
+
+
+                                      Screen 14
+                      **JanFebMarAprMayJunJlyAugSepOctNovDec**
+                      **x** ** ** ** ** ** ** ** ** ** ** ****
+                      **                                  ****
+                      ** *************************************
+                        %                                    *
+                      ** ****          x                     *
+                      **off************111111111222222222233**
+                      *******1234567890123456789012345678901L*
+
+
+
+                                Information Presented
+
+          This screen shows the months of a year on which the repeating
+          item occurs.  Note that more than on month can be indicated, by
+          the "x" in the corresponding box.  Also, each day of the month is
+          individually indicated.  All of the indicated days and months are
+          combined for the repeating action; for example, if "January" and
+          "September", "1" and "11" were all indicated, the item would
+          repeat on the first and eleventh of both January and September. 
+          You may have to create more than one repeating-entry item for
+          some combinations of dates, such as January 11 and August 31.
+
+
+                                      Functions
+
+          You can move the stick figure to any of the months or days;
+          pressing [Up-Arrow] into the boxes will toggle the days (or
+          months) on and off.  You can specify the "last" day of a month,
+          which could be the 28th, 29th, 30th, or 31st days.
+
+          You can also restrict the repeating action to business days. 
+          Press [Down-Arrow] into the "scan" box, and it will cycle
+          between no scan, forward scan, and reverse scan.  When "forward
+          scan" is on, the repeating date will occur on the first business
+          day after the exact date, if necessary.  For example, if January
+          11 is on a Sunday, "forward scan" will put the repeating date on
+          January 12, which is a Monday.  Similarly, "backward scan" will
+          put the repeating date on the last business day before the exact
+          date.
+
+
+
+
+                                      Page: 70
+
+
+
+
+
+                          Reference Section Three: Screens
+
+
+
+                                        Exit
+
+          The only exit is to screen 9, where you can modify the warning or
+          the description of the item.  If the changes you made to the
+          repeating item are such that the current date no longer falls on
+          the repeating date, the current date will move forward to the
+          first day that fills them.  If you exit the screen with no months
+          (or no days) specified, the repeating date will return to
+          whatever it was when you entered the screen.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      Page: 71
+
+
+
+
+
+
+
+                    Reference Section Four: Technical Information
+
+          The technical reference section discusses topics of a more arcane
+          interest than the rest of the manual.  You don't need any of the
+          information in this section to be a good user of TMPC; however,
+          it might come in handy if you want to write a program on another
+          computer to "talk" to TMPC, or if you're just curious about how
+          TMPC works.  Because this section is optional, we have made no
+          attempt to make it readily understandable - it isn't intended as
+          a primer in assembly language programming techniques.
+
+
+                                    Startup Notes
+
+          When you activate TMPC, several things happen before the first
+          screen appears:
+
+
+             # The last-used task file (or TOM.DO if the program has been
+               newly loaded from tape) is opened; if there is no such file,
+               the prompt "Task File Name?" appears, and you must type in a
+               name.
+
+             # If the file is new, TMPC inserts a set of control stops to
+               it - see the section below on task file formats.  If the
+               file exists, TMPC checks to make sure that the character
+               counts are consistent with the control stops.  If an error
+               occurs, a message will appear, and TMPC terminates back to
+               the main menu.  After such a termination, you will always
+               get a "Task File Name?" prompt.
+
+             # The current date in the Model 100's memory is checked for
+               feasibility.  Ridiculous dates, like March 34, are changed
+               to the last day of the month.  Only the years 1980 - 2069
+               can be used with TMPC.  Note that dates represented as 1900
+               - 1969 in the main menu will appear as 2000 - 2069 in TMPC. 
+               If an illegal year is set on the menu when TMPC is
+               activated, a message will appear and control will return to
+               the main menu.
+
+             # A special case occurs on March 1 of leap years.  Since the
+               Model 100's ROM software does not recognize leap year, TMPC
+               will change March 1 to February 29 unless the task file
+               shows February 29 as the last activated date.  This is not a
+               perfect "fix", and in some cases (such as when it really is
+               March 1, and TMPC was not used on February 29) it will lead
+               to errors.  Let the user beware.  [Ed. Note: !]
+
+
+
+
+                                      Page: 72
+
+
+
+
+
+                    Reference Section Four: Technical Information
+
+             # If today is more than one day after the last activation date
+               (called "LAD") in the task file, both dates appear on the
+               screen with the prompt, "proceed?".  This prompt allows a
+               user to avoid processing diary entries if the date has been
+               erroneously changed.  Further, if the LAD is chronologically
+               after DATE$, TMPC will not proceed.  If TMPC stops execution
+               at this point, the task file must be re-specified upon the
+               next entry.
+
+             # If there are any to-dos in the "processed" section of the
+               task file, they are entered in the diary.  Single-date items
+               are deleted from the task file once entered into the diary.
+
+
+          NOTE: No entries to the diary will be made if the diary is
+          deactivated; if the Model 100's memory is exhausted while making
+          diary entries, TMPC will abort the entry process.  After this
+          happens, you should check for possible duplicate entries in the
+          diary.
+
+
+             # The LAD is updated to today in the task file.
+
+
+                                  Task File Format
+
+          The task file is divided up into seven sections, as follows:
+
+
+            1. The Header and date. These serve to identify the file as a
+               legitimate task file; it seems unlikely enough that any
+               other DO file would start with the letters "tMpC"!
+
+            2. To-do warehouse.  An ordered list of all the to-dos in the
+               warehouse.
+
+            3. Daily list.  The list of to-dos allocated to be done today.
+
+            4. Processed to-dos.  The list of to-dos waiting to be written
+               to the diary and removed from the task file.
+
+            5. Single-date items.
+
+            6. Weekly-repeating items.
+
+            7. Monthly-repeating items.
+
+
+          Each section (except the first) is variable length, and followed
+
+
+                                      Page: 73
+
+
+
+
+
+                    Reference Section Four: Technical Information
+
+          by a terminating string.  Each is a list of item-blocks, which
+          have the following general format:
+
+
+                                    Header bytes
+                                   Character Count
+                               Description Characters
+
+
+          It is the character count which makes a check necessary to make
+          sure that the task file is valid.  Even the smallest change could
+          send the software off into a list of an indefinite number of
+          blocks extending past the file's end.  So, the software checks
+          the character counts upon opening the file (and at other times
+          too) to ensure that all is well.
+
+          The number and function of the header bytes depend on the
+          particular section. Below are descriptions of each set of header
+          bytes.  In the descriptions, "bit 0" refers to the least
+          significant.  All data is limited to six bits per byte, and every
+          value has an offset of 32 added in.  This is crucial.  The
+          offsets prevent any characters from having an ASCII of 26 (which
+          would terminate the file) or over 127 (which would complicate
+          transmission to other computers, etc)
+
+
+          To-Dos in Sections 2-4 (One byte)
+
+          A bit mask.  Bit 4 is always set. Bits 0 and 1 together indicate
+          the stress (0 = unassigned, 1 = level c, etc.).  Bits 2 and 3
+          together indicate the priority (0 = unassigned, 1 = priority 1,
+          etc.).
+
+
+          Single-Date Items (6 bytes total)
+
+          The first two bytes are the warning days.  A total of 10 bits are
+          used, with the least significant six in the first byte.  The
+          maximum value ever put there by TMPC is 999.
+
+          The next three bytes are the date of the appointment, expressed
+          as a day, month and year respectively.  Note that these values
+          are offset by 32.  The "year" value is the number of years
+          elapsed since 1980.  This is the format of the date at the
+          beginning of the task file, also.
+
+          The final byte is a flag byte in the form of a bit-mask.  Bits 0
+          and 1 are always 0; bit 2 is set if the item has a type "b"
+          warning; bit 3 is set if the item is an appointment and reset for
+          a memo; bit 4 is always 0; bit 5 is always set.
+
+                                      Page: 74
+
+
+
+
+
+                    Reference Section Four: Technical Information
+
+
+
+          Weekly Repeating Items (6 bytes total)
+
+          The first two bytes are the warning period, in the same format as
+          fixed-date items.
+
+          The third byte is a bit-mask for the weeks of each month which
+          are active; bit 0 is for the first week through bit 5, which is
+          for the fifth week.  Bit 6 is for the last week, which can be set
+          independently of the fifth or fourth weeks.
+
+          Bytes 4 and 5 form a bit-mask for the weekdays.  Bits 0 through 5
+          in byte four are for Sunday through Friday, respectively, and bit
+          1 of byte 5 is for Saturday; the remaining bits are not used.
+
+          Byte 6 is a bit-mask.  Bit 0 is always set; bit 1 is always 0;
+          bit 2 is set if the warning is type "b"; bit 3 is set for an
+          appointment and reset otherwise; bit 4 is always 0; bit 5 is
+          always set.
+
+
+          Monthly Repeating Items (11 bytes total)
+
+          Bytes 1 and 2 are the warning, just as for fixed-date items.
+
+          Bytes 3 through 8 form a bit-mask for the days of the month.  Bit
+          0 of byte 3 is for the first day, and bit 1 of byte 8 is for the
+          thirty-first day.  Bit 5 of byte 8 is for the last day of the
+          month, which can be set independently.
+
+          Bytes 9 and 10 are for the months of the year.  Bit 0 of byte 9
+          is for January, and bit 5 of byte 10 is for December.
+
+          Byte 11 is a flag byte in the form of a bit-mask.  Bit 0 is set
+          if the date will search, either forward or backward, to the next
+          business day.  Bit 1 is always set.  Bit 2 is set if the warning
+          is type "b".  Bit 3 is set if the item is an appointment.  Bit 4
+          is set if the search for business day is backward, and reset
+          otherwise.  Bit 5 is always set.
+
+
+          Terminators and Empty Sections
+
+          Each section of blocks ends with a terminator of spaces; the
+          number of spaces corresponds to the number of header bytes.  So,
+          each to-do section terminates with on space, the fixed items and
+          weekly-repeating items each end with 6 spaces, and the monthly
+          items end with 11 spaces.  These terminators must be in place
+          even if there are no items; thus, the minimum legal task file is
+
+                                      Page: 75
+
+
+
+
+
+                    Reference Section Four: Technical Information
+
+          33 bytes long: Four header characters, three characters for the
+          date, and 26 spaces.
+
+
+          Example Programs
+
+          Two example BASIC programs come on the tape to illustrate how the
+          task file can be manipulated.  The first, PTODO.BA, prints the
+          entire contents of the warehouse to the screen.  The second,
+          APPT.BA, adds appointments to the single-date section of the
+          calendar.  Both programs contain enough comments to document
+          themselves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      Page: 76

@@ -1,0 +1,508 @@
+EQUATE.HEX -- Collected Model 100/120 to Tandy 200 ROM/RAM Equates
+       Phil Wheeler -- 71266,125
+------------------------------------------------------------------
+
+This file is a collection of ROM/RAM address translations I have identified
+in converting programs from the Model 100 to the 200 or vise versa. See
+other files e.g., 100RAM.RDC & 100ROM.RD* for functionality info.
+
+    **Updated: 8/3/88**
+
+******** Addresses with labels and EQU are well-tested ********
+**** Some others are from published sources and not tested ****
+
+;                M100    T200
+;                ----    ----
+null    equ     $0007   $0007 (point to a 00h)
+inrh    equ     $01AC   $01AC
+snerr   equ     $0446   $0471
+d0err   equ     $0449   $0474
+overr   equ     $0455   $0480
+moerr   equ     $0458   $0483
+                $045D   $0488
+reterr  equ     $047B   $04A6
+                $0501   $052C
+                $0502   $052D
+                $05F0   $061B
+                $05F3   $061E
+Tokenz  equ     $0646   $0671  
+                $08DB   $0906
+GetVal  equ     $08EB   $0916
+ulerr   equ     $094D   $0978
+Caps    equ     $0FE9   $1014
+DcxH    equ     $1045   $106F
+iderr   equ     $10EF   $1119
+EVALEX  EQU     $112E   $1158
+print   equ     $11A2   $11CC
+ChGet   equ     $12CB   $12F7
+                $13B5   $13DE
+CHSNS   EQU     $13DB   $1422
+ioerr   equ     $1494   $15AC
+                $14DE   $15F5
+                $14EA   $1601
+SETSER  EQU     $17E6   $191D
+                $1804   $1808
+                $190F   $1A7E
+inxh    equ     $199E   $1B01
+                $1B35   $1CB9
+                $1B44   $1CC8 
+                $1BB1   $2697
+SaveBA  equ     $1F1B   $2A0B  
+Files   equ     $1F3A   $2A2A
+KILASC  EQU     $1FBE   $2AB4
+                $1FBF   $2AB5
+                $1FD9   $2ACE
+                $2017   $2B0C
+FINDCO  EQU     $2089   $2BA6
+L208F   EQU     $208F   $2BAC
+FindDO  equ     $20A0   $2BBD
+findfl  equ     $20AF   $2BCC :find all type of file, with extension
+                $20CC   $2BE9
+nxtdir  equ     $20D5   $2BF2  
+                $20FF   $2C1C
+                $2134   $2C50
+Resfpt  equ     $2146   $2C62
+GetLen  equ     $21FA   $2D43
+opendo  equ     $2206   $2D73
+MAKTXT  EQU     $220F   $2D7C
+                $2239   $2DAC
+swapnm  equ     $224C   $2DBF
+                $2346   $30B3
+                $23F5   $3165
+                $251A   $328A
+                $253D   $32A2
+mvhbi   equ     $2542   $32A7
+                $25A4   $3309
+prparm  equ     $25AB   $3310
+PRTNUL  EQU     $27B1   $3517
+mvhci   equ     $2EDD   $3C55
+coparm  equ     $3450   $41A1
+L3457   EQU     $3457   $41A8
+mvdbi   equ     $3469   $41BA:[DE]->[HL]xB
+                $36F8   $444C
+                $3725   $4479
+                $377E   $44D2
+prnhl   equ     $39D4   $470B
+omerr   equ     $3F22   $4C3D
+setmax  equ     $3F2F   $4C4A
+CRLF    EQU     $4222   $4F3E
+BEEP    EQU     $4229   $4F45
+CLS     equ     $4231   $4F4D
+SCLHLT  EQU     $423F   $4F5E
+UNLOCK  EQU     $4244   $4F63
+CURSON  EQU     $4249   $4F68
+CUROFF  EQU     $424E   $4F6D
+                $425D   $4F7C
+Setcur  equ     $427C   $4F9B
+                $428A   $4FA9
+SETDSP  EQU     $42A5   $4FC4
+DSPFNK  EQU     $42A8   $4FC7
+L45D3   EQU     $45D3   $53FB
+InpA    equ     $463E   $54F0
+InpB    equ     $4644   $54F6 (Input w/o '?')
+InxD    equ     $46D2   $5587
+bserr   equ     $48F6   $57AA
+wrbyt   equ     $4B44   $5A05
+PRTTAB  EQU     $4B55   $5A14
+CRLFc   equ     $4BB8   $5A77
+FNAME   EQU     $4C0B   $5ACA
+                $4C81   $5B40
+select  equ     $4CBF   $5B7E
+open    equ     $4D12   $5BD1
+close1  equ     $4D38   $5BF7
+                $4D59   $5C18
+                $4E22   $5CE1
+close   equ     $4E27   $5CE6
+rdbyt   equ     $4E7A   $5D36
+                $4E8A   $5D46
+zerob   equ     $4F0A   $5DC1
+fferr   equ     $5057   $5F0E
+CALMSG  EQU     $5244   $6142
+DISCON  EQU     $52BB   $61BA
+CONECT  EQU     $52E4   $61E7
+Delay2s equ     $5310   $620E
+TMDELA  EQU     $5316   $6214
+DIALER  EQU     $532D   $622B
+PREV    EQU     $5523   $649D
+DUPLEX  EQU     $553E   $64B8
+DUPDSP  EQU     $5544   $64BE
+ECHOTG  EQU     $5550   $64CA
+ECHDSP  EQU     $5556   $64D0
+WATDSP  EQU     $5562   $64DC
+CHGDSP  EQU     $556B   $64E5
+UPLDR   EQU     $55A0   $651A
+DWNLDR  EQU     $568F   $6619
+L56C5   EQU     $56C5   $6662
+UPLMSG  EQU     $5759   $6766
+DWNMSG  EQU     $5768   $6775
+ABTMSG  EQU     $5771   $677E
+FNTFND  EQU     $577C   $6789
+DISMSG  EQU     $5786   $6793
+printc  equ     $5791   $679E:print @ clm 1
+menu    equ     $5797   $67A4
+                $58B6   $6A4F
+                $58C3   $6A5C
+                $58DB   $6A6C
+                $58E2   $6A73
+                $58EB   $6A7C
+L5970   EQU     $5970   $6CB1
+                $59C9   $6D51
+                $59E5   $6D6D
+PRTBUF  EQU     $5A58   $6DF6
+                $5A62   $6E06
+                $5A79   $6E1D
+DefFnk  equ     $5A7C   $6E20
+FNKSB   EQU     $5A9E   $6E42
+FNDFL0  EQU     $5AA6   $6E4A
+CHKF    equ     $5AAB   $6E4F
+InrC    equ     $5AD6   $6E76
+FADDR   equ     $5AE3   $6E8C
+                $5AE4   $6E8D
+                $5B1A   $6845
+FNDTXT  EQU     $5C3F   $7042
+INCRDE  EQU     $5C6D   $7076
+CHKBYT  EQU     $5C74   $707D
+L5CAE   EQU     $5CAE   $70B7
+FNDTBL  EQU     $5D2B   $7133
+STKINI  EQU     $5D53   $714B
+restak  equ     $5D5D   $7155
+L5DB1   EQU     $5DB1   $715C
+L5DBC   EQU     $5DBC   $716B
+L5DC5   EQU     $5DC5   $7174
+                $5F2F   $72E5
+                $5F4B   $7301
+om      equ     $60B1   $7492:'Memory full' string
+mclear  equ     $6366   $7747:[HL]=0 x BC
+L6370   EQU     $6370   $7751
+L6383   EQU     $6383   $7764
+getend  equ     $6B2D   $8268:point HL to chr$(26)
+inschr  equ     $6B61   $829C  
+insert  equ     $6B6D   $82A8
+DELETE  EQU     $6B9F   $82DA
+mvhbci  equ     $6BDB   $8316
+mvhbcd  equ     $6BE6   $8321
+Basic   equ     $6C49   $838F  
+LoadBL  equ     $6C9C   $83DC (Load BA label)
+L6CA7   EQU     $6CA7   $83ED
+RCVX    EQU     $6D6D   $8508
+RV232C  EQU     $6D7E   $8519
+CTRLQ   EQU     $6E0B   $8608
+SD232C  EQU     $6E32   $8643
+SNDCOM  EQU     $6E3A   $864F
+CLSCOM  EQU     $6ECB   $87B5
+                $70C5   $897B
+                $7122   $89D8
+                $71C4   $8A85
+                $71F3   $8AB4
+                $71F4   $8AB5
+                $71FD   $8ABE
+                $7242   $8B03
+KEYX    EQU     $7270   $8B31
+break   equ     $729F   $8B69
+rkgff   equ     $72B1   $8B7B
+                $7398   $8CE4
+                $765C   $8FA0
+tick    equ     $7676   $8FC9
+FRERAM  EQU     $7EAC   $9AFD
+maxfil  equ     $7F2B   $9BE1
+                $7F98   $9C4E
+NULSUB  EQU     $7FF3   $9CA8
+;---------------------------------------
+MaxRAM  equ     $F5F0   $EEB0
+RS75HK  EQU     $F5FF   $EEC2
+CALPPS  EQU     $F62B   $EEF4
+FnkMac  equ     $F62C   $EEF9  
+                $F639   $EF06
+                $F63A   $EF07
+                $F63D   $EF0A
+SCLFLG  EQU     $F63E   $EF0B
+LF650   EQU     $F650   $EF32
+Errtrp  equ     $F652   $EF34
+                $F656   $EF37
+DUPFLG  EQU     $F658   $EF39
+LF659   EQU     $F659   $EF3A
+COMLF   EQU     $F65A   $EF3B
+SERPRM  EQU     $F65B   $EF3C
+                $F67A   $EF65
+LF67B   EQU     $F67B   $EF66
+CurBas  equ     $F67C   $EF67  
+inpbfr  equ     $F681   $EF6C  
+inpbuf  equ     $F685   $EF70
+KEYDSP  EQU     $F789   $F074
+LF7D9   EQU     $F7D9   $F0C4
+CSRITP  EQU     $F92F   $F21F
+                $F932   $F222
+                $F99A   $F295
+                $F9AF   $F2AA
+                $FAAD   $EF0A
+LOMEM   EQU     $FAC0   $F4EE
+CAPTUR  EQU     $FAC2   $F4F0
+LFAC3   EQU     $FAC3   $F4F1
+LFAC6   EQU     $FAC6   $F4F4
+Top     equ     $FACE   $F4FB
+Len     equ     $FAD0   $F4FD
+Exe     equ     $FAD2   $F4FF
+                $FAD8   $F505
+                $FADA   $F507
+                $FADC   $F509
+                $FAF0   $F51F
+                $FAF4   $F523
+                $FB00   $F52F
+                $FB08   $F537
+                $FB0A   $F539
+                $FB2C   $F55D
+                $FB32   $F563
+                $FB34   $F565
+                $FB36   $F567
+                $FB38   $F569
+stkval  equ     $FB9D   $F650
+DOAREA  EQU     $FBAE   $F661
+                $FBB0   $F663
+varspc  equ     $FBB2   $F665
+varend  equ     $FBB4   $F667
+frespc  equ     $FBB6   $F669
+numstr  equ     $FBE8   $F69B:number string stored here when 18187 is called
+SEEDRD  EQU     $FC7A   $F72D
+devout  equ     $FC8C   $F73F
+                $FC92   $F745
+FLNM    EQU     $FC93   $F746
+                $FC99   $F74C
+                $FC9C   $F74F
+                $FCA7   $F75A
+WkSpc   equ     $FCC0   $F856 [alt LCD buffer]
+                $FDA1   $F7C9
+                $FDD5   $F8D5
+                $FDD7   $F831
+                $FDEE   $F848
+                $FDEF   $F849
+ENDLCD  EQU     $FF40   $FCF0
+XONOFF  EQU     $FF42   $FCF2
+KBSITP  EQU     $FF8F   $FD03
+pkgff   equ     $FF99   $FD0D  
+KEYGPC  EQU     $FFA2   $FD16
+                $FFA4   $FD18
+                $FFA5   $FD19
+                $FFA7   $FD1B
+                $FFA8   $FD1C
+                $FFAA   $FD1E
+                $FFF3   $FEA1
+;BELL   EQU     code    $204F            
+;KILL   EQU     code    $2B2C        		
+                                     		
+                                     		
+;------- M100 RAM Code Routines (below)
+;
+;len    equ     XXXXX   $6ACC [see M100 code at end] print 'Length='
+;Kill   equ     XXXXX   $2B2C [see M100 code at end]
+;prnlen equ     XXXXX   $6A91 [see M100 code at end] prints 'xxxxx Bytes'
+;bell   equ     XXXCX   $204F [see M100 code at end] uses Sound
+;sound  equ     XXXXX   $8FA6 [see M100 code at end] Sound E,D
+;SaveCO equ     XXXXX   $3066 [see M100 code at end] Save CO file
+
+----------------------------------
+BELL Code for M100
+----------------------------------
+
+bell	mvi	d,0  
+	mvi	e,28 
+	stc          
+	jmp	sound
+
+----------------------------------
+SOUND and PRNLEN/LEN Code for M100
+----------------------------------
+
+getadr	equ	$5ae3	;get start adr of file
+rom1	equ	$05f4
+prnhl	equ	$39d4
+wrbyt	equ	$4b44
+ram1	equ	$f63a
+rom2	equ	$765c
+rom3	equ	$7676
+rom4	equ	$7657
+
+prnlen:	mov	a,m
+	call	getadr
+	cpi	$a0
+	jz	prn1
+	cpi	$b0
+	jz	prn2
+	cpi	$f0
+	jz	prn2
+	cpi	$c0
+	jz	prn3
+	push	h
+	xchg
+	call	rom1
+	pop	d
+	mov	a,l
+	sub	e
+	mov	e,a
+	mov	a,h
+	sbb	d
+	mov	d,a
+	dcx	d
+	jmp	len
+
+prn3:	mvi	a,$1a
+	lxi	d,$ffff
+prn4:	cmp	m
+	inx	h
+	inx	d
+	jnz	prn4
+	jmp	len
+
+prn1:	inx	h
+	inx	h
+	mov	e,m
+	inx	h
+	mov	d,m
+len:	xchg
+	push	h
+	call	prn5
+	db	'Length: ',0
+	call	prnhl
+	call	prn5
+	db	' Byte',0
+	pop	h
+	mov	a,l
+	dcr	a
+	ora	h
+	mvi	a,$73
+	cnz	wrbyt
+prn2:	lda	ram1
+	cpi	$17
+	rnc
+	mvi	a,$20
+	rst	4
+	jmp	prn2
+
+prn5:	xthl
+	call	prn6
+	xthl
+	ret
+
+prn6:	mov	a,m
+	inx	h
+	ora	a
+	rz
+	rst	4
+	jmp	prn6
+
+;-------------------
+
+sound:	push	psw
+	push	d
+	call	rom2
+	mov	b,d
+snd2:	call	rom3
+	mov	c,e
+	call	rom4
+	dcr	b
+	jnz	snd2
+	pop	d
+	call	snd3
+	pop	psw
+	jmp	snd4
+
+snd3:	in	$ba
+	ori	$20
+	out	$ba
+	ret
+
+snd4:	mvi	a,$09
+	sim
+	ret
+
+
+----------------------------------------
+Model 100 code for Bell, SaveCO and Kill
+----------------------------------------
+
+;Another Bell routine (as used by James Yi in 200 programs)
+;----------------------------------------------------------
+
+BELL:	DI
+	MVI	D,0
+S2	MVI	E,$28
+S1	DCR	E
+	JNZ	S1
+	CALL	TICK	;in Equate list
+	DCR	D
+	JNZ	S2
+	EI
+	RET
+
+;SaveCO Routine (minor patch of ROM code)
+;----------------------------------------
+
+SAVECO	CALL	$2089	;M100 ROM call drops into Basic with OK prompt,
+	CNZ	$1FD9	;terminating the M/L program which is running.
+	CALL	$20E4	;Only last two lines differ form M100 ROM code.
+	PUSH	H
+	LHLD	$FBB0
+	PUSH	H
+	LHLD	$FAD0
+	MOV	A,H
+	ORA	L
+	JZ	$3F17
+	PUSH	H
+	LXI	B,6
+	DAD	B
+	MOV	B,H
+	MOV	C,L
+	LHLD	$FBB2
+	SHLD	$FB99
+	CNC	$6B6D
+	JC	$3F17
+	XCHG
+	LXI	H,$FACE
+	CALL	$2540
+	LHLD	$FACE
+	POP	B
+	CALL	$6BDB
+	POP	H
+	SHLD	$FBB0
+	POP	H
+	MVI	A,$A0
+	XCHG
+	LHLD	$FB99
+	XCHG
+	CALL	$2239
+	CALL	$2146
+	LHLD	$FB8E	;not in M100 ROM
+	RET		;this is a JMP in M100 ROM routine
+
+;Small Stuff
+;-----------
+
+InrB	inr	b
+	ret
+
+InrA	inr	a
+	ret
+
+exit	jmp	menu
+
+
+;Kill Routine (emulates T200 code)
+;No corresponding code found (by me) in M100 ROM
+;-----------------------------------------------
+
+Killc0	equ	$1FBF	
+Kill80	equ	$2017
+Kill00	equ	$1FD9
+
+Kill	mov	a,m
+	inx	h
+	mov	e,m
+	inx	h
+	mov	d,m
+	dcx	h
+	dcx	h
+	cpi	$c0
+	jz	killc0
+	cpi	$80
+	jz	kill80
+	jmp	kill00
+

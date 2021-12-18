@@ -1,0 +1,340 @@
+
+
+                     ------------------------
+                     | Model 100 System Map |
+                     ------------------------
+ROM: Part I
+                          Copyright 1985
+                     Revision Date: 09/30/85
+                   Compiled and Researched by:
+                       Robert D. Covington
+            Systems Information Management Consultants
+      [Not associated with The Covington Group, N. Y., N. Y.]
+
+    This document may be duplicated and distributed free of
+charge to any individuals who desire it.  Any duplications of
+this document, however, must inluce all of the information
+contained here-in, with no deletions or changes.
+    The author and distributors of this document make no 
+expressed or implied warrantees as to the validity of the 
+information contained here in.
+
+
+                      - Model 100 ROM Memory Map -
+
+0000H -  System Reset
+
+0008H -  Compare character following RST 8H with the character pointed 
+        to by HL.
+         Entry:
+               HL - Points to the buffer to be used for the 
+                    comparison.  The character after call is compared 
+                    with the character pointed to by HL.
+         Exit:
+               If compare is successful a RST 10H is issued
+               If compare is unsuccessful, a SYNTAX ERROR is generated
+
+0010H -  Get the next character in the buffer pointed to by HL and 
+        place it in the A register.  HL is incremented prior to the 
+        load.  Spaces and tabs in the buffer are skipped.
+         Entry:
+               HL - Points to buffer
+         Exit:
+               A  - Character loaded from buffer
+               HL - Incremented
+           C flag - Set if character is a digit
+           Z flag - Set if character is a colon or null
+
+0018H -  Compare DE and HL
+         Entry:
+               HL - Number to compare
+               DE - Number to compare
+         Exit:
+           C flag - Set if HL<DE
+           Z flag - Set if HL=DE
+                A - Destroyed
+
+001EH -  Send a space to the screen or printer depending on the output 
+        flag at F675H.
+         Entry:
+            F675H - Device to output space to (0-screen, 1-printer)
+         Exit:
+                A - 20H
+
+0020H -  Print character in A on the screen or printer depending on 
+        the output flag F675H.
+         Entry:
+                A - Character to print
+            F675H - Device to output character to (0-screen, 
+                    1-printer)
+
+0024H -  8085 TRAP interrupt vector.  This non maskable interrupt is 
+        generated if the CPU does not have enough power to operate.  
+        When the interrupt occurs, the CPU jumps to F602H.
+
+0028H -  Determine the type of the last variable used.
+        Exit:
+                A - Destroyed
+           Z flag - Set if string
+           C flag - Reset if double precision
+           S flag - Set (M) if integer
+           P flag - Odd if single precision
+
+002CH -  8085 RST 5.5 interrupt vector.  This interrrupt is generated 
+        by the data being present on the Bar Code Reader port.  This 
+        interrupt jumps to F5F9H.
+
+0030H -  Returns sign of FAC1
+         Exit:
+                A - Destroyed
+
+0034H -  8085 RST 6.5 interrupt vector.  This interrupt is generated 
+        if a character is pending on the RS232 UART.  The RAM vector 
+        F5FCH is called on each interrupt.
+
+0038H -  RAM vector table driver.  The byte after the call determines 
+        the offset index for the highmem vector table starting at 
+        FADAH.  This routine calls the contents of the address 
+        computed by adding the offset to FADAH.
+
+003CH -  8085 RST 7.5 interrupt vector.  This interrupt is generated 
+        by the internal timer normally at regular 4 microsecond 
+        intervals (255 times per second).  On each interrupt, the 
+        Model 100 performs a keyboard scan and updates the typeahead 
+        buffer if nescessary.  The RAM vector F5FFH is called on each 
+        interrupt.
+
+0040H -  Start of function vector table for SGN to MID$
+
+007FH -  End of function vector table
+
+0080H -  Start of BASIC statement keyword table END to NEW
+
+018EH -  End of BASIC statement keyword table
+
+018FH -  Start of function keywords TAB to <
+
+01EFH -  End of function keywords TAB to <
+
+01F0H -  Start of function keywords SGN to MID$
+
+025FH -  End of function keywords SGN to MID$
+
+0262H -  Start of BASIC statement vector table for END to NEW
+
+02E1H -  End of BASIC statement vector table
+
+02EEH -  Start of vector for math operations (used at 10DAH)
+
+031BH -  End of math vector table
+
+031CH -  Start of BASIC 2 character error message text
+
+0359H -  End of error message text
+
+035AH -  Initialization image loaded at F5F0H-F76FH on cold boot
+
+036FH -  Code loaded at F605H on boot to detect external ROM
+
+03E9H -  End of initialization image
+
+0401H -  Pop the return address for a NEXT or RETURN off the stack.
+
+0422H -  Initialize system and go to BASIC ready
+
+0446H -  Generate Syntax error
+
+0449H -  Generate /0 error
+
+044CH -  Generate NF error
+
+044FH -  Generate DD error
+
+0452H -  Generate RW error
+
+0455H -  Generate OV error
+
+0458H -  Generate MO error
+
+045BH -  Generate TM error
+
+045DH -  Generate error number E
+         Entry:
+                E - Contains error number
+
+048DH -  Restore old stack and runtime pointers and jump to the 
+        address in BC.
+         Entry:
+               BC - Address to jump to following the call
+         Exit:
+               HL - Contains the contents of FB99H
+
+0501H -  Vector to BASIC Ready (Ok).  Pops the last address off the 
+        stack to maintain stack integrity.
+
+0502H -  Vector to BASIC Ready (Ok). Jump.
+
+0511H -  Vector to BASIC ready that does not reinitialize the system 
+        or print Ok.  This is primarily used inside the BASIC ready 
+        routine if a blank or illegal line was entered and control 
+        must return back to BASIC ready.
+
+0523H -  Perform operation in (HL) buffer and return to BASIC ready.
+         Entry:
+               HL - Points to the BASIC command line terminated with 
+                    a carriage return (0DH)
+
+05F0H -  Update in memory line addresses for the current BASIC program 
+        lines.  Address calculations start with the start of BASIC 
+        pointer.  This routine is primarily used if a program has 
+        been loaded off tape or if the current program has been 
+        edited.
+         Exit:
+            HL, DE, and AF are destroyed
+
+0626H -  Put the contents of HL on the stack (to save it) and find the 
+        line number in DE via 0628H.  On return from this routine, 
+        you must POP HL off the stack to return it to its original 
+        value and to preserve stack balance.
+
+0628H -  Find line # DE starting at the beginning of the current BASIC 
+        program.
+         Entry:
+               DE - Line number to find
+         Exit:
+               BC - Address of line
+               HL - Address of next line
+           C flag - Set if line found
+           Z flag - Set if line not found
+
+
+062BH -  Find the line number in DE via 0628H but start at the address 
+        in HL instead at the start of the BASIC program.
+         Entry:
+               HL - Location to start line number search
+               DE - Line number to find
+         Exit:
+               See 0628H
+
+0646H -  Token compression routine
+
+0726H -  FOR Statement
+
+076BH -  TO Statement
+
+0783H -  STEP Statement
+
+0804H -  BASIC program execution routine.  This routine evaluates the 
+        compressed BASIC code and executes the appropriate 
+        instructions.  Upon return from most instructions, this 
+        address is placed on the top of the stack.  Routines which 
+        wish to continue program execution should vector here if the 
+        stack becomes unbalanced.
+         Entry:
+               HL - Points to compressed BASIC code to execute
+
+083AH -  Start executing a program at the address in HL.  This routine 
+        starts the 0804H program executer routine.
+         Entry:
+               HL - Points to location where program exectution is to 
+                    begin.
+
+0840H -  Execute the compressed instruction token in the A register. 
+        Any parameters for the instruction must be in the buffer 
+        pointed to by HL.  If the contents of the A register are less 
+        than 128 then a LET is executed.
+         Entry:
+                A - Compressed BASIC token for the instruction that 
+                    is to be executed.
+               HL - Points to the buffer which contains the 
+                    parameters to the BASIC statement.
+
+0858H -  RST 10H routine (see 10H).
+
+0859H -  Same as RST 10H but with no pre-increment of HL (see 10H).
+
+0872H -  DEF Statement
+
+
+0881H -  DEFDBL statement
+
+0886H -  DEFINT statement
+
+0896H -  DEFSNG statement
+
+089FH -  DEFSTR statement
+
+08A1H -  Declare the variables in the buffer pointed to by HL to the 
+        type in the E register.  The variables in the buffer pointed 
+        to by HL must be in the same form as those used for a 
+        DEF(type) statement in BASIC.
+         Entry:
+                E - Type of variable (2-integer, 3-string, 4-single 
+                    precision, 8-double precision)
+               HL - Points to buffer containing variables to declare.
+
+08DBH -  Generate FC Error
+
+08E0H -  Evaluate line number text pointed to by HL.  This routine 
+        will evaluate an ASCII line number or a "."
+         Entry:
+               HL - Points to buffer where line number describer is.  
+                    The buffer is terminated by any non-number other 
+                    than a ".".
+         Exit:
+               Same as 08EBH
+
+08EBH -  Convert the ASCII number pointed to by HL to binary.  Number 
+        must be less than 65529 and be an integer.
+         Entry:
+               HL - Points to the ASCII number buffer.  The buffer is 
+                    terminated by any non-number.
+         Exit:
+               DE - Contains the binary equivalent of buffer
+                A - Destroyed
+           C flag - Set if a number was present
+
+08ECH -  Same as 08EBH except that conversion starts at HL+1
+
+090FH -  RUN Statement
+
+091EH -  GOSUB Statement
+
+0936H -  GOTO Statement
+
+094DH -  Generate UL error
+
+0966H -  RETURN Statement
+
+099EH -  DATA Statement
+
+09A0H -  REM Statement
+
+09C3H -  LET Statement.  Perform the variable assignment in the buffer 
+        pointed to by HL.
+         Entry:
+               HL - Points to the variable assignment to evaluate.
+
+0A2FH -  ON Statement
+
+0A34H -  ON ERROR Statement
+
+0AB0H -  RESUME Statement
+
+0B0FH -  ERROR Statement
+
+0B1AH -  IF Statement
+
+0B4EH -  LPRINT Statement
+
+0B56H -  PRINT Statement
+
+0C01H -  TAB Statement
+
+0C45H -  LINE Statement
+
+0C99H -  INPUT # Statement
+
+0CA3H -  INPUT Statement
+
+0CD9H -  READ Statement

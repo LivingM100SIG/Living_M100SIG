@@ -1,0 +1,158 @@
+RELFLE:Preliminary documentation
+
+RELFLE is a prelimary development version of a linkage to provide a form of 
+relative ram-file access from BASIC. Relative files, as exist on many other 
+types of computers allow the specifying of a record in a file and reading from 
+or writing to this record without going through the entire file each time.  
+This has potential for database programs and the like which would not 
+necessarily access files sequentially.  Using RELFLE for instance, you could 
+arrange a file into alphabetical or other sequence in place without having to 
+load the file into a memory array for manipulation.  This would free up a good 
+deal of memory space for a large file.
+
+Files to be accessed from RELFLE can be any .DO ram file with up to 255 records
+each up to 255 characters long, with a CR defining the end of each record.  
+Normally however the files to be accessed like this are composed of a series of
+fixed records, with specific information in specific sections (fields) of each 
+record, but unlike relative disk files on many other small computers, this is 
+not rigidly enforced.
+
+RELFLE commands can be called from BASIC programs or from immediate mode.
+
+RELFLE works somewhat similar to regular file operation, however it operates 
+outside of BASIC's normal IO channels.  Because of this, design has been very 
+conservative so far, considerable attention has been given to avoiding conflict
+with BASIC operation. RELFLE currently occupies about 0.5K of hi ram.
+
+This particular version has been assembled just below MAXRAM, with a jump table
+located there for the 4 basic functions OPEN, CLOSE, READ, WRITE.  The use of a
+jump table configuration will enable changes and improvements in the routines 
+without modifying the user addresses.
+
+This location in ram is of course not necessarily suitable for users of 
+Chipmunk, PowrDisk etc.  The easiest answer to to simply re-assemble at other 
+locations, and I can provide that (not having these software products myself, I
+will need information from others on where to assemble the routines).  
+Additionally I feel adaptation to M200 should be fairly easy, communication 
+with a knowledgeable 200 owner would be helpful.
+
+Commands and syntax are as follows:
+
+OPEN: CALL 62940,error_level,varptr(filename$) This routine opens the channel 
+for access.  While only one channel can be open at a time, the routine executes
+very quickly (about 7 ms) and there is nothing to keep you from jumping back 
+and forth between more than one file.  If a file is open, calling OPEN with a 
+new name will effectively close the old file and open the new one.  No problem 
+or error message results.  If an invalid or non-existent file name is passed, a
+file not found error is issued.  Upper or lower case file names (without the 
+.DO extension) are supported.
+
+
+CLOSE: CALL 62949 disables the current file channel to prevent accidental 
+access.  No other changes occur.  If not closed, a channel remains open 
+indefinitely until RELFLE is overwritten by another .CO file or memory is 
+cleared back to MAXRAM.
+
+WRITE: CALL 62946,record#,varptr(text$) will write the contents of this string 
+to the specified record #.  If the string is longer than the existing record in
+the file, the text is written as much as possible and a truncation error is 
+issued.
+
+READ: CALL 62943,record#,varptr(target$) will read the contents of specified 
+record directly into the target variable.  Because RELFLE does not interfere 
+with BASIC's string allotment, string space must be alloted from BASIC before 
+hand.  The two ways to do this are:
+
+A$=SPACE$(n) where n=number of spaces to be allotted.
+
+Alternatively, a blank buffer string could be set up BF$="        " and then 
+just before a read, execute A$=BF$.  Note that we did not use the more obvious 
+A$="      " because Microsoft BASIC expects string literals (characters in 
+quotes) to remain unchanged during program run, so it simply sets pointers to 
+the literal in the program rather than making another copy (that is why 
+programs with long lists of string data statements do not require clearing 
+nearly as much string space as might be expected).  Calling READ under these 
+circumstances would cause your data to be written directly into the program 
+text!
+
+If the record you attempt to read is longer than the alloted variable, as much 
+as possible will be copied and a truncation error will be issued.
+
+ERROR CODE: PEEK(62953) gives the number of the last error that occured.
+
+
+ERROR HANDLING: RELFLE supports 3 levels of error handling, these are user 
+specified when OPENing a file:
+
+'0' produces a beep and places error message on screen (useful for interactive 
+and debugging sessions)
+
+'1' places a message on screen but no beep.  This is useful in many simple 
+program applications.
+
+'2' disables error messages.  It is the responsibility of your program to 
+determine if an error has occurred (by PEEKing at 62953).  This is appropriate 
+for more sophisticated programs which handle their own error trapping.
+
+Error Codes are as follows:
+
+'0' no error
+
+'1' file name/not found error
+
+'2' truncation error
+
+'3' end of file error--attempt to read past end of file.
+
+'4' str/num error--attempting to pass other than a valid string varptr
+
+'5' undefined error
+
+GENERAL NOTES:
+
+A single record must consist of a single string, normally you would concatenate
+several fields of information into a single string for storage and break down 
+the string for manipulation.  If a non-string varptr() is passed a STR/NUM 
+error is issued.
+
+Entering invalid file names or specifying records past the end of the file will
+cause error messages but will not crash the system.
+
+I find it advisable to use variables (such as OP, RD, WR) set equal to the 
+various call addresses.  This keeps the program more readable (CALL RD,...) and
+produces less chance of a typographical error.  Be sure not to accidently 
+change the values of the variables you choose, however.
+
+All functions check the start address of a file each time they are called, so 
+activities performed between successive accesses such as adding or deleting 
+files, appending files through normal BASIC channels etc. cause no conflict.
+
+Normally files designed for RELATIVE access are fixed length records.  While 
+records of varying lengths will be handled by RELFLE, fixed length records 
+usually are usually more appropriate to the types of programs utilizing 
+relative files.
+
+Record size read or written is limited by the variable length of BASIC (255 
+bytes).
+
+Record #'s 0 through 255 are available to RELFLE.
+
+Currently RELFLE does not add records to a file (this is easily done with BASIC
+files opened in APPEND mode).
+
+***************************************
+
+DOWNLOAD RELFLEHX.100 (CHECKSUM=69256)and convert to ML using CHANGE.BA in DL4.
+  Save the file into RAM with SAVEM "RELFLE.CO",62368,62959,62433.  To activate
+RELFLE, either call it from the menu before running the BASIC program of LOADM 
+it from BASIC.  (The entry address simply shunts to a RETurn, no action is 
+performed other than loading the code.)
+
+This PRELIMINARY version is being placed on CIS for feedback on features and 
+approaches that may make it a more useful utility.  Please contact me via EMAIL
+with your comments/criticisms/suggestions.
+
+Jay Holovacs
+74756,413
+4/16/86
+

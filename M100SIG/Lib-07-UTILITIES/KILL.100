@@ -1,0 +1,27 @@
+CAPTURED MESSAGE:
+
+#: 148729 S7/Utilities
+    25-May-87  22:20:08
+Sb: #Kill a RAM file
+Fm: Paul Globman 72227,1661
+To: All
+
+A nice feature of the Tandy 200 is the ability to place the widebar cursor
+over a filename and press a function key AT THE MENU to kill a file and free
+the RAM it occupied.  The Model 100 doesn't allow this...until now.
+
+Just type in this 2 line BASIC program and SAVE it as KILL.BA.
+
+1 AD=64929+2*PEEK(65006):AD=PEEK(AD)+256*PEEK(AD+1):FOR I=3 TO 10:F$=F$+CHR$(PEEK(AD+I)):IF I=8 THEN F$=F$+"."
+
+2 NEXT:KILL F$:MENU
+
+Now you can place the widebar cursor over any RAM file [on the 100 menu] and
+type "KILL.BA" <CR> to delete that file.
+
+Use CHANGE.100 to make KILL.BA invisible and eliminate the ".BA".
+
+Now your M100 appears to have a built in KILL command!  If you KILL a .BA file,
+you will remain in BASIC.  To fix this, use this alternate LINE 2.
+
+2 NEXT:M$="MENU"+CHR$(13):AD=65450:POKE AD,6:FOR I=1 TO 5:M=ASC(MID$(M$,I,1)):POKE AD+2*I,M:POKE AD+2*I+1,M:NEXT:KILL F$

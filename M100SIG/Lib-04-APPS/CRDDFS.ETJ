@@ -1,0 +1,39 @@
+10 'CRDDFS.ETJ - Program to load into    RAM "sections" of a large data file.
+20 'Sections are loaded in one at a time and in consecutive order so that each
+30 'section can be used by CRDFIL progs  individually.  Run program each time
+40 'use of preceeding section is complete and it will load in next section until
+50 'through entire data file.  Program   uses "dfihol.do" to temporarily store
+60 'related information.  Program leaves approximately 3500 bytes free in RAM
+62 'However if you want larger sections  change line 190 from 3500 to 2000 and
+70 'kill program while using sections so that at least 3500
+80 'free bytes are available.  Reload and run when section use is completed
+90 'Maintain dfihol.do file or program   will start over.  Copyright 1988
+92 'Evan T. Jones POB 343 ANN. VA.22003
+100 MAXFILES=2:CLEAR1000
+110 OPEN"dfihol"FORAPPENDAS1:CLOSE1
+120 OPEN"dfihol"FORINPUTAS1:IFEOF(1)THEN270
+130 LINEINPUT#1,F$:INPUT#1,N:INPUT#1,Z:LINEINPUT#1,FF$
+136 OPENFF$FORAPPENDAS2:CLOSE2
+140 CLOSE1:KILL"dfihol.do":KILLFF$
+150 ONERRORGOTO290
+154 OPENF$FORINPUTAS1:OPENFF$FORAPPENDAS2
+158 ONERRORGOTO300
+159 IFZ=1THENP=1:GOTO175
+160 INPUT#1,P:PRINT#2,P
+170 FORA=1TO(2*P):LINEINPUT#1,T$:PRINT#2,T$:NEXT
+175 IFN=0THEN190
+180 FORA=1TON:LINEINPUT#1,T$:NEXT
+190 IFFRE(0)<3500THEN240
+200 FORA=1TOP:LINEINPUT#1,T$:PRINT#2,T$:IFEOF(1)THEN220ELSENEXT
+210 N=N+P:IFEOF(1)THEN220ELSE190
+220 CLOSE1:CLOSE2:CLS:PRINT@41," Final section now in RAM"
+230 PRINT:PRINT"  Press <ENTER> for MENU";:Q$=INPUT$(1):MENU
+240 CLOSE1:CLOSE2:OPEN"dfihol"FORAPPENDAS1
+250 PRINT#1,F$:PRINT#1,N:PRINT#1,Z:PRINT#1,FF$:CLOSE1
+260 CLS:PRINT@41," Current ";F$;" section now in RAM      file  ";FF$:GOTO230
+270 CLOSE1:CLS:PRINT@41," Is this a CRDFIL data file?             Press <ENTER> for CRDFIL                or <D> if other. ";:CC$=INPUT$(1)
+274 IFCC$="d"ORCC$="D"THENZ=1
+278CLS:PRINT:PRINT:INPUT" Name of file to be placed in RAM by     sections";F$
+280 PRINT:INPUT" RAM file name ";FF$:IFRIGHT$(FF$,3)=".DO"ORRIGHT$(FF$,3)=".do"ORRIGHT$(FF$,3)=".Do"THENGOTO150:ELSEFF$=FF$+".DO":GOTO150
+290 CLS:PRINT@41," Data file error... Check names and      locations":GOTO230
+300 CLS:PRINT@41,"Error is ";ERR;" in line ";ERL

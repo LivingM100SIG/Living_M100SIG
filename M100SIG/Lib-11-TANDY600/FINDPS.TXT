@@ -1,0 +1,17 @@
+10 ' Access System Printer Information
+20 ' Version 2.00  25 Dec 89  Gale S. Ringley
+30 ' If SM$="F" then Continuous mode is expected.
+40 ' If SM$="T" then (single) Sheet mode is expected.
+50 ' P(0)=Page Width, P(1)=Page Length, P(2)=Top Margin, P(3)=Bottom Margin,
+60 ' P(4)=Left Margin, P(5)=Right Margin.  Requires DBCALLS.LIB
+70 ' If any error occurs during the routine the HHOS initial values
+80 ' of F,85,66,6,6,13,12 will be used.
+90 ' WARNING: P must be a double precision array!  Do not DEFINT it!
+1000 DIM P(5):ON ERROR GOTO 1050:LIBRARY "DBCALLS.LIB":CALL DBOPEN("ENVIRON.SYS",0,A)
+1010 Q=0:SM$="SHTMODE"+"":CALL QSTART(A,P()):CALL QFIELD(A,P(),0,0,0,SM$):CALL RFIND(A,0,0,P(),Q):CALL FRGET(A,Q,1,SM$):CALL QREND(A,P())
+1020 Q=0:PM$="PMARGINS"+"":CALL QSTART(A,P()):CALL QFIELD(A,P(),0,0,0,PM$):PM$=PM$+PM$+PM$:CALL RFIND(A,0,0,P(),Q):CALL FRGET(A,Q,1,PM$):CALL QREND(A,P()):CALL DBCLOSE(A)
+1030 Q=0:B$="":FOR I=1 TO LEN(PM$):A$=MID$(PM$,I,1):IF A$="," THEN P(Q)=VAL(B$):B$="":Q=Q+1 ELSE B$=B$+A$
+1040 NEXT I:P(Q)=VAL(B$):GOTO 1060
+1050 SM$="F":P(0)=85:P(1)=66:P(2)=6:P(3)=6:P(4)=13:P(5)=12:RESUME 1060
+1060 STOP 'RETURN or GOTO or your next program line. This exit point must be kept!
+                                                                   

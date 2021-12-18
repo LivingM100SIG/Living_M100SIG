@@ -1,0 +1,213 @@
+
+                           ZIPSUB.DOC
+                    (c)1989 Wilson Van Alst
+                      All rights reserved.
+
+
+  I. GENERAL DESCRIPTION
+     A. ZIPSUB.CO is a machine language search & replace program that
+        lets you change selected strings in TEXT files very quickly.
+        Here are the main features:
+        1. The program is available in two versions: ZIPSUB.100, for
+           the M100/102 laptops, and ZIPSUB.200 for the Tandy 200.
+        2. RAM files are searched and changed "in place" -- so you
+           never need the extra memory used by programs that make a
+           copy of the original file.
+           a. The result is, you can work on very large files.
+        3.  ZIPSUB runs in the AltLCD buffer, a 'protected' area of
+           computer memory where it should not conflict with other
+           machine language programs.  You do not have to CLEAR space
+           or change HIMEM to use AltLCD programs.
+        4. You have an option, when you run ZIPSUB, of completely
+           automatic operation, or user-verification for each
+           replacement before it occurs.
+           a. If you select verification, the program shows you each
+              original string, hightlighted in context, to help you
+              decide whether it should be replaced.
+        5. The program makes it easy to perform several
+           search/replace operations on the same file, without
+           returning to the main MENU.
+        6. ZIPSUB is easy to access from a BASIC program -- offering
+           the above features within a custom framework you design
+           yourself.
+
+ II. INSTALLATION
+     A. You should download the version of ZIPSUB that's correct for
+        your computer: ZIPSUB.100 for the M100/102, and ZIPSUB.200
+        for the T200.
+     B. Remove any "garbage" (like CompuServe prompts) from the top
+        and bottom of the downloaded file, and convert the file to a
+        BASIC program.  Your computer manual explains how to do this
+        in the section describing BASIC's 'LOAD' and 'SAVE' commands.
+        1. Once you've created ZIPSUB.BA, you can kill the .DO file.
+     C. Run ZIPSUB.BA from the main MENU.
+        1. A rapidly changing number should appear in the middle of
+           the screen, and in about 30 seconds you should be back at
+           the menu with a new file: ZIPSUB.CO
+           a. At this point, you can save ZIPSUB.BA to tape or disk.
+              You do not need it to use ZIPSUB.CO
+        2. If ZIPSUB.BA beeps and prints "Bad Data" on the screen,
+           it's an indication that your copy of the program has been
+           corrupted.  You'll probably have to download the file
+           again and start from scratch.
+
+III. OPERATION
+     A. To run ZIPSUB.CO from the main MENU, just put the cursor over
+        the file and press <ENTER>.
+     B. You'll see a screen listing all the RAM files and asking
+        which 'File?' you want to work on.
+        1. Enter the name of a file, with or without a .DO extension
+        2. If you enter a "null" at this point -- by pressing the
+           <ENTER> key without naming a file -- you'll return to the
+           computer menu.
+           a. This is the normal way of exiting ZIPSUB
+        3. If you enter an "illegal" file name, or the name of a file
+           that doesn't exist, you'll simply be asked for a new
+           entry.
+     C. Once you've selected a file, ZIPSUB will clear the screen and
+        ask for a 'Find' string.
+        1. Entering a "null" at this point will take you back to the
+           'File?' prompt, discussed above.
+        2. Otherwise type in the text you want to replace in the
+           selected file.
+           a. This entry may be up to 80 characters.
+           b. You may search for any combination of alphabet
+              characters, numbers, graphics, spaces, and punctuation
+              marks
+              1) "control characters" are illegal -- except for TABs,
+                 which may be included at any point in the string,
+                 and count for just one character even though they
+                 may look like several spaces in a row
+           c. For alphabet characters, it won't matter whether your
+              'Find' string is in upper or lower case
+              1) the program searches for all records containing your
+                 entry, regardless of case.
+     D. After the 'Find?' entry, you'll be asked for a 'Sub?' string.
+        1. In this instance, case =is= significant.  The 'Sub' string
+           is entered in the TEXT file exactly as you type it.
+        2. If you enter a "null" for the 'Sub' string, it implies
+           that you want to delete the 'Find' string (i.e., replace
+           it with nothing).
+           a. ZIPSUB will ask you to verify that this is what you
+              intend:
+              1) If you answer "Y" to the 'Delete?' prompt the
+                 program will go forward.
+              2) If you answer "N" or "Q", you'll return to the
+                 'Find?' prompt, giving you a chance to exit the
+                 program, or enter a new set of search and replace
+                 strings.
+     E. The next prompt asks, simply, 'Ask?' -- and it wants to know
+        whether the upcoming search/replace operations should be done
+        automatically, or if you want to verify them one-at-a-time.
+        1. If you enter "Q" (for "Quit") at this point, you'll return
+           to the 'Find?' prompt.
+        2. If you respond "N" to the 'Ask?' inquiry, ZIPSUB will loop
+           through the file and make the requested changes without
+           intervention.
+        3. If you answer "Y" to the 'Ask?' prompt, the program will
+           pause every time it finds a match for your 'Find' string
+           and ask whether you want to replace it.
+           a. The 'Find' text is shown in context, highlighted by
+              reverse video, followed by a 'Y/N/Q' prompt:
+              1) "Y" makes the substitution and jumps to the next
+                 match for your 'Find' string;
+              2) "N" leaves the highlighted area unchanged and jumps
+                 to the next match;
+              3) "Q" abandons the current search/replace operation
+                 and takes you back to the 'Find?' prompt.
+     F. When the program has completed its work (i.e., there are no
+        more records in the file that match your 'Find' string), it
+        returns to the 'Find?' prompt:
+        1. If you enter a new 'Find' string, the program starts over
+           again -- ready to search and replace with a new set of
+           criteria, using the same file you've just finished with.
+        2. As before, if you answer the 'Find?' prompt with a "null"
+           entry, you'll go back to the 'File?' menu.  There, you can
+           choose a different file to work on, or enter a second
+           "null" and return to the main MENU.
+
+ IV. USE FROM BASIC
+     A. ZIPSUB has been designed for use by a running BASIC program
+        without the need for tricky PEEKs, POKEs, and VARPTR
+        statements.
+        1. The program picks up the name of the last file you opened
+           for INPUT, OUTPUT, or APPEND; so the easy way to pass a
+           file name to ZIPSUB is by opening the desired file, then
+           closing it (this is optional: if you have some reason to
+           keep the file open in your BASIC program, it will not
+           affect the way ZIPSUB works), just before making your CALL
+           to the proper ZIPSRT address:
+           a. For the M100/102 the CALL is 64736
+           b. For the T200, CALL 63606
+        2. Here's an example:
+
+           10 loadm"zipsub"
+           20 ' other stuff
+           30 ' more stuff
+           40 cls:files
+           50 lineinput"File for S&R: ";f$
+           60 openf$forinputas1:close
+           70 call63606 'T200 call
+           80 print"Another File?";
+           90 ifinstr("Yy",input$(1))then40
+           100 end
+
+     B. When you make the call specified here, you'll enter ZIPSUB at
+        the 'Find?' prompt:
+        1. A "null" response (just pressing <ENTER> without
+           specifying a 'Find' string) will return you to the BASIC
+           program
+        2. Otherwise you'll be following the steps outlined above,
+           starting at III. C...
+           a. EXCEPT: you will never see ZIPSRT's 'File?' menu
+              1) Any time you enter a "null" at the 'Find?' prompt,
+                 you'll return to your BASIC program.
+
+  V. TECHNICAL NOTES
+     A. Speed
+        1. It's worth noting that ZIPSRT will work =very= quickly
+           when the size of the 'Sub' string exactly matches the size
+           of the 'Find' string.  In this case, the program only has
+           to make a one-for-one substitution inside the TEXT file.
+           When the string sizes are different, though, ZIPSRT has to
+           expand or contract the file to make things fit -- and it
+           takes a bit of time to move things around.  I think you'll
+           still be pleased with how fast the program runs.
+     B. Selective searching
+        1. It helps to use some imagination when you're using ZIPSUB
+           (or any other search/replace program).
+              For example, if you wanted to change the word "cat" to
+           "feline" everywhere in a TEXT file, you might be tempted
+           just to type those words at the appropriate prompts and
+           let the program do its thing.  The problem is, you'd get
+           lots of strange looking results in words other than "cat"
+           that have the letters "c-a-t" in them.  Words like
+           "scatter" and "cathedral," would end up as "sfelineter"
+           and "felinehedral."
+              However, if you answered the 'Find?' prompt with " cat
+           " (without the quotes), putting spaces before and after
+           the search word, you'd be sure to replace only stand-alone
+           "cat"s with your "feline"s.  (Of course, you'd miss spots
+           where "cat" was followed by a comma or period, or -- as in
+           this text -- sourrounded by quotation marks.  But you can
+           go back and do other quick S&Rs for " cat.", " cat," and
+           '"cat"' if you like.  As I said, it pays to use your
+           imagination.)
+
+ VI. THANKS
+     A. I'll never find adequate words to thank James Yi for writing
+        and sharing his machine language Assembler/ Disassembler/
+        Monitor program, ADSM.  He once said he'd take his "payback"
+        from others who use ADSM to write new software.  I'm tryin',
+        James, I'm tryin'.  Meantime, many thanks to Randy Hess, who
+        suggested several ways to improve ZIPSUB during its
+        development.
+
+VII. SUPPORT
+     A. I can be reached on CompuServe's M100 SIG if you have
+        questions or suggestions relating to ZIPSUB.  Please put your
+        correspondence on the SIG's message board, instead of sending
+        it via EasyPlex, because your comments may help another
+        reader get more out of the program.  Thanks.
+                  Wilson Van Alst [76576,2735]
+

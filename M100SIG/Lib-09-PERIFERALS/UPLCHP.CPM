@@ -1,0 +1,33 @@
+0 'UPLCHP.CPM 2/26/85 W.H. Calvin  CIS:71256,1353
+1 ' use serial line on M100 to mimic CP/M terminal
+2  ' call up PIP, make CP/M file from upload from RAM or Chipmunk file
+3 'Has BATCH mode, transferring long series of disk files from Chipmunk to CP/M disk;
+4 '  just create BATCH.DO containing list of filenames (assumes 0:), place in same file folder
+5 'if CRC error, restarts file transfer
+6 'to get into TERM mode of TELCOM, <BREAK> and GOTO99 ala SMART; do a ^Z to close PIP
+7 'CUSTOMIZE by changing baud rates in 30-31
+11 MAXFILES=4:CLS:INPUT"Mount CP/M disk with PIP on A: drive";X$
+13 PRINT"RAM files":FILES
+20 BA=0:PRINT"DEFAULT is 0:BATCH.DO in folder":PRINT:INPUT "NAME for file to be uploaded: ";A$
+22 IFA$<>""THEN26ELSEBA=1:OPEN"0:BATCH.DO"FORINPUTAS4:PRINT"Opening batch file for input"
+24 IF BA=0OREOF(4)THEN70ELSEER=0:LINEINPUT#4,A$
+26 IFLEN(A$)<2THEN70ELSEIFBA=1THENOPEN"0:"+A$+".DO"FORINPUTAS2:GOTO29 'if using batch, assume filenm on disk
+28 OPENA$+".DO"FOR INPUTAS2
+29 PRINT"Opening ";A$;"  ":ONERRORGOTO95
+30 OPEN "COM:87I1E"FOROUTPUTAS3 '9600bd
+31 OPEN "COM:87I1E"FORINPUTAS1
+32 IF LEFT$(A$,2)="0:"THENA$=MID$(A$,3)
+33 COMOFF:PRINT#3,CHR$(24);:PRINT#3,"":PRINT"Prompting PIP"
+34 GOSUB200 'wait for A>,then repeat
+36 PRINT#3,"":GOSUB200 'gets around ^Q
+37 ONCOMGOSUB80:COMON:PRINT#3,"PIP A:"+A$+"=RDR:[B]"
+38 FORN=0TO1500:NEXT:PRINT"transferring..."; 'stall until PIP ready
+40 IFEOF(2)THEN60ELSEPRINT#3,INPUT$(1,2);:GOTO40
+60 PRINT#3,CHR$(26):PRINT"Closed ":CLOSE2,3:SOUND9999,20:CLOSE1,2,3:IFER<>1THEN24ELSEER=0:BEEP:PRINT:PRINT"ERROR,redo":GOTO26'repeat if error
+70 CLOSE:PRINT"Finished uploading ";A$:PRINT:INPUT "More files to upload? Y/N";A$:IFA$="Y"ORA$="y"THEN20ELSEMENU
+80 X$=INPUT$(1,1):PRINTX$;:RETURN
+95 ER=1:RESUMENEXT'restart on error
+99 CALL 21589'pop into TERM mode TELCOM
+200 'wait for CP/M prompt
+210 X$=INPUT$(1,1):PRINTX$;:IF X$=">"THEN RETURN ELSE 210
+999 'UPLCHP.CPM batch utility, W.H. Calvin

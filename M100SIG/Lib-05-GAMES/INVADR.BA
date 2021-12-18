@@ -1,0 +1,48 @@
+1 'INVADR.BA by James Yi/73327,1653
+2 'Variation of the original Space Invaders
+3 'Delete 580-590 after familiarizing with instructions to save ram
+150 IFPEEK(61983)<>PEEK(61983)THENPOKE63277,PEEK(61983)ELSEPOKE64634,PEEK(63791)
+160 A$=CHR$(245):H$=CHR$(147)
+180 CLS:PRINT"Caps lock off":PRINT,," P lay":PRINT" I nstructions":PRINT" S coring":PC=4
+185 K$=INKEY$:IFK$="p"THEN187ELSEIFK$="i"THEN580ELSEIFK$="s"THEN585ELSE185
+187 INPUT"Start at wave (1-4)";LV:LV=4-LV
+190 CLS:LV=LV-1:IFLV<-1THEN540ELSEPRINT@170,"Get ready for wave"3-LV:SOUND 0,99:CLS
+192 S$=CHR$(144)+" "+CHR$(145)+" "+CHR$(176)+" ":S$=S$+S$+S$+S$:S$=LEFT$(S$,23)
+195 LINE(0,56)-(239,63),1,BF:PRINTS$:TL=23:SD=12:MR=4+LV*3:CM=1:SL=265:FL=0:RW=0:CL=0
+220 K$=INKEY$:PRINT@SL," ";:SL=SL+3*((K$=",")-(K$=".")):SL=SL+40*((SL>279)-(SL<240)):PRINT@SL,H$;
+230 PRINT@FL," ";:IFFL=0THENIFK$<>" "THENGOTO250ELSEFL=SL:SC=SC-200
+240 FL=FL+40*(FL>0):IFRW=INT(FL/40)THEN500ELSEIFFL>0THENPRINT@FL,A$;ELSEFL=0
+250 IT=IT-1:IFIT>0THEN260ELSEIT=IT+MR:PRINT@RW*40+CL,SPACE$(TL):CL=CL+CM:AR=(CL<0)+(CL+TL>40):RW=RW-AR:CL=CL+AR*CM
+255 PRINT@RW*40+CL,S$:IFAR=-1THENCM=-CM:IFRW=6THENSOUND14000,5:SOUND15000,10:SOUND16000,15:SC=SC-4000:GOTO570
+260 L=RND(1)*(LV+2)*2:IFL>1THEN290ELSEC=INT(RND(1)*(TL)/2)*2:IFMID$(S$,C+1,1)=" "THEN290ELSEX=(CL+C)*6+2:LINE(X,RW*8+7)-(X,59)
+265 SOUND900,1:LINE(X,RW*8+7)-(X,59),0:LINE(X-1,56)-(X+1,57-(CM=1)),0,B:LINE(X+2*(L>.6),56)-(X-(L<.4)*2,56-(CM=-1)),0,B
+270 IFCL+C=SL-240THENPRINT@FL," ";:FL=0:LINE(X-2,59)-(X+2,56),1,BF:GOTO550
+290 SC=SC-10:GOTO220
+500 UO=FL-INT(FL/40)*40-CL+1:IFUO<1ORUO>TLTHEN530ELSEPRINT@FL," ";:IFMID$(S$,UO,1)=" "THEN530ELSE:SD=SD-1:MR=INT(SD/3)+LV*3
+515 S$=LEFT$(S$,UO-1)+" "+RIGHT$(S$,TL-UO)
+517 IFLEFT$(S$,2)<>"  "THEN520ELSES$=RIGHT$(S$,TL-2):CL=CL+2:TL=TL-2:GOTO517
+520 IFRIGHT$(S$,2)<>"  "THEN525ELSES$=LEFT$(S$,TL-2):TL=TL-2:GOTO520
+525 SOUND16000,1:SOUND7000,1:SOUND2000,1:FL=39:SC=SC+1000:IFSD=0THEN535ELSEGOTO250
+530 PRINT@FL,A$;:GOTO250
+535 SC=SC+(6-RW)*1000+4000:GOTO190
+540 PRINT@0,"Fantastic! Your courage saved the earth from becoming a mere vitamin factory"
+542 PRINT"You and your squad will go down in      history.  You and the remaining squad   members can have a well deserved life"
+543 PRINT"time vacation to Planet Invariable"
+544 FORL0=8TO1STEP-1:FORL1=L0TOL0+6:SOUNDL1*1000,2:NEXT:FORL1=L0+6TOL0STEP-1:SOUNDL1*1000,2:NEXT:NEXT
+548 PRINT"Your score = ";SC;:LINEINPUT" Play again?(y/n)";R$:IFR$="y"THENRUNELSEEND
+550 PC=PC-1:SC=SC-1000:FORL=0TO7:LINE(X-2,48+L)-(X+2,48+L),0:SOUNDL*1000,1:NEXT:IFPC<0THEN560ELSEFORL=0TO500:NEXT:GOTO290
+560 PRINT@0,"Despite the efforts of the warriors,    earth is left defenseless":PRINT"The aliens would land in a while and
+562 PRINT"colonize earth in a few years":PRINT"Then they would turn her into a vitamin factory":GOTO548
+570 PRINT@0,"The aliens landed successfully and took over control of the earth and made her  into a colony specializing in";
+572 PRINT" vitamin    BXy256 manufacture":PRINT"Survival tip:  effect of vitamin BXy256 to a human is unknown":GOTO548
+579 RESUME185
+580 PRINT"The Earth is being invaded by hostile   aliens from Jupiter and trained for     such an event are Nice Squat Warriors"
+581 PRINT"You are one of 5 squad members and you  must stop the aliens before they can    land and take over":PRINT
+582 LINEINPUT"<CR> for more";R$:PRINT"Use keys ',' to move left, '.' to move  right, Space bar to fire supersonic     arrows.";
+583 PRINT"  There are 4 waves and they get faster each wave":PRINT"Look out for antimatter beams"
+584 PRINT"Game ends when you survive wave 4 or all5 warriors are killed off or when aliensland.  ";:GOTO590
+585 PRINT" Each alien = 1000 points":PRINT"Each arrow fired costs 200, 1000 off foreach warrior killed, 4000 off if"
+587 PRINT"aliens land":PRINT"4000 pts bonus for each wave completed"
+588 PRINT"Quicker battle will result in higher    score.  ";:PRINT"Score is shown at the end of thegame.  ";
+590 LINEINPUT"<CR> for menu";R$:GOTO180
+

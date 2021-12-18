@@ -1,0 +1,43 @@
+RECOVR.BA is a short utility program to recover after cold starts or to reset 
+parameters that have been altered via various programs.
+
+Line 10 resets the year, overcoming the "bug" in the Model 100 caused by high 
+speed file transfers.
+
+Line 20 commands that the power remain ON continously -- use only if you're 
+working with an AC adapter cable.
+
+Line 30 resets the BASIC function keys to their default parameters, since some 
+programs alter the parameters and fail to reset them to their ingoing values.
+
+Lines 40-50 set function keys F6 and F7 in BASIC.  Note especially Line 40, 
+which is customized for use with the new DISK-POWER 100 from Ultrasoft 
+Innovations, which allows you to go into BASIC while in TELCOM (a very powerful
+enhancement for any PDD DOS).
+
+Lines 75 and 80 reset the TELCOM status to M7I1D,20  (Poke 63071,69 to set for 
+M7I1E).  The purpose of including this line in the program is that DISK-POWER 
+100 will reset the TELCOM stat to 98N1D after RUNning a program directly from 
+the RAM or DISK menu.
+
+Line 100 resets HIMEM=MAXRAM, which is useful after running .CO files to avoid 
+potential cold starts.  In addition, it resets MAXFILES=1, to save precious 
+bytes when some programmer fails to reset MAXFILES.  Some of you may not know, 
+but each additional file consumes a precious 267 bytes.
+
+
+Comments and suggestions are welcome.
+
+Larry Tiber 75675,302
+
+
+1 CLS
+10 DATE$=LEFT$(DATE$,6)+"86"
+20 POWER CONT
+30 CALL 23164,0,23366:CALL 27795
+40 KEY6,"TERM"+CHR$(24)+"CALL33070"+CHR$(13)
+50 KEY7,"KILL"+CHR$(34)
+75 POKE63067,77:POKE63068,55:POKE63069,73:POKE63070,49:POKE63071,68
+80 POKE63019,20
+100 CLEAR256,MAXRAM:MAXFILES=1:BEEP:MENU
+

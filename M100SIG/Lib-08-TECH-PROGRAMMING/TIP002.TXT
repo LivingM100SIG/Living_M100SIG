@@ -1,0 +1,304 @@
+
+Model 100 Hints and Tips -- Number 2               Page 1 of 7
+
+This article is number two in the "hints and tricks" article
+for getting the most out of your Model 100.  The topic of this
+particular session will be Model 100 ROM Calls.
+
+Radio Shack has been kind enough to document quite a few ROM
+calls, but they do not state that these entry points are
+inviolate (ie. will not change with a new ROM revision), nor
+do they give too much information regarding how to use them
+in BASIC programs.
+
+The following is a series of ROM calls that can be used in
+to perform some odds and ends.  To facilitate using some of the
+more "esoteric" calls, I will also be providing a method of
+providing an "interface" to BASIC variables.
+
+First, however, we will discuss the DOCUMENTED (by Tandy) ROM
+Calls that can be used directly in BASIC:
+
+DISC:   52BBH   (21179 Decimal)
+Disconnect Phone Line
+
+This ROM Call will cause the internal modem to disconnect from
+the phone line.
+
+Typical BASIC Usage:
+
+        CALL    21179
+
+-----
+
+CONN:   52D0H   (21200)
+Pick up phone line
+
+This ROM Call will cause the internal modem to "pick up" the
+phone line.  This would be used when trying to detect if
+carrier is present (see CARDET), but has other uses.  A crude
+"dialing" mechanism could be done using the DISC and CONN
+ROM Calls to "pulse" the phone line.  In fact, this is how the
+Model 100 actually dials!
+
+Typical BASIC usage:
+
+        CALL    21200
+
+Model 100 Hints and Tips -- Number 2               Page 2 of 7
+
+DIAL    532DH   (21293)
+Dial phone number string @ (HL)
+
+Here we come to the first ROM call that requires a parameter.
+The call expects to find a valid phone number "string" (see
+manual on auto-dial strings) at the address pointed to by the
+HL register.  It is not documented, but the phone number must
+have a "terminator".  This can either be a NULL CHR$(0), or
+an "auto-log" string.  If an auto-log string is used, the
+Model 100 will wait indefinitely for carrier before sending the
+auto-log string.
+
+Typical BASIC usage: (Autodialer)
+
+        PH$="555-1212" + CHR$(0)        :' Phone Number in PH$
+        V=VARPTR(PH$)                   :' Get addr of variable
+        AD!=PEEK(V+1) + PEEK(V+2)*256   :' Get addr of string
+        CALL    21293, 0, AD!           :' Dial Phone Number
+        CALL    21200                   :' Keep Phone line open
+        PRINT"Please pick up phone"     :' Alert user
+        INPUT"Enter when ready"; A$     :' Wait till picked up
+        CALL    21179                   :' Disconnect Model 100
+
+(Auto-logon -- terminal program)
+
+        PH$="555-1212<=?U700000,0000^M?Ppsswrd^M?!G PCS154^M>"
+                                        :' Phone Nbr + Auto Log
+        V=VARPTR(PH$)                   :' Get addr of variable
+        AD!=PEEK(V+1) + PEEK(V+2)*256   :' Get addr of string
+        CALL    21293, 0, AD!           :' Dial and auto log
+        OPEN "MDM:7I1E" FOR INPUT AS 1  :' Open up Modem...
+        OPEN "MDM:7I1E" FOR OUTPUT AS 2 :' for input and output
+        ...
+
+-----
+
+CLRFLK  5A79H   (23161)
+Clear function key definitions
+
+This ROM Call would be useful for resetting ALL the function
+key definitions.  It is not too useful for BASIC programs, but
+it cannot be performed simillarly in a BASIC program (!).
+
+Typical BASIC usage:
+
+        CALL    23161
+
+Model 100 Hints and Tips -- Number 2               Page 3 of 7
+
+STFNK   5A7CH   (23164)
+Set function key table
+
+CSFKEY  5B46H   (23366)
+Cold Start Function key table address
+
+BASFKY  F80AH   (63498 or -2308)
+Current function key def's used by BASIC
+
+The STFNK call is often used in BASIC program to reset the
+function keys to their default cold start values.  It can also
+be used to set the keys to any value desired.  The STFNK call
+requires the address of a table of function key values to be
+stored at (HL), or the second argument to a CALL function.
+
+Typical BASIC program -- Reset to Cold Start values:
+
+        CALL    23164, 0, 23366 
+
+Typical BASIC program -- Change keys and reset back:
+
+        A$=""                           :'Define a dummy string
+        V=VARPTR(A$)                    :'Get addr of variable
+        POKE V,128                      :'128 characters long
+        POKE V+1,10                     :'Point to...
+        POKE V+2,248                    :'Current key def's
+        B$=A$                           :'Store def's in B$
+        FOR X=16 TO 128 STEP 16         :'Set up delimiters
+          C=ASC(MID$(B$,X,1)) OR 128    :'Get delimiter
+          MID$(B$,X,1)=CHR$(C)          :'Put it into string
+        NEXT X                          :'Continue
+        KEY 1, "F1"                     :'Now reset keys
+         ...                            :'etc.  at end of pgm:
+        V=VARPTR(B$)                    :'Get addr of variable
+        AD!=PEEK(V+1) + PEEK(V+2)*256   :'Get addr of key def's
+        CALL    23164, 0, AD!           :'Reset key definitions
+
+In the above example, the code up to the "KEY 1" statement is
+used to save the current function key settings into the
+variable B$.  The STFNK function call requires that the
+definitions for all the keys be "delimited" by setting the
+most significant bit of the last byte.  The FOR...NEXT loop
+performs this delimiting.  At the end of the program, assuming
+that the variable B$ has not been modified, the last three
+instructions are performed, which reset the function key
+definitions to their original values.
+
+Model 100 Hints and Tips -- Number 2               Page 4 of 7
+
+RCVX    6D6DH   (28013)
+Return number of characters in RS-232 queue in A
+
+This ROM call is not too useful to be used directly in BASIC
+because BASIC has no way of returning values from ROM Calls.
+But... we can create a machine language "front end" that will
+suffice nicely.  You do not need to know machine language to
+use this routine:
+
+00              NOP                     ;Offset byte for call
+CD 6D 6D        CALL    RCVX            ;Call routine
+77              LD      (HL),A          ;Store value in variable
+23              INC     HL              ;Bump pointer
+36 00           LD      (HL),00H        ;Zero MSB
+C9              RET                     ;And return
+00              NOP                     ;Offset bytes
+
+The values on the left side of the listing above are the
+hexidecimal values of the assembly language instructions on
+the right.  These values can be "paired" off to be stored
+in an "integer array" as shown below.  The decimal equivalent
+of the integer pairs is shown to the right:
+
+        00 CD           -13056          ML%(0)
+        6D 6D            28013          ML%(1)
+        66 23             9062          ML%(2)
+        36 00               54          ML%(3)
+        C9 00              201          ML%(4)
+
+Thus, if we set up this array at the start of the program:
+
+        DIM ML%(4)                      :' Reserve space
+        FOR X=0 TO 4                    :' Four values
+          READ ML%(X)                   :' Store integer value
+        NEXT X                          :' Continue
+        DATA-31056, 28013, 9062, 54, 201:' Data values
+
+At this point, we now have a relocatable machine language
+routine of our own.  What does it do??  It allows us to
+call a ROM routine that returns a value in the A register,
+and get the value into an INTEGER variable in BASIC.
+
+How?  Let's say that we want to call this routine stored in
+ML%(0-4) and return the value in the BASIC variable CT%.
+This would be accomplished as follows:
+
+Model 100 Hints and Tips -- Number 2               Page 5 of 7
+
+        CT%=0                           :' Define variable
+        CALL VARPTR(ML%(0)), 0, VARPTR(CT%)
+                                        :' Do routine
+        PRINT CT%                       :' Print the count
+
+Pretty simple, once it is implemented.  The ML% array above
+is useful for other routines.  All that need be changed is
+the value in ML%(1), which should contain the address of the
+routine to be called.
+
+-----
+
+RV232C  (6D7EH) (28030)
+Get character from RS-232 to A register
+
+This routine is another that can be useful in BASIC in
+conjunction with the ML% array shown above.  Change the
+value of ML%(1) to 28030 by executing a statement like:
+
+        ML%(1) = 28030
+
+And the ML% routine can be used to get a character from the
+RS-232 queue.  The advantage of using this routine (as opposed
+to the BASIC INPUT$ statement), is that ALL values passed from
+the RS-232 queue will be available.  The INPUT$ statement does
+not allow the value CHR$(127) or CHR$(26)... in fact, receiving
+CHR$(26) has the effect of CLOSING the RS-232 file!!
+
+Typical BASIC program usage:
+
+        REM ML% Array set up with ML%(1) = 28030
+        CT% = 0                         :' Initialize variable
+        CALL VARPTR(ML%(0)), 0, VARPTR(CT%)
+                                        :' Do routine
+        PRINT CT%                       :' Print the char
+
+Model 100 Hints and Tips -- Number 2               Page 6 of 7
+
+SENDCQ  6E0BH   (28171)
+Send XON Resume character
+
+SENDCS  6E1EH   (28190)
+Send XOFF Pause character
+
+These two routines are usefull for pausing and resuming
+transmission from a host that acknowleges XON/XOFF protocol.
+This can be useful for times when general "housekeeping" must
+be done.  After an XOFF character (Pause) is sent, the host
+should stop transmitting.  At that point, the program can do
+what it needs to do, such as outputing to a slow device (such
+as cassette), etc.  When ready to resume transmission, send the
+XON character (Resume).
+
+Typical BASIC usage:
+
+        CALL    28190                   :'Send XOFF Pause
+        GOSUB ---                       :'Do interesting things
+        CALL    28171                   :'Send XON Resume
+        ...                             :'Continue receiving
+
+-----
+
+SD232C  6E23H   (28195)
+Send character in A to RS-232 port
+
+This routine can be used to send a single character to the
+RS-232 port.  In all actuality, there is no real benefit to
+using this call, as the PRINT # command allows you to send
+as many characters at a time as you wish with no restrictions.
+
+Typical BASIC program usage:
+
+        CALL    28195, 3                :'Send ^C to HOST
+
+-----
+
+CARDET  6EEFH   (28399)
+Return carrier detect status in A
+
+Since this routine returns a value, it is necessary to use a
+machine language "front end".  The ML% array described above
+can be used if the statement:
+
+        ML%(1) = 28399
+
+Model 100 Hints and Tips -- Number 2               Page 7 of 7
+
+is executed.  When the ML% routine is used to call the CARDET
+routine, the status returned is:
+
+        0       Carrier Detected
+        255     Carrier not found
+
+Typical BASIC program usage:
+
+        REM ML% Array setup as described above
+        CD% = 0                         :'Initialize variable
+        CALL VARPTR(ML%(0)), 0, VARPTR(CD%)
+                                        :'Get carrier status
+        IF CD% = 0 THEN PRINT"CARRIER DETECTED"
+                ELSE PRINT"NO CARRIER"
+
+-----
+
+Look for other exciting installments in the near future.
+Comments and/or suggestions are welcome.  Send them to
+        larry gensch [72236,3516]
+
+

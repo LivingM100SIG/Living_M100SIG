@@ -1,0 +1,63 @@
+This is a very easy to use program which makes it very easy also to create your 
+own shapes.
+
+If you are starting a new shape table, you first need to reserve a memory 
+location for it, by: CLEAR bytes,address   statement.
+
+To edit a shape or add a shape to an existing shape table, type in the name 
+of it as prompted by the program.  
+
+Select the shape number that ranges from 0 and maximum shape number in the 
+table.  There can be total of 256 shapes in one table.  If in editing, the shape
+ being edited will be shown as you start.  To see other shapes on the 
+screen, select DRAW # at upper right corner of the screen with '<' and '>'
+ keys, then press TAB to display it.
+
+To construct a shape, use key '3' to unplot, '4' to plot a point.
+
+To store the formed shape, box-in the shape by moving the cursor to one of the
+ corners(shape corner, not screen corner!), and press '1'.  Then go to the
+ opposite diagonal corner and press '2'.  Then press enter.
+
+Pressing ESC will cancel the editing or adding process.
+
+The cursor, which is a blinking dot, is controlled by cursor keys.  If you press
+ '+', cursor will move 10 dots per move, or if you press '-', it moves one dot.
+
+Pressing 'C' clears the screen.
+
+
+Remark: Try to not touch shape#0, as it is reserved for cursor. 
+ If you redefine it, cursor will appear as that shape which you redefine.
+
+
+For those who like to know how the shape table is organized:
+
+
+!            !           !           
+! #of shapes ! Directory !  Data     
+!            !           !           
+
+
+The first byte denotes maximum number of shapes on the table-1.  If there are 8 
+shapes, then it will contain #7
+
+Following this are consecutive blocks made of 4 bytes which is the shape 
+directory.  Its size is equal to 4*number of shapes.  The first block is 
+the directory of shape #0.
+
+ Each block contains the location of shapes and the width and height of 
+pixels that the shape is made of.  The first two of the bytes is the location of the shape.  Its value is the
+ displacement from the beginning of the table.  So if 107 is the displacement, 
+and the table begins at 60000, then the location is 60000+107.
+The third byte is the width, and the fourth byte is the height.
+
+Immediately following the directory is the data.  Each bit of the bytes 
+represents a pixel.  Bit 0 of the first byte goes in column 1, row 1.  And the 
+following bits go into right consecutive
+ columns.  When end of column is reached, the next bit is wrapped around 
+to the first column of the next row.
+  So if the width of the shape happens to be 8, bit 7 goes in column 8.
+  If the width is 5, bit 7 from the same byte will appear in column 3, row 2, and so on.
+
+Be creative and have fun!

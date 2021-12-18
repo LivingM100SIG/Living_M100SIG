@@ -1,0 +1,39 @@
+0 'ENCODE.MPC 11/05/88 15:21
+1 'TMPC Single Date Encoder
+2 'by Jean-Luc Crevier CIS [73720,2456]
+3 '
+4 'INSTRUCTIONS: (see also TMPCUT.DOC)
+5 'Three bytes holds the date of a 
+6 'single date item expressed as
+7 'a day, month and year respectively.
+8 '(see manual, page 74)
+9 '
+10 'Note that these values are
+11 'offset by 32.
+12 '
+13 'The year value is also offset by 32
+14 'but is the number of years elapsed
+15 'since 1980: so ASCII - 32 + 1980
+16 '
+17 '
+18 CLEAR500:MAXFILES=1:ONERRORGOTO37
+19 CLS:PRINT"TMPC Single Date Encoder":PRINT
+20 INPUT"Date as MM/DD/YY";DA$:IFDA$=""THENMENU
+21 IFINSTR(DA$,"/")=0ORLEN(DA$)<>8THENBEEP:GOTO20
+22 M$=LEFT$(DA$,2):M=VAL(M$)
+23 D$=MID$(DA$,4,2):D=VAL(D$)
+24 Y$=RIGHT$(DA$,2):Y=VAL(Y$)
+25 IFD<1ORD>31THEN29
+26 IFM<1ORM>12THEN29
+27 IFY<80ORM>99THEN29
+28 GOTO30
+29 BEEP:PRINT"INVALID DATE FOR TMPC":GOTO20
+30 INPUT"Output dev:file";F$:IFF$=""THENF$="LCD:"
+31 CLS:OPENF$FOROUTPUTAS1
+32 PRINT#1,"Calendar Date      TMPC Encoded Date":PRINT#1,STRING$(40,"-")
+33 PRINT#1,DA$;"           ";CHR$(D+32);
+34 PRINT#1,CHR$(M+32);
+35 PRINT#1,CHR$(Y-80+32)
+36 GOTO38
+37 PRINT"Error"ERR"in line"ERL:SOUND12538,10
+38 END

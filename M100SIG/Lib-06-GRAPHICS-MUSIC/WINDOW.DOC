@@ -1,0 +1,23 @@
+DOCUMENTATION FOR WINDOW.BA
+
+Model 100 & 200 graphics has a great deal of potential but is limited by the fact that it relates only to screen locations.  Translation from program values to screen values becomes an inconvenience when writing new programs.
+
+WINDOW.BA is a collection of drivers to treat the model 100 (or 200 with simple changes) screen as a view window on the real world.  In structure they are loosely modelled on the very useful WINDOW commands on the IBM PC and other computers.  Once set up, scaling and clipping are automatic and Y values increase upward instead of downward on the screen.
+
+Merge WINDOW.BA into your program confirming first that there are no line number conflicts.  Also review the list of variables used for any possible conflicts (except for the integer declared variables, either single or double precision floating point can be used).  The ON ERROR line can be used as is, or if your program incorporates its own error trap, moved there.  There is no need for a program to be concerned with whether a point wil actually appear on the screen, the routines will handle the situations automatically.
+
+To utilize any of the functions, first set the appropriate variables (as described below and in the program REMarks) then GOSUB to the appropriate subroutine.  The subroutines are described below:
+
+WINDOW (GOSUB 9000): Sets up the window structure.  Visualize the LCD screen as a window on the world of cartesian coordinates.  Choose two diagonally opposite corners and set WX(0),WY(0),WX(1),WY(1) to the world values, then GOSUB 9000.  Scaling and location values automatically will be set for future use by the other subroutines.  It is not necessary to exactly match the proportion of the LCD shape, the scale will adjust so your entire window will be included, plus whatever extra is provided by the difference from the shape of the screen.  This routine can be called as often as required, however it will not change the graphics already on the screen.  It is up to your program to clear the screen if necessary before re-scaling the window.
+
+PLOT (GOSUB 9100): Similar to PSET.  WX(0)=world X, WY(0)=world Y, WS=0 for erase, 1 for plot.
+
+LINE (GOSUB 9200): Similar to LINE in Basic.  Draws from world coordinates WX(0),WY(0) to WX(1),WY(1).  WS as with PLOT.  WB=0 for line, 1 for box, 2 for box filled.  Clipping is selected and applied by the routine.  If any portion of a line crosses the window, it will show on the screen.
+
+CIRCLE (GOSUB 9400): WX(0),WY(0)=world coordinates of center, WR=radius (world units).
+
+No 'voodoo' is used; all algorithms are easily visible and heavily commented so they can be modified or improved to your requirements.  To save space, all remarks (except for the routine titles) can be removed without problems.
+
+Any comments or suggestions, please contact me by EMAIL.
+
+Jay Holovacs 74756,413

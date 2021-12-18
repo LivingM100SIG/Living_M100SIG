@@ -1,0 +1,84 @@
+ADDITIONAL INSTRUCTIONS FOR TDD2PC.2DR
+
+Howard Sprow  73625,365  2/2/89
+
+
+The original version of TDD2PC.2DR was intended for use with a 2 drive 
+interface connecting a TDD and an IBM PC running Traveling Software's Booster-
+Link to emulate another drive. Since then I have experimented with Len Tucker's
+PC program, M100CO.EXE, in the M100SIG's DL 9. This program does essentially 
+the same thing as Booster-Link for only the cost of connect time to download 
+it.
+
+Just as with Booster-Link, this program can use multiple directories on the PC 
+disk so you can backup several TDD disks to their own directories on each PC 
+disk.
+
+In order to make TDD2PC.2DR work with M100CO, I had to make several additions 
+to the original version. The current copy of TDD2PC.2DR in DL 9 has these 
+changes.
+
+M100CO.EXE is a compiled BASIC program and has some trouble keeping up with the
+data flow when run on a standard 4.77 MHz PC. I had this problem intermittently
+on my standard XT. On my office PC, a fast AT clone, I experienced no problems 
+at all. This situation is discussed in the thread file, M100CO.THD in DL 9.
+
+The solution to running M100CO on a standard PC requires switching the 
+transmission rate from the normal 19200 bps to 9600. On your PC in M100CO press
+F8 to reset to 9600 or start the program with the command, M100CO /9600. My 
+M100 copy program now includes a prompt during the start-up routine to select 
+whether you want to use 19200 or 9600 when communicating through the MOTORON 
+port of the 2 drive interface. Only the MOTORON side can be switched to the 
+slower rate so make sure to connect your PC to this side. TDD2PC then 
+automatically switches between 19200 when accessing the TDD and 9600 for the PC
+side.
+
+At 9600, much of the speed advantage of the PC with Booster-Link is lost but 
+the total operation is still at least as fast as a TDD.
+
+A few other things are worth noting about M100CO. When using TDD2PC to copy 
+disks you, of course, want the PC side to be completely reliable. When using a 
+standard PC, it seems best to disable all of your terminate-and-stay-resident(
+TSR) utilities on the PC since some of these seem to cause M100CO to abort at 
+unpredictable times.
+
+If you are using a single drive system, be sure to include a copy of 
+COMMAND.COM on your M100CO PC disk since M100CO needs it during operation. This
+takes up 23K that could otherwise be used to store M100 files. The PC disk does
+not, though, have to be formatted as a system disk (i.e., with the 2 hidden DOS
+files).
+
+If you have a multiple drive PC system and your AUTOEXEC.BAT file includes a 
+PATH to the directory on another drive with COMMAND.COM in it (such as a hard 
+drive C:), you won't need to have the file on your M100CO disks. If you run 
+M100CO from a drive with COMMAND.COM and then press F9 in M100CO on the PC, you
+can switch to another drive or directory. In this way you would not need either
+COMMAND.COM or M100CO.EXE on the target disk which would give you maximum space
+for M100 files.
+
+M100CO uses 2 temporary files on the PC disk, PDD_DIR.DAT and PDD_DIR.BAK. In 
+the latest version of TDD2PC I have included a trap to insure that these files,
+as well as COMMAND.COM and M100CO.EXE itself, do not interfere when TDD2PC 
+kills the files on the PC target disk.
+
+When starting M100CO on the PC, make sure that your 2-drive interface is 
+switched to the PC side. M100CO looks for a complete connection and reports an 
+error if none is found. Once the program starts, you can switch off the 
+connection. I built my interface with a manual switch in parallel to the line 
+to the M100 cassette port, so it's easy to switch to either drive in the manual
+mode without having to type MOTORON/MOTOROFF.
+
+In MS-DOS, most characters other than letters and numbers are illegal in file 
+names. Because it makes no adjustments to your M100 file names, M100CO will 
+fail if you try to save a M100 file which includes such characters. Booster-
+Link automatically replaces these special characters with a "-" character. I'm 
+not sure how much of a problem this really is, so I haven't included the 
+feature in TDD2PC.
+
+The only other problem I found with M100Co occurs when you try to overwrite an 
+existing file on the PC using the POWR-DOS MAXRAMC calls as TDD2PC does. If you
+do this, the file seems to be appended to the PC file with the same name and is
+not overwritten. I have modified TDD2PC so that any time it copies a file to 
+the PC where a file of the same name exists, the existing file on the target 
+disk is deleted first.
+

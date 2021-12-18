@@ -1,0 +1,162 @@
+EXTRNL.MDM  (External Modem)
+ 
+A small, simple program that will allow use of an external modem for higher-
+speed communiccations with the Model 100 family of computers, the 100, 102,
+and 200.  It will "wake up" the external modem, set the proper communications
+parameters, send the phone number to dial to the modem, dial and wait for the
+modem connection, send your auto-logon string, then drop you into TELCOM's
+Terminal mode, ready to use.
+ 
+ 
+Copyright 1994 Tony B. Anderson, All Rights Reserved
+ 
+ 
+This is the smallest known external modem driver program that dials CompuServe
+(or any other system or BBS), automatically logs onto the system, then drops
+you into TELCOM's TERMinal mode, ready to operate.
+ 
+The program evolved from several message exchanges on the board, with input
+from Tony Anderson (76703,4062), Mike Kelton (100325,1507), and Robert Hamilton
+(72142,3311).
+ 
+Download or type in the following program and save it as "MODEM.BA", so it will
+be ready to use.  Connect the external modem to the RS-232 (serial) port on the
+back of the computer with an appropriate cable.  (Most modems include a cable
+when purchased, or plug directly into the socket on the computer.)
+ 
+ 
+10 MAXFILES=1:OPEN "COM:58N1E" FOR INPUT AS 1:CLOSE
+20 F$="=ATS0!=0^M?K=ATDT (insert local phone # here) ^M?0=^C?D (insert your ID # here\insert password here ) ^M>"
+30 V=VARPTR(F$):CALL 21443,,PEEK(V+1)+256*PEEK(V+2):CALL 21589
+ 
+ 
+Modify it as follows, for your particular applications:
+ 
+Insert your local CompuServe or BBS phone number in line 20, where it says
+"(insert local phone # here)".  Do not include the parens, and spaces are not
+required.  They are used above to clarify the meaning of the line.
+ 
+Insert your CompuServe ID number in line 20, where it says, "(insert your ID #
+here".  Follow that by a backwards slash, used as a separator.  Then insert
+your password where it says, "insert password here)".  Again, don't use the
+parens, and spaces are not needed, unless they are part of your password.
+ 
+In the Model 100 family, it is recommended >NOT< to use the special control
+code characters, ? (question mark), = (equal sign), ! (exclamation point), or
+^ (carat symbol) as part of your password.  These characters have special
+meanings for the TELCOM logon routines, and may cause problems getting the
+program to work right.
+ 
+Characters in the logon string that are preceeded with the carat symbol will be
+translated into "control characters".  (carat)M for example, becomes Control-M,
+the character that causes a carriage return.  To type the ^M necessary in the
+above line, press the Shift Key and hold it down, press the number 6 key, then
+let go of the shift key.  ^ will appear in your text.  The next character you
+type will be converted to a control character when sent.  Common control
+characters are ^M and ^C.
+ 
+ 
+Change the baud rate or other communications parameters for the external modem
+to the desired settings in line 10, in the "58N1E" part.  Here are the normally
+used parameter settings:
+ 
+        First Character:
+ 
+                3 = 300 baud
+                5 = 1200 baud
+                6 = 2400 baud
+ 
+                M = The internal Modem, limited to 300 baud
+ 
+        Second Character:
+ 
+                8 = 8 bit, or most "binary" characters, except 0 and 26
+                7 = 7 bit, all ascii characters except 0 and 26
+ 
+        Third Character:
+ 
+                N = No Parity (recommended with 8-bit)
+                I = Ignore Parity (recommended with 7-bit)
+                E = Even Parity
+                O = Odd Parity
+ 
+        Fourth Character:
+ 
+                1 = 1 Stop bit
+ 
+        Fifth Character:
+ 
+                E = Enable Xon/Xoff Data Flow Control (Software Handshaking)
+                D = Disable Xon/Xoff
+ 
+ 
+For users of the Tandy 200, there are two additional parameters, as in 58N1Exy.
+ 
+        Sixth Character: (x)
+ 
+                N = Normal Setting
+                I = Ignore all Control Characters except linefeed and carriage
+                    return
+ 
+        Seventh Character: (y)
+ 
+                N = Normal Setting; if incoming lines are double spaced on your
+                    screen, make sure this character is set to N.
+                I = Adds a linefeed to incoming carriage returns so that
+                    incoming data won't print over and over on one line.
+ 
+ 
+The recommended setting for communications with CompuServe are x7I1E, where "x"
+is the baud rate for the modem.  M7I1E for the internal modem, 57I1E for an
+external modem at 1200 baud, or 67I1E for external at 2400 baud.  We do not
+recommend use of higher modem communication rates with the Model 100 family,
+they simply can't keep up with 9600 or 14.4k baud rates with an external modem.
+You can use those higher rates for direct serial tranfers between computers
+using the RS-232 port, but that's another subject.
+ 
+ 
+Note that with the Model 100 and 102, regardless of what baud rate the modem is
+set to, the actual "data transfer rate" will be limited to about 600 baud
+because of the time it takes the operating system to scroll the LCD screen, to
+move the old lines up, and write new data on the bottom line of the screen.
+With the Tandy 200, data transfer rate is about 1500 baud, so you can use the
+1200 baud rate reliably.  With the Model 100/102, 1200 and 2400 baud, or
+higher, will be limited by the screen scrolling rate.  With the 200, 2400 baud
+will be slightly limited.
+ 
+While the computer is scrolling the screen, it sends an Xoff signal to the
+sending computer to stop the data flow temporarily, then sends an Xon signal
+when the screen routine is finished, and the computer is ready for more data.
+The more times the computer has to do this, the greater the chance for some
+characters to be lost in transmission, due to lag times as each computer
+responds to the data flow.
+ 
+There are utility programs in the libraries which can disable screen scrolling,
+to allow file transfers at the maximum possible rate.  Such programs cause the
+operating system to write the incoming data over and over on a single line,
+making it difficult to read, but do allow downloading at the full speed.  One
+such program for the Model 100/102 is called TOGGLE.100, and it's in Library 3.
+A similar program for the Tandy 200 is located in Library 10, under the name,
+SCROFF.201 - Also, see the documentation file SCROFF.DOC.
+ 
+If you are "losing characters", that's a good indication your modem is dropping
+characters because of the scroll rate problem.  Try a lower speed if possible.
+ 
+ 
+The two CALL's in line 30 of the program are for use with the Model 100 and
+102.  If you are using a Tandy 200, change those CALL's to 25301 and 25454
+respectively.  The line (for the 200) should appear as:
+ 
+30 V=VARPTR(F$):CALL 25301,,PEEK(V+1)+256*PEEK(V+2):CALL 25454
+ 
+ 
+If protocol file transfers are your interest, for uploading, or downloading, or
+transferring data files to another computer, there are several programs in
+the library which support the Xmodem file transfer protocol.  Actually there
+are several different versions of Xmodem programs, depending on what various
+bells and whistles you want in the program.  Simple BASIC programs that allow
+normal (internal) modem communications, and Xmodem file transfers, such as
+XMODEM.312 (for the 100/102) are seasoned, reliable programs.  There are also
+fast, machine language programs that include a wealth of features.  Ask on the
+message board for assistance in selecting a program that will fit your needs.
+ 

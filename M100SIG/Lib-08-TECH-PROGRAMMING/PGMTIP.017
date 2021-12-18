@@ -1,0 +1,29 @@
+Entering a text file from a Basic program on the Model 100/102
+
+Entering TEXT from Basic is easily done with a CALL 24046.  This gives you the 
+familiar "File to edit?" prompt you get from the main menu.  There is also a 
+way to enter a predetermined file without requiring the user to type the 
+name, but it is necessary to check the directory for the address where the 
+file starts.  The following program listing demonstrates how this can be 
+done:
+
+10 CLEAR:FILES:INPUT"Filename";T$:T$=T$+SPACE$(6-LEN(T$))+"DO"
+200 F$="":N=256:FORM=-1606TO-1408STEP11:L=M+3:IFPEEK(M)THENW=VARPTR(F$):POKEW,8:POKEW+1,LMODN+N:POKEW+2,L/N+N:IFF$=T$THENCALL24421,0,PEEK(M+1)+256*PEEK(M+2)
+210 NEXT:PRINT"File not found"
+
+Normally the program would specify the filename as, for example "ADRS  DO" and 
+the routine starting at line 200 would follow.  Note that filenames must be in 
+capital letters, or the search will fail.
+
+After you've finished editing your text file, F8 will return you to the main 
+menu.  The real trick would be returning to the Basic program, but I suspect 
+that's much more difficult.
+
+You should be aware that editing a program by adding a line at the "Ok" 
+prompt or deleting a line by typing its number followed by the "enter" key does 
+not update the directory.  A CLEAR statement at the beginning of your 
+program should solve this.  Jumping into a text file part-way through is okay; 
+it just means you can't edit the first part of the file, but jumping into a 
+Basic or .CO file is likely to be hazardous to your RAM files.
+
+Neil Wick [71056,613]

@@ -1,0 +1,483 @@
+; BARCODE.DIS
+
+; Machine-Language 3-of-9 Barcode Decoder
+; Disassembled from Model 100 file: B3OF9.CO
+
+; Disassembled and annotated by Michael M. Dodd   72155,752
+; November 12, 1984
+
+; This is the actual disassembly, with certain tables and
+; buffers converted to DB statements, as appropriate.  I have
+; added several types of symbols to the left of the addresses,
+; to flag certain important points.  They are:
+
+;       >      Called or jumped to from somewhere else.
+;       <      Calls or jumps to somewhere else.
+;       <--    Calls or jumps to somewhere outside this program.
+;       *      Referenced in a data-transfer instruction (e.g., LXI H).
+
+; I like to draw lines between the "<" and ">" symbols to clearly
+; show the loops.  You can do what you wish.
+
+; Please note:  I haven't gone completely through the code to try
+; and understand everything there is.  In particular, the translation
+; routines (after the code has been read) are still a mystery.  My
+; purpose was to understand enough to use the routines in machine-
+; language programs; I have accomplished that.
+
+; What follows here appears to be a lot of code which is called by
+; the Model 100 operating system.  I don't know what it does or
+; how it gets executed, except that some of it happens when the
+; WAND: file is OPENed.  You should read "Hidden Powers of the
+; TRS-80 Model 100 (C. Morgan, The Waite Group, ISBN 0-452-25578-3)
+; for (scanty) information on the hook table, which is referenced below.
+
+; Bar code interrupt (RST 5.5) enters here.
+; Apparently the RST 5.5 interrupts are not used, as the operating
+; system continuously turns them off, even if you turn them on.
+
+        002C   DI
+        002D   JMP F5F9h
+
+; Bar code interrupt jumps to this address.
+; The code at this address is never changed (e.g., loaded with a
+; JUMP instruction and an address.  Therefore, this must never
+; be used.
+
+        F5F9   EI
+        F5FA   RET
+
+; Beginning of B3OF9 bar code routine.
+; This is where the .CO file is loaded in RAM.
+; Unfortunately, it isn't clear just how or what the Model 100
+; does to get to these routines.  The RST 5.5 interrupt is never
+; enabled, do that won't help.  I believe that the BASIC INPUT$ routine
+; gets modified when the WAND: is opened in BASIC.  In any case,
+; the actual bar code subroutine, below, gets called from
+; somewhere.  If you want to use it, simply extract it from this
+; other junk.  That's what I did.
+
+; DOES ANYONE KNOW WHAT THE HECK THIS NEXT OPERATION IS FOR???
+<       F15C   MVI A,BFh        ; Sends 10111111 to the printer port
+        F15E   OUT B1h          ; The reason for this is unclear
+
+        F160   IN E0h           ; Check the keyboard for..
+        F162   ANI 80h          ; ..a BREAK key, and..
+        F164   JNZ 7270h        ; ..jump to 7270 if it is pressed
+<*      F167   LXI H,F300h
+<*      F16A   SHLD F331h
+        F16D   POP H            ; Discard a return address(?) from stack
+        F16E   RET              ; Return
+
+; Call this address when exiting BASIC after using the bar code driver.
+; See the bar code reader manual (p. 12).
+; This subroutine reloads hooks 35-38 with addresses 08DBh.
+
+        F16F   LXI H,08DBh      ; Default address (does RETurn)
+        F172   SHLD FB20h       ; Hook #35
+        F175   LXI H,FB20h
+        F178   LXI D,FB22h
+        F17B   MVI B,06h        ; Copy 08DBh to hooks 36, 37, and 38
+        F17D   JMP 2542h        ; (At address 2542 is a byte-copy routine)
+
+; Entry point, as specified on cassette.
+; This routine loads hooks 35-38 with the addresses of four
+; routines in this program.
+
+        F180   LXI H,F199h
+        F183   SHLD FB20h       ; Hook 35 (23h)
+        F186   LXI H,F1ADh
+        F189   SHLD FB22h       ; Hook 36 (24h)
+        F18C   LXI H,F1B8h
+        F18F   SHLD FB24h       ; Hook 37 (25h)
+        F192   LXI H,F1B1h
+        F195   SHLD FB26h       ; Hook 38 (26h)
+        F198   RET
+
+; Jumped to by Hook 35 (23h)
+
+        F199   POP PSW
+        F19A   MVI A,24h
+<*      F19C   STA F334h
+        F19F   XRA A
+<*      F1A0   STA F335h
+        F1A3   MVI A,24h
+<*      F1A5   STA F336h
+        F1A8   MVI A,01h
+<--     F1AA   JMP 14DDh
+
+; Jumped to by Hook 36 (24h)
+
+        F1AD   POP PSW
+<--     F1AE   JMP 4D59h
+
+; Jumped to by Hook 38 (26h)
+
+        F1B1   POP PSW
+<*      F1B2   LXI H,F335h
+<--     F1B5   JMP 17CDh        ; Moves contents of reg-C to F335h
+
+; Jumped to by Hook 37 (25h)
+
+        F1B8   POP PSW
+<*      F1B9   LXI H,F335h
+<--     F1BC   CALL 18C7h
+<*      F1BF   LDA F334h
+        F1C2   MOV C,A
+<*      F1C3   LDA F336h
+        F1C6   CMP C
+<       F1C7   JC F1D1h
+<       F1CA   CALL F1E0h
+<--     F1CD   JC 1494h
+        F1D0   XRA A
+>       F1D1   MOV C,A
+        F1D2   MVI B,00h
+        F1D4   INR A
+<*      F1D5   STA F336h
+<*      F1D8   LXI H,F300h
+        F1DB   DAD B
+        F1DC   MOV A,M
+<--     F1DD   JMP 4E8Ah
+
+><      F1E0   CALL F338h
+        F1E3   RC
+<*      F1E4   LHLD F331h
+        F1E7   MVI M,0Dh        ; Add carriage return, line feed, null..
+        F1E9   INX H            ; ..to the decoded string.
+        F1EA   MVI M,0Ah
+        F1EC   INX H
+        F1ED   MVI M,00h
+        F1EF   MOV A,L
+<*      F1F0   STA F334h
+        F1F3   XRA A
+<--     F1F4   CALL 7662h
+        F1F7   XRA A
+        F1F8   RET
+
+; This is probably junk code, to space out the address until
+; a page boundary is reached.  See below.
+
+        F1F9   XRA B
+        F1FA   DAD SP
+        F1FB   LXI B,3B28h
+        F1FE   RZ
+        F1FF   MOV L,A
+
+; This is the start of the buffer which receives the
+; durations of each bar.  The routine at F339 clears F200-F2FF
+; to nulls (0) at some point in the program.
+
+; NOTE: This table MUST begin on a "page" boundary (even
+; multiple of 256, low eight bits = 0) because of some
+; fancy manipulations in the decoding software.  Don't
+; change it.
+
+        F200   DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+               DB     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+; This is the buffer which accumulates the decoded ASCII
+; characters. The routine at F345 sets F300 to F337
+; with FFh (or whatever is stored at F300).
+
+; NOTE: This table also must begin on a page boundary.
+; See above.
+
+        F300   DB     255,255,255,255,255,255,255,255
+               DB     255,255,255,255,255,255,255,255
+               DB     255,255,255,255,255,255,255,255
+               DB     255,255,255,255,255,255,255,255
+               DB     255,255,255,255,255,255,255,255
+               DB     255,255,255,255,255,255,255,255
+               DB     255,255,255,255,255,255,255
+
+
+; * * *  HERE IT IS  --  THIS IS IT!  * * *
+
+; Aha!  Here we are at the bar code reading and translating subroutine.
+; Address F338 is a major loop entry point, which initializes the two
+; buffers and waits for the reader to detect white.
+
+>       F338   EI
+
+<*      F339   LXI H,F200h       ; This will null the first buffer.
+<*      F33C   LXI D,F201h
+        F33F   MVI B,00h
+        F341   MOV M,B
+<--     F342   CALL 2542h       ; Copy value in F200 to F201-F2FF
+        F345   MVI B,37h        ; This will fill the second buffer with FF.
+<--     F347   CALL 2542h       ; Copy value in F300 to F301-F337
+><      F34A   CALL F15Ch       ; Check for BREAK key
+        F34D   RC               ; RETurn if BREAK key is pressed
+
+; The program loops here until the bar code reader first detects
+; white (e.g., it is turned on and placed on the paper).
+
+        F34E   IN B3h
+        F350   ANI 08h          ; Read bar code data
+<       F352   JZ F34Ah         ; Loop if BLACK
+
+        F355   MVI L,00h        ; Set up a 256-pass counter
+
+; The white must be present for a certain length of time (256
+; counts of the L register).  We wait here, timing the white
+; time or else go back to F34A if things go black too soon.
+
+>       F357   IN B3h
+        F359   ANI 08h          ; Read bar code data
+<       F35B   JZ F34Ah         ; Loop if BLACK
+
+        F35E   INR L            ; Count this pass
+<       F35F   JNZ F357h        ; Loop if not 256 passes
+
+; Having detected white for the required time, we now loop until
+; the first black bar is detected.  Set up the buffer pointer and
+; counter, in preparation for reading the bar code.
+
+>       F362   IN B3h
+        F364   ANI 08h          ; Read bar code data
+<       F366   JNZ F362h        ; Loop if WHITE
+
+<*      F369   LXI H,F200h      ; Point to start of duration buffer
+
+; Fine, we have found the first black bar.  Disable the interrupts
+; and read the entire code.
+
+        F36C   DI               ; No interrupts allowed
+>       F36D   MVI B,00h        ; Initialize BLACK duration timer
+
+>       F36F   INR B            ; Increment duration timer
+        F370   NOP              ; Delay (BLACK loop only)
+<       F371   JZ F338h         ; Start over if duration greater than 256
+
+        F374   IN B3h
+        F376   ANI 08h          ; Read bar code data
+<       F378   JZ F36Fh         ; Loop if BLACK
+
+        F37B   MOV M,B          ; Store the duration of BLACK bar
+        F37C   INR L            ; Point to next buffer location
+<       F37D   JZ F338h         ; Start over if buffer has overflowed
+
+; Notice this next JMP, which jumps to the address immediately
+; following.  I speculate that this produces a (necessary) short
+; delay, and should not be modified.
+
+<       F380   JMP F383h        ; Continue by timing WHITE bar
+>       F383   MVI B,00h        ; Initialize WHITE duration timer
+
+>       F385   INR B            ; Increment duration timer
+<       F386   JZ F398h         ; End of bar code if white longer than 256
+
+        F389   IN B3h
+        F38B   ANI 08h          ; Read bar code data
+<       F38D   JNZ F385h        ; Loop if WHITE
+
+        F390   MOV M,B          ; Store the duration of WHITE bar
+        F391   INR L            ; Point to next buffer location
+<       F392   JZ F338h         ; Start over if buffer has overflowed
+
+<       F395   JMP F36Dh        ; Continue by timing BLACK bar
+
+; The entire bar code has been read, and the various times have been
+; stored in the 256-byte buffer at F200.  Now let's figure out what
+; all those numbers mean.
+
+>       F398   EI               ; Scan complete, enable interrupts
+        F399   DCR L
+        F39A   XCHG             ; DE points to last buffer location
+> <*    F39B   LXI H,F200h      ; HL points to first buffer location
+        F39E   PUSH H           ; Save first buffer address
+        F39F   INR L
+        F3A0   INR L
+        F3A1   INR L            ; HL points to buffer+3
+        F3A2   MOV A,M          ; Get the duration
+        F3A3   POP H            ; HL points to first buffer location
+        F3A4   MOV M,A          ; Replace (buffer) with (buffer+3)
+        F3A5   PUSH D           ; Save last buffer address
+<       F3A6   CALL F401h
+
+        F3A9   POP D            ; DE points to last buffer location
+        F3AA   CPI 52h          ; Reversed "start" code?
+<       F3AC   JZ F3E0h         ; Yes
+
+        F3AF   CPI 94h          ; Forward "start" code?
+<       F3B1   JNZ F338h        ; No, illegal bar code.  Start over.
+
+<*      F3B4   LXI D,F300h      ; Buffer for ASCII characters.
+        F3B7   XCHG
+<*      F3B8   SHLD F331h
+        F3BB   XCHG
+>       F3BC   INR L
+<       F3BD   CALL F401h
+
+        F3C0   CPI 94h          ; Forward "start" code?
+        F3C2   RZ               ; If yes, entire bar code has been decoded.
+
+; Well folks, you're on your own after this point.  I looked over the
+; code which follows, but didn't have enough time to figure out the
+; actual operation.  Briefly, this is what happens:
+
+; The buffer at F200-F2FF contains a series of 8-bit numbers which
+; represent the "duration" or width of a bar or white space.  The ratio
+; is approximately 3:1.
+
+; The program goes through a number of bytes in the buffer and
+; compares two bytes spaced three bytes apart.  There is a sort of
+; "shuttling" back and forth, but eventually nine (I think) bytes have
+; their values replaced with "1" or "0".  These nine bytes are then
+; assembled compressed into a nine-bit word, which is used to look
+; up the ASCII character from the table at the end of the routine.
+
+; The ASCII characters go into the buffer starting at F300.  There
+; are actually 10 bytes used for each character, because there is a
+; white spacee between characters.  Thus, the 256-byte limit of the
+; F200 buffer limits the number of characters to 25.  Subtracting
+; the start and stop codes leaves 23 text characters -- just what
+; the bar code reader manual says on page 5.
+
+; Naturally, this decoding algorithm is the second critical part of
+; the program, and is also the part which changes with the type of
+; bar code being read.  I will be interested to see any further work
+; done in this area, because -- sure as can be -- I'm gonna have to
+; learn about it sometime.
+
+<*      F3C3   LXI D,F438h
+>       F3C6   INX D
+        F3C7   LDAX D
+        F3C8   INX D
+        F3C9   CPI FFh
+<       F3CB   JZ F338h
+
+        F3CE   CMP C
+<       F3CF   JNZ F3C6h
+
+        F3D2   LDAX D
+        F3D3   PUSH H
+<*      F3D4   LHLD F331h
+        F3D7   MOV M,A
+        F3D8   INR L
+<*      F3D9   SHLD F331h
+        F3DC   POP H
+<       F3DD   JMP F3BCh
+;
+> <*    F3E0   LDA F330h
+        F3E3   ORA A
+<       F3E4   JNZ F338h
+
+; Here is some of that fancy code which requires the buffers to
+; begin on page boundaries.  There is more elsewhere, mainly
+; increment only the low register of a 16-bit pair.  I changed
+; all that, but had to change it back when the program would
+; occasionally lock up and also never read a bar code in reverse.
+; I traced the problem to this area and then gave up.  The buffers
+; will go on page boundaries.
+
+<*      F3E7   LXI H,F200h
+        F3EA   MOV A,E
+        F3EB   RAR
+        F3EC   ANI 7Fh
+        F3EE   MOV B,A
+>       F3EF   LDAX D
+        F3F0   MOV C,A
+        F3F1   MOV A,M
+        F3F2   MOV M,C
+        F3F3   STAX D
+        F3F4   DCR E
+        F3F5   INR L
+        F3F6   DCR B
+<       F3F7   JNZ F3EFh
+
+        F3FA   MOV A,H
+<*      F3FB   STA F330h
+<       F3FE   JMP F39Bh
+
+>       F401   MVI B,03h
+>       F403   PUSH H
+        F404   MOV D,H
+        F405   MOV E,L
+        F406   INR E
+        F407   MVI C,08h
+>       F409   LDAX D
+        F40A   CMP M
+<       F40B   JC F410h
+
+        F40E   MOV H,D
+        F40F   MOV L,E
+>       F410   INR E
+        F411   DCR C
+<       F412   JNZ F409h
+
+        F415   MVI M,01h
+        F417   POP H
+        F418   DCR B
+<       F419   JNZ F403h
+
+        F41C   PUSH H
+        F41D   MVI B,09h
+>       F41F   MOV A,M
+        F420   DCR A
+<       F421   JZ F426h
+
+        F424   MVI M,00h
+>       F426   INR L
+        F427   DCR B
+<       F428   JNZ F41Fh
+
+        F42B   POP H
+        F42C   INR L
+        F42D   XRA A
+        F42E   MVI B,08h
+>       F430   RLC
+        F431   ORA M
+        F432   INR L
+        F433   DCR B
+<       F434   JNZ F430h
+
+        F437   MOV C,A
+>*      F438   RET
+
+; This is the lookup table used to convert bar codes to ASCII.
+
+; I haven't looked into it very deeply, but it works.  If there
+; are any consistent reading errors, possibly there is a typing
+; error in this table.
+
+TABLE:
+        DB      34H,30H,61H,32H
+        DB      31H,34H,70H,36H
+        DB      25H,37H,64H,39H
+        DB      49H,42H,19H,44H
+        DB      58H,46H,0DH,47H
+        DB      4CH,49H,1CH,4AH
+        DB      43H,4CH,13H,4EH
+        DB      52H,50H,07H,51H
+        DB      46H,53H,16H,54H
+        DB      0C1H,56H,91H,58H
+        DB      0D0H,5AH,85H,2DH
+        DB      0C4H,20H,0A8H,24H
+        DB      0A2H,2FH,8AH,2BH
+        DB      2AH,25H,94H,2AH
+        DB      21H,31H,60H,33H
+        DB      30H,35H,24H,38H
+        DB      09H,41H,18H,45H
+        DB      48H,43H,0CH,48H
+        DB      03H,4BH,42H,4DH
+        DB      12H,4FH,06H,52H
+        DB      81H,55H,0C0H,57H
+        DB      90H,59H,84H,21H
+        DB      0FFH,54H,90H,00H
+
+       END

@@ -1,0 +1,124 @@
+
+
+     02/27/87    CTYPAT.DO   Page 1
+
+
+     ===================
+     C-TYPE MODIFICATION
+     by Ronnie Riche
+     ===================
+     
+     Unfortunately there are a couple of minor bugs in the program file 
+     CTYPE2.BA on the SIG in DL4. They are not harmful enough to cause 
+     me to delete the file and U/L a new one but I do want to correct 
+     them for those that use the program.
+     
+     I list the two bugs below and explain how to fix them yourself if 
+     you wish, or you can use the patch at the end of the file to both 
+     fix the bugs and add an autowrap feature to the typewriter. There 
+     is also an explanation of how to easily add more registers to the 
+     calculator for macro calculations.
+     
+     The first bug has to do with the calculator 'X' value. As usual I 
+     did not cross my variables (memory's good 'nough, huh), and I used 
+     'X' in the loop counter for the up lines feature. To correct this 
+     you can go to lines 62 and 63 and change the 'X' to 'LX' and you're 
+     fixed. This bug would change the value of the 'X' register to the 
+     loop value when you use 'Up' line. Hardly user friendly.
+     
+     The second is simply cosmetic and would cause the calcuator display 
+     to get garbled when working with numbers of maximum length and 
+     decimal places. To fix this one just paste out lines 71 and 72 from 
+     the patch and merge them to the program.
+     
+     =========
+     Auto Wrap
+     =========
+     
+     If you decide to install the patch at the end of the doc you will 
+     also get a line wrap feature that works transparently to the user. 
+     No more need to enter all of your CR's manually. With this feature 
+     simple letter writing becomes pretty foolproof, even to a rank 
+     beginner.
+     
+     The default selection is for word wrap 'on'. When the wrap is on 
+     the end of line character will appear as a left pointing arrow 
+     instead of the usual wedge character. You can toggle the wrap on or 
+     off at any time using the 'ESC' then 'W' key sequence. At the 
+     beginning or middle of a line you can toggle the feature without 
+     fear of problems. Check out the quirks listed below if you wish to 
+     toggle the wrap on at the end of a line.
+     
+     When wrap is on instead of the usual beep after hitting the right 
+     margin value the program will calculate and wrap the line on the 
+     correct word when the first space character is entered in excess of 
+     the right margin setting. The remainder of the line in the editor 
+     will be carried over to the next line.
+     
+     Quirks...
+     
+     The word wrap feature is effective but there are a couple of quirks 
+     to be aware of. The word wrap operates by keeping a pointer to the 
+
+
+
+
+
+
+
+
+     02/27/87    CTYPAT.DO   Page 2
+
+
+     last legal space entered. Legal in this case means inside the right 
+     margin. This will work all the time in a text formatter but TYPE II 
+     allows you to delete that last legal space after you enter it. This 
+     could cause the line to break improperly if you edit out the last 
+     legal space at the end of a line and do not enter another legal 
+     space character to update the pointer. This can also occur if you 
+     are typing with the wrap off and decide to turn it on at the end of 
+     a line. If you don't enter at least one legal space while wrap is 
+     on the line break will probably be incorrect and you could also 
+     produce an error #5 in line 92. All of this happens very seldom but 
+     when in doubt it is easy to avoid problems by just toggling the 
+     wrap off and entering the line manually.
+     
+     The only other problem will be encountered if you both overrun the 
+     margin and have no spaces in the line, such as a line of 
+     underscores for highlighting. If wrap is on this will cause an 
+     error #5 in line 92. Just press a key to continue and either edit 
+     the line, change the margin, or toggle the wrap off.
+     
+     If the word wrap is not desired but you wish to patch the program 
+     bugs keep only lines 62, 63, 71 and 72 from the patch.
+     
+     ========================
+     Expanding the Calculator
+     ========================
+     
+     For those that have requested more  registers for the calculator it 
+     is very simple to add them. Just go to line 73 and add 'M3=M2' to 
+     the FRONT of the line to add register M3 and so on and so on for 
+     more registers. This will push the values into the newly defined 
+     registers on the stack. So that the clear command will clear out 
+     these new registers simply add 'M3=0', etc-etc to line 85.
+     
+     Good luck...
+     
+     -ronnie-
+     
+     Here's the patch, checksum 88,548
+
+4 L=66:OD$="0":S$="S":R=75:Z=5:OU$="Y":U$="Y":AU=1:I$="P":RAM$="TYPE.DO":UP$="4":SX$="SNGLspace":O=0:E$=CHR$(27):BK$=CHR$(8):TB$=CHR$(9):RT$=CHR$(13):ND$="K"+CHR$(155):UN=2:WR=1
+6 PRINT" TypeII  v2.3c  (c)1987 Ronald Riche"
+25 XX$=INKEY$:IFXX$=""THEN25:ELSEXX=ASC(XX$):IFXX>31ANDXX<127THENL$=L$+XX$:GOTO60:ELSEIFXX=13ANDWR=1ANDLEN(L$)>(R-Z+O)THEN92:ELSEIFXX=13THEN26:ELSEIFXX=8THEN57:ELSEIFXX=27THEN50:ELSEIFXX=127THEN58:ELSEIFXX=9THEN59:ELSESOUND300,18:GOTO25
+32 L$=NW$:PR$="":O=0:NW$="":FM$="":SP=0:PRINT@80,E$+"K";
+50 PRINT@40,E$+"p DEL He Qk Ti Up Vw Wr XY0 1/9 : "+E$+"q"+E$+"K";:AN$=INPUT$(1):IFAN$=CHR$(8)THEN67:ELSEAN=INSTR("1234567890UuTtVvQqXxYyHhWw",AN$)
+51 IFAN=0THENSOUND1234,18:GOTO19:ELSEONANGOTO93,94,95,96,97,98,99,100,101,102,65,65,68,68,69,69,86,86,90,90,91,91,103,103,70,70
+60 PRINT@75,LEN(L$)+LEN(Z$);:PRINT@121,RIGHT$(L$,37)+E$+ND$;:IFXX=32ANDWR=1THENGOTO92:ELSEIFWR=0AND(LEN(L$)+Z-O)>RTHENBEEP:GOTO25:ELSE25
+62 PRINT@80,E$"K Printing... ";:IFOU$="Y"OROU$="y"THENFORLX=1TOUP:LPRINT:NEXT
+63 IFU$="Y"ORU$="y"THENFORLX=1TOUP:PRINT#1,"":NEXT:GOTO20:ELSE20
+70 IFWR=1THENWR=0:ND$="K<":GOTO19:ELSEWR=1:ND$="K"+CHR$(155):GOTO19 'Wrap
+71 PRINT@1,OPR$:PRINT@15,E$+"K";:PRINTUSINGD$;Y;
+72 PRINT@55,E$+"K";:PRINTUSINGD$;X;:RETURN
+92 IFLEN(L$)<=(R-Z+O)THENSP=LEN(L$):GOTO25:ELSEIFLEN(L$)=(R-Z+O)THENNW$="":GOTO26:ELSEIFLEN(L$)>(R-Z+O)THENNW$=RIGHT$(L$,LEN(L$)-SP):L$=LEFT$(L$,SP-1):GOTO26

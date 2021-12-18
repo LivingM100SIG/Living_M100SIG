@@ -1,0 +1,29 @@
+10 'KSCOPE.100 (c) 1988 David Rowland
+20 '72277,1433   -  KALEIDOSCOPE,
+30 'a small program that fills the
+40 'screen with attractive patterns.
+50 'It will run on the 8201, and 
+60 'probably the 102, 200 & Olly.
+70 'Remove line 90 for non- RS 100s.
+80 'M100 CHECKSUM (w/o REMs)= 16,440
+90 POKE64634,PEEK(63791)
+100 CLS:Y=31
+110 N=1-(N=1)
+120 FORX=33TO209STEP58
+130 A=INT(RND(1)*23)+1
+140 B=INT(RND(1)*23)+1
+150 C=INT(RND(1)*3)+1
+160 FORI=0TOASTEPC
+170 FORJ=-BTOBSTEP2*B
+180 PSET(X+I,Y+J,N)
+190 PSET(X+J,Y+I,N)
+200 PSET(X-I,Y+J,N)
+210 PSET(X+J,Y-I,N)
+220 NEXTJ,I,X
+230 GOTO110
+240 'Many variations are possible;
+250 'try changing line 120 to 155
+260 'and the values in lines 130 &
+270 '140 from 23 to 29 as an example.
+280 'Will also work as a one-liner.
+

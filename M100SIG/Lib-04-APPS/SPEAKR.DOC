@@ -1,0 +1,200 @@
+Copyright 1989 Mike Audleman (73577,3041)
+Distribution restricted to Model 100 Forum members
+
+
+
+        SPEAKER.DVI   Apr 26, 1989  Mike Audleman  73577,3041
+
+
+        What is SPEAKER.DVI?
+
+           SPEAKER.DVI is a utility  to  aid  an  individual  in
+        designing the optimum speaker enclosure.  The user needs
+        to have the specification sheet commonly  provided  with
+        the speaker or the specs are  sometimes  listed  in  the
+        manufacture's catalog.   SPEAKER.DVI  will  calculate  a
+        varieity of boxes with  different  frequency  charastics
+        and  the  user  must  choose   one   that   fits   their
+        application.  SPEAKER.DVI then will step the  height  or
+        depth through a range entered by the user and  show  the
+        combinations which will produce the best enclosure.  The
+        user  must  have  some  knowledge  in  building  speaker
+        cabinets.   SPEAKER.DVI  will   not   give   "carpentry"
+        information, just the INSIDE dimentions  that  the  user
+        can use to construct the box.
+
+
+        What SPEAKER.DVI must know.
+
+          The information that it must have is usually  provided
+        with most quality  speakers.   The  speaker's  free  air
+        resonance (Fo), equivalent air volume (Vas), Diameter of
+        the  speaker  (D),  and  the  total  Q  (Qts)  are   the
+        information  points  usually  provided   and   are   all
+        SPEAKER.DVI need to perform its calculations.
+
+
+        What will SPEAKER.DVI tell me?
+
+          SPEAKER.DVI  will,   after   entering   the   required
+        information, calculate  the  optimum  width,  depth  and
+        height for an array of combinations  varying  in  volume
+        and frequency responce.  It will also,  if  selected  by
+        the  user,  send  all  results  to  the  printer  for  a
+        perminant record.  The prelimenary information  provided
+        is the Q of the box (Qb), the internal volume of the box
+        (Vb), the Q ratio (Qr) between the box Q and the speaker
+        Q, volume ratio (Vr), resonant frequency of the  speaker
+        mounted in the box  (Fsb),  the  3dB  low  end  roll-off
+        frequency (F3dB), and the width, depth, and  the  height
+        based on the optimum w-d-h ratio.   The  user  needs  to
+        select a combination that fits their  application  based
+        on  the  roll-off  frequency,  resonant  frequency   and
+        possibly  size  limitations  that  may  be  involved  in
+        placing the cabinet in a  crowded  room  or  on  a  book
+        shelf.  Using SPEAKER.DVI you can sit  with  a  list  of
+        specs  out  of  a  catalog  and  run  through  literally
+        hundreds of calculations that would take hours to do  on
+        a calculator.  SPEAKER.DVI also plots a graph on the LCD
+        screen showing the ratio of the box volume (Vb) and  the
+
+
+
+
+
+
+
+
+
+
+
+
+        3 dB  roll-off  frequency  so   you   have   a   graphic
+        representation of the information  provided  in  numeric
+        form on the CRT or printer.
+
+           If the printer option is selected,  SPEAKER.DVI  will
+        try to call XCOPY to dump the LCD to a Radio  Shack  DMP
+        series printer.  If you don't have this program or don't
+        have a DMP printer, you will have to edit the line  that
+        loadms and calls XCOPY to call a LCD screen dump program
+        for  your  printer  or   simply   remove   the   feature
+        alltogather.  XCOPY.CO is created by DMP.DMP  and  loads
+        into the alternate LCD buffer so it  doesn't  require  a
+        HIMEM setting or protected  memory  so  will  work  with
+        almost anything in himem.
+
+          After  you  choose  a  combination  that   fits   your
+        application, SPEAKER.DVI will ask wheather you  wish  to
+        step through Width & Depth  (and  calculate  Height)  or
+        Width & Height (and  calculate  Depth).   You  are  then
+        prompted for the ranges for  both  Width  and  Depth  or
+        Height depending on which one you  select.   SPEAKER.DVI
+        will then step through the combinations  and  point  out
+        the ones that will  fit  the  optimum  ratio.   All  the
+        dimentions that are presented in this  table  will  work
+        and their internal volumes are all the  same,  only  the
+        width, depth and height dimentions will change.  It will
+        calculate the ratios and display them also.
+
+          Other options of SPEAKER.DVI are to  calculate  values
+        for a Ported reflex or an Acoustic suspention enclosure.
+        It will also calculate the width, depth and height based
+        on the optimum ratio for a volume entered by  the  user.
+        Also, SPEAKER.DVI will calculate the internal volume  of
+        an enclosure with dimentions provided by the user.
+
+
+        What else will you need besides SPEAKER.DVI?
+
+          To complete the Ported Bass Reflex enclosure, you will
+        have to use the tables in the Radio Shack book "Building
+        Speaker Systems", catalog # 62-1087  as  of  this  date,
+        listed at $5.95, well worth it if you are  serious  abot
+        making your own  speaker  cabinets.   If  you  have  any
+        carpenter in you, the book probably will not  be  needed
+        for the acoustic suspention box  but  before  purchasing
+        any components, material or  wood,  I  highly  reccomend
+        that you obtain a copy of the book and read through  the
+        construction information.
+
+
+        How does SPEAKER.DVI work?
+
+          The formulas that are in the  Radio  Shack  book  have
+        implemented in SPEAKER.DVI using  the  loops  and  other
+
+
+
+
+
+
+
+
+
+
+
+
+        conditional statements provided  by  BASIC.   You  could
+        design your cabinet  without  SPEAKER.DVI,  but  to  run
+        through various combinations on a hand calculator  would
+        be  very  cumbersome  and  time  consuming.    Also,   I
+        developed a formula to compute the optimum  W-D-H  ratio
+        of a given volume.  This formula is  not  in  the  book.
+        The ratio provided in the book is 1:.6:1.6.  This  means
+        that the depth should be .6  times  the  width  and  the
+        height should be 1.6  times  the  width.   Deriving  the
+        formula:
+
+         V=Volume,H=Height,D=Depth,W=Width
+
+          V  = W x D x H
+
+          V  = W x .6W x 1.6W
+
+          V  = W x .6W x 1.6W
+         ---   --------------
+         W^3   W  x  W  x  W
+
+          V  = 1 x .6 x 1.6
+         ---
+         W^3
+
+          V  = .96 W^3
+
+          V  = W^3
+         ---
+         .96
+
+              ______
+           3 /  V
+         \  /  ---    =  W
+          \/   .96
+
+        D=.6W
+        H=1.6H
+        And is Basic it is:
+
+        W=(V*.96)^(1/3):D=.6*W:H=1.6*W
+          Since most computers don't have a cube  root,   simply
+        rase the figure to the 1/3rd power.
+
+          You are welcome to make modifications to the  program.
+        If you do, please make them  obvoius  and  if  possible,
+        upload a copy with  a  changed  version  number  to  the
+        Compuserve Model 100 SIG, library 4  (Applications).   I
+        do request that you leave my  name  and  number  in  the
+        program and menus but you may add yours if you like.
+
+          If you have any recomendations or questions,  you  may
+        leave E-mail to me on CIS, 73577,3041.
+
+
+
+
+
+
+
+
+
+

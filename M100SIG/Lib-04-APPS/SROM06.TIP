@@ -1,0 +1,262 @@
+SROM06.TIP by Algis Kaupas [73327,3157]
+
+In addition to using my model 100 as a "learning computer," I'm trying to use 
+it, along with Superrom, to simplify the various record-keeping aspects of my 
+free-lance work.  I plan to upload applications as I work them out, both as 
+useful templates in themselves, and as an aid to understanding Lucid.
+
+SROM06.TIP contains templates and instructions for keeping a client data base, 
+and using Lucid's report function to generate a client address book, mailing 
+list and telephone list.
+
+CLIENT.DO: The input template.
+=========  === ===== ========
+---------------------------------------
+CLIENT.CA/.DO
+Last update:   [AA3         ]
+Place cursor here -->[AA4      ], type  in filenm.do, press <ENTER> and PRESS 
+F6 to modify view.do file
+     PRESS F5 TO RECORD/VIEW INFO/
+CLIENT.CA/.DO INPUT SCREEN:       [#  ]
+ID        [A#                         ]
+NAME      [B#                         ]
+ADDRESS   [C#                         ]
+CTY,ST,ZP [D#                       ]
+PH#       [E#             ]
+     PRESS F5 TO RECORD CONTACTS/
+CONTACT 1:[F#                      ]
+TEL: HM/EXT [G#                       ]
+CONTACT 2:  [H#                       ]
+TEL: HM/EXT [I#                       ]
+CONTACT 3:  [J#                       ]
+TEL: HM/EXT [K#                       ]
+     PRESS F5 TO ENTER REMARKS/
+REMARKS:[L#                           ]
+REMARKS:[M#                           ]
+REMARKS:[N#                           ]
+REMARKS:[O#                           ]
+     PRESS F5 FOR PRINT CHOICES/
+  Place cursor on printing choice and     press PRINT function key:
+client adress book:    [DR1      ]
+client mailing list:   [DS1      ]
+client telephone list: [DT1      ]
+     PRESS F5 FOR INPUT SCREENS/
+---------------------------------------
+
+Paste the above template, between but not including the single dotted lines, 
+into TEXT, naming it CLIENT.DO.
+
+Be sure there is a code-0 paragraph marker at the end of the lines:
+
+     PRESS F5 TO RECORD/VIEW INFO
+     PRESS F5 TO RECORD CONTACTS
+     PRESS F5 TO ENTER REMARKS
+     PRESS F5 FOR PRINT CHOICES
+     PRESS F5 FOR INPUT SCREENS
+
+The code-0 marker separates "paragraphs" of the input screen.  This marker is 
+made by pressing the decimal zero key while holding down the code key.  The 
+resulting symbol looks like a bacward P or top of a Greek column.
+
+CLIENT.CA:  Creating the spreadsheet/database.
+=========   ======== === ====================
+
+From the model 100 main menu, place cursor over Super and press <ENTER.>
+When the Super menu appears, press F4 = Lucid Data.
+When the prompt, "Lucid file?" appears, type CLIENT and press <ENTER.>
+When the prompt, "View file name?" appears, type CLIENT and press <ENTER.>
+
+You will find yourself in the first CLIENT.DO viewpoint.  This and the rest of 
+the input screens are pretty self-explanatory.
+
+Pages D 1-1 to D 2-5 are the sections of the Superrom manual that explain 
+mailing lists.
+
+If you ever want to change the input screen, simply type the filenm.do (in this
+case, CLIENT.DO) into any blank field available, press <ENTER> and press F6.  
+You will be in the Text file, ready to edit.  When through editing, press F8 
+and you will be back in view input mode where you previously left it.
+
+
+REPORT TEMPLATES:
+====== =========
+
+
+CLADBK.DO (Client Address Book Report Template):
+---------------------------------------
+[b#                                   ] [e#                                   ]
+
+[c#                                   ]
+[d#                                   ] 
+
+     [f#                              ]      [g#                              ]
+
+     [h#                              ]      [i#                              ]
+
+     [j#                              ]      [k#                              ]
+
+
+     [l#                              ]
+     [m#                              ]
+     [n#                              ]
+     [o#                              ]
+
+
+---------------------------------------
+
+
+CLMLIS.DO (Client Mailing List Report Template)
+---------------------------------------
+[f#                                  ]
+[b#                                  ]
+[c#                                  ]
+[d#                                  ]
+
+
+---------------------------------------
+
+
+CLTEL.DO (Client Telephone List Report Template):
+---------------------------------------
+[B#                                  ]                 [E#                   ]
+
+     [F#                             ]                 [G#                   ]
+     [H#                             ]                 [I#                   ]
+     [J#                             ]                 [K#                   ]
+
+
+---------------------------------------
+
+
+The above are Lucid Report Templates for CLIENT.CA.  Paste them into TEXT, 
+naming them as above.
+
+When that's done, go into CLIENT.CA.  If you're in the view template, push F7, 
+Lucid, to get into the spreadsheet itself.  
+
+Press the <SHIFT> and Right arrow keys.
+When the "Go to: Xn" prompt appears, use the <del/bksp> key to erase the 
+existing entry and type in DR1.  Press <ENTER>.
+
+When you're there type in the following into the specified cells:
+
+Type CLADBK.DO into DR1.
+Type +NOT(NUL(B#)) into DR2.
+Type 1 into DR5.
+
+Type CLMLIS.DO into DS1.
+Type +NOT(NUL(B#)) into DS2.
+Type 1 into DS5.
+
+Type CLTEL.DO into DT1.
+Type +NOT(NUL(B#)) into DT2.
+Type 1 into DT5.
+
+The entries in row 1 tell Lucid which template to use.
+The entries in row 2 tell Lucid how to pick records for printing.  The formula 
++NOT(NUL(B#)) means "print records that are not empty in field B."  Since B 
+holds the name for each record, that's a pretty good bet.
+
+The entry in row 5 says print 1 record wide.
+
+PRINTING RECORDS.
+======== =======
+
+I've found that the easiest way for me to print records is to first "print" 
+them to a RAM file directly from the spreadsheet, edit them in TEXT, and then 
+use WRITE to format the printout.  (It also saves a lot of paper.)
+
+Here's a step-by-step description of how to do that:
+
+1.  Enter the Client.ca spreadsheet and go to DR1, as described above.
+2.  Press the PRINT function key.
+3.  Press F3, Output.
+4.  When the prompt, "Output:LPT:" appears, use the del/bksp key to erase LPT 
+and type in the name of the RAM file you want to output to.  (I use ADBK, MLIS 
+or TEL.)
+5.  Press <ENTER>.
+6.  Press F8, exit.
+7.  Put the cursor over the name of the report template you want to use.  (
+CLADBK.DO for ADBK, CLMLIS.DO for MLIS.DO, or CLTEL.DO for TEL.DO.)
+8.  Press F6, Data.
+9.  When the function keys change, press F2, Report.
+10. Wait will flash while Lucid prints the report to the ram file.
+11. When Wait disappears, press F8 to exit to the model 100 main menu.  You'll 
+see the name of the RAM file just created on the menu.
+12. Select super and then F2=Write.
+13. When the list of .DO files appears, put the cursor over the RAM filenm.do 
+just created and press <ENTER.>  You'll be in the RAM file, ready to edit.
+14. When through editing, press F8, exit.  You'll be back at the Write list of 
+.DO files.  Format the printout as you usually do with Write.  Press Print, Go,
+and you're printing away.
+15. Remember to go back to Lucid to change the Print output back to LPT: when 
+you're done, or whatever printing you do in the future will be to this same RAM
+file.
+
+You'll notice that the CLIENT.DO template is set up to allow printing from the 
+template, as described in the manual.  I personally find the above method 
+simpler, and requiring less keystrokes.
+
+SROM07.TIP: SAMPLE CLIENT.CA SPREADSHEET AND PRINTOUTS.
+==========  ====== ========= =========== === =========
+
+If you have any troubles with the above, download SROM07.TIP, which has a 
+sample, filled-in spreadsheet, as well as instructions for converting the HEX 
+file to .CA format and sample printouts of the various reports
+
+IDEAS AND SUGGESTIONS:
+===== === ===========
+
+Here's a random grab-bag of ideas for using the CLIENT.CA/.DO format.
+
+Column A, i.d., allows records to be sorted alphabetically by last name (or 
+first word of company name) without worrying about how to keep a proper format 
+for mailing lists.  If you want to enter a record for Arthur Artsy, for 
+example, put Artsy as the i.d., and Arthur Artsy as the name.  Sort using a 
+cell in column A as the key cell reference.
+
+This column also allows categorizing the records.  In my field, for example, I 
+need to keep lists of Audio Assistants, Production Assistants, Rental 
+Companies, etc.  Column A could be used to identify names as "Audio Assist,"  
+"Rental Co.," and so on.  I would then sort using a cell in column a as the 
+primary key reference and a cell in column B as the key2 cell reference.
+
+If it's important to keep track of how long ago a client/customer was last 
+contacted, one of the remark columns could be used to record "last contact."
+A periodic sort using this column as the primary cell reference and the i.d. 
+column as the key2 cell reference would allow scanning the list to see who 
+should be called up.
+
+I feel that it's easier to browse through paper records than go through 
+rercords on a computer.  Stationery and computer supply stores carry continuous
+form Rolodex cards.  The address book report format could be used to print out 
+the data base onto Rolodex cards, and EASILY updated as often as required.
+
+I strongly suggest looking at Tony Anderson's "PHONE.BK1" program in DL2.  This
+produces a small booklet of phone numbers easily carried around.  I haven't 
+used the program yet, but I gather it simply requires a RAM file, PHBK.DO in 
+RAM that takes the form:
+Bob Jones/212-555-1212.
+
+The report template for this from CLIENT.DO would be:
+
+PHBK.DO (Report template for use with PHONE.BK1 in DL2):
+---------------------------------------
+[B#                 ]/[E#          ]
+
+---------------------------------------
+
+Not having used Tony Anderson's program, I'm not sure if the carriage return 
+between records is needed.
+
+The PRINT output should be PHBK.
+
+Play around with this stuff!  One of the nice things about Lucid is that it's 
+easy to change things.
+
+And laugh all the way to the bank when you price the commercial programs that 
+are sold to print out Rolodex cards and pocket calendars!
+
+Algis Kaupas  [73327,3157]
+Sept. 30, 1986
+

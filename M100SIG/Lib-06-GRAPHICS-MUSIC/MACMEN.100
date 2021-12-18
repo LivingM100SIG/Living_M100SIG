@@ -1,0 +1,37 @@
+10 CLEAR 4000:DIM M$(8,8),KS(8),W(8),C(8):KEY ON:ON KEY GOSUB 101,102,103,104,105,106,107,108
+15 M1$="":M2$="":E$=CHR$(27):NM$=E$+"q":RV$=E$+"p":CF$=E$+"Q":CN$=E$+"P"
+16 A=VARPTR(M1$):POKE A,160:POKE A+1,0:POKE A+2,254:A=VARPTR(M2$):POKE A,159:POKE A+1,160:POKE A+2,254
+20 M$="Appl File Edit Font Size      Stop Menu":FOR K=1 TO 8:KS(K)=1
+30 READ K$:IF K$="0" THEN NEXT K:GOTO 40 ELSE C(K)=C(K)+1:IF W(K)<LEN(K$) THEN W(K)=LEN(K$)
+35 M$(K,C(K))=K$:GOTO 30
+40 CLS:PRINT@280,M$;:PRINT@0,CN$;
+50 PRINT INKEY$;:GOTO 50
+101 K=1:GOTO110
+102 K=2:GOTO110
+103 K=3:GOTO110
+104 K=4:GOTO110
+105 K=5:GOTO110
+106 K=6:GOTO110
+107 STOP:K=7:GOTO110
+108 MENU:K=8:GOTO110
+110 IF C(K)=0 THEN RETURN ELSE KEY STOP:PRINT CF$;:KC=1:M3$=M1$:M4$=M2$:LN=CSRLIN:PO=POS(0)
+115 FOR KC=1 TO C(K):PRINT@315-KC*40+K*5,CHR$(245)SPACE$(W(K))CHR$(245);:GOSUB 200
+120 NEXT:PRINT@315-KC*40+K*5,CHR$(240)STRING$(W(K),241)CHR$(242);:KC=KS(K):PRINT RV$;:GOSUB 200
+130 I$=INKEY$:IF I$="" THEN 130 ELSE IF I$=CHR$(30) THEN IF KC=C(K) THEN 130 ELSE KN=KC+1:GOTO 190
+131 IF I$=CHR$(31) THEN IF KC=1 THEN 130 ELSE KN=KC-1:GOTO 190
+140 PRINT NM$;:KS(K)=KC
+150 PRINT@0,M3$;M4$;:M3$="":M4$="":PRINT@LN*40+PO,CN$;:KEY ON:RETURN
+190 PRINT NM$;:GOSUB 200:KC=KN:PRINT RV$;:GOSUB 200:GOTO 130
+200 PRINT@316-KC*40+K*5,M$(K,KC);:RETURN
+910 DATA About Menu,------,Control Panel, Puzzle, System Bugs, Note Pad, Scrap Book, 0
+920 DATA New, Open, Save, Save As, Close, Print, Quit, 0
+930 DATA Undo, Paste, Cut, Copy, 0
+940 DATA Chicago, Monaco,New York,Venice,0
+950 DATA 10,12,14,20,24,28,0
+990 DATA 0,0,0,0,0,0
+1000 'Convince your friends you have a Mac in your M100
+1001 'Run the program, type anything you liek, and press a function key.
+1002 'move the fkey cursor up and down with arrow keys, press any other key
+1003 'to leave the menu.  Maybe someone can take this a nd make a real program.
+1004 'Don Corbitt, 73216,1022
+1005 'Jan 8, 1985

@@ -1,0 +1,25 @@
+10 REM EKG by Mark Lutton, 12/5/86
+11 REM Connect a wire from your chest to the computer, run this program,
+12 REM put the computer in a conspicuous spot by the bed,
+13 REM lie in bed and look miserable.
+14 REM You are sure to get sympathy from your friends.
+20 DIM A(99):N=40
+30 GOSUB 1000
+40 C=40:D=0:I=0:O=A(0)
+50 CLS
+99 REM main loop
+100 LINE (C,0)-(C,63),0
+110 IF D=0 THEN 130
+120 LINE (D-1,O)-(D,A(I))
+130 O=A(I):C=C+1:IF C>239 THEN C=0
+140 D=D+1:IF D>239 THEN D=0
+150 I=I+1:IF I>=N THEN I=0
+160 GOTO 100
+999 REM get data points
+1000 FOR I=0 TO N-1:READ A(I):NEXT:RETURN
+1010 DATA 45, 40, 15, 35, 42, 45, 44, 46, 42, 40, 36, 40, 42, 45, 43, 45
+1015 DATA 44, 46, 43, 44, 45, 44, 46, 44, 45, 44
+1020 DATA 45, 44, 46, 47, 44, 43, 46, 45, 46, 44, 43, 45, 46, 44, 43, 45
+1025 DATA 46, 44, 43, 45, 44, 45, 46, 45, 46, 44, 46, 47, 44, 45
+2000 REM Come on, hackers!  Speed it up, add heartbeat sounds,
+2010 REM make it simulate a heart attack at random times, etc.

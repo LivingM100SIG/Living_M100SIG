@@ -1,0 +1,18 @@
+0 MAXFILES=1:CLEAR250:OPEN"[#]"FORAPPENDAS1:FORX=65110TO65116:PRINT#1,CHR$(PEEK(X));:NEXT:FORX=65144TO65154
+1 S$=S$+CHR$(PEEK(X)):NEXT:Q$=CHR$(34):IFINSTR(S$,"k")<>0THENT$="(Bas)"
+2 IFINSTR(S$,"DS")<>0THENT$="(Txt)"
+3 IFINSTR(S$,"IO")<>0THENT$="(Cor)"
+4 PRINT#1,T$:CLS:X$="load"+Q$+"cas:"+CHR$(13)+"run"+Q$+"casdir"+CHR$(13):GOSUB5:END
+5 FORI=1TOLEN(X$):X!=(I-1)*2+65451:X=ASC(MID$(X$,I,1)):POKEX!,X:IFX>7THENPOKEX!+1,0ELSEPOKEX!+1,255
+6 NEXTI:POKE65450,LEN(X$):RETURN
+10 'CASDIR,Stig Hammond 12/10/85. You can copy or modify IF YOU KEEP THIS LINE.
+11 'USE: Program creates a file containing complete directory of a cassette.
+12 'Handy for discovering what's on old, unlabeled tapes.
+13 'NOTE: Program MUST be called CASDIR, or line 3 changed to reflect new name.
+14 'INSTRUCTIONS: Rewind tape, press "play" then RUN program.  Go read a book.
+15 'When tape finishes, hit shift-   break, then MENU. Tape Directory is now in file [#].DO
+16 'WORKINGS:Program writes part of second line of LCD (usually Found:FILNAM) to the [#].DO file.
+17 'Third screen line will either be "Ok", for Basic files, "?DS Error", for text files,
+18 'or "?IO Error", for corrupt files; correct response is written to [#].DO file.
+19 'Then program tries to load from the cassette and runs itself again by sending X$ to suboutine 4
+20 'which pokes it into the buffer as though it were typed in. Send questions to [71706,1313]

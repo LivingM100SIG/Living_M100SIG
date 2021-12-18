@@ -1,0 +1,191 @@
+Documentation for SINGER.100
+============================
+joel & debbie dinda
+[75725,1134]
+CHECKSUM 107,331
+
+Singer.100 is a program in BASIC which reads text files to produce music. 
+This version's most important improvement over its predecessors is that it can
+play a medley of tunes contained in a single file.  This required a VERY
+slight change in the file format.  All other modifications were intended
+mainly to improve program performance.
+
+Instructions for Use
+====================
+This program assumes you've one or more files in RAM (or on disk) which
+conform to the file format described below.  There are several such files in
+DL6; under my PPN [75725,1134] these have the extension .SNG.  My personal
+favorite is FOSTER, but these things are debatable.
+
+When the program is run, it sets itself up and inquires how many songs you
+wish to hear.  Since the program only accepts single- digit responses at this
+point, the maximum permitted response is 9; the program treats 0 and
+non-numeric responses as 1.
+
+You are next prompted for song titles.  Select a song (or medley) file, and
+type its name at this point.
+
+After each file is selected, Singer asks how many times you wish the
+song/medley to be repeated.  Nine is, again, the maximum permitted.
+
+At this point the program locates the files, and plays the music they
+contain.  After it completes these tasks, it asks if you wish to hear more
+songs.
+
+Please notice that Singer.100 has NO error traps.  It expects that all files
+you request will actually exist, and that those files conform to a particular
+format.  Failing these expectations will usually result in a (harmless)
+program crash.
+
+Expected Song Format
+====================
+Perhaps you will wish to encode your own songs for this program.  If you can
+read standard music notation, the procedure is relatively simple:
+
+Singer expects the first entry for a song (ANY song) to be an asterisk (*),
+all alone on a line.  This serves as a flag for the program to look for the
+information in the next line; it's also the only change in the file format
+since the previous (Portable 100) version of this program.
+
+The next line contains information about the song:
+
+The first entry in the line is a tempo indication.  4 is very fast, and 16 is
+pretty slow and should be considered the upper limit.  Follow this with a
+comma.
+
+The next entry in the line is the key signature.  This is an "S" (for sharps)
+
+
+
+
+
+
+
+
+
+
+
+Documentation for Singer.100                                          11/29/85
+Page 2 
+
+
+or and "F" (flats) (case is irrelevant) and a number, in the form of S3 or f0,
+again followed by a comma.  Key of C MUST BE specified by either F0 or S0.  A
+convention given below assumes that all accidentals in the file match the
+"flatness" or "sharpness" of the key signature.
+
+The last item in this line is the song's title.  This title needs no quotes,
+and can be any length at all -- but more than 36 characters is going to look
+funny on the screen.  End the line with a carriage return.
+
+To recap:  The first two lines in a song's description might look like this:
+*
+6,S1,Paddles
+
+
+Thereafter the song consists of encoded notes.  Each note is coded with a
+three character code.  "EC2", for instance, is "middle C", as a eighth note. 
+(Continue for further details.)
+
+The three characters have the following general format:
+		dp#
+
+"d" is the duration of the note, expressed as:
+	S (for 16th note)
+	E (8th)
+	e (dotted 8th)
+	Q (quarter)
+	q (dotted quarter)
+	H (half)
+	h (dotted half)
+	W (whole note).
+Tied notes are not provided for, but can often be represented directly if you
+don't care about such formalities as bar lines (which don't show in this
+representation, anyway).  Triplets, too, are permitted:  3 is a triplet-
+within- a quarter; # is within- a- half.
+
+"p#":  The alphabetic character (pitch) is the usual A through G music set. 
+Upper case is NATURAL; lower case signifies an accidental which MUST match the
+key signature in direction (this means you may have to tinker a bit with what
+you see on the page to get it to fit this notation system).
+
+The numeric character indicates the pitch's octave; the permitted range is 0
+to 3.
+
+For instance:  "EC2" is an eighth note, C natural in the second octave.  As
+it happens, it's "middle C".  "qB1" (a dotted quarter note, B natural in the
+first octave) is the next note down.
+
+C natural is usually the bottom note in each octave (occasionally it's
+B-sharp, instead, but that shouldn't be a problem as B-sharp is usually
+imaginary.)  That this doesn't conform to the charts in the Tandy manuals
+reflects on the manuals, which make no obvious sense.
+
+
+
+
+
+
+
+
+
+
+
+
+Documentation for Singer.100                                          11/29/85
+Page 3 
+
+
+QR0 is a quarter note rest; longer or shorter rests can be generated in the
+same fashion as longer or shorter notes.  As this instruction actually
+generates a (very high) tone, overuse of rests can sound quite strange. 
+Experiment.
+
+The program reads until it finds a carriage return, then processes what it's
+read.  This trait can be used to indicate phrasing -- not an ideal system, but
+it works.
+
+Should you get an OS error, you need to break a long phrase into two shorter
+ones.  Else modify the CLEAR statement in line 1.
+
+Perhaps inspecting FOSTER.SNG can help you decipher these notes.  There's a
+much longer discussion of all of this in the October 1983 issue of Portable
+100 magazine, but I've no idea where you might find that.  Questions? 
+Ask....
+
+MEDLEYS:  An added feature with this version of Singer.100 is that a file can
+contain a medley of tunes.  This can be simply accomplished; you just stack
+songs up and separate them with the (already required) *, which serves has a
+flag that the new song's about to begin.  YULE.SNG and HANKS.SNG are
+examples.
+
+Programmers' Notes
+==================
+Debbie helped IMMENSELY with the program's logic, and with some of the coding
+solutions....
+
+I bought this computer in early April of 1983, just after Tandy announced the
+product.  At that time it had been several years since I'd done any
+programming in BASIC, and I'd never had an opportunity to write a music
+program (I learned four languages on two different DEC systems).  This seemed
+like a convenient way to introduce myself to the machine's capabilities.  One
+result is that there's been a version of this program on this SIG since May of
+1983.
+
+While I'm a much better programmer today than I was in 1983, this program's
+actually pretty much like the original.  Editing programs almost always proves
+easier than starting over....
+
+Besides my sister/co-author, this program owes considerable debts to Ronald
+W. Johnson and Jim Stutsman, who were working on a similar program at about
+the same time (COMPOZ.100).
+
+And a debt to our favorite Sysop:  My first contact with Dave Thomas was an
+inquiry about this program, in the fall of 1983.  (I figured he was a kid.) 
+Almost all of the improvements in this version date indirectly from those
+discussions; my thanks.  The medley feature was a long time coming....
+
+joel
+LSJ-Access TBBS
+517-482-8144
+29nov86

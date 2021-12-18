@@ -1,0 +1,373 @@
+2DRIVE.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The file 2DRIVE.TDD in Lib 9 discusses developing a dual-TDD system for the
+Tandy computers.  This set of messages discusses the implementation of such
+a system, and results from the first users.  Additional THD files on this
+topic are expected!
+
+
+Message range: 175332 to 175547
+Dates: 10/8/88 to 10/14/88
+
+
+Sb: #Two Drives Online!
+Fm: bob scott 73125,1437
+To: SYSOP Tony 76703,4062
+
+   Built the two drive interface.  Chip version was too complex and flaky.
+Switched <grin> to micro relays.  Device is the size of a cigarette pack and
+runs off a plug in xformer.  Total cost was about $25 at RS. Since
+TS-DOS/Random won't allow raw sector access to non RANDOM disks, I've DL'ed
+POWRDOS to generate a disk to disk copy utility that can occur untouched by
+human hands....(faint cheer).  Will keep you posted if you're interested.  Bob
+P.S. only need to switch six lines!
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+Congratulations on getting it to work before I did.  I'm still waiting for my
+second drive to arrive... it's in the UPS pipeline. (grin)
+
+Since you mention POWR-DOS, it appears you're using a 100/102... you're lucky
+in that respect; most of the program you need for disk-to-disk copy is already
+available; just some modification to be made.  I'm doing it on a 200, using
+POWR-DISK (200), the predecessor to POWR-DOS, and less capable.  It can still
+be done, and I'm only waiting for the second disk drive to arrive to test it
+out.
+
+I built mine in a 7x11 metal chassis, so the two drives sit on top of it, side
+by side, making a neat dual-drive setup.  Also used small relays and external
+power pack.  I had many of the parts on hand.
+
+You will also find that with a little judicious work on your part, you can use
+the relay interface with an external modem and disk drive to simulate download
+to disk capability.  Connect modem to port #1, and drive to #2.  (#1 is relays
+off, #2 is relays on)  Download a file to RAM, jump into BASIC, witch the
+relays, use a BASIC program to copy the file to disk and kill it from RAM,
+switch the relays back, then jump back into TELCOM for more.  You can even
+download large files (larger than RAM) by using ^S to stop somewhere in the
+middle, save the part you have to disk, get the second part (^Q), and APPEND it
+to the first part already on disk.
+
+External modem needs to hold the connection while you are off in BASIC doing
+all the disk activity.
+
+Why don't you outline your construction and operating technique, and give us a
+file on the subject.  2DRIVE.001 would be a good filename.
+
+
+Fm: bob scott 73125,1437
+To: Tony Anderson 76703,4062
+
+Righto!  I used mine for something similar: switching between a serial printer
+and a PDD.  Looks like this is going to be a fun toy.  Just got POWR-DOS up and
+running (quite a hhassle makingit get along with MENU and RANDOM in ROM).  Any
+it just finished it's first disk-to-disk backup and it worked!  Bad part is
+that it took about 25 minutes.  random sector writes were SLOOWWWW.  I'm going
+to DL the POWR-copier and see if I can modify that and speed the process up a
+mite.  The everything in one box setup is a good idea.  Raises the drives up.
+I've got mine stacked right now.  The version I've got is hreally more an
+outgrowth of the breadboard test version (didn't really expect it to work!) and
+I'd do a finished version in a much neater fashion.  I think I'd try to get
+some of the DIP header's that RS uses for the drive end of the cable to make up
+special drive only cables, and have parallel DB-25's for modem or printter/disk
+use (too much wire on the desk now).  Also think I'd find some DPDT MAG-Latch
+relays to allow powering from the M100 (only need juice to switch states).  But
+this doesn't look too bad,and it works, so you can guess how far down the road
+MOD 0.1B is!  Stay tuned.  Bob.
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+I got a couple of latching mini-relays from Peter St. Clair; one of our early,
+and long lamented hardware hacking geniuses here.  They're like 8-pole, double
+throw, latching.  He had a circuit made up with several of the relays and an
+"addressable" line monitor.  You could send a command down the line, and the
+monitor would select which relay you wanted; then you issue a close or open
+command, and it would act only on the selected relay.  Worked real well.
+Unfortunately, Peter was not real good on writing down his developments, and
+when he moved on to a more sophisticated computer, most of his know-how moved
+on, with him.
+
+Problem with using latching relays, is you need a flip/flop toggle of some sort
+to select the "other" coil, when the relay is in (whichever) normal state.
+Having been unable to find or develop such a circuit over the years is what's
+prevented me from documenting the hardware approach to multiple RS-232 ports.
+
+The "drive-only" cables is a good idea, if you can figure the cable out.  The
+connector schematic is in the manual (for the TDD-1), but I had difficulty
+testing a complete circuit between both ends of the standard cable when I tried
+to figure that out myself.  It would make a "neater" semi-permanent setup.
+
+My original idea was "stacking" the controller and two drives.  But I opted for
+the horizontal approach for a couple of reasons; 1) I could front-mount a
+couple of LED's, one under each drive, which would indicate which drive was
+"selected", and 2) I couldn't find a box that was the right size to use in a
+vertically stacked configuration.  While I have 8 R-S stores up here, only one
+non-RS store, and it's not well stocked.  I'd have had to mail-order something.
+I'd like to have used a plastic box, about the same size as the TDD, only about
+half as high.  That would have made a neat package.
+
+It also occurred to me to use a 17 inch chassis, and include a cassette machine
+in the package. - Haven't done that yet, but it's a possibility.
+
+
+Fm: bob scott 73125,1437
+To: Tony Anderson 76703,4062
+
+Tony: I think if this thing starts looking like a permanent installation I'll
+redo it along the lines you've outlined.  For permanent drive cables, I was
+thinking of just ordering two TDD cables from Natl Parts and hacking them up.
+Also solves the controller to drive cable problem (twice!). Anyway, the latest
+flash is that POWR-COPY was pretty easy to modify and works MUCH quicker than
+the sector approach.  The latter may be the hot ticket for copying odd disks
+(like SARDINE dict.) though.  Full disk to disk copy took a bit over 9 minutes
+with an essentially empty RAM a  bank (0MENU, POWR-DOS and theCopy pgm).
+Needless to say in those nine minutes I was free to fly to Europe if I wished.
+Nothing like the happy clicking of a drive controller.  I'm going to try a mass
+backup of my disks this weekend using this approach and if it works out, I'll
+upload a software/hardware description to DL9. Good point on the latching
+relays.  I've never used one and sort of thought it was like a D flip flop.
+Seperatecoils would be a real bother. I initially tried using tri-state buffers
+(since the TDD uses TTL levels out and relies on the M100 to pull the 0 volts
+to -5) but never got solid results.  Might work if I had added RS-232 line
+drivers to the circuit but then you've got 4 more chips, 3 power
+supplies...Yuk! 'Lot to be said for relays.... Bob
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+That's a good idea... getting two replacement cables from Nat'l Parts and
+hacking them to fit.  That also saves the original cables for portable use when
+you want them.
+
+And speaking of permanent installation; what do you think about adding a larger
+power supply, maybe 12 volts at 1.5 amps (readily available), and stepping it
+down, via 7806 regulators, to power the two TDD's when used in this mode?  One
+could save a lot of plug space that way.
+
+I'll bet the clicking relays, and whirring disks are a sound to be heard and
+appreciated!  I'm envious that you got there first.  Indeed, modification of
+POWR-DOS's COPY.PWR program was the logical way to do it for 100/102 users. A
+bit more complex for the 200 users since COPY isn't available in a 200 version,
+and Power-DISK doesn't support sector access.  (Documented support anyway)
+While 9 minutes is SUPER, even 25 isn't bad for a completely automated disk
+backup.  I'd be happy with that.  NO DISK SWAPS!!!!
+
+I wish latching relays were that simple; but most of them have a "latch" and an
+"unlatch" coil. Meaning a single pulse line can't switch it to the alternate
+state.  That would be ideal.  I've never been able to find that, though.  The
+nearest I've seen is a pulsed, stable, flip-flop, with the relay tied to one of
+the output lines.  I haven't found a reliable circuit, though.  In theory it's
+possible, but I just haven't found one.
+
+In a "chip" approach, I was thinking of 4606 bilateral switches.  Each chip has
+four, so you'd need four chips to handle on/off - off/on for 8 lines to 2
+devices.  Problem is, you'd still need a relay to switch them to on/off states.
+Another problem, with only +/- 5 volts in the line, internal resistance of a
+couple hundred ohms may present a significant voltage drop. -- May not work.
+
+
+Fm: bob scott 73125,1437
+To: Tony Anderson 76703,4062
+
+  I like your idea on the "mothership" cabinet.  My thought would be to put in
+a small 12 xformer and diode bridge to run the relays and a slightly heavier 6v
+unit with filtering and voltage regulation to run the drives and the M100. A
+power switch on the front would kill the whole works.  I'd like to keep the
+relay power separate just to avoid a problem with back EMF from the relay coils
+frying something in the drives or M100, queching diodes aside.  This would make
+a nice desktop unit and would need (faint but sincere cheer) only ONE outlet.
+Then I could leave my AC adapter(s) in my travel bag.  Normal ops would likely
+be the TDD in bay one, and a 2400 bps modem in bay two.  Next step is to take a
+varient of your telcom idea nad modify XMDPWx to optionally DL to a buffer as
+big as free memory for both text and protocol xfers, then ^S the host and
+APPEND the file to disk.  Downloading a 100K file would be a snap.
+
+Incidentally, I'm only switching DB-25 pins 2,3,4,5,6 and 20.  Pin 7 is tied
+common and all others are left hanging.
+
+I looked at CMOS switches, only problem I see is that you'd need a bipolar 6v
+supply to run them (input voltage to the switches must stay between Vss and
+Vdd) but that's not impossible.  My attempt using bus transceivers was pretty
+much a disaster so I'd be interested at hearing what you find out about CMOS if
+you try it.  The ON resistance shouldn't be a big deal, with 12v between Vss
+and Vdd it will only be about 100 ohms (for the 4066) and the current flow is
+pretty low.
+
+Of course if you're modem or printer puts out a full +/- 12 volts..yikes! Were
+I to fool with chips again, I think I'd just bite the bullet and put in RS-232
+line drivers and tristate bus tranceivers.  The relay approach seems to work,
+however. Only problem is the settle time but a FOR J=1to10: NEXT: or a BEEP
+seems to be enough time.  Since part of the speed problem is the cassette
+relay, I don't know that chips would be all that much faster anyhow.
+
+So, what do you think of patching SARDINE to switch MOTOR ON when executed
+and motor off when done?  Full time online spell checker for TXT? Bob
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+You raise many interesting ideas for this relay controller.  I've been talking
+about this project for some time; since folks found out they couldn't download
+directly to the TDD disk.  But it looked like the stumbling block was that many
+folks did not want to upgrade to an external modem.  It's just recently that I
+started thinking of it in terms of a 2-drive system.  (I HATE disk swapping!)
+
+Well, I'd accept two power supplies, built-in; one for relay control, one for
+the drives.  And the idea of a modified Xmodem/Terminal program to handle a
+buffered download isn't too hard to handle. (Boy, wouldn't that be something!)
+However, don't forget the 64K file size limit.  You can't download 100K into a
+single file. (grin)
+
+I believe the 4066 will work from a single-ended supply... I'd have to go back
+and check some manuals.  Wasn't aware that they would only pass voltages lower
+than Vdd.  Maybe that's another situation where relays are still superior. -- I
+knew we would need a delay for settling time, and assumed it would be about 1/2
+second, which is redily available as a CALL in the TELCOM dialing routines.
+
+I suppose SARDINE could be patched, but not having ever received my promised
+copy, I wouldn't be able to explore the concept myself.  Technically, any
+program could be patched to switch the relays; either by BASIC statement or ROM
+CALL.  And of course, most folks who need spelling checkers have moved on to
+the multi-ROM version; which seems to be superior.  But _any_ program can be
+set up to switch the relays, where it would be useful.
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+One little thing I noted in your message when reading it offline... a potential
+problem if you plan on running both the drives and the M100 from a common power
+supply with an on/off switch. ... If the AC supply plug is installed in the
+external supply jack on the computer, and you switch off the external power,
+it's like you've gone into a power failure condition, and the CMOS memory will
+start to draw power from the internal nicad.  This may not be a problem, unless
+you have an older M100, where the nicad stack is no longer able to hold a
+charge, or where it's not functional at all.  A condition that might well be
+masked if you regularly use AC and fresh batteries.
+
+So... in this case, I'd suggest your power switch only interrupt supply voltage
+to the relays and drives, but leave power being supplied to the computer. ...
+Or, install the "Uninterruptable Power Supply" modification in the file
+UPS100.200 in Lib. 8.
+
+
+Fm: bob scott 73125,1437
+To: Tony Anderson 76703,4062
+
+Good point on the 64k.  Let's say "100k down in an unspecified number of files"
+<grin>.  I'm ready to rip into Mod 0.2, but the thought of slicing my hands to
+ribbons trying to chain drill or nibble a db-25 hole (or two) in a cabinet
+isn't appealing.  Gotta check around for a prepunched box, or maybe the mat
+shop a work has a punch (fat chance as we're just getting rid of paper tape in
+the Navy!). As you say, thhe external modem business is looking up though.  One
+thing I was sorta surprised at is that you don 't need a bunch of p\ull up/down
+resistors on the drives to keep them from going screwy when you switch. Seems
+to work fine the way it is. Was thinking that a DTR modem disconnect could be
+preserved with a high value (100k?) pull resistor which held the carrier when
+the relay switched to the drive.  The value would have to be hig enough that
+the M100 could over power it to bring down though.  (Just a thought as I'd
+likely strap the modem too ignore the DTR and use S/W disconnect.) Bob
+
+
+Fm: bob scott 73125,1437
+To: Tony Anderson 76703,4062
+
+Yeah I was thinking about that.  On the one hand, I suppose it's good to
+execcise the little critter (it's supposed to hold for a couple of weeks or
+something with 32k, right?)  On the other hand....Might be better to switch
+just the relay and drive power supplies, eh? Bob
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+Well, the time has been quoted variously between 8 days and a month.  I'd
+suspect that since the nicad is constantly float-charged, it has very little
+memory capacity, and probably a matter of hours is more like it, in practical
+terms.
+
+I think I'd opt for switching the relay and drive supplies only.  One neat
+thing there is that powering down, will always power back up in the default
+condition selecting drive #1. (or whatever is connected as device #1 - relays
+off.)
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+Since a DB-25 chassis punch sells for about $125, I've found a Dremel tool to
+be the easiest way to cut those little slots for such plugs/sockets.
+
+Another thing I thought of today, is that if you include both the DB-25 sockets
+and the dedicated drive cable, as we discussed, if you have two computers, like
+I do, you can connect to the second drive directly through the DB-25 socket
+from the second computer.  i.e. one drive per computer, with the additional
+advantage of the disk-disk copy capability.
+
+I'd have to look at the pull up/down resistors to see what's happening there,
+but don't look a gift horse in the mouth... if it works, don't fix it. (grin)
+
+I have no difficulty with my external modem, it holds the line even when
+physically disconnecting it from the port.  Some will, some won't.  But there
+is probably a way to make all of them owrk that way.  I don't know if the 100K
+pull resistor would work... that seems sort of high for a pull.  I'm used to
+seeing 1K or 1.5K.  A DTR modification would be the most reliable.
+
+
+Fm: bob scott 73125,1437
+To: Tony Anderson 76703,4062
+
+Yeah, I was just sort of whistling in thedark, there.  Actually most modems
+have a switch that will cause them to ignore DTR so it's really no big deal.
+Hmm....$62.50 per hole.  Might take a while to amortize the cost of a DB-25
+punch unless I start banging these things out for profit!  Still haven't turned
+one up, and the thought of showering my self with steel filings is still not
+too attractive.  I can usually talk myself into one such undertaking, but it's
+the second go round that I hate; panel opening one is _always_ better looking!
+Bob
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+If you really want one of those DB-25 chassis punches, I can look up the
+address of the suppler and let you know.  Maybe you could "rent it out".
+(grin)
+
+
+Fm: bob scott 73125,1437
+To: Tony Anderson 76703,4062
+
+Uh, yeah. "Well I tried this damn thing out, and it just don't work!" There's a
+big installation goat-rope going onat my work site, so I'm hoping that one of
+the contractors has one languishing at the bottom of a bag.  Onegood thing
+about procrastination is I had yet nother idea. Power outages seem to be pretty
+popular here in PR.  I'm thinking of making a mini-ups using 5C or D cells and
+a diode and building that into the box as well.  I started to get into ni-cads
+or lead-acid and recharger circuits but then I realized that the 4 alkaline D's
+I bought 16 months ago to run my M100 when it was both away from AAC and near
+the travel bag haveyet to expire.  so every couple of years I'll go wild and
+buy four new batteries for the thing. Ought to keep the box from sliding about
+on the desk, as well.  Maybe even give me an excuse to boost the LED/$ ratio of
+this thing (a precious figure of merit for me). Bob
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+Well, that's a good idea.  The UPS part.  (grin)  One of the things we often
+overlook, but which has been proven a real winner over the years, is a common
+6-volt lantern battery.  They're documented to run over 300 hours, full-tilt;
+and might be ideal as a UPS supply, since they have a long shelf life.
+
+What changes did you make in the Power-DOS COPY program to make it handle the
+relay switching?  Where at?  What line numbers?

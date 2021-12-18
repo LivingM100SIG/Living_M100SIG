@@ -1,0 +1,265 @@
+
+
+
+
+                         VTEMUL DOCUMENTATION AND NOTES
+
+      These  instructions  represent  a subset of the complete documentation
+    for '100/100', the commerically available version of VTEMUL.RLC.  If you
+    want  the  complete  documentation  (about  25  pages)   just   send   a
+    self-addressed stamped (39 cents) 8"x11" envelope to:
+
+            Terry Luke
+            6770 So. Dixie Dr.
+            West Jordan, UT  84084
+
+    Features  described  in this documentation but which are NOT implemented
+    in the free (CompuServe) version are as follows:
+
+    1.  Fast-Mode and the GRPH 'f' key.  By turning off echo to the  screen,
+        data  can  be  received  up  to  5  times  faster and then viewed at
+        leisure.
+
+    2.  Print screen function which allows printing out the 80 column by  24
+        line screen.
+
+    3.  The  utility  programs  for  allowing  use  of VTEMUL (100/100) with
+        DIRACC and SXM.100
+
+    4.  The setup utility used to change  default  parameters  such  as  tab
+        stops and autowrap/no wrap mode.
+
+    As  you  read the rest of the documentation, remember the above features
+    are not implemented in this version.  For information on  100/100,  see
+    the product description in DL13 called 100100.PRD.
+
+    HOW TO RUN VTEMUL.RLC
+
+    Using  the  CompuServe  program  RLCLDR,  the  file  VTEMUL.RLC  can  be
+    converted to a machine language program.  Once VTEMUL.RLC is loaded into
+    your Model 100 type:
+
+    CLEAR256,59589
+
+    Assuming you have also loaded RLCLDR.BA, you put the  cursor  over  that
+    entry and press enter to run that program.
+
+    Choose option 'L' from the RLCLDR program to load from a .DO file.  When
+    asked  for  a  starting address, type 59589, unless you want it lower in
+    memory.  If you want it below another program, type in the address  3370
+    bytes  below the starting address of the program you want it below.  The
+    rest is done by RLCLDR and you will be a beep when it is done.  You  now
+    have  VTEMUL.CO  which  you  should  promptly save to disk or tape.  For
+    example, if you haven't relocated it, to save to tape type:
+
+      CSAVEM"VTEMUL",59589,62959,59589
+
+    After saving to tape or disk, if you want to  conserve  memory  you  can
+    save the program in upper memory only by typing:
+
+    LOADM"VTEMUL"
+
+    SAVEM"VTEMUL",59589,59589,59589
+
+
+
+
+
+
+
+
+    Now,  if  you  run  any other M/L programs in the same memory space, you
+    will have to reload the program from tape or disk, but  you  have  saved
+    3370 bytes.
+
+    RUNNING THE PROGRAM
+
+    At  the menu put the cursor over VTEMUL.CO and press enter.  You are now
+    in TELCOM, but with a title line at the top to remind you that VTEMUL is
+    loaded and F6 and F7 are defined.   However,  you  are  really  only  in
+    regular  TELCOM.   From  here you can use autodial as you normally do or
+    manually dial and press F4 to enter terminal mode.   You  are  still  in
+    TELCOM.   After pressing F4 to enter terminal mode, you must press F6 to
+    enter VT100 mode.  Now you are in  VT100  mode.   The  label  line  will
+    disappear  and  the  cursor  will  go to the top left corner.  Now after
+    reaching column 40, characters will scroll horizontally.  Function  keys
+    1-7  will  move  you  around  the various parts of the 80 x 24 screen as
+    described in the  next  section.   If  there  is  no  natural  break  in
+    transmission  from the host, you should type CTRL S before moving around
+    the screen, and CTRL Q to resume transmission after pressing  the  PASTE
+    key.   See the next section for slightly more complete details on how to
+    use the function keys to move around  the  screen.   Pressing  F8  exits
+    VT100  mode  back  to  TELCOM.   F8  again  will exit TELCOM, or F6 will
+    reenter VT100 mode.
+
+    Before getting online, you may want to experiment to make sure VTEMUL is
+    working.  To do this put the cursor over VTEMUL.CO and run it.  You  are
+    in  TELCOM.   Press  F3  to  get the STAT command.  Type in 37I1E or any
+    other valid parameter that doesn't begin with 'M'.  Now you can press F4
+    and get into terminal mode, then F6 and enter VT100 mode  without  being
+    connected to anything.
+
+    At  this point, the screen should have cleared the TELCOM label line and
+    the cursor be in the top left corner.  Now press the LABEL key.  In  the
+    lower  left  corner you should now see 'r1 c1'.  Press F1 and the cursor
+    should go  to  the  lower  right  corner  and  the  column  row  display
+    disappear.   You  are  in  view  mode,  viewing 1/6 of the VT100 screen.
+    Press PASTE and the cursor should return to the top.  Press CODE x twice
+    and it should beep once.  Now press F8 and the TELCOM label line  should
+    appear  as  you exit VT100 mode back to TELCOM.  If all that worked, you
+    are ready to go.
+
+    VTEMUL requires 2000 free bytes to run.  It will automatically use  2000
+    bytes  wherever they happen to exist.  If there are less than 2000 bytes
+    free, when you press F6 to enter VT100 mode, the TELCOM label line  will
+    flicker  and  nothing  else  will happen.  You will not be able to enter
+    VT100 mode.
+
+    Since this version doesn't support DIRACC compatibility, the F7  key  in
+    TELCOM  lists  files  and free memory rather the the '<T>ext or <B>asic'
+    prompt mentioned in the next section.
+
+    If after reading the next section you still have questions,  send  me  a
+    SASE as described above for the complete documentation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+                              100/100 DOCUMENTATION
+
+
+                                    SECTION I
+
+    OVERVIEW
+
+    100/100  is  a  machine language program for the Model 100 that emulates
+    the functions of the Digital VT100 terminal.  It allows the Model 100 to
+    be used to access VAX and other computers and  use  programs  which  are
+    screen  oriented  and  require VT100 compatibility.  It decodes the ANSI
+    escape  sequences  and  performs  the  proper  action.    Text   scrolls
+    horizontally to simulate an 80 column screen as the data is received and
+    the  program saves 80 columns by 24 lines of data to be displayed in six
+    windows by using the Model 100 function keys.
+
+    Although not all of the VT100 functions can be  emulated  on  the  Model
+    100, many of the features have been, including:
+
+    Tabs:  up  to  ten horizontal tabs can be set.  Tabs set after the tenth
+       are ignored. Tabs can also be cleared under program control  or  with
+       the Setup program that is included.
+
+    Cursor  keys:   the Model 100 cursor keys emulate the VT100 cursor keys,
+       both in cursor and application mode.
+
+    Keypad:  the VT100 keypad is  also  emulated  using  the  graph  key  in
+       conjunction  with  the  keys labeled for use with the "NUM" key. (eg:
+       GRAPH m = 0 on the VT100 keypad).
+
+    Scrolling Regions:  100/100  supports  software  selection  of  top  and
+       bottom  margins  to  create scrolling regions smaller than the entire
+       screen.
+
+    Reverse Scrolling:  The screen will scroll down  when  a  reverse  index
+       command is received and the cursor is at the top margin.
+
+    Direct  Cursor  addressing:   The  program  will  move the cursor to the
+       proper location (HVP and CUP commands, etc.)
+
+    What are you?:  100/100 will respond properly  when  asked  to  identify
+       itself,  allowing  use of programs which normally abort automatically
+       if your are not using a VT100.
+
+    Erasing:  supports all the VT100 erase functions, cursor to end of line,
+       end of screen, clear screen, etc.
+
+    Editing:  supports both replace and insert character  mode  as  well  as
+       insert line and delete line commands.
+
+    Autowrap:  Characters  received  will  wrap  automatically  at the right
+       margin if the feature is turned on, otherwise it defaults to no  wrap
+       at column 80.
+
+    Line  Drawing  Character  Set:   100/100  will  emulate the line drawing
+
+
+                                    page -3-
+
+
+
+
+
+
+
+
+    100/100 Documentation
+
+
+       characters of the VT100 character set only.  Other special characters
+       are not translated.
+
+    Newline Mode: both new line and no new line on linefeed  are  supported,
+       either under program control or using the Setup Utility included.
+
+    Device status or cursor positioning reports.
+
+    Save and Restore Cursor
+
+    FEATURES NOT IMPLEMENTED
+
+    132 column mode
+    Origin relative mode 
+    VT52 Mode
+    Smooth scrolling
+    Local Echo
+    Alternate character sets 
+    Attributes such as reverse video, bold or blinking.  (These commands are
+       trapped however, to prevent garbage on the screen)
+    Double-width or double-height characters
+
+    TELCOM COMPATIBILITY
+
+    100/100  works in conjunction with TELCOM, so Autodial, Echo to printer,
+    Uploading and Downloading are all available.  It works equally well with
+    either the built-in modem or the RS232 port.  During an online  session,
+    a  user  can  switch back and forth between the VT100 and TELCOM at will
+    using the F6 key.  This is particularly useful, not only to be  able  to
+    use  UPLOAD and DOWNLOAD in TELCOM, but because text files are sometimes
+    easier to read in 40 column wrap mode than 80 column  horizontal  scroll
+    mode.  
+
+    In  addition,  100/100  is  completely  compatible  with  the DIRACC.100
+    program on CompuServe.  The F7 key while in TELCOM is defined by 100/100
+    to bring up the prompt "<T>ext or <B>asic".  The selected reponse  jumps
+    the  user  to the proper portion of the DIRACC program.  After editing a
+    file or executing BASIC commands, DIRACC then returns you back to TELCOM
+    while maintaining the connection.
+
+    XMODEM AND 100/100
+
+    To use this program with SXM.BA,  a  CompuServe  program  allowing  file
+    transfer with Xmodem protocol, see appendix C.
+
+
+    MODEL 100 FUNCTION KEYS WITHIN TELCOM
+
+    The  function  keys  remain the same in  TELCOM with the exception of F6
+    and F7 being defined:
+
+    F6 will enter VT100 mode
+
+
+                                    page -4-
+
+
+
+
+

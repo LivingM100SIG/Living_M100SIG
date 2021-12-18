@@ -1,0 +1,128 @@
+Compiled by Don Corbitt [75655,1516] of Holmes Engineering.
+
+This was done for my personal edification.  I make no guarantees of 
+infallibility.  Have fun, I did.  All numbers in Hexadecimal.
+
+80-8Fh	In				80-8Fh Out
+Optional I/O Controller			Optional I/O Controller
+80h In - Data				80h Out - Data
+81h					81h Out - Command
+82h In - Status
+83h					83h Out - Command?
+
+90-9Fh	In				90-9F Out
+Optional Answering Telephone		Optional Answering Telephone
+
+A0-AFh	In				A0-AF Out
+					Bit 0 - Telephone on/off line control
+						0=off line
+						1=on line
+					Bit 1 - Modem enable signal
+						0=disable modem
+						1=enable modem
+
+B0-BFh	In 				B0-BFh Out
+81C55 chip select			81C55 chip select
+
+B8 (B0)	 In - Status register		B8 (B0) Out - Command register
+Bit 0 - Interrupt Request A		Bit 0 - Port A Input/Output
+						0=input
+						1=output
+Bit 1 - Buffer full A (input)		Bit 1 - Port B Input/Output
+	Buffer empty A (output)			0=input
+						1=output
+Bit 2 - Interrupt Enabled A		Bits 3,2 - Defines PC0-5
+Bit 3 - Interrupt Request B			00=ALT 1 (all input)
+						01=ALT 2 (all output)
+						10=ALT 3 (0-2 control A,
+							  3-5 are output)
+						11=ALT 4 (0-2 control A,
+							  3-5 control B)
+Bit 4 - Buffer full B (input)		Bit 4 - Enable Interrupt Port A
+	Buffer empty B (output)			1=enable
+						0=disable
+Bit 5 - Interrupt Enabled B		Bit 5 - Enable Interrupt Port B
+						0=disable
+						1=enable
+Bit 6 - Timer Interrupt			Bits 7,6 Timer Command
+	Latched high when terminal		00=NOP
+	count is reached			01=Stop/NOP
+						10=Stop after terminal count
+						11=Start
+
+B9 (B1)	Port A In - Not used		B9 (B1) Port A Out- Keyboard strobe,
+						LCD chip select, printer data,
+						A0-A4 clock interface
+					Bit 0=C0, 1=C1, 2=C2, 3=CLK, 4=DATA
+
+BA (B2)	Port B In - Not used		BA (B2) Port B Out - Controls
+					Bits 0,1 - Keyboard strobe, LCD
+						controller chip select
+					Bit 2 - Enable sound from clock
+						0=enable
+						1=disable
+					Bit 3 - RS232 circuit mux
+						0=RS232
+						1=Modem
+					Bit 4 - Power off
+						0=power cont
+						1=power off
+					Bit 5 - click buzzer
+					Bit 6 - DTR - Pin 20 RS232
+					Bit 7 - RTS - Pin 4 RS232
+						If PB3=1 then controls relay
+						for pulse dialing of modem
+
+BB (B3)	Port C In			BB (B3) Out - Not used
+Bit 0 - Clock data
+Bit 1 - Printer ready 1
+	0=printer not ready
+	1=printer ready
+Bit 2 - Printer ready 2
+	0=printer ready
+	1=printer not ready
+Bit 3 - BCR data
+Bit 4 - CTS or CL/AS
+	If PB3=0 then CTS
+	else	0=originate mode
+		1=answer mode
+Bit 5 - DSR or CP/TL
+	If PB3=0 then DSR
+	else	0=direct connect
+		1=accoustic cups
+
+BC (B4)	In - Not used			BC (B4) Out - Lower 8 bits of timer
+
+BD (B5)	In - Not used			BD (B5) Out - Bit 0-5 Upper 6 bits
+						of timer,
+					Bit 7,6 - Timer mode
+						00=single square wave
+						01=continuous square wave
+						10=single pulse on TC
+						11=continuous pulses on TC
+
+C0-CFh	In - UART data in		C0-CFh Out - UART data out
+
+D0-DFh	In - UART status		D0-DFh Out - UART command
+Bit 0 - Carrier Detect			Bit 0 - SBS
+Bit 1 - Overrun Error			Bit 1 - EPE
+Bit 2 - Framing Error			Bit 2 - PI
+Bit 3 - Parity Error			Bit 3 - CLS 1
+Bit 4 - Trans Buff Empty		Bit 4 - CLS 2
+Bit 5 - Ringing Pulse pin 8
+Bit 7 - Low power sense
+
+E0-EFh	In - Keyboard data in		E0-EFh Out - Various strobes
+					Bit 0 - ROM select
+						0=standard ROM
+						1=option ROM
+					Bit 1 - Printer strobe
+					Bit 2 - Clock strobe
+					Bit 3 - Cassette motor
+						0=motor off (relay open)
+						1=motor on (relay closed)
+F0-FFh In - LCD control and data 	F0-FFh Out - LCD control and data
+
+FEh In - LCD status			FEh Out - LCD command
+	Bit 7 - busy
+FFh In - LCD data in			FFh Out - LCD data out

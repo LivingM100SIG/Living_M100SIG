@@ -1,0 +1,453 @@
+The following is approximately 8 pages of detailed product information for 
+both the new TS-DOS version 2.0 and the TS-RANDOM advanced disk software.
+
+For pricing information please contact:
+
+Traveling Software
+North Creek Corporate Center
+19310 North Creek Parkway
+Bothell, Wa. 98011
+(206) 483-8088
+800 343-8080
+Compuserve: 76466,15
+
+
+
+
+                         TS-DOS 2.0 ENHANCEMENTS
+                       ---------------------------
+
+
+TAG feature -
+
+	This feature allows you to LOAD, SAVE or KILL more than
+	one file at a time while in the DISK MENU or RAM MENU of TS-DOS.
+	You can TAG each file name that is to be included in the 
+	operation by placing the bar cursor over the file name and pressing
+	the CTRL T key combination.  A '>' will appear to the left of each
+	file that has been tagged.  After TAGGING the desired files you 
+	will press one of the LOAD, SAVE or KILL function keys. 
+	All TAGGED files will then have that operation performed on them.
+
+	To UN-TAG a single file place the bar cursor over the file name
+	and press the CTRL T key combination again.  The '>' marker will 
+	disappear from beside the file name.
+
+	To do a GLOBAL TAG on all files in displayed on the screen press
+	the CTRL G combination and all files will show a '>' marker by the
+	file names. 
+
+	To UN-TAG all TAGGED files at once press the CTRL U combination and
+	all files will have the tag marker '>' removed.
+
+
+
+                               TS-RANDOM
+                              -----------
+
+	TS-RANDOM is a new PORTABLE DISK DRIVE utility that gives true
+	RANDOM DISK ACCESS enhancements to the file commands available in
+	BASIC.
+
+	Three other utilities are provided with the TS-RANDOM program
+	and will be discussed later.
+
+	- DISK COPY will create image copies of any diskette.
+	- DISK RECOVERY will help you to recover "DO" files that
+	  have been deleted from a diskette.
+	- FORMAT will allow you to create a blank disk for random access
+	  in any of four record sizes.
+
+                    RANDOM BASIC ENHANCEMENTS
+                  -----------------------------
+
+DISK FORMATTING -
+
+	This feature is available as a CALL statement in BASIC and as a menu
+	option from within TS-RANDOM itself wich will be discussed later.
+
+		CALL MAXRAM+10,fc
+			
+	Using this CALL while in BASIC will cause the Portable disk drive
+	to FORMAT a DISK to one of 4 different RECORD sizes.
+
+		fc		sector size
+		0		  64 bytes
+		1		  80	
+		2		 128
+		3		 256
+
+	For example:      10 CALL MAXRAM+10,2
+
+	will cause the disk drive to format a disk for 128 bytes per
+	LOGICAL SECTOR.
+
+	You must determine if TS-DOS is ON before attempting to format a
+	new disk
+
+	M100 example:
+		10 IF PEEK(MAXRAM)<>73 THEN PRINT "TS-DOS not ON!":MENU
+		20 CALL MAXRAM+10,2
+
+	When a disk is formatted the storage space available on the disk is
+	organized and mapped so that it will know were to read or write
+	a specific RECORD in the future. The DISK is organized by 
+	TRACKS, HARD SECTORS and LOGICAL SECTORS.
+
+	A RECORD is the same thing as a LOGICAL SECTOR.
+
+	A DISK will always be formatted with a total of 40 TRACKS.
+
+	Each TRACK will always have 2 HARD SECTORS for a total of 80 HARD
+	SECTORS per DISK.
+
+	The number of RECORDS will vary depending on the size with
+	which the disk is formatted:
+
+        fc     record size  # of records/disk
+       ----    -----------  -----------------
+        0          64             1600
+        1          80             1280
+        2         128              800
+        3         256              400 
+ 
+RANDOM RECORD DISK ACCESS
+
+	TS-RANDOM provides several enhancements to the following BASIC
+	commands:
+
+     OPEN "0:" FOR OUTPUT AS #
+                   INPUT
+
+	Use the OPEN command to  set the disk drive up for random access.
+	You may have as many disk files open as you want.  If you want to
+	read and write to the disk at the same time then you must open one
+	file for OUTPUT and another file for INPUT.
+
+	You do not need to include a file name after the 0: it will be
+	ignored.
+
+     PRINT #f,REC=xxx,.....
+
+	The PRINT command is used to write a record to the diskette.
+	replace the xxxx with a record number, numeric variable or formula.
+		ex.
+			10 OPEN "0:" FOR OUTPUT AS 1
+			20 R%=120
+			30 A$="Hello WORLD!!!!!"
+			40 PRINT #1,REC=R%,A$
+
+		Line 10 opens file 1 for output to the disk drive
+		Line 20 sets the record number to 120
+		Line 30 loads the variable A$ with the data to be
+		written to the diskette
+		Line 40 writes the data in A$ to the record number stored
+		in R%.
+
+     INPUT #f,REC=xxx,........
+
+	Use the INPUT command to read a record from the disk drive.
+	After the file number you give the RECORD number by replacing the xxx
+	with a number, variable or equation:
+		ex.
+			10 OPEN "0:" FOR INPUT AS 1
+			20 R%=38
+			30 INPUT #1,REC=R%,A$,B$,C$
+ 	
+	line 10 opens the disk for input
+	line 20 sets the record number to 38
+	line 30 finds record 38 and loads the first 3 values into the 
+	variables A$, B$ and C$
+
+	If you want to read individual data fields into seperate variables
+	as in the example above, you must be sure to include a comma (,)
+	between each field when it is writen to the diskette.
+		ex.
+			10 OPEN "0:" FOR OUTPUT AS 1
+			20 R%=38
+			30 A$="Hello":B$="WORLD!!!"
+			40 PRINT #1,REC=R%,A$;",";B$
+
+	In line 40  a comma (,) was inserted between the words "Hello" and
+	"WORLD!!!" when  written to record number 38.
+
+                        TS-RANDOM MENU OPTIONS
+                      --------------------------
+
+The following options are available from the main menu of the TS-RANDOM
+program.
+
+		DISK COPY
+		DISK FORMAT
+		RANDOM RECOVERY
+		DISK FILE RECOVERY
+		turn TS-RANDOM ON/OFF
+
+
+
+DISK COPY.
+
+	A DISK COPY utility is included with TS-RANDOM that will create
+	copies of a diskette formatted to any sector size.
+
+	Select the DISK COPY option from the menu of TS-RANDOM and press 
+	<ENTER>
+
+	You will then get the prompt
+
+		Insert SOURCE disk press any key
+
+	Make sure your source disk has the write protect notch OPEN, this
+	will prevent loosing valuable files on your SOURCE disk should you
+	get your SOURCE and TARGET diskettes mixed up!
+
+	After inserting your SOURCE disk, press any key and you will get the
+	following
+
+		Is this a TS-DOS disk? (Y/N)
+
+	Answer 'Y' to this question if the disk you want to copy was created 
+	using TS-DOS or FLOPPY.CO.  The amount of time spent making a backup 
+	copy may be significantly less if it is a TS-DOS disk.
+
+	You should then get the following message.
+
+
+		### Copy Cycles are required
+		Do you want to continue (Y/N)
+	
+	Here is where you must decide if you want to continue with the
+	process.  You will change diskettes 2 times for each copy cycle.
+	You may want to be sure that you have as much free RAM as possible
+	when you start the disk copy process.
+
+	If you wish to continue with the DISK COPY process then answer by
+	pressing the "Y" key, any other will return you to the main menu.
+
+	If you answer "Y" you will get the following prompt
+
+		Insert BLANK disk Press any key
+
+	Make sure the disk you use has nothing of value stored on it.  
+	The program will FORMAT the disk and you will loose any files you 
+	may have stored on it.  After inserting a diskette, press any key 
+	and you will get the message
+
+		Formatting...
+
+	The formatting will take about 1 minute 30 seconds.
+	You will then be prompted to start the copy process.
+
+		Cycle #1
+		Insert SOURCE disk Press any key   
+
+	Remove the formatted TARGET disk and insert the SOURCE disk and 
+	press any key.  When the program is done reading the SOURCE disk
+	you will be prompted
+
+		Insert TARGET disk Press any key
+
+	Remove the SOURCE disk and insert your TARGET disk and then press
+	any key.  The program will repeat the read and write process once
+	for each cycle. When the disk copy is complete you will see
+
+		DONE. Press any key
+	
+	Press any key and you will be taken back to the main system menu and
+	your disk will have been copied.
+
+DISK FORMAT UTILITY.
+
+	You can format a blank diskette to any of 4 different record sizes
+	by choosing the DISK FORMAT option from the main menu of the
+	TS-RANDOM program and press the <ENTER> key.
+
+	You will then see this menu
+		
+		FORMAT A DISK
+
+		  0 =  64 byte sectors
+		  1 =  80
+		  2 = 128
+		  3 = 256
+
+		Insert disk and Enter format code
+
+	Place the blank diskette into the portable disk	drive and press
+	the number corresponding to the size you want each record to be
+	formatted to.  You will then see this message.
+
+		Formatting....
+
+	Your disk is now being formatted, the process will take about
+	1 minute and 30 seconds.  When finished you will see the message
+
+		Done. Press any key.  
+
+	Press any key and you will be returned to the main menu.
+
+RANDOM RECOVERY UTILITY.
+
+	A RANDOM RECOVERY utility is included with TS-RANDOM that
+	will allow you to randomly read sectors on a diskette and display
+	them on the screen.  You can dump the data directly to a RAM file.
+
+	Select the RANDOM RECOVERY option from the TS-RANDOM main menu.
+	This will start the recovery program and display the first sector
+	on the disk.  The following screen will appear
+		___________________________________________
+		|                                         |
+		|                                         |
+		|                                         |
+		|                                         |
+		|                                         |
+		|                                         |
+		|                                         |
+		|Open  Goto Asci           H=1  L=1  End  |
+		-------------------------------------------
+		  [1]  [2]  [3]  [4]  [5]  [6]  [7]  [8]       
+
+	The first 7 lines on the screen are used for displaying the sectors
+	read from the disk.  The bottom line gives you prompts and status
+	information about the disk in the drive.  The prompts correspond to
+	the function keys over which they appear.
+
+		F1 -	Used to OPEN a file for storing data that appears
+			on the screen.  You will get the prompt
+
+				File :?	
+			enter the name of a file to be used to store the 
+			data read from the disk.Once a file has been OPENED
+			the F1 prompt will change to CLOSE.  When you are
+			finished retrieving  the data you need then press
+			the F1 key to close the capture file.
+
+		F2 -    This key is used to GOTO a particular HARD SECTOR
+		        LOGICAL SECTOR combination.	
+
+			by pressing the F2 key.  You will get this prompt
+
+				Hard Sector :?
+			Simply enter the number of the HARD SECTOR.
+		        You will then get this prompt
+
+				Logical Sector :?
+			Enter the number of the LOGICAL SECTOR.  The HARD -
+			LOGICAL sector combination will be read and displayed
+	 		on the screen.
+
+		F3 -	This key will change the way data is shown on the
+			screen.  When ASCII is shown on the status line the
+			data will be displayed as it appears on the diskette.
+			When HEX appears on the status line the data will be
+			displayed in hexadecimal format.
+
+		F8 -	Press this key to END the program and return to the
+			main menu.
+
+	   <ENTER> -    Used to read the next sequential sector on the
+			disk.
+
+
+DISK FILE RECOVERY UTILITY.
+
+	DISK FILE RECOVERY is a utility that will allow you to recover files
+	from a TS-DOS formatted disk that has had the directory destroyed or
+	if you have accidently deleted a file on the disk.
+
+	Select the DISK FILE RECOVERY option from the TS-RANDOM main menu.
+	This will start the recovery program and display the beginning of 
+	the first file on the disk.  The following screen will appear
+		___________________________________________
+		|                                         |
+		|                                         |
+		|                                         |
+		|                                         |
+		|                                         |
+		|                                         |
+		|                                         |
+		| DO  Load  Next      FILE #xx  XXXX  End |
+		-------------------------------------------
+		  [1]  [2]  [3]  [4]  [5]  [6]  [7]  [8]       
+
+	The first 7 lines on the screen are used for displaying the file
+	read from the disk.  Function key 1 is a toggle that changes
+	the way you will view the file, it will show up as DO, BA or CO
+	depending on how you want to view the file.  If the file is a .DO
+	or a .BA file you will be able to see the first few lines of it. If
+	the file is a .CO file you will see the START address, LENGTH and
+	EXECUTION address displayed on the screen.  Once you have reached the
+	beginning of a file press the F1 key to change the way the file is
+	displayed on the screen.  This will help you to determine what type of 
+	file it is.  
+
+	The bottom line gives you prompts and status information about the
+	file you are looking at.  The prompts correspond to the function
+	keys over which they appear.
+
+		F1 -	Used to change the way the file is displayed on the
+                        screen. This will help in determining the type of file
+                        for loading.
+
+		F2 -    This key is used to LOAD the file into RAM from the
+			disk. by pressing the F2 key.  You will get this prompt
+
+				FILE NAME:
+				Simply enter the name of the file to be stored
+				in RAM.
+
+		F3 -	This key will select the next file in sequence on the
+			disk The file number is displayed above the F6 function
+			key and	the size of the file is displayed above the F7
+			function key.
+
+		F8 -	Press this key to END the program and return to the
+			main menu.
+
+
+
+                       SAMPLE DISK ACCESS PROGRAM
+                      ----------------------------
+
+	A sample BASIC random access program has been included with your 
+	TS-RANDOM program disk.  This program gives a good example of how
+	to use the new random access features to create a disk based file
+	management system.  The sample program uses a technique known as 
+	hashing  to calculate unique record numbers for each record written
+	to the disk.  I will explain the technique of hashing and then give
+	a general description of the sample program.
+
+	- HASHING.
+
+	Hashing is a technique used to store and retrieve records in a file
+	so as to minimize the time and effort spent reading the disk
+	searching for the correct record.  When storing records using a 
+	hashing system a record number is calculated based on some field or
+	value in the record.  The record number must fall within the limits
+	of the disk size.  If not it must be converted to one that does.  You
+	may have duplicates in the file but at the expense of more disk
+	accesses required to find the duplicate record.
+
+	When a record is to be added to a file a record number is generated
+	based on the value of some key.  If that record number has already 
+	been used then you increment the record number and check that one.
+	This process continues until a blank record is found on the diskette.
+	If the record number exceeds the maximum allowed then it is set to
+	the minimum number allowed and searching begins again from there.  If
+	a blank record cannot be found then the diskette is full.
+
+	As you can probably guess the closer the disk gets to being full, the
+	more searching will be required to find a blank record to add.  It is
+	a good idea to keep count of the number of records stored on the disk
+	and leave 20-30% of the disk space free in order to minimize disk 
+	access time.	
+
+	There are other techniques that can be used for the same task such as
+	an indexed key or link lists but you will find that hashing requires
+	very little program code to implement. It also works well with fixed
+	file sizes and files that do not get updated often.
+
+	When a diskette is formatted it is set up to hold a maximum number of
+	records depending on the size of each record.  So a diskette will 
+	have a fixed number of records available to write to.
+

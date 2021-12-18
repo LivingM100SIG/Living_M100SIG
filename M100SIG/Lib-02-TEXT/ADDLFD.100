@@ -1,0 +1,32 @@
+10 '*** (c) 1983 by F.B. David, Dillon, SC   - 830424 ***
+20 'Modified 8/27/83 by Guerri F. Stevens, for use on TRS 80 Model 100
+30 '*** NOT FOR RESALE - FOR USE IN PUBLIC DOMAIN ONLY !!!
+40 '*** Program - ADDLF.BAS
+50 'This program adds Line Feeds for those Basic programs written on various
+60 'text editors, etc. which put a Carriage return at the end of each line
+70 'but no Line Feed thusly making the program unreadable by the TYPE command
+80 'on CP/M and IBM-PC machines.  Use MBASIC on CP/M or BASIC/BASICA on the
+90 ' to run this program.  The file to be corrected must be an ASCII file.
+100 'Use ESC key to end processing at any point
+110 MAXFILES=2 : CLEAR 1000
+120 CLS
+130 FALSE%=0:TRUE%=NOT FALSE%:FIVE%=5
+140 PRINT "SOURCE PROGRAM NAME:";:LINEINPUT P1$
+150 IF LEN(P1$)>6 THEN PRINT "ERROR":BEEP:GOTO 140
+160 CT=0
+170 PRINT "DESTINATION PROGRAM NAME:"; : LINE INPUT P2$
+180 IF LEN(P2$)>6 THEN P2$=LEFT$(P2$,6)
+190 OPEN P1$ FOR INPUT AS 1
+200 OPEN P2$ FOR OUTPUT AS 2
+210 IF NOT EOF(1) THEN GOSUB 280 : GOTO 210
+220 CLOSE
+230 PRINT:PRINT
+240 PRINT "DONE *******":BEEP
+250 PRINT "ANOTHER (Y/N) ";:LINE INPUT B$
+260 IF B$ = "Y" THEN 140
+270 END
+280 LINE INPUT #1, A$
+290 CT=CT+1:IF CT MOD FIVE%=FALSE% THEN PRINT". ";
+300 Z$=INKEY$:IF Z$=CHR$(27) THEN END
+310 PRINT #2, A$
+320 RETURN

@@ -1,0 +1,257 @@
+BIBPWR: A Disk based file management system for the M100 and TDD using POWR-DOS
+
+===============================================================================
+
+-
+-
+     BIBPWR is an automatic, easy to use file reference system which will:
+      > store, update and cross-reference the names of your Disk AND Tape files
+with their location, sizes and comments
+      > keep track of update dates
+      > find individual file/subject references anywhere in your library file
+      > print disk and cassette labels PLUS two different styles of 
+directories; one alphabetically cross referenced, and one alphabetically source
+by source
+-
+     The number of files you can catalog is limited only by available RAM.
+-
+     PLEASE read all these instructions completely before running BIBPWR. 
+They're NOT complicated but they ARE necessary.
+-
+     BIBPWR.BA is written for use with POWR-DOS by Acroatix (now available FREE
+in DL9) but it MAY work with other DOS accessible with "0:" commands. It uses 
+LFILESV, LFILES, LFILESTO and LFILESMENU  commands. If your DOS does NOT 
+support these commands, continue to use BIBLIO.BA which contains its own disk 
+access routines and DON'T RUN BIBPWR till we've discussed it. 
+     If you have previously used BIBLIO.BA to catalog your disk and cassette 
+files you will find that BIBPWR.BA, being Disk based, cuts in HALF the RAM 
+required for operation. This is because all of the sorting routines run without
+needing a temporary .DO file to store "sort" info in addition to the primary 
+RAM copy of BIBFYL.DO. The BIBFYL.DO data files created with BIBLIO.BA and 
+BIBPWR.BA are IDENTICAL and therefore are FULLY COMPATIBLE with either version 
+and BIBPRT.BA
+-
+-
+                                INITIAL SET-UP
+-
+     Download BIBPWR.BA, BIBLDR.BA, BIBPRT.BA and BIBPWR.DOC (this file). Edit 
+out the garbage and checksum them as .DO files. Print out a copy of BIBPWR.DOC 
+for future use. Save all the program files as .BA files. RUN BIBLDR.BA and it 
+will create three files:
+    - BIBSRT.CO is a modified version of the Perry/Wheeler SORTHI.CO which runs
+in the Alt/LCD buffer but will be run from the DISK where BIBPWR and BIBFYL are
+stored.
+    - BIBFYL.DO will be the data file. (Line 1 MUST start with # and line 2 
+with *.)
+    - END<!>.DO will be used in the cassette update routine. (If you won't be 
+cataloging cassette files you can kill END<!> and move to the next paragraph.) 
+The dummy file named END<!>.DO MUST be saved as the LAST file on each cassette;
+either at the end of each side if you'll index each side separately or at the 
+end of side 2 if you prefer to treat the whole tape as one source. (also a 
+handy way to find the end of current programs on a side).
+-
+     BIBPRT.BA will create "fancy" directories and LABELS for your tapes and 
+disks. Although BIBPWR.BA has a built-in X-Ref print function for creating an 
+all-inclusive and very useful printed cross reference, BIBPRT is comprehensive 
+and prints a variety of formated file documents in 80/96/132 column format. 
+Follow the instructions in the first few lines of BIBPRT.
+-
+-
+                                   OPERATION
+
+     Although BIBPWR CAN be run from DISK, you'll find it much less confusing 
+to load a .BA copy into RAM. It uses the same amount of RAM either way but is 
+much more easily selected from the main menu during various routines. Also, be 
+sure that POWR-DOS is installed! 
+     BIBPWR first displays it's main menu and you make your selection by 
+pressing the corresponding letter. (The menus all require UPPER CASE letters 
+for reasons discussed below.)
+     Before you use BIBPWR for the first time you should decide on a method of 
+identifying your disks and tapes. You can use any combination of letters and 
+numbers with a maximum of THREE. Try to enter your sources in the order you 
+want them in the directory. Disks and tapes will be combined in BIBFYL.DO but 
+will print out separately for the Directories. Although you can change the 
+order of source I.D.'s later, it requires some VERY careful editing so doing it
+right initially is worth the time. (Once the source is entered, subsequent 
+updates will retain the original sequence.)
+     BIBPWR starts the update process by sorting all commented files with the 
+same source I.D. into a small array. If BIBFYL.DO already containes an 
+annotated file record with the same name and source ID as each "new" version, 
+it will save your previous "old" comments and append them to the "new" file 
+record. Conversly, if you previously had an annotated file record that does NOT
+appear on the "new" source then that file and comment will be lost.
+     This means you only have to annotate a file record ONCE in BIBFYL.DO and, 
+as long as you keep that file name and source ID together, your comments will 
+be appended to subsequent updates of that file and source. (see "annotate" 
+below)
+     If you receive the message "Need RAM..." clear some or start a new BIBFYL;
+then re-run BIBPWR. If you fill up one BIBFYL just save it to your medium as 
+BIB-1 etc. and continue. (Remember: ALWAYS title the current data file as 
+BIBFYL and put # as the first character in line 1 and * as the first character 
+in line 2.) 	 
+     During the update process you will be asked to alternate between your 
+BIBFYL.DO "storage" disk and the disk or cassette to be updated. After each 
+update you will be prompted for "Update another..? Y/N". Pressing Y will prompt
+for the next source: N will run BIBSRT.CO from your "BIBFYL.DO" disk. and rerun
+BIBPWR.
+-
+-
+   <D>isk update: 
+     At BIBPWR's main menu press D and enter the 3 character disk I.D. You will
+then be prompted when to insert your disk. Press <ENTER> to continue. Any other
+key will abort the update and re-run BIBPWR. When BIBPWR is finished updating 
+your disk you will be prompted for "...another?" Press Y and continue or N 
+which will run BIBSRT.CO from your "BIBFYL.DO storage disk". BIBPWR will re-
+start.
+-
+-
+   <C>assette update:
+     Press <C> and enter the 3 character tape I.D. at the prompt; insert your 
+tape in the tape deck and press PLAY, then <ENTER>. The cassette process is 
+automatic but requires you to turn over the tape if you chose to put END<!> on 
+one side only. The tape process tries to LOAD each tape file, stops, reads the 
+screen, ID's the file and saves the name with correct extension. It then pauses
+to ask you for the tape counter reading which it will use in BIBFYL.DO in place
+of disk file sizes. Enter no more than 5 digits. (These will be shown with a 
+"#" added as the right character in directories and labels.) BIBPWR will repeat
+until it finds END<!>.
+     If you forgot END<!> just press SHIFT/BREAK or CTRL-C at a "counter" 
+prompt when the tape is finished and then type: LOAD"BIBPWR" press <ENTER>, and
+type RUN78 and press <ENTER>. This will re-run BIBPWR at the right line as if 
+you had remembered to put END<!> in place. (This may also leave the file 
+CSTEMP.DO in RAM which can be killed manually after you're finished.)
+      Tape files will have a "c" as the last ext. character in X-ref and 
+directories.
+     When BIBPWR is finished updating your tape you will be prompted for 
+"...another?" Press Y and continue or N which will run BIBSRT.CO from your 
+"BIBFYL.DO storage disk". BIBPWR will re-start itself.
+-
+-
+   <A>nnotate:
+     This will download BIBFYL to RAM and take you to BIBFYL via TEXT. Here you
+will see the BIBFYL record of all your cataloged files. The format is: FILE.EXT
+ID SIZE; use F1 to search if desired. (Remember you are in TEXT and that Ctrl -
+> will take you to the end of a line as well as all the other regular TEXT 
+commends.)
+     You can use 20 characters for your comments if you don't leave a space 
+after the file size. BIBPWR's "comment recovery" array is sized to let you use 
+ONLY 40 CHARACTERS PER FILE! You can change the CLEAR1600 (40x40) statement in 
+line 2 if you need more comment room but be VERY careful when adding over 20 
+characters. ONLY ONE Cr PER FILE RECORD! I suggest you use only UPPER CASE 
+letters for comments because of the simple search routine used later. When 
+you're finished "annotating" return to menu via F8 and run BIBPWR from the main
+menu. When it runs you will be prompted for approval to overwrite the DISK 
+record of BIBFYL with your newly edited RAM version. CHECK THE FILE SIZES FOR 
+OBVIOUS DISCREPANCIES. If there seems to be a problem, correct it before 
+overwriting your DISK record!
+-
+-
+   <S>earch:
+     Choose a string to search for in BIBFYL. The routine looks for an EXACT 
+match of your search string ANYWHERE in BIBFYL.DO: If you chose "PRINT" as the 
+search string then ALL file records containg that string would be ouput: 
+whether the match was in a file name or comment. You can search for source #'s,
+file types, names etc.. This is very handy and why I've tried to keep everthing
+UPPER CASE including comments! ("SAM" is not "sam".) <D>isplay will show 6 
+files, pausing when the screen is full; <P>rint will ask you if your paper is 
+ready then Lprint all matches. "Searching for >  <" will display the "search" 
+string at the top of the screen while BIBPWR works.
+-
+-
+   <X>-ref:
+     This will Lprint a semi-formatted standard pitch 80 column alphabetical 
+cross reference. All annotated file records will display a "<" next to the file
+description.
+-
+-
+   <R>ecords:
+     From this prompt you will find which ID's are currently filed and when 
+each source was last updated: "d" means a disk source and "c" means tape.
+-
+-
+   <F>iles:
+     This will send the command LFILES to your TDD and page through the files 
+on the loaded disk. DON'T SHIFT/BREAK out of the display or you'll have to re-
+run BIBPWR: not a major problem but, if you do, watch for any RAM/DISK BIBFYL 
+size discrepancy as discussed above. It is better just to "spcbr" to end of 
+files and let BIBPWR re-start itself.
+-
+-
+   <P>urge:
+     This routine lets you remove ALL file records of a chosen source, 
+INCLUDING annotated files. Use carefully!!  Press P at the Menu; enter 3 
+character source I.D. at the prompt or <ENTER> to return to previous menu.
+-
+-
+   <E>xit:
+     ALWAYS END A BIBPWR SESSION BY RETURNING TO THE M100 MENU USING <E>XIT. 
+BIBPWR will have saved BYBFYL.DO to your DISK where you should also keep 
+BIBSRT.CO, BIBPWR.BA, and BIBPRT.BA for your next session. (Keep BIBLDR.BA 
+someplace too, in case you lose BIBSRT.CO.) 
+     BIBPWR exits with an LFILESMENU command. This should restore all your 
+TELCOM stats to their original values.
+-
+-
+-
+   Points to remember:
+     The size of BIBFYL (file records + comments) is really only limited by 
+available RAM. 5000 bytes will store about 200 uncommented file records. BIBPWR
+needs it's own 4500 bytes plus 2324 bytes for array storage and string space 
+plus free RAM at least as large as BIBFYL.DO to run.
+     The info stored in BIBFYL.DO is not explosive but it IS rigidly formatted 
+for BIBPWR. Please be very careful when you directly add or delete BIBFYL info.
+You can change the sequence of sources in the first line if you PERFECTLY 
+follow the syntax used. (Any mistakes here will totally foul up BIBPWR's sort 
+and update routines.) You MUST also locate the appropriate date sets and change
+THEIR sequence in the second line; 1st source goes with first date etc.)
+     Only the most rudimentary error trapping was used to save space. Be sure 
+that the disk drive and cassette recorder are on, loaded, and ready to go. (Be 
+sure you've CSAVEd END<!> as the last prog on your tape: otherwise BIBPWR will 
+try to run the tape update forever!) 
+     BIBPWR makes and then kills PWRTMP.DO & CASTMP.DO for interim sorting 
+storage. Although BIBFYL.DO is the file BIBPWR uses when running, you can of 
+course keep library files in your storage medium under any name. Just be sure 
+that you name the catalog file to be processed as BIBFYL.DO on your disk when 
+you run BIBPWR. As BIBFYL.DO fills up, the final sort routine does take time to
+sort. Be patient; it's working as fast as it can. (60sec/7K BIBFYL).
+     You can leave any "input" prompt in BIBPWR by pressing <ENTER>. If you 
+should "Need RAM" during any routine DON'T PANIC! Go to the main menu and look 
+for BIBFYL.DO and PWRTMP.DO. If you find both then clear more RAM and inspect 
+PWRTMP. If it contains commented file entries then use TEXT to APPEND PWRTMP.DO
+to BIBFYL.DO and re-run BIBPWR. If you find only PWRTMP then load BIBFYL.DO 
+into RAM from your disk and compare file entries. If BIBFYL.DO contains the 
+SAME entries as PWRTMP.DO then it's safe to kill PWRTMP.DO. If, however, there 
+are NO entries in BIBFYL.DO for the files in PWRTMP.DO then APPEND PWRTMP.DO as
+above and re-run BIBPWR.
+     BIBPWR keeps the last two digits of the DATE$ at "88" in line 152. As the 
+years roll by simply change "88".
+     BIBPWR can't correctly record more than 6 .CO files in a row on a tape. 
+Please put a different kind of file at least every 6 .CO files on your tapes.
+     Although every effort has been made to make BIBPWR fool-proof, mistakes DO
+happen. It is only prudent to keep a back-up copy of BIBFYL.DO someplace; 
+particularly as you fill it up with comments. It is fairly simple to log all 
+your sources again but MUCH more time consuming to re-annotate 400 files!
+-
+-
+-------------------------------------------------------------------------------
+
+
+     I hope you enjoy BIBPWR. If I've missed something in the program or DOC 
+please let me know. Feel free to send me E-MAIL (73267,552) or phone me at: 800
+-228-3309. Many people worked hard to develop some of the routines I used. 
+Thank you all!
+-
+CREDITS:      Cassette idea: Stig Hammond
+              SORTHI/BIBSRT.CO: Rick Perry & Phil Wheeler
+              Misc. programming help: Jim Howard
+-
+-
+7/5/88
+Randy Hess 73267,552 
+Omaha, Ne 
+COMM: 402-556-4211
+WATS: 800-228-3309
+
+-
+-
+NOTE: BIBLDR.BA and BIBPRT.BA are in DL4 

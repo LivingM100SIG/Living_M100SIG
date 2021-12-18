@@ -1,0 +1,136 @@
+.rf
+.pa
+PRTMG3 03/04/86
+.csENTERING AND MANAGING DOCUMENTS
+.PP
+DOCUMENT, MERGE and MAIL LIST files can be produced with the built-in TEXT programs of the M100 and M200 or by other text entry programs that produce standard ASCII .DO files.  DOCUMENT and MERGE files consist of text plus DotComs and Psigs within the text which cause the program and printer to produce the desired end result.  Short text (up to perhaps 8,000 characters) should be kept together in one DOCUMENT file.  Extensive text should be partially stored in one DOCUMENT file and extended into as many MERGE files as needed.  PRTEXT will handle them as one long, continuous document with correct page numbers but the individual segments will easily fit into RAM memory for entry and editing.  Initializing DotComs (margins, header, page length, etc.) need only appear in the master DOCUMENT file.
+.pp
+Short name lists can also be kept in one MAIL LIST file while longer lists can be broken up into multiple files.  Only the first file in a series contains the ML HEADER information and each file contains the proper .ML DotCom to call up the next.
+
+.csDOT COMMANDS (DotComs)
+.pp
+DotComs are used in DOCUMENT and MERGE files to control print formatting (the .ML DotCom can also be used in MAIL LIST files).  A DotCom begins with a period (dot) in the first column of a new line followed by two characters (UPPER or lower case) followed (when needed) by numeric parameters (##) and switches (/##) to control the desired action.  Each DotCom in the text must start in column one with a dot and only one DotCom per line is allowed.  The DotCom line must be terminated with a return produced by the ENTER key.
+.pp
+A default value is listed for each DotCom and is the value PRTEXT chooses at start-up which will remain for the entire document unless a DotCom in the document changes it.
+.nf
+
+DotCom	     default	Name
+
+ .FL###		66	Form (paper) Length
+				(range 1 to 999)
+
+ .PL##		56	Page Length (lines to be printed)
+				(range 1 to FL)
+
+ .LM##		10	Left Margin (as with a typewriter)
+				(range 0 to RM-10)
+
+ .RM###		75	Right Margin (as with a typewriter)
+				(range LM+10 to 132)
+
+	The print line length is RM - LM.
+.pa
+DotCom	     default	Name
+
+ .LS#		 1	Line Spacing (1 single space, 2 double, etc.)
+
+ .PG###		 1	Reset Page Number.  Default start is Page 1.
+
+ .IN(##[/##])	0/0	Indent  ##  to right of LEFT margin.
+			       /##  to left of RIGHT margin.
+
+ .PP(##[/#])	5/0	Indent first line only ## characters.
+			A negative value (.pp-5) is valid and will
+				provide a reverse or hanging indent.
+			/#  extra line spaces between paragraphs.  
+			.PP alone repeats the last previous setting.
+
+ .SK##			Skip ## lines.
+
+ .PA			Force new page.  Otherwise a new page will
+			be started automatically when the text
+			exceeds .PL page length.
+
+			To print a Header with optional page number
+			at the top of the first page, a .PA DotCom
+			should appear after the .HC header line
+			before the first line of body text.
+
+ .AJtext		Pause to Adjust or insert paper, etc.;
+			"text" will be displayed as a reminder as in
+			".AJ Insert Envelope".
+
+ .HCtext		Header Centered - "text" will be centered at
+			the top of each new page.  If a
+			#  character is included as in:
+				.hcSample Header Text     Page #
+					or
+				.HC-#-
+			the current page number will replace the #.
+
+ .CStext		Center String - "text" will be centered.
+
+ .RF		RF	Right fill - ragged right margin.
+			DO NOT use tabs in this mode as the auto-
+			matic word wrap will confuse their location.
+
+ .NF		RF	No fill - print lines exactly as entered.
+			Tabs OK.  User is responsible for maintain-
+			ing right margin in this mode by terminating
+			lines with ENTER (CR/LF) at the proper point.
+
+ .RJ		NJ	Right Justify - even right margin
+				(includes RF).
+
+ .NJ		NJ	No Justify - ragged right margin
+.pa
+DotCom	     default	Name
+
+ .MG DEV:FILNAM.DO	Merge DEV:FILNAM.DO at this point.  The MERGE
+			file must be in RAM or disk memory (see PDD
+			notes).  When all of the MERGE file is
+			processed control will return to the next line
+			of the DOCUMENT file.  Many files can be com-
+			bined into one document with correct page
+			numbers with this DotCom.  MERGE files
+			cannot contain .ML or .MG DotComs.
+
+ .ML DEV:FILNAM.DO	Open and process mailing list.  The mailing
+			list file may be in RAM, on cassette or disk
+			(see PDD notes).  .ML should be the first
+			DotCom in a DOCUMENT file or the last
+			(and only) DotCom in a MAIL LIST file.  When
+			the .ML DotCom is encountered the first time
+			the file will be opened and the names of
+			each field read into memory.  Then the data
+			in the records is read one record at a time
+			and a copy of the document printed for each
+			name record.  The document is personalized
+			according to the way that field names are
+			included in the text.
+
+ .PX#		0	Disable=1  Enable=0 Special Print Symbols.
+
+.csSPECIAL PRINTING SIGNALS (Psigs)
+
+May be inserted anywhere in text.
+
+ GRPH l	(lowercase L)	Start and end underscore
+				(displays as right arrow).
+
+ GRPH i (lowercase I)	Start and end italics (or color)
+				(displays as lazy S).
+
+ GRPH b	(lowercase B)	Start and end bold face
+				(displays as 45 deg arrow).
+
+ GRPH o (lowercase O)	Superscript ONE character following
+				(displays as up arrow).
+
+ GRPH , (comma)		Subscript ONE character following
+				(displays as down arrow)
+
+ SHIFT GRPH C		Force space (displays as shaded block).
+			Use as space when text is to be always
+			kept together as one word.  Prints as a
+			normal space.

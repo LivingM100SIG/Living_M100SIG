@@ -1,0 +1,237 @@
+LONGLN.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Typically, the LINE INPUT statement in BAsic is limited to lines no greater
+than 255 characters in length.  The messages in this gem of the Thread show
+how to move beyond that limit, letting us do things with the LINE INPUT
+sttement that normally would require use of the slower INPUT$(1,1) approach.
+Good Stuff!!
+
+Message range: 174056 to 174160
+Dates: 9/9/88 to 9/11/88
+
+
+Sb: #Long Lines
+Fm: RANDY HESS 73267,552
+To: Tony Anderson
+
+ As a "breather" from your much appreciated POWR-DISK work, perhaps you could
+remind me how to "LINEINPUT" .DO files with lines
+ longer than 256 bytes. INPUT$(1,1) works OK but is abismally slow in BASIC.
+The problem, of course, is when that last line
+ with the CHR$(26) comes in. Even INPUT$(254,f) doesn't like the EOF marker (no
+surprise really). Any thoughts?
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552
+
+I've had a long day, and maybe all my brain cells aren't working right now, but
+I can't think of any way to input long lines (lines >255 characters without
+carriage returns, except the INPUT(1,1) method.
+
+Maybe someone with a clearer head can remember a way to do it. (if one exists~2
+
+
+Fm: Wilson Van Alst 76576,2735
+To: RANDY HESS 73267,552
+
+   I've had general success with the following:
+
+        100 if eof(1) then close: etc.
+        110 lineinput#1, A$
+        120 if len(a$) = 255 then print A$; else print A$
+        130 goto 100
+
+   To "see" how it works, briefly analyze, then run the following:
+
+ 0 MAXFILES=2:CLEAR800
+ 5 OPEN"test1"FOROUTPUTAS1
+ 10 FORN=1TO10 'loops will print strings of x's with len=251to260
+ 20 FORI=1TO250+N:PRINT#1,"x";
+ 25 NEXT:PRINT#1,""
+ 30 NEXT
+ 40 CLOSE:OPEN"test1"FORINPUTAS1
+ 45 OPEN"test2"FOROUTPUTAS2
+ 50 IFEOF(1)THENMAXFILES=1:MENU
+ 60 LINEINPUT#1,A$
+ 65 L=LEN(A$):CLS:PRINT@90,L 'display l
+ 70 IFL=255THENPRINT#2,A$;ELSEPRINT#2,A$
+ 80 GOTO 50
+
+
+Fm: Paul Globman 72227,1661
+To: RANDY HESS 73267,552
+
+Randy - from Van's message you can see that LINEINPUT#1,X$ is very similar to
+the read from XBASIC.  That is X$ was terminated by a CR, 255 limit, or EOF.
+You can use what was returned, but must check to see what terminated the
+LINEINPUT and act accordingly.  You don't get an EOF error until you go BEYOND
+the EOF, so the LINEINPUT that read the EOF will not generate the error.  That
+set up BASIC's flag ( result descriptor) and subsequent LINEINPUTS will
+generate the EOF error condition.
+
+
+Fm: RANDY HESS 73267,552
+To: Wilson Van Alst 76576,2735
+
+ I looked over your info and thanks, but does it permit lines LONGER than 256?
+
+
+Fm: RANDY HESS 73267,552
+To: Paul Globman 72227,1661
+
+Paul and Van,
+ Paul; your explanation of Van's example was a big help. I was confused as to
+WHEN
+ the EOF err was generated. Thanks! I'll now be able to move un-formatted .DO
+files with XBSMGR.200. "The saga continues..."
+
+
+Fm: RANDY HESS 73267,552
+To: Paul Globman 72227,1661
+
+Paul; Van,
+ It seems that what I've been missing here is that the CLEARxxxx statement
+permits the LINEINPUT command to ACCEPT lines longer
+ than the 256 "default" max string length. As the English say; "the other penny
+dropped". If you CLEAR enough string space for
+ "longest" string, then after LINEINPUTing a 255 character "piece" of a string
+longer than 255, you just have to add it to the
+ last piece 'til you come to the "end"; i.e. a piece that includes a CR or EOF.
+
+
+Fm: RANDY HESS 73267,552
+To: Wilson Van Alst 76576,2735
+
+ I see NOW why your program works! It's the CLEARxxx statement that lets you
+take "bytes" out of a long string, not some preset parameter in the LINEINPUT
+buffer requiring the string to have a CR or EOF included.
+ Onward, ever onward;
+
+
+Fm: Paul Globman 72227,1661
+To: RANDY HESS 73267,552
+
+I might add that the IF EOF(1) statement is the BASIC equivalent of checking
+the result descriptor for EOF after a read, and taking that action. You should
+test the XBASIC result descriptor after an XBASIC read.  IF PEEK(RD)=17 THEN is
+the XBASIC version of IF EOF(1) THEN.
+
+Remember, if you test AFTER the 'read' and find EOF then there is good data in
+the 'read buffer' and it should be processed.  If you test BEFORE the 'read'
+and find EOF then you don't have to deal with processing the 'read bfe'.  That
+data will have been processed before you loop back to the EOF test (just before
+the next read attempt).
+
+BTW, you can use XBASIC to determine the length of files in any bank.  Just
+open to read and note the pointer address.  Then close the file and open to
+write, and note the new pointer address.  The difference is the length of the
+file.
+
+
+Fm: RANDY HESS 73267,552
+To: Paul Globman 72227,1661
+
+ Your info is very useful; and I'll use the "length" idea if I can.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: RANDY HESS 73267,552
+
+   There are several issues here: how you input the strings, how you output (
+print) them, and how much string space you need to clear.
+   I thought you were concerned with proper formatting of the output, which can
+be tricky if the input file has lines greater than 255 characters.  That
+problem is solved by the routine in my previous message.
+   On the EOF question, my understanding is this:  When you open a file for
+input, the computer creates a 256 byte "buffer" for that file.  Let's say you
+do a LINEINPUT.  The data (up to 255 bytes) that "comes in" to your program is
+taken from that buffer -- while the buffer, in turn, fills up with the next 256
+bytes of the opened file.  If the buffer-stuffer encounters an EOF marker, chr$
+(26), among those newly acquired bytes, it stops stuffing and sets a flag for
+BASIC to read.  Your program has one more chance to fill the bucket, but after
+that, the well is dry.
+   So, do you need to CLEAR extra memory for those buffer bytes?  No.  At
+least, not as long as you've got the standard 256 bytes of cleared string space
+in BASIC _and you're not using them for anything else_.
+   This is where things get interesting and a few demonstration routines can
+help explain what's going on.
+
+   Make yourself a test file consisting of a single long line of x's:
+
+ 10 open"test"foroutputas1
+ 20 fori=1to600:print#1,"x";:next
+ 30 close:end
+
+   Now try to input from that file _without_ clearing extra memory space:
+
+ 10 open"test"forinputas1
+ 20 ifeof(1)thenclose:end
+ 30 lineinput#1,a$
+ 40 printa$;
+ 50 goto20
+
+   Oops, you get the dreaded OS in 30 error when the program loops back for
+more input.
+   That's because A$ is already "full" from the previous input, and it doesn't
+know that you want to throw those characters away.  (If variables cleared
+themselves every time they found an '=' sign, you could never do the
+fundamental computer operation A$=A$+B$.)  So, unless you've CLEARed additional
+string memory, A$ is already grabbing your 256-byte default.
+   BUT ... if you add the line
+
+ 45 A$=""
+
+        the program will run without problems.  You have wisely given 255 bytes
+of string space back to the computer for the next input cycle.
+   You could put the same concept to work by modifying line 20, instead of
+adding line 45:
+
+ 20 A$="": ifEOF(1)thenclose:end
+
+   This approach is probably better in most applications, for reasons you'll
+see below.
+   Whichever way you "flush" A$, the extra bytes of code add minutely to the
+program size; but they avoid the need for a CLEAR 512 statement, which would
+actually tie up _more_ memory while the program was running.
+   It's a paradox: a longer program can sometimes save memory.
+   (As an aside, here's an interesting version of line 20 from the above
+routine:
+
+ 20 a$=inkey$: ifa$=chr$(27)then [do something] else lineinput#1,a$
+
+   (This serves the dual purpose of clearing the A$ contents _and_ allowing an
+<ESC> key break from the input/output loop.  As with the other modification to
+line 20, line 45 is no longer necessary.)
+   So ... now we've discovered we can "do it all" with BASIC's 256-byte default
+value for string space?  Not quite.
+
+   Sometimes 256 bytes aren't enough, and we _do_ have to use a CLEARnnnn
+statement -- because other string variables are grabbing part of BASIC's
+"minimum subsistence" allowance.
+   It's interesting to note that some other strings will, and some won't, take
+a piece of the pie.  Try adding the following line to the above program (with
+line 45, or the modified line 20, included):
+
+ 5 B$="Randy"
+
+   It has no effect.
+   Now, replace it with:
+
+ 5 B$="Randy"+" Hess"
+
+   Damn!  An OS error in the input/print loop.  B$ suddenly has grabbed a hunk
+of our string space allocation.  BASIC has different ways of dealing with
+string variables, depending on whether they are "stand-alones", or used in an
+expression that BASIC has to interpret.
+   To avoid the OS error in our demonstration program, we have a couple of
+choices:
+        o CLEAR enough extra string space to handle "Randy Hess", the memory
+gobbler;
+        o or mercifully destroy "Randy Hess" before we get into the LINEINPUT
+routine.  You can accomplish this with a B$="" statement, or by using A$
+instead of B$ as the variable in line 5 and then using one of the preferred
+versions of line 20.

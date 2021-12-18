@@ -1,0 +1,139 @@
+0 GOTO124:'TGRPH.100  ---  TRP-100, CGP-100 Graphics mode print expander by William Hart 75745,1545
+1 '
+2 ' At either first line of text or following any <CR> the following
+3 ' sequence sets character size:  CHR$(255)N<CR>
+4 ' The N (any number from 1-80) will cause the data that follows to N times normal size.
+5 ' The sequence CHR$(27)p will start inverse printing, CHR$(27)q will return
+6 ' to normal black on white printing
+7 '
+8 'Get character matrix
+9 '
+10 N=ASC(A):NB(6)=0:FORNI=0TO5:NB(NI)=0:NEXT:IFN<32THENRETURN
+11 IFN<128THENNA=30481+((N-31)*5)-5ELSENA=30961+((N-127)*6)-6
+12 FORNI=0TO5
+13 IFNI<5THENNB(NI)=PEEK(NA+NI)ELSEIFN>127THENNB(NI)=PEEK(NA+NI)
+14 IFN>127THENIFNB(NI)AND128THENNB(6)=NB(6)OR(2^NI)
+15 IFN=252ORN=239THENNB(6)=NB(6)OR192ELSEIFN=255THENNB(6)=NB(6)OR128
+16 IFIVTHENNB(NI)=NOTNB(NI)
+17 NEXTNI:RETURN
+18 '
+19 'Turn on bit for print
+20 '
+21 FORNP=1TOIP
+22 MB(LL)=MB(LL)ORMO(M)
+23 LL=LL+1:NEXTNP:RETURN
+24 '
+25 'Get text to process
+26 '
+27 IFEOF(1)THENIFM=0THEN137ELSE80ELSEA=INPUT$(1,1)
+28 IFKS=0ANDA=CHR$(255)THENKS=1:INPUT#1,A:IP=VAL(A):IC=480/(6*IP):GOTO27
+29 IFA=CHR$(13)THENKS=0:IFLEN(AL)=0THENA=" ":IC=1:GOTO32ELSEIC=LEN(AL):GOTO33
+30 IFA=CHR$(27)THENAL=AL+A:IC=IC+2:GOTO27
+31 IFA<CHR$(32)THEN27
+32 AL=AL+A:IFLEN(AL)<ICTHEN27
+33 PRINTAL;:K=0
+34 '
+35 'Generate output line
+36 '
+37 MS=6:LS=(M+(8*IP))/(MS+1)
+38 I=LS*(MS+1):IFI<(8*IP)THENLS=LS+1
+39 FORLR=1TOLS
+40 IFLR>1THENKC(KH(LR-1))=KF(LR-1)
+41 LL=0:KM=K:MM=M:FORII=1TOIC
+42 A=MID$(AL,II,1):LM=LL:IFA=CHR$(27)THENIT=1:GOTO62
+43 IFITTHENIT=0:IFA="p"THENIV=1:GOTO62ELSEIFA="q"THENIV=0:GOTO62
+44 GOSUB10
+45 PRINT@240,A;" Char";II;"of";IC;"Bit";K;"Out";M;"Pass";LR;"of";LS;
+46 '
+47 'Character matrix bit tester
+48 '
+49 FORJ=0TO5
+50 IFNB(J)ANDMT(K)THENGOSUB21ELSELL=LL+IP
+51 NEXTJ
+52 M=M+1:MN=M:KC(K)=KC(K)+1:LL=LM
+53 IFII=1ANDM>MSTHENKH(LR)=K:KF(LR)=KC(K)
+54 PRINT@290,"Bit line";KC(K);
+55 'PRINT@200,KC(0);KC(1);KC(2);KC(3);KC(4);KC(5);KC(6);KC(7);
+56 'PRINT#3,"LR";LR;"LS";LS;"II";II;"K";K;"M+1";M;"[";A;") (";KC(0);KC(1);KC(2);KC(3);KC(4);KC(5);KC(6);KC(7);"] KH";KH(LR);"KF";KF(LR)
+57 IFKC(K)=IPTHENKC(K)=0:K=K+1:KN=K
+58 IFK>7THEN60
+59 IFM<=MSTHEN45ELSEKC(K)=0
+60 K=KM:M=MM:LL=LL+(6*IP)
+61 IFLR>1THENKC(KH(LR-1))=KF(LR-1)
+62 NEXTII:K=KN
+63 IFK>7THENK=0
+64 IFMN<=MSTHEN73
+65 '
+66 'Send the line matrix to output
+67 '
+68 JS=479
+69 FORJ=0TOJS
+70 MB(J)=MB(J)OR128:PRINT#2,CHR$(MB(J));
+71 MB(J)=0:NEXTJ:PRINT#2,
+72 M=0:GOTO74
+73 M=MN
+74 IFLR>1THENKC(KH(LR-1))=0:KH(LR-1)=0:KF(LR-1)=0
+75 NEXTLR
+76 GOTO85
+77 '
+78 'Send last line matrix to output
+79 '
+80 JS=479:PRINT@240,"Outputing last line to printer now";SPACE$(20);
+81 FORJ=0TOJS
+82 MB(J)=MB(J)+128:PRINT#2,CHR$(MB(J));
+83 MB(J)=0:NEXTJ:PRINT#2,
+84 IFEOF(1)THEN137
+85 CLS:AL=""
+86 IC=480/(6*IP):GOTO27
+87 '
+88 'Variable Description
+89 '-------- -----------
+90 ' AN      Print matrix file name
+91 ' BM      Print matrix
+92 ' MS      Printer bit limit
+93 ' MT      Character matrix byte bit tester
+94 ' MO      Output matrix byte bit setter
+95 ' AI      Input file name
+96 ' IC      Characters per line
+97 ' IP      Character multiply factor
+98 ' BN      Input file name
+99 ' BO      Output file name
+100 ' AL      Line to print
+101 ' LR      Line scan indexer
+102 ' LS      Line scan stop
+103 ' II      Line substr indexer
+104 ' K       Matrix test indexer
+105 ' KM      Matrix test indexer holder
+106 ' KN      Matrix test next index
+107 ' KC      Bit line counter
+108 ' KF      Bit line counter high point
+109 ' KH      Bit line counter indexer holder
+110 ' M       Output matrix indexer
+111 ' MM      Output matrix indexer holder
+112 ' MN      Output matrix next index
+113 ' LL      Output line indexer
+114 ' MB      Output line matrix
+115 ' NB      Character matrix
+116 ' NI      Character matrix indexer
+117 ' A       Character in process
+118 ' N       Asc value of A
+119 ' IV      Invert print switch
+120 ' IT      Escape detect switch
+121 '
+122 'Intialization
+123 '
+124 CLS:CLEAR2000:MAXFILES=3:DEFSTRA-H:DEFINTI-N:DIMMB(479),NB(7),MT(7),MO(7),KH(80),KF(80):IP=1
+125 CLS:PRINT:PRINT:PRINT:A="":INPUT"Enter name of Input file ";A:IFA=""THEN125ELSEBN=A+".DO":OPENBNFORINPUTAS1
+126 MT(0)=1:MT(1)=2:MT(2)=4:MT(3)=8:MT(4)=16:MT(5)=32:MT(6)=64:MT(7)=128
+127 MO(0)=1:MO(1)=2:MO(2)=4:MO(3)=8:MO(4)=16:MO(5)=32:MO(6)=64:MO(7)=128:MS=6
+128 CLS:PRINT:PRINT:PRINT:PRINT"Output option";TAB(20);"1 - LPT":PRINTTAB(20);"2 - File":A=""
+129 A=INKEY$:IFA=""THEN129ELSEIFA<"1"ORA>"2"THENBEEP:GOTO128
+130 IFA="1"THENBO="LPT:"ELSEINPUT"Enter file name ";A:BO=A+".DO"
+131 OPENBOFOROUTPUTAS2:PRINT#2,CHR$(18)
+132 'OPEN"0:TRACE.DO"FOROUTPUTAS3
+133 GOTO85
+134 '
+135 'End-of-processing
+136 '
+137 PRINT#2,CHR$(30):PRINT#2,:PRINT#2,:PRINT#2,:PRINT#2,:PRINT#2,:PRINT#2,
+138 CLOSE:MAXFILES=0:MENU

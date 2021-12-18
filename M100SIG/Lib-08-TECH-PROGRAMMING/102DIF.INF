@@ -1,0 +1,80 @@
+Preliminary interpretation of 102.DIF -- Differences between 100 and 102 ROMs
+
+   Overview
+
+   Several differences between the Model 100 and Tandy 102 ROMs have been
+documented in this DL in the file 102.DIF.  This file is a beginning attempt
+to explain what the changes involve.
+   It appears that few, if any, ROM calls are affected, and certainly none of
+the commonly known call addresses.  Several M100 routines are diverted to
+small patch routines in the 102.  These patches are located in addresses
+7052-7082 (undetermined purpose in M100), 29444-29478 (undetermined purpose in
+M100), 27692-27719 (Dummy filename data for M100 directory), 32762-32767
+(contains nothing in M100).  It is conceivable that M100 programs could CALL
+or jump to addresses in the 7052 range and possibly the 29444 range.
+   The designs of several LCD characters have been changed slightly and a few
+were even changed to different characters.  The 102 characters correspond to
+those in the 200.  The keys required for producing several of the CODE
+characters have been changed.  These also now correspond to the 200.
+   Data has been changed in two other places.  Cold start Stat setting is
+M7I1D instead of M7I1E, and July is spelled Jul instead of Jly.
+   Listed below are the changes.  Listed are: address range involved, M100
+contents (on left of "=>"), T102 (on right of "=>").  If anyone has more
+information about how these routine affect the operation of the computer, I'd
+like to hear about it.  I expect to revise this file.
+
+    1-    2  JMP 32051 => JMP 7079
+ 7079- 7082  => XRA A  JMP 32051
+32051-32061  102 has completely new routine.
+
+  905-  906  'TA' => 'AB'.  Loads to 63007-8 on boot.  To do with option ROM?
+
+        969  'E' => 'D'.  Default Telcom Stat M7I1E => M7I1D.
+
+       2560  LXI 63108 => LXI 63107.  Byte before => 2 bytes before input
+              buffer.
+
+ 7052- 7054  => JMP 7083.  Skips over addresses 7052 to 7082 in 102.
+
+ 7064- 7066  => LHLD 63033.  (Cursor row).  How do we get to this instruction?
+
+ 8519- 8521  STA 63497 => CALL 27714.  63497 is last byte of function key
+              definition area.
+27714-27719  'RickY ' => STA 63497  JMP 8589.
+
+ 8534- 8535  CALL 8405 => CALL 7055
+ 7055- 7066  => CALL 8405  RZ  CPI 240  RNZ  INR A  RET
+
+ 9826- 9827  CALL 9949 => CALL 27703.  To do with input CO file from cassette?
+27703-27708  'Hayash' => PUSHB  CALL 9949  POP B  RET
+
+      13247  'V' => 'W'  Some sort of table?
+
+18076-18078  LXI 63108 => JMP 32762  <Enter> routine for input.
+32762-32767  null bytes => LXI HL, 63108  MVI M,','  RET  Puts ',' in byte
+              before start of input buffer.
+
+18837-18838  CALL 13785 => CALL 29444.  For PRINT USING?
+29444-29460  => CALL 13785 ... RET
+
+21709-21710  CALL 28030 => CALL 29461  Part of Term routine.
+29461-29478  CALL 28030 ... RET
+
+23292-23293  'ly' => 'ul'  Change 'Jly' to 'Jul' for date.
+
+      25939  CALL 26011 => CALL 7067  Text FIND (ctrl-N) routine.
+ 7067- 7077  => ... JMP 26011
+
+27901-27902  CALL 30338 => CALL 27692.  Warm start.
+27692-27697  'Suzuki' => STA 65531  JMP 30338
+
+29479-29480  => INR A  RET
+
+30651-31535  LCD character patterns (not every byte in this range is changed).
+
+31905-31989  Keyboard conversion matrix for CODE key combinations (not every
+              byte changed).
+
+Neil Wick [71056,613]
+
+Note: All addresses given are decimal

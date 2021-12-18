@@ -1,0 +1,62 @@
+
+
+0 'THIS PROGRAM MAKES BANK 2 INTO
+1 'ROM 0. IT DESTROYS ALL INFO IN
+2 'BANK 2!
+3 CLEAR 256,62300!
+4 Z=62301!:Y=34
+5 FOR X=Z TO Z+Y-1
+6 READ A$:GOSUB 11:POKE X,A
+7 NEXT X
+8 INPUT"ROM0 TO BANK 2 PRESS RET";Q
+9 EXEC Z
+10 END
+11 A=0:B$=LEFT$(A$,1):GOSUB13
+12 A=A*16:B$=RIGHT$(A$,1)
+13 B=ASC(B$):A=A+B+32*(B>95)+7*(B>63)-48
+14 RETURN
+15 'DATA area makes bank two into ROM0
+16 'ROMRAM:f35d
+17 'ld hl,0;mem loc 0 in ROM
+18 'ld b,8;specify write to bnk 2
+19 'ROMRA1:f362
+20 'ld d,(hl);get (rom) into d
+21 'ld a,h;ready for adding 8000h
+22 'add a,80;bump up
+23 'jp c,ROMRA2
+24 'push hl;save address
+25 'ld h,a;RAM BNK2 addr to store (ROM)
+26 'di;no interupts
+27 'call PUTBNK;copy (ROM) to (RAM)
+28 'ei;okay to int
+29 'pop hl;restore ROM pointer
+30 'inc hl;point to next loc
+31 'jp ROMRA1
+32 'ROMRA2:f375
+33 'call BEEP
+34 'ld a,02;0000-7FFF = BANK #2
+35 'di;make BNK2 into pseudo ROM0
+36 'out (a1),a;switch
+37 'ei;okay !
+38 'ret
+39 DATA 21,00,00
+40 DATA 06,08
+41 DATA 56
+42 DATA 7c
+43 DATA c6,80
+44 DATA da,75,f3
+45 DATA e5
+46 DATA 67
+47 DATA f3
+48 DATA cd,eb,7e
+49 DATA fb
+50 DATA e1
+51 DATA 23
+52 DATA c3,62,f3
+53 DATA cd,58,42
+54 DATA 3e,02
+55 DATA f3
+56 DATA d3,a1
+57 DATA fb
+58 DATA c9
+59 END

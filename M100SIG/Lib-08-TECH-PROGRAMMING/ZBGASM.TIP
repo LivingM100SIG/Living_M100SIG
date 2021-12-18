@@ -1,0 +1,17 @@
+The documentation for the Radio Shack/Microsoft ASSEMBLER/DEBUGER fails to 
+mention a number of things.  I would like to establish this file as a format 
+for sharing our fixes and/or hints for the best use of ZBGASM.
+[1]  See FIXHOK.ZBG in this DL for a small BASIC program to repair the RST 7 
+hook table upon exit from ZBGASM.  That's why the example program bombs out, 
+CHGET (WAIT: CALL 12CB) calls through the hook table, and ZBGASM isn't set up 
+to handle the suprise!
+[2]  The warm entry for ZBGASM seems to be at location E9D5 (59861).  So if 
+you're working on a program and want to reenter ZBGASM (to use the symbolic 
+DEBUGGER perhaps) when a routine finishes just use JMP 0E9D5H as the last 
+instruction.  You can also get back to ZBGASM from the MENU without bombing the
+symbol table by entering BASIC and CALLing 59861.
+[3]  Now its your turn... Contact me through EASYPLEX 'cause I'm not often on 
+the SIG.  David O. Rowell 70406,445
+
+
+

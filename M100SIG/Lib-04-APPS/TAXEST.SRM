@@ -1,0 +1,387 @@
+LUCID Tax Estimator                                                  page 1
+
+
+
+
+                      BUILD YOUR OWN CUSTOMIZED 1987
+                     INCOME TAX ESTIMATOR USING LUCID
+
+                  (Also good for 1-2-3, Multiplan, etc.)
+
+
+                           Mark Lutton, 3/28/87
+
+
+
+        Without a great deal of difficulty, you can use your spreadsheet 
+to build yourself a customized income tax estimator.  I say "customized" 
+because it is much easier to put in only those parts that apply to you 
+(such as your particular tax table) than make a generalized package for 
+anyone's use.
+
+                            GENERAL PRINCIPLES
+
+        If you are using LUCID on the model 100, set it up so that you see 
+three columns, with the first one a bit wider than the other two.  Put 
+explanatory labels in the first column.  Put numbers to be totaled into 
+the third column.  Use the second column for partial results; for 
+instance, only 65% of your personal interest is deductable; put your 
+entire interest amount into a cell in column B and put a formula into the 
+cell in column C that multiplies the amount in column B by .65.  Here is 
+how a part of the spreadsheet will look:
+
+
+        A               B               C
+020 Home Mortg Int                 ---------
+021 Personal Int     ----------
+022 Allowable amt                  +B21*.65
+
+        Put a row of dashes into all cells used for entering data.  Use 
+the "protection" feature to protect all the cells containing labels and 
+formulas.  This will prevent you from accidentally wiping out the formula.
+
+                                  TABLES
+
+        Toward the end of this application we will be using a tax table.  
+If you don't know how to use your spreadsheet's table lookup function, now 
+is the time to learn.  Here is how to do it in LUCID:
+
+        All tables in LUCID are two-dimensional, and you look up an X 
+value and a Y value.  This ties in nicely with income tax tables.  Here is 
+the income tax table for SINGLE taxpayers for 1987:
+
+
+LUCID Tax Estimator                                                  page 2
+
+
+If your income
+     is over      but not over    tax is    plus this %    of amt over
+
+       0             1800            0           11             0
+    1800            16800          198           15          1800
+   16800            27000         2448           28         16800
+   27000            54000         5304           35         27000
+   54000             ----        14754           38.5%      54000
+
+
+        As a LUCID table, it would look something like this:
+
+      D            E              F              G
+001                1              2              3
+002   1800         0            .11              0
+003  16800       198            .15           1800
+004  27000      2448            .28          16800
+005  54000      5304            .35          27000
+006  10^50     14754           .385          54000
+
+
+        Now suppose your taxable income is in cell C52 and you want to 
+calculate your tax in cell C53.  Use D52, E52 and F52 to hold intermediate 
+formulas as follows.  In D52:  +TBL(C52, E1, D1:G6).  This means:  using 
+the table in D1 through G6, use the amount in cell C52 to find the row and 
+the amount in cell E1 (that is, 1) to find the column.  It will pick the 
+right base amount from column E1.  The formula in E52 will be +TBL(C52, 
+F1, D1:G6), and the formula in F52 will be +TBL(C52, G1, D1:G6).  Finally, 
+the formula for the tax, which goes into C53, will be +D52+E52*(C52-G52).
+
+        Since this is a customized form, you will put only the one table 
+that matches your situation into the form.  All four tables appear at the 
+end of this article.
+
+        Lotus 1-2-3 tables are similar but inherently one-dimensional.  
+Here is the Lotus equivalent of the tax table:
+
+      D            E           F
+001      0         0         .11
+002   1800       198         .15
+003  16800      2448         .28
+004  27000      5304         .35
+005  54000     14754        .385
+
+        The Lotus formula for D52 would be @VLOOKUP(C52, D1..F5, 1).  For 
+E52:  @VLOOKUP(C52,D1..F5, 2).  For F52:  @VLOOKUP(C52, D1..F5, 0).
+
+
+                              TAX REFORM INFO
+
+        To find out all about the tax rule changes, get Publication 553, 
+Highlights of 1986 Tax Changes, from the IRS.  It's only the highlights, 
+
+LUCID Tax Estimator                                                  page 3
+
+
+mind you; to find out everything about the changes you'd have to get the 
+entire act which is truly immense.  Most people will find that Publication 
+553 has all they need.  I've made notes below about some important things.
+
+                            ESTIMATING YOUR TAX
+
+        Use an old 1986 tax form as a guide for building your spreadsheet. 
+Here is basically how you estimate your tax:
+
+          1.  Add together all your taxable income from all sources to get 
+              TOTAL INCOME.
+              
+          2.  Add together all your adjustments to income to get TOTAL 
+              ADJUSTMENTS.
+              
+          3.  Subtract TOTAL ADJUSTMENTS from TOTAL INCOME to get ADJUSTED 
+              GROSS INCOME.
+              
+          4.  Add together all your allowable deductions to get TOTAL 
+              DEDUCTIONS.
+              
+          5.  Figure your STANDARD DEDUCTION.
+              
+          6.  Subtract TOTAL DEDUCTIONS or STANDARD DEDUCTION, whichever 
+              is greater, from ADJUSTED GROSS INCOME to get INCOME MINUS 
+              DEDUCTIONS.
+              
+          7.  Figure how many EXEMPTIONS you have and subtract 1900 times 
+              EXEMPTIONS from INCOME MINUS DEDUCTIONS to get TAXABLE 
+              INCOME.
+              
+          8.  Look up TAXABLE INCOME in the tax table to get TAX.
+              
+          9.  Add together all your credits to get TOTAL CREDITS.
+              
+         10.  Add together all other taxes to get OTHER TAXES.
+              
+         11.  Compute TOTAL TAX = TAX - TOTAL CREDITS + OTHER TAXES.
+              
+         12.  Figure out how much will be WITHHELD from your paychecks.  
+              Also figure out OTHER PAYMENTS.
+              
+         13.  Subtract WITHHELD and OTHER PAYMENTS from TOTAL TAX.  If 
+              amount is greater than zero, this is the AMOUNT YOU OWE.  If 
+              it is less than zero, its absolute value is the AMOUNT OF 
+              YOUR REFUND.
+              
+
+                                  DETAILS
+
+        That, believe it or not, is all there is to figuring out your tax! 
+Only 13 steps!  (ONLY, he says!)  All we have to do now is to figure out 
+
+LUCID Tax Estimator                                                  page 4
+
+
+all those items.  Each of the items will be a section of the spreadsheet 
+-- either a single cell or the total of a group of cells.  We'll just 
+start at the top and work our way down.
+
+                             1.  TOTAL INCOME
+        Use a row of the spreadsheet for each of the following items.  Put 
+the name of the category in column A and a place for the amount in column 
+C.  Leave out all those things that won't possibly apply to you.
+
+WAGES, SALARIES, TIPS
+INTEREST
+DIVIDENDS  (Note:  it used to be you could exclude $100 or $200 of 
+dividends.  No longer; you must now include all your dividends as income.)
+TAXABLE STATE/LOCAL TAX REFUNDS
+ALIMONY
+SCHEDULE C INCOME OR LOSS
+CAPITAL GAINS/LOSSES (Note:  capital gains are now taxed as ordinary 
+income, but for 1987 the maximum tax rate on net capital gains is 28%.  
+Capital losses can be deducted in full up to an amount equal to ordinary 
+income + $3000.  If this applies to you, you can make formulas to 
+calculate this mess, but don't bother otherwise.)
+TAXABLE PENSIONS (Note:  there is a change in the way pensions are taxed 
+if you retired after June, 1986.  It's too complicated for me to list 
+here; see the tax book and put formulas here if you need to.)
+RENTS, ROYALTIES, ETC.
+FARM INCOME/LOSS
+UNEMPLOYMENT INCOME (Note:  fully taxable now.)
+TAXABLE SOCIAL SECURITY
+OTHER INCOME
+
+                           2.  TOTAL ADJUSTMENTS
+
+        Add together the following:
+
+EMPLOYEE BUSINESS EXPENSES
+IRA (Note:  Still deductible as an adjustment for some people, mainly 
+people not eligible for other pension plans.  Also note that an IRA can 
+still be a good deal even if you can't deduct contributions; interest is 
+not taxed until withdrawal.)
+KEOUGH
+EARLY WITHDRAWAL PENALTIES
+ALIMONY
+SCHEDULE W ADJUSTMENT
+
+                         3.  ADJUSTED GROSS INCOME
+
+        This is just TOTAL INCOME minus TOTAL ADJUSTMENTS.
+
+                           4.  TOTAL DEDUCTIONS
+
+        Some things are fully deductible, some are partially deductible, 
+and some are deductible only if they exceed a certain percentage of your 
+
+LUCID Tax Estimator                                                  page 5
+
+
+adjusted gross income.  You'll be entering lots of formulas here.
+
+Put TOTAL MEDICAL EXPENSES in column B.  In the next row, put a formula 
+for EXCLUSION which is ADJUSTED GROSS INCOME * .075  (7.5% of AGI).  
+Subtract the exclusion from TOTAL MEDICAL EXPENSES, then use the MAX 
+function to put that result or 0, whichever is greater, into the cell for 
+MEDICAL DEDUCTIONS in column C.
+
+STATE, LOCAL INCOME TAXES
+Note:  SALES TAX is no longer deductible.
+REAL ESTATE TAXES
+OTHER DEDUCTIBLE TAXES
+HOME MORTGAGE INTEREST, including "Home Equity Line of Credit"  (Note:  
+there is a limit here which depends on the amount you paid for your house 
+and the improvements you have made to it.
+PERSONAL INTEREST -- multiply by .65 to get the amount deducted.
+OTHER INTEREST
+CONTRIBUTIONS
+MOVING EXPENSES
+CASUALTY AND THEFT after exclusions (Note:  if you can predict your 
+casualty and theft losses for the whole year, there is something fishy 
+going on between you and the underworld!)
+
+MISCELLANEOUS DEDUCTIONS:  total them together and subtract the exclusion 
+which is 2% of your ADJUSTED GROSS INCOME.
+
+                          5.  STANDARD DEDUCTION
+
+        If you are under 65 and not blind:  Single, $2,540; Married filing 
+jointly, 3,760; Married filing separately, $1,880;  Head of household, 
+$2,540;  Qualifying widow(er), $3,760.  If either over 65 or blind:  
+Single, $3,000; Married filing jointly, $5,000; Married filing separately, 
+$2,500; Head of Household, $4,400; Qualifying Widow(er) $5,000.  It gets 
+more complicated if you are over 65 AND blind, or married filing jointly 
+and you have a combination of over-65's and blindness, or if you can be 
+claimed as an exemption on someone else's return.  Check with the IRS in 
+these cases.
+
+                        6.  INCOME MINUS DEDUCTION
+
+        ADJUSTED GROSS INCOME - MAX(STANDARD DEDUCTION, TOTAL DEDUCTIONS).
+
+                              7.  EXEMPTIONS
+
+        1 for yourself, but you can't claim this if you can be claimed as 
+an exemption on someone else's return.  Note that it says "can be 
+claimed", not "are claimed."  (Grumble grumble.)  Don't claim exemptions 
+for "over 65" or "blind" -- those are part of the standard deduction now.  
+(If you're over 65 and itemize your deductions, you lose.)  Claim one 
+exemption for each of your dependents -- no, not your basset hound!
+
+                            8.  TAXABLE INCOME
+
+LUCID Tax Estimator                                                  page 6
+
+
+        Multiply your EXEMPTIONS by 1900 and subtract the result from 
+INCOME MINUS DEDUCTIONS.
+
+                                  9.  TAX
+
+        Put the proper tax table into cells D1 to G6 and use the table 
+lookup function to find the amount that goes here (see the formulas 
+above).
+
+                            10.  TOTAL CREDITS
+
+EARNED INCOME CREDIT (If your earned income is less than $15,432 and you 
+have a child who lives with you, you can get a credit here; get Form W-5 
+for details)
+OTHERS 
+
+        Note:  Many of the credits are no longer allowed, for instance the 
+credit for contributions to political candidates.
+
+                             11.  OTHER TAXES
+
+SCHEDULE SE
+ALTERNATIVE MINIMUM TAX
+TAX ON AN IRA
+OTHERS
+
+                              12.  TOTAL TAX
+
+        TAX - TOTAL CREDITS + OTHER TAXES.
+
+                               13.  WITHHELD
+
+        Look at your paycheck stub to find out how much is withheld every 
+pay period.  Multiply it out to get the year's total.
+
+                            14.  OTHER PAYMENTS
+
+        This includes refunds from last year that you told them to apply 
+to this year's taxes, and also estimated tax payments you intend to make.
+
+                            15.  AMOUNT YOU OWE
+
+        If TOTAL TAX - WITHHELD - OTHER PAYMENTS is greater than zero, the 
+result is the amount you owe.
+
+                        16.  AMOUNT OF YOUR REFUND
+        
+        WITHHELD + OTHER PAYMENTS - TOTAL TAX, if you should be so lucky 
+as for this amount to come out greater than 0.
+
+
+
+
+LUCID Tax Estimator                                                  page 7
+
+
+                           TAX TABLES FOR LUCID
+
+
+                SINGLE
+
+      D            E              F              G
+001                1              2              3
+002   1800         0            .11              0
+003  16800       198            .15           1800
+004  27000      2448            .28          16800
+005  54000      5304            .35          27000
+006  10^50     14754           .385          54000
+
+
+
+                MARRIED FILING JOINTLY
+                OR QUALIFIED WIDOW(ER)
+
+      D            E              F              G
+001                1              2              3
+002   3000         0            .11              0
+003  28000       330            .15           3000
+004  45000      4080            .28          28000
+005  90000      8840            .35          45000
+006  10^50     24590           .385          90000
+
+
+
+                MARRIED FILING SEPARATELY
+
+      D            E              F              G
+001                1              2              3
+002   1500         0            .11              0
+003  14000       165            .15           1500
+004  22500      2040            .28          14000
+005  45000      4420            .35          22500
+006  10^50     12295           .385          45000
+
+
+
+                HEAD OF HOUSEHOLD
+
+      D            E              F              G
+001                1              2              3
+002   2500         0            .11              0
+003  23000       275            .15           2500
+004  38000      3350            .28          23000
+005  80000      7550            .35          38000
+006  10^50     22250           .385          80000
+
+                                  THE END

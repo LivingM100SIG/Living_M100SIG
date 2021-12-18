@@ -1,0 +1,56 @@
+In a recent conversation I became aware that the ESC sequence for cursor
+positioning was not fully understood ( mainly because the Tandy manuals do not
+fully explain it).
+
+Page 84 of the Tandy 200 Basic Reference Guide lists a variety of ESC
+sequences for manipulating the LCD screen.
+
+ESC Y r,c is listed as the sequence for moving the cursor to row r, column c.
+
+This is rather ambiguous because r and c are not clearly defined.  Here's how
+to use this ESC sequence...
+
+Row can be 1-16 (1-8 on the M100), and Column is 1-40.  31 must be added to
+Row and Column before it is sent in the ESC Y sequence.  Here's a simple
+example that will put the cursor at ROW 5, COLUMN 5 and print "X".
+
+
+10 R=5:C=5
+20 PRINTCHR$(27)"Y"CHR$(R+31)CHR$(C+31);
+30 PRINT"X"
+
+Note the semicolon at the end of line 20 so a <CR> is not sent to the LCD.
+
+You can use this as a subroutine when trying to adapt a program that uses
+LOCATE X,Y instead of PRINT@.
+
+It can further be argued that...
+
+10 R=5:C=5
+20 PRINT@ (R-1)*40+(C-1),"";
+30 PRINT"X"
+
+...is the functional equivalent and saves 4 bytes, so the programmer does
+have two fairly equivalent options.
+
+These two approaches also have the same benchmark times in a 500 iteration loop
+so execution time is of little significance.
+
+
+This can also be used in M/L programs preceding the string to be printed, and
+the string will be properly positioned.
+
+MSG:	DB 27,89,32,32,'print this',0
+
+This is quite useful in customizing M/L programs for which the assembly 
+language source code is not available.  
+In BASIC is helps bridge the compatibility gap between M100 and NEC,
+and in M/L is is one less CALL that must be converted for another machine.
+
+
+No doubt there are many potential uses for the ESC Y sequence, and for each 
+use it can be argued that another approach will do equally well.  I will
+not dispute that idea.  I am simply presenting the use of ESC Y and how to
+implement it, so you have a choice.
+
+Paul Globman [72227,1661]

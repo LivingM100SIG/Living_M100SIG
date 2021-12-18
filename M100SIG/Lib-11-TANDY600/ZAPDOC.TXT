@@ -1,0 +1,181 @@
+                          Z A P - 6 0 0
+
+                     I N S T R U C T I O N S
+
+
+     ZAP-600 is a disk editing utility program for the Tandy  600
+Portable  Computer.  ZAP-600 is written in BASIC, and it performs
+CALLS to the UTILITY.LIB subroutine library.  Tandy 600 BASIC and
+a  copy of the UTILITY.LIB subroutine library MUST be resident in
+RAM in order for ZAP-600 to function.
+
+     ZAP-600 performs  three  functions:  Disk  analysis;  Sector
+copy;  and  Sector  Edit.    Disk  sector  reading and writing is
+performed  using  the  DBSYSINT  subroutine  in  the  UTILITY.LIB
+library  to  access BIOS interrupts as described in the Tandy 600
+Programmers Reference Guide (R/S 26-3901).   In  theory,  ZAP-600
+should be capable of reading and writing any MS-DOS single-sided,
+double density disk in drive A: or B:,  although  this  "feature"
+has not been tested by the author.
+
+     ZAP-600 may be used to modify  disk  directory  entries,  to
+modify  or  repair the File Allocation Table (FAT) and to recover
+or copy portions of disk files.   The  program  is  not  terribly
+user-friendly,  and  users who attempt to alter directory entries
+or the FATs should use ZAP-600 in conjunction with a good  MS-DOS
+disk manual (e.g. one of the Norton Utilities manuals).
+
+WARNING:  This  preliminary  version  of  ZAP-600  is  not  fully
+debugged,  and  errors  are fairly likely to occur.  COPY all RAM
+resident files to disk BEFORE attempting to use  ZAP-600  Version
+1.00!!!   The program is being placed in the public domain in the
+hope that others will test, debug, revise and  enhance  it.    As
+Tandy says, "No warranties, written or implied, ..."
+
+
+                        ZAP-600 Functions
+
+Main Menu
+
+     The ZAP-600 Main Menu presents four options:
+
+        Edit Disk Sectors               Analyze Disk
+        Copy Disk Sectors               Exit ZAP-600
+
+     Each of the main options is discussed below.  To  select  an
+option, use the ARROW keys to highlight it, and press ENTER.
+
+
+Edit Disk Sectors
+
+
+     The EDIT mode permits any individual disk sector to be read,
+modified and written.
+
+     When EDIT mode is selected, you will first be  prompted  for
+the  drive number and the absolute sector number to be read.  The
+built-in drive is number 0.  Absolute sectors are between  0  and
+2CF  (hex)  on  a standard Tandy-600 disk, and the program should
+force you to remain within the proper ranges (more on this  under
+the  Analyze  Disk  command).    The prompts for drive and sector
+appear on the left side of the screen, and  ALL  numeric  entries
+are  in  hexidecimal.    To  accept a current value, press ENTER.
+ESCape will generally backup one command throughout the program.
+
+     When a sector is read from disk, the sector contents will be
+displayed  in  Hex  and  in  ASCII,  and you may step through the
+display using the arrow keys as follows:
+
+     Right Arrow:  Moves the cursor forward One Byte.
+
+     Left Arrow:  Moves the cursor backward One Byte.
+
+     Down Arrow:  Moves the cursor down One Line (16 bytes)
+
+     Up Arrow:  Moves the cursor up One Line (16 bytes)
+
+     Shift/Right Arrow: Moves the cursor to the right end
+                    of the current line.
+
+     Shift/Left Arrow: Moves the cursor to the left end
+                    of the current line.
+
+     Shift/Down Arrow: Moves the cursor forward 256 bytes
+                    (the screen will clear, and 16 new lines
+                    will be displayed)
+
+     Shift/Up Arrow: Moves the cursor backward 256 bytes
+                    (the screen will clear, and 16 new lines
+                    will be displayed)
+
+
+     While in Edit Disk Sectors mode, the following commands  may
+also be performed:
+
+     ESCape:  Returns to the Main Menu display.
+
+     R[ead]:  Returns to the Drive/Sector prompts in order to
+               read a new sector.
+
+     E[dit]:  Allows individual bytes in the current sector to be
+               modified (in hexidecimal).
+
+     W[rite]: Writes the current sector buffer, as displayed, to
+               any specified sector on any drive (0-1).
+
+
+     The E[dit] sub-mode allows the byte at  the  current  sector
+offset  position to be modified.  "EDIT" appears on the left side
+of the display, and you may enter two hexidecimal digits  (0-9,A-
+F).    When  two  hex  digits  are  entered, the sector offset is
+incremented by one, up to the end of the current sector.    Press
+ESCape to return to the DISPLAY mode.
+
+     The W[rite] sub-mode allows the current sector to be written
+to  any  location on either disk drive.  You will be prompted for
+drive and absolute sector  number,  and  you  will  be  asked  to
+CONFIRM  the  write  operation  before  it  is  completed.  ENTER
+accepts the current values in the drive and sector  prompts,  and
+ESCape  may  be  used  to  back up to the previous prompt.  Using
+ESCape during the Drive prompt will abort the W[rite] command, as
+will any response other than "Y" to the CONFIRM prompt.
+
+
+Copy Disk Sectors
+
+     The COPY function allows  a  specific  sector  or  range  of
+sectors  (1-9)  to be copied from any location on the disk to any
+other location on the same disk or on a different disk.  The copy
+command  requests the following information (all responses are in
+hexidecimal):
+
+       Source Drive: 000           (Range: 0-1)
+       Starting Sector: 000        (Range: 0-max)
+       Number of Sectors: 000      (Range: 1-9)
+       Destination Drive: 000      (Range: 0-1)
+       Starting Sector: 000        (Range: 0-max)
+
+     If the source drive and the destination drive are the  same,
+ZAP-600   will  prompt  for  the  insertion  of  the  source  and
+destination disks.
+
+     Use ENTER to accept  the  current  prompt  values,  and  use
+ESCape to back up to the previous prompt.
+
+WARNING: ZAP-600 does NOT check for an overlap of the source  and
+destination  sectors,  so it's possible to be writing to a sector
+which you want to read!  It's advisable to copy one sector  at  a
+time, although that's frustratingly slow.
+
+
+Analyze Disk
+
+
+     The ANALYZE mode reads and  displays  the  disk  information
+which  is  stored in the first sector (absolute sector zero), and
+will also attempt to locate all readable sectors on a disk.
+
+     Prior to running a disk analysis, ZAP-600 assumes  that  you
+are  attempting to read a standard Tandy 600 disk with 80 tracks,
+9 sectors per track, 512  bytes  per  sector.    If  the  Track-0
+information differs from these default settings, ZAP-600 will re-
+configure these defaults when the disk analysis is performed.  To
+use  the  default  settings, simply run ZAP-600. To use the specs
+which appear on Track 0, run the  disk  analysis  to  reset  disk
+format information to the current disk specs.
+
+     ZAP-600 will ask if you wish to locate  disk  sectors  after
+the  sector-zero  information  has  been  displayed.   A negative
+response will return to the  main  menu.    A  positive  response
+results  in  a display of track/sector information as the program
+attempts to read each of the sectors on the disk.   The  absolute
+sector  numbers of any unreadable sectors are displayed, as well.
+To abort the sector location process, press ESCape.
+
+
+REPEATED WARNING:  ZAP-600 is not fully tested  and  debugged  --
+the  author  hopes  that errors will be fixed by others, since he
+doesn't really have time to do it himself.  Backup RAM before you
+use  the  program, and mess with the Directory and FAT sectors at
+your own risk!!!
+

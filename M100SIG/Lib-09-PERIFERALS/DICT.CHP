@@ -1,0 +1,137 @@
+DICT.CHP by David W. Willman, 75775,202   3/23/86
+
+Copyright 1986 David W. Willman
+Licensed for use only, Compuserve M100 Sig members.
+
+This program compares the word list in a specified RAM file to the word lists
+in dictionary disk files DIC-AB.DO thru DIC-YZ.DO . Any words in the specified
+file that do not appear in the dictionary files is stored in the RAM
+file SUSPEC.DO for review.
+The word list in the specified RAM file should have been prepared by the m/l
+program loaded by DCPREP.LDR in DL5 and the disk dictionary files should be
+formatted with the words in alphabetical order, in small letters & each word
+on a seperate line with no blank lines in between words. Such as built by ADDICT.BA below.
+
+WARNING: The first thing this program does is copy the RAM file to be checked
+to the disk in order to insure room for the SUSPEC.DO file, it then kills the
+original RAM file. The original RAM file must not have the same name as any
+other file on the disk or it will be destroyed on disk.
+
+		SPLCHK.BA
+
+10 CLEAR256:MAXFILES=3:CLS:PRINT:PRINT"Place Dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):ONERRORGOTO110:PRINT:OPEN"0:DIC-AB.DO"FORINPUTAS1:CLOSE
+20 CLS:PRINT:FILES:LINEINPUT"What file to check: ";A$:IFA$=""THENMAXFILES=1:MENUELSEIFRIGHT$(A$,3)<>".DO"THENA$=A$+".DO"
+30 F$="0:"+A$:ONERRORGOTO130:OPENA$FORINPUTAS2:ONERRORGOTO160:OPENF$FOROUTPUTAS1
+40 IFNOTEOF(2)THENINPUT#2,B$:PRINT#1,B$:GOTO40
+50 CLOSE:KILLA$:OPEN"SUSPEC.DO"FOROUTPUTAS1:OPENF$FORINPUTAS2:C$="00":D$=C$
+60 IFEOF(2)THENCLOSE:KILLF$:MAXFILES=1:GOTO100ELSELINEINPUT#2,B$:IFB$<D$THENPRINT#1,B$:GOTO60ELSEIFB$=D$THEN60ELSEB=ASC(LEFT$(B$,1))-32:IFB<>ASC(RIGHT$(C$,1))ANDB<>ASC(LEFT$(C$,1))THEN80
+70 IFEOF(3)THENPRINT#1,B$:GOTO60ELSELINEINPUT#3,D$:IFD$<B$THEN70ELSEIFD$=B$THEN60ELSEPRINT#1,B$:GOTO60
+80 IFBAND1THENC$=CHR$(B)+CHR$(B+1)ELSEC$=CHR$(B-1)+CHR$(B)
+90 H$="0:DIC-"+C$+".DO":CLOSE3:CLS:PRINT@80,"Checking file "H$:OPENH$FORINPUTAS3:GOTO70
+100 OPEN"SUSPEC.DO"FORINPUTAS1:IFNOTEOF(1)THENCLOSE:MENUELSECLS:PRINT:PRINT"All spelling checks.":CLOSE:KILL"SUSPEC.DO":PRINT"Hit any key to return to menu.";:A$=INPUT$(1):MENU
+110 IFERR=52THENPRINT"Dictionary disk not in drive."ELSEPRINT"Error #"ERR" in line #"ERL
+120 PRINT"Hit any key to continue.";:A$=INPUT$(1):IFERR<>52THEN150ELSERESUME10
+130 IFERR=52THENPRINTA$" file was not found."ELSEPRINT"Error #"ERR" in line #"ERL
+140 PRINT"Hit any key to continue.";:A$=INPUT$(1):IFERR<>52THEN150ELSECLOSE:RESUME20
+150 CLOSE:MAXFILES=1:MENU
+160 PRINT:PRINT"Error #"ERR" in line #"ERL:PRINT" Hit any key to return to menu.";:A$=INPUT$(1):MENU
+
+
+
+This program takes a word list stored in the RAM file SUSPEC.DO and adds these
+words in alphabetical order into the disk dictionary files DIC-AB.DO thru
+DIC-YZ.DO . The words within SUSPEC.DO must be in all lower case letters,
+each word on a seperate line with no blank lines in between, words arranged
+alphabetically in the file & words must start with a letter but may contain
+a hyphen or appostrophe. Such as set-up by the m/l program loaded by DCPREP.LDR
+and spell checked with SPLCHK.BA above. The SUSPEC.DO file is not automatically killed so it may be added to a back-up
+dictionary disk.
+
+WARNING: If you edit SUSPEC.DO after running SPLCHK.BA and alter it other
+than just deleting words, make sure the new file still meets the criteria
+above (all small letters & sorted). I suggest you rename the new SUSPEC.DO
+file and run it back through the m/l program and SPLCHK.BA before adding it
+into your dictionary files.
+
+		ADDICT.BA
+
+10 CLEAR256:MAXFILES=3:CLS:PRINT:PRINT"Place Dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):ONERRORGOTO130:PRINT:OPEN"0:DIC-AB.DO"FORINPUTAS1:CLOSE:CLS:ONERRORGOTO150:OPEN"SUSPEC.DO"FORINPUTAS1:ONERRORGOTO180:C$="00"
+20 IFEOF(1)THENCLOSE:GOTO70ELSELINEINPUT#1,B$:GOSUB90:GOSUB100
+30 IFEOF(2)THEN50ELSELINEINPUT#2,D$:IFB$<D$THEN40ELSEIFB$=D$THEN30ELSEPRINT#3,D$:GOTO30
+40 PRINT#3,B$:IFEOF(1)THENGOSUB120:CLOSE:GOSUB80:GOTO70ELSELINEINPUT#1,B$:GOSUB90:IFB<>ASC(LEFT$(C$,1))ANDB<>ASC(RIGHT$(C$,1))THEN60ELSEIFB$<D$THEN40ELSEIFB$=D$THEN30ELSEPRINT#3,D$:GOTO30
+50 PRINT#3,B$:IFEOF(1)THENCLOSE:GOSUB80:GOTO70ELSELINEINPUT#1,B$:GOSUB90:IFB=ASC(LEFT$(C$,1))ORB=ASC(RIGHT$(C$,1))THEN50ELSECLOSE2,3:GOSUB80:GOSUB100:GOTO30
+60 GOSUB120:CLOSE2,3:GOSUB80:GOSUB100:GOTO30
+70 MAXFILES=1:MENU
+80 KILLH$:NAME"0:TP-DIC.DO"ASH$:RETURN
+90 B=ASC(LEFT$(B$,1))-32:RETURN
+100 IFBAND1THENC$=CHR$(B)+CHR$(B+1)ELSEC$=CHR$(B-1)+CHR$(B)
+110 H$="0:DIC-"+C$+".DO":CLS:PRINT@80,"Adding to file "H$:OPENH$FORINPUTAS2:OPEN"0:TP-DIC.DO"FOROUTPUTAS3:RETURN
+120 PRINT#3,D$:IFNOTEOF(2)THENLINEINPUT#2,D$:GOTO120ELSERETURN
+130 PRINT:IFERR=52THENPRINT"Dictionary disk not in drive."ELSEPRINT"Error #"ERR" in line #"ERL
+140 PRINT"Hit any key to continue.";:A$=INPUT$(1):IFERR<>52THEN170ELSERESUME10
+150 PRINT:IFERR=52THENPRINT"SUSPEC.DO file not found."ELSEPRINT"Error #"ERR" in line #"ERL
+160 PRINT"Hit any key to return to menu.";:A$=INPUT$(1)
+170 CLOSE:MAXFILES=1:MENU
+180 PRINT:PRINT"Error #"ERR" in line #"ERL:GOTO160
+
+
+
+This program takes a word list stored in the RAM file SUSPEC.DO and removes
+these words from the disk dictionary files DIC-AB.DO thru DIC-YZ.DO . The
+words within SUSPEC.DO must be spelled exactly as they appear in the disk
+dictionary files, each word on a seperate line with no blank lines in
+between, all small letters, but they need not be in alphabetical order.
+SUSPEC.DO is not automatically killed so it can be removed from back-up disks.
+
+		REMDIC.BA
+
+10 CLEAR256:MAXFILES=3:CLS:PRINT:PRINT"Place Dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):ONERRORGOTO130:PRINT:OPEN"0:DIC-AB.DO"FORINPUTAS1:CLOSE:CLS:ONERRORGOTO150:OPEN"SUSPEC.DO"FORINPUTAS1:ONERRORGOTO180
+20 IFEOF(1)THENCLOSE:GOTO70ELSELINEINPUT#1,B$:GOSUB90:GOSUB100
+30 IFEOF(2)THENCLOSE2,3:GOSUB80:GOTO20ELSELINEINPUT#2,D$:IFB$=D$THEN30ELSEPRINT#3,D$:GOTO30
+70 MAXFILES=1:MENU
+80 KILLH$:NAME"0:TP-DIC.DO"ASH$:RETURN
+90 B=ASC(LEFT$(B$,1))-32:RETURN
+100 IFBAND1THENC$=CHR$(B)+CHR$(B+1)ELSEC$=CHR$(B-1)+CHR$(B)
+110 H$="0:DIC-"+C$+".DO":CLS:PRINT@80,"Deleting from file "H$:OPENH$FORINPUTAS2:OPEN"0:TP-DIC.DO"FOROUTPUTAS3:RETURN
+130 PRINT:IFERR=52THENPRINT"Dictionary disk not in drive."ELSEPRINT"Error #"ERR" in line #"ERL
+140 PRINT"Hit any key to continue.";:A$=INPUT$(1):IFERR<>52THEN170ELSERESUME10
+150 PRINT:IFERR=52THENPRINT"SUSPEC.DO file not found."ELSEPRINT"Error #"ERR" in line #"ERL
+160 PRINT"Hit any key to return to menu.";:A$=INPUT$(1)
+170 CLOSE:MAXFILES=1:MENU
+180 PRINT:PRINT"Error #"ERR" in line #"ERL:GOTO160
+
+
+
+This program creates the blank dictionary files DIC-AB.DO thru DIC-YZ.DO
+on a formatted disk. If the file DIC-AB.DO already exists it will abort.
+
+		CRDICT.BA
+
+10 CLS:PRINT:PRINT"Place dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):PRINT:ONERRORGOTO20:OPEN"0:DIC-AB.DO"FORINPUTAS1:PRINT"Dictionary files already exist.":CLOSE:END
+20 FORN=65TO89STEP2:H$="0:DIC-"+CHR$(N)+CHR$(N+1)+".DO":OPENH$FOROUTPUTAS1:CLOSE:NEXT:MENU
+
+
+
+This program prints the words in the specified dictionary disk file in a
+format of 4 words (max. 18 chars./word) per line and sends an ASCII 12 (top
+of forms) to the printer at the end of the file.
+
+		PRTDIC.BA
+
+10 CLS:PRINT:PRINT"Place dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):H$="0:DIC-"
+20 CLS:PRINT:PRINT"Enter pair of letters of file :";
+25 A$=INKEY$:IFA$=""THEN25ELSEIFASC(A$)<>13THENH$=H$+A$:PRINTA$;:GOTO25ELSEPRINT:H$=H$+".DO":OPENH$FORINPUTAS1:LPRINT"Printing words in "H$;SPACE$(20);DATE$;SPACE$(5);TIME$:LPRINT:GOSUB30:CLOSE:LPRINTCHR$(12):MENU
+30 IFEOF(1)THENRETURNELSELINEINPUT#1,A$:GOSUB40:LPRINT"  "A$;:IFEOF(1)THENRETURNELSELINEINPUT#1,A$:GOSUB40:LPRINTA$;:IFEOF(1)THENRETURNELSELINEINPUT#1,A$:GOSUB40:LPRINTA$;:IFEOF(1)THENRETURNELSELINEINPUT#1,A$:GOSUB40:LPRINTA$:GOTO30
+40 IFLEN(A$)<19THENA$=A$+" ":GOTO40ELSEIFLEN(A$)>19THENA$=LEFT$(A$,19):RETURNELSERETURN
+
+
+
+This program will count & display the number of words in each of the disk
+dictionary files, as well as, the total number of words in the dictionary.
+
+		CNTDIC.BA
+
+10 CLS:PRINT:PRINT"Place dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):C=0:TC=0:
+20 CLS:FORN=65TO89STEP2:H$="0:DIC-"+CHR$(N)+CHR$(N+1)+".DO":OPENH$FORINPUTAS1:PRINT:PRINT"Counting words in "H$:PRINT"Words this file ="
+25 P=(PEEK(63033)-2)*40+17:GOSUB30:CLOSE:TC=TC+C:C=0:BEEP:NEXT:PRINT:PRINT"Total words ="TC:PRINT:PRINT"Hit any key to return to menu.";:A$=INPUT$(1):MENU
+30 IFEOF(1)THENRETURNELSELINEINPUT#1,A$:C=C+1:PRINT@P,C:GOTO30

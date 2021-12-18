@@ -1,0 +1,283 @@
+
+10:58:55 AM EST Sunday, March 9, 1986
+
+(Sysop .^Dave^.) We seem to be gathering ....
+  TOPIC this morning is Basic programming and I thought we could share our pets
+  for efficient solving of problems. Wasn't really thinking of Byte Fyting as
+  the subject, but that might get into it if suitable.
+  F'rintstance: Isn't X$=INPUT$(1) a preferable Menu handling device rather
+  than X$=INKEY$:IF X$="" THEN
+
+(rowlfe) the second is preferable to me, when something is interrupt driven,
+ since I found out that INPUT$(1) is not interrupted by the ONTIME$ interrupt
+ so it is not suitable for using with COM etc.
+(Sysop .^Dave^.) Concur; that is why I said "Menu handling device" since
+  INPUT$(1) leaves you locked at location; that is why IF X$="" is necessary
+  for INKEY$ since the polling continues.
+(Sysop Tony) Depends on use. Lotsa folks like to see the response echoed to the
+ screen to be sure computer received it.
+(Sysop .^Dave^.) That is a point, but INPUT$(1) reacts so fast that there is
+  no doubt about reception unless the IF THEN loop won't accept the response.
+(rowlfe) I did successfully use input$(1) by making a loop anyway and printing
+ the character after the user input, then using instr function to search for
+ valid input then print@ to erase if not valid and do it again. but it was
+ cumbersome at best.
+(Sysop .^Dave^.) Yep, sounds like a loop dee loop to me ...
+  Eiji, you have a pet technique or problem in preparing WORPRO and other
+  programs??
+(Eiji) Well, I usually use INSTR function to compare the key input, and use
+ ONGOTO to jump to whatever I want to do.
+(Sysop .^Dave^.) Yep; that ON X GOTO gig is nifty ... wasn't it you that first
+  used ON INKEY$ GOTO around here Eiji?? Or have I gawt the wrong syntax?
+(Eiji) I am not sure.  If menu choice is number like 1,2,3 you can use
+ ON INKEY$ GOTO, but if it's alphabet, you must define characters in a string,
+ and find the position of the input with INSTR, then use ON X GOTO. 
+
+
+(curt) COULD SOMEONE SUGGEST A BOOK WHICHCH TEACHES PEEK, POKE, CALL ETC 
+(Sysop .^Dave^.) Yes, very handy and easy to get hold of is David Lien's book
+  "The TRS-80 Model 100 Portable Computer" which is sold at Radio Shack
+  Computer Centers; then you can move into the Waite Group's series which
+  includes five books, has very advanced stufff as well as Basic in the series.
+  check at Walden's or Dalton's bookstores
+
+
+(reid p) How effective is Custom software's BYTEFYTER in conserving RAM space?
+(Sysop .^Dave^.) Well, I hope there is sumbaudee here that has used it besides
+  me ...
+  ???? ...
+  because it was named for me ...
+(Nabla) not me, batman.
+(Sysop Tony) I've used it. Very efficient... very fast.... Good program...
+ When combined with RENUMber program, can't be beat.
+(Sysop .^Dave^.) [clap, clap]
+(reid p) is RENUM essential to use w/BF? 
+(Sysop .^Dave^.) Nope, not essential, it is an entirely different program that
+  renumbers very fast and efficiently and will save bytes from the GOTO and
+  GOSUB statements if they take up fewer digits.
+(Sysop Tony) Not essential, but renumbering can also save bytes. expecially in
+ larger programs.
+(rowlfe) does it concatenate non-referenced program line?
+(Sysop .^Dave^.) Program asks for line length max and I normally respond
+  with 255 and let it go; everthing is compressed to such an extent that I cut
+  out DATA lines first.
+(rowlfe) just what I need for the backgammon, monopoly programs.
+(Sysop .^Dave^.) HIGHLY recommend it tell Greg I sent you and maybe ...
+  he'll charge you more.
+(rowlfe) [gee, THANKS!]
+
+
+(Nabla) While the great minds are assembled. Anyone here familiar with the 200?
+(Sysop Tony) Yes.... and no.... what's the question?
+(Nabla) Same old thing. Can I turn off and on the RTS line from BASIC?
+(Sysop Tony) Sorry, that's still unanswered.
+(Sysop .^Dave^.) Nabla, can't you do it with shears and a soldering iron??
+  [let's get serious around here ...]
+(Sysop Tony) (How about using the cassette motor relay?)
+(Sysop .^Dave^.) Nabla, that last of Tony's is worth investigating; a LOT has
+  been done in that area.
+(rowlfe) it just might be possible, comt to think of it it depends on the usart
+ and how it is programmed. I seem to remember at one of the LAUGH meetings
+ talking about just this sort of thing. Mebbe the Hidden Powers book might shed
+ some light on this. I'll research it while I am out to sea.
+(Sysop Tony) Rowlfe, remember, it's already documented for the 100.
+ Nabla wants the infomation for the 200. Apparently different UARTS.
+(Bob R) in the rom files (8 parts in the dl section) there is documneted that
+ the rts can be controlled by bit 7 of port B2H.
+(Sysop .^Dave^.) But Bob, that is for the Model 100 and the question was about
+  the Tandy 200 !!!!
+
+
+(rowlfe) NorthStar Basic has an EXIT command to get out of a FOR-NEXT loop
+ without completing it normally without glitching the control variable.
+ Is there a way to EXIT from that kind of thing on the 100? or a way around it?
+ In translating that is the last hurdle to overcome to get the backgammon and
+ monoply games up.
+(Sysop .^Dave^.) what is matter with IF ... THEN exit?
+(Sysop Tony) Exiting a loop in Microsoft BASIC is different than in NorthStar
+ BASIC. It's OK.
+(rowlfe) does that mean I can use IF-THEN-GOTO n and not have trouble wilth a
+ NEXT statement later?
+(Sysop .^Dave^.) KEEEEE RECT !!!
+(Sysop Tony) If you have further loops in the program you need to define the
+ NEXT statement. to keep the stack correct.
+(rowlfe) Thought so. Just did not know if control variable was satisfied.
+
+(DAVID EDWARDS) I would like to know if a routin for talking to the portable
+ disk drive has come out.
+(Sysop Tony) Yes. One is called POWR-DISK... costs $39.95 and is described in
+ the file POWR-D.PRD in DL6.  Another is called TS-DOS, and is sold by
+ Traveling Software for $59.95. Another is called DSKMGR and is available here
+ in DL5 for connect charges.
+
+
+(Bob R) if you need to leave a loop early, and the FOR statement was
+ FOR X=1 TO 100 then in the loop have an IF ------- THEN X=100:NEXT: GOTO--...
+
+(Sysop .^Dave^.) Don't forget to remove all those 'GOTO' statements in your
+  IF .... THEN GOTO ... lines rowlfe ...
+(rowlfe) [GOTO's removed already.]
+
+(Mike White) Re earlier question about getting out of a FOR loop. I was alwasy
+ tought never to muck about with the index variable within the loop.
+(rowlfe) [me too, hence the Q.]
+(Mike White) different interpreters and compilers respond differently.
+ some of my students in my FORTRAN class tried it in Microsoft FORTRAN (similar
+ to you 'vaproators in most respects) and it blew up it their faces.
+ i think it is good practice never to do it. 
+(Sysop .^Dave^.) Mike, have NO experience with 4train but know that in today's
+  MicroSoft Basic for the majority of current computers it is perfectly
+  acceptable practice. I'm looking at the code right now for a program I put in
+  DL 2 for the Tandy 600 that was written for the Model 4 and IBM type
+  computers. It is FULL of "IF .... THEN nnnn" type statements within loops.
+(Mike White) Yes, it is always to IF-THEN your way out of a loop. What I am
+ talking about is doing that by changing the value of the index variable in
+ such a way that it exceeds the loop limits; some interpreters and compilers
+ will let you do it in that the code will run, but its real easy to get things
+ screwed up; the interpreter sets pointers that tell it where to go when the
+ loop is finished, and changing the index can in some cases screw that up.
+(Sysop .^Dave^.) Ahhhhh sooooo, follow you now, don't say that the pointer
+  is 100 when it is really only 56 just to exit the loop.
+(Mike White) yes
+
+
+(DAVID EDWARDS) ARE THE PACKAGES YOU MENTIONED ON THE PORTABLE DISK
+ USEBLE IN A PROGRAM.
+(Sysop Tony) Yes, they are machine language routines, accessible from BASIC.
+
+(rowlfe) Mike, exactly the problem. the syntax for the exit is
+ IF-THEN-EXIT nnn, where nnn is a line number outside the loop. the exit
+ satisfies the loop so that a NEXT X, if X was the control variable, will give
+ an error of a next without FOR. I wondered how Microsoft handled getting out
+ using a GOTO in that the control might still be on the stack, and liable to
+ cause unwanted results if a NEXT was used later without a variable defined
+ the shorthand version of NEXT instead of NEXT X
+(Mike White) I see what you mean. In the basics i am familiar with exiting the
+ loop in any fashion resets the counters so that any subsequent use of NEXT
+ without a FOR will just give you a NEXT WITHOUT FOR error.
+ I've never had a problem with that particular thing.
+(Sysop Tony) If you exit a loop, and then enter a second loop the first loop
+ counter may not be satisfied
+(rowlfe) [nested loops]
+(Sysop Tony) However, if you use a dedicated variable for the loop counter
+ each successive loop clears out the previous stack counter.
+(Eiji) I believe changing the index variable value is okay with M100.
+ I remember reading about it in a magazine article somewhere. That's why I
+ started to use it.  Within a loop, just change the variable to the last number
+ of FOR--TO-- value.
+(rowlfe) ok. will try it out and see. I'll let you know what happens on various
+ combinations of FOR-NEXT loops with nesting. These things are nested at least
+ 5 deep at last count, and the EXITing is done to all kinds of strange places
+ in the programs.
+
+
+(rowlfe) anybody working a text editor that uses a proportional character set,
+ like what is now being built in to most printers?
+(Eiji) Since I got my printer, I wanted to add proportinal spacing feature,
+ but I just quit since I got WRITE ROM.
+
+(PAUL LOVE) I have an olly m-10 and want M/l  txt frmtr
+(Sysop .^Dave^.) You can use just about any of the programs in the DL 0
+  database as long as they are in BASIC; that includes PRINT.100, PRINTR.100,
+  WORPRO.EM3, and the latest PRTEXT.BA which is rather powerful. None of those
+  have PEEK, POKE, or CALL statements so there should be no problems.
+  DON'T load any M/L programs in your Olivetti unless there is a 100% assurance
+  that the program was written for the M-10; and we h'ain't gawt none of them.
+  Afraid the M-10 is an orphan.
+(PAUL LOVE) at least the price was right
+(Sysop .^Dave^.) you can do a LOT with you Olly as long as you
+  stick to Basic programs. Lotza luck ...
+(PAUL LOVE) I loaded print.100 and it works ok
+
+
+(Sysop .^Dave^.) Comment: Over the last two days I've been programming in
+  rather advanced Basic with M/L calls for the Tandy 600. A check record
+  program with sorting, finding, printing and all that good stuff using such
+  statements as CALL RDELETE, CALL RCREATE, CALL RNUMPF and similar.
+  Keeps astonishing me at what I can get to work !!!!
+  Me oh my!!! Hope to finish before Wednesday.
+
+
+(CLAUDIA) I was wondering where I can get some info on the PWR-DOS that I keep
+ reading about in the DLX areas
+(Sysop .^Dave^.) See POWR-D.PRD and POWR-D.REV in the DL 6 database ...
+  the one is description and ordering information and the other is a review.
+
+
+(Jay M.) I just bought a PDD yesterday, and was wondering what could be done
+ to make a real OS out of it. I saw the stuff for POWR-DOS in DL 6 (though I
+ haven't read it yet) can it be driven from BASIC?
+(Sysop Tony) Yes. If you buy the extra software called POWR-DISK or TS-DOS,
+ you can access the disk drive from BASIC.
+(Jay M.) ok...will look up the info in DL 6 when I get back from class.
+(DAVID EDWARDS) THE INFO IS GOOD.
+(Jay M.) is there a review/info file for TS-DOS? Are there any comparisons?
+ Does anyone have recommendations?
+(Sysop Tony) (Info is ALWAYS good)
+(DAVID EDWARDS) AGREED
+(Sysop Tony) TS-DOS is being released this month, no reviews of the product
+ yet; it'll take a while before someone writes one.  What sort of information
+ do you need? I beta tested the TS-DOS program and have POWR-DISK, too.
+(Jay M.) I'm looking for comparisons, et cetera - I'm hoping to standardize
+ on one system (assuming they're incompatible) and stick with it. I want to see
+ just how far I can stretch this machine.
+(Sysop Tony) Product comparisons, in the computer program field are comparing
+ apples and oranges; most programmers approach a problem from different angles,
+ depending on their own talents.  As for POWR-D and TS-DOS, they both do the
+ same thing, using different approaches. You can stretch the M100 as far as
+ your talents allow. Eiji has done more advanced pushing than anyone I know.
+ He asks questions I never enen thought of.
+(Jay M.) I consider myself a proficient programmer; I'm just learning the ins
+ and outs of the M100. This is my 9th personal computer, and I'm rapidly
+ falling in love with it!
+(rowlfe) [welcome to the club!]
+(Sysop Tony) I do more work on the portables now, than on my Desktop computer.
+(DAVID EDWARDS) I LIKE IT
+(Sysop Tony) They're adicting....
+(DAVID EDWARDS) YES
+(Sysop Tony) We don't do much product comparison here, at least not in
+ documented form...
+(Jay M.) (heh)
+(Sysop Tony) allowing each program to be reviewed on it's own merits.
+(Jay M.) ok...I'll read the P-D stuff and wait for someone to review TS-DOS.
+ If P-D isn't too expen$ive, I might even order it.
+(Sysop Tony) $59.95.
+
+
+(Sysop Tony) Well, I guess that's it for this Sunday morning....
+ What was it Walter Crankcase used to say????
+ That's all fffolks...
+(Sysop .^Dave^.) "Good night Chet"
+
+12:55:22 PM EST Sunday, March 9, 1986
+
+
+  User ID   Nod Handle
+----------- --- ------------
+70007,1176  ATJ Thom Hartmann
+71036,1603  HOO Jay M.
+71036,36    QCA reid p
+71046,653   DCI Mike White
+71216,1564  QFI Eiji
+72207,3402  MAD John S.
+72256,2551  TOC Gary D.
+72276,2454  DLQ WAYNE S.
+72276,3505  ANA john k
+72407,3224  SYR Marty T
+72467,331   DCI :LAN Y:
+72527,765   NFK DANA ROBERT HYDE
+72737,2242  TRO BILL PIPPER
+72737,3431  RAL Bob R
+72737,625   QEI curt
+73107,2166  ATJ RON CLINE
+73127,36    DCI DAVID EDWARDS
+73216,53    DET STEVE KARLSON
+73267,2450  ALB FRED
+74405,1177  SDC rowlfe
+75026,154   SIE Mark S
+76012,3532  BAT Peter Tucker
+76257,1561  MID Nabla
+76474,1121  SPM CLAUDIA
+76606,2375  LAK PAUL LOVE
+76703,4062  SIE Sysop Tony
+76703,446   BMD Sysop .^Dave^.

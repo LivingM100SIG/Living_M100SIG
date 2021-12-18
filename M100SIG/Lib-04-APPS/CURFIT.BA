@@ -1,0 +1,173 @@
+1 ' NON-LINEAR REGRESSION ANALYSIS PROGRAM
+2 '(C) COPYRIGHT 1987 David O. Rowell
+3 '    All rights reserved
+4 ' 3961 Cherry Valley Turnpike, Marietta, NY  13110 - CIS 70406,445
+5 '
+6 ' Permission is granted to members of CompuServe's Radio Shack MOD
+7 ' 100 SIG for their personal use of this program.  Sale, distribution
+8 ' or any other use of the program is forbidden without the written
+9 ' permission of the copyright holder.  This copyright notice must
+10 ' be retained in all copies of the program.
+11 '
+20 'Your data is entered as data statements.  The first datum MUST be
+21 'the number of data points (pairs) that will be entered.  The data
+22 'points are then entered in additional data statements.  Those
+23 'data must be entered as X1,Y1,X2,Y2 ... Xn,Yn.  You may use line
+24 'numbers from 100 to 900 for your data.  For example 30-45 gives the
+25 'DATA statements for 14 observations whose independent variable,
+26 'dependent variable data pairs are contained in the remaining DATA
+27 'statements.  The data given could be used to demonstrate the
+28 'operation of the program by simply removing the line number and
+29 'tic mark leaving DATA statements 100 to 120 as real data.
+30 '100 DATA 14
+35 '105 DATA 10,21.2, 10,19.9, 11,22.5, 11,23.7, 12,25
+40 '110 DATA 15,30.3, 17,36.1, 19,38.6, 20,41.5, 20,42.7
+45 '115 DATA 23,45, 25,50, 27,53.9, 30,62.1
+99 GOTO 1000
+1000 DEFDBL A-Z
+1010 READ N%
+1020 DIM XD(N%),YD(N%),X(N%),Y(N%),YH(N%)
+1030 FOR I%=1 TO N%:READ XD(I%),YD(I%):NEXT I%
+1050 FOR CV%=1 TO 6
+1060   CLS:PRINT@56,"-CURFIT-"
+1070   PRINT@134,"(C) COPYRIGHT"
+1080   PRINT@213,"DAVID O. ROWELL"
+1090   PRINT@256,"70406,445"
+1100   SX=0:SY=0:XY=0:X2=0:ST=0:SR=0:SE=0
+1110   ON CV% GOSUB 11000,11100,11200, 11300,11400,11500
+2000   FOR I%=1 TO N%
+2010     SX=SX+X(I%) : SY=SY+Y(I%)
+2020     X2=X2+X(I%)*X(I%)
+2030     XY=XY+X(I%)*Y(I%)
+2040   NEXT I%
+3000   XB=SX/N% : YB=SY/N%
+3010   BH=(N%*XY-SX*SY)/(N%*X2-SX*SX)
+3020   AH=YB-BH*XB
+3030   FOR I%=1 TO N%
+3040     YH(I%)=AH+BH*X(I%)
+3050     SR=SR+(YH(I%)-YB)^2
+3060     SE=SE+(Y(I%)-YH(I%))^2
+3070     ST=ST+(Y(I%)-YB)^2
+3100   NEXT I%
+3110   ID=1-SE/ST
+3120   CC=SGN(BH)*SQR(ID)
+3130   ME=SE/(N%-2)
+3140   MT=ST/(N%-1)
+3150   MR=SR
+3160   F=MR/ME
+3200   ON CV% GOSUB 11040, 11140, 11240, 11340, 11440, 11540
+3900 '(C) COPYRIGHT 1987 David O. Rowell All rights reserved
+4000   CLS:PRINT@40,"CURVE TYPE        A          B"
+4010   PRINT    "----------     --------   --------"
+4020   PRINT USING F1$;AH;BH
+4030   PRINT USING "CORREL. COEF.: #.#####  F-RATIO:####.##";CC;F
+4040   GOSUB 10000
+4050 IFZ$=CHR$(27)THEN6000
+4060   CLS:PRINT@40,"SOURCE OF  D.F.     SUM OF     MEAN"
+4070   PRINT "VARIATION           SQUARES    SQUARE"
+4080   PRINT "---------  ----    --------    ------"
+4090   PRINTUSING "total      ###   ##.###^^^^ ##.###^^^^";N%-1;ST;MT
+4100   PRINTUSING "regression   1   ##.###^^^^ ##.###^^^^";SR;MR
+4110   PRINTUSING "error      ###   ##.###^^^^ ##.###^^^^";N%-2;SE;ME
+5000   GOSUB 10000
+5010   IF Z$=CHR$(27)THEN6000
+5200   FOR I%=1 TO N% STEP 5
+5210     CLS:PRINT "X-ACTUAL  Y-ACTUAL  Y-CALC   PCT-DIFR"
+5220     FOR J%=I% TO I%+4
+5230      PRINT XD(J%);TAB(9);YD(J%);TAB(19);INT(10000*YH(J%)+.5)/10000;TAB(29);INT(10000*(YD(J%)-YH(J%))/YD(J%)+.5)/100
+5240      IF J%=N% THEN J%=I%+4
+5250     NEXT J%
+5260     GOSUB10050
+5270   NEXT I%:CLS
+5280   INPUT"WANT PREDICTED VALUES";A$:CLS
+5290   IFINSTR("Yy",A$)THEN5300ELSE6000
+5300     CLS:INPUT"VALUE FOR 'X' (INDEP VAR)";XP
+5310     ON CV% GOSUB 11090,11190,11290,11390,11490,11590
+5320     PRINT USING"THE VALUE OF 'Y' IS ####.####";YP
+5330   GOTO 5280
+6000 NEXT CV%
+6010 CLS:END
+6020 '(C) COPYRIGHT 1987 David O. Rowell All rights reserved
+9999 ' SUBROUTINES
+10000 PRINT@283,"ANY KEY TO CONTINUE-ESC TO BYPASS";
+10010 Z$=INKEY$:IFZ$=""THEN10010
+10020 RETURN
+10050 PRINT@290,"ANY KEY TO CONTINUE";
+10060 GOTO10010
+10999 '
+11000 FOR J%=1 TO N%  ' V=A+BU
+11005   X(J%)=XD(J%): Y(J%)=YD(J%)
+11010  NEXT J%
+11015 RETURN
+11040 F1$="Y=A+[B*X]     ##.###^^^^ ##.###^^^^"
+11045 RETURN
+11090 YP=AH+BH*XP
+11095 RETURN
+11099 '
+11100 FOR J%=1 TO N% ' V=Ae^(BU)
+11105   X(J%)=XD(J%)
+11110   Y(J%)=LOG(YD(J%))
+11115  NEXT J%
+11120 RETURN
+11140 AH=EXP(AH) ' INVERSE TRANSFORM
+11145  FOR J%=1 TO N%
+11150    YH(J%)=EXP(YH(J%))
+11155  NEXT J%
+11160  F1$="Y=A*e^[BX]   ##.###^^^^ ##.###^^^^"
+11165 RETURN
+11190 YP=AH*EXP(BH*XP)
+11195 RETURN
+11199 '
+11200 FOR J%=1 TO N% ' V=AU^B
+11205   X(J%)=LOG(XD(J%))
+11210   Y(J%)=LOG(YD(J%))
+11215  NEXT J%
+11220 RETURN
+11240 AH=EXP(AH) ' INVERSE TRANSFORM
+11245  FOR J%=1 TO N%
+11250    YH(J%)=EXP(YH(J%))
+11255  NEXT J%
+11260 F1$="Y=A*[X^B]     ##.###^^^^ ##.###^^^^"
+11265 RETURN
+11290 YP=AH*XP^BH
+11295 RETURN
+11299 '
+11300 FOR J%=1 TO N% ' V=A+B/U
+11305   X(J%)=1/XD(J%)
+11310   Y(J%)=YD(J%)
+11315  NEXT J%
+11320 RETURN
+11340 F1$="Y=A+[B/X]     ##.###^^^^ ##.###^^^^"
+11345 RETURN ' NO INVERSE TRANSFORM
+11390 YP=AH+BH/XP
+11395 RETURN
+11399 '
+11400 FOR J%=1 TO N% ' V=1/(A+BU)
+11405   X(J%)=XD(J%)
+11410   Y(J%)=1/YD(J%)
+11415  NEXT J%
+11420 RETURN
+11440 FOR J%=1 TO N%
+11445   YH(J%)=1/YH(J%)
+11450  NEXT J%
+11455  F1$="Y=1/[A+B*X]  ##.###^^^^ ##.###^^^^"
+11460 RETURN
+11490 YP=1/(AH+BH*XP)
+11495 RETURN
+11499 '
+11500 FOR J%=1 TO N% ' V=U/(A+BU)
+11505   X(J%)=1/XD(J%)
+11510   Y(J%)=1/YD(J%)
+11515  NEXT J%
+11520 RETURN
+11540 ZZ=AH:AH=BH:BH=ZZ
+11545 FOR J%=1 TO N%
+11550   YH(J%)=1/YH(J%)
+11555  NEXT J%
+11560  F1$="Y=X/[A+B*X]  ##.###^^^^ ##.###^^^^"
+11565 RETURN
+11590 YP=XP/(AH+BH*XP)
+11595 RETURN
+11599 '
+12000 '(C) COPYRIGHT 1987 David O. Rowell All rights reserved
+

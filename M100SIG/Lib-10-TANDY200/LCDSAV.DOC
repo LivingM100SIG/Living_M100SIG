@@ -1,0 +1,62 @@
+LCDSAV.DOC (C)1988 James Yi 73327,1653
+
+LCDSAV.200 is a machine language routine that you can LOADM and CALL from 
+BASIC.
+With it you can save and load the 240 by 128 pixel screen image to either
+ 5200 bytes text file, or 3840 bytes compressed binary file.
+The text file format can be uploaded and downloaded with TELCOM.
+
+LCDSAV.200 is downloaded as a Basic prgram listing.  Running it creates
+LCDSAV.CO.
+LCDSAV.CO is 321 bytes long and loads at 63580, the altLCD buffer area.
+
+To use it in a Basic program, first LCDSAV.CO has to be LOADM'ed.
+Then CALL 63580,MODE,VARPTR(F$).
+MODE is either 0 for Load, to recreate the screen image from an image file,
+or 1 for Save, to save the picture to an image file.
+F$ is the name of the image file.  It must have either .DO or .CO extension.
+The binary(.CO extension) file's loading address is set to 57260.
+You do not have to CLEAR the HIMEM when loading/saving to a .CO file, since 
+LCDSAV reads and writes directly to the .CO file, without loading it into 
+HIMEM.  That also means that you can run other .CO programs safely in HIMEM 
+while using LCDSAV.  But LCDSAV is loaded in altLCD, so you should be careful 
+about using it with other .CO programs that run in altLCD.
+
+LCDSAV has built in error checking for memory full condition, invalid file name
+/type, and non-image file, so there's no way you can do damage by specifying 
+wrong parameters.
+
+If you save to an already existing image file, it is simply updated.
+
+Here are some sample calls:
+
+10 'This one saves the screen to a .CO file.
+20 LOADM "LCDSAV"
+30 FC$="IMAGE1.CO"
+40 CALL 63580,1,VARPTR(FC$)
+50 END
+
+
+10 'This one loads the screen from an existing .DO image file.
+20 LOADM "LCDSAV"
+30 FD$="IMAGE2.DO"
+40 CALL 63580,0,VARPTR(FD$)
+50 END
+
+
+10 'This one converts a .CO image file to .DO image file,
+20 'by loading the image from a .CO file, then saving it to a .DO file.
+30 LOADM "LCDSAV"
+40 FC$="IMAGE1.CO":FD$="IMAGE1.DO"
+50 CALL 63580,0,VARPTR(FC$)
+60 KILL FC$:'Throw away original .CO
+70 CALL 63580,1,VARPTR(FD$)
+80 END
+
+
+For screen dumping to a dot-matrix printer, look in DL10 for:
+ GRDUMP.200, for normal size prints,
+ or LCDPRT.200 for double size.
+
+	<END of DOC>
+

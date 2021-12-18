@@ -1,0 +1,30 @@
+The following short program patches the
+FLOPPY.CO after LOADMing into high mem-
+ory so that the function key labels are
+where they should be (LCD line 8, just
+above the key numbers).  To use it, put
+FLOPPY.CO in high mem by following the
+instruction in the Operation Manual or
+by LOADM "FLOPPY.CO"; then RUN FXMENU.
+The FLOPPY program in high memory will
+be patched. Now CALL 59400 to see the
+new funtion menu.  For easy use, SAVE
+this call as a one line BASIC program,
+and run it instead of FLOPPY.  I have
+modified my working copy of FLOPPY with
+the changes in FXMENU, but the method I
+used is tedious involving converting
+FLOPPY.CO to FLOPPY.DO, modifying it by
+hand, and then converting it back to
+FLOPPY.CO.  I suspect there are easier
+ways to go.  Comments are welcome.
+
+
+10 CLEAR 300
+20 A$="Disk File Manager  Ver.01.00.00"+CHR$(13)+STRING$(7,CHR$(10))+"File Load Save Bkup Kill Name Frmt Menu"+STRING$(60,CHR$(0))
+30 A=59607:FOR X=1 TO 138
+40 POKE A+X,ASC(MID$(A$,X,1)):NEXT X
+50 POKE 59449,4:REM moves avail memory msg to line 4
+60 POKE 59481,4:POKE 59482,5:REM moves time$ msg to line 4, pos 5
+70 END
+

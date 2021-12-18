@@ -1,0 +1,87 @@
+10 CLS:PRINT:PRINT:PRINT"    ROCKT2":PRINT"    SINGLE STAGE ROCKET PERFORMANCE"
+20 GOSUB 90
+30 G=32.174
+40 CLS:PRINT:PRINT"SELECT OUTPUT DEVICE":PRINT:PRINT"1) OUTPUT TO: PRINTER":PRINT"2)          : SCREEN":PRINT"3)          : 'RESULT.DO'":PRINT:INPUT"Option";P
+60 CLS: ONPGOTO65,70,75,40
+65 OPEN"lpt:"FOROUTPUTAS1:GOTO100
+70 OPEN"lcd:"FOROUTPUTAS1:GOTO150
+75 OPEN"result"FOROUTPUTAS1:GOTO100
+90 FORI=1TO1000:NEXT:RETURN
+100 PRINT#1,:PRINT#1,:PRINT#1,"  ROCKT2    "DATE$"  at  "TIME$"  Single Stage Rocket Performance"
+150 CLS:PRINT"   MAIN MENU"
+160 PRINT" 1) Calculate Delta V Capability (V)"
+170 PRINT" 2) Calculate Initial Weight (W0)"
+180 PRINT" 3) Calculate Final Weight (Wf)"
+190 PRINT" 4) Quit"
+200 INPUT" Enter Choice (1,2,3,4-ENTER)";B
+210 ONBGOTO1000,2000,3000,220
+220 CLS:CLOSE:MENU
+1000 CLS:INPUT"  INPUT Isp (Sec)";ISP
+1010 CLS:INPUT"  INPUT Initial Weight (Lb)";W0
+1020 CLS:INPUT"  INPUT Final Weight (LB)";WF
+1050 Y=W0/WF:V=G*ISP*LOG(Y):WP=W0-WF
+1060 IF P=2 THEN 1150
+1100 PRINT#1,:PRINT#1,"  ROCKT2- Calculation of Delta V Capability"
+1110 PRINT#1,:PRINT#1,USING"\    \####.#\      \  \                    \#######,.#";"Isp",ISP," (Sec)","  Propellant Wt (Lb) ",WP
+1120 PRINT#1,USING"\                     \########,.#\                   \########,.#";"Initial Weight (Lb)",W0," Final Weight (Lb) ",WF
+1130 PRINT #1,USING"\                 \ ########,.#";"Delta V (Ft/Sec)",V
+1150 CLS:PRINT USING"\                  \ ########,.#";" Delta V (Ft/Sec)=",V
+1160 PRINT" 1) CHANGE Isp"
+1170 PRINT" 2) CHANGE Initial Weight"
+1180 PRINT" 3) CHANGE Final Weight"
+1190 PRINT" 4) Go To Main Menu"
+1200 PRINT" 5) Quit"
+1210 INPUT " Input Choice (1-5, ENTER)";C#
+1220 ONC#GOTO 1250,1300,1350,150,220
+1250 CLS:PRINT USING"\             \ ####.# \     \";"Current Isp=",ISP,"(Sec)"
+1260 INPUT"  INPUT NEW Isp (Sec)"; ISP: GOTO 1050
+1300 CLS:PRINT USING"\                \ #######,.# \    \";"Initial Weight=",W0,"(Lb)"
+1310 INPUT" INPUT NEW INITIAL WEIGHT (W0,Lb)";W0:GOTO1050
+1350 CLS:PRINT USING"\              \ #######,.# \    \";"Final Weight=",WF,"(Lb)"
+1360 INPUT" INPUT NEW FINAL WEIGHT (Wf,Lb)";WF:GOTO1050
+2000 CLS:INPUT"  INPUT Isp (Sec)";ISP
+2010 CLS:INPUT"  INPUT Final Weight (Lb)";WF
+2020 CLS:INPUT"  INPUT Delta V (Ft/Sec)";V
+2050 Y=V/(G*ISP):Z=EXP(Y):W0=WF*Z:WP=W0-WF
+2060 IF P=2 THEN 3150
+2100 PRINT #1,:PRINT#1,"ROCKT2- Calculation of Initial Weight"
+2110 PRINT #1,:PRINT#1,USING"\    \####.#\      \  \                    \#######,.#";"Isp",ISP," (Sec)","  Propellant Wt (Lb) ",WP
+2120 PRINT #1,USING"\                \#######,.#\                    \#######,.#";"Delta V (Ft/Sec)",V,"  Final Weight (Lb)",WF
+2130 PRINT #1,USING"\                   \#######,.#";"Initial Weight (Lb)",W0
+2150 CLS:PRINT USING"\                   \#######,.#";"Initial Weight (Lb)",W0
+2160 PRINT" 1) CHANGE Isp"
+2170 PRINT" 2) CHANGE Final Weight"
+2180 PRINT" 3) CHANGE Delta V"
+2190 PRINT" 4) Go to Main Menu"
+2200 PRINT" 5) Quit
+2210 INPUT " Input Choice (1-5, ENTER)";C#
+2220 ON C# GOTO 2250,2300,2350,150,220
+2250 CLS:PRINT USING"\            \####.#\     \";"Current Isp=",ISP," (Sec)"
+2260 INPUT" INPUT NEW Isp (Sec)";ISP:GOTO2050
+2300 CLS:PRINT USING"\                  \#######,.#";"Final Weight (Lb)=",WF
+2310 INPUT" INPUT NEW Final Weight (Lb)";WF: GOTO 2050
+2350 CLS:PRINT USING"\                \#######,.#";"Delta V (Ft/Sec)=",V
+2360 INPUT" INPUT NEW Delta V (Ft/Sec)";V: GOTO 2050
+3000 CLS:INPUT "INPUT Isp (Sec)";ISP
+3010 CLS:INPUT"INPUT Initial Weight (Lb)";W0
+3020 CLS:INPUT"INPUT Delta V (Ft/Sec)";V
+3050 Y=V/(G*ISP):Z=EXP(Y):WF=W0/Z:WP=W0-WF
+3060 IF P=2 THEN 3150
+3100 PRINT #1,:PRINT #1," ROCKT2- Calculation of Final weight"
+3110 PRINT #1,:PRINT #1, USING"\    \####.#\      \  \                    \#######,.#";"Isp",ISP," (Sec)","  Propellant Wt (Lb) ",WP
+3120 PRINT #1,USING"\                   \#######,.#\                    \#######,.#";"Initial Weight (Lb)",W0,"  Delta V (Ft/Sec)",V
+3130 PRINT #1,USING"\                   \#######,.#";"Final Weight (Lb)=",WF
+3150 CLS:PRINT USING"\                   \#######,.#";"Final Weight (Lb)=",WF
+3160 PRINT" 1) CHANGE Isp"
+3170 PRINT" 2) CHANGE Initial Weight"
+3180 PRINT" 3) CHANGE Delta V"
+3190 PRINT" 4) Go to Main Menu"
+3200 PRINT" 5) Quit
+3210 INPUT " Input Choice (1-5, ENTER)";C#
+3220 ON C# GOTO 3250,3300,3350,150,220
+3250 CLS:PRINT USING"\            \####.#\     \";"Current Isp=",ISP," (Sec)"
+3260 INPUT" INPUT NEW Isp (Sec)";ISP:GOTO 3050
+3300 CLS:PRINT USING"\                  \#######,.#";"Initial Weight (Lb)=",W0
+3310 INPUT" INPUT NEW Initial Weight (Lb)";W0: GOTO 3050
+3350 CLS:PRINT USING"\                \#######,.#";"Delta V (Ft/Sec)=",V
+3360 INPUT" INPUT NEW Delta V (Ft/Sec)";V: GOTO 3050

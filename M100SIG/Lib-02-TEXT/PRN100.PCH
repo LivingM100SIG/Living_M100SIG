@@ -1,0 +1,23 @@
+10 CLS:PRINT:PRINT"You must have the current version of":PRINT"PRINT.CO as a file in your M100 before
+20 PRINT"you continue.  If you do not, press":PRINT"SHIFT-BREAK, otherwise press ENTER to
+30 PRINT"continue.";:LINEINPUTR$
+40 CLS:PRINT:PRINT"This program will patch a page number":PRINT"routine into PRN100.  After it runs the
+45 PRINT"new SAVE address for PRINT.CO will be
+50 PRINT:PRINTTAB(11)"59838,62959,60503":PRINT:LINEINPUT"Press ENTER to continue";R$
+60 CLS:PRINT"The program will number pages, starting":PRINT"with page 2.  If you continue
+70 PRINT"to work with the same document after a":PRINT"printout, you will have to reset the
+80 PRINT"the START @ PAGE number, even though it":PRINT"may appear correct, since it is used as
+90 PRINT"the counter.  Press ENTER to begin";:LINEINPUTR$
+100 CLEAR256,59838:LOADM"PRINT"
+110 FORX=59838TO59899
+120 READA:POKEX,A
+130 NEXTX
+140 FORX=61709TO61711
+150 READA:POKEX,A
+160 NEXTX
+170 SAVEM"PRINT",59838,62959,60503
+180 END
+200 DATA 205,94,241,245,229
+210 DATA 58,255,239,254,1,202,235,233,33,247,233,126,35,205,63,109,254,32,194,206,233,58,255,239,198,48,205,63
+220 DATA 109,62,13,205,63,109,205,63,109,205,63,109,58,255,239,60,50,255,239,225,241,195,16,241,80,97,103,101,32
+230 DATA 195,190,233

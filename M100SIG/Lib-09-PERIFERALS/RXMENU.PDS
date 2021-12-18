@@ -1,0 +1,80 @@
+     Date: Jan 19,1986, Mon                      Page 1
+
+
+
+
+
+
+
+
+
+     ==================
+     POWR-DOS
+     DMENU Rename Patch
+     by Ronnie Riche
+     [70337,3727]
+     ==================
+
+     I just love PowrDOS and I use DMENU.BA all of the time. It is probably
+     one of the most useful programs in my machine. The only feature that I
+     wish it had a lot of the time is a rename for a RAM file. This is
+     something you frequently need to do prior to saving or after loading a
+     new file. I decided to see how much room it would cost and how
+     cumbersome it'd be in the program.
+
+     The mod eats 183 bytes and for the ease of use I think it is well
+     worth while. Since you can't get more than one page of RAM files (20)
+     on screen anyway I patched into the [F5] 'Page' key in the RAM menu
+     for the rename function. When you are in the RAM menu 'Name' will
+     appear over [F5]. This is the only difference that you will notice in
+     the appearance of the program.
+
+     Only one file at a time can be renamed... Sorry
+
+     To do multiples would have cost a lot more RAM (and complication). If
+     you press 'Name' with multiple files selected the program will redraw
+     the screen. If you decide that you don't want to rename the file after
+     selecting 'Y' just press enter on the new FN prompt. The resulting NM
+     error will leave the file untouched. The 'patch' hooks into the kill
+     file routines and does the rename from the paste buffer just like all
+     of the other DMENU functions. This means that the usual OS rules
+     regarding legal renames will apply. This is really kind of neat and
+     eliminates the need for a lot of trapping. Just put the cursor on the
+     file to rename and press [F5]. The filename AND extension must be
+     typed in. You can modify this if you want. I didn't think it was worth
+     the RAM.
+
+     Leave any questions or comments on the SIG to [70337,3727]. I'll
+     answer any question if I can.
+
+     Just paste the patch out merge to DMENU, save and run it. The checksum
+     for the correct patch with spaces and CR's removed is 46,516. You
+     should have lines 8,21,32,39,50,68, and 69.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Date: Jan 19,1986, Mon                      Page 2
+
+
+
+
+     Here's the patch.
+
+8 U=PEEK(XX):T=PEEK(XX+1):O=0:S=0:GK="Press Key":ONERRORGOTO52:IFU=1THENLFILESTOAQ:ZL=1280*DSKI$(""):QQ$="p    ":ELSELFILESRTOAQ:ZL=FRE(0):QQ$="pName":KEY(5)ON
+21 FORP=1TON:PRINTEMID$(C,P,1);:GOSUB7:NEXT:CALL26041:IFNF<21ORT>0THENPRINT@300,E+QQ$+E"q";
+32 KEYSTOP:GOSUB3:KE=0:CALL8802:A="Run23":GOSUB6:V=0:IFINSTR(C,"p")ANDRX=1THENRUN23ELSEIFINSTR(C,"p")THENGOSUB5:PRINTC3"ALL (y/n/a)?";:GOSUB56:R=I:GOSUB5:IFR=0ANDC1=""THENRETURN
+39 IFRX=1THEN69ELSEIFZ<>0THENA="Kill"+D+FP+F:GOSUB6
+50 IFU<>1THEN68ELSEIFNF<21ORT>0THENRETURNELSEKEYSTOP:GOSUB3:O=(O+20)MOD40:GOTO14
+68 C1="":C3="Rename ":RX=1:GOSUB32:RX=0:GOSUB5:GOTO25
+69 RX=0:GOSUB5:INPUT"Name as (FN.EX)";NM$:A="Name"+D+F+D+"as"+D+NM$:GOSUB6:GOTO40

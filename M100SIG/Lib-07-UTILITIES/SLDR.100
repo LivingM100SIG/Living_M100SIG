@@ -1,0 +1,61 @@
+0 REM SLDR 3/24/84 Creates SLIB.CO from SLIB.DO Hex file. by Rick Perry 75665,1045; adapted from SUBLIB (c) 1983 by Jesse Bob Overholt 70130,101
+1 IFMAXFILES<1THENMAXFILES=1
+2 ONERRORGOTO8:Y=MAXRAM-1:PRINT"End address ("Y") ";:INPUTY:IFY>=MAXRAMTHENERROR6ELSEREADZC:X=Y-ZC:CLEAR256,X-1:DEFINTI-N:DEFSNGP-Z:X=HIMEM+1:READZC:Y=X+ZC
+3 CLS:PRINT@92,"Loading SLIB...":PRINT:OPEN"slib"FORINPUTAS1:N=2:FORW=XTOY:GOSUB10:POKEW,Z:NEXT
+4 N=4:GOSUB10:IFZ<1THEN6
+5 FORL=1TOZ:GOSUB10:W=X+Z:R=PEEK(W)+256*PEEK(W+1)+X:P=INT(R/256):POKEW,R-256*P:POKEW+1,P:NEXT
+6 CLOSE:READZ:IFZC<>ZTHEN7ELSEBEEP:PRINT"Origin is"HIMEM+1:SAVEM"slib",X,Y
+7 SOUND9394,10:PRINT"CHECKSUM IS WRONG":END
+8 SOUND9394,10:IFERR=5ORERR=7THENPRINT"Too low, or not enough memory."ELSEPRINT"Too high."
+9 PRINT:RUN
+10 Z=0:FORJ=1TON
+11 I=ASC(INPUT$(1,1)):IFI=13ORI=10THEN11
+12 I=I-48:IFI>9THENI=I-7
+13 Z=Z*16+I:NEXT:ZC=ZC+Z:IFZC>65535THENZC=ZC-65536
+14 RETURN
+15 DATA593,7141
+16 REM *** end of program ***
+----------
+   This program will create the subroutine library, SLIB.CO, which is a relocatable version of Jesse Bob Overholt's SUBLIB. The hex file, SLIB.HEX, must be stored in RAM as SLIB.DO before using this program.
+
+   The "End" address of SLIB may be chosen anywhere below MAXRAM-1. If you already have SUBLIB you do not need SLIB unless:
+
+ - you have the RS Disk/Video interface or similar code (like Text Power or ProAid) installed in high RAM.
+
+ - you want to use the SUBLIB routines at the same time with some other .CO routine which has overlapping load addresses.
+
+   Besides being relocatable, SLIB differs from SUBLIB in three ways:
+
+ - the length of a .BA file reported by Function 3 is correct in SLIB (the original SUBLIB returned a value that was one byte high)
+
+ - Function 3 of SLIB will return info on invisible files.
+
+ - A new function for converting strings to uppercase has been added to SLIB.
+
+   The default "End" address used by SLDR is MAXRAM-1. You may override this default by entering any other desired value. When finished loading, SLDR will print out the resulting "Origin" of your version of SLIB. Make a note of this origin because this will be the address to CALL when using SLIB.CO
+
+   The use of SLIB is similar to that of SUBLIB (see the SUBLIB documentation) except for the differing origin. From BASIC, if you perform LOADM"SLIB" the "Top" address displayed is what I'll refer to here as the Origin (for which you should substitute the value noted above after running SLDR).
+
+To reserve RAM and load SLIB.CO do:
+
+   CLEAR 256,Origin-1 : LOADM"slib"
+
+Then to use one of the SLIB functions do:
+
+   CALL Origin,E,VARPTR(PL%(0))
+
+where E is a value from 0 to 3 and PL% is an integer array (consult SUBLIB documentation).
+
+   To use the new function, UPCASE, for converting strings to uppercase do:
+
+   CALL Origin+561,Q,VARPTR(A$)
+
+where: A$ is a string variable,
+       Q  is the ASCII code for the quotation symbol, e.g.
+           use 34 if " represents a quote,
+           use 39 if ' represents a quote.
+
+Quoted portions of the string will not be affected by the UPCASE function.
+
+...Rick Perry, 3/24/84
+

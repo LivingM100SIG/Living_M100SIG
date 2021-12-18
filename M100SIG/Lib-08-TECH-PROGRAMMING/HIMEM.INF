@@ -1,0 +1,91 @@
+New users of the Tandy portables are often confused about how to load machine
+language programs, what HIMEM and MAXRAM mean, and what relationship they have
+to loading and running the .CO program. This file started out as a response to
+those questions from a new user.
+
+
+Automatic international copyright is claimed under the Berne Convention 1988
+changes in International Copyright Law.
+
+Copyright 1989 Tony B. Anderson, All Rights Reserved
+
+
+
+HIMEM - MAXRAM - What they are, and how they relate to use of .CO programs.
+
+
+HIMEM is a movable partition which can be set to allow you to load and protect
+a machine language program in a reserved area of RAM just below MAXRAM, in an
+area between the HIMEM partition and MAXRAM.  Normally, HIMEM = MAXRAM, but
+using the CLEAR,N,X command, you can move the HIMEM pointer to some address
+below MAXRAM, "X", then load a machine language program between HIMEM and
+MAXRAM, and the operating system will not overwrite the program by storing
+variables, the file buffers, or the stack pointer in that area.  Such things
+are normally stored just under the HIMEM address.  The "N" figure in the above
+CLEAR statement specifies a number of bytes which should be reserved for
+variable storage; usually it's 256, but it could be more, or less, depending on
+what you want.
+
+MAXRAM is a partition that separates RAM space available to the user from the
+reserved area of RAM that is used by the computer's operating system - an area
+that stores flags, buffers, pointers, the file directory, and other information
+needed by the operating system.  Machine language programs - .CO programs - are
+loaded and execute just under MAXRAM.
+
+In order to load a machine language program, designated with the filename
+extension ".CO", first you go into BASIC and test to see if HIMEM = MAXRAM. Use
+the command PRINT HIMEM;MAXRAM and press the ENTER key.
+
+If the two addresses are different, then you clear out any existing machine
+language program with the command CLEAR 256,MAXRAM.  That resets the HIMEM
+partition back to it's default value, in effect "unloading" any machine language
+program that was already in that area.  Then you attempt to load the .CO program
+you want to run with the command LOADM"(filename)".  I say "attempt", because
+the program will not load because the HIMEM partition has not yet been set.
+
+BASIC will return three addresses, "Top", "End", and "Exe".  The display might
+look like this:
+
+Top: 60905
+End: 61103
+Exe: 60920
+? OM error
+
+The "error" indicates the program didn't load.  It might be a different type
+of error - no matter, it means the program didn't load.  If it did, you'd get
+"Ok" on the next line below the Exe address.
+
+Note what the "Top" address is - ignore the others, they aren't of interest to
+you at this point.
+
+Now type CLEAR 256,"address", putting the top address where I indicated
+"address".  A typical clear might be CLEAR 256,58000, if 58000 was the "Top"
+address given to you.
+
+You can now LOADM the .CO program again, return to the menu, move the cursor
+over the .CO filename and press ENTER to run the program, or you can type
+RUNM"(filename)", which will load and run the program automatically.
+
+HIMEM should remain where it was put, and the machine language program should
+remain loaded for further use until you set HIMEM to something else.  Depends
+on how the .CO program was written, and what other programs may do to the HIMEM
+pointer, or what may be loaded into the reserved area, or what might be poked
+into the reserved area.  It is possible, although not suggested, that several
+different machine language programs might run in the same area, each one
+overwriting the previous one.  This could lead to problems, so is not advised
+unless you really know what you're doing.
+
+Machine language programs which are designed to run in the computers alternate
+screen buffer do not need to have an area reserved for them, and you do not
+have to set HIMEM.  Once such programs are on your menu as a .CO program, all
+you have to do is move the cursor over the filename and press the ENTER key.
+They can also be LOADMed from BASIC, and run with a call to the "Exe" address,
+or they can be RUNMed from BASIC.  Some of these programs can be used as
+subroutines from other programs, check the documentation or check with the
+author for information on those applications.
+
+For additional information, refer to the Tandy BASIC Reference Manual
+which came with your computer.  It's in the form of a dictionary, more or less,
+and you can look up the words you want more information on, such as HIMEM,
+MAXRAM, LOADM, RUNM, CLEAR, etc.
+

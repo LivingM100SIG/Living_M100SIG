@@ -1,0 +1,62 @@
+Using PSWD.CA 1/14/85 by Rick Perry [75665,1045]
+
+   PSWD.CA is a BASIC program which will create a machine language file,
+pswd.co, that provides a simple password protection scheme for entry to
+Lucid and .CA calcsheet files.  The pswd.co file will automatically be
+created & relocated to any 'End' address you desire using PSWD.CA and
+will be set up with a password of your choice, up to 30 chars long. 
+Note that the file in this database called PSWD.CA has a .CA extension
+only to call attention to it for Lucid users -- it is really a BASIC
+program that you download and store on your M100 as PSWD.BA.  Its
+operation is based on a hook in Lucid that can CALL HIMEM+2 under
+certain circumstances (see PSWD.ASM for technical info).
+
+   Upon running PSWD.BA you are prompted for 'End address' for pswd.co
+file to be created; this defaults to MAXRAM-1 (usually 62959).  Press
+ENTER to use the default value, or type in the desired value (one less
+than 'Top' address of any code which you normally keep permanently
+resident above HIMEM).
+
+   After loading the machine code and verifying the checksum, the
+program will prompt for 'New Pswd:'.  Enter up to 30 chars which will
+become your password (encoded into the pswd.co file) for entry to Lucid.
+It does not matter whether you enter the password in upper or lower
+case, since the code automatically converts your password to uppercase.
+The 30 char length restriction arises from the fact that Lucid uses part
+of the LINE INPUT buffer for its own purposes.
+
+   After entering your desired new password, the program will display
+the 'Top' address of the newly created pswd.co file (result will be
+62876 if 'End' address was 62959).  HIMEM will now be equal to this
+'Top' address and the password code will take effect upon entering Lucid
+or any .CA file from the Main Menu.  If you enter the wrong password at
+the 'Pswd:' prompt, you will go back to the M100 Main Menu.  You no
+longer need the PSWD.BA file (unless you want to change your password)
+and may delete it from RAM.
+
+
+Summary of use of pswd.co:
+
+   For the Lucid password code to be effective, the pswd.co file must be
+loaded into RAM and HIMEM must be equal to the 'Top' address of pswd.co.
+If for some reason HIMEM is altered and you wish to reset the password
+protection, go to BASIC and enter LOADM"pswd" (if you get an ?OM error,
+then type CLEAR 256,xxxxxx where for 'xxxxxx' you substitute the 'Top'
+address of pswd.co as shown on the screen after the LOADM command, then
+do LOADM"pswd" again).  HIMEM must be equal to the 'Top' address of
+pswd.co for the password protection to be effective (check it using
+PRINT HIMEM, if it's not right use CLEAR 256,xxxxx as described above).
+
+   The Lucid password protection can easily be removed by typing from
+BASIC: CLEAR 256,yyyyy where 'yyyyy' is any value other than the 'Top'
+address of pswd.co.  For extra protection against the removal of the
+password code you can use the program MAXRAM.BA from DL4 (also see
+MAXRAM.DOC) to set MAXRAM equal to the 'Top' address of pswd.co after
+LOADMing pswd.co.  This will prevent HIMEM from being reset above the
+new MAXRAM value, but the pswd code can still be removed by entering
+commands such as CLEAR 256,HIMEM-1 and restored by entering CLEAR
+256,MAXRAM.  Thus, the intention and probable use of this pswd
+protection is only to help prevent accidental (or malicious) entry to
+your .CA files by co-workers, family members, etc. and does not provide
+complete machine security (such as SECURE.CO from Secure Systems, Inc.
+[71256,545]).

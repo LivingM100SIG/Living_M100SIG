@@ -1,0 +1,165 @@
+
+	(c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Dean Metzgar
+To: Steve Ringley
+
+I am running a Tandy 1000EX w/640K and a 3 1/2 " drive in addition to
+the 5 1/4 built-in.  Any thoughts on getting the 1000 EX to read 600
+disks and Vice versa?  The EX comes with DOS 2.11 but I also run V3.3.
+On a quick look the other day, the EX will] read the 600 files
+directories when using DOS 3.3 but won't read the files properly.  I
+know that the 600 Drive is working with 360K on one side, I believeit is
+80 traks, but don't know much more about it.  Any thoughts ???
+
+                - 0 -
+
+Fm: Steve Ringley
+To: Dean Metzgar
+
+I just went through that at my local RS, and we ended up using a serial
+cable... Bernie seems to have the solution in that DRIVPARM that he uses to
+make the PC think it is dealing with a SS drive.  The in-store 1000 I used
+thought the 600 disk was single density, and we never got anything usable.  I
+also never tried 3, it was all done with 2.11.  I think the best shot would be
+to use DRIVPARM, which I gues is in the IBM forum, to make your PC think the
+3.5 is singlesided, and then see what happens.
+
+                - 0 -
+
+Fm: Jim Scheef
+To: Steve Ringley
+
+    DRIVPARM is an option that can be included in your config.sys file - but
+only in DOS 3.2 or higher. It is not a file or device driver but rather is a
+way of configuring the device drivers that are built into DOS. It is not
+documented by IBM, so look in an MS-DOS manual.
+    I tried using DRIVPARM to create a 600 format diskette using IBM DOS 3.2
+and generic MS-DOS 3.3 on an IBM XT and was not successful with either. I was
+surprised when someone reported success but with other ROM BIOS, who knows!
+The chances of success would be better on a AT clone due to the AT's more
+flexible BIOS.
+    Give the following line a try in your config.sys:
+
+      drivparm=/d:1/h:1
+
+ The /d option selects the drive, 0 for your a: drive, 1 for your b: drive.
+The /h option is the number of heads (sides). Good luck!
+
+		- 0 -
+
+Fm: Dean Metzgar
+To: Jim Scheef
+
+   I tried the drivparm line you mentioned without success.  I do believe that
+the 3.5" drive Tandy sells for the 1000EX has some sort of Tandy "oddity"
+which I have as yeto sort out.  Using your suggested config.sys, I get a 3.5"
+disk with 40 tracks on one side and a total count of 180K available.
+Hmmmmm??? Thanks for your info anyway.
+
+		- 0 -
+
+Fm: Steve Ringley
+To: Dean Metzgar
+
+Yes, that 180K format is what bedeviled me when I tried. Hmm...
+
+		- 0 -
+
+Fm: Jim Scheef
+To: Dean Metzgar
+
+    The drive (other than it's size) has nothing to do with how it formats a
+diskette or what formats it can read/write. All that functionality is
+contained in each machine's BIOS. The BIOS in ROM together with the device
+drivers contained in the DOS (which is also in ROM in the EX, I believe) that
+determines what formats a machine will recognize. That's why driver.sys is
+needed for many machines to use 3.5" 720K diskettes. Unfortunately Tandy, in
+another attempt to shoot themselves in the foot, used a non-standard disk
+format in the M600 (and then realizing the mistake failed to support the
+format anywhere else!). MS-DOS (or PC-DOS) does not support single-side 3.5"
+diskettes. (Your experiment gave you the 3.5" equivalent of a single-side 5
+1/4" diskette.) The MS-DOS user manual makes this clear by stating that
+certain combinations of parameters are not allowed for the format command,
+driver.sys, and drivparm (all of which use the same switches to determine disk
+format). I suggested that you try those drivparm setting on the outside chance
+that Tandy had added them as a valid set to allow for interchange of M600
+diskettes. The 1400LT *can* read and write M600 format and is the only machine
+I know of that has the ability. If you need this interchange, contact Manzana
+Microsystems, in Goleta, CA. (805) 968-1387. They sell a device driver that
+supports the M600 format.
+
+		- 0 -
+
+Fm: Tim Barber
+To: Jim Scheef
+
+I just put a 1.44 3.5" floppy in my Tri-Star 386.  After downloading the file
+that give the parameters for using drivparm, I downloading the drivprm.arc
+from the IBM Utils lib.  On my first try I entered the parameter and formatted
+a 3.5 disk in the PC.  I now can read and write text between my Model 600 and
+my 386!  What a deal! Tim Barber!
+
+		- 0 -
+
+Fm: Steve Ringley
+To: Jim Scheef
+
+I have often heard that the 1400 supports the format, but the RS people here
+have no idea about it at all.  Could you perhaps explain how the 1400 reads
+600 disks?  Thanks a bunch!
+
+                - 0 -
+
+Fm: Jim Scheef
+To: Steve Ringley
+
+    If I were a wise guy I'd jst say that the 1400 reads 600 diskettes after
+you insert them in a disk drive. <grin> The reason the 1400 can read the 600
+format lies in the software built into the 1400 - it's BIOS and the version of
+DOS supplied for the 1400. In other words, the capability was designed in by
+Tandy persumably so 600 owners could upgrade to the 1400LT.
+    I tried this in the store and it does work.
+
+		- 0 -
+
+Fm: Steve Ringley
+To: Jim Scheef
+
+Thanks...most RS employees think I am nuts when I say it can be done!
+
+		- 0 -
+
+Fm: Dean Metzgar
+To: Jim Scheef
+
+  Thanks for your detailed and informative reply.  The EX does not have DOS in
+ROM as does some of its cousins. It comes supplied with 2.11 on disk.  I have
+been using 3.3 also with it.  But, 3.3 does not have the drivparm available as
+was in 3.2.  I DL'd an updated drivparm from IBMSYS SIG which provides the
+same capability to 3.3 users. I'll let you know what I find - - - still no
+success, but haven't had much time to play with it.
+
+		- 0 -
+
+Fm: Dean Metzgar
+To: Steve Ringley
+
+   I dl'd the DRIVPARM file from IBMSYS.  It's a good piece of work - very
+nicely done. However, ... even using DOS 3.3, I do not get the results I
+need/desire for the 600. I'll try working with it some more when I get a
+chance. I believe that possibly the Tandy 3.5" drive for the EX has some
+special characteristics that are inhibiting proper implementation of DRIVPARM.
+I'll let you know if I succeed. Thanks for your help.
+
+		- 0 -
+
+
+Starting message #: 189877  Starting date: 11-Nov-89  16:42:04
+ Participants:
+Dean Metzgar 76537,2657
+Steve Ringley 73727,1202
+Jim Scheef 76137,757
+Tim Barber 72517,712

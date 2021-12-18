@@ -1,0 +1,77 @@
+10 MAXFILES=2:CLEAR 3000
+11 ::' save a MultiPlan spread sheet as a SYLK file named MPNINP
+12 ::' this program will produce a .DO file named MPNOUT looking like the
+13 ::' Multiplan spread sheet.
+20 OPEN "MPNINP" FOR INPUT AS 1:OPEN "MPNOUT" FOR OUTPUT AS 2
+21 ::' get the first line of the SYLK file
+30 GOSUB 400:IF A$<>"ID;PMP"THEN PRINT"WRONG FILE":END
+31 ::' the second line is expected to be the general format statement
+40 GOSUB 400:IF LEFT$(A$,3)<>"F;D"THEN PRINT"WRONG INIT FORMAT":END
+50 W=VAL(RIGHT$(A$,1)):J$=MID$(A$,6,1)
+51 ::' the third line is expected to be the size statement
+60 GOSUB 400:IF LEFT$(A$,1)<>"B"THEN PRINT"WRONG SIZE":END
+70 Y=VAL(MID$(A$,INSTR(A$,"Y")+1,2))
+80 X=VAL(MID$(A$,INSTR(A$,"X")+1,2))
+81 ::' X and Y are used to DIMension the string matrix to hold the spread
+82 ::' cells which will be stored in the .DO file
+100 DIM B$(X,Y)
+105 ::' start the process of filling the matrix with spread sheet cells
+110 GOSUB 400
+120 GOSUB 300
+125 ::'line 130 prepares a number field
+130 IF (LEFT$(A$,1)="C" AND INSTR(A$,"K")>0 AND INSTR(A$,CHR$(34))=0) THEN NF=1:GOSUB 900
+135 ::'line 140 prepares a label field
+140 IF INSTR(A$,CHR$(34))>0 THEN NF=0:GOSUB 700
+142 ::' line 145 handles a copy previous cell contents direction
+145 IF RIGHT$(A$,1)="S" THEN B$(B1,B2)=B$
+147 ::' line 150 handles a copy cell contents at a specified location
+150 IF (INSTR(A$,";S")>0 AND INSTR(A$,";S")+1<LEN(A$) AND INSTR(A$,"K")=0) THEN GOSUB 800
+155 IF A$="E" THEN 180
+157 ::' now get another line
+160 GOSUB 400
+161 ::' if it is a format line, got format the string
+165 IF LEFT$(A$,1)="F"THEN GOSUB 1000:GOTO 110
+170 IF A$="E" THEN 180
+172 ::' use the general format statement if a specific format line is absent
+175 F$=J$:GOSUB 1070:GOTO 120
+177 ::' now put the works into a .DO file
+180 FOR Y1=1 TO Y:FOR X1=1 TO X:IF B$(X1,Y1)=""THEN B$(X1,Y1)=SPACE$(W)
+190 PRINT#2,B$(X1,Y1);:NEXT X1:PRINT#2,:NEXT Y1
+195 ::' and end it all
+200 CLOSE:MAXFILES=1:END
+295 ::' subroutine for setting B1 and B2 to the cell address
+300 B=VAL(MID$(A$,INSTR(A$,"X")+1,3)):IF B>0 THEN B1=B
+310 B=VAL(MID$(A$,INSTR(A$,"Y")+1,3)):IF B>0 THEN B2=B
+320 RETURN
+395 ::' subroutine for getting a SYLK file line
+400 INPUT#1,A$:RETURN
+495 ::' left justification subroutine
+500 IF LEN(B$(B1,B2))>W THEN B$(B1,B2)=LEFT$(B$(B1,B2),W):RETURN
+510 B$(B1,B2)=B$(B1,B2)+SPACE$(W-LEN(B$(B1,B2))):B$=B$(B1,B2):RETURN
+595 ::' right justification subroutine
+600 IF LEN(B$(B1,B2))>W THEN B$(B1,B2)=LEFT$(B$(B1,B2),W):RETURN
+610 B$(B1,B2)=SPACE$(W-LEN(B$(B1,B2)))+B$(B1,B2):B$=B$(B1,B2):RETURN
+645 ::' center justification subroutine
+650 B$(B1,B2)=SPACE$((W-LEN(B$(B1,B2)))/2)+B$(B1,B2):GOTO 510
+695 ::' label to string subroutine
+700 B$(B1,B2)=MID$(A$,INSTR(A$,CHR$(34))+1,LEN(A$)):B$(B1,B2)=LEFT$(B$(B1,B2),INSTR(B$(B1,B2),CHR$(34))-1):B$=B$(B1,B2):RETURN
+795 ::' cell copy address subroutine
+800 B=VAL(MID$(A$,INSTR(A$,";C")+2,10)):IF B>0 THEN B3=B
+810 B=VAL(MID$(A$,INSTR(A$,"R")+1,10)):IF B>0 THEN B4=B
+820 B$(B1,B2)=B$(B3,B4):B$=B$(B1,B2):RETURN
+895 ::' number to string subroutine
+900 B$(B1,B2)=STR$(VAL(MID$(A$,INSTR(A$,"K")+1,10)))+" ":RETURN
+995 ::' formatting subroutine
+1000 IF INSTR(B$(B1,B2),"$")>0 THEN RETURN
+1005 IF (INSTR(A$,";Y")>0 OR INSTR(A$,";X")>0) THEN GOSUB 300:RETURN
+1010 F$=RIGHT$(A$,1):IF (NF=0 OR MID$(A$,4,1)="G") THEN 1070
+1020 IF MID$(A$,4,1)="F" THEN L=VAL(MID$(A$,5,1))
+1030 IF MID$(A$,4,1)="$" THEN L=2
+1040 IF NF=1 THEN B$(B1,B2)=STR$(INT(10^L*(VAL(B$(B1,B2))+(10^-L)/2))/10^L)
+1050 IF (NF=1 AND INSTR(B$(B1,B2),".")=0) THEN B$(B1,B2)=B$(B1,B2)+"."
+1060 IF NF=1 THEN B$(B1,B2)=B$(B1,B2)+STRING$(INSTR(B$(B1,B2),".")+L-LEN(B$(B1,B2)),"0")+" "
+1065 IF NF=1 AND MID$(A$,4,1)="$" THEN B$(B1,B2)="$"+RIGHT$(B$(B1,B2),LEN(B$(B1,B2))-1)
+1070 IF F$="L" THEN GOSUB 500
+1080 IF F$="R" THEN GOSUB 600
+1090 IF F$="C" THEN GOSUB 650
+1100 RETURN

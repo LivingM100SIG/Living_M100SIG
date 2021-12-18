@@ -1,0 +1,80 @@
+10 ' CONVFR.100: M100 > ACNOR < M100
+20 ' Jean Lalonde 76606,671 (jan.86)
+30 '
+40 ' ACNOR: Agence Canadienne de NORmalisation
+50 '-----------------------------------
+60 ' CARACTERES FRANCAIS / FRENCH CHARS
+70 '-----------------------------------
+80 '  Litt.    ascii-M100  ascii-ACNOR
+90 '-----------------------------------
+100 ' a grave   161 (code x)    64 (@)
+110 ' c cedil   162 (code c)    92 (\)
+120 ' e aigu    187 (code d)   123 ({)
+130 ' u grave   188 (code ,)   124 (|)
+140 ' e grave   189 (code v)   125 (})
+150 ' a circo   192 (code 1)    91 ([)
+160 ' e circo   193 (code 3)    93 (])
+170 ' i circo   194 (code 8)    94 (^)
+180 ' o circo   195 (code 9)    92 (`)
+190 ' u circo   196 (code 7)   126 (~)
+200 '------------------------------------
+210 CLEAR
+220 DEFSTRC,F
+230 'CA: car.actuel
+240 'CC: car.choix
+250 'CD: cars.dest.
+260 'CF: cars.fran.
+270 'CM: cars.M100
+280 'CN: cars.neut.
+290 'FA: fichier
+300 'FV: fichier verifie
+310 DIMCH(3)'choix menu
+320 DEFINTD,I-N,V
+330 'DO: position .DO
+340 'DT: drapeau type
+350 'DV: ascii FV/drapeau Voir
+360 'I,J: boucles
+370 'L: position dans chaine
+380 DEFSNGA,B
+390 'AA: adr.actuel
+400 'AC: adr.catalo.
+410 CH(0)="ACNOR > M-100 ":CH(1)="M-100 > ACNOR ":CH(2)="M-100 > NEUTRE":CH(3)="M-100 > MAJUS."
+420 CF="{}\]@^`|~["
+430 CN="eeceaiouua"
+440 CM=CHR$(187)+CHR$(189)+CHR$(162)+CHR$(193)+CHR$(161)+CHR$(194)+CHR$(195)+CHR$(188)+CHR$(196)+CHR$(192)
+450 AC=63842:AA=AC'debut du catalogue
+460 K=0'colonne 0 a 2
+470 CLS:PRINT"CONVERSION DE TEXTES FRANCAIS":GOSUB780
+480 PRINT"1: ";CH(0):PRINT"2: ";CH(1):PRINT"3: ";CH(2):PRINT"4: ";CH(3):PRINT:PRINT"Votre choix (Q: quitter)? ";
+490 CC=INKEY$:IFCC="1"THENCO=CF:CD=CMELSEIFCC="2"THENCO=CM:CD=CFELSEIFCC="3"ORCC="4"THENCO=CM:CD=CNELSEIFCC="q"ORCC="Q"THEN800ELSE490
+500 'entete
+510 CLS
+520 PRINT"R";CHR$(187);"pertoire: conversion ";CH(VAL(CC)-1)
+530 GOSUB780:FILES:GOSUB780
+540 'quel fichier
+550 INPUT"Nom du fichier a convertir";FA:IFFA=""THEN210
+560 FORJ=1TOLEN(FA):CA=MID$(FA,J,1)
+570 IF(CA>="a")AND(CA<="z")THENMID$(FA,J,1)=CHR$(ASC(CA)-32)
+580 NEXTJ
+590 AA=AC:DO=INSTR(1,FA,"."):IFDO>0THENFA=LEFT$(FA,DO-1)
+600 FV="":DT=PEEK(AA):IFDT=255THENPRINT"Introuvable...":GOSUB780:GOTO520
+610 IFDT<>192THEN640
+620 FORJ=3TO8:DV=PEEK(AA+J):IFDV>32THENFV=FV+CHR$(DV):NEXTJ
+630 IFFV=FATHEN650
+640 AA=AA+11:GOTO600
+650 PRINT"Affichage ";CHR$(161);" l'";CHR$(187);"cran (o/n) ?";
+660 CA=INKEY$:IFCA=""THEN660ELSEDV=1:IF(CA="N")OR(CA="n")THENDV=0
+670 PRINT:GOSUB780
+680 AA=PEEK(AA+1)+256*PEEK(AA+2)
+690 I=PEEK(AA):IFI=26THEN760
+700 CA=CHR$(I):L=INSTR(1,CO,CA)
+710 IFL>0THENPOKEAA,ASC(MID$(CD,L,1)):GOTO690
+720 IFCC="4"THENIFI>96ANDI<123THENPOKEAA,(I-32):GOTO690
+730 IFCC>"1"THENIFI>127THENPOKEAA,39:GOTO690
+740 IFDVTHENPRINTCA;
+750 AA=AA+1:GOTO690
+760 GOSUB780:PRINT"Pressez une touche...";
+770 IFINKEY$=""THEN770ELSE210
+780 'trace ligne
+790 FORI=1TO40:PRINTCHR$(241);:NEXTI:RETURN
+800 MENU

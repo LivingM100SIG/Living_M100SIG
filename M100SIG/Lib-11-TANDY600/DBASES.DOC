@@ -1,0 +1,142 @@
+
+Documentation for DBASES.600, a Database Manager program for the Tandy 600.
+ Copyright 1986 - David Dunn Thomas - All rights reserved
+
+Introduction:
+
+     DBASES.600 is a Basic program that may be used to maintain and retrieve
+data from the FILE Applications program built into the Tandy 600. The program
+enables the user to: add new records, edit records, sort records, find & print
+to screen records, delete records, print all or selected records to printer as
+well as print out all or selected mailing labels, and switch from one xxxx.DAT
+file to another. Each xxxx.DAT may contain up to 500 records. All of these
+functions may be performed rapidly without exiting the program. The program
+provides Menu selection of functions, clear prompting, and is speedy in
+execution due to use of DBCALLS.LIB machine language sub-routines.
+
+     DBASES.600 is currently tailored to handle data in three files:
+ADRESS.DAT, CHECKS.DAT, and PHONBOOK.DAT. With little adaptation, the program
+may be modified to handle any other xxxx.DAT file containing five fields.
+Further, more advanced modifications, will enable it to handle any xxxx.DAT
+file that may be desired. Use of ADRESS.DAT permits mail label print out from a
+FILE containing: Last name, First name, Company, Office Phone, Home Phone, and
+address of those recorded.
+
+Requirements:
+
+     DBCALLS.LIB and the xxxx.DAT/FIL desired must be loaded in the Tandy 600's
+RAM. Basic ROM must be installed or, RAM permitting, loaded in active RAM.
+Unless rather small databases are involved, expansion to 128K is required.
+Expansion to the full 224K would permit use of all three xxxx.DAT to their
+maximum capacity. The DBASES.600 program uses 9378 bytes; ADRESS.FIL 2079
+bytes; CHECKS.FIL 1842 bytes; and PHONBOOK.FIL uses 1700 bytes as configured
+for use with DBASES.600. Naturally, each xxxx.DAT file can grow to a maximum of
+64K, but even ADRESS.DAT will reach it's limit of 500 files first.
+
+Setting up:
+
+     DBASES.600 must be downloaded with the Tandy 600's XMODEM protocol
+following the procedures explained in TEL004.600 from DL 1 of the Model 100 SIG
+and must be received as DBASES.BAS. It is a binary file and is ready to run on
+receipt.
+     For simplicity, it is highly recommended that the applications files be
+downloaded also --- at least those of interest/need to the user. Specifically,
+ADRESS.DAT, ADRESS.FIL, CHECKS.DAT, CHECKS.FIL, PHONBO.DAT, and PHONBO.FIL
+should be downloaded from DL 2. Each is a binary file and must be downloaded
+with XMODEM protocol as described in TEL004.600.
+     All of the applications should retain their filename.ext except for the
+PHONBO.* files. They must be renamed to PHONBOOK.DAT and PHONBOOK.FIL (after
+saving your current copies to disk!)
+     Note that DBASES.BAS will operate with any one, or all, of the three
+databases loaded into RAM. Further, it will operate on any other database after
+suitable patching of the program.
+
+Using DBASES:
+
+     After initialization, the user is advised as to the xxxx.DAT files loaded
+into active RAM and asked which file is desired. The file requested must be
+listed on the screen AND must be one of the three files listed above. Both
+upper and lower case responses are accepted.
+     After an acceptable selection, the user is taken to the Master Menu. In
+addition to an eight option Menu, the date is displayed at the top right of the
+screen and the number of records in the database is displayed on the top left.
+These two bits of data are displayed on the screen for each Section used.
+     The Menu, and the entire program, is pretty much self-explanatory and the
+user will readily follow the prompts. Main Menu options are:
+     1) Add new xxxx.DAT records            5) Delete xxxx.DAT records
+     2) Edit xxxx.DAT records               6) Print  xxxx.DAT records
+     3) Sort xxxx.DAT records               7) Change database file
+     4) Find xxxx.DAT records               8) Exit program
+
+     For each Section, the prompts vary depending upon the database file being
+used. Likewise, the screen display and hard copy print outs vary from database
+to database. Most obviously, ADRESS.DAT is the only one that offers a mailing
+label option after choosing the "6) Print" Section. Further, ADRESS.DAT will
+only display five of the ten fields when using the Find Section whereas all
+fields are displayed with CHECKS.DAT and PHONBOOK.DAT in use.
+
+Section comments:
+
+     In order to either Edit or Delete a record, it's Item or Number must be
+known. That information may be obtained by use of the Find section.
+
+     For Sorting, Finding, and Printing records, the user is able to select the
+field on which to search and the type of match desired. The "matching" may take
+a bit to get used to, but in every case note that ALL records may be easily
+selected by use of 0 as the Number/word to search for and then choosing option
+"1) Not equal to" as matching criteria.
+
+General comments:
+
+	Surely nobody has any specific use for the xxxx.DAT files as they
+currently appear here in the Data Library. The xxxx.FIL files are necessary in
+order to obtain the layout information including field names, types, widths and
+such like. However, the suggested procedure is to download and use the xxxx.DAT
+files in order to experiment and familiarize oneself with the use of DBASES.
+Then, when the user is comfortable, the records in the xxxx.DAT file may be
+deleted with either the DBASES program or by accessing the FILE application
+directly and using the system's column/row deletion method. Keep in mind,
+however, that DBASES expects the three databases to be formatted precisely as
+they are available here in the Data Library.
+
+Program modifcation:
+
+	Even a novice programmer can easily modify DBASES for use with other
+database files to their own specifications. Some pointers:
+
+  Lines 46-50:     Database filename must be located here or the error message
+                   "Sorry, no DATA statements" will be received." Note that
+                   these lines contain further essential coding and references.
+
+  Lines 400-       DATA lines containing: number of fields, field names.
+
+  D number         Specifies database type and affects record handling during
+                   running of the program.
+                   D = 1: numeric, alpha (date), alpha, alpha, numeric (money)
+                   D = 2: numeric, alpha, alpha (phone), alpha, alpha
+                   D = 3: numeric, alpha, alpha, alpha, alpha (phone),
+                          alpha (phone), alpha, alpha, alpha, numeric
+                          In "Find" only the first five fields are displayed.
+                          With "Item" known, the "Edit Section" may be used to
+                          locate remainder of information if needed.
+
+  Lines 5-7       Initialization
+  Lines 8-38      Sub-routines including, but not limited to, DBCALLS
+  Lines 39-59     Database and Section selection
+  Lines 60-73     Add New Records module
+  Lines 100-118   Edit Files and Records module
+  Lines 120-123   Sort Records module
+  Lines 130-145   Find Records module
+  Lines 150-156   Delete Records module
+  Lines 160-221   Print Records & Mailing Labels module
+  Lines 250-254   Change Database module
+  Line  255       Close files and LIBRARY, exit to System Manager
+  Lines 300-309   Error handling
+
+     As noted in REM lines 0-4 DBASES.600 is Copyrighted by David Dunn Thomas
+and the program may NOT be submitted, published, or uploaded to other BBS,
+local or national, in any format without author's permission in writing.
+     Contact author at 2308 Chetwood Circle, #103; Timonium, MD 21093 or
+telephone (301) 252-5379.
+     Program will be tailored to user's specifications on stipended request.
+

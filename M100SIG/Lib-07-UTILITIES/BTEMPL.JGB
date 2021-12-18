@@ -1,0 +1,129 @@
+
+0 REM Basic Pgm Template  Dec 83  Version 1.1
+1 '
+2 ' This listing and support article were published in Portable 100 Magazine, March 1984
+3 ' - "Bender's Better Way to Better Basic, Part 2" by J. Gary Bender.
+4 ' Additional explainations of the routines and why the template is designed as it is are in Part 3 of the same series.
+5 ' Users are encouraged to modify to meet their own needs and styles.
+6 ' Part 4 of the series will add code to the 600-699 range of line numbers.
+7 '
+8 ' Submitted to the Public Domain by the publisher, Portable 100 Magazine, and the author, J. Gary Bender, Rio Grande Software, [70375,1070].
+9 '
+10 CLS: CLEAR 1024      ' change CLEAR value as required.
+20 GOSUB 20000          ' initialize
+30 GOTO 10000           ' to MAIN
+99 '
+100 REM General Subroutine dispatcher
+151 IF ZQ$="fupper" THEN 511 ELSE IF ZQ$="flower"  THEN 512
+152 IF ZQ$="center" THEN 520
+153 IF ZQ$="isnum"  THEN 530 ELSE IF ZQ$="isalpha" THEN 535
+154 IF ZQ$="entern" THEN 540
+155 IF ZQ$="enters" THEN 550
+156 IF ZQ$="cmatch" THEN 560
+171 IF ZQ$="push%"  THEN 710 ELSE IF ZQ$="pop%" THEN 715
+172 IF ZQ$="push!"  THEN 720 ELSE IF ZQ$="pop!" THEN 725
+173 IF ZQ$="push#"  THEN 730 ELSE IF ZQ$="pop#" THEN 735
+174 IF ZQ$="push$"  THEN 740 ELSE IF ZQ$="pop$" THEN 745
+198 PRINT"*"; ZQ$; "* not found": STOP: RETURN
+199 '
+500 REM Misc routines
+510 REM Force UPPER/lower case in string ZS$
+511 ZU%=-1: GOTO 513    ' fupper
+512 ZU%=0               ' flower
+513 IF ZS$="" THEN RETURN
+514 FOR Z1%=1 TO LEN(ZS$): Z2%=ASC(MID$(ZS$,Z1%,1))
+515  IF ZU% THEN IF Z2%>96 AND Z2%<123 THEN MID$(ZS$,Z1%,1)=CHR$(Z2%-32): GOTO 517 ELSE 517
+516  IF Z2%>64 AND Z2%<91 THEN MID$(ZS$,Z1%,1)=CHR$(Z2%+32)
+517 NEXT: RETURN
+519 '
+520 REM center string ZS$ for 40 chars
+521 IF ZS$="" OR LEN(ZS$)>38 THEN RETURN
+522 ZS$=STRING$((40-LEN(ZS$))\2,32)+ZS$
+523 RETURN
+529 '
+530 REM isnum - test ZS$ is numeric, ZF% is true if only 0-9,+,-,. (not E)
+531 ZF%=0: IF ZS$="" THEN RETURN ELSE ZF%=-1
+532 FOR Z1%=1 TO LEN(ZS$): IF INSTR("0123456789+-.",MID$(ZS$,Z1%,1))=0 THEN ZF%=0: Z1%=999
+533 NEXT: RETURN
+534 '
+535 REM isalpha - test ZS$, ZF%=TRUE if all A-Z, a-z, or blank
+536 ZF%=0: IF ZS$="" THEN RETURN ELSE ZF%=-1
+537 FOR Z1%=1 TO LEN(ZS$): Z2%=ASC(MID$(ZS$,Z1%,1): IF (Z2%>64 AND Z2%<91) OR (Z2%>96 AND Z2%<123) OR Z2%=32 THEN 538 ELSE ZF%=0: Z1%=999
+538 NEXT: RETURN
+539 '
+540 REM entern - Numeric k/b input, returns ZS$,ZN# and ZN%
+541 ZS$="": ZN%=0
+542 Z1$=INPUT$(1): IF Z1$=CHR$(13) THEN 546 ELSE IF INSTR("-.0123456789",Z1$)>ZN% THEN ZS$=ZS$+Z1$: PRINT Z1$;: IF Z1$="." THEN ZN%=2 ELSE IF ZN%=0 THEN ZN%=1: GOTO 542 ELSE 542
+544 IF Z1$=CHR$(8) THEN IF LEN(ZS$)>0 THEN ZS$=LEFT$(ZS$,LEN(ZS$)-1): PRINT CHR$(8);" ";CHR$(8);: GOTO 542 ELSE 541
+545 GOTO 542
+546 ZN%=0: ZN#=VAL(ZS$): IF ZN# > -32679 AND ZN# < 32768 THEN ZN%=ZN#
+547 RETURN     ' **** this line was missing in the published listing ****
+549 '
+550 REM enters - String k/b entry, returns ZS$, only normal ASCII accepted
+551 ZS$=""
+552 Z1$=INPUT$(1): IF Z1$=CHR$(13) THEN 556 ELSE IF Z1$<>CHR$(8) THEN 554 ELSE IF LEN(ZS$)>1 THEN ZS$=LEFT$(ZS$,LEN(ZS$)-1) ELSE ZS$=""
+553 PRINT CHR$(8);" ";CHR$(8);: GOTO 552        ' backspace
+554 IF Z1$>CHR$(31) AND Z1$<CHR$(128) THEN ZS$=ZS$+Z1$: PRINT Z1$;
+555 GOTO 552
+556 RETURN      ' can "fupper" if need
+559 '
+560 REM cmatch - command matcher compare ZS$ to ZC$, return ZF% = -1 if shorter of two matches same chars of other
+561 ZF%=LEN$(ZS$): IF LEN$(ZC$)<ZF% THEN ZF%=LEN(ZC$)
+562 IF ZF%=0 THEN RETURN
+563 ZQ$="fupper": GOSUB 100: IF LEFT$(ZS$,ZF%)=LEFT$(ZC$,ZF%) THEN ZF%=-1 ELSE ZF%=0
+564 RETURN
+569 '
+700 REM Special Utility Subroutines
+710 REM push% - temp save integer ZZ%
+711 IF ZZ%(0)>9 THEN PRINT" push% overflow": STOP: RETURN
+712 ZZ%(0)=ZZ%(0)+1: ZZ%(ZZ%(0))=ZZ%: RETURN
+714 '
+715 REM pop% - recover pushed ZZ%
+716 IF ZZ%(0)<1 THEN PRINT" pop% underflow": STOP: RETURN
+717 ZZ%=ZZ%(ZZ%(0)): ZZ%(0)=ZZ%(0)-1: RETURN
+719 '
+720 REM push! - temp store real ZZ!
+721 IF ZZ!(0)>9 THEN PRINT" push! overflow": STOP: RETURN
+722 ZZ!(0)=ZZ!(0)+1: ZZ!(ZZ!(0))=ZZ!: RETURN
+724 '
+725 REM pop! - recover pushed real ZZ!
+726 IF ZZ!(0)<1 THEN PRINT" pop! underflow": STOP: RETURN
+727 ZZ!=ZZ!(ZZ!(0)): ZZ!(0)=ZZ!(0)-1: RETURN
+729 '
+730 REM push# - temp save double ZZ#
+731 IF ZZ#(0)>9 THEN PRINT" push# overflow": STOP: RETURN
+732 ZZ#(0)=ZZ#(0)+1: ZZ#(ZZ#(0))=ZZ#: RETURN
+734 '
+735 REM pop# - recover pushed double ZZ#
+736 IF ZZ#(0)<1 THEN PRINT" pop# underflow": STOP: RETURN
+737 ZZ#=ZZ#(ZZ#(0)): ZZ#(0)=ZZ#(0)-1: RETURN
+739 '
+740 REM push$ - temp save string ZZ$
+741 IF VAL(ZZ$(0))>9 THEN PRINT" push$ overflow": STOP: RETURN
+742 ZZ$(0)=STR$(VAL(ZZ$(0))+1): ZZ$(VAL(ZZ$(0)))=ZZ$: RETURN
+744 '
+745 REM pop$ - recover pushed string ZZ$
+746 IF VAL(ZZ$(0))<1 THEN PRINT" pop$ underflow": STOP: RETURN
+747 ZZ$=ZZ$(VAL(ZZ$(0))): ZZ$(0)=STR$(VAL(ZZ$(0))-1): RETURN
+749 '
+998 STOP
+999 '
+1000 REM  Application Subroutines
+9998 STOP
+9999 '
+10000 REM  MAIN program
+19998 STOP
+19999 '
+20000 REM  Initialization
+20010 DEFINT A-Z
+20020 PRINT: PRINT TAB(12);"Program Template"
+20030 I=0: J=0: K=0     ' predefine frequently used variables
+20040 ' . . .           ' other initialization statements
+20980 I=FRE("")         ' garbage collection
+20990 RETURN
+29998 STOP
+29999 '
+30000 REM  Data Statements
+39998 STOP
+59999 ' end-of-program
+

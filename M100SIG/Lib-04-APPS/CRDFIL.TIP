@@ -1,0 +1,128 @@
+ 
+ 
+    CRDFIL.TIP
+    ----------
+ 
+ 
+Copyright 1987 Tony B. Anderson
+All Rights Reserved
+ 
+ 
+The following are a series of tips that have been gleaned from problem-solving
+discussions with users of the CRDFIL.BAS program.  Some of them may help you
+customize the program for your particular application, or give you ideas of
+ways to improve the program, or your use of it.
+ 
+ 
+Tip 1:  Problem: OS error during run of the program.  Add CLEAR1000 in line 1,
+between MAXFILES=1 and M=0
+ 
+ 
+Tip 2:  You can use the original program with files on disk, providing your DOS
+supports access of disk files from BASIC, and in particular the append function
+to existing disk files.  At the "Name of file to use" or the "Filename to
+create" prompts, simply preface the filename with the device or disk access
+indicator; most respond to "0:filename.DO", but some require only the colon, in
+the form: ":filename.DO".  Some also do not require the ".DO" extension.
+ 
+The Chipmunk's CDOS supports this command, and the Tandy Disk/Video Interface
+does, too.  Thus far, we have determined that the following alternate DOS's for
+the TDD also support the necessary commands for the program to work with the
+TDD.
+ 
+Acroatix' programs POWER-DISK and POWER-DOS for the TDD-1 do, as well as
+Traveling Software's TS-DOD, version 2 for the TDD-1.  Also UltraSoft's version
+1 of DISK-POWER does; probably DISK-POWER II for the TDD-2 does, too.
+ 
+It is likely that Traveling Software's DOS for the TDD-2, TS-DOS 3.0 also does,
+but this is not yet confirmed by report of successful use.  (12/30/87)
+ 
+ 
+Tip 3:  To create a blank prompt, rather than a named prompt, in the section of
+the program where you are creating prompts, simply type a space, followed by
+pressing the ENTER key.
+ 
+ 
+Tip 4:  To automatically add a colon after every prompt entered, change line
+1102 in the program so that I$+" " becomes I$+": ".  After the change, each
+time you enter a prompt, a colon will be added to it.  "Name" becomes "Name:".
+ 
+ 
+Tip 5:  To eliminate the prompts (field names) on output, so that your card
+display contains the data, but not the prompts, change line 1360 by deleting
+A$(A), so the statement becomes PRINT@P(A),B$(A).  That eliminates the input
+prompts from appearing on output.
+ 
+ 
+Tip 6:  You want to "mark" or "define" your cards in the data file, so that you
+can edit them in RAM?  Simply add one extra prompt to your cards, make it an
+invisible prompt by typing a space for the prompt, so it doesn't appear on the
+screen as output, and respond to the prompt by pressing the enter key during
+input mode.  You will thus create a blank line in your data file between the
+groups that make up each "card", and can more easily find the beginning (or
+end) of each card.  Put the invisible prompt on line 8, column 39, and it will
+look like a "Press Enter to continue" sort of flashing cursor.  This will also
+give you a chance to review all the data before going to the "Is the data
+correct" question.
+ 
+ 
+Tip 7:  Data Dynamics, 2750 Grundy Ave., Signal Hill CA 90806, sells a larger
+than normal mailing label on continuous forms in the Fall/Winter '87 mail-order
+catalog.  The label is 4 inches by 1 7/16 inches, which is perfect for dumping
+an entire screen display to a label.  It exactly matches a 40 column by 8 line
+display, with one blank line between labels.  Prices: 1000/$8; 5000/$25.
+ 
+If you have an application where your "card" can be used in a label form, for
+labelling file folders, boxes, or making shipping labels, these would seem to
+be a good match for the program's capabilities.
+ 
+Call (800) 351-7832 (outside Calif.) or (213) 424-1172 (inside Calif.) to reach
+Data Dynamics.  Undoubtedly such labels are also available elsewhere.
+ 
+ 
+Tip 8:  To make a shipping label, Use "From:" as your first prompt on line 1,
+followed by two blank-prompted entries for lines 2 and 3; then "To:" as your
+fourth prompt on line 5, followed by two more blank-prompted entries.  Fill in
+your name and address as the top 3 lines, and your shippee's address on the
+last three lines.  When dumped to a label, the resulting label will look like:
+ 
+ -------------------------------------
+|   From:  Your Name Here             |
+|          Your Address               |
+|          City and State, Zip        |
+|                                     |
+|   To:    Shipee's Name              |
+|          Address                    |
+|          City, State and Zip        |
+ -------------------------------------
+Note that you need to position your blank prompts properly to indent the output
+data in the above form.
+ 
+ 
+Tip 9:  Search mode, to look for specific cards, or cards with a matching entry
+is case-sensitive.  To cure that, add the following lines to the program.  They
+force your search word, and all the entries on your card to upper-case during
+the search.  (You can cut them out of this file, and paste them into your copy
+of the program, if you downloaded the TIP file.)
+ 
+503 FORB=1TOLEN(S$):IFASC(MID$(S$,B,1)>64THENMID$(S$,B,1)=CHR$(ASC(MID$(S$,B,1))AND223):NEXTELSENEXT
+ 
+508 GOSUB1350:FORA=1TON:FORB=1TOLEN(B$(A)):IFASC(MID$(B$(A),B,1))>64THEN
+MID$(B$(A),B,1)=CHR$(ASC(MID$(B$(A),B,1))AND223):NEXTB:NEXTAELSENEXTB:NEXTA
+509 FORA=1TON:IFINSTR(B$(A),S$)THENGOSUB1360ELSENEXT:GOTO506
+ 
+ 
+ 
+Tip 10: An error in line 408 of the original program, versions 1 and 2.  GOTO
+402 should be GOTO 400.
+ 
+ 
+Tip 11: If you move data and files between the 200 and 100/102, the following
+line will provide an error check indicating that files created for display on
+the 200 screen will not display properly on the 100/102.
+ 
+1309 FORA=1TON:IF(P(A)>319)AND(PEEK(1)<>171)THENBEEP:PRINT" Data File Cannot
+Display on this Model  Program Aborted":PRINT:STOPELSENEXT
+ 
+ 
+More tips will be added to this file as they become available.

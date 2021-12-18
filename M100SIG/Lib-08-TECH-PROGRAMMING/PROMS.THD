@@ -1,0 +1,167 @@
+PROMS.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Vendors have been selling Model 100/102/200 software on ROM chips for some
+time, even in custom ROMs in some cases.  This file captures the latest
+series (actually, two series) of messages on "doing it yourself" -- with
+both hardware and software issues touched upon.
+
+Message range: 149516 to 149813
+Dates: 6/6/87 to 6/10/87
+
+
+Sb: #EPROM in ROM Socket
+Fm: Stan Wong 70346,1267
+To: All
+
+I would like to put some of my commonly used programs and files into a standard
+EPROM and plug it into the ROM socket.  Is there some sort of adapter that is
+commercially available or that someone has built?  I have access to a PROM
+programmer so creating the PROM is no problem; how to interface it is. The
+pinout of the M100 ROM socket doesn't resemble any of the EPROM pinouts I can
+find.  Any help would be very much appreciated.
+
+
+Fm: Tony Anderson 76703,4062
+To: Stan Wong 70346,1267
+
+Wouldn't we all...
+
+But lacking the technical expertise, or the equipment to find out what's what,
+no one has yet come up with how to do it, and placed the information in the
+public domain so that anyone else could do it.
+
+Oh, a few people have figured out how to do it... and have based commercial
+businesses on the technique.  They charge about $500 for burning ONE EPROM, and
+generously drop the price to around $50 each for a dozen or more...  A move
+designed to eliminate the individual user, and favor the large commercial
+market.
+
+As you noted, you need some sort of adapter to unscramble and reroute the
+address lines, for use with standard EPROM's.  None are available.  They are
+custom made for the companies who do EPROM burning, and to the best of my
+knowledge, are not available for sale.
+
+There is one company who can burn an EPROM for about $60, but they have not
+developed the technique of running the programs from the ROM... it's used
+strictly as a storage bank, and programs are "loaded" into regular RAM to be
+run.  --  You might as well get an extra RAM bank; at least you can make
+changes in programs as needed... or get a disk drive... one disk holds the
+equivalent of 6 EPROMS or RAM banks, and an entire bank of data can be loaded
+or saved with a single command.  With such functional disk drives around, the
+days where the Optional ROM for personal use may well have passed.  I can see
+where it still has a useful market in the commercial area, especially with
+dedicated programs used by a large number of people in a company.  But for most
+of us, the disk is simply a better choice.
+
+
+Fm: Ran Talbott 70506,60
+To: Tony Anderson 76703,4062
+
+_Would_ we all want to use EPROMs?  There's nothing that magical about it. The
+adapter is not that hard to make,  though it would be a bit tricky to assemble
+and use.  Personally,  I would be more inclined to build a board that would
+plug into the system bus, like the RAM bank whose manufacturer escapes me.  It
+would make it easier to change the EPROM (I think it would also require the use
+of skinny-DIPs that I've only seen in photos).  The big question is how to make
+use of the ROM: as you pointed out,  it takes some special programming to use
+it as anything other than a "disk".  I wonder how many people (other than
+developers of products!) would really do it.
+
+There are good reasons for using ROMs: portabilty and operational simplicity
+come to mind.  Not to mention the fact that I occasionally get the perverse
+desire to punch a button and turn the M100 into a FORTH machine.  I do wonder
+how much company I've got, though.
+
+
+Fm: Tony Anderson 76703,4062
+To: Ran Talbott 70506,60
+
+I for one am not impressed by the magic of ROM technology.  But in many
+applications, I can see it's usefullness... particularly as I mentioned, where
+a company has equipped a number of it's employees with 100's, and they all need
+to use the same program.  Aside from that, seems like a disk system makes so
+much more sense.
+
+
+Fm: Stan Wong 70346,1267
+To: Tony Anderson 76703,4062
+
+I wouldn't mind having just a storage capability with an EPROM.  I could get a
+disk but the whole aim is to keep size and weight down.  A disk drive would add
+quite a bit of both.  The reason for the EPROM is so that I can reprogram it as
+programs change.  If I can figure out what the chip select (CS) pin does then I
+might have a chance.  I guess I'll consult some of the hardware folks at work.
+If I do eventually wind up with something that works you can be sure that I'll
+publish it here.  In the meantime, any other help I can get will be
+appreciated.
+
+
+Fm: Ran Talbott 70506,60
+To: Stan Wong 70346,1267
+
+The CS pin in the ROM socket is controlled by a latched output pin:  in one
+state it selects the internal ROM,  in the other it selects the option ROM.
+
+The trick to using an EPROM for storage is to write an assembler routine that
+sits in RAM and switches the ROMs. It can copy data from the EPROM into RAM.
+
+
+Fm: Tony Anderson 76703,4062
+To: ALL
+
+New file in DL8 (LINES.EPR) lists the pin connections for the adapter to use
+standard EPROM's in the Model 100 family's optional ROM socket.  Based on a
+visual examination of a commercial ROM, and may not be entirely accurate.
+
+But it's a starting point...
+
+
+Fm: C. Davey Utter 70055,522
+To: Stan Wong 70346,1267
+
+There is, and you can get one from John Ross 76703,551.  Email him and he will
+send it to you, don't know what he sells them for but it ain't much, let me kow
+how you make out, I'm interested in doing it too...Dave
+
+--------------------
+Sb: #user prom's
+Fm: Mark A. Fleming 73336,3444
+To: sysop
+
+I was wondering if there was any info on the format of plug in romware. Would
+it be possible to create a prom program which will appear on the main menu when
+my prom is plugged in? Since I have access to a prom burner, I thought it would
+be nice to put a few programs permanently on the menu. If you know of any
+upload files, messages, or books on the subject, please drop me a line. Thanks.
+
+
+Fm: Denny Thomas 76701,40
+To: Mark A. Fleming 73336,3444
+
+  So far none of that information has appeared in the public domain. Companies
+that have the info have based their business on it.
+
+
+Fm: Tony Anderson 76703,4062
+To: Mark A. Fleming 73336,3444
+
+You can check LINES.EPR in DL8, as my meager contribution to understanding the
+EPROM situation.
+
+
+Fm: Ran Talbott 70506,60
+To: Mark A. Fleming 73336,3444
+
+I don't think it's possible to make it happen _automatically_, but the trick is
+to write some simple .CO files that toggle the ROM select bit and CALL the real
+program in your EPROM.  You'll also need some sort of interface code for
+communicating between your EPROM and the subroutines you need in the ROM.
+
+Ran
+
+PS - It occurs to me you might not have discovered yet that the plug-in ROM
+occupies the same lower 32K of address space as the built-in ROM, and they're
+"bank-switched".

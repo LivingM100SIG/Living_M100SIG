@@ -1,0 +1,412 @@
+TXTJMP.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+From time to time the Model 100 Forum message board becomes a "programming
+workshop".  One user has a problem to solve, and it becomes a challenge.  The
+messages collected here are an example, where the question is how to leave a
+Basic program and enter TEXT (rather than returning to the main menu).  The
+question is asked and solutions are given.
+     <<Updated with new stuff -- 4/30/87>>
+
+
+Message range: 144230 to 146688
+Dates: 3/31/87 to 4/27/87
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: Tony Anderson
+
+Is there any way to quit BASIC so that rather than getting the MENU to jump
+directly into a text-file? Thanks for help in advance.
+
+
+Fm: Tony Anderson 76703,4062
+To: CHAIM FORGACS 72737,2213
+
+Yes.  Determine the system entry address of the program you want to jump to,
+from the file CALLS.MNU in DL8, then in BASIC type CALL(address), and away you
+go!
+
+If you do it often, you can put the call on an unused function key...
+
+KEY7,"CALLnnnn"+CHR$(13)
+
+That takes you to the TEXT prompt that asks what file to open.  There is no way
+to jump directly into a file, because they move up and down in RAM, depending
+on what files or programs are added or subtracted, and the call address would
+be constantly moving around.
+
+It's _possible_ to jump to a machine language routine that looks up where a
+specific file is located, but that won't move you into TEXT and open that file.
+It might be possible, however to pre-stuff the keyboard buffer, so that once
+you get to the TEXT prompt, the name of the file you want is already entered,
+and subsequently would open the file for you.  All speculation, you understand,
+but food for thought for somebody.
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: Tony Anderson 76703,4062
+
+Thanks for the advice. I plan now a notebook program, to make notes (longer
+than 256 chars) save them on disk, transfer reminders and actions to Note.do
+and Todo.do and search the the file on disk. After debugging will attempt to
+upload it.
+
+
+Fm: Tony Anderson 76703,4062
+To: CHAIM FORGACS 72737,2213
+
+OK... Good show.  Let us know when ready... A "notebook program" for a
+"notebook computer" should be unique!  (grin)
+
+
+Fm: Neil Wick 71056,613
+To: CHAIM FORGACS 72737,2213
+
+   The following routine will enter a text file from a Basic program, when the
+name of the file is in T$ (ex. T$="ADRS  DO":
+
+200 F$="":N=256:FORM=-1606TO-1408STEP11:L=M+3:IFPEEK(M)THENW=VARPTR(F$):
+POKEW,8:POKEW+1,LMODN+N:POKEW+2,L/N+N:IFF$=T$THEN
+CALL24421,0,PEEK(M+1)+256*PEEK(M+2)
+210 NEXT:PRINT"File not found"
+
+Add this line to try it out:
+10 CLEAR:FILES:INPUT"Filename";T$:T$=T$+SPACE$(6-LEN(T$))+"DO"
+
+   There must be a CLEAR at the beginning of your program.
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: Neil Wick 71056,613
+
+Thanks. I have two questions: 1Are the peeks, pokes and calls for 100 or 200?
+2. If for 100 do you know the proper values for 200? Thanks again.
+
+
+Fm: Neil Wick 71056,613
+To: CHAIM FORGACS 72737,2213
+
+  Sorry, it's for the 100.  I can change the directory search for the 200, but
+I don't know what address to call.  I will think about how this address could
+be found.  I don't have a 200.
+
+
+Fm: Tony Anderson 76703,4062
+To: Neil Wick 71056,613
+
+Is it a common system call?  Give me the address and perhaps I can locate it's
+equivalent in one of the comparison charts I have for the Tandy 200.
+
+
+Fm: Neil Wick 71056,613
+To: Tony Anderson 76703,4062
+
+
+24421; not too common.  I don't remember where I got it now.
+
+
+Fm: Tony Anderson 76703,4062
+To: Neil Wick 71056,613
+
+OK... that's not listed in my handy-dandy comparison chart, so will take a
+little digging.  Stay tuned...
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: Tony Anderson 76703,4062
+
+Thanks for your efforts. I follow of course your notes with great interest
+hoping for results.
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: Tony Anderson
+
+I found in CALLS.ROM (compiled by guess whom) the following: To get into a text
+file use CALL 8719 (for the 100 or 11644 for the 200). Field name should be
+starting at location 64659 or 63302 respectively in a six character field
+without extension. The catch - I can not make it working. Would you mind to
+give a try? Thanks in advance.
+
+
+Fm: Tony Anderson 76703,4062
+To: CHAIM FORGACS 72737,2213
+
+The ONLY information I know about that code is that contained in the ROM maps.
+Quoting from 100ROM.RC2:
+
+220FH - Open a Text File
+
+         Entry:
+          (FC93H) - Filename (8 bytes). DO not required
+         Exit:
+          HL - points to start of text file
+          DE - points to directory entry
+          C flag - set if file already exists, reset if it is a new file
+
+The exact same information describes 2D7CH for the Tandy 200. Nothing more.
+
+But it looks to me like we're talking about something different here.  You
+mention getting into a text file, while the ROM maps indicate this as "Open a
+Text File".  I would venture to say, "Open" is not the same as "Enter". I would
+also guess that you can't just jump into a text file, without any sort of
+program control. What would the OS _do_ just sitting there.  I would think you
+have to enter the TEXT program, so you'd be in the Edit mode, THEN open a file;
+which is exactly what TEXT does.
+
+Perhaps I'm mistaken here, but it appears you want to do something different.
+Why would anyone want to jump directly into a text file?  That's like jumping
+directly into the previous screen buffer.  Why?  For what purpose?
+
+
+Fm: Neil Wick 71056,613
+To: CHAIM FORGACS 72737,2213
+
+
+ OK.  I haven't quite had a chance to convert the directory search section, but
+here's how to find the call address:  You need a dissasembler program. Begin
+disassembly at 29085 (or 719D in hex).  After about 15 lines there will
+probably be a CALL 2D7C followed by a JMP.  The address of this JMP is the
+address you want.  In the M100, this is followed by "File to edit" (watch the
+disassembly for one letter on each line.)  Let me know how you make out on
+this.
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: Neil Wick 71056,613
+
+Thanks for both advices. I shall let you know if this works. (Probably after
+the weekend.)
+
+
+Fm: James Yi 73327,1653
+To: CHAIM FORGACS 72737,2213
+
+I read your messages, and hope this helps(Changed Neil's program slightly):
+
+
+10 CLEAR:FILES:INPUT"FILE";T$:T$=T$+SPACE$(6-LEN(T$))+"DO"
+200 F$="":FORL=0TO52:M=L*2+63433:M=PEEK(M)+PEEK(M+1)*256+3:IFM=65538THEN220
+210 W=VARPTR(F$):POKEW,8:POKEW+1,M-INT(M/256)*256:POKEW+2,M/256:IFF$=T$THENPOKE63560,L:CALL27719ELSENEXT
+220 PRINT"File not found"
+
+
+It jumps into the text file you specify, or if you change the extension in
+line 10, you can also jump to Basic or CO file.
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: James Yi 73327,1653
+
+Thanks. Will try it. Although first I will have to adapt it to the 200.
+
+
+Fm: James Yi 73327,1653
+To: CHAIM FORGACS 72737,2213
+
+What do you mean adapt it?  It is for 200.
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: James Yi 73327,1653
+
+Thanks again. I thought that the CALL etc are for 100. I will try it
+immediately.
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: James Yi 73327,1653
+
+And thanks again. It is exactly what I needed. Works beauty.
+
+
+Fm: CHAIM FORGACS 72737,2213
+To: [F] Tony  76703,4062
+
+James Yi found a perfect solution which does exactly what I need. (See
+#145400). Now I am quite close to uploading my notebook to to notebook computer
+system.
+
+
+Fm: Neil Wick 71056,613
+To: James Yi 73327,1653
+
+It's a well known saying that there is "more than one way to skin a cat" and
+I've come up with a third method to jump into a text file.  For the Model 100/
+102:
+
+10 A$="adrs"+CHR$(0):A=VARPTR(A$)
+30 CALL24079,0,PEEK(A+1)+256*PEEK(A+2)
+
+This has 2 advantages: obviously it's short and also the filename does not have
+to be in capital letters.  (If the file is not found, it is created.)
+
+  I think I have the address for the 200.  The following will confirm it:
+
+10 a=peek(29118):b=peek(29119)
+15 c=peek(29120)
+20 ifa=205andb=115andc=45then?"OK":end
+30 ?"Results not as expected:";a;b;c
+
+If you get an "OK" it's probably safe to try this Tandy 200 version of the
+program:
+
+10 A$="adrs"+CHR$(0):A=VARPTR(A$)
+30 CALL29118,0,PEEK(A+1)+256*PEEK(A+2)
+
+I'd still like an answer to my original inquiry which I think is IFPEEK(29121)
+=195 THEN ?PEEK(29122)+256*PEEK(29123)
+I'd like to add some of this to my PGMTIP file on entering text files.
+                        Neil
+P.S.  I tried to reproduce your CO file juggling on my Model 100, but no
+strange results occurred.
+
+
+Fm: Tony Anderson 76703,4062
+To: Neil Wick 71056,613
+
+Being inherently lazy, I modified you test program for the T200 as follows:
+
+1 A=29118:PRINTPEEK(A);PEEK(A+1);PEEK(A+2)
+
+and got: 205 115 45
+
+Then I tried addresses 29121, 122, 123, and got:  29467
+
+
+Fm: RANDY HESS 73267,552
+To: Neil Wick 71056,613
+
+Neil and James, Now that we can "jump to TEXT" from a basic program how do we
+get back to the program from TEXT without going thru the MENU?
+
+
+Fm: Neil Wick 71056,613
+To: Tony Anderson 76703,4062
+
+So, then, does the 2-line program work?  I guess it should.
+
+
+Fm: Neil Wick 71056,613
+To: RANDY HESS 73267,552
+
+
+  That's a little more complicated.  I just got a little machine language
+routine from Fred Edelkamp which returns.  I'm going to see about getting that
+uploaded to a data library.
+
+
+Fm: Tony Anderson 76703,4062
+To: Neil Wick 71056,613
+
+Oh, I didn't try that... thought you needed that address information before
+coming up with something substantial.  Will go back and get it, and see if it
+do.
+
+
+Fm: Tony Anderson 76703,4062
+To: Neil Wick 71056,613
+
+Works fine.  And, is a lot shorter than the previous version.  Thanks.
+
+Well, that's another one solved!  Now, would like someone to come up with a way
+to add additional function key calls in TEXT.... or actually, redefine one or
+more unused ones.
+
+If I could find a way out of TEXT, by jumping to a predetermined location, we
+could get macro capability into TEXT.
+
+
+Fm: James Yi 73327,1653
+To: Neil Wick 71056,613
+
+Sorry for the late reply.
+  Here's something which might be interesting:
+At Previous page area(63432(T200)), there's a list of two-byte address
+pointers, which point to RAMDIR location of files, arranged in order in which
+they appear in Menu.
+By poking the corresponding order number at 65360, then calling 27719, you can
+jump directly into any kind of file.
+For example, poke65360,0:call 27719  gets you directly into BASIC.
+Only if the list is not updated everytime, it could be poked so that as
+soon as exiting from TEXT, you can just press enter and jump into any
+predetermined program other than BASIC.
+Getting warmer..
+
+
+Fm: Neil Wick 71056,613
+To: Tony Anderson 76703,4062
+
+  Happy to know that works.  Just one more routine to write and I'll be able to
+revise my PGMTIP file with definitive information.
+  I think there may be a fairly simple way to define new CTRL+key combinations,
+but I think function keys are more difficult.
+
+
+Fm: Neil Wick 71056,613
+To: James Yi 73327,1653
+
+I'm a little confused by this sentence.  (Can you explain again):
+      Only if the list is not updated everytime, it could be poked so that as
+      soon as exiting from TEXT, you can just press enter and jump into any
+      predetermined program other than BASIC.
+It's fairly easy to jump to the address of any machine language instruction on
+exiting text, but a few routines are desirable first to re-enable screen
+scrolling and things like that.
+
+
+Fm: Tony Anderson 76703,4062
+To: Neil Wick 71056,613
+
+Have you, perhaps, located a way to utilize any of the other function keys in
+TEXT to call a ML routine and return? I've been looking for how for some weeks
+now, and short of rewriting the ROM code, haven't figured out how to grab any
+function key press other than diddling with the keyboard scanning routine.
+
+I need that info to be able to get to the macros routine in TEXT.  Do you
+happen to know?
+
+If so, Gimme, Gimme, please....
+
+
+Fm: Carl Oppedahl 70146,1646
+To: Tony Anderson 76703,4062
+
+The function keys in TEXT cannot be hooked into with TEXT as they can in
+TELCOM.  Sorry.  Have to fool with key scanning instead.
+
+
+Fm: James Yi 73327,1653
+To: Neil Wick 71056,613
+
+The list of directory location of files can be poked, so when you try to enter
+BASIC, it can take you to any other program.  But the list is refreshed
+whenever exiting from TEXT, so your poke is made none effect.
+Never mind that..  I think it's useless, since it seems you already to know a
+better way to jump into a location upon exiting TEXT.
+If it isn't too long to explain, how is it done?
+
+
+Fm: RONNIE RICHE 70337,3727
+To: Tony Anderson 76703,4062
+
+guys, reading this thrread... I'm looking for a way to return to a basic prg
+from a text file. thanx to carl's neat little book i can get into the file that
+i want but i can't find howta get back. i think it's possible!
+suggest,command,request,anyone... -ronnie
+
+
+Fm: Neil Wick 71056,613
+To: James Yi 73327,1653
+
+
+  There is a hook table which is used after you push F8 in Text.  In the M100
+addresses 64274-5 usually contain the address of a RETurn instruction.  If you
+poke something else in here, it will jump to that address.  I haven't really
+investigated how this affects the stack.  I'm sure there is a similar table (
+used by RST 7) in the 200, but I don't know the address.  Maybe someone else
+out there knows?
+

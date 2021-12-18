@@ -1,0 +1,89 @@
+TXTFMT.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+TXTFMT (DL2) is a 100/102 machine language text processor which, like
+DSKMGR, takes over the screen and is somewhat incompatible with the PG
+Designs 0MENU program.  This set of messages discusses the TXTFMT.PGD patch
+file -- and provides further info from a user on its use.
+
+Message range: 159876 to 160050
+Dates: 11/7/87 to 11/9/87
+
+
+Sb: #TXTFMT VS. PG MENU
+Fm: Lee Levitt 70526,111
+To: Phil Wheeler
+
+Paul Stork suggested that I ask you this question:  I use PG's ram chip and its
+menu program.  I recently installed Paul Stork's TXTFMT in one of the RAM
+banks. When I put the cursor over this machine-language program's name in the
+menu, I get a hybrid screen--most of the screen is from TXTFMT, but laid down
+on top of it are the F-key definitions from the PG menu.  The system freezes at
+that point; the only way I can get out is by pressing the RESET button.   If,
+before accessing TXTFMT, I press F8--which gets me out of the PG menu and back
+to the standard Model-100 menu--TXTFMT starts and runs properly.  This is
+inconvenient, obviously.  Thank you for any help you can give.  --Sincerely,
+Lee Levitt
+
+
+Sb: #159876-TXTFMT VS. PG MENU
+Fm: Phil Wheeler 71266,125
+To: Lee Levitt 70526,111
+
+Look for TXTFMT.PGD (DL2).  Hope that's what I called it!
+
+
+Fm: Lee Levitt 70526,111
+To: Phil Wheeler 71266,125
+
+I brought down your patch for TXTFMT, and it seems to be working fine.  Thank
+you.  Paul Stork did not know your patch repaired ENTRY to TXTFMT from the PG
+menu-he thought it only fixed RETURN to the PG menu.  I'll tell him. I should
+have realized he was confused, since I had the problem at the very outset.  One
+thing of academic interest to me: Your patch pgm loads TXTFMT.  But if, once it
+has been run, you execute (as you instructed) a SAVEM, the 7-byte driver gets
+saved, rather than the modified TXTFMT.  Why is that--what keeps the entire
+TXTFMT from being saved?  I assumed, by the way, that the only way to save
+TXT-PG.CO to cassette was to load it from the menu, then save it to cassette;
+if  had tried to save it to cassette right after running your patch, I would
+have saved only the driver.  Is that right? Anyway, thanks again.  --Lee
+
+
+Fm: Phil Wheeler 71266,125
+To: Lee Levitt 70526,111
+
+Frankly, I did not remember how I did that -- since I do not use TXTFMT (did
+the patch for another user like yourself).
+
+When you have the 7 byte program on the menu, and you are able to run TXTFMT
+successfully from it, you can save the entire program to menu by going to Basic
+and doing 'SAVEM"TXTFMT",XXXXX,YYYYY,ZZZZZ' where XXXXX is the top address
+(should be same as HIMEM at the time), YYYYY is 62960 (I think you need to save
+all up to MAXRAM) and ZZZZZ (as I recall) is the same as XXXXX.  Then you can
+save that menu program to Cassette.
+
+
+Fm: RANDY HESS 73267,552
+To: Lee Levitt 70526,111
+
+I'm the "other user" Phil referred to. All Phils mods to TXTFMT work
+perfectly but it's important to get the sequence of mods and saves correct.
+If you decide to keep TXTFMT (and I think it's a tremendous value; use it
+all the time!) then Paul will send you a manual and CONFIG.BA which loads
+TXTFMT with YOUR printer codes. Here's the seq:
+
+1) Load TXTFMT
+
+2) Run CONFIG.BA
+
+3) Run TXT-PG
+
+4) SAVEM(or CSAVEM)"TXT-PG",60675,MAXRAM,60675
+   (This assumes of course that you're running TXTFMT from 60700 to MAXRAM)
+   Phil's prog adds 25 bytes from 60675-60700.
+
+5) You can save a 7 byte loader but be sure you use 60675 NOT 60700!
+
+Any questions feel free to phone me at work: 800-228-3309 Hope this helps;

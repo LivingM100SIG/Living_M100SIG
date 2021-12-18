@@ -1,0 +1,156 @@
+                     Mininet v.2.1 and 2.1X Documentation
+(Mininet v. 1.03 and documentation Copyright 1983 David J. Ulmer. Revisions and
+updates Copyright 1986 Tom Fitzpatrick.) "This program may be copied,
+distributed and updated as long as the result is also made public domain."
+
+  Mininet 2.1 is a bulletin board program designed for use on a Model 100
+computer with 24K or more of RAM. A 32K machine can comfortably hold thirty
+accounts, leaving 21K for messages. For automatic answering, Mininet 2.1
+requires the telephone ring detector described in the files TELECO.DO and
+SCHEM.REV, both on DL8. For those not electronically inclined, a few
+modifications convert Mininet 2.1 to Mininet 2.1X, which allows Mininet to work
+with an external auto answer modem instead.
+  Two files are needed to get Mininet 2.1 up and running. This file requires
+8105 bytes, MINVC2.100 8420. Once these files are obtained, please save them
+as-is before making any modifications (just in case a mistake is made and you
+need to refer to the original).
+  To set up Mininet, clear your 100 of all other programs and load Mininet 2.1
+as a BASIC program. Next, create files I.DO, M.DO, ADRS.DO, M 4.DO and M 5.DO
+(That's M(space)4.DO and M(space)5.DO--don't forget the space!) using figures
+1-5 as examples. If you are using the built-in modem, at this point you should
+connect the ring detector and the phone line and switch the ANS/ORIG switch on
+the 100 to ANS. If you are using an external modem, connect the modem to the
+100 via the RS-232 port and follow the directions for converting Mininet 2.1 to
+Mininet 2.1X.
+  Now you can RUN Mininet(finally!). The screen will clear, then display the
+time and number of bytes free. Press [F1], then the LABEL key, then [F4]. You
+should now see the re-defined function keys. Those keys are: 
+  [F1] Quit - Stops Mininet and resets the function keys.
+  [F4] Run - Acts as if your 100 is calling itself.
+  [F5] Ring - Tells Mininet to answer the phone as if it were ringing.
+
+Try [F4] now. You will hear a beep and see a flashing block on the screen.
+Press ENTER. (ENTER is referred to as <cr> in the program.) Your 100 will
+respond by printing the version of the program, then "Enter I.D. or NEW:." Log
+onto the system by typing your user number and password here. Notice that the
+function keys have again changed. They now read:
+  [F1] Chat - Allows direct typing between you and a caller.
+  [F2] View - Toggles the screen on and off. The screen is usually left off for
+increased speed.
+  [F3] ^X and [F4] Zoom (^X) - The 100 running Mininet will not recognize a
+CTRL-X or a CTRL-Z from its keyboard. Use [F3] and [F4] instead. 
+  [F5]-[F7] - Shows name of current caller(if the label line is on).
+  [F8] ^S - Displays a ^S only when one computer asks the other to wait.
+
+  Maintenance on Mininet should be done every two or fewer days. This
+maintenance involves printing or deleting the userlog(L.DO), changing printer
+paper(if used), and deleting email that has already been read. The userlog
+(L.DO) will contain the name, logon/logoff dates and times of callers, any
+information left from a NEW user or from an established one using FEEDBACK, and
+any program errors. If a ready printer is attached to the parallel port, this
+information will be printed; otherwise, it is entered into L.DO.
+  Email are entries in the file named M 4.DO To delete email, go into M 4.DO
+and Find ([F1]) \D. (To get the \, hold down the GRPH key while pressing the -
+key.) This will signal the start of a piece of mail that has already been read.
+Press [F7] (SELect), then Find [F1] \ (that's "\" and a space). Now press [F6],
+Cut. Repeat this procedure until you are at the end of the file. It sounds
+complicated, but gets much easier with practice!
+  You are now at the controls of your own bulletin board system(BBS). If you
+have any questions or comments, please send them via U.S. mail to:
+  Tom Fitzpatrick
+  2069 Caraway St.
+  Escondido, CA 92026
+My "Starving college student" financial status prohibits me from answering with
+Compuserve mail, but I will reply to all inquiries sent to the above address.
+A self-addressed, stamped envelope is appreciated. Good Luck!
+
+----------
+NEW
+  No one is here at the moment.  Allow me to take a message.  Who may I say
+called?^[
+What is your phone number?^[ Okay, and what is this concerning? (You've got 1,
+80 character line to fit it in!)^[
+Got it!  I'll be sure he gets the message.  Bye!^Q
+FDBK
+Feedback will end after five lines or <cr> on a blank line.
+:^[:^[:^[:^[(Last line!):^[
+Thanks for the input!^Q
+
+FIGURE 1. (I.DO)
+Notes:  ^[ is the ESCape key.  Enter it into the file by holding down the CTRL
+key while pressing p, then pressing ESC.  Whenever Mininet sees this, it stops
+and waits for input.  ^Q is similar--hold down CTRL while pressing p, then hold
+down CTRL and press q.  This ends the file.
+----------
+                 MENU
+ 1  Goodbye
+ 2  Enter a msg
+ 3  Delete a msg
+ 4  Email read/send
+ 5++HELP!
+ 5  Recent news
+
+FIGURE 2. (M.DO)
+Notes:  You can customize the top of this file, but the simpler it is, the
+easier it is to read and the less memory it takes.
+----------
+15CHIEF,Tom Fitzpatrick*,00/00/0000:00
+02ROBOTICS,John Smith,00/00/0000:00
+21PAPER,Fred User,00/00/0000:00
+
+FIGURE 3. (ADRS.DO)
+The format for a user is:
+
+NUMBER(different for each user)PASSWORD(ALL UPPER CASE),Name(UPPER/lower
+case),last call date and time(start out with 00/00/0000:00)
+
+Notes: Use a unique number for each user. The passwords must be in all UPPER
+case, and do not need to be unique. Placing an "*" in one's name gives him
+sysop access, meaning he can delete any file, read all email(not just his
+own--do this by typing 4+++), and he can respond to the Help/Recent news
+column. Be sure to give yourself this access!
+----------
+
+FIGURE 4. (M 4.DO)
+Notes: There is nothing here because M 4.DO should be created as an empty 
+file. Do this by entering TEXT and typing M 4.DO. Now press [F8]. Voila! 
+---------- 
+\ 03/29/86 @ 00:00Tom Fitzpatrick*
+MININET HELP FILE
+  Mininet operates using numeric commands. These commands are:
+  1. GOODBYE: Disconnects you from the board. You may write feedback to the
+system operator as you leave.
+  2. ENTER A MESSAGE: Eleven message subjects can be maintained by Mininet at
+the same time. If there is room, this will allow you to start a new message
+subject.
+  3. DELETE A MESSAGE: Deletes a message that you wrote. Because of the
+limited memory here, you will want to become very familiar with this command!
+  4. EMAIL READ/SEND: This first reads any mail to you, then asks if you would
+like to send some. To send mail, type in the recipient's name exactly as it
+appears on the board, including an "*" if one appears at the end of his name.
+  5++ HELP/SYSTEM NEWS: Types this file. Additional news will occasionally be 
+added to the end of this file. To read just the new news without the help 
+file, type 5 instead of 5++.
+  # Reads the new responses to that message(i.e. entering 6 reads the new 
+responses to message 6, if there are any.)
+  #++ Reads all of message #. 
+  CTRL-S Pauses the screen. Any key re-starts.
+  CTRL-N Skip to next response in a message, or to next piece of mail.
+  CTRL-Z ZOOM! Quick disconnect.
+  X-ON/X-OFF: Please ENABLE this feature on your terminal to prevent lost
+characters.
+  IMPORTANT NOTE: When using CTRL-S to pause the display, please note that you
+only have 1.5 minutes to re-start before the board logs you off automatically!
+  That about does it. Any questions? If so, leave a public message and one of 
+us should be able to help you out! THE MANAGEMENT
+
+FIGURE 5a. (M 5.DO)
+\ 03/28/86 @ 00:00Tom Fitzpatrick*
+Because of memory restrictions, the 
+help file has not been repeated here.  
+Please refer to your help sheet.
+
+FIGURE 5b. (M 5.DO)
+Notes:  I suggest that 5a. be sent on paper to each user, and 5b. be put in
+file M 5.DO. The reason is obvious--the help file takes up over 1700 bytes by
+itself.

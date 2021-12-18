@@ -1,0 +1,23 @@
+1 'This program asks for two fractions
+2 'as input, adds them, and reduces the
+3 'numerator and denominator until they
+4 'have no common divisor. Input numer-
+5 'ator, denominator must be no greater
+6 'than 100.
+7 '    ...Phil Wheeler [71266,125]...
+8 '
+9 '
+10 CLS:PRINT:INPUT"Fractions (A/B,C/D)";R$,S$:CLS
+20 Z1=INSTR(R$,"/"):Z2=INSTR(S$,"/")
+30 T=VAL(LEFT$(R$,Z1-1)):V=VAL(LEFT$(S$,Z2-1))
+40 U=VAL(MID$(R$,Z1+1)):W=VAL(MID$(S$,Z2+1))
+50 IF U>100 OR W>100 THEN CLS:PRINT@95,"BadInput":FORI=1TO500:NEXT:GOTO10
+60 P=T*W+U*V:Q=U*W
+80 READA:IFA>PORA>100THEN300
+90 IFP/A<>INT(P/A)THEN80
+100 IFQ/A<>INT(Q/A)THEN80
+110 P=P/A:Q=Q/A:IFP=1THEN300ELSE90
+150 DATA2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101
+300 CLS:RESTORE:PRINT@80,T"/"U"+"V"/"W"="P"/"Q:PRINT:PRINT"Press any key to continue"
+301 Q$=INKEY$:IFQ$=""THEN301ELSE10
+

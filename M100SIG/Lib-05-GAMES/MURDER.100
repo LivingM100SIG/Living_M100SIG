@@ -1,0 +1,69 @@
+1 '<MURDER.100> by Benn Gibson
+2 '             [73055,1317]
+3 SCREEN0,0:DIML$(3),N$(5,3),G$(3),Q$(3),T(3):B$=CHR$(27)+"p":W$=CHR$(27)+"q"
+4 DATAMiss White,Col Mustard,Mrs Plum,Dr Brown,Bishop Green,Gun,Pipe,Rope,Dagger,Sword,Library,Verandah,Gazebo,Parlor,Kitchen
+5 DATAWho,With,Where
+6 CLS:LINE(35,6)-(70,6):LINE-(75,20):LINE-(30,20):LINE-(35,6):LINE(35,20)-(70,60),1,BF:LINE(49,43)-(56,59),0,BF
+7 LINE(38,41)-(44,50),0,BF:LINE(61,41)-(67,50),0,BF:LINE(38,24)-(44,33),0,BF:LINE(61,24)-(67,33),0,BF:LINE(50,25)-(55,31),0,BF
+8 LINE(41,24)-(41,50):LINE(64,24)-(64,50):LINE(38,45)-(44,45):LINE(61,45)-(67,45):LINE(38,28)-(44,28):LINE(61,28)-(67,28)
+9 LINE(50,52)-(50,53):T=500:GOSUB53:GOSUB55
+10 X$="MURDER":T=5:PRINT@40*1+17,;:GOSUB52:PRINT@40*3+17,"in the":GOSUB53:X$="MANSION!":PRINT@40*5+17,;:GOSUB52:GOSUB55
+11 RESTORE4:FORC=1TO3:FORR=1TO5:READN$(R,C):NEXT:NEXT:FORC=1TO3:READQ$(C):NEXT
+12 PRINT@7*40+17,"Need Instructions?";
+13 A$=INKEY$:IFA$<>""THEN14ELSEX=RND(1):GOTO13
+14 ON(INSTR("YyNn",A$)+1/2)GOTO15,57
+15 CLS:W=0:FORC=1TO3:FORR=5TO2STEP-1:A=INT(RND(1)*R)+1:H$=N$(R,C):N$(R,C)=N$(A,C):N$(A,C)=H$:NEXT:NEXT
+16 RA$="":FORC=1TO3:L$(C)="":G$(C)="":FORR=1TO5:A=INSTR(N$(R,C)," "):L$=MID$(N$(R,C),A+1,1):L$(C)=L$(C)+L$:IFR=5THENRA$=RA$+L$
+17 NEXT:NEXT
+18 FORK=-1TO4:PRINT@(K+2)*40," "B$;
+19 IFK=0THENPRINT"     Ruled Out";
+20 IFK>0ANDK<4THENPRINT" "Q$(K);
+21 PRINTTAB(16)W$;:NEXTK
+22 PRINT@40+18,"Murder in the Mansion":LINE(104,5)-(236,17),1,B
+23 FA$="":TB=23:FORK=1TO2:FORC=1TO3
+24 P=(C+2)*40+TB:PRINT@P,;:IFK=1THEN30
+25 PRINTQ$(C)"? ";:A$=INPUT$(1)
+26 IFA$<>CHR$(13)THEN28ELSERESTORE4:FORR=1TOC*5:READX$:IFINT((R+4)/5)=CTHENPRINT@6*40+TB-5,"Choices: "X$TAB(39):T=400:GOSUB53
+27 NEXT:PRINT@6*40+TB-5,TAB(39);:GOTO24
+28 IFASC(A$)>96THENA$=CHR$(ASC(A$)-32)
+29 R=INSTR(L$(C),A$):IFR=0THENBEEP:GOTO24ELSEFA$=FA$+A$:PRINT@P,N$(R,C);
+30 PRINTTAB(TB+12);:NEXT:P=P+40:PRINT@P,TAB(30);:NEXT
+31 IFFA$=RA$THEN48
+32 W=W+1:PRINT@P,"no...";TAB(30);:C=0
+33 C=C+1:A$=MID$(FA$,C,1)
+34 R=0
+35 R=R+1:IFR>4THEN33
+36 IFA$<>MID$(L$(C),R,1)THEN35
+37 IFINSTR(G$(C),A$)>0THEN46
+38 G$(C)=G$(C)+A$:P=(C+2)*40+LEN(G$(C))*2+6:PRINT@P,B$A$W$;
+39 PRINT@7*40+2,;:IFLEFT$(RA$,2)=LEFT$(FA$,2)THEN44ELSEFORJ=1TO3:T(J)=MID$(RA$,J,1)=MID$(FA$,J,1):NEXT
+40 IF(T(1)AND(T(3)=0))OR(T(1)ANDT(3))THEN42
+41 IFLEFT$(N$(R,3),1)=RIGHT$(FA$,1)THEN43ELSEPRINTN$(R,1)" was in the "N$(R,3)".";:GOTO47
+42 PRINT"The "N$(R,2)" was held by "N$(R,1)".";:GOTO47
+43 PRINTN$(R,1)" had an alibi.";:GOTO47
+44 R=0
+45 R=R+1:IFMID$(L$(1),R,1)<>LEFT$(FA$,1)THEN45ELSEPRINT"That's not where "N$(R,1)" was.";:GOTO47
+46 PRINT@7*40+2,N$(R,C)" already ruled out.";
+47 T=1000:GOSUB53:PRINT@7*40+2,TAB(39);:GOTO23
+48 P=P+40:PRINT@P,"Right!"W+1"tries.";:T=100:GOSUB53
+49 DATA4184,2,2793,3,3321,1,4184,2,3728,2,3321,2,3134,2,3321,2,3728,2,2793,10,0,0:D=7:RESTORE49:GOSUB56
+50 T=1000:GOSUB53:PRINT@P,TAB(39);:PRINT@P,"Play Again? ";:A$=INPUT$(1):ON(INSTR("YyNn",A$)+1)/2GOTO15,51
+51 MENU
+52 FORK=1TOLEN(X$):PRINTMID$(X$,K,1)" ";:GOSUB53:NEXT:RETURN
+53 FORJ=1TOT:NEXT:RETURN
+54 PRINT@7*40+34,"<Key>";:A$=INPUT$(1):CLS:RETURN
+55 DATA2348,4,2793,6,3516,2,4184,3,3516,1,3516,2,3134,2,2793,3,0,0:D=12:RESTORE55:GOSUB56:RETURN
+56 READS,L:IFL=0THENRETURNELSESOUNDS,L*D:GOTO56
+57 CLS:PRINT"     Old Professor Kingsley, murdered!":PRINT"Every guest at dinner that gloomy night":PRINT"is a suspect."
+58 PRINT"     You're the detective, called upon":PRINT"to sift through the evidence and name"
+59 PRINT"the perpetrator, the weapon, and the":PRINT"location of this heinous crime.";:GOSUB54
+60 PRINTB$" Suspects:"TAB(18)"Weapons:"TAB(29)"Locations: "W$
+61 RESTORE4:FORC=1TO3:FORR=1TO5:READX$:PRINT@R*40+(-(C=1)*1)+(-(C=2)*18)+(-(C=3)*29),X$;:NEXT:NEXT:GOSUB54
+62 PRINT"     To solve the crime, make accusa-":PRINT"tions--'Miss <W>hite did it with a"
+63 PRINT"<G>un in the <L>ibrary.'  The computer":PRINT"tests your theory.  If it's wrong, you"
+64 PRINT"get a clue which may (or may not) help":PRINT"rule out one of the elements."
+65 PRINT"     Loosely based on the board game":PRINT"of Clue, you use all your";:GOSUB54
+66 PRINT"deductive powers to narrow the field":PRINT"and solve the crime."
+67 PRINT"     If you need help in recalling your":PRINT"options, an <Enter> lists them off."
+68 PRINT"     Go ahead!  Begin the most challen-":PRINT"ging case of your illustrious career!":GOSUB54:GOTO15
+

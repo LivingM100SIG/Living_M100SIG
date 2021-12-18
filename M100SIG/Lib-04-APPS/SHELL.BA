@@ -1,0 +1,112 @@
+0 'SHELL.BA 10/23/87
+1 'Copyright 1987, Mike Aiello
+2 'General purpose application shell
+10 '-----------declarations------------
+15 DEFINT A-Z
+20 DIM PL,II,KX,KP,KV,KN(8),KS(8),KA(8),EX,EV#,ED
+25 DIM BK$,RV$,NR$,FN$,KY$(8),SS$,EV$
+50 '-----------initializations---------
+55 PL=170:BK$="                                        ":RV$=CHR$(27)+"p":NR$=CHR$(27)+"q":FN$="-none-"
+100 'program initialization
+105 GOSUB 29000 'disp init scrn
+110 CLS:GOSUB 9000 'disp stat scrn
+150 'init fn keys
+155 SCREEN 0,0
+160 CALL 23161 'clr fn keys
+165 KEY OFF
+170 DATA "    ","    ","    ","    ","    ","    ","    ","Exit"
+175 FOR II=1TO8:READ KY$(II):KX=II:GOSUB 9100:GOSUB 9300:NEXT II
+200 '-------branch to control loop-----
+205 GOTO 32000
+210 '---application routines 210-999---
+999 '-------main fn key routines-------
+1000 KX=1:GOSUB 9500:GOSUB 9800
+1020 'KV=0:GOSUB 9600 ' all keys n/a
+1030 'KX=?:GOSUB 9100:GOSUB 9300 'key on
+1100 '----application code goes here---
+1105 'repeat 1000-1999 as 2000-2999 for F2,
+1110 '3000-3999 for F3 etc. Change KX=2 for
+1120 'F2, KX=3 for F3 etc.
+1899 '----application code ends here---
+1900 GOSUB 9000
+1910 'KV=-1:GOSUB 9600 'all keys av
+1920 KX=1:GOSUB 9500:GOSUB 9700
+1990 EX=-1:RETURN
+2000 EX=-1:RETURN
+3000 EX=-1:RETURN
+4000 EX=-1:RETURN
+5000 EX=-1:RETURN
+6000 EX=-1:RETURN
+7000 EX=-1:RETURN
+7999 '--normal exit: unset loop flag---
+8000 EX=0:RETURN
+8998 '--------utility subroutines------
+8999 'status display
+9000 PRINT@0,BK$;BK$;BK$;BK$;BK$;BK$;BK$;
+9090 EX=-1:RETURN
+9099 'set fn key avail
+9100 KN(KX)=-1:RETURN
+9199 'set fn key not available
+9200 KN(KX)=0:KS(KX)=0:KA(KX)=0:KEY (KX) OFF:KP=280+(KX-1)*5:PRINT@KP,"    ";:RETURN
+9299 'set available key on
+9300 IF KN(KX) AND (NOT KA(KX)) THEN KS(KX)=-1:KA(KX)=0:KP=280+(KX-1)*5: PRINT@KP, KY$(KX);:KEY KX,"":KEY (KX) ON
+9310 RETURN
+9399 'set available key off
+9400 IF KN(KX) AND KS(KX) AND (NOT KA(KX)) THEN KS(KX)=0:KP=280+(KX-1)*5: PRINT@KP, "####";:KEY (KX) OFF
+9410 RETURN
+9499 'toggle key active
+9500 IF NOT KN(KX) THEN RETURN
+9520 KP=280+(KX-1)*5
+9530 IF NOT KA(KX) THEN KA(KX)=-1:PRINT@KP, RV$+KY$(KX)+NR$;:KEY (KX) OFF:RETURN ELSE KA(KX)=0:PRINT@KP,KY$(KX);:KEY (KX) ON:RETURN
+9599 'set all keys availability
+9600 FOR KX=1TO8
+9620 IF KV THEN GOSUB 9100 ELSE IF NOT KA(KX) THEN GOSUB 9200
+9630 NEXT KX:RETURN
+9699 'set all keys on
+9700 FOR KX=1TO8
+9710 GOSUB 9300:NEXT KX:RETURN
+9799 'set all keys off
+9800 FOR KX=1TO8
+9810 GOSUB 9400:NEXT KX:RETURN
+9999 'filename acquire
+10000 SS$=INKEY$:IF SS$<>"" THEN 10000
+10005 PRINT@PL,"File? ";:FN$=""
+10010 SS$=INKEY$:IF SS$="" THEN 10010
+10020 IF SS$=CHR$(8) AND LEN(FN$)>0 THEN PRINT CHR$(127);:FN$=LEFT$(FN$,LEN(FN$)-1):GOTO 10010
+10030 IF SS$=CHR$(13) THEN IF LEN(FN$)>0 THEN RETURN ELSE BEEP:GOTO 10010
+10040 IF LEN(FN$) = 6 THEN BEEP:GOTO 10010
+10050 IF (SS$ >= "a" AND SS$ <= "z") THEN SS$=CHR$(ASC(SS$)-(ASC("a")-ASC("A")))
+10060 IF (SS$ >= "A" AND SS$ <= "Z") THEN FN$=FN$+SS:PRINT SS$;:GOTO 10010
+10070 IF (LEN(FN$) > 0 AND (SS$ >= "0" AND SS$ <= "9")) THEN FN$=FN$+SS$:PRINT SS$;:GOTO 10010
+10080 BEEP:GOTO 10010
+10099 'get numeric input
+10100 SS$=INKEY$:IFSS$<>""THEN 10100
+10105 PRINT@40,BK$;BK$;BK$;BK$;BK$;:PRINT@PL,"Value ====> ";:EV$="":ED=0
+10110 SS$=INKEY$:IF SS$="" THEN 10110
+10120 IF SS$=CHR$(8) AND LEN(EV$)>0 THEN PRINT CHR$(127);:EV$=LEFT$(EV$,LEN(EV$)-1):GOTO 10110
+10130 IF SS$=CHR$(13) THEN 10180
+10140 IF (SS$>="0" AND SS$<="9") THEN EV$=EV$+SS$:PRINT SS$;:GOTO 10110
+10150 IF LEN(EV$)=0 AND (SS$="-" OR SS$="+") THEN :EV$=EV$+SS$:PRINT SS$;:GOTO 10110
+10160 IF SS$="." AND NOT ED THEN ED=-1:EV$=EV$+SS$:PRINT SS$;:GOTO 10110
+10170 BEEP:GOTO 10110
+10180 EV#=VAL(EV$):RETURN
+28999 'initial program screen
+29000 CLS:SCREEN 0,0
+29010 PRINT@122,"* * SHELL.DO - Program Template * *"
+29020 PRINT@205," Copyright 1987 M. Aiello"
+29030 FORII=1TO800:NEXT II:RETURN
+31997 '
+31998 '---------main menu loop---------
+31999 '
+32000 EX = -1
+32100 ON KEY GOSUB 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000
+32200 IF EX THEN 32200 'wait for fn key
+32250 '
+32251 'normal exit
+32252 '
+32255 CLS
+32260 CALL 23164,0,23366 'reset fn keys
+32265 CALL 27795 're-init BASIC fn keys
+32270 KEY OFF
+32275 CLOSE:MAXFILES=1
+32300 MENU

@@ -1,0 +1,94 @@
+0 REM Arpege (Arpeggiating Organ) by Mark Lutton, 73106,1627
+1 REM Public Domain.  6/7/85
+2 REM This program is unbearably slow when run in BASIC.
+3 REM But if you compile it with TCOMP.110 (from DL4) it is fast enough
+4 REM to be useable.
+5 REM Load the program and save it as ARPEGE.BA
+6 REM Run TCOMP.110 and do the following:
+7 REM Starting address?  61331
+8 REM Ending address?  <ENTER>
+9 REM Source .BA program?  ARPEGE
+10 REM Object .CO program? ARPEGE
+11 REM Then wait a few minutes for the program to compile.
+20 REM Notes on the program:  It looks in the keyboard matrix to see
+21 REM what keys are pressed.  There is a handy subroutine
+22 REM at 2000 that looks in the matrix and puts key codes into the
+23 REM array K.  These are key codes, not ascii characters.  For instance
+24 REM Z is 0.  A -1 marks the end of the codes in the array.
+25 REM Control keys are represented in the array too.  The array K2 also
+26 REM reflects the control keys.  If k2(0) = 1 then shift is pressed.
+27 REM If k2(5) = 1 then caps lock is pressed, etc.
+30 REM You can change the keyboard pitch assignments by changing
+31 REM the data statements in 9000 on.  I leave it as an
+32 REM exercise to figure out what's what!
+100 DEFINT A-Z
+105 DIM S(143)
+110 DIM K(71):DIM K2(7):'keyboard memory
+115 REM PRINT "ARPEGE multi-voice keyboard instrument"
+116 REM PRINT "by Mark Lutton, 73106,1627."
+117 REM PRINT "Compiled by TCOMP.110, the Tiny Basic"
+118 REM PRINT "compiler by Michael Weiblen, 72506,2072"
+120 RESTORE 9000
+122 I=0
+123 READ S(I):J=I+72:S(J)=S(I)\4
+130 I=I+1:IF I<72 THEN 123
+140 CLS:PRINT"            Arpeggio Organ"
+141     PRINT"     Polyphonic keyboard instrument.
+142     PRINT"           Hit break to quit."
+143     PRINT"        <SHIFT> jumps 2 octaves."
+144     PRINT"       <NUM> turns on Arpeggiator."
+190 IF P2=0 THEN 192
+191 GOTO 195
+192 GOSUB 400:REM silence
+195 P=0:P2=0
+200 GOSUB 2000:'get key presses
+205 IF K2(7)=0 THEN 210
+206 REM break pressed, empty keyboard buffer
+207 Q=0:Q$=INKEY$:IFQ$<>""THENQ=ASC(Q$)
+208 IF Q=0 THEN 1000
+209 GOTO 207
+210 IFK(P)=-1THEN190
+220 IFK2(0)=0 THEN 222:REM shift key
+221 S1=72:GOTO 300
+222 IF K2(5)=0 THEN 224:REM caps lock
+223 GOTO 221
+224 S1=0
+299 REM got key, make sound.
+300 D=K(P):S9=S1+D:D=S(S9):IFD=0THEN390
+310 P2=1:REM made a sound this time around.
+320 X1=D MOD 256:OUT 188,X1
+330 X1=D\256:X1=X1 AND 127:X1=X1 OR 64:OUT 189,X1
+340 OUT 184,195
+350 X1=INP(186):X1=X1 AND 219:X1=X1 OR 32:OUT 186,X1
+390 P=P+1:IF P>K0 THEN 190
+392 REM numlock = arpeggiator
+394 IF P2=0 THEN 200
+395 IF K2(4)=0 THEN 190
+398 GOTO 200
+399 REM no new sounds this time around, be silent
+400 X1=INP(186):X1=X1 AND 223:X1 = X1 OR 4:OUT 186,X1
+410 RETURN
+1000 GOSUB 400:END
+1999 REM Keyboard matrix subroutine
+2000 K0=0
+2010 L0=-102:L4=0
+2020 L1=PEEK(L0)
+2030 L2=0:L5=1
+2040 L3=L1ANDL5:IFL3=0THEN2045
+2041 GOTO 2050
+2045 K2(L2)=0:GOTO2060
+2050 K(K0)=L4:K0=K0+1:K2(L2)=1
+2060 L2=L2+1:L5=L5+L5:L4=L4+1
+2070 IFL2<8THEN2040
+2080 L0=L0+1:IFL0<-93THEN2020
+2090 K(K0)=-1
+2100 RETURN
+9000 DATA 9394,8368,7456,7032,6269,5586,4976,4433
+9010 DATA 9952,8866,7900,0,6642,5918,5272,0
+9020 DATA 4697,4184,3728,3516,3134,2793,2488,2348
+9030 DATA 2092,1864,1758,3950,0,4697,4184,3728
+9040 DATA 4976,4433,3950,0,3321,2959,2636,0
+9050 DATA 2216,1975,0,1660,0,0,0,0
+9060 DATA 0,1567,11172,12538,0,0,0,0
+9070 DATA 0,0,0,0,0,0,0,0
+9080 DATA 0,10544,0,0,0,0,0,0

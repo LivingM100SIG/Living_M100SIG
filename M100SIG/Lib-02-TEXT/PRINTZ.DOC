@@ -1,0 +1,147 @@
+User Guide for PRINTZ 1/29/85 by Rick Perry [75665,1045]
+
+
+   PRINTZ.LDR is a TRS-80 Model 100 BASIC program that installs
+relocatable machine language code which intercepts carriage returns and
+other special characters directed to the parallel printer port, LPT:. 
+PRINTZ.LDR is all you need to get started; later, if you want to save
+some bytes, you can use the .LDR to generate a PRINTZ.CO file to be used
+in conjunction with PRINTZ.100 per instructions at end of this document.
+
+   PRINTZ allows you to specify page length, indentation, optional page
+numbering, pause between pages and more.  Once installed, the M/L code
+will operate not only when using Shift-Print from TEXT or BASIC (LLIST),
+but also when doing Echo to printer from TELCOM, and when LPRINTing from
+BASIC.
+
+   The default 'End:' address for the M/L code is set to MAXRAM-1, but
+if you want it loaded below other code that you keep above HIMEM, just
+edit the program and change the four MAXRAM references to the value you
+want.
+
+********
+
+   The MOST IMPORTANT THING TO DO, especially required if you run other
+.CO's or have programs that do CLEAR xxx,MAXRAM, is:
+
+Run PRINTZ to install the code before you start printing, then run it
+again to remove the code after you are done all your printing jobs. 
+When it is run, if the M/L interface code is already installed, it will
+prompt "Remove  PRINTZ?".  If the code is not active, it will prompt
+"Install PRINTZ?".  Answer with Y, y, N, or n depending on which prompt
+you get and what you want to do.
+
+********
+
+   When you 'install' it, and when answering the "Remove" prompt with N
+or n, it will give you a chance to reset the default parameter settings
+prompting:
+
+Counter:  0 ?
+Length : 58 ?
+Skip   :  8 ? (default is 66-Length)
+Spacing:  1 ?
+Indent :  4 ?
+Width  : 72 ? (default is 80-2*Indent)
+
+Type in desired values or just press ENTER to use the defaults.  The
+'Counter' keeps track of how many lines have been printed so far on a
+page.  Thus, after printing a file which ends in the middle of a page,
+if you print another one right after that it will start about two lines
+after the previous one, and pagination will continue as normal.  If you
+roll the paper forward by hand, check the counter (by running PRINTZ)
+and set it back to 0 or whatever you want.
+
+'Length' means number of lines printed per page.
+
+'Skip' means number of lines skipped between pages, can be 0 if desired.
+
+'Spacing' of 1 means single spacing, 2 means double space, etc.
+
+'Indent' is number of spaces to indent for left margin, can be 0 if
+desired.
+
+
+   After these prompts it asks "Number pages?" and if you respond Y or y
+it will ask:
+
+1st page #: 0 ?
+Bot margin: 2 ?
+
+Type in desired values or just press ENTER to use the defaults.  The
+'1st page #' will be used as the page number when the bottom of the
+current page is reached.  'Bot margin' specifies how many lines to skip
+before printing the page number.  If '1st page #' is set to 0, or if
+'Bot margin' is not less than 'Skip', the pages will not be numbered.
+
+
+   Final prompt is "Pause between pages?".  If you respond Y or y then
+when the top of a new page is reached, printing will be suspended, you
+will hear a BEEP, and can then press any key to continue when you are
+ready.
+
+
+Special features:
+
+   To enable proper handling of the line counter and page breaks when
+printing lines longer than the specified width (for example, when
+LLISTing a BASIC program with long lines), the M/L code performs
+automatic character wrapping if the width is exceeded.  The value of
+width used can be specified using PRINTZ or by entering the value at the
+"Width:" prompt in TEXT.  Before printing from BASIC, do one LPRINT to
+insure that the indentation takes effect with the next line.
+
+   Characters # 128 to 255 are intercepted and the high-order bit masked
+to 0 before printing.  If the character was #140 (GRPH '), it will
+become #12 <FF> (formfeed) after masking and the program will send
+sufficient <CR>'s to goto a new page.  You can use this feature to
+insert forced page breaks in a document or to send escape codes to the
+printer by using GRPH ' for <FF> (looks like squiggly equals sign on
+screen) and GRPH k for <ESC> (looks like left arrow on screen).  As you
+may already know, TEXT will simply print ^L and ^[ instead of sending
+any real <FF> or <ESC> in a file.  To start a new page from BASIC do
+LPRINT CHR$(12).
+
+
+Leftovers:
+
+   The following pokes can be used directly to remove the effects of the
+M/L PRINTZ code (in case it's loaded but you do not have PRINTZ.BA in
+RAM):
+
+POKE 64228,243 : POKE 64229,127
+
+   If you wish, edit line 18 to change the default parameter values. 
+The 0 at end of DATA statement in line 16 can be changed to 10 if your
+printer needs linefeeds.
+
+   The intrepid programmer will want to see PRINTZ.ASM for the assembly
+source code listing.
+
+
+PRINTZ.100 & .CO:
+
+   The total amount of RAM storage needed for the PRINTZ code can be
+reduced by about 50% by using PRINTZ.LDR to generate a PRINTZ.CO file as
+follows:
+
+1. Run PRINTZ.LDR and 'install' it.
+
+2. Immediately after returning to Main Menu, goto BASIC and enter:
+
+SAVEM"PRINTZ",HIMEM,MAXRAM-1
+
+3. Get a copy of PRINTZ.100 and save it as PRINTZ.BA.
+
+4. That's it... PRINTZ.100 will do the LOADMing of the PRINTZ.CO
+whenever you use it, and also go through the parameter setup menus same
+as PRINTZ.LDR.
+
+   For those of you who (shudder!) keep machine code permanently
+resident above HIMEM, you can obtain a version of PRINTZ relocated to
+whatever 'End:' address you want by changing all MAXRAM references in
+PRINTZ.LDR, PRINTZ.100, and step 2 above to the desired value.  For
+example, replace MAXRAM with 62000 and replace MAXRAM-1 with 61999, to
+avoid interference with code loaded at 62000 and above.
+
+*** The End ***

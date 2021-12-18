@@ -1,0 +1,140 @@
+1000  '  UNITAG.BAS -------------------------------------by Walter Cornell
+1010  '
+1020  '    This program prints any ASCII text file. Written originally
+1030  '    to create repetitive stickers/labels, but works with notices
+1040  '    flyers, postcards, ANYTHING!!!...BUT YOU FORMAT IT!!!
+1045  '
+1050  '                      CIS 73130,2755
+1060  LET E$ = ""
+1070  LET EN = 0
+1100  LET OPD$ = "LPT:"
+1110  LET QTY = 100
+1115  LET BELLS = -1
+1127  KEY OFF: CLS
+1130  DIM E$(51), EN(51)
+1140  FOR LOOP1 = 0 TO 50
+1150    READ EN(LOOP1), E$(LOOP1)
+1160  NEXT LOOP1
+1170  ON ERROR GOTO 1810
+1180  PRINT "UNITAG V2.0"
+1190  PRINT "IBM version Copyright 1986 W.Cornell"
+1195  PRINT "TANDY version Copyright 1991 W.Cornell"
+1196  PRINT "All rights reserved. "
+1200  PRINT
+1210  IF BELLS THEN BEEP
+1220  FILES
+1290  '---------Get User Input
+1300  PRINT
+1310  INPUT "Enter PATH & FILE to print "; LF$
+1315  IF LF$ = "" AND BELLS THEN BEEP
+1320  IF LF$ = "" THEN PRINT "Enter a PATH:FILE name or"
+1330  IF LF$ = "" THEN INPUT "press <ENTER> alone to quit "; LF$
+1340  IF LF$ = "" THEN MENU
+1350  PRINT "How many copies ["; QTY; "]: ";
+1360  INPUT QTY: IF QTY = 0 THEN QTY = 100
+1370  PRINT "Enter output device ["; OPD$; "]: ";
+1380  INPUT OPD1$
+1390  IF OPD1$ = "" THEN OPD1$ = OPD$
+1395  '---------Count the lines in the file
+1397  PRINT
+1400  PRINT "Busy";
+1410  '
+1420  '
+1430  OPEN LF$ FOR INPUT AS 1
+1440  CNT = 0
+1450  IF EOF(1) THEN 1500
+1460    LINE INPUT #1,A$
+1470    CNT=CNT+1
+1480    A$=""
+1490  GOTO 1450
+1500  CLOSE 1
+1505  '---------Dimension & Load Array
+1510  PRINT ".";
+1515  DIM B$(CNT)
+1520  OPEN LF$ FOR INPUT AS 1
+1530  FOR I = 0 TO CNT - 1
+1540    LINE INPUT #1,B$(I)
+1550  NEXT I
+1560  CLOSE 1
+1565  '---------Print the Array QTY times
+1580  OPEN OPD1$ FOR OUTPUT AS 1
+1590  L = 1
+1600  IF L > QTY THEN 1670
+1610    FORI=0TOCNT-1
+1620      PRINT#1,B$(I)
+1630    NEXTI
+1640    GOSUB1740
+1650    L=L+1
+1660  GOTO 1600
+1670  '---------Turn out the lights...
+1680  CLOSE1 
+1700  MENU
+1710  '----------Update the count on screen
+1740  LET LEFT = QTY - L
+1760  PRINT CHR$(13);
+1770  PRINT USING "Printed:##,###  -  To print:##,### "; L; LEFT;
+1800  RETURN
+1810  '---------Error trap
+1830  I = 1
+1840  IF ERR <> EN(I) THEN I = I + 1: GOTO 1840
+1850  PRINT
+1870  BEEP
+1880  PRINT "["; E$(I); "!] "
+1890  IF ERR = 18 THEN GOTO 1950
+1900  'IF ERR=68 THEN GOTO 1950
+1910  'IF ERR=71 OR ERR=72 THEN GOTO 1950
+1930  'RUN
+1950  INPUT "Press <ENTER> to continue "; DUMMY$
+1970  IF ERR = 18 THEN RESUME ELSE RUN
+1980  DATA 1,Next without for
+1990  DATA 2,Syntax error
+2000  DATA 3,Return without gosub
+2010  DATA 4,Out of data
+2020  DATA 5,Illegal function call
+2030  DATA 6,Overflow
+2040  DATA 7,Out of memory
+2050  DATA 8,Undefined line number
+2060  DATA 9,Subscript out of range
+2070  DATA 10,Duplicate definition
+2080  DATA 11,Division by zero
+2090  DATA 12,Illegal direct
+2100  DATA 13,Type mismatch
+2110  DATA 14,Out of string space
+2120  DATA 15,String to long
+2130  DATA 16,String formula too complex
+2140  DATA 17,Can't continue
+2150  DATA 18,I/O error or Printer not ready
+2160  DATA 19,No resume
+2170  DATA 20,Resume without error
+2180  DATA 22,Missing operand
+2190  DATA 23,Undefined error
+2200  DATA 56,Direct statment in file
+2210  DATA 59,Undefined error
+2220  DATA 26,Undefined error
+2230  DATA 27,Undefined error
+2240  DATA 29,Undefined error
+2250  DATA 30,Undefined error
+2260  DATA 50,Internal error
+2270  DATA 51,Bad file number
+2280  DATA 52,File not found
+2290  DATA 53,Already open
+2300  DATA 54,Input past EOF
+2310  DATA 55,Bad file number
+2320  DATA 57,Too many files
+2330  DATA 58,File not open
+2340  DATA 59,Undefined error
+2350  DATA 62,Undefined error
+2360  DATA 63,Undefined error
+2370  DATA 64,Undefined error
+2380  DATA 66,Undefined error
+2390  DATA 67,Undefined error
+2400  DATA 68,Undefined error
+2410  DATA 69,Undefined error
+2420  DATA 70,Undefined error
+2430  DATA 71,Undefined error
+2440  DATA 72,Undefined error
+2450  DATA 73,Undefined error
+2460  DATA 74,Undefined error
+2470  DATA 75,Undefined error
+2480  DATA 76,Undefined error
+

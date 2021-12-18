@@ -1,0 +1,70 @@
+0 'Program:(DE)CODE.BA Vers 2
+1 'Copyright (C) 1986
+2 'by Rex Rivers [70155,1365]
+3 'all rights reserved
+10 CLS:DEFINTA-Z
+20 ONERRORGOTO50
+30 IFMAXFILES<2THENMAXFILES=2
+40 CLOSE:BEEP:GOTO100
+50 RUN
+100 FILES:INPUT"Input filename	";I$
+110 OPENI$FORINPUTAS1
+200 INPUT"Output filename	";O$
+210 OPENO$FOROUTPUTAS2
+300 INPUT"Code number	";C!
+310 C!=ABS(C!)
+320 R=RND(-C!)
+400 IFEOF(1)THEN500
+410 X=ASC(INPUT$(1,1))
+420 R=RND(1)*127
+430 A=XXORR:IFA=0ORA=26ORA=127THENA=X
+440 PRINT#2,CHR$(A);:PRINTCHR$(A);
+450 GOTO400
+500 CLOSE:BEEP:CLS:MENU
+600 '
+601 '	(DE)CODE will encrypt or
+602 'decrypt any TRS-80 Model 100 file
+603 'with a code number so that only
+604 'those who know the number can view
+605 'it.  The input and output files
+606 'can be any file structured device
+607 '(RAM:,CAS:,COM:,MDM:,0:,1:,ect).
+608 'The code number can be any number
+609 'that the computer is capable of
+610 'storing.  The number of possible
+611 'codes is about 10^32.
+700 '
+701 '	To code a file simply run the
+702 'program and give the input file 
+703 'name at the first prompt.  Give
+704 'the output file a different name.
+705 'You may then delete the original
+706 'file and rename the new file if
+707 'you wish.
+708 '
+800 '	The new file will look like
+801 'meaningless garbage.  Do not edit
+802 'this file in any way or you will
+803 'not be able to decode it.  To
+804 'decode the file again simply run
+805 'the program again and use it as
+806 'the input file.  Be sure to use
+807 'the same code number.  This
+808 'version of the program takes care
+809 'of the previous problem with
+810 'characters the computer could not
+811 'store.  The coded file will
+812 'contain control characters that
+813 'cannot be transferred over the
+814 'modem unless you use a direct file
+815 'tranfer protocol such as XMODEM.
+816 '
+900 '	If you would like more
+901 'information on how the code number
+902 'is seeded, or the algorithm that
+903 'does the encryption, write to me
+904 'via EMAIL.
+905 '
+906 '		Rex Rivers
+907 '		[70155,1365]
+

@@ -1,0 +1,158 @@
+QIKDMP.SRC
+G.W.Flanders [73300,2772] February 4, 1988
+	This file contains the annotated source code for the machine language found in the BASIC loader in QIKDMP.DOC. The routines herein provide (1) a read/write of the LCD from/to a 1920-byte buffer created by the program and (2) a fast, reliable dump of the graphic screen to a bit-addressable line printer. As discussed in the referenced text file, printer codes used here are for Gemini printers. Modifications will be required for most others.
+	The user should not reassemble the source at an address less than 2500 or so bytes under your particular MAXRAM (some disk operating systems change that value). If you have a straight-up M-100 without disk drive, your MAXRAM is probably $F5F0/62960 and you might reassemble as high as $F230/60000 without trouble. In that case, set HIMEM to 60000 (or whatever start point you choose) before loading the data.
+	Now, the source:
+
+BYTES	EQU	$7432	;reads bytes under cursor and loads them into
+			;six memory locations starting at (HL)
+CINT	EQU	$3501	;converts to integer
+DEVICE	EQU	$F675	;signals output to 0=LCD, 1=LPT
+DIV%	EQU	$377E	;perform division
+INTX	EQU	$765C	;disable interrupts
+MOD	EQU	$37DF	;perform DE MOD HL
+PRLP	EQU	$5A58	;print bytes starting at (HL) until a zero is found
+	ORG	$D2F0	;code starts at 54000
+SVIMG	XRA	A	;A=0 (CALL54000 to STORE the image)
+	JMP	GO
+RTIMG	MVI	A,$01	;A=1 (CALL54004 REPAINT the screen with the image)
+GO	STA	TOGL+1	;TOGL+1 is the flag for store/repaint
+	LXI	H,IMAGE	;the 1920-byte graphics buffer
+	XRA	A	;A=0
+NXR	STA	$FFF4	;set cursor row
+	XRA	A	;A=0
+NXC	STA	$FFF5	;set cursor column
+	PUSH	H	;save buffer position
+	CALL	INTX	;disable interrupts
+TOGL	MVI	D,$00	;loads the D register with 0 (or 1, depending
+			;on the entry point) preparatory to the CALL
+	CALL	BYTES	;read six bytes under cursor into (HL)
+	POP	H	;retrieve last position in buffer
+	LXI	B,$06
+	DAD	B	;increment position 6 bytes
+	LDA	$FFF5	;cursor column
+	INR	A	;increment by one
+	CPI	$28	;are we at the end of a row?
+	JNZ	NXC	;if not, do another column in this row
+	LDA	$FFF4	;check the current row
+	CPI	$07	;are we at the end?
+	RZ		;if so, exit
+	INR	A	;if not, increment by 1
+	JMP	NXR	;and start the next row
+SCRDMP	MVI	A,$01	;begin the dump
+	STA	DEVICE	;by putting 1 (LPT) in the device flag
+	LXI	H,SET	;printer setup codes in the string 'SET'
+	CALL	PRLP	;print the string of commands
+	LXI	H,IMAGE	;point to the graphics buffer
+	MVI	A,$08	;counter of 8 for rows
+PRINT	STA	SW	;set the counter in the buffer 'SW'
+	CALL	PROW	;and print a row
+	LDA	SW	;get the row count
+	DCR	A	;decrement it by 1
+	JNZ	PRINT	;if we're not done, do another row
+	LXI	H,NORM	;we're done. Get the string 'NORM'
+	CALL	PRLP	;and send the printer those commands
+	XRA	A	;A=0 (LCD)
+	STA	DEVICE	;the device flag indicates LCD output
+	RET		;exit from screen dump
+PROW	SHLD	RBUF	;store row position in the buffer 'RBUF'
+	CALL	HIRES	;send high resolution command to printer
+	MVI	B,$F0	;240 bytes of column data per row
+	LHLD	RBUF	;get row position in HL
+	XCHG		;and move it to DE
+MOD16	LDAX	D	;get the value pointed to by DE in A
+	PUSH	D	;and save the position on the stack
+	PUSH	B	;save the counter on the stack
+	MOV	E,A	;LSB in E
+	MVI	D,$00	;MSB=0
+	LXI	H,$10	;HL=16
+	CALL	MOD	;get DE MOD HL
+	CALL	CNVRT	;and pick the right printing code
+	POP	B	;get counter back
+	DCR	B	;and decrement it by 1
+	JZ	CRM	;if zero, go do a linefeed and carriage return
+	POP	D	;else get the buffer position back
+	INX	D	;and increment it by 1
+	JMP	MOD16	;print the right code for this byte
+CRM	POP	D	;get the buffer position back
+	MVI	A,$0D	;put CHR$(13) in A
+	RST	4	;and send it to the printer
+DIV16	CALL	HIRES	;now we're ready for the second pass. Send hi-res code
+	LHLD	RBUF	;where were we in the buffer?
+	XCHG		;load position into DE
+	MVI	B,$F0	;240 bytes of column data in the B counter
+DIVL	LDAX	D	;get a byte from the buffer
+	PUSH	D	;store the position
+	PUSH	B	;and the counter
+	MOV	E,A	;E=LSB of value
+	MVI	D,$00	;D=MSB (0)
+	LXI	H,$10	;HL=16
+	CALL	DIV%	;HL=DE/HL
+	CALL	CINT	;get integer portion of result
+	CALL	CNVRT	;and convert it into the right printing code
+	POP	B	;retrieve the counter
+	DCR	B	;decrement it by 1
+	JZ	CR	;if we've finished the second pass, goto 'CR'
+	POP	D	;else retrieve buffer position
+	INX	D	;increment it by 1
+	JMP	DIVL	;and do another byte in this pass
+CR	POP	D	;row's done. Get buffer position
+	MVI	A,$0D	;put CHR$(13) in A
+	RST	4	;and print it
+	INX	D	;increment buffer position by 1
+	XCHG		;put it in DE
+	RET		;and set up for the next new row
+CNVRT	MOV	A,L	;put the value in A
+	CALL	MATCH	;and go fetch the right printing code
+	RST	4	;now print it
+	RST	4	;three
+	RST	4	;times
+	RET		;and go back for another
+HIRES	LXI	H,HR	;point to the high resolution code string 'HR'
+	CALL	PRLP	;send it to the printer
+	RET		;and return
+MATCH	CPI	0	;is the byte=0?
+	RZ		;if so, go back and print it as is
+	LXI	D,BYTS	;if not, point DE to the list of printing codes
+NLP	DCR	A	;and test
+	JZ	GET	;if A=0, we've found the right code
+	INX	D	;otherwise check the next one
+	JMP	NLP	;and keep checking until we find it
+GET	LDAX	D	;get the selected code in A
+	RET		;and go print it
+BYTS	DB	$C0	;if A=1, code=192
+	DB	$30	;if A=2, code=48
+	DB	$F0	;if A=3, code=240
+	DB	$0C	;if A=4, code=12
+	DB	$CC	;if A=5, code=204
+	DB	$3C	;if A=6, code=60
+	DB	$FC	;if A=7, code=252
+	DB	$03	;if A=8, code=3
+	DB	$C3	;if A=9, code=195
+	DB	$33	;if A=10, code=51
+	DB	$F3	;if A=11, code=243
+	DB	$0F	;if A=12, code=15
+	DB	$CF	;if A=13, code=207
+	DB	$3F	;if A=14, code=63
+	DB	$FF	;if A=15, code=255
+SET	DB	$1B	;ESC
+	DB	$4D	;"M" - left margin is
+	DB	$0A	;CHR$(10) - space 10
+	DB	$1B	;ESC
+	DB	$41	;"A" - linefeed value=x/72
+	DB	$08	;CHR$(8) - x=8
+	DB	$00	;0 byte string delimiter
+HR	DB	$1B	;ESC
+	DB	$4C	;"L" - high resolution mode
+	DB	$D0	;CHR$(208)
+	DB	$02	;CHR$(2) - expect 720 columns of data:256*2+208
+	DB	$00	;0 byte string delimiter
+NORM	DB	$1B	;ESC
+	DB	$40	;"@" (reset printer to default settings)
+	DB	$0D	;CHR$(13) line feed and carriage return
+	DB	$00	;0 byte string delimiter
+SW	DS	$01	;1-byte buffer
+POS	DS	$02	;2-byte buffer
+RBUF	DS	$02	;2-byte buffer
+IMAGE	DS	$0780	;1920-byte graphics buffer
+	END

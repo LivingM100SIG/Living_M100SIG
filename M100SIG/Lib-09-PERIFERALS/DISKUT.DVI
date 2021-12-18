@@ -1,0 +1,135 @@
+0 ' DISKUT.DVI v1.00 c 1987 BY KEITH RICHMOND [73127,1727]
+1 '    ****************************************
+4 '    *   D I S K   U T I L I T Y   F O R    *
+5 '    *   S A V I N G   D I R E C T O R Y    *
+6 '    *   T O   T R A C K # 3 9   A N D      *
+7 '    *   E X P A N D   D I S K   S P A C E  *
+8 '    *   B Y   A B O U T   9 K   I F        *
+9 '    *   T H E   D I S K   I S   N O T      *
+10 '   *   P R O T E C T E D   U S I N G      *
+11 '   *   D I R E C T O R Y   R O U T I N E  *
+12 '   *   I N   T H I S   P R O G R A M .    *
+14 '   ****************************************
+15 '   ****************************************
+16 '   *                                      *
+17 '   *       I N I T I A L I T I O N        *
+18 '   *                                      *
+19 '   ****************************************
+22 CLS
+23 CLEAR 1000
+24 ON ERROR GOTO 5000
+35 SCREEN1,0:WIDTH 40
+36 '   ****************************************
+37 '   *                                      *
+38 '   *     M E N U   T O   F O L L O W      *
+39 '   *                                      *
+40 '   ****************************************
+50 PRINT@51,"DISK DIRECTORY SAVER"
+60 PRINT@120,"(1) RECORD DIRECTORY ON TRACK #39"
+70 PRINT@160,"(2) REPLACE DIRECTORY TO TRACK #20"
+80 PRINT@200,"(3) CREATE 9K MORE DISK SPACE"
+90 PRINT@240,"(4) END"
+100 PRINT@320,"YOUR CHOICE PLEASE  ";
+110 INPUT X
+120 IF X<1 OR X>4 THEN 40
+130 ON X GOSUB 1000,2000,3000,4000
+140 GOTO 40
+200 '  ****************************************
+201 '  *                                      *
+202 '  * P R O T E C T I O N   O F  T R A C K *
+203 '  *        # 3 9   M O D U L E           *
+204 '  *                                      *
+205 '  ****************************************
+1000 CLS
+1010 PRINT@80,"WRITE PROTECTING TRACK 39"
+1020 A$=CHR$(254)+CHR$(254)
+1030 FOR M=16 TO 18
+1040 B$=DSKI$(0,20,M,0)
+1050 MID$(B$,79,2)=A$
+1060 DSKO$0,20,M,0,B$
+1070 NEXT M
+1075 '*****************************************
+1076 '*                                       *
+1077 '*  T R A N S F E R   D I R E C T O R Y  *
+1078 '*             M O D U L E               *
+1079 '*                                       *
+1080 '*****************************************
+1085 CLS
+1090 PRINT@80,"TRANSFERING DIRECTORY TO TRACK 39"
+1100 FOR I=1 TO 18
+1110 A$=DSKI$(0,20,I,0)
+1120 B$=DSKI$(0,20,I,1)
+1130 DSKO$0,39,I,0,A$
+1140 DSKO$0,39,I,1,B$
+1150 NEXT I
+1160 CLS
+1170 PRINT@80,"DONE-(PRESS <ENTER> TO CONTINUE)";
+1180 INPUT X$
+1190 RETURN
+1500 '*****************************************
+1501 '*                                       *
+1502 '*   R E P L A C E   D I R E C T O R Y   *
+1503 '* T O   T R A C K   # 2 0   M O D U L E *
+1504 '*                                       *
+1505 '*****************************************
+2000 CLS
+2010 PRINT@80,"REPLACING DIRECTORY TO TRACK # 20"
+2020 FOR I=1 TO 18
+2030 A$=DSKI$(0,39,I,0)
+2040 B$=DSKI$(0,39,I,1)
+2050 DSKO$0,20,I,0,A$
+2060 DSKO$0,20,I,1,B$
+2070 NEXT I
+2080 CLS
+2090 PRINT@80,"DONE-(PRESS <ENTER>) TO CONTINUE ";
+2100 INPUT X$
+2110 RETURN
+2500 '*****************************************
+2501 '*                                       *
+2502 '*    M O R E   D I S K   S P A C E      *
+2503 '*            M O D U L E                *
+2504 '*                                       *
+2505 '*****************************************
+3000 CLS
+3005 X$=CHR$(255)+CHR$(255)+CHR$(255)+CHR$(255)
+3006 PRINT@80,"THIS MODULE WILL GIVE YOU 9K MORE DISK":PRINT"SPACE"
+3008 INPUT"HIT ENTER TO START";ZZ$
+3010 FOR I=16 TO 18
+3020 A$=DSKI$(0,20,I,0)
+3021 E$=RIGHT$(A$,124)
+3022 E$=X$+E$
+3035 B$=LEFT$(A$,4)
+3036 C$=LEFT$(B$,2)
+3037 D$=RIGHT$(B$,2)
+3038 C=ASC(C$):D=ASC(D$)
+3039 DSKO$ 0,20,I,0,E$
+3050 NEXTI
+3060 PRINT:PRINT:PRINT"ALL DONE DO ANOTHER ?";:INPUT S$
+3070 IF S$="Y" THEN 3000
+3080 IF S$="y" THEN 3000
+3090 IF S$="YES" THEN 3000
+3100 IF S$="yes" THEN 3000
+3110 RETURN
+3500 '*****************************************
+3501 '*                                       *
+3502 '*  T E R M I N A T I O N   M O D U L E  *
+3503 '*                                       *
+3504 '*****************************************
+4000 CLS:
+4010 PRINT@120,"ARE YOU FINISHED (Y/N)";
+4020 INPUT X$
+4030 IF LEFT$(X$,1)="Y" THEN END
+4040 RETURN
+4500 '*****************************************
+4501 '*                                       *
+4502 '*        E R R O R   M O D U L E        *
+4503 '*                                       *
+4504 '*****************************************
+5000 CLS
+5010 IF ERR<> 18 THEN PRINT@160,"ERROR CODE ";ERR;" IN LINE ";ERL:STOP ELSE 5100
+5100 CLS
+5110 PRINT@120,"I/O ERROR OCCURED IN LINE ";ERL
+5120 PRINT@160,"ON TRACK ";I;" SECTOR ";J;" CONTINUING"
+5130 A$=STRING$(128,CHR$(255))
+5140 B$=STRING$(128,CHR$(255))
+5150 RESUME NEXT

@@ -1,0 +1,42 @@
+BA2CLC.TIP	(c)1989 Wilson Van Alst
+			[76576,2735]
+
+
+   For those who've wondered: there _is_ a simple way to make use of the T200 
+calculator while running a BASIC program.
+   The calcultor function is available whenever BASIC is in the "blinking 
+cursor" mode, waiting for a keyboard entry.  So, you can use it whenever 
+you're facing an INPUT or LINEINPUT prompt -- as in:
+
+ 10 INPUT"Your name";N$
+
+	or
+
+ 20 LINEINPUT"Name (Last,First): ";N$
+
+   In the above examples, you can use the calculator any time before you press
+the <ENTER> key to complete the input statement.
+   The calculator will also come up while BASIC is waiting for a single 
+keypress with the INPUT$(1) command.
+   Here is an example:
+
+ 10 A$=INKEY$:IFA$=CHR$(27)THENGOSUB99
+ 20 PRINT"n":GOTO10
+ 99 CLS:PRINT:PRINT"Calculator available.  Press any key to resume 
+program.":A$=INPUT$(1):RETURN
+
+   As the program runs, a touch of the <ESC> key will take you down to Line 
+99, which gives you access to the calculator.  Once you've finished with it, 
+any keypress will take you back to the main program loop.
+   Line 99 could also be written:
+
+ 99 CLS:PRINT:LINEINPUT"Calculator available.  Press <ENTER> to resume 
+program.";A$:RETURN
+
+   Of course, you don't need the <ESC> detector in Line 10, above, if you're 
+writing a program with ONKEY GOSUB interrupts; you can use an F-key to take 
+you to Line 99 at any point in the program execution.
+   But remember: you don't need any special GOSUBs to use the calculator while
+you're responding to an INPUT or LINEINPUT prompt from BASIC.
+
+

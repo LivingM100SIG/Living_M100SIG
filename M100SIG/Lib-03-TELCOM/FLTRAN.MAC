@@ -1,0 +1,371 @@
+;
+; Source code for FLTRAN/CMD, a program that allows
+; TEXT file transfers to/from a Model III at 19.2k baud
+;
+; Program originally by : Greg Susong
+; Modified 06 Sep 83 by : Robert Briggs
+;
+;--------------------------------------------
+; 1 - Moved ORG down to 5600 hex
+; 2 - added "discard line feed" routine
+; 3 - cleaned up screen display during xfer
+; 4 - added check for "out of limits" read
+;     error (same as EOF)
+; 5 - added XON/XOF during receive
+; 6 - converted to MAC-80 format
+; 7 - added cursor on/off control
+;--------------------------------------------
+; ** Known Problems:
+;    Can only handle files that fit in memory.
+;    Could be modified to send XOFF when buffer
+;    fills, save/read buffer, send/rcv next buffer
+;--------------------------------------------
+; 
+; ===== Model III definitions =====
+;
+rdbyte  equ     0013h   ; read byte from file, DE=>DCB
+wrbyte  equ     001bh   ; write byte to file, DE=> DCB
+kbline  equ     0040h   ; get line of input from keyboard
+kbwait  equ     0049h   ; wait for single key
+vdchar  equ     0033h   ; display char in A to screen
+vdcls   equ     01c9h   ; clear the screen
+vdline  equ     021bh   ; display a line
+dos     equ     402dh   ; DOS entry point
+errmsg  equ     4409h   ; DOS error message display
+syntax  equ     441Ch   ; check file name syntax/move to DCB
+init    equ     4420h   ; initialize new file
+open    equ     4424h   ; open existing file
+close   equ     4428h   ; close open file
+filsiz  equ     24      ; nnnnnnnn/eee.pppppppp:d(CR)
+;
+curoff  equ     0fh     ; turn cursor off
+curon   equ     0eh     ; turn cursor on
+lf      equ     0ah     ; line feed
+cr      equ     0dh     ; cariage return
+eoferr  equ     1ch     ; end of file "ERROR"
+limerr  equ     1dh     ; out of limits (this is also EOF)
+break   equ     01h     ; BREAK key value
+eof     equ     01ah    ; CTL-Z is EOF character
+xoff    equ     013h    ; Pause character
+xon     equ     011h    ; Resume character
+;
+status  equ     0eah    ; RS232 status port
+data    equ     0ebh    ; Read/Write data port
+txbit   equ     6       ; "OK TO SEND" bit
+rxbit   equ     7       ; "CHAR RECVD" bit
+
+        aseg
+        org     5600h
+        entry   start
+;
+keybuf:
+        defs    filsiz  ; room to keyin file spec
+dcb1: 
+        defs    50      ; DCB for file
+secbuf:
+        defs    100h    ; full sector I/O buffer
+;
+stl:
+        defw    00h     ; storage for start display address
+;
+screen1:
+        defm    0c7h,'Model 100 To/From Model III'
+        defm    ' File Transfer Utility',lf,lf
+;
+        defm    0c9h,'Copyright (c) 1983 by'
+        defm    ' Greg Susong [70635,1312]',lf 
+;
+        defm    0cdh,'Modified by Robert Briggs [70515,1262]'
+        defm    lf,lf,lf
+;
+        defm    0cfh,'[1] Transfer File to Model 100',lf
+        defm    0cfh,'[2] Receive File From Model 100',lf,lf
+        defm    0d5h,'[BREAK] Return to DOS',lf,lf,lf,lf
+;
+        defm    0cfh,'Enter your Selection : ',03h
+;
+trnmsg:
+        defm    'Ready to Transmit File',lf,lf,cr
+rcvmsg:
+        defm    'Ready to Receive File',lf,lf,cr
+fspmsg:
+        defm    'Enter Filespec  : ',curon,03h
+donmsg:
+        defm    lf,'*** File Transfer complete ***',lf
+        defm    'Press <any key> to continue... ',lf,cr
+start:
+        call    init232    ; set up RS-232
+        call    vdcls      ; clear screen
+        ld      hl,screen1 ; initial screen
+        call    vdline     ; display it
+;
+getsel:
+        call    csron      ; cursor on
+        call    kbwait     ; get selection
+        call    csroff     ; cursor off
+
+        cp      BREAK      ; BREAK ? 
+        jp      z,DOS      ; ... exit to DOS if so
+;
+        cp      '1'        ; selection 1 ?
+        jp      z,sendfl   ; ... go do it if so
+        cp      '2'        ; selection 2 ?
+        jp      z,receive  ; ... go do it if so
+        jr      getsel     ; try again, dummy
+;
+receive:
+        call    vdcls      ; cls
+        ld      hl,rcvmsg  ; "ready to receive"
+        call    vdline     ; ... display it
+;
+        ld      hl,fspmsg  ; prompt for
+        call    vdline     ; ... file spec
+        call    csron      ; cursor on
+        ld      b,filsiz   ; max # of chars to get
+        ld      hl,keybuf  ; hl=> keyin buffer
+        call    kbline     ; get it
+        call    csroff     ; cursor off
+;
+        ld      a,b        ; anything
+        or      a          ; ... keyed in?
+        jr      z,start    ; re-start if not
+;
+        ld      hl,keybuf  ; hl=> key buffer
+        ld      de,dcb1    ; de => file DCB
+        call    syntax     ; syntax filespec to DCB
+;
+        LD      hl,filebuf ; storage buffer 
+        ld      (stl),hl   ; save start of line
+        call    vdcls      ; clear screen
+
+readlp:
+        call    chk232     ; any input ?
+        jr      z,readlp   ; loop back if not
+;
+        cp      EOF        ; CTL-Z ?
+        jr      z,wrtfil   ; go write file if so
+
+        cp      LF         ; line feed ?
+        jr      z,readlp   ; ... ignore if so
+;
+        ld      (hl),a     ; store character
+        cp      CR         ; carriage return?
+        call    z,doline   ; ... display line if so
+        inc     hl         ; bump buffer pointer
+        jr      readlp     ; go get next char
+
+wrtfil:
+        ld      (hl),EOF   ; store EOF character
+        ld      de,dcb1    ; DE => dcb1
+        ld      hl,secbuf  ; Hl => file buffer
+        ld      b,0        ; file length 0
+        call    init       ; create the file
+        jp      nz,abort   ; ... error?  abort if so
+
+        ld      hl,filebuf ; hl=> start of buffer
+        ld      de,dcb1    ; DE => DCB
+wrtlop:
+        ld      a,(hl)     ; get character from buffer
+        cp      EOF        ; CTL-Z (EOF)?
+        jp      Z,closeup  ; ... close up if so
+        call    wrbyte     ; write byte to file
+        jr      nz,abort   ; ... abort if bad write
+        inc     hl         ; bump to next char
+        jr      wrtlop     ; go do next char
+
+closeup:
+        ld      a,EOF      ; EOF mark
+        call    wrbyte     ; ... write it
+        jr      nz,abort   ; abort if error
+        ld      de,dcb1    ; DE => file DCB
+        call    close      ; close the file
+        jr      nz,abort   ; ... error if can't close
+        jp      start      ; back to menu 
+;
+doline:
+        call    sndxoff    ; XOFF the mod-100
+        push    hl
+        push    de         ; save regs
+        push    af
+;
+        ld      hl,(stl)   ; get start of line
+        call    vdline     ; display it
+;
+        pop     af
+        pop     de         ;  restore regs
+        pop     hl
+;
+        inc     hl         ; bump past CR
+        ld      (stl),hl   ; save new start of line
+        dec     hl         ; fix pointer
+        call    sndxon     ; tell mod-100 OK to go
+        ret                ; and exit
+;
+; 
+; send file from memory to model-100
+;
+sendfl:
+        call    vdcls      ; clear screen
+        ld      hl,trnmsg  ; tell operator 
+        call    vdline     ; ... ready to send file
+        ld      hl,fspmsg  ; prompt for
+        call    vdline     ; ... file spec
+        call    csron      ; cursor on
+;
+        ld      b,filsiz   ; max file name size
+        ld      hl,keybuf  ; buffer area
+        call    kbline     ; get line
+        call    csroff     ; cursor off
+        ld      a,b        ; get # chars entered
+        cp      0          ; if none
+        jp      z,start    ; ... start over
+;
+        ld      hl,keybuf  ; hl=> file spec
+        ld      de,dcb1    ; de => syntax dcb
+        call    syntax     ; move it in
+;
+        ld      de,dcb1    ; DE => DCB
+        ld      hl,secbuf  ; HL => buffer for file
+        ld      b,0        ; LRL = 256
+        call    open       ; open it
+        jr      nz,abort   ; ... abort if error
+
+        ld      hl,filebuf ; HL => start of buffer
+rdflop:
+        call    rdbyte     ; get byte from file
+        jp      nz,rderr   ; ... read error
+        ld      (hl),a     ; save char in buffer
+        inc     hl         ; bump pointer
+        jr      rdflop     ; continue
+;
+abort:
+        set     6,a        ; set verbose error
+        call    errmsg     ; display message
+        jp      dos        ; exit to DOS
+
+rderr:
+        cp      EOFERR     ; EOF reached?
+        jr      z,cont     ; ... expected 
+        cp      LIMERR     ; out of limits?  (same as EOF)
+        jr      nz,abort   ; ... abort if not
+cont:
+        ld      a,(hl)     ; get character
+        cp      EOF        ; EOF ?
+        jr      z,sndfil   ; ... go send file if so
+        inc     hl         ; bump to next char...
+        ld      (hl),EOF   ; ... and store an EOF
+;
+sndfil:
+        call    vdcls      ; clear screen
+        ld      hl,filebuf ; file buffer
+sndlop:
+        ld      a,(hl)     ; get the character
+        call    out232     ; send to model 100
+;
+        cp      EOF        ;  EOF ?
+        jr      z,shwdne   ; ... re-start if so
+;
+        push    de
+        push    hl         ; save regs
+        push    af
+        call    vdchar     ; display it
+        pop     af
+        pop     hl         ; restore regs
+        pop     de
+;
+        inc     hl         ; bump to next char
+        call    chk232     ; check for input
+        cp      XOFF       ; XOFF ?
+        call    z,pause    ; ... wait till XON if so
+        jr      sndlop     ; get next char
+;
+shwdne:
+        ld      hl,donmsg  ; "file xfer done"
+        call    vdline     ; ... display it
+        call    csron      ; cursor on
+        call    kbwait     ; wait for any key
+        call    csroff     ; cursor off
+;
+        jp      start
+;
+csron:
+        push    af
+        ld      a,CURON
+        call    vdchar
+        pop     af
+        ret
+csroff:
+        push    af
+        ld      a,CUROFF
+        call    vdchar
+        pop     af
+        ret
+
+;---------------------------
+; Wait for XON after being XOFF'ed
+;
+pause:  call    chk232     ; get character
+        cp      xon        ; XON ?
+        ret     z          ; return if so
+        jr      pause      ; loop till XON
+;---------------------------
+; Check RS232 for character 
+;
+;  character returned in A reg
+;  0 = no character
+;
+chk232: in      a,(status) ; check RS232 STATUS
+        bit     rxbit,a    ; check rcv bit
+        jr      nz,getone  ; 
+        xor     a          ; nothing
+        ret                ; return
+;
+getone: in      a,(data)   ; get byte
+        or      a          ; set status
+        ret                ; return
+;--------------------------
+; Send character via RS232
+;        
+;  A = character to be sent
+;  waits until ready to send
+;
+out232:
+        ld      c,a        ; save character
+o232lp:
+        in      a,(status) ; get RS232 status
+        bit     txbit,a    ; ok to send ?
+        jr      z,o232lp   ; wait if not
+        ld      a,c        ; restore character
+        out     (data),a   ; send it
+        ret
+;---------------------------
+init232:
+;
+        di
+        xor     A          ; disble interrupts
+        out     (0e8h),a   ; mask 'em
+;
+        ld      a,0ffh     ; 19.2k baud send/receive
+        out     (0e9h),a   ; ... set it
+;
+        ld      a,6ch      ; 8 bit, no parity, xmit enable
+        out     (status),a ; ... set it
+;
+        ret     
+;---------------------------
+;
+sndxoff:
+        ld      a,XOFF
+        call    out232
+        ret
+sndxon:
+        ld      a,XON
+        call    out232
+        ret
+;
+;---------------------------
+;
+filebuf equ     $
+;
+        END     start
+

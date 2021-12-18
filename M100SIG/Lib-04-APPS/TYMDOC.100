@@ -1,0 +1,153 @@
+Documentation for TYMKPR.100 & TYMRTR.100
+===========================================
+
+D. J. MAURER 75665,1252         11/5/83
+
+
+TYMKPR.100 is a program designed to record computer use time by "ACCOUNTS" or 
+categories.  Its complimentary program, TYMRTR.100 prints a formatted statement
+of individual entries and keeps a running tally of computer time for each 
+account for the year.  It was written to help document the percentage of 
+personal computer cost which can be used for a business tax deduction.
+
+The program is set up for six different accounts, although a greater or lesser 
+number can be used to fit your requirements.  TYMKPR.BA is designed to 
+"permanently" reside in RAM.  The program is only 294 BYTES, but TYMFIL.DO, the file it creates can be considerably longer.
+
+To use:
+
+a.  SAVE TYMKPR.BA to RAM.
+
+b.  Goto MENU.  Place the cursor over TEXT and <ENTER>.  Type TYMFIL at the 
+"File to Edit?" prompt.  Goto MENU.
+
+c.  Place the cursor over TYMKPR.BA and <ENTER>.  The screen will go blank.
+
+d.  To activate the program throw the ON OFF switch to <OFF>, then to <ON>.  The date and a time will appear on the screen along with your list of accounts,
+and the prompt "SELECT ACCOUNT:".
+
+e.  Type in the NUMBER of the appropriate account then <ENTER>.  The screen will clear and the menu will appear.
+
+f.  You may now access any file or function you wish, however we should examine
+what has taken place.
+
+Enter TYMFIL.DO .  You will notice two lines.  The first contains the date, a 
+time and "EXIT".  The second line is similar except the time should be
+different (later) and a number replaces "EXIT".
+
+The first line was created when you first entered the program.  In all 
+subsequent entries this type of line signals the completion of an operating 
+period.  This first line is not used, and will destroy the listings generated
+by TYMRTR.100 .
+
+
+At this time you may
+
+                 ERASE THE FIRST LINE ONLY.
+                 ============================
+
+You should now have one line remaining.  The last number in the line is the 
+account number you entered.
+
+TYMKPR.100 uses the <POWER OFF,RESUME> command available in Model 100 Basic. 
+On power up TYMKPR.100 starts running in the middle of the program (the program
+ends with <MENU>).
+
+g.  When finished working (nobody actually plays) with the Model 100,
+TYMKPR.100 should be reset.  To reset the program goto MENU.  Place the cursor over TYMKPR.BA and <ENTER>.  A new "EXIT" line will be PRINTed to TYMFIL.DO,
+and the screen will clear again.  The computer is now OFF.  There is no need to switch the computer to <OFF>, but you may if you wish.
+
+Each entry set (2 lines) requires 45 bytes of RAM for storage.  If the computer
+is used frequently for short intervals TYMFIL.DO can use up the available RAM 
+quickly.  When TYMFIL.DO becomes so large that it limits the programming 
+capability of the Model 100, TYMFIL.DO should be SAVEd and reopened.
+
+TYMFIL.DO can be SAVEd to CASsette like any other TEXT file or can be processed
+and printed out as a statement using TYMRTR.100 .
+
+                        *** BEFORE USING TYMRTR.100 ***
+
+                 SAVE TYMFIL.DO TO CASsette or RAM for INSURANCE!
+                =====================================================
+
+TYMRTR.100 automatically converts the data in TYMFIL.DO to a cumulative listing
+by account.  The original data in TYMFIL.DO is erased and replaced by the 
+cumulative data.  If you desire to store the original data for future reference
+TYMFIL.DO MUST BE SAVEd BEFORE RUNNING TYMRTR.100 .
+
+TYMRTR.100 can be run ONLY ONCE for each original data set.  To run multiple 
+copies of the TYMRTR.100 statement the original data must be LOADed back into 
+TYMFIL.DO.
+
+TYMRTR.100 is approximately 3000 BYTES with the remarks removed.  It can be 
+SAVEd to a CASsette file until you are ready to print a statement.  TYMRTR.100 
+is not an interactive program.  After loading all the user must do is place the
+printer on line and run the program.
+
+The program is written in Model 100 basic and uses standard ASCII graphic 
+commands. The original program was written to run on a Mannesmann Tally
+MT-160L.
+
+Lines 100, 109, 119, 339, 415, 440, and 471 contain print format commands.  
+These lines are remarked so you can embed codes for your printer.  You should 
+also be able to run the program with the lines deleted although you may lose 
+something in appearance.
+
+TYMRTR.100 converts the individual entries in TYMFIL.DO into hours and minutes 
+and lists them in columns by account.  The print out is formatted for six 
+accounts.  The second account is one space wider than the others.  I use this 
+column for work related computing time.  It should handle an accumulated total 
+of 9999 hours.
+
+Line 450 erases the original entries in TYMFIL.DO and replaces them with the 
+cumulative totals for each account.  The totals print out as " YR to DATE " in 
+the last line of the listing and as "PREVIOUS" in the first line of the listing
+the next time the program is run.
+
+
+                                LIMITATIONS
+
+In order for TYMKPR.100 to work you should end each session by going to MENU
+and running TYMKPR.BA .  If the computer is switched off manually the "EXIT" line in TYMFIL.DO will not be recorded and the files will be out of sequence
+after that point.  The automatic POWER down has the same effect. (If anyone
+knows of a machine language command to goto a specific address before POWER OFF
+I'd appreciate hearing from you.)  If the computer is switched <ON> then <OFF> 
+without entering an account number and <ENTER> the computer will jump to MENU
+on the next power up.
+
+The IPL or POWER OFF commands cannot be used when this program is running.
+
+
+                                TROUBLESHOOTING
+
+Every problem I have encountered with TYMKPR.100 and TYMRTR.100 can be traced
+to an error in TYMFIL.DO .  The problem that shows up most frequently is a 
+statement containing repeated "PREVIOUS" statements.  This indicates an out of 
+sequence file.  It can be caused by any of the above mentioned reasons.
+
+TYMRTR.100 uses "EXIT" as a test.  If "EXIT" is not the sixth (or a multiple of
+the sixth) data element the program reverts to the "PREVIOUS" routine.
+
+I have found it best to enter TYMFIL.DO while in the text mode occassionaly to 
+make sure that every other entry ends with "EXIT".  Fortunately data files can 
+be edited like any other text file on the Model 100.  If the wrong account is 
+entered, or if you forgot to run TYMKPR.BA after a programming session data 
+files can be written in manually, changed or deleted.
+
+Another problem which may show up is a date with no time listing.  This is 
+caused by an "account" entry outside the parameters of the program.  If you are
+prone to this kind of error add the following line to TYMKPR.100:
+
+        35 IFA$<>"1"AND<>"2"AND<>"3"AND<>"4"AND<>"5"AND<>
+"6"THENCLS:PRINT@133,"INVALID ENTRY":FORX=1TO500:NEXTX:GOTO30
+
+As mentioned earlier you can run TYMRTR.100 only once for each set of original 
+data.  Running the program a second time will print a "PREVIOUS" row followed
+by an identical " YR to Date " row.
+
+
+The two programs discussed add a little more professionalism to your Executive 
+Work Station, and they may keep Uncle Sam off your case when you try to deduct 
+your Model 100 as a business expense next April!
+
+========================================	     END OF LISTING

@@ -1,0 +1,57 @@
+DOWNLOAD TIMINGS -- Updated 5/29/86
+------------------------------------
+
+I tested downloads to the Chipmunk from CIS and a public BBS.  Results are:
+
+ 1. SIG Doc file (3405 bytes) -- ADDRP.DOC (DL2)
+
+    M100 TELCOM to RAM (base) -- 1:58
+    CHP TELCOM.CO to disk     -- 2:05
+    SXM.100 to disk (capture) -- 2:09 (with many errors)
+    SXM.CHP to disk (capture) -- 2:40 (with no errors)
+    QMODEM on IBMPC (xmodem)  -- 2:37
+    X-TEL to disk   (xmodem)  -- 2:55
+    XMODEM.312 to disk  (")   -- 3:45
+    SXM.CHP/100 to disk (")   -- 4:43
+
+Denny Thomas has repeated a portion of these tests, with a maximum variation from the above results of about 7%.
+
+2. BBS Doc file (3473 bytes)
+
+Then some BBS tests were done to make sure that the timing of CIS was not a big part of the results.
+
+    QMODEM on PC     (xmodem) -- 2:07
+    X-TEL to disk    (xmodem) -- 2:25
+    XMODEM.312 to disk  (")   -- 3:12
+    SXM.CHP/100 to disk (")   -- 4:18
+
+
+3. Download Time Conclusions
+
+These are only partial tests.  Main things to note are:
+
+  1) Xmodem downloads with SXM are slow.  No Model 100 program is very fast, but (for some reason) XMODEM.312 is considerably faster than SXM; wonder why -- could it be the writing of the incoming file to the screen?  For my money, I'll do Capture downloads and checksum afterwards.
+
+  2) On the otherhand, SXM makes a good showing in capturing to disk; even SXM.CHP is acceptable (about 15% slower than SXM.100, but with no errors).  And SXM.CHP can be sped up (see below).
+
+  3) I did not test xmodem uploads with any of the programs which support it.  But that is a real strong plus for SXM, et al -- since it assures error-free uploading to the SIG.  That is worth a speed penalty.
+
+  4) Aside from its other features, X-TEL ($50, from Sigea) does give a significant improvement in xmodem downloading to Chipmunk disk.  Presumably, uploads are similarly improved.  Its big weakness is the inability to capture to disk, so (for example) you cannot write the message board to disk with X-TEL, whereas you can with SXM.CHP and XMODEM.312.
+
+4. Improved Speed with SXM.CHP
+
+I've done some capture-to-disk download experiments with SXM.CHP, with interesting results.  They relate to changing the DIM (line 66) and the size (line 4) of the Z(N) string.  This determines how many bytes are buffered before the CHP writes.  My theory was that larger values would reduce the overhead in accessing the disk.  Results suggest this is true.  Some results from before are included (TELCOM download time to RAM was identical).  The file tested is ADDRP.DOC (DL2).
+
+  SXM.CHP (127  char buffer)  -- 2:45
+  SXM.CHP (256  char buffer)  -- 2:40
+  SXM.CHP (1024 char buffer)  -- 2:30
+  SXM.CHP (2048 char buffer)  -- 2:20
+  SXM.100 (No buffer, errors) -- 2:09
+  TELCOM.CO to Chipmunk       -- 2:05
+  TELCOM to RAM               -- 1:57
+
+All files (except SXM.100 case) were identical, per checksum.  And with the 1024 char buffer SXM.CHP took exactly the same time to download to RAM as to disk.
+
+The only downside seems to be the added string space required; but with a Chipmunk in the system, RAM is likely to be pretty available.  But I haven't fully tested the program (all modes and conditions), so there could be some unknown effects.
+
+Phil Wheeler -- 71266,125

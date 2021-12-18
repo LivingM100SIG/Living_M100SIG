@@ -1,0 +1,42 @@
+CVT8-7.100 Convert Programs from 8-bit to 7-bit
+ 
+   This program allows you to upload/download a Basic program containing 8-bit 
+graphics characters using a regular 7-bit ASCII upload/download.  Lines with 
+characters 128 to 255 must be modified if they are to be uploaded in 7-bit 
+mode.  CVT8-7 does this by coding these lines and making them into data 
+statements.  Line numbers from 65000 up are used for these data statements and 
+also for a routine which later puts the program back in its original form, so 
+the program to be processed must not contain line numbers higher than 64999.
+ 
+How to use CVT8-7
+-----------------
+   Save your program as a .DO file.  (Type SAVE"FILE",A or SAVE"FILE.DO")  Run 
+CVT8-7.  Your program will be processed and a new file written.
+
+   Lines which contain special characters should be kept a little shorter than 
+usual, since CVT8-7 adds to their length.  Characters are divided into three 
+ranges: 32-127, 128-191, 192-255.  When any character is in a different range 
+than the preceding character a shift character is inserted into the output 
+listing, so each such change adds one character to the line.  A line number and
+DATA" add another 11 characters to the line length.
+
+   This new file has mixed-up line numbers, so you may wish to LOAD it and re-
+save it in ASCII, but don't run it first or it will be converted back to its 
+original form.  (You should load it anyway to make sure everything is working 
+okay.)
+
+   Lastly, be sure to mention in any program description or documentation you 
+upload:
+1) The program is self-modifying the first time it is run.
+2) It requires an available file slot on the menu for a file called TEMP8B.DO
+3) The program listing you upload contains strange character sequences (like 
+~{}).  This last one is especially important and should be in the description 
+because people will think they're getting a bad download or the file is 
+corrupted.  Consider Basic statements like the following:
+C$=MID$({ ~(I9Z:[7X|{,P,1)
+It sure doesn't look too good, but it translates into a perfectly sensible 
+result.
+
+Let me know if you have any questions or comments.
+Neil Wick [71056,613] (GEnie: N.WICK)
+

@@ -1,0 +1,126 @@
+Docmentation file for SKETCH.BA, GRAFIX.CO, and LDGRFX.BA by Robert
+H.Pigford, (c) 1989, Newark, DE 19711.
+02/02/91
+
+SKETCH.BA and GRAFIX.CO work together to provide dot-by-dot M100 LCD screen
+pixel editing, 12 sizes of screen dumps (for Epson 9 pin or compatible
+printers), saving of screen images to PICTUR.CO filenames assigned by the
+user, and retrieval/re-editing of any of those PICTUR.CO files from RAM.
+
+The PICTUR.CO files created by SKETCH/GRAFIX have a 0 execution address so
+they will return you to the M100 main menu if accidently loaded
+(inadvertantly using the cursor bar on them).  The machine language program
+GRAFIX.CO will be 2809 bytes long (including a 1920 byte buffer for the
+PICTUR.CO saving function).  The resulting saved PICTUR.CO files are
+each only 1920 bytes long.
+
+The GRAFIX.CO program is CALLed by SKETCH.BA as a way of providing
+graphics screen prints in any of 12 different Height and Width
+combinations.  The 1 wide X 1 high printout is great for printing a small
+logo at the top of a page with a letterhead.  The 4 wide X 4 high
+printout will almost fill the paper and is great for scientific graph
+printouts.  GRAFIX.CO does not reset all the printer settings so, when
+finished, you will not have to reset your margins, bold, etc.  Hitting
+Shift-Break while printing will return control to the M100 program but your
+printer may be locked in graphics mode requiring you to turn it off and back
+on to completely clear it.
+
+LOADING:
+--------
+Download LDGRFX.BA in .DO format.  In BASIC, type LOAD"LDGRFX".  When loaded,
+type SAVE"LDGRFX".  Then with LDGRFX.BA created and stored in RAM, you may type
+KILL"LDGRFX.DO" to recover some memory space.
+
+Run LDGRFX.BA to create the GRAFIX.CO program.  LDGRFX.BA asks you to choose
+where in memory GRAFIX.CO will always load and run.  If you don't want it up
+under the current HIMEM, choose a starting address so the required 2807
+bytes of memory will not conflict with any other machine language program
+which you may wish to have active at the same time (like your Disk Operating
+System).  When the loading is complete, you are offered two user determined
+configuration choices:
+
+1.  Want Linefeeds sent to your printer upon printouts <Y/N>?  Some people set
+their printers to automatically throw in a linefeed every time it sees a
+carriage return.  If so, then chose <N>.  If you want the program to supply the
+needed linefeeds, choose <Y>.
+
+2.  Set printer linespacing value.  Most Epson compatible printers use 24
+(actually 24/180 inch).  Printers using other values for their graphics
+vertical line spacing include the Gemini-10X which uses 16.  If you don't know
+about your printer, use the "24" default value and see if the printouts have
+spaces or overlaps in the print.
+
+If you later decide to change these values or wish GRAFIX to operate at a
+different address, you will have to run LFGRFX.BA again.  SKETCH.BA is designed
+to find GRAFIX.CO in RAM and extract the CALL addresses it needs prior to
+running.  PICTUR.CO files made with previous versions of GRAFIX.CO will be
+compatible with the new version.
+
+RUNNING:
+--------
+Download SKETCH.BA in .DO format.  In BASIC, type LOAD"SKETCH".  When loaded,
+type SAVE"SKETCH".  Then with SKETCH.BA created and stored in RAM, you may type
+KILL"SKETCH.DO" to recover some memory space.
+
+RUN the SKETCH.BA progam.  At the first menu, press Enter to continue with
+LOADMing of GRAFIX.CO into high memory.  The HIMEM value will be set
+automatically.  At the MAIN MENU, choose <I> for instructions.  After reading
+these, choose <N> to create a new picture.  The dot will start at the
+upper left corner.  Move the dot around with the keypad directors.  The space
+bar toggles it on and off.
+
+When ready to Save or Print the screen contents, hit </> to bring up the
+GRAFIX choices on line 8 of the picture.  You may then choose: 
+
+<Q>uit returns you to Editing where you left off.
+<P>rint will prompt you for your choices of Height multiple, then Width
+multiple desired.  When the Width choice is entered, the printout begins.  If
+it dosen't, check that your printer may be offline.  If so, put it online to
+begin.
+<S> to make a SAVE.  When GRAFIX completes a screen scan, it clears the
+screen and asks you to <1> choose a filename for saving, <2> return to
+editing the same sketch, or <3> returning to the Main Menu.  Choosing
+<3> for Main Menu will ERASE your picture so be wure to SAVE your work
+first!  Using the same filename as an existing filename will overwrite the
+old copy.  Make frequent saves and even change filenames if you wish to save
+different copies of the same picture.  When saving is complete, you are left
+in BASIC.  Hit <F4> to RUN SKETCH again, or <F8> toto go to the M100 Main Menu.
+
+
+To work on an old file or to get it on the screen so you can print it, choose
+<E> at the SKETCH Main Menu.  When asked for a filename, enter the name of your
+picture file in RAM (don't use the extension).  If SKETCH.BA can't find
+it, it will tell you.  If found, your picture file will unfold onto the
+screen and leave you in dot editing mode.  TOGGLE the dot on/off with the
+<SPACEBAR> to help locate it.
+
+Notes and Hints:
+
+Use the Ctrl+ARROW keys then the <D> combination as a quick way to draw
+lines, borders, etc.
+
+The Shift+ARROWS moves the dot 16 pixel at a time up/down and 12 pixels left/
+right so, if started from an edge, it can be helpful in choosing where to
+place text (text chrs. are 8 dots high x 6 dots wide).
+
+When using the <D>raw function, that the second <D> can be cancelled by hitting
+Cntrl-D.
+
+The <T>ext function is also handy for making selective erasures.  Just put
+the dot near where you wish to erase, hit <T>, then use the spacebar to print
+spaces over the graphics.  Once erased this way, however, the dot graphics are
+gone.  You will have to redraw them if wanted (or Edit your recently saved
+RAM file again).  If you hit <T> and then change your mind, just hit <ENTER>
+to finish and get back to dot editing without having put any text over the
+graphics.
+
+Using Shft-Grph-x in the <T>ext mode will can quickly fill the screen with
+full characters of all dots.
+
+To conserve RAM, the SKETCH.BA program can be shortened by:
+1.  Editing out the instructions (just change line 585 to BEEP:GOTO335 and
+ delete lines 590-695).
+2.  Removing the LINE commands (but not from line #555).
+3.  Editing out all remarks and all lines which contain only remarks.
+
+Have fun!

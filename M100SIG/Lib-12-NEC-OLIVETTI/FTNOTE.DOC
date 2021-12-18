@@ -1,0 +1,103 @@
+ 10/26/86
+ 
+ Instructions for FtNote.BA
+ 
+ by Tom Streeter, 75216.2530
+ 
+    The unique thing about this formatter is that it's suitable for
+ long manuscripts, particularly of an academic sort.  To see what it can do,
+ use it to print out this file on your printer.  It has made it possible for
+ me to use my NEC 8201A (with SideCar) as my only word processor for a 230
+ page PhD dissertation (now on file at the University of Illinois).  It uses
+ dot commands for centering, underlining, etc., and allows chaining
+ of up to twelve files and printing embedded footnotes at the bottom of
+ the page, in Modern Language Association (MLA) dissertation style.
+ It's slow, but with a low-end letter quality printer, you'll never notice.
+ (You may have to change the codes in line 120 to suit your printer before
+ using this: UN = auto underline on; UO = auto underline off;
+ SP = superscript or half linefeed backwards; SO = superscript off or
+ half linefeed forwards; SH = shadow print or boldface; SN = shadow or
+ boldface off.)
+    Customizers may wish to know that this is a debugged, improved and
+ compressed version of "Format.BA", published in the "NEC 8200 User
+ Monthly" in 1985.  The line numbers in "FtNote.BA" more or less correspond
+ to those in "Format", but comments and spaces have been removed to save RAM,
+ and some lines have been collapsed. 
+ 
+ Using FtNote.BA
+ 
+    The input section of the program is designed to compensate for the
+ NEC's small screen; you can see everything that's going on without
+ loosing information as it scrolls by.  When the program is run, a list of
+ text files appears at the bottom half of the screen, and the cursor appears
+ next to the number "1" at the top.  Type in the first file name, using the
+ prefix "CAS:" if the file is on tape, and then hit return, whereupon a
+ number "2" appears, again next to the cursor.  Again type in the filename,
+ hit return, and continue until all file names are entered, then just hit
+ return. 
+    When prompted with "Parameters?," type a lower case "y" if you want to
+ change the defaults.  Then answer the following prompts (skipping any of the
+ prompts by keying a CR produces the default for that parameter.)
+      
+   "Left margin?"
+   "Line spacing?"
+   "Line width?" (the width of the
+      line BETWEEN margins)
+   "First page #?" (page numbers less than 1 will NOT be printed; thus
+      type 0 for a title page that should not be numbered and should
+      be followed by page one, or -100 when you don't want any page
+      numbers at all.)
+   "First FN #?" (Sets the number assigned to the first footnote
+      the formatter encounters; footnotes will be incremented by
+      one after that). 
+   "Paragraphing?" (This sets the paragraph indent.  A negative
+      number can be used to produce a hanging indent, but the number
+      must be smaller than the margin.)
+   "Output?" (Specify "lpt:" for parallel, "com:" for serial, or
+      "ram:")
+   "Page halt? (y/n)" (Typing "y" causes the printer to stop at the
+      end of each page to allow for insertion of single sheets.  When
+      this happens, the prompt "Ready?" appears in the black bar, and
+      typing "y" causes printing to resume.)
+
+    Defaults are set in line 40 of the program.  Printer codes for
+ underlining, boldface, and superscripts are set in line 120. 
+ 
+ Preparing the Text
+ 
+    A CR in the file creates a CR in the printed text.  Paragraph indenting
+ occurs whenever a CR is followed by one or more spaces. (This means that a
+ simple extra space or two at the beginning of a paragraph in TEXT
+ results in a standard paragraph indentation in the formatted output.)
+ The formatter removes extra spaces, but adds two spaces after a period at
+ the end of a sentence, in accordance with normal typing practice.  (To turn
+ off this feature, follow the period with a GRPH+C from the NEC keyboard,
+ which the formatter will view as a character, but most printers will
+ ignore.) Put dot commands in the text, separated from other words by spaces. 
+ Put commands at the beginning of lines where possible.  (Leave out the quote
+ marks shown in the following list; they're there just to fool the
+ formatter into printing them, which ordinarily you don't want it to do.)
+ To create a footnote, type ".fn" followed by the text of the note in
+ curly brackets; e.g.  ".fn {Like this.}" Be sure to leave enough space
+ in RAM to store footnotes while printing. 
+ 
+      
+   ".u" begins underlining, ".nou" ends it. 
+   ".bold" begins boldface, ".nobold" ends it. 
+   ".c" centers the following line. 
+   ".page" advances to the next page. 
+   ".quote" changes the parameters for  a long direct quote in MLA style
+      (indented four spaces on right and left, single-spaced);
+      ".noquote" returns things to normal. 
+   ".x" causes the following word or character to be printed after the
+      preceding word without a space in between.  Try printing this as an
+      illustration:
+      "( .x .u word .nou .x )". 
+   ".lmN" changes the left margin, where N is the column number. 
+   ".spN" changes the line spacing, where N is the number of spaces;
+      (e.g., ".sp2" creates double spacing.)
+   ".lwN" changes the line width, where N is the number of
+      characters per line, not including the left margin. 
+   ".inN" changes the paragraph indenting, where N is the number
+      of characters to indent.  Hanging indents can be created with
+      negative numbers.

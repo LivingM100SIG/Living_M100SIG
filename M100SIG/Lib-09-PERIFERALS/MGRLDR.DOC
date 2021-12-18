@@ -1,0 +1,132 @@
+            MGRLDR.BA - LOADER PROGRAM FOR DSKMGR.100 AND UTILITIES
+
+     Instructions for using MGRLDR.BA
+         Load DSKUTL.CO, DSKSVL.CO, DSKFMT.CO and MGRLDR.BA into memory.
+             Remember that DSKUTL.CO must be POKED to enable the utility
+             functions.
+             It would be best to save it that way.
+                 See DSKMGR.UTL and DSKMGR.ADD for details.
+         RUN MGRLDR.BA
+             MGRLDR.BA will ask for all that it needs.
+             MGRLDR.BA will ask for permission before altering protected
+             memory.
+             MGRLDR.BA will not allow loading if there is not enough RAM.
+             
+     This is how it works:
+         
+     DSKMGR.100 must be in RAM as DSKUTL.CO
+         Modified to enable F7
+             POKE 62731,58:POKE 62732,245:POKE 62733,245
+     DSKMGR.SVL must be in RAM as DSKSVL.CO     
+     DSKMGR.FMT   "   "  "  "   " DSKFMT.CO
+         OR the names in the program must be changed
+         
+     Initialize
+         type vars
+             CH a char answer/choice
+             LA DSKMGR load address
+             OF load offset from LA for utility
+             WH which progs will be used
+         100 ' MGRLDR PROGRAM FOR DSKMGR AND UTIL MODULES
+         110 ' DSKUTL, DSKSVL AND DSKFMT SHOULD ALL BE RESIDENT
+         120 DEFSNG L: DEFSTR C: DEFINT O,W
+         130 LA=60700 'DSKMGR LOAD ADDR
+         
+     Find out which functions are needed
+         DSKMGR: HIMEM=60700
+         Save all - DSKSVL: HIMEM=60600
+         Format disk option - DSKFMT: HIMEM=60200
+         140 CLS:PRINT@43,"WHICH UTILITY MODULE IS NEEDED?"
+         150   PRINT@125,"[D] DSKUTL - just need DSKMGR";
+         160   PRINT@165,"[S] DSKSVL - save all files"
+         170   PRINT@205,"[F] DSKFMT - format a disk"
+         180   CH=INKEY$: IF CH="" THEN 180
+         190 WH=INSTR("SDFsdf",CH) MOD 3 '1-save all 0-format 2-DSKUTL
+         only
+         
+     If ML program loaded in high mem
+         ask if OK to overwrite it
+             if not quit
+         200 IF HIMEM=MAXRAM THEN 230
+         210   CLS:PRINT@45,"Something is stored in memory where the
+         program will be located."
+         220   PRINT@165,;:INPUT"OK to overwrite it";CH: IF
+         INSTR("Nn",LEFT$(CH,1)) THEN MENU
+         
+     If enough RAM set HIMEM as needed
+         if not enough RAM give warning and quit
+
+
+                                 Page  1
+
+
+
+
+
+
+         230 IF WH=2 THEN OF=0: GOTO 250
+         240 IF WH THEN OF=100 ELSE OF=500 'LOAD ADR OFFSET
+         250   IF FRE(0)>MAXRAM-(LA-OF)+512 THEN 280
+         260     CLS:PRINT@90,"NOT ENOUGH FREE RAM!"
+         270     CH=INKEY$: IF CH="" THEN 270 ELSE MENU
+         
+     Save a key in RAM to guide post CLEAR action
+         60700 looks like a good place, it must be safe
+         280 POKE LA,WH 'SAVE WHICH FUNCTION
+         
+     CLEAR needed room
+         Then get the key back
+         290 CLEAR 0,LA-OF
+         300 WH=PEEK(60700)
+         
+     Load module
+         And run it
+         310 IF WH=2 THEN 320 ELSE IF WH THEN LOADM "DSKSVL" ELSE LOADM
+         "DSKFMT"
+         320 RUNM "DSKUTL"
+         
+     Hope this helps you out.
+         Dave Rowell  70406,445
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                 Page  2
+
+
+
+
+
+

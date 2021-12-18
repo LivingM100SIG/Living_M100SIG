@@ -1,0 +1,230 @@
+
+ASM -  8085 Assembler for the Model 100
+               From
+         Micro Demon, Inc.
+         P.O. Box 50162
+         Columbia, SC 29250
+         Phone:803-733-0980
+         CIS 75515,1507
+   
+ASM is a professional 8085 assembler
+from Micro Demon. It supports the
+features  that you expect in an
+assembler, and much more! First of all,
+ASM is compact and FAST. it only
+requires 3.6K of your model 100's
+memory, and it can assemble a 15K
+source file in less than 20 seconds.
+ASM is written entirely in machine
+language, but comes with a one-line
+BASIC interface that makes it very easy
+to load and run. ASM produces an object
+file (.CO extension) directly from the
+source file. It does NOT just poke the 
+code into memory.
+
+   ------------------------------
+
+ But ASM is more than just fast. It
+also contains a myriad of features to
+make your machine language programming
+both easier and more efficient. For
+instance 
+             -----
+
+ **1 All arithmetic expressions are
+allowed in labels. You can use +,*,
+-,^,MOD,AND,OR,NOT,XOR, and the use of
+parenthesis. Negative 8, and 16 bit
+constants are allowed.
+
+ **2 As an end of assembly option, ASM
+will supply you with a listing of the
+value of each label used in your
+program, along with the number of times
+it was accessed. You can have the
+values printed in decimal or
+hexadecimal. 
+
+**3. You can have multiple statements  
+   on a line. For example,
+      inx h:inx d:dcr b:jnz loop
+  is legal code. Commas are optional.
+You may write lxi h 23000 or
+ lxi h,23000
+
+ **4.Source files can use any mixture
+of upper and lower-case characers.    
+upper- and lower-case only matters    
+for labels.
+ 
+ **5.ASM supports, of course, all the
+ standard pseudo-ops, and in full    
+generality. What's more if you     
+don't like the mnemonics used, you    
+can change them to suit your whims! The
+only restriction is that you must use
+the same length for your new mnemonics.
+as that used by the old ones 
+
+**6.dfb (define bytes), and dfw (define
+    word) can both define a whole list 
+   of data. For instance,
+  dfw 23,LABEL,$FA34,%10010,12600,$A4D
+is ok. Note that hex, decimal, and 
+label values can all be intermixed.    
+(The $ prefix denotes hex constants,
+and % denotes binary constants.)
+        
+**7.You can use any mixture of hex and 
+   decimal, and binary values in your
+source files. You can also have the
+output listed in either hex or decimal.
+             
+**8.You can have any portion of the    
+assembled output listed to the    
+display. The output will be routed    
+to the printer automatically if the    
+printer is on and connected to the    
+model 100.              
+
+**9.The following examples will show   
+ you some of the data statements    
+allowed by ASM.
+    mvi a,23   ;Load A with decimal 23 
+    mvi a,$fa  ;Load A with hex FA     
+    cpi 'X     ;compare A with 88,     
+               ;the ASCII value for X  
+    mvi c,>63000 ;Load C with the high 
+               ;byte of 63000    
+    ani <book  ;AND A with the low     
+               ;byte of label BOOK     
+
+    lda 2*(box+car)/5 ;Load A from the
+                      ;computed address
+    ori %10010101   ;OR A with 149 
+                    ;binary 10010101
+
+**10.The asc (or dfm) mnemonic can be   
+
+ used to generate a string of ASCII    
+characters for messages and other    
+purposes. Thus,
+        asc This is a message!       
+will put the corresponding bytes of    
+   "This is a message!" into the    
+appropriate part of the object file.   
+  All printable characters are legal   
+ in an asc expresion.                  
+ 
+Full Error Checking 
+
+**11. ASM checks carefully for all
+standard errors, and in case an error
+is detected, ASM will display an error
+message along with the line in which
+the error occured, and with the error
+in inverse video.
+
+**12.Labels can be up to six characters 
+long and can either denote the address
+of a line or be defined by an
+EQU (equate) pseudo-op. ASM checks for
+repeated labels and will inform you if
+you slipped up and used the same label
+twice. When the assembly is complete,
+you can have ASM list the labels and
+their values in hex or decimal Labels
+must be preceeded by a period.
+               ----- 
+
+**13. You may reserve a specified
+number of bytes by using the ds
+directive
+      Thus ds 90 will reserve 90 bytes 
+of memory for a table, list or     
+other data structure. Also you can     
+specify the contents of the bytes     
+reserved by ds. If you use just
+    ds 60
+ ASM will reserve 60 bytes, and will
+place a zero in each one.  If you use
+instead,
+          ds 60,32
+   ASM will reserve 60 bytes, but will
+fill each one with a blank character 
+(ASCII 32). The fill byte can be any
+byte value.              
+
+**14. The EXEC pseudo-op allows you to 
+assign an execution address to the 
+object file created by ASM. If you do
+not include EXEC, then there will be no
+execution address. If you use EXEC on a
+line by itself the origin will be the
+execution address. If you use
+     EXEC 62000
+  Then 62000 will be the execution     
+address for the object file.           
+
+             Macros!  
+     
+**15. While ASM is not a macro 
+assembler, it does contain several built
+-in macros that simplify writing source 
+code. For example
+XBD   - Exchages the B and D registers
+PUSHA - Pushes all the registers        
+        onto the stack.      
+POPA  - Pops the registers in then      
+        reverse order of PUSHA.
+ILHL -  Indirectly load the HL register
+        pair.
+DUMP -  Pops the stack without
+        affecting any reisters
+DISP -  Displays a message. For example
+        DISP NOTE will print the
+        message stored at NOTE.     
+PRHL -  Prints the 16-bit integer
+        stored in HL.
+GET  -  Scans the keyboard and gets a
+        character of input     
+NEGA -  Negates the accumulator
+     AND More!     
+
+
+**16. Relative Branch Instructions!    
+  Included among the macros are a     
+collection of relative branch
+instructions intended for use in
+programs that must interface with a
+BASIC program, and should ideally be
+reloacteable. These are lengthy and
+slower than a simple jump, but they can
+be used to produce relocateable code.  
+  
+ COMPLETE DOCUMENTATION and ROM 
+Information 
+
+**17. ASM comes with a through manual  
+   that not only explains ASM, but     
+provides much useful information     
+about the ROM also.  In addition, ASM
+comes with three example source files,
+including a program that will allow you
+to trace the operation of your BASIC
+programs.
+
+  -----------------------------------
+
+ ASM sells for only $69.95 and is  
+available from
+
+            Micro Demon, Inc
+            P.O. Box 50162
+            Columbia, SC 29250
+                              
+  Or call 803-733-0980 (24 hrs a day)
+Or leave a mesage to David Sumner or
+Micro Demon 75515,1507 on this SIG.    
+

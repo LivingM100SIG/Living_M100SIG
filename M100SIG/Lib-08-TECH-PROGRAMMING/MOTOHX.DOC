@@ -1,0 +1,57 @@
+
+
+
+
+				     MOTOHX
+
+		     M100 Memory to Motorola S-Records (Hex)
+
+		      Copyright (c)  1987  by Stanley Wong
+
+	Note:  The  MOTOHX  program and associated documentation are  re-
+	leased  for  personal  use by Compuserve  M100SIG  members  only.
+	Contact the author for additional permissions.
+
+	MOTOHX  creates  Motorola S-Records from the  M100  memory.   Its
+	intended purpose is to program EPROMs.   The program is set up to
+	create S2 records,  or 24-bit addresses.   16-bit address,  or S1
+	records, can be created by simple chages to the program.
+
+
+			       Running the Program
+			       -------------------
+
+	The program asks four questions.  Typical input is shown below:
+
+	Beginning Address ? 52300
+	Ending Address ? 62960
+	Load Address ? 0
+	S-Record Filename ? PS.HEX
+
+	The  beginning  and ending addresses are the area of M100  memory
+	that are to be converted.   The load address is where the data is
+	to start in the EPROM (or device being programmed).  The S-Record
+	filename is the name of the M100 file where the S-Records are  to
+	be stored.  All numeric values are radix 10.
+
+	In the example above, a machine language program residing in high
+	memory is to be converted to hex.  The binary data will be loaded
+	starting at address 0 of the EPROM.   The hex data will be stored
+	in the file PS.HEX.
+
+	The output of the program has been used on a Data I/O programmer.
+
+
+				16-bit Addresses
+				----------------
+
+	MOTOHX generates 24-bit address (S2 records).  Since the M100 has
+	a  maximum  of 16 address bits you may want to change  to  16-bit
+	addresses, depending on your EPROM programmer.  Change the string
+	"S2"  in line 150 to "S1".   Also delete the string "00"+ in line
+	118.
+
+		   ==========================================
+
+	Please   send  comments  and  bug  reports  to  Stan   Wong   CIS
+	[70346,1267].

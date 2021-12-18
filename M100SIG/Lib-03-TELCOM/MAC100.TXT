@@ -1,0 +1,102 @@
+
+   It's really difficult to imagine easier file transfer between different 
+machines than can be accomplished between Tandy's M100 and Apple's Macintosh.  
+No special hardware or software is needed for the M100.  For the Mac, you'll 
+need a communications package (I use Apple's MacTerminal) and an Imagewriter 
+printer cable.  To connect the machines, unplug the printer cable from the back
+of the Imagewriter and plug it into the M100's RS-232 port.  Then move the Mac 
+end of the cable from the printer port to Mac's modem port.  You're done!  No 
+ribbon cables or null modems required.  What could be simplier?  (Ans:  It 
+would be simplier if you could just leave the Mac end of the cable in the 
+printer port.  MacTerminal lets you do just that by allowing output to be sent 
+through either serial port. However, for baud rates above 1200, the MacTerminal
+documentation recommendes using the modem port.) 
+ 
+   To transfer files, the communications parameters for both machines should be
+identical.  I set the status in TELCOM to 97I1E, which means a transfer rate of
+19200 baud, a 7 bit word  length, parity is ignored, the stop bit is set to 1, 
+and XON/XOFF is enabled.  The same settings are made on the Mac with 
+MacTerminal.
+ 
+   Before beginning, one further detail must be attended to on the M100.  You 
+must POKE 63066,1 to have line feeds sent from the M100 with carriage returns. 
+Otherwise, the Mac will receive a single line, repeatedly overwritten.
+ 
+   After the machines are connected, the M100 is placed in the Term mode of 
+TELCOM, MacTerminal is booted on the Mac, and the communications parameters are
+synchronized.  You're then ready to transfer ASCII files in either direction.  
+At this point, anything typed on either keyboard should appear on the other's 
+screen.  If you are in Half Duplex mode in Term and have set "Echo ON" in 
+MacTerm, you'll see what is typed on both screens.  With Full Duplex and "Echo 
+OFF" set, keystrokes are transmitted but not repeated on the originator's 
+screen.
+ 
+   To transfer from the M100 to Mac, (1) press F3 (Up) from Term on the M100, (
+2) enter the name of any .DO file in memory at the "File to Upload?" prompt, 
+and (3)  enter the desired number of characters between carrage returns at the 
+"Width" prompt.  (If "Enter" is pressed with no number, then no extra carrage 
+returns will be inserted into the text.) The transfer will then take place at 
+19200 baud.  If MacTerminal is set to capture the file on disk, then the 
+effective baud rate is limited by the Mac's drive.  A nice feature of TELCOM is
+that it word wraps each outgoing line at the "Width" selected, so there are no 
+broken words in the received file.
+ 
+   An alternate method, not requiring TELCOM, is to (1) select the .DO file to 
+be transferred from the M100 Menu, (2) press F3 (Save) and enter COM:97I1E at 
+the "Save to:" prompt.  This will transmit the file out the RS-232 port with 
+only the carriage returns contained in the text.  This method does not require 
+POKE 63066,1 to get line feeds.  However, the received file may have broken 
+words at line ends since a word wrap is not used.  (Word wrap can be achieved 
+by "pre-processing" the text with a text editor, like WORPRO, which can insert 
+carrage returns in the proper places.)
+ 
+   To go from the Mac to M100, you again can either use TELCOM or not.  To use 
+TELCOM, (1) press F2(Down) from Term and at the "File to Download?" prompt 
+enter a legal M100 file name, and then (2) transmit the file from MacTerminal. 
+   When the transfer is complete toggle F2 again to close the M100 capture 
+buffer.  
+   Alternatively, you can (1) open a new .DO file on the M100, (2) press F2(
+Load) and at the "Load from:" prompt enter COM:97I1E, then (3) transmit the 
+file from MacTerminal as before.  I personally prefer using TELCOM because I 
+can see the file as it comes across the M100 screen.  
+ 
+   That's all there is to it.  Good luck!
+
+Jim Eagle 71216,1461
+
+
+
+
+Recent additional information:
+
+
+#: 38011 S1/General/Help
+    02-Nov-91  20:00:58
+Sb: #MAC TO TANDY100/102
+Fm: SEAN DWYER 72637,1716
+To: SYSOP (X)
+
+Tony, The recent messages regarding file transfer between Mac and Model
+100/102 motivated me to recheck the file transfer information in Library 3. 
+In tests with a Tandy 102, a Mac Plus with Versa Term Pro,  and a
+modem/printer cable for the Mac, I found that a Null Modem is indeed necessary
+for successful file transfer.  This is contrary to the directions in
+MAC100.TXT and LAPMAC.THD in Lib. 3.
+
+The following setup worked to send files from the T102 to the Mac: Mac modem
+port -> Image Writer cable -> Null Modem -> T102 RS-232C port.  T102 Telcom
+settings were 98N1E.  The Mac's Versa Term  Pro settings were 19200 bd, 8
+Bits, No parity, 1 stop bit.  The files could be uploaded by using F3 either
+in Telcom, where it means "UPLOAD", or in the Text file where it means "SAVE
+TO:".  If I left out the Null Modem as recommended in the above Library 3
+files, nothing was transferred.  The Telcom route was preferred because its
+request for line width allowed one to avoid words being split as line wrapping
+occurred at the Mac end.
+
+Transfers from the Mac to the Tandy gave errors at the above baud rate and I
+used settings of 600 bd, 8 bits, No parity, 1 stop bit on the Mac and 48N1E on
+the T102.
+
+If anybody has had problems following the recommendations in Library 3, they
+should try adding a Null Modem to the procedure. Sean Dwyer
+

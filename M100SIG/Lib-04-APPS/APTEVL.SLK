@@ -1,0 +1,191 @@
+APTEVL.SLK
+
+Apartment Evaluator:
+
+  This sheet is used primarily to evaluate the cash flow situation when
+considering small (residential) rental units. It was written for a three
+family unit I recently purchased and runs conveniently on a M-100. It works
+even better on a T-200. (The larger screen was my primary consideration in
+"upgrading" to a T-200.)
+  Operation:
+    Land: This is the percentage of total value for land. This is assumed to
+      be 100% - {the value for buildings}.
+    Bldg: This is the percentage of total value for the building(s) involved.         A value of zero (0) is assumed until changed.
+
+    Purchase:
+     Price : Cost of property purchased.
+     Int   : Interest rate of money borrowed. Fixed rate only.
+     Months: Number of months of loan.
+     Down  : Down payment.
+     Paymt : The P&I for the loan. MAKE NO ENTRIES HERE.
+
+    Fix  up: The cost it will take to fix up the property. If this is not
+             applicable, leave it blank.
+    Deprecn: The amount you will be able to depreciate (for tax purposes) this
+             property. Note: This uses the 18 year straight-line depreciation
+             method, and is subject to change. Modify as necessary.
+
+    Rents:
+     Rent : Enter total amount of rent collected. If you collect from more
+            than 1 unit for each property, you may find it best to enter them
+            like this:   "={rent1}+{rent2}+{rent3}[ENTER]"
+            This will allow you to go back and edit this cell and the rent
+            figures will be intact.
+     Mngmt: This is the management fee you pay each month. It is assumed to be
+            15% of the gross rents. Change as necessary or [BLANK] if not
+            applicable.
+     Taxes: This is the yearly taxes you pay on this property. This sheet
+            assumes a 27mils and 30% of the purchase price. This is a figure
+            arrived at purely by experience. The area I live in taxes at a rate
+            of about 27 mils, and the assessed value is generally 30-50% of the
+            appraised value.
+     Utils: This is the yearly amount you pay for utilities on the property. If
+            you want to go on a monthly evaluation, [Edit] the cell next to
+            "Net:" and remove the "/12" following "Utilities".
+     Insnc: Yearly Insurance payments. If you want to deal on a monthly basis,
+            [Edit] "Net:" in the same manner as "Utils:".
+
+     Net: This is the end result. If it is negative, then another row appears
+          under the depreciation cell. This an alternate amount that you will
+          be able to write off. NOTE: This is accurate as of 1985 tax laws, and
+          should survive to 1986. After 1987 - Who knows???
+             This alternate amount is the normal depreciation plus the negative
+          cash flow (cost of owning the property) times 12. Modify as you see
+          necessary.
+
+  This spreadsheet uses the same process that many mortgage companies use to
+evaluate a given property when financing. I've found the P&I number to be
+off by .01 or so from the P&I tables (found in stationary stores).
+
+
+                   +---------------+
+                   |  Robert Toft  |
+                   |  [74716,476]  |
+                   +---------------+
+ID;PMP
+F;DG2R9
+B;Y21;X6
+NN;NPur_price;ER5C2
+NN;NPur_int;ER6C2
+NN;NPur_mon;ER7C2
+NN;NPur_down;ER8C2
+NN;NPur_pmt;ER9C2
+NN;NUtilities;ER8C4
+NN;Ntaxes;ER7C4
+NN;NRent;ER5C4
+NN;Ninsurance;ER9C4
+NN;NManagement;ER6C4
+NN;NFix_up;ER11C2
+NN;NNet;ER11C4
+NN;NLand;ER2C2
+NN;NBuilding;ER2C4
+NN;NRatios;ER1C1
+C;Y1;X1;K"Ratios:"
+F;FG2L
+F;X2;FG2L
+F;X3;FG2L
+F;X4;FG2L
+F;X5;FG2L
+F;X6;FG2L
+C;Y2;X1;K"Land:"
+C;X2;E100-Building;K100
+F;FG2L
+C;X3;K"Bldg:"
+F;X4;FG2L
+F;X5;FG2L
+F;X6;FG2L
+C;Y3;X1;K"--------------";G
+F;FG3R
+C;X2;S;R3;C1
+F;FG3R
+C;X3;S
+F;FG3R
+C;X4;S
+F;FG3R
+C;Y4;X1;K"Purchase ";G
+F;FG3R
+C;X3;K"Rents"
+F;FG2L
+C;Y5;X1;K"Price :";G
+F;X2;F$0R
+C;X3;K"Rent :"
+F;F$0R
+F;X4;F$0R
+F;X5;F$0R
+F;X6;F$0R
+C;Y6;X1;K"Int   :";G
+F;FG0R
+F;X2;FF3R
+C;X3;K"Mngmt:"
+F;FF3R
+C;X4;E15%*Rent;K0
+F;F$0R
+F;X5;FF3R
+F;X6;FF3R
+C;Y7;X1;K"Months:";G
+F;FF0R
+F;X2;FF0R
+C;X3;K"Taxes:"
+F;FF0R
+C;X4;E0.027*0.3*Pur_price;K0
+F;F$0R
+F;X5;FF0R
+F;X6;FF0R
+C;Y8;X1;K"Down  :";G
+F;FG0R
+F;X2;F$0R
+C;X3;K"Utils:"
+F;FG0R
+F;X4;F$0R
+F;X5;F$0R
+F;X6;F$0R
+C;Y9;X1;K"Paymt :";G
+F;FG0R
+C;X2;E(Pur_price-Pur_down+Fix_up)*Pur_int/12*(1+Pur_int/12)^Pur_mon/((1+Pur_int/12)^Pur_mon-1);K#DIV/0!
+F;F$0R
+C;X3;K"Insnc:"
+F;F$0R
+F;X4;F$0R
+F;X5;F$0R
+F;X6;F$0R
+F;Y10;X2;F$0R
+C;X3;K"-------";G
+F;F$0R
+C;X4;K"-------";G
+F;F$0R
+C;Y11;X1;K"Fix  up:"
+F;FG3R
+F;X2;F$0R
+C;X3;K"Net:";G
+F;FG3R
+C;X4;ERent-taxes/12-Utilities/12-insurance/12-Pur_pmt-Management;K#DIV/0!
+F;F$0R
+F;X6;FG2L
+C;Y12;X1;K"Deprecn:";G
+C;X2;EBuilding/100*(Fix_up+Pur_price)/18;K0
+F;F$0R
+F;X3;F$0R
+F;X4;F$0R
+C;Y13;X1;EIF(Net<0,"Alt Depr:","");K#VALUE!
+F;FG0R
+C;X2;EIF(Net<0,Building/100*Pur_price/18-12*Net,"");K#VALUE!
+F;F$0R
+C;X3;EIF(Net<0,"Cost/yr:","");K#VALUE!
+F;FG0R
+C;X4;EIF(Net<0,-Net*12,"");K#VALUE!
+F;F$0R
+F;Y14;X2;F$2R
+F;X4;F$2R
+F;X6;FG2L
+F;Y15;X2;F$0R
+F;X3;F$0R
+F;Y16;X4;F$0R
+F;Y17;X1;F$0R
+F;X2;F$0R
+F;X4;F$2R
+F;Y18;X1;F$0R
+F;X3;F$0R
+F;Y19;F$0R
+F;Y21;X2;F$0R
+F;X3;F$0R
+E

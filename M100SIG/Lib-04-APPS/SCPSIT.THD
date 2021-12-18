@@ -1,0 +1,61 @@
+SCPSIT.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+There have been several recent questions regarding the use of linefeed
+patches with SCRIPTSIT from Tandy (aka the non-ROM version of WRITE+ from
+PCSG). These programs have a conflict with the most commonly used LF patch,
+LFUTL.PW1.  This is a short series of messages discussing this issue.
+
+Message range: 142657 to 144589
+Dates: 3/8/87 to 4/4/87
+
+
+Fm: MICKEY SIMONSON 71340,3217
+To: ALL
+
+Does anyone have a patch for Scripsit-100 so that it will a line feed after
+a carriage return?  I am using an Epson printer tht can be configured with
+dip switches but I prefer not to, since I use it with a Kaypro which
+automatically adds the line feed.  Any suggestion would be appreciated.
+
+
+Fm: STEW HESTER 72747,711
+To:  76703,4062 
+
+First, thank you for your help on location of CR/LF program in DL7. Have
+learned a lot on the path you pointed out. Downloaded LFUTL.PW1, LFUTL.INF and
+LFUTL.DES.  I'm using Scripsit 100, written by PCSG, (which has a lot of stuff
+in HIMEM and I followed the instructions from Phil Wheeler'message in
+LFUTL.INF, changing line 8.
+
+The program worked sometimes, and I thought my problems were solved, but would
+frequently hang up...then while trying to get my 100 "unhung" cleared all
+memory.  Have reloaded Scriptsit, but hesitant to load LFUTL.PW1 until I know
+what I'm doing.  I've been using my 100 for several years,(wouldn't leave home
+without it...for WP) and sell larger systems, but I'm definately not a
+programmer.
+
+
+Fm: Phil Wheeler 71266,125
+To: STEW HESTER 72747,711
+
+The problem occurs because S-Sit resets the function keys to their cold
+start values at exit -- a bit unecessary, since S-Sit does not redefine them
+in the first place!
+
+The fix should be pretty easy.  Load the Basic program of S-Sit (whatever it is
+called).  Then save it as a DO file (SAVE"SSIT.DO" will do it).
+
+Enter the DO file in Text and look for CALLs.  You should fine the following
+sequence in (or near) the line which has the "MENU" instruction:
+
+CALL 23164,0,23366:CALL 27795 (see p. 149 of M100 Manual)
+
+Simply delete this (needless) code.  Go to Basic and do LOAD"SSIT.DO".  You
+should get a Basic program which will work (then do SAVE"SSIT" to save it to
+menu).
+
+BTW -- all this assumes that the Scriptsit BA program is NOT called SSIT.BA; if
+it is choose a different name for the new program.

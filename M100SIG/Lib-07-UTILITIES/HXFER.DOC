@@ -1,0 +1,58 @@
+HXFER.200 is a machine language utility that saves a CO file to text file in 
+hexadecimal format, for transfering CO files as text files.
+
+After running Hxfer.co, choose (1) from the hxfer's menu to load a program 
+downloaded as text file containing hexadecimal data to its original CO format.
+Enter the name of the text file, with or without an extension, or just press 
+carriage return or CTRL-C to return to the menu and start over.  After entering
+the file name, you can choose to relocate the CO file, if it is a relocatable 
+program, by entering the new address to load it to, or just press carriage 
+return to load it at its original location.
+
+Choosing (2) saves a CO file to a text file as hexadecimal data.  Enter the 
+name of the CO file first, or as in (1), you can press <CR> to abort the 
+process and return to the menu.  Then enter the name of a text file to save the
+hexadecimal data.
+You can specify an output device with the text file name, like CAS:, RAM:, 
+LPT:, etc.
+
+Press (3) or just <CR> to quit the program.
+
+
+
+For those interested in uploading programs as hex files and want to make them 
+relocatable:
+
+If a CO program will not work when relocated, it can be made to work by making 
+some adjustments to the DO file.
+
+First you need to find out which bytes in the program should get relocated.
+All opcodes with 2 byte operands that point to a location within the program 
+are automatically relocated, but items of tables, or vectors, are not.  To 
+relocate these items in a table, find the address(I'll call them relocating 
+data) of each item in the original location of the program.  Then insert these 
+relocating data in hex format, low byte first, to the end of existing converted
+DO file.
+For example, if an item is at $EA60 in its original location, insert 60EA to 
+the end of DO file.  When hxfer is run, it will relocate the two bytes at 
+$EA60.
+Be careful when relocating items of tables this way.  Avoid twice relocating an
+item, if an item is already automatically relocated, having a 3 byte opcode 
+preceding it.  This has to be determined by examining the disassembly of the CO
+file.
+
+What to do if bytes should not be relocated, but was automatically relocated?  
+Add the original addresses(I'll call these non-relocating data) of these bytes 
+to the DO file, as it was done for relocating data.
+If hxfer comes upon two bytes at $EA88, and recognizes it as an operand of a 3 
+byte instruction, it will first check if it's ok to relocate it by reading the 
+next number at the end of DO file, and if this number is 88EA,  therefore 
+matches the address of bytes it's about to relocate, it will just skip that one
+and not relocate it.
+
+One convention that has to be followed, that is the order of adding relocating 
+and non-relocating data to the DO file.
+Non-relocating data, if any, must first be added to the DO file, before any 
+relocating data is added.  And non-relocating data must be in ascending order, 
+but relocating data doesn't have to be in any order.
+

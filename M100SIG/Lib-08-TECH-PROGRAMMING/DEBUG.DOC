@@ -1,0 +1,87 @@
+ Debug General Description
+	The Debug program will allow the programmer to analyze the
+ operation and effects of a Machine Language Program (MCL). This is
+ particularly valuable in getting a program to work, that is in
+ debugging the program that you have written. The Debug program can
+ also be used to analyze the operation of resident ROM programs. It may also be an aid in understanding the operation
+of the M-100 microcomputer.
+
+Operation:
+  DEBUG.100 is a Basic language program that employs a Machine Language Program (DEBUG.CO) for speed. This MCL 
+occupys memory from
+ 60672 to 63959 (MAXRAM) . The DEBUG.CO is created by loading and running DEBUGM.100.
+	The MCL under test is assembled by the Assembler from this SIG 
+or by another. It must also be loaded into Model-100 memory by poking
+ or by other means. The best place is probably just below the
+ DEBUG.CO, just below location 60672 ($ED00). Once your test MCL is loaded the DEBUG.100 program is RUN. 
+
+Model-100 Data Display 
+The top line is a mode status line and it shows the state of the following modes. These are described below.
+	Subroutine bypass mode. "SUBF"
+	Multiple step mode.     "MSTP"
+	Breakpoint Active mode  "BKPT"
+
+The Model-100 screen will show the contents of the following registers: 
+	PC (program counter)
+	A Register
+	B and C Registers
+	D and E Registers
+	H and L Registers
+	S Register relative to its initial value
+     Each system status flag is shown by letter if its value is true.
+The flags are 	"M" = minus
+		"Z" = zero
+		"H" = half carry
+		"P" = parity
+		"C" = carry
+For illustration, if carry and zero are set then  [ Z  C]  will be shown. 
+	Below the register contents is the disassembled instruction that occurs at the memory location designated by 
+the Program Counter (PC value).
+	Further below is a listed reference memory pointer and a display of five consecutive memory locations 
+starting with that pointer value.
+The ASCII character interpretation of those five locations is also shown.
+	The bottom line is used for prompts and for command/data entry. The initial prompt is "RXS^.<>+*QE" which is 
+explained below. 
+
+Data Entry - working registers.
+Data is entered into a register by pressing "R". The Model-100 will respond with this prompt "ACBEDLHFPM". At this 
+time enter a register letter or "F" for "Flags". After a register letter then enter a 2 digit hexadecimal value for 
+registers A to H and a 4 digit hexadecimal value for the PC or Memory pointer. After "F" enter "M", "Z", "H", "P", OR
+"C" to toggle that flag.
+
+Changing the PC
+The Program Counter (PC) is changed by typing "P" after the register prompt and then entering a 4-digit hexadecimal 
+value. The PC can be advanced to the next statement (without execution) by typing "+". The program counter also may 
+be changed by execution as described below. 
+
+Changing the Memory Pointer.
+The Memory pointer is changed by typing "M" after the register prompt and then entering a 4-digit hexadecimal value. 
+The Memory pointer may be advanced one location by typing ">" or moved back one location by tuping "<". The contents 
+of the 5 displayed memory locations are useful to show the stored results of program execution. This is often a 
+particular RAM location, although if desired the memory pointer may be locked-on to the PC by typing "^". It is 
+toggled back to the original value by typing "^". 
+
+Changing the contents at the Memory pointer
+The value referenced by the memory pointer is changed by typing "." after the main prompt and then entering a 2-digit
+hexidecimal value.
+
+Changing the Debug Modes.
+ The modes may be changed by typing "*" and then the "SUBF" mode or the "MSTP" mode or the "BKPT" may be toggled. If 
+The Breakpoint is activated then you must enter a 4 digit hexadecimal value. This is the location where the computer 
+will breakout of its execution and display its registers..
+
+Executing the Program.
+The MCL may be executed from the PC location in several ways at the main prompt. Type "X" and the program will 
+execute from the PC location. If teh "BKTP" is set it will continue until the breakpoint or indefinetely if no 
+breakpoint is encountered. After the breakpoint, the current status of all registers, flags and the five memory 
+locations are shown. If "X" is typed when "BKPT" is inactive then the program will execute a subroutine starting at 
+the PC. (until a return "RET" at the proper nesting level). If "S" is typed then only one instruction is executed.
+Subroutines are often tedious to step through especially if they have already been checked out. If "MSTP" is set then
+after typing "S" you must also tyoe the number of steps desired. DEBUG will step around them (executing without pause
+) is the "SUBR" mode is set. Note that the all execution functions including step and breakpoint and execute (X) 
+operate on ROM MCL programs as well as RAM.  
+
+General Problems: Operating a new and untried Machine Language Program may easily erase executive RAM in the Model-
+100. This may necessitate a total restart by momentarily removing power from the RAM (the switch on the bottom) or 
+typing Cntl-Shift-Break while turning power on. This is not serious if it doesn't happen often and if your source 
+programs can easily be loaded.O

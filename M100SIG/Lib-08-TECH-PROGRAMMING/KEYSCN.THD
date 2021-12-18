@@ -1,0 +1,188 @@
+KEYSCN.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Technical information has become mre easy to come by with the publishing of
+"Hidden Powers of the TRS-80 Model 100" (by Chris Morgan) and "Inside the
+Model 100" (by Carl Oppedahl).  But this Forum is still a leading source of
+timely and interactive technical data for the intrepid programmer.  This
+file captures a group of messages related to intercepting key strokes for
+the purpose of entering a resident program.
+
+
+Message range: 146626 to 146737
+Dates: 4/26/87 to 4/28/87
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Tony Anderson 76703,4062
+
+Hi, Tony!  Saw something in a .CO xscript re: MACPGM and pending investigation
+of the keyboard scan interrupt.  That code gets real sticky in a hurry.  DVORAK
+darn near gave me a bald spot because of that hook!
+
+Being unfamiliar with MACPGM, I'm guessing, but mayhaps you'd prefer the CHGET
+hook at FADEh (64222d), called via RST 7 when OS wants a key.  Your routine
+might, for example, call 12D6h (where OS was headed after the RST 7), thus
+bringing you the keystroke.  Then you can play with it as desired, either
+passing it back to OS unmodified, changed to something else, or just kidnap it
+entirely.  In any case, you may wanna POP the return address off the stack
+before doing a RET, or it heads right back to 12D6h when you're done.  (Unless,
+of course, that's what you want.)  Reckon I should leave it there 'til I know
+more about MACPGM's intentions.
+
+BTW, you live in LA, right?  Capitol Records and such?  I used to live over on
+N. Orchid (off Hollyweird Blvd, behind Mann's Chinese Theatre and across from
+Holiday Inn).  What a neighborhood!  Music is a strange life!
+
+
+Fm: Denny Thomas 76703,444
+To: Mike Nugent (TMN East) 71426,1201
+
+Facinating info, Nuge. The light was just about dawning for me on this subject
+and it looks like I was heading in the right direction. Would it be wise to do
+a DI before and EI after the RST 7?  And what is the offset used or is that
+user defineable.
+
+The idea is just to be able to detect certain combos of keystrokes and act upon
+getting a hit.
+
+This is getting good!
+
+
+Fm: Tony Anderson 76703,4062
+To: Mike Nugent (TMN East) 71426,1201
+
+Hi Mike.  We just thought of your DVORAK approach Saturday, and were going to
+explore it next week, as time permits.  An early attempt at intercepting the
+keyboard scan routine crashed.
+
+Thanks for the information you provided, it will help us along the way.  We
+already have macro capability running in TELCOM (used regularly) and in BASIC.
+(in both direct input, and line input response in a running program)  Now
+trying to solve the TEXT problems.  But it looks like we'll be converting over
+to keystroke intercept for all modes, as it offers some advantages over the
+crude method we kludged up to get it running in BASIC.
+
+Actually, no... I've left LA for the Sierra Nevada mountains, north of the
+Reno-Lake Tahoe area.  Denny is the one who works at Capital Records.
+
+Thanks for the offer of help, may have some questions along the way.  I've just
+started learning assembly language, and the macros program was my first major
+project.  Want a copy?  Check the file MACROS.DOC in DL3, and let me know your
+machine configuration.
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Tony Anderson 76703,4062
+
+Wow, we're playin' in the same playground!  Wait'll you see June's Laptop User!
+JD had requested something similar in response to reader queries.  I think
+you'll like it.  Nice to be cuttin' bytes again!  This "vendor" stuff ain't
+near as fun.  And yeah, please direct a copy of MACPGM.100 (32K) to me,
+especially the .SRC file.  Should be interesting!  Thanks!
+
+Dave Sumner had CHGET scoped out long ago with SUPERA.  (Nice work, too!)  So
+DVORAK used the TP (RST 7.5) hook to remain widely compatible, yet small. T'was
+a bear, sidestepping interrupts without landing on Tandy (c) toes! Making it
+live with SUPERA, MENU.BA, et al, meant relocating "on the fly."  I'm proud of
+the results, and users are all pleased.  Now I must be patient 'til the laptop
+crowd figures out what they're missing.
+
+Meanwhile, I used CHGET for the LU piece, to stay compatible with DVORAK.
+(SUPERA hates it now -- sorry, Dave!)  I think CHGET is a good candidate for
+MACPGM and much easier to handle than TP.  I could 'plex you the LU code (with
+JD's permission) but it's strictly private.  Laptop User has first North
+American rights.  Fair enough?  Besides, I don't want you using it in the
+contest <tee hee!>.
+
+I got a message from Denny, too (#146630), so see my reply to him for some more
+detailed info.  Thanks in advance for the MACPGM listing.  Glad to help if I
+can.  Isn't assembly language addictive?
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Denny Thomas 76703,444
+
+Hiya!  Sorry, Denny, it's you who works in my old neighborhood, not Tony.  So
+now I'm even more confused -- which one of you guys is The Maven?
+
+Denny, the TP interrupt is the "autonomic nervous system," strictly background
+stuff, putting keystrokes into the keyboard buffer.  But the remainder of the
+system retrieves 'em from the buffer "consciously" by sprinkling calls to 12CBh
+throughout TEXT, BASIC, and such.  Interrupts don't affect it, so you needn't
+worry about DI/EI.  Yes, the CHGET hook has a definite location, FADEh.  I
+think there's a file called HOOKS.100 around here somewhere that shows it, as
+do Morgan's and Oppedahl's books.  Here's what happens:
+
+Programs call 12CBh when they want a keyboard character:
+12CB  PUSH  H      ;saves 'em for you!
+12CC  PUSH  D
+12CD  PUSH  B
+12CE  CALL  12D4   ;get chr fm buffer (puts 12D1 on stack)
+12D1  JMP   14EE   ;POP B,D,H : RET
+
+12D4  RST   7      ;puts 12D6 on stack
+12D5  DB    4      ;and JMP to adr pointed to by FADA+4 (= FADE = CHGET hook)
+                    ;FADE normally points to 7FF3, which contains a RET,
+                    ;so it pops 12D6 off stack and returns here
+12D6  LHLD  F62C   ;CHGET routine, returns key
+      *
+      *
+      *
+     RET          ;returns key (and flags) in PSW
+
+Stuff your routine's adr into FADE.  Have it call 12D6, returning the key to
+you.  Do what you will to the key, set any flags and counters, jam stuff into
+the keyboard buffer, whatever.  12D6 is still on the stack.  Pop it off -we've
+just been there.  Now 12D1 is on the stack, and your RET will take you there
+(and out of this mess).
+
+CHGET was a tempting choice for DVORAK, but the conversion table would have
+been excessively long.  In exchange for the frustration of the TP hook, I kept
+DVORAK under 500 bytes.  I got TP to do some macros, and it has the advantage
+of wider compatibility, but it's really tough sledding.  I hope this has been
+some help.  See my reply to Tony's #146631.
+
+
+Fm: Tony Anderson 76703,4062
+To: Mike Nugent (TMN East) 71426,1201
+
+Now if I only knew what all that meant!  Gad!  You're light years ahead of me
+in all that... remember, I'm just starting; can't hardly tell the pushes from
+the pops. (grin)
+
+Check EasyPlex tomorrow for the files you've requested.
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Tony Anderson 76703,4062
+
+Whoa!  'Plex just said I've got a truckload of files waiting -- thanks!  I'll
+go get 'em in a sec.  I didn't mean to confuse.  For one thing, I was trying to
+deal with too much info in too small a space, and for another, I didn't know
+how much you've gotten into the ROM code and such.  Tell you what -- I can
+leave you a long Easyplex, or you can call me here if you'd rather.  Don't know
+how long it'll take me to write, 'cause I've got lotsa chores to handle.  But
+either way is fine.  Thanks for the files.  I'll go get 'em now.
+
+
+Fm: J.D. Hildebrand 73717,2674
+To: Mike Nugent (TMN East) 71426,1201
+
+    By all means, send HOTKEY to as many "beta testers" (grin) as you like. But
+ask 'em not to post it here or spread it around, hokay?
+    Increasing access to information never hurt anyone.
+
+
+Fm: Phil Wheeler 71266,125
+To: J.D. Hildebrand 73717,2674
+
+Re Maven: Looks like you are the leader!
+
+
+
+*--*  Qmodem Capture File  04/30/87 19:17:23  *--*
+Function: 
+

@@ -1,0 +1,354 @@
+ROMSW.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Switching ROM's is an interesting topic, for the M100/102/200 and for other
+devices such as the Chipmunk.  Commercial devices support this maneuver for
+the computers.  These messages discuss doing it yourself.  Focus here is on
+the Chipmunk, and include a discussion of combining the 100 and 200 CDOS
+ROM's into a single chip.
+ >> 7/18/88 update: Message resulting success has been added! <<
+
+Message range: 171297 to 171623
+Dates: 7/7/88 to 7/14/88
+
+
+Fm: Eiji Miura 76703,4311
+To: Phil 71266,125
+
+By the way, do you know any device which let me switch between two
+[Chipmunk] ROM's?  I want to have something like Y-adapter switch with ROM
+socket so that I can switch between the 100 and the 200 version of CDOS ROM.
+Right now, I have to open up the Chipmunk to replace the ROM, and switch
+like that would be very convenient.
+
+Fm: Mo Budlong 76167,3310
+To: Eiji Miura 76703,4311
+
+Stephen Ambrose over at SoundSight and I played around with one, one night and
+got it to work.
+
+Some of this is from the Intel Memory handbook and some of it from my memory so
+you'll have to experiment with it yourself but here goes.
+
+Stephen actually built a small dual socket arrangement that fit inside the
+limited space but he is a whiz at crafting small things.
+
+Pin 20 of the ROM chip (the chip itself) is the chip enable line and must go
+low to select the ROM. Normally the Model 100 controls this line and brings it
+low when accessing the ROM.
+
+Piggy back two ROMs so that all pins are connected except 20 then plug the
+lower ROM into a ROM carriage socket.
+
+Run a line from the socket that pin 20 would normally go in, to the center pole
+of a double pole double throw switch.
+
+Connect two 100K (or there abouts resistors) to the two outside poles on the
+switch and connect the end of each resistor to pin 1 of either ROM chip which
+is the voltage supply.
+
+Connect each of the dangling pin 20's from the ROM chips to the two out side
+poles as well.
+
+Here is an electrical diagram with all the power of ASCII graphics.
+
+ Pin 1 ROM 1 *  |--------[100k]----------
+             |--|                        \
+ Pin 1 ROM 2 *  |--------[100K]---       |
+                                  \      |
+            Pin 20 ROM 2  _______ |      | ____Pin 20 ROM 1
+                                 \|      |/
+     Double Pole Double Throw->   *___*  *
+                                    |  \
+                                        \
+                                        |
+                Normal Pin 20 Socket    *
+
+
+The effect of this hook up is that all lines are shared except for 20. When the
+switch is thrown for one ROM, it is attached to the chip enable line of the
+Model 100.
+
+The other pin 20 would float except that it is directly connected via the
+resistor to a high line thereby disabling the chip.
+
+I suspect that most ROM banks are based on this principle. ie all lines are
+shared, but the switch (whether electronic or mechanical ties the selected ROM
+line 20 to the computer's Chip enable line.
+
+The resistor may have to be bigger to cut down on the power drain.
+
+
+Fm: Tony Anderson 76703,4062
+To: Mo Budlong 76167,3310
+
+If that's all that's needed to select between ROM's, both PCSG and
+Traveling Software had a deuce of a time figuring it out! When they were in the
+process of releasing multi-ROM banks, selecting which one was active was a
+factor in seveal development delays. In fact, the PCSG bank, with a rotary
+switch, has(had) a tendancy to blow out ROM's if switched while there was power
+available in the bank.  An obvious design flaw.  Haven't heard much from them
+lately, so we (or at least "I") don't know if it was ever solved.
+
+
+Fm: Eiji Miura 76703,4311
+To: Mo Budlong 76167,3310
+
+Thank you very much, Mo.  That's the type of information I was looking for.
+Someone once suggested piggy backing two ROMs, but they didn't have info on
+which pins are used for switching the ROMs.  I'll try this out and will let you
+know how it goes.
+
+By the way, does switching the ROM while all the power is on cause any damages
+to the ROM?  In this case, what can happen if I switch to 100 ROM while using
+the drive with the 200?  I can try it out, I guess, but if it's possible to
+damage ROMs that way, I won't try.
+
+
+Fm: Mo Budlong 76167,3310
+To: Eiji Miura 76703,4311
+
+Eiji, Thanks for sorting out the diagram. I don't know about blowing ROMs.
+Stephen used the package for about a month without any problems and then
+dropped the project. I personally would avoid 1.      Switching while power is
+on. 2.      Switching while acutally running an Option ROM program.
+
+Also make sure that the switch is break-before-make. I wish I could swear that
+it is not a damaging circuit but I can't say that it was tested enough. Maybe
+someone with a ROM burner will copy two of his/her favourite ROMs and try it
+out. I am a seat-of-my-pants engineer as far as electronics goes (software is
+my real field) and I guess if something like this were a comercial product it
+would include capacitors for surge protection. Maybe someone on the forum has
+enough electronic know-how to chip in here. Anyway it may spur further
+research. Good Luck. Mo.
+
+
+Fm: Mo Budlong 76167,3310
+To: Tony Anderson 76703,4062
+
+Don't know about the problems. See my note to Eiji on this line. The circuit is
+pretty raw and I suppose could cause problems. Stephen never had any. I
+actually worked out the hook up for him during about two hours of phone calls
+one night, so it probably is too simple. There might be some sort of voltage
+surge when the switch is thrown. A soft switch might do a better job. That
+would involve the actual switch controlling a chip that and all that jazz. Mo.
+
+
+Fm: Phil Wheeler 71266,125
+To: Eiji Miura 76703,4311
+
+But I thought you wanted to switch between two ROM chips in your Chipmunk. If
+so, I wonder if the same info applies.
+
+Mo's input is  very interesting one.  Now we just need to get someone to give
+it a try and give us a blow-by-blow account.  Hmmmm...I have a couple of
+expendable ROM's, but no carriers.  And I have a second M100 for
+"experimentation"  (Vhere is that van de graff generator, Igor?).
+
+Suspect strong advice to have the computer off while throwing the switch -- and
+to uninstall one ROM before swithching to another would apply.  Not user
+friendly, but truely exciting (in more ways than one!).  Great THD material!!
+
+
+Fm: Eiji Miura 76703,4311
+To: Phil Wheeler 71266,125
+
+Phil, I hope what Mo told me would apply to ROM's in Chipmunk, also.  No, it's
+not user friendly, but Chipmunk is not user friendly with the 200 anyway.
+
+
+Fm: Stan Wong 70346,1267
+To: Eiji Miura 76703,4311
+
+A simpler solution to a dual rom socket would be to purchase the TSI 8-ROMpack.
+I have been using one for several months now and am very satisfied.  I have all
+four Tandy-style sockets filled (actually I have five roms, gonna have to sell
+one or put it into an EPROM).  There are four EPROM sockets.  The unit came
+with TS-DOS in one EPROM which also contains the ROMPACK menu code.
+
+The ROMPACK menu code prevents you from using the other three EPROM sockets
+because it is meant for the Sardine.  But I reprogrammed the TS-DOS chip to
+allow me to use the EPROM sockets. I use it for testing my option rom
+programming.  I could also put my fifth rom into an EPROM also.
+
+Everything works great, the unit hardly weights anything, and doesn't take up
+much space either.  I seem to remember paying about $150 which included the
+TS-DOS rom chip.  Quite a bargain I think.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+When the 200 version Chipmunk ROM came out (after a long wait, and much thumb
+twiddling...) Larry Holmes indicated that both ROM's could be installed in the
+drive, and the version you wanted could be selected with a switch, mounted on
+the back panel.  He also suggested they would be willing to "custom-up" such
+models for those who needed them.  A phone call to Glenn Checketts might bring
+some information on the subject.
+
+  (Why didn't I get one of those dual drive setups when they were available???
+Hindsight is always better than foresight.)
+
+
+Fm: Eiji Miura 76703,4311
+To: Stan Wong 70346,1267
+
+I guess I've confused some members; this is not for the M100 but for the
+Chipmunk disk drive.  Chipmunk's DOS is on ROM chip, and I have one for the 100
+version and one for the 200.  Since I have only one Chipmunk drive, I want to
+be able to switch between two ROMs instead of unplug/plugging the ROM when I
+want to use with different computer. The EPROM has Hitachi logo, and has
+following prints:
+
+ JAPAN 8416
+ U0009SS0
+ HN482764G
+
+
+Fm: Denny Thomas 76701,40
+To: Tony Anderson 76703,4062
+
+ The main problem with the PCSG bank wasn't necessarily the physical switching,
+but the fact that they never took care of any of the hooks that were installed
+by each rom. I usually had to cold start between roms if I wanted clean
+operation.
+
+TS's 8 ROM pack (actually PG Designs) takes care of the problem by
+reinitializing all hooks when moving from rom to rom. Mo's explanation should
+work and is exactly what Glenn at Holmes told me to do when switching CDOS
+roms. He didn't go as far as taking care of the pullup of pin 20, but the rest
+is the same.
+
+
+Fm: Ran Talbott 70506,60
+To: Eiji Miura 76703,4311
+
+You can replace the 2 2764s with a 27128,  adding a switch (though I'm not sure
+where) to change "modes".  You'll have to cut 1 trace and add a few wires.
+
+Pin 26 is Address bit 13 on the 27128,  but is tied to +5 on the 2764.  What
+you need to do is copy one 2764 into the lower 8k of the 27128,  and the other
+into the upper 8K.   Cut pin 26 loose from its current +5 connection, and hook
+it to a DPST switch that connects it to either +5 or ground.  By switching pin
+26,  you choose either the copy of the 100 ROM or the copy of the 200 ROM.
+
+
+Fm: Ran Talbott 70506,60
+To: Eiji Miura 76703,4311
+
+Someone else's msg reminded me:  be sure that the Chipmunk is disconnected and
+powered off when you do the switch,  lest unamusing events ensue.  Not fire or
+smoke,  but the M100 might develop mental problems if it's executing CDOS code
+when you do the switch.
+
+
+Fm: Eiji Miura 76703,4311
+To: Ran Talbott 70506,60
+
+Thanks for your message, Ran.  I wish I can follow your instruction, but I
+don't have any knowlede nor capability to copy ROMs like that.
+
+
+Fm: Stan Wong 70346,1267
+To: Eiji Miura 76703,4311
+
+Are the Chipmunk roms standard 24- or 28-pin EPROMS or are they the Tandy
+(Molex) style?  If they are standard EPROMS I can combine them for you very
+easily.  If they are Tandy-style roms I can still do it but it's lots more
+work.  How you implement it (e.g. Ran's suggestion) is your problem bucko.
+Email me if you are interested.
+
+
+Fm: Mo Budlong 76167,3310
+To: Eiji Miura 76703,4311
+
+Eiji, Place the chip so that the pins are pointing downward or so that you are
+looking down on the top of the chip. One end of the [chip has a small notch
+indentation. With the notch pointed away from you the pins are numbered 1
+through 14 down the left side of the chip and the 15 through 28 UP the right
+hand side. Please note it is DOWN the left and UP the right. This means that
+two pins on the left and right of the notched end of the chip are 1 and 28.
+Next two down are 2 and 27 and so on to the unnotched end of the chip which
+holds 14 and 15. Hope this helps. Mo.
+
+
+Fm: Eiji Miura 76703,4311
+To: Stan Wong 70346,1267
+
+They're standard 28-pin EPROMS.  I don't know if I can do what Ran suggested
+(need more info), but it won't hurt to try.  Thank you very much for your
+offer.  I'll leave you Email later today.
+
+
+Fm: Ran Talbott 70506,60
+To: Eiji Miura 76703,4311
+
+No problem,  Eiji.  Almost anyone with an EPROM programmer can handle it for
+you in a matter of minutes.  If you're in the San Jose area,  or can live
+without your Chipmunk for a couple of US Snail delays,  I can do it for you.
+
+
+Fm: Eiji Miura 76703,4311
+To: Ran Talbott 70506,60
+
+Stan Wong offered me to do the combining, so I just sent him a message.  Will
+you tell me a little more about this method?  You mentioned that pin 26 is used
+for switching.  Do I just plug the 27128 into the original socket except its
+pin 26, which connects to either +5 or ground through a switch?  And where are
+those +5 and ground?  Sorry to ask you too many questions, but I want to make
+sure I understand it before I start.
+
+
+Fm: Ran Talbott 70506,60
+To: Eiji Miura 76703,4311
+
+Let me give you the safest method,  Eiji.  That way,  you don't have to risk
+damaging your board.
+
+After the 27128 has been programmed,  bend pin 26 so it's approximately
+straight and perpendicular to the other pins.  DOn't worry about being precise.
+Do worry about not bending the lead too much:  it'll break easily.
+
+If you use a toggle or slide switch,  you'll probably find that the lugs for
+the 3 contacts are in a line,  with the center one being for the movable
+contact.  Solder wires from the two outer lugs to pins 14 and 28 of the ROM
+socket.  THis will give you ground and +5,  respectively.  Insert the 27128,
+and solder a wire between pin 26 and the remaining solder lug on the switch. If
+you prefer,  use one of the contacts out of an IC socket,  instead of soldering
+to the chip.  I recommend against this,  though:  27128s are cheap enough that
+you'll probably throw the chip away if you ever need to pull it, and using the
+socket contact will make for a less-reliable connection.
+
+
+Fm: Eiji Miura 76703,4311
+To: Ran Talbott 70506,60
+
+Thank you very much, Ran.  That helps.  One more question:  how does the upper
+(or lower) half of ROM selecteted?  I mean, is the upper half active when the
+pin 26 is connected to ground or +5?  Thank for the info.
+
+
+Fm: Ran Talbott 70506,60
+To: Eiji Miura 76703,4311
+
+Anything greater than about 2.5 volts is considered a logic 1,  so the +5
+selects the upper half.
+
+btw,  since you'll be running off batteries,  it's desirable to get a CMOS chip
+(27C128) if you can find one.  It'll cost a couple of bucks extra,  but it'll
+help your batteries last a little longer.
+
+
+Fm: Eiji Miura 76703,4311
+To: All
+
+I've finished modifying my Chipmunk to work with both M100 and T200.  It works
+very well.  I could save a .DO file from one computer and load the same file
+into the other computer, by just flipping the swich and changing the cable.  My
+Chipmunk is now twice as useful as before.
+
+I would like to thank Mo Budlong and Ran Talbott for giving me the information
+I needed and got me started on this, and Stan Wong for burning the CDOS ROM
+chip.

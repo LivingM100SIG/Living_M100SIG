@@ -1,0 +1,454 @@
+ADSM.DOC by James Yi 73327,1653 July 27, 1988
+
+ADSM.200 and ADSM.100 are downloaded as hexadecimal coded text files.  They 
+should be converted back to a binary file by using HXFER.200(in DL10) or 
+HXFER.100(in DL8).
+HXFER also lets you relocate the program as it is being converted.  To relocate
+it, enter the relocation address at the "Load at?(<CR=default>" prompt in 
+HXFER, else just press ENTER to load it at a preset address.  If you relocate 
+it, make sure that the new address is lower than the preset address, else the 
+system variables above MAXRAM will be written over when ADSM.CO is LOADM'ed!
+The preset loading address is 56601 for M200, 58603 for M100.
+
+Once it's converted to ADSM.CO, HIMEM has to be cleared from Basic with the 
+CLEAR,256,xxxxx statement.
+The value for xxxxx is the same as the preset loading addresses, but if you 
+relocated it, the value will of course be different.
+
+ADSM.CO can now be RUNM'ed from Basic or executed from Menu.
+
+As an alternative to the above HIMEM loading procedure, the following is the 
+LOMEM loading procedure:(M200 users only.)
+Instead of running it HIMEM, it is possible to locate ADSM into LOMEM, area 
+below the file storage space, and access it through ADDRSS, SCHEDL, or MSPLAN 
+directory slot.  The result is a saving of 4.5 K bytes, since the .CO file is 
+not needed, whereas if you run it in HIMEM, the .CO file is needed in order to 
+reload it every time it runs, since other HIMEM machine language programs may 
+have been run in the same location just before and erased ADSM.  But .CO files 
+cannot be LOADM'ed below the HIMEM area, so there's no worry of writing over a 
+program in LOMEM by a loading a .CO file.
+To install it in LOMEM, you need ADMINS.200 in DL10.  It also is a hex file and
+needs converting to a .CO file with HXFER.  To install it, just run ADMINS.CO. 
+When installing, ADSM.CO file must also be present.  It will not space-conflict
+with other LOMEM programs you may have there already.  But take proper caution 
+if you have .BA programs that have ML codes poked into the REM statesments, 
+since all files are moved up when the space is created in LOMEM, or moved down 
+when it's removed.  The ML codes in the REM statements have to be relocated 
+every time LOMEM shrinks and expands.
+
+After it's installed, both files can be deleted, and ADSM accessed from Menu.  
+To remove it, run ADMINS.CO again.
+
+;--------------------------------------
+* Monitor:
+
+When you run ADSM, there's a hexadecimal number at the bottom left corner of 
+the screen, and a flashing cursor beside it.  This number is the current 
+address and entering data(opcodes, DB, etc.) at this address will store it 
+there. Initially it's 0F856H(M200) or 0FCC0H(M100), TELCOM's PREVious screen 
+buffer, used by monitor as the default workspace.  This area will be written 
+over when you use TELCOM, but otherwise it's a safe place for temporary data.
+
+To change the current address, just enter the address that you want to go to.  
+It has to be a number starting with 0-9, so if you want to go to F800H, enter 
+0F800H.  If you enter a label here, the label is defined as the value of the 
+current address.  So if you are at 8989H and typed ABCD, ABCD becomes a label 
+defining the number 8989H.
+
+NOTE: From this point, whenever a number is referred to, it can also be a label
+or an ascii chr(in single quotes(')), or a combination of these.
+For example, the following are all equivalent of LXI H,$43A0:
+
+1)	LXI	H,43A0H
+2)	LXI	H,$43*256+$A0
+3)	LXI	H,A0H+(43H*256)
+4)	LXI	H,'C'*256+$A0
+5)	LBLB	EQU	'C'
+	LXI	H,0A0H+(LBLB*$100)
+6)	LXI	H,67*256+10100000B
+
+
+To step forward or backward certain number of bytes, enter a number preceded by
+a positive or negative sign.
+
+To see the disassembly of the current address, press <ENTER>.  The content will
+be displayed and the address will step forward to the next instruction.
+
+To go back to the previous address, press <SHIFT> with <ENTER>.  Upto 16 
+locations can be retraced.  Pressing <CTRL> will trace forward, instead of 
+backward.
+
+To display the next few addresses, enter commas.  One comma fills one screen.  
+To stop listing, press <CTRL>, or to pause, press <SHIFT>.
+
+You can read and write to text files from the monitor.  Select the file name by
+entering a '=' followed by the file name.  A device name can be specified with 
+it.  The default name is NOTES.  To read the file, enter a '<'.  To write to 
+it, enter a '>' followed by a string.  The string will be appended to the file.
+  Press <SHIFT> to pause reading, or <CTRL> to abort.
+Commands mentioned thus far are sign chrs entered as the first chr in a command
+line.  They are -,+,,,<,>,=
+Rest of the commands consist of one or more alphabets.
+
+The command input in monitor is much like a line in a source code.  There are 
+LABEL, OPCODE, OPERAND,and COMMENT fields, each seperated by a tab, space, or a
+comma.  The command input can be commands, assembler directives or opcodes, 
+which assemble immediately at the current address.  Commands are entered in 
+OPCODE field.
+
+The monitor is initially in hexadecimal mode, i.e., all outputs are in base 16.
+
+It's changed with:
+ MD Byte
+Don't forget that commands are entered in opcode field, so a TAB or SPACE 
+should be inserted before MD, and Byte goes in operand field, so another TAB or
+SPACE should be in between MD and Byte.
+Byte is any base from 2 to 255.
+Any base other than 2,8,10, and 16 will have '#' sign suffix.
+You can only ENTER numbers in base 2,8,10, and 16.
+Use letter 'B' suffix to indicate base 2,
+'Q' or 'O' for base 8,
+'D' or none for base 10,
+and 'H' for base 16.
+A000H, 0A000H, $A000, $A000H
+are all equivalent ways of entering a hexadecimal number.  Because hex numbers 
+can begin with a letter, some restrictions are set on labels.  You cannot have 
+a label that looks exactly like an ordinary hex number.  For example, you 
+cannot have a label named A000H, but you can have A000 as a label.  Also, avoid
+using the following as labels: B, D, Q, O, H.
+
+Disassembly of an address consists of a mnemonic and numbers or chrs in the 
+comment field.  The mnemonic can be suppressed with:
+  CD Byte
+If Byte is 0, mnemonics are displayed, but if Byte is 1-32, each line will 
+contain only comments, For example, CD 11 causes the display to be 11 numbers 
+or chrs as comments.
+
+What appears in the comment field can be controlled with:
+ DD Byte
+Byte=0 for none,
+1 for ascii chrs only,
+2 for numbers only,
+3 for both ascii and numbers.
+
+RST instructions are normally one byte instructions, but Model 100/200, uses an
+extra byte for RST 1 and RST 7.
+  RFIX Byte,Byte
+controls how many bytes a particular RST instruction represents.  The first 
+Byte chooses which RST(0-7) and the second Byte is the length( 1 or 2).
+E.g., to make RST 7 disassemble in two bytes, enter:
+ RFIX 7,2
+As a default, RST 1 and 7 are set to 2 bytes.
+If you specify a value after RST, like
+:
+ RST 7,20H
+RST is assembled in two bytes, the single byte RST instruction, and 20H after 
+it.
+
+Commands MD, DD, CD, and RFIX control the disassembly outputs of both the 
+monitor and the disassembler.
+
+The symbol table contains the currently defined labels.  It is preserved when 
+you exit the program, if you reenter it without editing any text files, 
+deleting, or creating new files, or doing other tasks that change the amount of
+free memory.
+To list the table, enter:
+ SMB String
+and specify an output file to dump the listing.  To view it on screen, enter 
+LCD: as the file name, LPT: to print it out.  Press <SHIFT> to pause listing, 
+and <CTRL> to abort.  A beep sounds when finished.
+String is optional, used to selectively list only those that begin with String,
+e.g., to list only those beginning with "LI", enter:
+ SMB LI
+
+To delete a label from the symbol table, use:
+ DEL Label
+Or:
+ DEL *
+to clear the table.
+
+To calculate a formula, use:
+ GET Expression
+Expression can be a mixture of numbers of different bases, labels, single ascii
+characters(closed in single quotes(')).
+Boolean(!(xor), .(and), "(or)) and algebraic(-,+,*,/) operations are allowed.  
+Only one parenthesis can be opened, e.g., ((8+9)*2) cannot be done, but (34+2)*
+(2+3) is ok.  To make things simple, all operations have same priority and 
+evaluated from left to right, so in order to get a correct answer to 2+9*9, 
+which is 83, you would have to enter:
+ GET 2+(9*9)
+Without the parenthesis, the result would be 99.
+
+To convert a number to a different base, use:
+ CNV Number,Byte
+Byte is the base.  If only Number is entered, it is converted to an ascii chr.
+
+To search for a sequence of numbers or strings, use:
+ FIND List
+The search begins at the current address.
+For example, to look for the string 'No file' followed by a chr$(0), enter:
+ FIND 'No file',0
+To find 195,20301, enter:
+ FIND 195,20301
+Press <SHIFT> to pause the scrolling, or press <CTRL> to abort.
+
+To move to another address, a number beginning with 0-9 can be entered in the 
+label field, as explained before, but to use a label, enter:
+ SET Label
+
+To move a block of memory:
+ MOVE Beg,End,Destiny
+
+To PEEK:
+ RE Addr
+The displayed result is:
+Byte in Addr, Byte in Addr+1, and the 16 bit word formed by the two bytes.
+
+To POKE one or two locations at once:
+ WR Addr,Number
+If Number is >$FF, the high byte is poked into Addr+1
+
+To examine an IO port:
+ IP Port
+
+To write to a port:
+ OP Port,Byte
+
+To execute a machine language routine:
+ GO Addr,Parameter
+Only one parameter can be specified and it's loaded into BC,DE,HL, and PSW(LSB 
+in A, MSB in flag byte).  eg, if you enter
+ GO 32,$FFFE
+HL,BC,DE are loaded with $FFFE, and A register is loaded with $FE, flag byte 
+with $FF, then 32 is called.
+
+To exit the program and return to the menu, enter:
+ MENU
+;--------------------------------------
+
+* Disassembler:
+
+It's called from the monitor by entering:
+ DSM
+Then enter the .CO file to disassemble, or to disassemble an area of ROM or 
+RAM, enter the begin and end addresses, seperated by a comma.
+Then specify the disassembly output file.  You can specify an output device as 
+well, such as LPT:, LCD:, RAM:, CAS:, R:, 0:, etc.  To disassemble to 200's 
+option banks, use R1:, R2:, or R3: as device names.
+The disassembler will use the labels stored in the symbol table.  A number not 
+in the table will be shown as Lxxxx or Ixxxx.  'L' stands for a label and 
+indicates that reference is made to that address by one or more instructions 
+within the program. 'I' stands for "interval", which is just put there in 
+intervals as a reference for the user.
+Any instruction disassembled in DB means that the reference was made to the 
+instruction, but to the middle of it, its operand.
+
+A beep will sound when finished.
+Press <CTRL> to abort, or <SHIFT> to pause.
+
+;--------------------------------------
+* Assembler:
+
+It's called by entering:
+ ASM
+Then enter the name of source code, followed by the name of .CO file to be 
+created.
+A source file in another bank(200 option banks) can be specified by R1:, R2:, 
+or R3: as the device name.
+
+The assembler must read the source file twice.  After the first pass, it 
+displays the Top, End, Exe values.  If the program's starting location is in 
+HIMEM and its end steps above MAXRAM, lower the Top value, so that when it 
+runs, it will not write over the system variable area above MAXRAM.
+
+If "0" is entered for the object file name, the object file is not created, and
+the it stops after the first pass.  This is when you only want to see the 
+symbols or the Top, End, Exe values.
+
+If error occurrs or user-aborted during the 2nd pass, object (.CO) file is 
+trashed and should not be run.
+
+Pressing <CTRL> aborts.
+
+ENT directive specifies the Exe addr of the .CO file.  If ENT is not used, Exe 
+is same as ORG.  If ORG is not specified, it is taken as $F856 for M200, $FCC0 
+for M100, which are addr of the Prev screen buffer.
+
+SET(also a monitor command) is used to setup a variable space outside the .CO 
+file.  It must be used at the very beginning of the source code, before 
+specifying ORG.
+As an example, the following sets up 65370 to 65373 as program variables.
+
+	SET	65370
+var1	dw	0
+var2	db	1
+var3	db	0
+
+	ORG	60000
+	lxi	h,$0000
+	shld	var1
+	mvi	a,1
+	sta	var2
+	... etc.
+
+
+IF and ENDIF are used for conditional assembly.
+
+Example:
+COND	equ	2
+
+	IF	cond=1
+	call	beep
+	ENDIF
+
+	IF	cond=2
+	call	whistle
+	ENDIF
+
+Since COND=2, only 'call whistle' instruction is assembled.
+IF statesments can be nested:
+	if	C1=1
+	call	SUB1
+	if	C2=2
+	call	SUB2
+	endif
+	endif
+The following results according to C1 and C2:
+
+C1=1,C2=2:
+	call	sub1
+	call	sub2
+
+C1=1,C2<>2:
+	call	sub1
+
+C1<>1,C2=2:
+	nothing assembled
+
+C1<>1,C2<>2:
+	nothing assembled
+
+
+Source code can be LINKed, so that one can write something much bigger than 
+what 200's memory can hold.
+ LINK Filename
+to connect two or more pieces of a file together, e.g., if you were to cut a 
+large file into 3 manageable pieces, and save each to a disk, cassette, option 
+bank, or whatever,
+at the end of piece 1, put:
+ LINK Piece2
+At the end of piece 2, put:
+ LINK Piece3
+No other changes are neccesary.
+If you assemble Piece1, Piece 1,2,3 will assemble as if they were a whole file.
+
+
+In addition to the standard 8085 opcodes, there are 10 undocumented opcodes.  
+See OPCODE.DOC in DL8 for detailed info on these.  They are:
+
+DSUB B or HLMBC: Subtract BC from HL
+RHR: Shift HL right, with bit 7 of H remaining unchanged.  Bit 0 of L goes into
+the carry bit.
+RDL: Shift DE left.  Carry bit shifts into bit 0 of E, and bit 7 of D goes into
+the carry bit.
+LHLX or LHLI: Load DE from addr pointed by HL
+SHLX or SHLI: Save DE to addr pointed by HL
+DEHL or DMOV D,HL+: Load DE with HL+byte
+DESP or DMOV D,SP+: Load DE with SP+byte
+JND: Jump if bit 5 of flag byte is off
+JD:  Jump if bit 5 of flag byte is on
+___: Call 40H if overflow flag is on.
+
+
+List of ADSM directives:
+
+SET	Setup external variables
+ORG	Set Top,Exe
+ENT	Set Exe
+EQU	Define labels
+DB	Enter Data
+DW	Enter a two byte data, a word
+DM	Enter a string
+DS 	Reserve space
+LINK	Connect files
+IF	Assemble following if true
+ENDIF	Until endif
+END	End of source code
+
+;--------------------------------------
+* Possible differences from other assemblers:
+
+The meaning of SET, ENT maybe different
+
+A comment begins with ';' symbol and it can begin at any field, not just the 
+comment field.
+
+More than one data item can be specified with the DB directive.  Seperate each 
+item with a comma, tab, or space.
+If an item is a number >255, the MSB will also be stored.  For example,
+
+LABELX	EQU	$AA55
+	DB	'HI' 0,$EEDD,LABELX
+
+is same as
+
+	DB	'H','I',0,$DD,$EE,$55,$AA
+
+
+Hexadecimal numbers can start with a letter.  For example, FAB0H, 0FAB0H, and 
+$FAB0 are all valid.  As a trade off, labels that resemble a hexadecimal 
+numbers cannot exist.  For example, if you forget and do this:
+DH	EQU	$1098
+	CALL	DH
+The call is made to $000D, instead of $1098 that was meant to be.
+
+;--------------------------------------
+* List of monitor commands:
+
+MD: Output base
+CD: Suppress mnemonics
+DD: Display ascii or number in comment
+RFIX: Change length of RST instructions
+GET: Evaluate a numeric expression
+CNV: Display a different base,or ascii
+FIND: Search for string
+GO: Execute a ML routine
+SET: Go to a different address
+MOVE: Move a memory block
+RE: Peek
+WR: Poke
+IP: Read IO port
+OP: Write to IO port
+MENU: Exit
+ASM: Assemble
+DSM: Disassemble
+LINK: Link source files
+
+While in SMB, ASM, DSM, press <CTRL-C> or <ENTER> for the file name prompts, to
+abort.
+
+;--------------------------------------
+* Error messages:
+
+When an error occurrs, a beep sounds and the error code is displayed.  Most 
+error codes are same as the Basic's error codes, so if you run across an error 
+that is not listed here, consult the Basic manual.
+
+1: ENDIF encountered without IF statement preceding.
+2: Syntax error - unrecognizable opcode , command, or register
+6: In MOVE Beg,End,Dest, End maybe lower than Beg
+7: Out of memory
+8: Undefined label
+9: Repeatedly defined label
+10:Bad label
+12: The instruction can only be used in monitor.
+18: IO Error
+22: Missing operand
+52: File not found
+55: Bad file name
+57: Ram directory is full; cannot create any more files
+
+;--------------------------------------
+
+	<End of DOC>
+

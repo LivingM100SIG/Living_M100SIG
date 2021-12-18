@@ -1,0 +1,97 @@
+1 REM Relocating loader for MODEL 100   machine language directory program.     Jim Moore - 5/9/85
+2 PRINT "If you have not saved this file to D.BA, BREAK and do so now or else hit ENTER.":LINE INPUT A$
+3 MAXFILES=1
+4 MB=236:REM Number of bytes of machine code. Repeated at line 21.
+5 CLS
+6 S=HIMEM-MB
+7 PRINT "The current high memory is:";HIMEM
+8 PRINT "New high memory will be:   ";S
+9 PRINT:PRINT "If this is acceptable, just type ENTER."
+10 PRINT "Otherwise, enter the desired new value"
+11 INPUT "for high memory";S
+12 IF S+MB>MAXRAM THEN PRINT "ERROR: Program will exceed MAXRAM":PRINT:GOTO 6
+13 PRINT "New high memory will be";S;"."
+14 PRINT "Okay (Y/N)?";
+15 A$=INPUT$(1):PRINT
+16 IF A$<>"Y" AND A$<>"y" THEN CLS:GOTO 6
+17 REM Set HIMEM to allow room for      machine code
+18 CLEAR256,S
+19 REM *******************************
+20 ML=97:REM Highest line number in this program.
+21 MB=236:REM Number of bytes of machine code.
+22 DIM A%(MB-1)
+23 REM Find D.BA in the directory and   shorten it to just D
+24 FOR I=63933 TO 64131 STEP 11
+25 A$=""
+26 FOR J=I TO I+7
+27 A$=A$+CHR$(PEEK(J))
+28 NEXT J
+29 IF A$="D     BA" THEN POKE I+6,32: POKE I+7,32
+30 NEXT I
+31 REM Change the names of the BASIC and Patch buffers to Basic.BF and Patch.BF
+32 FOR I=63900 TO 63907
+33 READ L:POKE I,L
+34 NEXT I
+35 FOR I=63911 TO 63918
+36 READ L:POKE I,L
+37 NEXT I
+38 REM Load the relocation table
+39 FOR I=0 TO MB-1
+40 READ A%(I)
+41 NEXT I
+42 REM Load the machine code into memory with appropriate address relocations
+43 FOR I=0 TO MB-1
+44 READ L
+45 IF A%(I) THEN POKE HIMEM+I,L:GOTO 54
+46 READ H
+47 O=256*H+L
+48 IF O+HIMEM>=65536 THEN A=O+HIMEM-65536 ELSE A=O+HIMEM
+49 H=INT(A/256)
+50 L=A-H*256
+51 POKE HIMEM+I,L
+52 I=I+1
+53 POKE HIMEM+I,H
+54 NEXT I
+55 REM Create TEMP.DO so when merged    with D it leaves only a CALL for the machine code
+56 OPEN "TEMP" FOR OUTPUT AS 1
+57 PRINT#1,"1CALL";:PRINT#1,USING "#####";HIMEM
+58 FOR I=2 TO ML
+59 PRINT#1,I
+60 NEXT I
+61 CLOSE
+62 INPUT"Set MAXFILES to (usually 1 or 0)";F:MAXFILES=F
+63 CLS:PRINT"At the Ok prompt you may kill TEMP.DO"
+64 MERGE "TEMP.DO"
+65 REM New buffer file names
+66 DATA 66,97,115,105,99,32,66,70
+67 DATA 80,97,116,99,104,32,66,70
+68 REM Relocation table
+69 DATA -1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
+70 DATA -1,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0
+71 DATA -1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,0,0,-1,-1,0,0,-1,0,0,-1,-1,-1,0,0
+72 DATA -1,-1,-1,-1,-1,-1,0,0,-1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
+73 DATA -1,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1
+74 DATA -1,-1,-1,-1,-1,0,0,-1,-1,0,0,-1,-1,-1,-1,0,0,-1,-1,-1,-1,0,0,-1,-1
+75 DATA -1,-1,0,0,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,-1,-1,0,0
+76 DATA -1,-1,-1,-1,-1,0,0,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1
+77 DATA -1,0,0,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0
+78 DATA -1,-1,-1,-1,-1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,0,0,-1,-1,-1,-1,-1,-1
+79 REM Machine code
+80 DATA 62,  32,  33, 236, 255,  22,  20, 119,  35,  21, 194,   7,   0,   6
+81 DATA 242,  14,  14,  33, 153, 249, 126, 230, 144, 238, 128, 197, 229
+82 DATA 194, 200,   0, 126,  35,  94,  35,  86, 235,  17,   0,   0, 230
+83 DATA 96, 238,   0, 194,  66,   0,   6,   2, 195,  53,   0,   6,   3, 190
+84 DATA 19,  35, 194,  51,   0,   5, 194,  53,   0, 195,  92,   0, 254,  64
+85 DATA 194,  82,   0,  62,  26, 190,  19,  35, 194,  73,   0, 195,  92
+86 DATA 0,  35,  35,  94,  35,  86,  33,   6,   0,  25, 235, 225, 229, 213
+87 DATA 22,  8,  35,  35,  35,   1, 238, 255, 126,   2,  35,   3,  21,  62
+88 DATA 2, 186, 194, 118,   0,  62,  46,   2,   3,  62,   0, 186, 194, 103
+89 DATA 0, 209,  33, 249, 255,   1,  16,  39, 205, 218,   0,   1, 232,   3
+90 DATA 205, 218,   0,   1, 100,   0, 205, 218,   0,   1,  10,   0, 205
+91 DATA 218,   0,  62,  48, 131, 119,  22,   4,  62,  48,  33, 249, 255
+92 DATA 190, 194, 174,   0,  54,  32,  35,  21, 194, 163,   0,  22,  20
+93 DATA 33, 236, 255, 126, 213, 229, 205,  68,  75, 225, 209,  35,  21, 194
+94 DATA 179,   0, 225, 193,  13, 197,  229, 204, 203,  18, 225, 193,  17
+95 DATA 11,   0,  25, 120, 147,  71, 194,  20,   0, 205, 203,  18, 205, 151
+96 DATA 87,  54,  48, 123, 145,  95, 122, 152,  87,  52, 210, 220,   0,  53
+97 DATA 235,   9, 235,  35, 201

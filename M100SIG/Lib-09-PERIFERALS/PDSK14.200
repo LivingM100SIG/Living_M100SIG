@@ -1,0 +1,130 @@
+
+PDSK14.200
+
+Converted, transcribed and tweaked as necessary by Tony Anderson, 76703,4062.
+September 1988
+
+        (C) 1985 Acroatix Inc.
+Released for exclusive distribution on
+CompuServe's Model 100 Forum. All other
+rights reserved.
+
+
+MAP of ML routines in POWR-DISK  (200 version)
+
+
+Caution:  To avoid inconvenient litigation, do not attempt to market or
+distribute a product that competes with POWR-DISK using the information in this
+file. Also, treat this material as confidential, please.  We provide it for
+your benefit as a customer.
+
+  ALL RIGHTS RESERVED.
+  (C) 1985  Acroatix Inc.
+
+All addresses in Hexadecimal.
+
+E650 - Start of Code.  JMP statements
+       to supported calls.
+E662 - Initialize Vector pointers.
+       Uses a table at E68F.
+E68F - Table in the format:
+        byte - offset
+        word - vector for F507H.
+       The byte is offset from last
+       latch minus one.
+E6B4 - LFILES entry point
+E6FE - Loop for file names
+E73C - Determine free sectors
+E768 - LFILES OFF
+E771 - LFILES MENU
+E775 - Restores User COM setting
+       (jmp'd to by MAXRAM+12)
+E79D - Sets up TDD into file-command
+       mode.  Prelim. for all i/o
+E7D6 - Sends 2 chars in H&L to TDD
+E7EC - Sets COM to 98N1DNN.  Saves COM
+       setting for LFILES MENU if
+       different from 98N1DNN.
+       NOTE:  This technique is not
+       perfect, as users will discover.
+E80C - '98N1DNN'
+E813 - Sets up file-name command:
+       On entry:
+        A=Fname code 0, 1, or 2
+       On exit:
+        HL address to put file name
+        (if any)
+E82E - Set up command string for TDD
+       ENTRY:  A=command
+       EXIT: HL pts to arg. byte ct,
+             initially set to 0.
+E83F - Send previously set-up command
+       (Calculates checksum, xmits)
+E86E - Check for active COM port.  If
+       data-set not ready, NR error.
+E876 - DN error entry
+E879 - CM error entry
+E87C - AE error entry
+E87E - Error handler for codes >58
+       on entry, e=error code.
+E8FB - Error-"message" table
+E910 - Receive response from TDD
+       (checks checksum)
+E960 - JMP here if TDD indicates a
+       DOS error occurred (IO, etc.)
+E982 - Device ID expansion latch code
+       identifies ':' and '0:'
+       NOTE: ALSO RESETS EXP. LATCHES
+       60H & 62H, DUE TO M200 ROM BUG
+E9A3 - Allows '0:' (expansion latch)
+E9AB - Exp. Latch for KILL.  Kills TDD
+       files if ':' specified.
+E9BE - Command dispatcher for single-
+       code commands with no TDD
+       response expected.
+E9C8 - Check for DO file on disk.
+       Name of file in FC93-FC99.  'DO'
+       Is supplied.
+E9CB - Same as F10F, except use
+       extension named by H&L.
+E9CE - Check for file on disk found
+       in F746-F74E.
+       On exit, Z set for new file,
+        not set for existing file.
+       File len. available for existing
+       file at EE3E, in MSB/LSB order.
+E9EA - Expansion latch for device-
+       table router.
+E9FF - Device table for TDD
+       Same format as for ROM DVT's.
+       EA09 - OPEN driver
+       EA65 - CLOSE driver
+       EA78 - OUTPUT driver
+       EAA2 - INPUT driver
+EAF1 - EOF function expansion
+EB18 - LOADM expansion
+EB1F - LOADM ,F code
+EB92 - Reads DE bytes from opened TDD
+       file into mem. at HL.  Code does
+       not check for EOF; HT error
+       will result if read is past end.
+EBB1 - Set up buffer for read routine
+       above.  File must be found with
+       EC9E routine, then this routine
+       must be called.  Then READ can
+       access data.
+EBC9 - Table of File-type data:
+        Byte: directory status byte
+        Word: POWR-DISK routine adr.
+        Word: Adrs of pointer to start
+       for CO, DO, and BA file types.
+EC49 - LOADM/RUNM without ,F from TDD
+EC81 - BASIC LOAD from TDD
+ECC0 - SAVEM expansion latch
+ECC5 - SAVEM without numbers (by file)
+ED19 - WRITES DE bytes from HL to
+       opened TDD file.
+ED3A - SAVEM with numbers to TDD.
+ED72 - BASIC SAVE to TDD.
+EDAE - MAXRAM expansion
+EDB5 - CLEAR expansion

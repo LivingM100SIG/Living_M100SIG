@@ -1,0 +1,177 @@
+MIGENT.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The WorldPort 1200 pocket modem has been very popular in the Model 100
+Forum.  In many respects the Migent modem is comparable in size and
+capabilities -- and the Migent seems more popular in other circles (e.g.,
+MS-DOS laptops).  This file is made up of Forum messages related to the
+Migent, and how one member got it and his M100 to speak to one another
+(after some tavail!).
+
+Message range: 150381 to 150773
+Dates: 6/16/87 to 6/22/87
+
+Sb: #Migent pocket modem
+Fm: Bob McArtney 71306,375
+To: All
+
+I recently purchased a Migent Pocket modem for use with my Model 100 but I
+cannot get it to work. It operates perfectly with my TRS-80 Model 4 but there
+is no response at all with the Model 100. Has anyone been successful in this
+type of hookup?
+
+
+Fm: Denny Thomas 76701,40
+To: Bob McArtney 71306,375
+
+  Did you go into TELCOM and set your STAT to 57I1E and then hit the F4 key and
+then type: ATDT(phone number)? If not, the modem will not wake up. I don't have
+the modem, but if it is Hayes compatible as it is advertised, then the previous
+commands should work. Also, you might want to try Q-PORT.100 in DL3. That
+program is set up for the WorldPort modem, but there is an outside chance it
+might work with the Migent. See W-PORT.DOC for instructions.
+
+
+Fm: Bob McArtney 71306,375
+To: Denny Thomas 76701,40
+
+   Thank you for your willingness to help. Yes, I did go into TELCOM and set
+the STAt to 57I1E (I also tried 37I1E), then I went into terminal mode (F4) and
+tried to type but at 300 baud the modem return gibberish until a key was held
+down and then it printed correctly. At 1200 baud nothing was returned until a
+key was held down and then printed correctly. It was possible at the slower
+speed to occasionally get an "ok" out of the modem but nothing else.
+   I called Migent and they gave an answer immediately making me think that
+they had seen this problem before. They said type "AT&C1&W". This should change
+switch 6 relating to carrier detect. I entered the command with my Model 4
+since the modem works perfectly with it. But still there was no change with the
+Model 100. There is a difference with the carrier detect pin between the
+computers. I just did download both Q-port.100 and wport.doc. Haven't tried
+them yet. Any other ideas?
+
+
+Fm: Denny Thomas 76701,40
+To: Bob McArtney 71306,375
+
+  Very strange format that they gave you. Do you really have to put &'s between
+each command? Most Hayes compatibles can take the commands strung together one
+after the other, as in: ATZC1DT5551212 That string should reset the defaults,
+turn carrier detect on, and dial information.
+
+Also, I could not find the W command in either my WorldPort or Hayes manual.
+What did they say it did?
+
+From your description, if you had a WorldPort you'd be online by now. Let me
+know what happens,
+
+
+Fm: Denny Thomas 76701,40
+To: Bob McArtney 71306,375
+
+Reading over your message again, I notice that you said you tried to type. You
+shouldn't be able to do anything except issue valid AT commands. Some modems
+require that you send them in uppercase. What happens when you type: AT
+(followed by a carriage return)?  You should get the OK prompt on the next
+line. If you get that far, try the command ATDT999-9999 (any phone number,
+without the dash). I would pick up the phone and check to see if it is really
+dialing (if you have it hooked up) If it really dials, try CompuServe and
+remember to hit <ENTER> or <CTRL C> after the the CONNECT response.
+  Geez, what a lot of if's!
+
+
+Fm: Bob McArtney 71306,375
+To: Denny Thomas 76701,40
+
+   Thanks for your continuing concern to get my Migent pocket modem working.
+Its a nice unit. Too bad....
+   The "&" is part of the new Hayes 2400 command structure supported by this
+modem. E.g. "&C" means DCD ( whatever that is!) is always on; "&C1", as Migent
+suggested means DCD follows carrier on line. The "&W" writes the change into
+non-volatile memory.
+   I can't get the modem to accept even an AT command except when I hold down
+the "A" and as soon as it prints quickly hit the "T", but I'm not fast enough
+to enter more than that before it prints nonsense again. By the way I ran your
+"Q-port" and the program said there was NO modem connected although the Migent
+was.
+   I will probably write to Migent with what has been happening. If you hear of
+anyone having success please let me know.
+
+
+Fm: Denny Thomas 76701,40
+To: Bob McArtney 71306,375
+
+  The "no modem connected" display probably means the modem is in some way
+defective or is set up only for PC type computers. (can't imagine why that
+would make a differnce) I check for the DTR signal from the modem (Data
+Terminal Ready) which has to be there if the M100 is going to talk to it. I
+would mention this to the people at Migent, it might give them a lead.
+
+
+Fm: Phil Wheeler 71266,125
+To: Denny Thomas 76701,40
+
+Maybe the software is selective about what it calls a modem! (tee-hee)
+
+
+Fm: Bob McArtney 71306,375
+To: Denny Thomas 76701,40
+
+   EUREKA! It works! I connected my Migent pocket modem through my Radio Shack
+RS-232 interface connector and all is well.
+   The connector is designed to switch select three RS-232 devices to the one
+computer. I usually leave it connected to my Model 4. Somehow it must change
+the wiring in the RS-232 cable. I can't find the booklet that came with the
+connector but if I can figure out the wiring I should be able to design a cable
+to work independently of the connector. I have logged on today with the new
+modem.
+   Thanks for your interest and help. If I come up with more on this I will put
+a message on the SIG.
+
+
+Fm: Leonard Erickson 70465,203
+To: Bob McArtney 71306,375
+
+        I've got one of those RS-232 switches. What it does is not switch the
+wires, but it *does* supply signals such as DTR (data terminal ready) EVEN IF
+THE COMPUTER ISN'T SENDING THE SIGNAL!
+                I'd suggest asking Migent which "handshaking" lines their modem
+needs. The 100 doesn't support all of the "stanard" ones. It while it can
+receive CTS, DSR, and CD, the TELCOM software *ignores* them. The only other
+signals are DTR & RTS which it asserts as neccessary (maybe).
+
+
+Fm: BRUCE BATES 73007,2044
+To: Bob McArtney 71306,375
+
+Through the "School of Hard Knocks" I have learned (especially with R.S. stuff)
+that not all connecters/cables are created equal when it comes to RS-232
+equipment.  For reasons unknown to me (and this goes all the way back to the
+MOD I) R.S. chose not to use all the available "pins" in the RS-232 interface
+standard;  thus (for cost reasons I guess) when they supplied RS-232 cables for
+their equipment the wires/pins were purposely left out which represented signal
+lines that they did not use and/or did not recognize.  Bummer, I realize, but
+that's Tandyland for you !  This may or may not be part of your problem, but
+keep it in mind just in case.  It's not the kind of thing one would go "looking
+for".
+
+
+Fm: Bob McArtney 71306,375
+To: Leonard Erickson 70465,203
+
+    Thank you, Leonard, for your reply. I really don't understand a lot about
+the various "handshaking" going on - I might learn something thru this! I
+finally decided to keep the modem and I just sent in the registration card.
+Once Migent gets that they will support questions. They really have a neat
+modem - IF it will work without a gadget that has to be plugged in!
+
+
+Fm: Bob McArtney 71306,375
+To: BRUCE BATES 73007,2044
+
+    Thank you Bruce for your reply. I didn't realize that Radio Shucks (sic)
+left out some of the connecting wires, etc. Figures. I haven't been able to
+spend a lot of time on this but I'll keep trying!
+        Heath has a kit to help determine which wires go where on an RS-233 - I
+just might get that. Thanks again.

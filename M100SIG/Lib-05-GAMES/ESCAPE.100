@@ -1,0 +1,103 @@
+10 REM **************************
+20 REM **        ESCAPE        **
+30 REM **   BY ROBBY DEMARCO   **
+40 REM **************************
+50 REM **     PUBLIC DOMAIN    **
+60 REM **************************
+70 REM **     Fri 02/28/86     **
+80 REM **************************
+85 CALL 16959
+90 CLS
+95 GOSUB 10000
+100 PRINT @11,"Escape"
+110 PRINT @91,"Do you nead instructions?";
+120 IF INKEY$<>"" THEN 120
+121 A$=INKEY$:IF A$ = "" THEN 121
+124 IFA$="Y"ORA$="y"THENPRINT       "Yes":GOSUB 900
+126 PRINT @131,"Negatory good buddy!"
+130 CLS
+150 FOR I = 0 TO 39:PRINT @I,CHR$(239):PRINT @I+280,CHR$(239):NEXT I
+160 FOR I = 0 TO 319 STEP 40
+170 PRINT @I,CHR$(239):PRINT @I+39,CHR$(239)
+180 NEXT I
+190 CE = INT (RND(1)*320)
+200 IF PEEK(65024+CE) = 32 THEN 190
+210 PRINT @CE,CHR$(255)
+220 PP=175 : PP$ = CHR$(144)
+230 EC = INT (RND(1)*320)
+240 IF PEEK(65024+EC) <> 32 THEN 230
+250 PRINT @EC,CHR$(150)
+260 IF FLAG = 1 THEN PRINT @CE,CHR$(224)
+270 A$=INKEY$:IF A$="" THEN A$="L"
+280 A=ASC(A$)
+290 IF A = 28 THEN PO = 1
+300 IF A = 29 THEN PO =-1
+310 IF A = 30 THEN PO =-40
+320 IF A = 31 THEN PO =40
+330 PP=PP+PO
+340 IF PEEK(65024+PP) = 42 THEN 800
+350 IF PEEK(65024+PP) = 239 THEN PP=PP-PO:PO=-PO
+360 IF PEEK(65024+PP) = 255 THEN PP=PP-PO:PO=-PO
+370 IF PEEK(65024+PP) = 224 THEN 700
+380 IF PEEK(65024+PP) = 150 THEN FL = 1
+390 C = INT(RND(1)*320)
+400 IF PEEK(65024+C)=42 THEN PRINT @C," ":GOTO 440
+410 IF PEEK(65024+C)=32 THEN 430
+420 GOTO 390
+430 PRINT @C,"*";
+440 PRINT @PP,PP$
+450 FOR I = 1 TO 20
+460 NEXT I
+470 PRINT @PP," "
+480 GOTO 260
+700 FOR I = 41 TO 241 STEP 40
+710 PRINT @I,STRING$(38," ")
+720 NEXT
+730 FOR I = 0 TO 10000 STEP 500
+735 PRINT @50,CHR$(27);"p";"       "
+740 SOUND I,5
+750 PRINT @50,CHR$(27);"p";"ESCAPED"
+760 NEXT I
+762 PRINT CHR$(27);"q";
+765 PRINT @161,"Press any key to play,<ENTER> for menu"
+770 IF INKEY$<>"" THEN 770
+780 A$=INKEY$:IF A$=CHR$(13) THEN MENU ELSE IF A$<>"" THEN RUN
+790 GOTO 780
+800 FOR I = 3000 TO 2600 STEP -50
+810 PRINT @PP,CHR$(27);"p";PP$
+820 SOUND I,5
+830 PRINT @PP,CHR$(27);"q";PP$:FORC=1TO20:NEXT
+840 NEXT I
+850 SOUND 2000,100
+860 PRINT @161,"Any key to play,<ENTER> for menu"
+870 A$=INKEY$:IF A$=CHR$(13) THEN MENU ELSE IF A$<>"" THEN RUN
+880 GOTO 870
+900 GOSUB 20000
+910 RETURN
+10000 S%=VAL(RIGHT$(TIME$,2))
+10010 FOR I% = 1 TO S%
+10020 DUMMY = RND(1)
+10030 NEXT I%
+10040 RETURN
+20000 CLS:PRINT @0,CHR$(27);"p";"              Escape.ba                 ";
+20010 PRINT @280,CHR$(27);"p";"        Press any key to continue       "
+20020 PRINT @40,CHR$(27);"q";
+20030 PRINT CHR$(27);"q";"OBJECT - The object of this game is to"
+20040 PRINT "get the key("CHR$(150)")so the locked door("CHR$(255)")"
+20050 PRINT "will open so you can leave the arena."
+20060 PRINT "How ever there are mines(*).If you hit"
+20070 PRINT "it,then you will die.Use the arrow keys"
+20080 PRINT "to move , you continue moving in that"
+20090 A$=INKEY$
+20100 IF A$="" THEN 20090
+20110 FOR I = 40 TO 240 STEP 40:PRINT @I,SPACE$(40);:NEXT:PRINT @40,;
+20120 PRINT "direction,till you press another arrow"
+20130 PRINT "key. Since this is a reflex game,don't"
+20150 PRINT "get frustrated.It may seem imposible at"
+20160 PRINT "first,but there is a 4 to 1 chance to"
+20170 PRINT "win.Your chances increase as your"
+20180 PRINT "reflexes improve."
+20190 A$=INKEY$
+20200 IF A$="" THEN 20190
+20210 RETURN
+

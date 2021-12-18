@@ -1,0 +1,40 @@
+CR.DOC--Documentation for CR.100 V1.0
+c1987 Jon Diercks [73327,2353]
+
+CR.100 is actually two text utilities in one.  Both are Machine Language, so 
+they're small and super-fast.  Both work on the text file IN PLACE in the RAM: 
+directory, without creating another copy of the file, thereby saving precious 
+memory.  You should find CR.100 very helpful in managing .DO files as you move 
+them back and forth from CIS to your M100.
+
+The first CR utility, WRAP, inserts CR's into the text file for uniform line 
+length, wrapping words around using the width you specify <may be 10-132 - the 
+default is the last width used by SHIFT-PRINT, UPload, or CR itself.  CIS 
+requires lines less than 80 characters long>.  One caution:  be careful with 
+very narrow widths.  They can break up dot commands or long words.  Use WRAP 
+on any text file you plan to UPLoad to CIS with XMODEM, because you can't use 
+Telcom's "Width:" feature on protocoled uploads.  <I used WRAP on this DOC, 
+for instance.>
+
+The second utility, STRIP, removes extra Carriage Returns from your text file. 
+ STRIP ignores lines starting with a "." to preserve any word processor dot 
+command syntax.  If a CR is followed by a space character <indent> or another 
+CR, a paragraph is assumed and the CR is left intact.  Otherwise, the CR is 
+deleted.  If it was preceded by anything other than a space or a hyphen, the 
+CR is replaced by a space <so that words don't getruntogether>.
+
+Both routines check for CR's without accompanying LF's and then add them where 
+necessary.
+
+The whole program weighs in at under 500 bytes.  Pretty small, but not quite 
+small enough for the ALT LCD buffer, so I've uploaded it as a relocating .BA 
+loader.
+
+Hope CR.100 proves useful to you.  You can test it out on this DOC, for 
+starters.  Programmers will also want to see CR.SRC, the ML source code for 
+CR, in Custom Software format.
+
+Send all problems, suggestions, praise, money <especially money - Xmas is 
+coming!>, etc. to:
+
+Jon Diercks [73327,2353]

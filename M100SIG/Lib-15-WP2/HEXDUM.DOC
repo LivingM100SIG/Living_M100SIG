@@ -1,0 +1,66 @@
+                                  HEX-DUMP
+                             by Michael F. Klar
+                                 71311,3076
+ 
+   HEX-DUMP is a machine language program that will enable you to look at the
+contents of the WP-2's memory, print it out, or send it to another computer
+via the RS-232 port.  The data is output in both hex and ASCII format, so both
+program code and text will be readable. 
+ 
+   To run the program, download it via XMODEM, either directly to the WP-2 or
+to another computer and then to the WP-2 from there.  The WP-2 will let you
+download to memory, to the RAM disk, or to a RAM IC card.  The program can be
+run from each of these locations, but the copy-file command will not work with
+this program if you try to copy it to memory.  Curiously enough, you CAN copy
+it to the RAM disk from memory.  I don't have an IC card or disk drive, so I
+am unable to test them.  Wherever you decide to put it, bring it up on the
+file screen (F2 = from the wordprocessor) and hit RUN (F2-7). 
+ 
+   You will be prompted for start address, end address, dump-to destination,
+and slot #.  Start and end address are in hex, and can be anything from 0 to
+FFFF.  Destination can be P, D, or R for printer, display, or RS-232 port.
+Slot # is also in hex.  It can be anything from 0 to FF (although selectable
+slot #s only range from 0 to 1F - more on this later). 
+ 
+   If you change your mind and want to go back to the previous prompt, just
+hit <ESC>.  Hitting <ESC> from the start address prompt will exit the program.
+You can also hit <ESC> at any time during the dump to abort and return to the
+start address prompt. 
+ 
+   If you select the display for dump-to destination, you also have three
+other options during the dump.  <P> will pause the output untill another key
+is pressed, <F> will make the display page faster (.3 second delay), and <S>
+will make the display page slower (1.5 second delay).  The default is <S>low.
+After the last line has been displayed, press any key to return to the start
+address prompt. 
+ 
+                    SOME NOTES ON SLOT # SELECTION:
+    (slot # selection was omitted from the original version of HEX-DUMP) 
+ 
+   The value enterd for slot # is sent directly to output port 51H.  The lower
+5 bits of this value select the ROM bank to be bank switched into memory
+locations 4000 to 7FFF.  This allows for 32 ROM banks.  ROM banks 15 to 30 (0F
+to 1E hex) are assigned to IC ROM card applications.  ROM banks 0 to 14 (00 to
+0E hex) contain the wordprocessor, application programs (such as telecom) and
+the dictionary. The WP-2 Service Manual gives the false impression that the
+BIOS, character font data, and the first part of the worprocessor program are
+in bank 0 (I'm referring to the memory map on page 4-18).  In actuallity,
+these are located in bank 31 (1F hex), which is permenantly addressed as
+memory locations 0000 to 3FFF. 
+ 
+   The top 3 bits select the RAM bank.  I have yet to figure out how this
+memory is then accessed.  It is not bank switched into the top 32K of memory
+(which would cause the program to crash anyway, since that's where it
+resides).  The Service Manual mentions that "Expansion memory is mapped on the
+I/O address."  (top of page 4-5).  I assume this means it is port mapped, but
+which ports?  Something tells me there are a few entries missing from the I/O
+Address Map on page 4-7. 
+ 
+   Anyway, if you don't want to play around with the top 3 bits of port 51H, 
+use a value from 0 to 1F for the slot # prompt to select ROM banks 0 to 31. 
+ 
+ 
+                     +-------------------------------+
+ 
+   Michael F. Klar - 4 Fleetwood Dr. - Somerville, NJ 08876 - 71311,3076
+ 

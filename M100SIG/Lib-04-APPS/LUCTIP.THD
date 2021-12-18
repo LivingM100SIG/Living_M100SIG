@@ -1,0 +1,64 @@
+
+        (c)1990 Golden Triangle, Inc.
+        (c)1990 Wilson Van Alst
+          All rights reserved.
+
+
+Fm: Paul Globman
+To: PETER ROSS
+
+The trick to getting multiple lines in the header is to assign a CODE character
+a 013 (CR) and put the code character into the header.  Adjust lines per page
+for the extra CR's put out in the header.
+
+As for IF...THEN in a single cell, here's the gist of a letter I sent to PCSG 3
+years ago (July 9, 1986).
+
+-------------
+
+I have found that I am able to perform IF...THEN...ELSE decisions within a
+single cell of LUCID, without having to refer to any outside table (TBL).
+
+This comes from the use of RELATIONAL OPERATORS, which the LUCID manual does
+not discuss.  The LUCID DATABASE manual discusses (very) briefly the use of
+relational operators for criteria selection in the 'report definition block'
+for output.
+
+Relational operators can be used in any cell to obtain a TRUE(-1) or a FALSE(0)
+value and when multiplied by -1 yeilds some fantastic options. Please note
+examples:
+
+A1 = number of hours worked on a job.
+Minimum charge is for 4 hours.
+B1 = billable hours
+
+The formula for cell B1 is:
+
+       -(A1<=4)*4-(A1>4)*A1
+
+Now consider the "-" as the word "IF" and the "*" as the word "THEN".
+Additional "-"s are read as "ELSE IF...THEN".  Zero result if all conditions
+are false.
+
+Now enter some data in cell A1 and watch the results.  Pretty POWERFUL indeed!!
+This formula is the essence of the decision making processes in some financial
+spreadsheets.  I don't know if you are aware of this power, but it was nowhere
+to be found in the manual.  I use this for tax calculations like:
+
+IF deduct > 2480 THEN display deduct - 2480 ELSE display 0.
+       (A6=total deductions)
+
+CELL FORMULA: -(A6>2480)*(A6-2480)
+
+Or how about applying 5% discount on total sales (A5) if it exceeds $20
+
+NEW CELL FORMULA:+A5+(A5>20)*(.05*A5)
+
+I hope you find this of significant interest.
+
+    =+=+=+=+=+=
+
+Starting message #: 185518  Starting date: 24-Jul-89  23:12:13
+ Participants:
+Paul Globman 72227,1661
+PETER ROSS 72027,3653

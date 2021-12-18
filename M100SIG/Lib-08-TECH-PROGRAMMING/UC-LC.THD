@@ -1,0 +1,377 @@
+UC-LC.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+In developing Basic programs, it is often desirable to make the program
+insensitive to the case (CAPS, or not) of data entered from the keyboard in
+response to prompts.  These messages start with the issue of adding this
+feature to a particular program during development -- and move on to
+some pretty detailed and arcane stuff!
+
+
+Fm: Denny Thomas 76701,40
+To: RANDY HESS 73267,552 
+
+I worked with QWKPWR last night (can barely remember - 3am) and I liked it
+alot - much faster. My only pickiness is that you have to use upper-case
+only. I'd rather sacrafice the bytes for the handiness of upper/lower
+caseability.
+
+
+Fm: RANDY HESS 73267,552
+To: Denny Thomas 76701,40 
+
+Denny, I'll resend a 100-only version and, if a 200 version can be found I'll
+make a QWKPWR.200. With the bytes I save I'll see about fitting upper/lower
+capabilities; isn't there some code using "AND(223)" or something like that
+which will let a letter be EITHER. INSTR code at each input is awfully
+wasteful. I did a 175 byte routine that automatically backs-up to disk ALL
+active RAM files, visible or not, with no user input. Not being a long-time
+POWR-DOS user, I'm not sure if it's been done already, but I'll include it in
+the DOC if you think it would be useful.
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+Yes, the AND(223) is correct.  It allows you to enter either upper or lower
+case letters in answer to a prompt, and convert them to upper case so they can
+be tested subsequently with a simple IF-type statement. One of the PGMTIP files
+in DL8 covers this application.  You'll have to review the file to get the
+exact form of the statement, or take a look at my latest TVSKED in DL10 which
+uses the technique a couple times in capitalizing input for later use in INSTR
+statements.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: RANDY HESS 73267,552 
+
+Since you're squeezing bytes, you should know that AND 95 is equivalent to
+AND 223 for the range of values in question. That is,
+CHR$(ASC(INPUT$(1))AND95) will return an upper-case alpha for both  upper
+and lower case input. Best, Van
+
+
+Fm: Denny Thomas 76701,40
+To: Wilson Van Alst 76576,2735 
+
+That's really cool - I never would have thought to stuff the INPUT$ in the
+middle of the expression. I also thought that 95 would be a good AND value
+since you are only concerned with turning off bit 6. Somehow I thought there
+were other implications to using 223.
+
+
+Fm: RANDY HESS 73267,552
+To: Wilson Van Alst 76576,2735 
+
+Thanks to you and Tony! Is there a way to use it somehow in A$=INPUT$(1):IF
+A$=... so that an upper or lower case input would still work?
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+I generally use the form:
+
+A$=INPUT$(1):A$=CHR$(ASC(A$)AND223):IFA$=
+
+The IF will test for upper case only.  That can be shortened to:
+
+A$=CHR$(ASC(INPUT$(1))AND223):IF A$ =
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Denny Thomas 76701,40 
+
+Trial and error.  The expression works for INPUT$(1), but not for INKEY$. I
+don't know what the 'implications' might be regarding AND 95, vice AND 223,
+as long as you're dealing with the standard ASCII character set (i.e.,
+values < 128).  If you recall what makes you suspicious, I'd be interested.
+Best, Van
+
+
+Fm: Wilson Van Alst 76576,2735
+To: RANDY HESS 73267,552 
+
+I don't have a copy of PWRQIK handy for reference, but the expression will
+work exactly as you surmise:
+
+        A$=CHR$(ASC(INPUT$(1))AND95):IFA$= ...
+
+From a bytefighter's perspective, though, you'd be better off with:
+
+        N=ASC(INPUT$(1))AND95:IFN= ...
+
+      where you test for numeric (ASCII) equivalents to the alpha values.  This
+makes the program somewhat harder to 'read,' but it'll save memory.
+   I've looked at PWRQIK only briefly, but I'm betting you can bring in a
+working version in something close to -- and maybe under -- 700 bytes.
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735 
+
+AND223 has the benefit of working with the international character set above
+ascii 128, whereas AND95 returns a blank (space) for those characters.
+[ed note: proved later to be inaccurate]
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062 
+
+   Maybe my ignorance is showing, but I don't see the point you're making about
+the international character set.  Do those characters have a meaningful pattern
+associated with bit-5 of their binary code?  That is, does ANDing them with 223
+_do_ anything useful?
+   Otherwise, I don't see why it matters what you AND them with: the result
+will be nosensical.
+   A technical clarification of your message (if I understand it correctly):
+AND95ing a value above 127 will not return the ASCII code for a "blank
+character."  The values returned are in two discrete integer ranges, 0-31 and
+64-95, inclusive.  The ASCII code for a blank (32) is not among those values.
+   Here's the bottom line as I see it, Tony: ANDing with 223 turns off bit-5,
+while leaving all other bits alone.  ANDing with 95 turns off bits 5 and 7,
+while leaving other bits alone.  I don't know of any use for either routine,
+other than the limited (and somewhat artificial, though convenient)
+application of converting lower-case ASCII alphas to upper case; and for that
+application, bit-7 doesn't matter.
+   So, unless there are negative effects of AND95ing (as Denny implied, but
+wasn't sure about), I don't know why 223 is any better.
+   Please elaborate if you have better information....
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735 
+
+ANDing with 223 has been the recommended standard for about 2 years.  When
+Randy asked for how to do it, I recommended what was considered the standard
+method.  You indicated an alternate method was available, ANDing with 95.  Some
+subsequent question was raised about what is the difference, and why would one
+method be better than the other ("what are the implications").  I was only
+illustrating one of the implications.  Personally I don't care if you AND with
+5 and subtract 15; whatever works for you is fine.  I'm not naive enough to
+state there is one, and only one way that works.
+
+We have had a number of cases where some of our members have mentioned that
+they DO use the international character set, and they have pointed out that any
+string manipulating should keep that consideration in mind.  In such cases a
+seventh bit might be significant in the end product (we can't predefine all
+cases of use).  And in particular where the ANDing method is used to capitalize
+an entire string, rather than a single character, it would be most important
+not to change international characters to spaces.  Converting entire strings to
+uppercase is used in INSTR comparisions, notably in the CRDFIL series of
+programs.
+
+Thanks for pointing out that 95 was a significant number in the conversion
+process for ascii sets which do not include values above 127; that IS of value.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062 
+
+   Hmmm... (N AND 5)-15 ... I wonder.  <grin>
+   Seriously, I will track down a reference for that international ASCII
+standard and see what gives.  (I assume it is only loosely related, if at all,
+to the GRPH and CODE set in the M100 family.)
+   In general terms, Tony, I agree with you: why mask two bits with AND95 when
+you only need to mask one bit with AND223?  (It dawns on me as I write this
+that bit-7 is sometimes called the 'parity bit' -- meaning un-intentional
+AND95ing could be *realy* bad news in communication programs!  And do I recall
+that Kyocera uses bit-7 as a flag to signal the last character in function key
+definitions?)  So, let's hear it for the 223 standard!
+   Finally, there is one technical point I apparenty didn't make clear in my
+last message.  If I read you correctly, you've been told ASCII values >127,
+when ANDed with 95, will return a "blank" or a "space."  If you mean CHR$(32),
+you've been misinformed.  The value 32 cannot be produced by ANDing *any*
+number with 95, or with 223.
+   BTW, ANDing with 5 and subtracting 15 won't produce a 32 either.  <double
+grin>
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735 
+
+Run this little program, and observe what you get on your screen.  Output will
+be in the form:
+
+  65 AAA
+
+...except that it will illustrate what characters you get when ANDing with 223
+and with 95, in the range 128-255.  .
+Note the three columns of characters after the ascii number; first column is
+the actual ascii character, second is the AND95 character, and third column is
+the AND223 column.
+
+ANDing 95 with ascii 128-191 gives you only two columns, illustrating that it
+is coming up with "non-printing" characters, although you will see some spaces,
+linefeeds, beeps, and other interesting things happening on the screen.  From
+ascii 192 through 255 you have three columns, and you will note that the center
+column (the AND95 column) does not match the international characters generated
+in columns 1 and 3.  However, AND223 (the third column) does match column 1
+exactly.
+
+You will also note that characters 128-159, including some common graphics and
+math symbols is also translated correctly with AND223; with AND95, those
+characters become non-printing characters. -- Also note that ANDing with 95
+starts with the "@" symbol, CHR$(64), rather than with "A", CHR$(65) which
+seems like where you would really want uppercase conversion to start, if only
+for neatness in controlling what is happening with the code. (192-128 equals
+64; 64 = "@")
+
+ 10 FORA=128TO255:PRINTUSING"### ";A;
+ 20 A$=CHR$(A):PRINTA$;
+ 30 B$=CHR$((A)AND95):PRINTB$;
+ 40 C$=CHR$((A)AND223):PRINTC$
+ 50 FORB=1TO100:NEXT:NEXT
+
+Re creation of a "blank space" (CHR$(32)) with AND95: I had a slightly
+different version of the above program the first time I ran it, and noted the
+difficulties with characters in the range of 137-141 and 169-173 where there
+were apparent blank spaces, line feeds and skips.  Upon closer examination,
+these convert (with AND95) to the cursor line characters TAB, Linefeed, Form
+feed, and carriage return.  I misinterpreted them as "extra spaces, i.e.
+printing CHR$(32).  They were, in fact, printing characters 9-13, which I
+"guessed" to be blank spaces.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062 
+
+   Your program illustrates the point, but you've slightly mis-stated its
+output for the values 192-255.  Only part of that range (192-223) is preserved
+by AND223.
+   Try merging the following lines, to generate a .DO file for closer
+inspection:
+
+ 5 OPEN"CHR$HI"FOROUTPUTAS1
+ 50 PRINT#1,USING"### \\ \\ \\";A,A$,B$,C$:NEXT
+
+   After looking at the file, I don't see anything that makes AND223 either
+more or less significant than any other one-bit mask.  It preserves half the
+values (the ones with bit-5 originally off), and it changes half of them (by
+turning bit-5 off when it was originally on).  There doesn't seem to be any
+useful pattern to the 'translations' it makes (eg., lower to upper-case as in
+the <128 range).  And, from inspection, it would be hard to argue that the
+'preserved' characters are more important than the ones that get changed.
+   Of course, we're now looking at a machine-specific version of characters
+from 128 to 255.  From one of your earlier messages, I inferred the existence
+of a more universal 'international standard' designed intentionally to make the
+bit-5 mask a useful device -- in effect extending the wisdom of those who
+contrived the <128 ASCII table.  Is there any particular literature you can
+refer me to?
+
+   Concerning your note that "ANDing with 95 starts with the '@' symbol ...
+rather than with 'A'," I can't help it.  That's the way the mask works, given
+the table of characters associated with the values it's translating.  The
+preferred method, AND223, works precisely the same way for standard ASCII
+alphas (values <128).
+   Again, for those values there is *no* difference between AND95 and AND223:
+
+     bit-7 bit-6 bit-5 bit-4 bit-3 bit-2 bit-1 bit-0
+95=    0     1     0     1     1     1     1     1
+223=   1     1     0     1     1     1     1     1
+
+   If bit-7 is significant (i.e., you care about values from 128 to 255), you
+need to use 223.  If it's not, you can use either 223 or 95.  If bit-14 were
+significant, you could use 32735.  All those values will convert lower-case
+'keyboard' alphas to upper case; and all will make non-sensical changes to
+other data.
+   This application of the ANDing routine is, in a sense, artificial -- much
+like your hypothetical (AND 5)-15.  You use it if it works.  And you grab the
+good and filter out (as much as you can of) the bad.  Kind of like taking a
+vacation in Southern California.  <grin>
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735 
+
+Ah, but characters above CHR$(223) are Tandy-specific graphic symbols, and one
+wouldn't normally care to have them converted to their upper-case equivalents.
+
+My only claim, in opposition to use of AND95 as a method of case conversion is
+that it does not maintain character integrity when used with text which
+contains international symbols in the range 192-223, which are very commonly
+used by many who correspond, or work in international languages.  It is obvious
+that the AND technique, either 95 or 223 is not perfect... although I seem to
+be arguing that 223 is "more perfect" than 95. (grin)
+
+However, since you insist on confusing me with logic, facts, and binary
+examples, and since, not being a mathmatician, I don't really fully understand
+the ANDing, ORing, XORing processes, I will defer to your greater clarity, and
+agree that whatever works is the best way for a programmer to go.
+
+Now, shall I go back and make this thread public, so Phil can capture and
+enshrine it's wisdom forever?  A wave of the magic wand, and everyone can see
+it.  (and wonder about our sanity) (grin)
+
+PS, I have no reference material I can point you to, other than the PGMTIP.009
+file which was developed over two years ago when the technique was first
+discovered and documented.  You might query the file's author.  (double grin)
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062
+
+   And I defer to your much broader knowledge of what people actually *do* with
+these machines.  The preferred AND223 _is_ the way to go for generalized
+applications (full-string conversions, principally) that might use the ultra-
+ASCII chr$ set.
+   I was only trying to save one programmer one byte -- and look at all the fun
+it caused!  Sure, if Phil thinks anyone would care to read this stuff, tell him
+to .THD away.
+
+   ANDing and/or ORing are really not that mysterious.  At the risk of boring
+you, let me illustrate how the AND223 generates capital letters from lower-case
+ASCII:
+   The letter 'K' carries an ASCII value of 75.  Small 'k' has the value 107.
+Compare the binary equivalents of those numbers:
+
+        bit-7  bit-6  bit-5  bit-4  bit-3  bit-2  bit-1  bit-0
+  75=     0      1      0      0      1      0      1      1
+ 107=     0      1      1      0      1      0      1      1
+
+   The difference?  Bit-5.  Designers conveniently assigned values to the ASCII
+alphas so that this single bit 'toggles' between capital and lower case
+letters.  (I digress for a moment to note that we are talking about the
+_alphabet_ and not the _keyboard_.  There is no such thing as a 'capital 7',
+and I don't know of any design efforts to link unshifted '7' to a specific
+shift-'7' character.)
+
+Back to our theme: if we can "force" bit-5 to a value of 0, then any alpha
+character we're looking at will be "forced" to upper case. That's where the
+AND routine comes in.  When we say X AND Y = Z, we're talking about a bit-by-
+bit comparison of the binary values for X and Y.  If the routine finds that
+bit-n of X AND Y are both 'on' (have values of 1), it assigns a 1 to bit-n of
+Z.  If bit-n is 0, in X, Y, or both, it becomes 0 in Z.
+
+   Easier to "see" than to write about:
+
+     X  11111111   00000000   10101010
+AND  Y  00001111   00001111   00001111
+        --------   --------   --------
+   = Z  00001111   00000000   00001010
+
+   If a bit in X carries the value 0, it remains 0 in Z.  If the bit in X is a
+1, it will remain 1 if the equivalent bit in Y is 1, or change to 0 if the same
+bit in Z is 0.
+   Another way of looking at it: if the bit value in Y is 1, the value in Z
+will be the same as it was in X.  If the value in Y is 0, it will be 0 in Z, no
+matter what it was in X.
+
+   Now we know how to "force" bit-5 of the ASCII code to a value of 0.  We AND
+it with any number containing a 0 in bit-5.  But, since we don't want to change
+any other bits, we'll use the number where bit-5 is 0, and all the others are
+1's.
+
+        bit-7  bit-6  bit-5  bit-4  bit-3  bit-2  bit-1  bit-0
+          1      1      0      1      1      1      1      1
+
+   The decimal value of that number is ... 223.
+
+   Make sense?
+                Best wishes,
+                   Van
+
+p.s.  at the risk of *really* boring you, I could also explain why OR32ing
+an ASCII alpha value will convert the character to _lower_ case....

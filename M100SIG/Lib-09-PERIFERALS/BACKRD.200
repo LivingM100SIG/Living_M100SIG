@@ -1,0 +1,520 @@
+This file describes converting BACKRD.100, a program for the 100/102, so it
+will run in a 200, allowing the user to backup all files in a 256K Node RAMdisk
+to a PC clone, using M100CO.EXE in the PC to simulate a TDD (Tandy Portable
+Disk Drive). It results in a fast, automatic way to backup all Node files to a
+PC, requiring only minutes to copy all files to a PC disk.
+
+Required:  Copies of BACKRD.100 (Lib 9)  (DOC's in file)
+
+		     HXFER.200  (Lib 10) (and HXFER.DOC)
+
+		     PDSK03.200 (Lib 10) (Read Power-Disk Manual in PDSK02.200
+		     if you plan to use Power-Disk regularly)
+
+		     M100CO.EXE (Lib 9)  (and M100CO.DOC) (download into PC)
+
+
+
+Sb: #Node/IBM transfer
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: sysop
+
+Are there any files in the LIBs which will allow me to backup a Node Datapack
+to my IBM-clone hard drive? The Node is on a Model 200.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+The program BACKRD.100 in Library 9 (DOCs are in the file) will backup files
+in a Node Datapak to a TDD disk, using Power-DOS in the computer.  The program
+M100CO.EXE (Read M100CO.DOC), also in Library 9 will make a PC think it's a
+TDD.
+
+BACKRD should run in a 200, using Power-Disk, but may require some changes. If
+it doesn't work, let me know and I'll explore.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+I just looked at BACKRD, and it's 100-specific, will need to be modified to
+run in a 200.  Can you do that, or do you need help on it?
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062
+
+Thanks very kindly for the offer, Tony. What I'm looking for is something like
+PCXFER, which will allow me to pump files from the 200 into the desktop
+without stopping at a TDD. I'm going to try PCXFER later today; it's always
+worked for me with the 100, and I think all I'll have to do is change the
+STATs.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+I guess I didn't explain it clearly enough... there is no TDD involved.  You
+don't even have to own one.  The BACKRD program, along with Power-DOS/Disk
+saves data out the RS-232 port _as_if_ it were going to a TDD.
+
+Meanwhile M100CO is running in the PC, which is attached to the RS-232 port,
+and the PC _thinks_ it's a TDD.  So when the backup program runs, it saves
+files from the Node datapak to the PC, which saves them on disk.
+
+I think PCXFER requires you to manually save files from RAM to the PC... the
+implication is that it's a "transfer" program.  You'd have to move files from
+the Node into RAM, then on to the PC, all manually.  The BACKRD/M100CO process
+would be all automatic.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062
+
+Sonuvagun! That's what I want to do, all right.
+
+Meanwhile, I've made some progress on another approach. I have the 200 and the
+desktop connected through a null modem cable, and by running Procomm on the
+desktop and Telcom on the 200 I've got them swapping files. However, any file
+I want to send from the 200 to Procomm has to be in main Ram, not the Node. Is
+there anything in the LIBS that lets Telcom or something like it run in the
+Ramdisk? Maybe SXM?
+
+(I should have thought of Procomm/Telcom sooner...sorry to bug you with it
+before I thought it through!)
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+Yeah... well, that's always worked; but it's not what you originally asked
+for. And it involves a lot more work.
+
+I've never had any success in running programs directly from the Node, and to
+the best of my knowledge no one has developed any other program that would do
+what you propose, because such programs do not actually run _IN_ the Node...
+they are moved into RAM to run, so they have access to the operating system.
+When you edit a file "in the Node", you're actually in RAM under control of
+the RAMdisk's ROM.  If there is not enough room in RAM to edit a file, or run
+a program, it doesn't open or run.
+
+Anyway, whatever works.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062 (X)
+
+I had a sneaking suspicion that was the case. Oh, well, I'll just move the
+files into RAM and use TELCOM to pop 'em onto the hard drive. 9600 baud seems
+to give errors, but 4800 works perfectly, and I can't read at 9600 baud anyway
+(grin).
+
+Thanks for the help, Tony. I think I'm gonna love this Node...it's a real
+trip, after writing five books on a 100, to have the WHOLE working manuscript
+of the next one in memory at once! I haven't gotten this excited since I got
+my Chipmunk.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062 
+
+Tony, I'd like to give BACKRD a try. Would it be too much trouble to ask you
+to modify it to run on the 200? It's beyond me.
+
+Meanwhile, I'll get POWR-DISK for the 200 (LIB 10, right?) and M100CO. Thanks!
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+Power-Disk and M100CO are in Library 9.  For Power-Disk, you only need three
+files to get it running, instructions, loader and data file.  Start by reading
+the instructions in PDSK01.200, and get the files that are recommended there.
+
+M100CO.EXE should be downloaded into your PC.  M100CO.DOC contains the
+instructions.
+
+To use BACKRD in the 200, download it, and remove CALL17001: from line 9.  It
+serves no real purpose in the program, only making screen display in reverse
+video, but is machine specific.
+
+Change 63013 in Line 11 to 61162.
+
+Change -87 in Line 23 to -737.
+
+Change -86 in Line 23 to -738.
+
+Change -86 in Line 24 to -738.
+
+The program should now run in the 200, since those are the addresses that make
+the program machine-specific, and you've just changed them to the addresses in
+the 200.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062 (X)
+
+Now that I've looked at some of the Powr-D files, I have a couple of
+questions. (you guessed, right?)
+
+The POWR-D.INF file says that no one's running it on a 200. Hmm? I trust that
+this is obsolete information.
+
+Could TINY.PWR do the same job, since all I'll be using it for is the BACKRD
+program?
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+No, you're in the wrong files.... you've located Power-DOS for the 100/102.
+You want Power-Disk, which is for the 200, and starts with the file
+PDSK01.200.
+
+TINY will not work in the 200, since it is part of the Power-DOS series.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062
+
+Many thanks, Tony! Would you like me to upload a copy of BACKRD to LIB 10 when
+I get it modified and working?
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062 (X)
+
+My brain is flowing out of my ears, and I haven't gotten BACKRD running yet.
+Let me see if I can tell you what I've done, so you can tell me what I did
+wrong.
+
+I loaded Power-Disk by running the programs in PDSK03.200, converting the hex
+file with HXFER.REL. I made the modifications to BACKRD and saved it in the
+Node. Then, following the BACKRD instructions, I killed all files in main RAM,
+went to BASIC and entered CALL 63013,1. Dumb move...that must be the call for
+the 100. Arctic start.
+
+SO, I reloaded Power-Disk. This time I tried CALL 61162,1 since the Node
+instructions said 61167 was the address for BASIC calls for the 200. Lockup.
+
+SO, I arctic started, reloaded everything, and tried CALL 61167,2. This got me
+the Node menu. I started M100COM on the desktop and ran BACKRD. I got
+"Communication error" on the desktop and "Error 18 in Line 22" on the 200.
+
+That's where it stands right now. I think Power-Disk is still loaded, since
+the bank shows 17446 bytes free and there's nothing in main RAM.
+
+Next move, doctor?
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+Huh!  Well, you certainly have a problem there somewhere.  Let me try it all
+myself, and see what happens.  I'll get back to you in the morning.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+Well, I didn't duplicate your cold start... in fact, except for entering two
+minor points, I followed the directions in the BACKRD file, and the program
+ran as expected, and backed up stuff, as expected, with one minor glitch.
+
+Your messages described in detail what you did to get the program running,
+except for one step.  Did you use START.BA to load and hook Power-Disk into
+the operating system?
+
+Here's what I did, which you should be able to duplicate.  I selected a little
+used bank in the 200 to experiment in.  I saved all files in the bank to disk.
+Obviously that meant I already had Power-Disk operational in the bank.  So I
+killed all files after saving, then removed Power-Disk with the command
+LFILESOFF:CLEAR256,MAXRAM:MENU.  At this point, all I had in the bank was
+RAMDSK on the main menu.  Through RAMDSK, I loaded START.BA and POWR-D.CO from
+the Node, and ran START to load Power-D.
+
+Then I transferred BACKRD from bank 1 into bank 2, and saved it to the Node.
+BACKRD had already been edited as previously advised.
+
+At this point, instead of killing RAMDSK and using a CALL to enter the Node's
+menu, I went to the menu with RAMDSK, leaving it in memory.  Moved the cursor
+over BACKRD, pressed the enter key, and away it went -- Saved the first file,
+displayed "Ok" and "RUN9" and I pressed the ENTER key to save the next file.
+That saved, displayed "Ok" and "RUN9" so I pressed ENTER to save the next
+file. And so it goes....  I saved several files direct to disk, and since it
+was working, aborted the test after about the sixth file.
+
+The "glitch" I mentioned, is that you shouldn't have to press the ENTER key to
+get each file to save... it should be automatic.  But that's a minor thing.
+Also, I did not have M100CO running in the PC, I saved directly to TDD, since
+my PC is not readily available here, and that part of it shouldn't matter,
+unless there is some as-yet unreported problem with M100CO.
+
+So try the above, and see if you duplicate my results.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+I made some changes in lines 23 and 24 to fix that "glitch" I described.  If
+you merge these lines into the BACKRD program it will run automatically, as it
+should, so you don't have to press the ENTER key after every file, in order to
+save the next file.
+
+23 A="Run9"+CHR$(13):FORT=1TO5:POKE2*T+64797,ASC(MID$(A,T)):POKE2*T+64798,0
+24 NEXT:POKE64798,5:KILLB:END
+
+And, I let the program run to completion, to backup all the files in my Node
+to disk.... took 3 disks (whew!).  But it ran flawlessly; to the TDD anyway.
+Will try it with a PC tomorrow, after getting M100CO up and running, and will
+let you know if that works as it should.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+OK, I have now loaded and ran M100CO in a PC clone, and successfully backed up
+Node files to the PC with BACKRD.
+
+In the process I discovered your Error 18 in Line 22, and read about the cause
+and cure in the file M100CO.THD.  It's caused by the PC when it is running at
+too slow a speed to keep up with the incoming data from the portable at 19,200
+baud.  The solution is to set your PC to run in "turbo mode", or at the
+fastest clock speed possible.  I got the error 18 when the PC was running at
+4.77 mhz, but not at 10 mhz.  At 10 mhz, BACKRD ran completely, backing up the
+entire Node contents to a disk in the PC, and with the line 23-24 changes, ran
+automatically, without operator intervention.  It seems to meet your needs
+exactly.
+
+One other thing I did find, some characters which are allowed in filenames in
+the portables, are not allowed in filenames in the PC, and can cause a
+filename error.  Specifically, you can have a filename in the portable which
+includes a question mark; but you cannot have such a filename in the PC.  If
+you have any files which contain non-alphanumeric characters, you should
+rename them first with the Node's F2 button.
+
+So, make the line 23-24 changes, run your PC at the fastest possible speed,
+and try again.
+
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062
+
+Wow....service beyond the call of duty! Hope it didn't keep you up all night.
+
+I set the desktop into Turbo Mode and tried again. Same result...it loads the
+first filename and gives a communications error. After reading M100CO.THD, I
+suspect the problem may be with the desktop (oh, great...I'm even more
+ignorant there than I am with the 200!). I didn't configure the thing, so I
+don't know how many buffers there are or whether or not I have any TSRs
+fouling up the works. I don't think so, since I run TAPCIS extensively and it
+doesn't like TSRs either.
+
+I'm going to fiddle with the desktop config at lunch today; the first thing
+I'll try is increasing the number of buffers. Then I'll reread M100CO.THD and
+see if anything else occurs to me. Like maybe wiggling the cable connectors.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+Well, I have a TSR in the PC which does not appear to conflict with M100CO.
+But perhaps you have something that does.
+
+I believe my buffers are set at 20 -- I didn't configure this machine either,
+so can't help you much there.
+
+I suspect the clock speed in the PC isn't allowing the program to handle the
+19.2K that the DOS uses to send data to the disk/PC.  I see that there has
+been some work to change the baud rate, and it may be necessary to do
+something similar in your case, although I didn't have theat problem.  That
+will take some digging to find the baud rate in Power-Disk, I suspect.  It can
+be reset in M100CO by a "switch", and in Power-DOS by a specific statement. 
+But that statement doesn't work with Power-Disk I'm afraid.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062
+
+Yeah, I tried the slower baud rate option in M100CO. Nothing happened at all.
+
+I'm going to ask the guy who configured my system about the clock speed and
+seee what I can find out. Meanwhile, if there was a way to get Power-Disk to
+send at tle lower baud rate, that would probably solve it. I don't have to
+wring every bitof speed out of the system, after all.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062
+
+Off we go again. I tried kicking the PC into turbo mode, and ran BACKRD. It
+transferred 128 bytes of the first file and gave me a communications error
+(error 18 in line 22 again on the 200).
+
+I checked my CONFIG.SYS file and saw that I have 20 buffers. Not that I know
+from buffers, but I changed it to 30. No change.
+
+Then I tried the poke to make Power-Disk run at 9600 baud (from the M100CO.THD
+file), set M100CO to 9600, and ran BACKRD. The 200 screen showed that it had
+begun transferring the first file, and everything froze; nothing ever showed
+up on the PC. Tried that one both in turbo mode and normal.
+
+Next I'm going to try reloading Power-Disk, on the off chance that I fouled it
+up somewhere in all of this experimentation. Film at 11.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+I don't think the poke to slow down the baud rate of Power-Disk that's shown
+in the M100CO.THD file will work in the 200 version. -- The 200 version loads
+between 58960 and 61103, much below the 61291 address given to poke. That
+would put the address up in the reserved RAM area, and poking that
+indiscriminently is liable to lead to all sorts of grief.  I'll have to go
+looking for the equivalent address in the 200 version of Power-Disk.
+
+PEEK(HIMEM+441) shows 195, not the 57 indicated in the M100CO.THD file, so
+it's not the same routine at that location in the 200 version.
+
+But I think slowing down Power-Disk to 9600 baud is the way to go in your
+particular equipment combination.  I'm working on it...
+
+That "Error 18" simply means the PC is not able to keep up with the 19.2K baud
+rate that the portable is sending; and that's because the clock speed, or the
+combination of interrupts, clock speed, and memory wait states isn't fast
+enough to deal with the dataflow.  We have to 1) Speed up your PC, or 2) Slow
+down the portable.  Working on the latter.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062
+
+That was just about what I was deciding too. I chatted with my expert, and he
+says that short of a major hardware upgrade I'm not gonna speed up the PC.
+Since M100CO has the 9600 baud option, that seems like the simplest way to go.
+I'll be standing by...thanks!
+
+Hope that poke I made doesn't foul things up! I'll cold start that bank just
+in case and reinstall Power-Disk. Having the Node sure makes cold starts less
+daunting; everything's still safe in that little box stuck underneath.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+After loading Power-Disk, poking 56 to 59404 will change the output baud rate
+to 9600 baud, without affecting anything else.  Then running M100CO in the PC
+by typing:
+
+M100CO /9600
+
+at the DOS prompt will do it.  I ran a successful complete backup test at this
+speed, and although slower, it works just as well as the faster 19.2K baud.
+Should work for you, unless your PC is terribly non-compatible.
+
+So the plan is, Load Power-Disk with the START.BA program, then go into BASIC
+and type: POKE 59404,56 and press ENTER.  Then get M100CO running in the PC,
+so it's ready to receive, and go into your Node and run BACKRD.
+
+I also made some changes to line 22 of BACKRD, which makes a better screen
+display.  When the program restarts, it leaves the "Ok, RUN9" displayed on the
+screen from then on, so you can't be sure exactly what point you're at.
+Changing the SPACE$(120) statement in line 22 to CHR$(27)"J" clears that off
+each time while the program is actually saving.  If you want to make that
+change, the line now looks like this:
+
+22 PRINT@45,"Saving "C;CHR$(27)"J":SAVEMC
+
+Let me know whether it works for you.
+
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062
+
+Tried the poke. Still no luck. With 9600 set in M100CO nothing happens at all;
+when I abort BACKRD I get the Error 18 in line 22 again. With M100CO set to
+19200 baud I get a disk error on the 200 and communications error on the PC.
+That's the only indication I have that the two machines are actually connected
+(sigh). I've tried this in both turbo and normal mode, after reloading
+Power-Disk, and in another bank in the 200.
+
+I guess the problem is somewhere in my PC's clock speed or wait states, about
+which I know nothing. I suppose I'm stuck with Procomm until I can get someone
+to look at the PC.
+
+Thanks anyway for all the effort...I HAVE learned a lot.
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+Well, I've just about exhausted suggestions, but here are two final ones....
+
+1. Make sure you are using a null modem adapter somewhere in the line between
+the 200 and the PC.
+
+2. Make sure that pins 4 and 5 in the cable, or adapter, are shorted together
+at the 200 end, and again at the PC's end, and do not connect to each other.
+(no connection between 4 and 5 on the 200's end and 4 and 5 on the PC's end)
+
+And if it still doesn't work, there's no where else I can go with it for you.
+It works here, and if it doesn't work there, there's something causing it not
+to work, and I don't know what. Sorry.
+
+What brand/type of PC-clone do you have?  How much memory?  Does your cable
+connect to COM port 1 or COM port 2?  May be that M100CO uses only one port...
+but which one?  Works in COM 1 on mine.
+
+
+Fm: GERALD LINDSAY 73717,2710
+To: Doug Pratt (ModelNet) 76703,3041
+
+Doug you may need to change the UART for the serial port on the PC. There have
+been a lot of complaints by those PC owners with 9600 and 19200 modems that
+they have nothing but trouble. The culprit has been an older style UART that
+doesn't keep up with the data flow at those speeds. It overflows the buffers.
+Check on the IBMCOM forum and ask around, I'm sure they can direct you to the
+correct UART. BTW whenever I used M100Co in the past I ALWAYS had to use COM
+1, it would not work on COM 2 of any of my machines, don't have the slightest
+idea why. BTW glad to see you're having "fun" with your new toy.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Tony Anderson 76703,4062
+
+The null modem adapter is a Radio Shack standard, and it works with Procomm
+talking to TELCOM, so I kinda doubt that it's the problem.
+
+I have been attempting to use COM2. M100CO has a switch for it; you boot the
+program by typing M100CO /COM2. Again, it works with Procomm. I think I'll try
+to figure out how to get into COM1; that's Gerry Lindsay's suggestion. Maybe
+this thing just doesn't like to use COM2.
+
+It's an ARC Turbo from American Research, 640K and 50 meg hard drive.
+
+Please don't apologise...you've been very helpful through the whole thing! I
+have had much worse help from paid consultants.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: GERALD LINDSAY 73717,2710
+
+Sonuvagun. I've been using COM2, since the modem is on COM1. I'm not even sure
+how to switch it, since I have an internal modem. I'll tinker. Thanks!
+
+
+Fm: Tony Anderson 76703,4062
+To: Doug Pratt (ModelNet) 76703,3041
+
+Aha!  And there it is in the second paragraph of the M100CO.DOC file... The
+program defaults to use COM1.  If you need to use it on COM2, then add the
+switch /COM2 on the command line when you execute the program.
+
+So at the DOS prompt, you'd type:
+
+M100CO /9600 /COM2
+
+

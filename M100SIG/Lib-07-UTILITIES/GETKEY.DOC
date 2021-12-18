@@ -1,0 +1,118 @@
+	 TRAPPING THE BREAK, PAUSE, PASTE, PRINT AND LABEL KEYS
+
+		       A SUBSTITUTE FOR INKEY$
+
+
+The following is a BASIC routine which creates a callable machine language
+routine to get a character from the keyboard similar to the INKEY$ function
+in BASIC.  A major difference is that the special keys including BREAK and
+PAUSE are effectively trapped and function keys are returned as follows:
+
+			KEY     RETURNED
+			---     --------
+			F1      200
+			F2      201
+			F3      202
+			F4      203
+			F5      204
+			F6      205
+			F7      206
+			F8      207
+			LABEL   208
+			PRINT   209
+		  SHIFT+PRINT   210
+			PASTE   211
+		  SHIFT+BREAK     3
+			PAUSE    19
+
+All other keys return their normal ASCII values.
+
+PAUSE does not stop execution and BREAK does not halt the program.  PRINT and
+SHIFT+PRINT do not print the screen.
+
+This is an effective way of trapping those special keys, for example instead
+of
+		Press F1 to obtain printout
+
+you can say:
+		Press PRINT to obtain printout
+=======================
+A few words of warning: If you use this routine, DO NOT use A0$ or CA$ or CZ!
+======================= anywhere else in your program!
+
+To implement this, put it in your program as a subroutine and GOSUB to it
+before you need to use it.  That will establish the routine.  Then, when
+you want to use it, issue the command:
+
+			CALL CZ!
+			A0% = ASC(A0$)
+
+And the key (if any) pressed will be returned in the string A0$.
+
+You can use this instead of:
+
+			A0$ = INKEY$
+			A0% = ASC(A0$)
+
+Here's the code.  Put in your own line numbers.  Be sure to add a RETURN
+at the end.  The line with the * to the left of it (RESTORE ????) will need
+to be changed so that the ???? reflects the line number where the DATA
+statement is found.
+------------------------------------------------------------------------------
+
+   CA$ = STRING$(33, 0)                    ' CA$ will hold the code
+   A0$ = " "                               ' A0$ will capture the value
+
+   VC! = VARPTR(CA$)                       ' Locate the two primary
+   VA! = VARPTR(A0$)                       '   strings in the routine.
+
+   POKE VA! + 1, PEEK(VC! + 1)             ' Set A0$ to the first
+   POKE VA! + 2, PEEK(VC! + 2)             '   position in CA$
+
+   CZ! = PEEK(VC! + 1)+256 * PEEK(VC! + 2) ' CZ! will be the value to CALL
+
+*  RESTORE ????
+   FOR     I = 1 TO 32                     ' Read in the machine code and
+	   READ A                          '   POKE it serially into the
+	   POKE CZ! + I, A                 '   string, byte by byte for all
+   NEXT    I                               '   33 bytes.
+
+   POKE CZ! +  4, PEEK(VC! + 1)            ' Now, POKE in the jump locations
+   POKE CZ! +  5, PEEK(VC! + 2)            '   and the storage location in
+   POKE CZ! + 11, PEEK(VC! + 1) + 15       '   the proper places.  This had
+   POKE CZ! + 12, PEEK(VC! + 2)            '   to wait because we didn't know
+   POKE CZ! + 16, PEEK(VC! + 1)            '   where in string space BASIC
+   POKE CZ! + 17, PEEK(VC! + 2)            '   would put CA$.
+   POKE CZ! + 21, PEEK(VC! + 1) + 6        '
+   POKE CZ! + 22, PEEK(VC! + 2)            '
+
+   CZ! = CZ! +  1                          ' Increment the CALLing location
+					   '   to the beginning of the actual
+					   '   routine.  Remember, the first
+					   '   byte is used for storage.
+
+????   DATA 62, 0, 50, 0, 0, 205, 66, 114, 200, 210, 0, 0, 198, 200, 50, 0
+????   DATA 0, 254, 3, 202, 0, 0, 22, 1, 30, 144, 6, 1, 205, 197, 114, 201
+
+------------------------------------------------------------------------------
+	The following Assembly language segment gives the routine.  Obviously
+	the ORG will change as will the store and jump locations.  7242 is
+	the location for the ROM routine KYREAD which scans the keyboard.
+	72C5 is the location for the ROM routine that sounds the tone (like
+	the BASIC command SOUND).
+
+	0000                                    ; location for A0$
+	0001    3E 00           MVI  A,00H      ; Clear the Accumulator
+	0003    32 00 00        STA  0000       ; Store Accumulator in A0$
+	0006    CD 42 72        CALL 7242       ; Scan keyboard
+	0009    C8              RZ              ; Exit if no character
+	000A    D2 0F 00        JNC  000F       ; Jump if normal character
+	000D    C6 C8           ADI  C8H        ; Add 200 if special key
+	000F    32 00 00        STA  0000       ; Store Accumulator in A0$
+	0012    FE 03           CPI  03H        ; If it is a BREAK  then
+	0014    CA 06 00        JZ   0006       ;    jump back for an EXIT
+	0017    16 01           MVI  D,01H      ; Set MSB of frequency
+	0019    1E 90           MVI  E,90H      ; Set LSB of frequency
+	001B    06 01           MVI  B,01H      ; Set Duration of tone
+	001D    CD C5 72        CALL 72C5       ; Give audio feedback
+	0020    C9              RET             ; Return to BASIC

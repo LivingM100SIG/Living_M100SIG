@@ -1,0 +1,3529 @@
+
+               PPPPPPPP     OOOOOOO    WW           WW   RRRRRRRR
+               PP     PP   OOOOOOOOO   WW           WW   RR     RR
+               PP     PP   OO     OO   WW           WW   RR     RR
+               PPPPPPPP    OO     OO   WW    WWW    WW   RRRRRRRR
+               PP          OO     OO   WW   WW WW   WW   RR  RR   =====
+               PP          OO     OO   WW   WW WW   WW   RR    RR =====
+               PP          OOOOOOOOO    WW  WW WW  WW    RR     RR
+               PP           OOOOOOO      WWWW   WWWW     RR      RR
+            
+                        DDDDDDD      OOOOOOO     SSSSSSSS
+                        DD    DD    OOOOOOOOO   SS
+                        DD     DD   OO     OO   SS
+                        DD     DD   OO     OO    SSSSSSS 
+                        DD     DD   OO     OO          SS
+                        DD     DD   OO     OO          SS
+                        DD    DD    OOOOOOOOO          SS
+                        DDDDDDD      OOOOOOO    SSSSSSSS 
+
+
+
+
+
+                              P O W E R  -  D O S 
+           
+           
+           
+                         POWR for Portable Disk Drives 
+           
+           
+                                 Owner's Manual 
+           
+           
+           
+           
+
+           
+           
+           
+           
+           
+           
+           
+           
+                     Transcribed By Denny Thomas [76701,40] 
+               Exclusively for CompuServe Model 100 Forum Members 
+           
+
+
+            
+                         (C) 1986 Acroatix Incorporated 
+                               All Rights Reserved
+
+
+
+                                  Introduction 
+           
+           
+          POWR-DOS is a comprehensive utility package to access the
+          Tandy Portable Disk Drive (100K Version - Called "PDD" in
+          this manual).  At the heart of POWR-DOS is an invisible
+          machine-language program that enhances TEXT and BASIC.  Once
+          these enhancements are in place, you have complete access to
+          the PDD using BASIC commands.  Surrounding this invisible
+          program are a number of BASIC programs.  You can load these
+          independently of each other, and use them only when needed. 
+           
+           
+          Chapters One through Six in this manual Explain how to use
+          the POWR-DOS utilities.  Each of these chapters consists of
+          three sections: 
+           
+             * BASIC Procedures for using the utility.  These
+               instructions are as brief as we could make them; they
+               will help you get "up and running" as quickly as
+               possible. 
+           
+             * Notes and Options to the basic procedures.  Here you
+               will find more detail and interesting options once you
+               have mastered the basics.  You may skip this section on
+               first reading, but you will probably want to come back
+               to it later. 
+           
+             * Errors and Recovery from the more common problems.  Turn
+               to this section when something does not go as expected. 
+               We only covered the most common errors; to cover
+               everything would have taken volumes. 
+                                C o n t e n t s 
+           
+           
+          Chapter 1: Loading POWR-DOS.......................1
+               Basic Procedures.............................2
+                    Choose the Loader Program...............2
+                    Choose POWR-DOS.........................2
+                    Shift the BASIC Programs................3
+               Notes and Options............................3
+                    When to Use IPL.BA......................3
+                    Using TINY..............................4
+                    Specifying an Immovable Program.........5
+               Errors and Recovery..........................6
+                    Errors in PL and IPL....................6
+                    Errors in TINY..........................7
+                    Errors While Loading POWR-DOS...........7
+           
+           
+          Chapter 2: POWR-DOS Basics........................9
+               Basic Procedures.............................9
+                    Is POWR-DOS Active?.....................9
+                    Loading a BASIC File....................9
+                    Examining Disk and RAM Files............10
+                    Saving BASIC Programs...................11
+                    Loading and Saving Text Files...........11
+                    The Memory Eaters.......................12
+                    Deactivating POWR-DOS...................12
+               Notes and Options............................13
+                    Side Effect of LFILES V.................13
+                    Options when Loading BASIC Programs.....13
+                    Options with LFILES.....................13
+                    Text File Options.......................14
+               Errors and Recovery..........................14
+
+          Chapter 3: Using DMENU.BA.........................15
+               Basic Procedures.............................16
+                    Viewing Files...........................16
+                    Saving a File to Disk...................17
+                    Loading a file into RAM.................17
+                    Killing a File..........................17
+                    Leaving DMENU...........................17
+               Notes and Options............................18
+                    Multiple Pages..........................18
+                    Selecting Multiple Files................18
+                    Operations with Multiple Files..........19
+                    Running Programs from DMENU.............20
+                    Examining Document Files................21
+               Errors and Recovery..........................22
+          Chapter 4: Formats and Backups....................24
+               Basic Procedures.............................24
+                    Formatting..............................24
+                    Backups.................................25
+               Notes and Options............................29
+                    Using FORMAT.BA.........................29
+               Errors and Recovery..........................30
+
+          Chapter 5: Disk-Based TEXT........................31
+               Basic Procedures.............................31
+                    Accessing Disk Files....................31
+                    Printing a File.........................32
+                    Editing a Small File....................32
+                    Appending to a Large File...............33
+                    Modifying a Large File..................34
+               Notes and Options............................36
+                    Adding New Print Formats................36
+                    Editing Options.........................37
+                    Accessing the Disk in TEXT..............37
+               Errors and Recovery..........................38
+
+
+          Chapter 6: Data Recovery..........................39
+               Basic Procedures.............................39
+               Notes and Options............................41
+                    How RECOVR Works........................41
+                    Deciding the File Type..................42
+               Errors and Recovery..........................43
+
+
+          Chapter 7: Command Descriptions...................44
+               DSKI$........................................45
+               DSKO$........................................47
+               LFILES.......................................49
+               LFILES FORMAT................................51
+               LFILES OFF...................................53
+               LFILES V.....................................54
+               LOADM ,F.....................................55
+               MAXRAMC......................................57
+               SAVEM........................................58
+
+
+          Chapter 8: Programming Tips.......................61
+               Side Effects.................................61
+               Re-starting Programs.........................62
+               Machine-Language Calls.......................63
+               Error Codes..................................66
+
+          Appendix A: Your Portable Disk Drive..............68
+
+          Appendix B: Reserved Memory.......................71
+
+
+
+                                    Chapter 1
+                                Loading POWR-DOS
+
+
+
+          POWR-DOS gives you access to your portable disk drive (PDD)
+          from your computer.  Yet, POWR-DOS comes on a disk, so the
+          question arises: how can you load in POWR-DOS itself?  The
+          answer is a special-purpose loader program which can access
+          the PDD only to load POWR-DOS.  We provide two different
+          loader programs; you choose one depending on your situation. 
+          Both programs are written in BASIC.  Each has its own
+          advantages and disadvantages:
+
+
+             * PL.BA ("program loader") operates with the PDD DIP
+               switches in their normal position.  Consequently, if you
+               frequently re-load POWR-DOS, PL.BA is more convenient. 
+               However, PL.BA is difficult to enter from the keyboard.
+
+
+             * IPL.BA ("initial program loader") is compatible with the
+               Tandy IPL.BA program (as listed in the Tandy instruction
+               manual.)  You can key it in quickly; further, PCSG's
+               Super ROM has IPL.BA built in.  However, each time you
+               run IPL.BA, you must set the DIP switches differently
+               from the running position, which can be annoying if done
+               often.
+
+
+          You may occasionally have use for both programs.  PL.BA is
+          probably handier most of the time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+           
+                                     Page 1
+          Chapter 1               Loading POWR-DOS            Page 2
+
+
+                                Basic Procedures
+
+                            Choose the Loader Program
+
+          If you are using another disk program already, such as
+          Tandy's FLOPPY.CO or our POWR-DISK, load in PL.BA from your
+          owners disk.  PL.BA operates correctly when all four DIP
+          switches are off; since this is their normal operating
+          position, you will probably not need to change them, but they
+          are worth checking the first time.
+
+          If you do not have access to your disk, then you must type in
+          IPL.BA.  (Note: if you have Super ROM, you can use the
+          built-in IPL.BA found in the ROM.)  To enter IPL.BA, get into
+          BASIC and enter the following program:
+
+
+          10 OPEN"COM:88N1DNN" FOR OUTPUT AS 1
+          20 PRINT#1, "S10985157C00AD7EF08B3AS901FE"
+          30 LOAD "COM:88N1ENN",R
+          SAVE "IPL
+          Menu
+
+
+          If you make an error in a numbered line, re-type it.  Once
+          you have returned to the menu, switch off the power on your
+          PDD.  Turn it over, and locate the four DIP switches.  (See
+          your PDD manual for more information.)  Move them all to the
+          "on" position.  Then, switch the power back on and insert the
+          POWR-DOS owner's disk.
+
+
+                                 Choose POWR-DOS
+
+          Once you have PL.BA or IPL.BA in place, run it from your
+          computer's menu.  If you are using a disk package (such as
+          POWR-DISK) that adds functions to BASIC, deactivate the disk
+          program first.  Refer to the product's manual for details.
+          When running the loader program, you will see the prompt:
+
+
+          Powr-DOS or Tiny (p/t)?
+
+
+          Answer with a "p" and press ENTER.  The loading procedure
+          with commence.
+          Chapter 1               Loading POWR-DOS            Page 3
+
+
+                            Shift the BASIC Programs
+
+
+          A question may appear:
+
+
+          Is it safe to move PROGRM (y/n)?
+
+
+          Instead of "PROGRM", the question will contain the name of a
+          BASIC program.  If the  program name is SUPERA or PG Design's
+          MENU program, see the section below about "immovable
+          programs"; otherwise, answer this question with a "y".  (It
+          is safe to move almost any BASIC program.)
+
+          The following message should appear:
+
+
+          POWR-DOS now active.
+          Press space bar for Menu
+
+
+          Press the space bar, and you will return to your computer's
+          menu.  There should be about 3,000 fewer bytes free than
+          before you started.  If you used IPL.BA (as opposed to
+          PL.BA), you must return the DIP switches to their normal
+          position: all off (Do this with PDD power off).  Then, you
+          can move on to the next chapter, "POWR-DOS Basics".
+
+
+
+                                Notes and Options
+
+
+                               When to use IPL.BA
+
+          Just about the only time you will want to use IPL.BA is after
+          a "cold start", when all your files are gone.  In this case,
+          IPL.BA is far easier to type in than PL.BA, which justifies
+          flipping the DIP switches.  However, if you cold-start
+          frequently, you may want to save PL.BA on cassette tape, or
+          leave yourself an electronic letter (on a bulletin board
+          service) containing PL.BA.  This way, you can use PL.BA,
+          which is easier, with a minimum of trouble.
+
+          Of course, whenever you remove POWR-DOS from RAM, you should
+          load a copy of PL.BA first.  This way, re-loading it will be
+          easy.
+          Chapter 1               Loading POWR-DOS            Page 4
+
+
+                                   Using TINY
+
+          POWR-DOS takes up about 3,000 bytes; the loading process
+          needs about 7,000 bytes to work successfully.  In
+          anticipation of possible memory problems, we provide TINY, a
+          program which gives you access to the PDD using 800 bytes of
+          memory.  TINY has limited functions; you will probably want
+          to use it only when you load and save files too large to fit
+          into RAM with POWR-DOS.
+
+          If you respond "t" to the question, "Powr-DOS or Tiny", you
+          will load in TINY.  If you are using IPL.BA, the :low
+          battery: light will flash irregularly after loading TINY; you
+          must turn off the drive and re-set the DIP switches before
+          proceeding. The TINY prompt appears as follows:
+
+
+          > C FFFFFF.XX (C=KLSQ)
+          >
+
+
+          The prompt is designed to remind you of TINY's functions. 
+          "C" stands for a command (one of K, L, S, or Q) and the F's
+          and X's help line up the files names.  All TINY commands
+          consist of a single letter, which stands for one of four
+          commands:
+
+
+             * L for Loading from disk;
+
+             * S for saving to disk;
+
+             * K for Killing a disk file; and
+
+             * Q for Quitting the program.
+
+
+          All commands require a file name. (Even "Q" may not work
+          unless you enter a file name.)  The file name must line up
+          with the F's and X's on the prompt.  So, for instance, to
+          save a file called MEMO.DO to the disk, enter the following
+          command:
+
+
+          > C FFFFFF.XX (C=KLSQ)
+          > S MEMO  .DO[ENTER]     <--- (You type this)
+          Chapter 1               Loading POWR-DOS            Page 5
+
+
+          Neither [L]oad nor [S]ave will overwrite an existing file. 
+          If you try to overwrite a file either in RAM or on disk, you
+          will get an "AE" (already exists) error.  If you are [S]aving
+          to disk, use TINY to [K]ill the old disk file first , then
+          try [S]aving it again.  If you are [L]oading a RAM file and
+          you get an AE error, you must [Q]uit TINY, kill the RAM file,
+          then run TINY again to [L]oad the file.
+
+
+          As you can see, TINY is a "no-frills" program.  It does have
+          one convenience, however; it remembers the last file name you
+          typed.  This can come in handy when overwriting files.  For
+          example, if you wanted to replace MEMO.DO on the disk, with
+          the MEMO.DO in RAM, you could use the following command
+          sequence:
+
+
+          > C FFFFFF.XX (C=KLSQ)
+          > S MEMO  .DO[ENTER]     <--- (You type this)
+          AE err
+          > C FFFFFF.XX (C=KLSQ)
+          > K[ENTER]               <--- (You type this)
+          > C FFFFFF.XX (C=KLSQ)
+          > S[ENTER]               <--- (You type this)
+
+
+                         Specifying an Immovable Program
+
+          POWR-DOS exist in memory as an invisible BASIC program file. 
+          The way that your computer manages its memory, BASIC programs
+          reside in the very bottom portion of RAM; POWR-DOS usually
+          resides in the very first possible BASIC position.  There are
+          many advantages to the method, but there are two significant
+          disadvantages:
+
+
+             * Software that loads BASIC programs from the "bottom up"
+               will cause cold-starts.  WARNING: FLOPPY.CO is the only
+               known program that does this!  After loading POWR-DOS,
+               do NOT use FLOPPY to load BASIC programs! (All other
+               FLOPPY functions will work fine.)
+
+             * Other software that uses BASIC files to "hide"
+               machine-language code cannot be moved and still run
+               properly.  There are only two programs of concern here:
+               SUPERA.BA and PG Design's bank transfer program.
+          Chapter 1               Loading POWR-DOS            Page 6
+
+
+          If you are using one of these immovable programs, its name
+          will appear in the "is it save to move" question.  Answer
+          "n", and the name of the next BASIC program may appear in
+          another question.  Answer "y" when a movable program name
+          appears.  POWR-DOS will still load properly.
+
+          Once you've loaded POWR-DOS "above" an immovable program, you
+          must adhere to an important restriction.  Do Not Kill The
+          Immovable Program until you turn POWR-DOS off.  If you
+          accidentally kill an immovable program, you will very
+          possibly cause a cold-start, so be careful.  See the error
+          section below for more details on what you should do if this
+          happens
+
+
+                               Errors and Recovery
+
+
+                              Errors in PL and IPL
+
+          Both PL.BA and IPL.BA are simple programs which contain very
+          little error-trapping.  The only reliable error indication is
+          ?OM, which means that you have insufficient memory to run the
+          program.  If this happens while loading POWR-DOS, try loading
+          TINY, then saving some files to the disk.  Kill the files you
+          saved, then try again.  If even TINY will not load, you have
+          very little memory left.  You must remove something to allow
+          for at least 900 free bytes before TINY will load.
+
+          If the load procedure fails, the most likely indication is
+          that the computer and the drive will idle, i.e., do nothing. 
+          When this happens, press SHIFT-BREAK.  If you get an OK (in
+          BASIC), press [F8] (or type Menu[ENTER]) and go through the
+          following checklist:
+
+
+            1. Remove the disk and examine it.  Is it a POWR-DOS
+               owner's diskette?
+
+            2. Turn off the drive's power.  Examine the DIP switches on
+               the bottom of the drive - are they correctly set?  They
+               should be all ON for IPL.BA or all OFF for PL.BA.
+
+            3. Check the disk-drive connection to the computer.
+
+            4. If you are using IPL.BA, check the listing carefully for
+               typos.
+          Chapter 1               Loading POWR-DOS            Page 7
+
+
+            5. Turn the drive back on and insert the disk.  (Turning
+               the drive off, then back on resets some internal
+               circuits in the drive and could make the difference all
+               by itself.)
+
+          Once you've gone through this checklist, try to re-run the
+          program.
+
+
+                                 Errors in TINY
+
+          TINY gives disk error codes corresponding to the POWR-DOS
+          codes.  See the listing at the back of the manual if you are
+          getting errors in TINY.
+
+
+                          Errors While Loading POWR-DOS
+
+          THe loading procedure for POWR-DOS can result in three error
+          messages:
+
+
+          Not enough memory to IPL POWR-DOS
+
+          or:
+
+          Directory is Full
+
+          or:
+
+          POWR-DOS code already installed!
+          MAXRAMC = 32777
+
+
+          (Note: MAXRAMC may have a value other than 32777)
+
+
+          If there is not enough memory, use TINY to save some files to
+          disk, then kill them to clear out approximately 7,000 bytes. 
+          If the directory is full, you must kill one file, no matter
+          how small, before you can proceed.
+
+          It is possible that POWR-DOS can be installed and not active. 
+          There is one CALL statement in particular which will
+          deactivate POWR-DOS without removing the invisible BASIC
+          program; for the Model 100, it is CALL 32454, and for the
+          Tandy 200, it is CALL 39703.  These calls sometimes get used
+          by other software; an example is the bar-code reader
+          software.  When POWR-DOS is disable, it will not function,
+          but it will not load, either.
+          Chapter 1               Loading POWR-DOS            Page 8
+
+
+          If some POWR-DOS features do not work, yet the loader
+          complains that POWR-DOS is already installed, get into BASIC
+          and type LFILES V[ENTER].  If you get a version message, full
+          functionality has been restored.  If you get an ?FC error,
+          you must use the BASIC program shown below to remove
+          POWR-DOS, then load it again.  Alternatively, enter the BASIC
+          command CALL nnnnn, where nnnnn is the value of MAXRAMC
+          printed by the loader.  In nearly every case, this CALL will
+          restore full functionality; however, it is less reliable than
+          the BASIC program below, so use it with care.
+
+          If you answer "n" to the question, "is it safe to move....?"
+          you must never kill the "immovable" file while POWR-DOS is
+          active.  If you do, you are at great risk of a cold-start. 
+          If you do this accidentally, you may not get a cold-start
+          immediately; however, POWR-DOS will be effectively disabled,
+          and any file-related command or any POWR-DOS command could
+          potentially cold-start the system.  If you have your wits
+          about you, get into BASIC and enter the following program:
+
+
+          10 'Tandy 200 values
+          20 IF PEEK (2)=152 THEN C=39703:A=63302:D=10904
+          30 'Model 100 Values
+          40 IF PEEK (2)=125 THEN C=32454:A=64659:D=8098
+          50 CALL C
+          60 FOR X=A TO A+7
+          70 READ I:POKE X,I
+          80 NEXT
+          90 CALL D
+          100 DATA 112,111,119,114,45,100,111,115
+
+          After running this program, it is safe to re-load POWR-DOS.
+
+
+
+                                    Chapter 2
+                                 POWR-DOS Basics
+
+
+          You cannot see POWR-DOS on your computer's menu.  It is an
+          invisible program whose primary purpose is to enhance TEXT
+          and BASIC.  In this chapter, we discuss how to use the most
+          commonly used enhancements.
+
+
+                                Basic Procedures
+
+                               Is POWR-DOS Active?
+
+          There will be times when you want to ask yourself, "is
+          POWR-DOS installed?"  This question will naturally occur to
+          you immediately after first loading it.  To find out, get
+          into BASIC.  Enter the command LFILES V and press [ENTER]. 
+          If POWR-DOS is not installed, you will get an ?FC error.  If
+          it is installed, you will get a message showing the POWR-DOS
+          revision number.  Example:
+
+
+          LFILES V[ENTER]          <--- (You type this)
+          Powr-DOS 2.1 (c)1986 Acroatix
+          OK
+
+
+                              Loading a BASIC File
+
+          In addition to the invisible part of POWR-DOS, your owner's
+          diskette contains seven application programs.  All seven are
+          written in BASIC; the most important of these is called
+          DMENU.BA.  The next chapter discusses DMENU in detail, but
+          before you can use it, you must load it.  To load DMENU.BA,
+          get into BASIC and enter the following commands:
+
+
+          Load ":dmenu[ENTER]      <--- (You type this)
+          Save "dmenu[ENTER]       <--- (You type this)
+
+
+          Once you have loaded DMENU, you can run it immediately by
+          entering the BASIC command RUN, or return to the main menu
+          and run it from there.  If you are in a hurry to get started,
+          skip on to Chapter 3 now.  But don't forget that, even
+          without DMENU, you can still access your PDD with POWR-DOS. 
+          You can load any BASIC program from disk using a similar
+          technique.
+                                     Page 9
+          Chapter 2               POWR-DOS Basics             Page 10
+
+
+                          Examining Disk and RAM Files
+
+          POWR-DOS adds a powerful new command to your computer's
+          BASIC: LFILES.  In its simplest form, LFILES list the files
+          on the current disk. Example:
+
+
+          Lfiles[ENTER]            <--- (You type this)
+          CLEAN .BA     207
+          DIARY .DO    1981
+          FDP   .BA     940
+          PCAL  .BA    1326
+          PTODO .BA     815
+          SETUP .BA     215
+          SRCH  .BA    1321
+          Space or Break
+          TASK  .DO    3755
+          TMPC  .BA     189
+          TMPC  .CO    9599
+          UPDATE.BA      60
+              56 Sectors free
+          Space or Break
+          OK
+
+
+          (NOTE: The 200 Display is different; there are more files
+          between breaks, and the pause message is different.)
+
+          On the Model 100 (only), the screen clears after each "Space
+          or Break" t speed the scrolling.  At each point where the
+          display stops, you may continue the listing by pressing the
+          space bar, or abort it with SHIFT-BREAK or Control-C.
+
+          You can see a very similar display of files in RAM by
+          entering the command LFILES R.  This command will list all
+          visible RAM files and their lengths.  Example:
+
+
+          Lfiles R[ENTER]          <--- (You type this)
+          DMENU .BA    2327
+          TASK  .DO    3755
+          TMPC  .BA     191
+          UPDATE.BA      62
+          Space or Break
+          OK
+          Chapter 2               POWR-DOS Basics             Page 11
+
+
+          Helpful Hint: If you will be using BASIC often without DMENU,
+          you may want to define an unused Function key as follows:
+
+
+          Key 7, "CLS:LFILES "[ENTER]   <--- (You type this)
+
+
+          (Note: Tandy 200 users can omit the CLS:.)  After this
+          command, the [F7] Key will types the LFILES command for you;
+          simply press [F7][ENTER] for disk files and [F7] R [ENTER]
+          for RAM files.
+
+
+                              Saving BASIC Programs
+
+          After creating or change a BASIC program, you may want to
+          save it to disk.  To save the program, simply enter the
+          following command:
+
+
+          Save ":progrm[ENTER]     <--- (You type this)
+
+
+          (NOTE: Use your BASIC program name instead of "progrm".)
+
+          The SAVE command will overwrite any existing disk file
+          without warning.  In the context of normal BASIC development,
+          the automatic overwrite is a convenient feature.
+
+
+                          Loading and Saving Text Files
+
+          If you have used your computer's TEXT program with the
+          cassette player, you know that [F2] loads from cassette, and
+          [F3] saves to cassette.  With POWR-DOS active, you can add an
+          extra colon (":") to the file name to load and save files to
+          diskette.
+
+          To load a new file from diskette, you must first create that
+          file in RAM using TEXT.  Create it just as you would any new
+          DOcument file.  Once you see the blank screen and the
+          flashing cursor, press [F2].  TEXT will prompt you "Load
+          from:"; enter the disk file name preceded by a colon (":"). 
+          If you omit the ".DO" extension, POWR-DOS will add it for
+          you.  Remember, the TEXT prompt also contains a colon, so the
+          bottom line of your screen will look as follows:
+
+
+          Load from::memo
+          Chapter 2               POWR-DOS Basics             Page 12
+
+
+          (NOTE: The file name may be different from "memo".)  There
+          are two colons in all: one from the computer, and one from
+          you.
+
+          To save a file to disk, press [F3].  TEXT will prompt you
+          "Save to:"; enter the disk file name preceded by a colon
+          (":").  If you omit the ".DO" extension, POWR-DOS will add it
+          for you.  Once again, remember that there will be two colons
+          on the bottom line: one from you, one from the computer.  If
+          you specify an existing disk file, POWR-DOS will
+          automatically overwrite it with the new file you are saving.
+
+
+                                The Memory Eaters
+
+          There are four different uses for memory that do not appear
+          on your computer's menu.  The paste buffer contains
+          characters that will appear in TEXT when you press the PASTE
+          key.  The unsaved BASIC program is the program that lists
+          when you get into BASIC from the menu and enter the LIST
+          command.  The reserved memory is an area used by many
+          machine-language programs; you can determine its length by
+          entering the BASIC command: PRINT MAXRAM-HIMEM.  Invisible
+          files will not appear on your menu, although they are normal
+          files in every other sense.  POWR-DOS resides in an invisible
+          BASIC file; your computer may contain other invisible files
+          as well.
+
+          You should realize that there are three other "invisible"
+          memory eaters besides POWR-DOS.  When you need more memory,
+          check these three memory eaters first, and eliminate them. 
+          You can eliminate all three from BASIC with two commands:
+
+
+          CLEAR 0,MAXRAM[ENTER]    <--- (You type this)
+          NEW[ENTER]               <--- (You type this)
+
+
+                              Deactivating POWR-DOS
+
+          As nice as POWR-DOS is, you may occasionally want to remove
+          it from you computer.  To remove it, get into BASIC and enter
+          the following command:
+
+
+          LFILES OFF[ENTER]        <--- (You type this)
+          Chapter 2               POWR-DOS Basics             Page 13
+
+
+          Be certain that you have loaded in a copy of PL.BA before
+          entering this command.  Otherwise, you may find it necessary
+          to type in IPL.BA and reset your drive's DIP switches when
+          re-loading POWR-DOS later.  LFILES OFF removes POWR-DOS
+          completely from memory.
+
+
+                                Notes and Options
+
+
+                            Side Effects of LFILES V
+
+          POWR-DOS enhances BASIC by installing about a dozen "hooks"
+          into the ROM.  Some software - particularly several ROM
+          packages from PCSG - modify the hook table, effectively
+          disabling part of POWR-DOS.  The LFILES V command, in
+          addition to printing a message, also restores the hook table. 
+          It is this behavior (not vanity) that led us to include the
+          LFILES V statement in each of the application programs.  You
+          can use it also, particularly if you are getting ?NM errors
+          when trying to access the disk.
+
+
+                       Options when Loading BASIC Programs
+
+          If a BASIC program exists on disk in ASCII format (as a DO
+          file), you can use LOAD to convert it to BASIC format.  You
+          can also MERGE ASCII-saved programs directly from disk. 
+          These options allow considerable flexibility and power when
+          dealing with public domain software, which almost always
+          downloads in ASCII format.
+
+          After LOADing a BASIC program, you can SAVE it to a different
+          name in RAM, or a different name on disk using SAVE.  Or, you
+          can leave it "unsaved".  In this case, it will not appear on
+          the menu, but will still RUN and LIST from BASIC.  It will be
+          one of the "memory eaters".
+
+
+                               Options with LFILES
+
+          You can direct LFILES output to your line printer or to a
+          file.  The syntax is simple:
+
+
+          LFILES TO "LPT:"[ENTER]  <--- (You type this)
+
+          or:
+
+          LFILES TO "file"[ENTER]  <--- (You type this)
+          Chapter 2               POWR-DOS Basics             Page 14
+
+
+          (NOTE: "file" can be any legal DOcument file name.)  If you
+          specify a file, LFILES will replace any existing file with a
+          new listing.  When you use the TO option, there are no "Space
+          or Break" prompts or cleared screens.  LFILES TO is useful
+          when creating labels of backup diskettes or a
+          diskette-library index.
+
+          You can use the TO option in addition to the R option.  Using
+          both will send a RAM directory listing to your printer or to
+          a file.
+
+
+                                Text File Options
+
+          In TEXT, you can load disk files with different names than
+          the RAM filename you are editing.  Further, text you load
+          with [F2] will always appear at the end of your file.  This
+          behavior makes TEXT, combined with POWR-DOS, a convenient
+          tool for concatenating files.
+
+
+                               Errors and Recovery
+
+
+                             LFILES V has no Errors
+
+          The LFILES V command should never give you an error while
+          POWR-DOS is active.  If it gives an ?FC error, POWR-DOS has
+          been deactivated; if it gives any other error, you should
+          immediately deactivate POWR-DOS and re-load it.  See the
+          "Errors and Recovery" section in Chapter 1 for details.
+
+
+                              Disk Errors in BASIC
+
+          All disk-related errors in BASIC result in a two-letter code. 
+          For example, ?ND stands for "no disk".  Refer to the
+          error-code summary at the back of this manual for a complete
+          listing.
+
+
+                               Quirks of LFILES TO
+
+          LFILES TO has a few peculiarities when writhing to a DOcument
+          file.  For full details, refer to the LFILES description in
+          Chapter 7, which lists all the BASIC command enhancements.
+
+
+
+                                    Chapter 3
+                                 Using DMENU.BA
+
+
+          DMENU.BA is the central application program of POWR-DOS.  It
+          is a menu program that simplifies your access to the disk. 
+          Once you acquaint yourself with DMENU's features and
+          conveniences, you may find it the most-used program in your
+          computer.
+
+          This chapter first presents how you can use DMENU to perform
+          the most basic operation involving disk and RAM; then it
+          describes some of the convenient DMENU features.  Finally, it
+          discusses the errors that can occur during the program.
+
+          If is important from the outset to realize two aspects of
+          DMENU.BA.  First, it is simply a BASIC program.  It uses
+          POWR-DOS commands to access the disk just as any other
+          program could.  So, if you remove DMENU, you can still access
+          the disk using the techniques described in Chapter 2. 
+          Second, DMENU operates in two phases.  In the first phase,
+          you select files you want to operate on and the operation
+          (either Load, Save, or Kill).  In the second phase, DMENU
+          "types" in the commands into your computer's PASTE buffer and
+          "pushes" the PASTE key.  At this point, you will see the
+          commands appear on the computer screen; you could just as
+          easily have typed these commands yourself, with the same
+          results.  Further, if you "break" the PASTE" buffer by
+          pressing SHIFT-BREAK, you will be in BASIC; simply enter the
+          RUN command to resume DMENU.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     Page 15
+          Chapter 3              Using DMENU.BA               Page 16
+
+
+                                Basic Procedures
+
+
+                                  Viewing Files
+
+          When you run DMENU, the first screen it shows you is a
+          display of the files in RAM:
+
+
+                     ----------------------------------------
+                    |Src:PDD      Free: 23030   Type:   BA   |
+                    |08/22/86 09:05:27                       |
+                    | DOS+    EPSON   FLOPPY  FLOPPY  IMAGE  |
+                    | LFILES  LOAD    LOADER  MAP     MENU   |
+                    | MENU0   MENUP   MRELO   DP-FLP  POWR   |
+                    | POWR-D  RELO    RELO    RESTOR  SAVE   |
+                    |                                        |
+                    | Sel Load Kill Len. Page  RAM  All Menu |
+                     ----------------------------------------
+
+
+          (Note: The Tandy 200 screen is slightly different.)  There
+          are a few terms specific to the menu program.  The source is
+          simply RAM or PDD, depending on whether you are looking at
+          files in RAM or files on disk, respectively.  The message
+          line is the penultimate line on the screen, which is reserved
+          for prompts and messages from DMENU.  The widebar cursor is
+          the "bar" of inverse video that appears over a file name. 
+          The arrow keys and the space bar move the widebar cursor just
+          a s with your computer's main menu.  Finally, a file is
+          selected when its name appears in inverse video.  The file
+          name with the wide-bar cursor is always selected; more than
+          one file can be selected, as shown later.
+
+          You can change the source from RAM to PDD by pressing [F6]. 
+          When the source is PDD, pressing [F6] again will change the
+          source back to RAM.  If you are looking at PDD files and you
+          change diskettes, press [F6] twice to change the files to RAM
+          and back to PDD; this "double switch" refreshes the display
+          with file names on the new diskette.
+
+          The file names on the screen appear without the extension
+          names.  There are two ways to see the extension name of a
+          file.  First, by moving the widebar cursor over a file.  The
+          extension appears in the upper right-hand corner of the
+          screen.  Second, by pressing [F4].  The full name of the file
+          under the widebar cursor will appear on the message line,
+          along with its length.
+          Chapter 3              Using DMENU.BA               Page 17
+
+
+                              Saving a File to Disk
+
+          To save a file to disk, set the source to RAM.  Move the
+          widebar cursor to the file you wish to save, then press [F2]. 
+          If the files does not already exist on disk, DMENU will save
+          it immediately.  However, if the file already exists on disk,
+          you will see the question "Overwrite 0:file.xx (y/n)" appear
+          on the message line.  (instead of file.xx, you will see the
+          file name you are saving.)  Press a "y" if you wish to
+          overwrite the existing file on disk; otherwise, press "n". 
+          There is no need to press [ENTER] because DMENU will react as
+          soon as you press the key.
+
+
+                             Loading a file into RAM
+
+          To load a file from disk into RAM, set the source to PDD. 
+          From then on, follow the exact procedure above for saving
+          files to disk.  You will notice that the bottom LCD line
+          shows "Save" over the [F2] label when the source is RAM, and
+          "Load" when the source is PDD.
+
+
+                                 Killing a File
+
+          To kill a file, select the file with the widebar cursor, then
+          press [F3].  DMENU will always prompt you with the message
+          "Kill ext:file.xx (y/n)?" where "ext" is the extension
+          (either RAM: or 0: for RAM or disk, respectively).  If you
+          press a "y" DMENU will kill the file; if you press an "n" it
+          will ignore the [F3] you pressed. If the source is RAM, the
+          file killed will be a RAM file; if the source is PDD, the
+          file killed will be a disk file.
+
+
+                                  Leaving DMENU
+
+          Pressing [F8] will return you to your computer's main menu
+          regardless of the source.
+          Chapter 3              Using DMENU.BA               Page 18
+
+
+                                Notes and Options
+
+
+                                 Multiple Pages
+
+          On the Model 100 version (only), it is possible that there
+          will be more files on disk than will fit on one screen.  When
+          this happens, you can use [F5] to toggle between two pages of
+          files.  Whenever there is another page to be displayed, the
+          bottom LCD line will show the word "Page" over the [F5]
+          label.
+
+
+                            Selecting Multiple Files
+
+          DMENU is most effective when you can select multiple files to
+          load, save, or kill.  You can reduce the number of keystrokes
+          and time for these three operations whenever you want them
+          done for more than one file.  Get into the habit of looking
+          over all the files before loading, saving, or killing. 
+          Select all the files for the operation, then press [F2] or
+          [F3] as required.
+
+          As noted above, the widebar cursor is always over one
+          selected file.  Moving the widebar cursor normally
+          "unselects" one file and selects another.  However, pressing
+          [F1] will leave a file selected even after you move the
+          cursor.  For example, if you press [F1] and then the space
+          bar, the screen shown above will as follows:
+
+
+                     ----------------------------------------
+                    |Src:PDD      Free: 23030   Type:   BA   |
+                    |08/22/86 09:05:27                       |
+                    |[DOS+  ][EPSON]  FLOPPY  FLOPPY  IMAGE  |
+                    | LFILES  LOAD    LOADER  MAP     MENU   |
+                    | MENU0   MENUP   MRELO   DP-FLP  POWR   |
+                    | POWR-D  RELO    RELO    RESTOR  SAVE   |
+                    |                                        |
+                    | Sel Load Kill Len. Page  RAM  All Menu |
+                     ----------------------------------------
+                        (brackets indicate reverse video)
+          Chapter 3              Using DMENU.BA               Page 19
+
+
+          You now have selected two files.  You can repeat the process
+          to select as menu files as you like.  In addition, you can
+          use the [F1] key to quickly select all the files or
+          "unselect" all the files.  If you press [F1] repeatedly
+          without moving the widebar cursor, the following sequence
+          will occur:
+
+
+             * The first [F1] will permanently select the file under
+               the widebar cursor;
+
+             * The second [F1] will select all the files on the screen
+               (it will not select files on the second page, if there
+               is one.
+
+             * The third [F1] will "unselect" all the files on the
+               screen.  Then fourth [F1] acts like the first did, and
+               so on.
+
+
+          Once you have selected many files on the display, it can
+          become difficult to tell where the widebar cursor is, or what
+          the extension of a particular file is.  When this happens,
+          use [F4] to printout the filename; [F4] always prints out the
+          full filename (and length) of the file under the widebar
+          cursor.
+
+
+                         Operations with Multiple Files
+
+          Load, Save, and Kill operations proceed almost identically
+          with multiple files as with single files.  The only
+          differences involve checking for overwrites.
+
+          The simplest multiple-file operation to perform is Kill. 
+          Whenever you have multiple files selected and press [F3],
+          DMENU will print the question, "Kill all (y/n/a)?" on the
+          message line.  Respond with one of the following letters:
+
+
+             * "y" will kill all the selected files without further
+               pause.
+
+             * "n" will abort the multiple kill entirely. All the files
+               will remain selected.
+
+             * "a" will make DMENU display each of the selected files
+               one by one and ask you either to kill it or not.
+          Chapter 3              Using DMENU.BA               Page 20
+
+
+          Once you have indicated which files are to be killed, DMENU
+          will kill them all one by one.  Note that DMENU cannot kill
+          itself, so it is safe to select it to be killed.
+
+          The procedure to load or save multiple files resembles the
+          procedure for killing them.  The difference is that the first
+          question DMENU will ask is "Overwrite all (y/n/a)?"  This
+          question refers only to files that must be overwritten (i.e.,
+          files already in RAM when you are loading, or files already
+          on disk when you are saving.)  DMENU loads all other files
+          automatically, without prompts.  Thus, your answer has
+          slightly different significance:
+
+
+             * "y" Means to load or save all the selected files whether
+               they already exist in RAM or on disk, respectively, or
+               not.
+
+             * "n" Means to load or save only those files that do not
+               already exist in RAM or on disk, respectively.
+
+             * "a" Means to ask before overwriting any file.  DMENU
+               will never ask about files that do not involve
+               overwriting.
+
+          After this question, DMENU will check all the files to see if
+          an overwrite is necessary.  Depending on whether you answered
+          y, n, or a, it will either automatically overwrite an
+          existing file, skip it, or ask you.  "Ask" is usually the
+          safest option.
+
+
+                           Running Programs from DMENU
+
+          You can run BAsic or COmmand files directly from DMENU. 
+          Simply move the widebar cursor over the file name and press
+          [ENTER].  Exactly what happens depends on the situation.
+
+          BAsic files in RAM will run from DMENU exactly as they will
+          from your computer's main menu.  In other words, when source
+          is RAM, pressing [ENTER] over a BASIC file is exactly the
+          same as pressing [F8], moving the cursor to the BASIC file on
+          your computer's menu, and pressing [ENTER]. You save a few
+          keystrokes when you do it from DMENU.
+          Chapter 3              Using DMENU.BA               Page 21
+
+
+          If you press [ENTER] to run a BAsic file on disk, DMENU will
+          load the file first into the unnamed program area.  The BAsic
+          program will then be in RAM, but it will not appear on any
+          menu; it will be one of the invisible "memory eaters"
+          discussed in Chapter 2.  If you plan on running a program
+          several times, it is probably better to load the BAsic file
+          into RAM first, then run it from RAM.  There is no extra
+          memory required, and you will be able to see the program on
+          the menu after running it.  However, for small programs you
+          wish to run only once, pressing [ENTER] to load them from
+          disk and run them is a convenient shortcut.
+
+          COmmand files are more complex because memory must often be
+          reserved before they can be run.  If there is sufficient
+          memory reserved to run a COmmand file, DMENU will run it
+          without changing the amount of reserved memory.  If there is
+          not enough memory reserved, DMENU will reserve just enough to
+          run the COmmand file, then run it.  If you do not understand
+          the intricacies of COmmand files, you may want to refer to
+          Appendix B
+
+          In general, you save memory by running COmmand files directly
+          from the disk using the [ENTER] key.  THis is because DMENU
+          can move the COmmand file directly from the disk into the
+          reserved area, where it runs.  In any case, however, you will
+          almost certainly have some memory reserved, which is one of
+          the "memory eaters" discussed in Chapter 2.  You will
+          probably want to recover this memory eventually.
+
+
+                            Examining Document Files
+
+          There are times when you may wish to examine a DOcument
+          file's contents without going into TEXT.  If you move the
+          widebar cursor over a DOcument file (either in RAM or on
+          disk), DMENU will display its contents one screen at a time. 
+          There is no "word wrap".  At the end of each screen, DMENU
+          asks, "More?"  Answer with a "y" for the next screen of the
+          file, or "n" to return to the menu display.
+          Chapter 3              Using DMENU.BA               Page 22
+
+
+                               Errors and Recovery
+
+          Errors in DMENU can occur in either phase, the "menu" phase
+          or the "command" phase.  Each phase has its own
+          characteristic errors and recoveries.
+
+
+                            Errors in the Menu Phase
+
+          You cannot run DMENU unless there are at least 1,100 bytes
+          showing free on your computer's menu.  The precise
+          requirement varies slightly depending on a variety of
+          factors.  If there is insufficient memory to run, DMENU will
+          show an ?OM error message on the message line, wait for you
+          to press a key, and return you to your computer's menu.
+
+          You also must have room for at least one more file in your
+          RAM directory for DMENU to work.  It creates a temporary file
+          as it is running; if there is no room for that file, you will
+          get a #57 error.  When this happens, you must remove one
+          file, no matter how small, from RAM before DMENU will work.
+
+          On rare occasions, the PASTE buffer will exhaust the memory
+          while you are in the menu phase.  If you run DMENU with very
+          few bytes free, it is possible that there are enough bytes
+          free to display the files, but not enough to hold the
+          commands in the paste buffer.  When this a=happens, you will
+          get an ?OM error message and find yourself at the main menu. 
+          If you were performing an operation on multiple files, you
+          may have better luck if you try doing the operation one at a
+          time.
+
+          The only other errors that can happen in the menu phase of
+          DMENU are disk related.  These errors generally mean that the
+          disk is full or write protected, or that the drive is
+          disconnected or malfunctioning.  See Chapter 8 for a complete
+          list of disk-related errors.
+          Chapter 3              Using DMENU.BA               Page 23
+
+
+                           Errors in the Command Phase
+
+          In the command phase, an error does not halt execution;
+          instead, the PASTE buffer moves on to the next command. The
+          errors appear as a normal BASIC error message. An example:
+
+
+          Kill"0:BB    .DO"
+          ?WP Error
+          Savem":BB    .DO"
+          ?AE Error
+          Clear:Gosub2:u= 2:t= 0:goto24
+
+
+          This sequence would occur if you tried to overwrite BB.DO to
+          a write-protected diskette.  The one danger of command-phase
+          errors is that you might not notice them - you might think
+          that you have updated a disk file, when in fact you have not. 
+          For this reason, you should generally watch the command-phase
+          execution to check for errors.
+
+          THere are two types of errors in the command phase:
+          disk-related, and RAM-related.  Disk-related commands usually
+          indicate that the disk is full or write protected. 
+          Occasionally there may be an ?IO error, indicating a bad
+          disk, or some other problem; usually, if DMENU makes it to
+          the command phase without errors, there will be no problems
+          with the disk, except write-protection or a full diskette. 
+          RAM-related errors include ?OM and ?FL, which occur when the
+          free space or the directory are exhausted, respectively. 
+          Also, an ?FC error will occur if you try to Kill DMENU
+          itself, and an ?AE error will occur if you try to overwrite
+          DMENU from the disk.
+
+          Occasionally, the execution phase will prevent the menu phase
+          from starting again.  This happens when you fill the memory
+          too full in the execution stage, so much so that there isn't
+          room to run the menu phase anymore.
+
+
+
+                                    Chapter 4
+
+                               Formats and Backups
+
+
+          The two primary headaches of dealing with any disk-storage
+          system are formatting and backing up.  This chapter presents
+          three application programs for dealing with these headaches.
+
+
+                                Basic Procedures
+
+
+                                   Formatting
+
+          A new disk straight from the box cannot be used at all until
+          certain timing marks and divisions are put onto it.  This
+          process is called formatting.  Before you format a diskette,
+          any attempt to read it or write to it will result in an ?IO
+          error.
+
+          Formatting with POWR-DOS is simple.  All it takes is a single
+          BASIC command:
+
+
+          LFILES FORMAT[ENTER]     <--- (You type this)
+
+
+          Once a diskette has been formatted, it can be read or written
+          to using POWR-DOS.  After formatting, you have an "empty"
+          disk, which will show no files on it and 79 sectors free.
+
+          The best way to format is to have a "formatting party" as
+          soon as you buy a new box of diskettes.  This habit minimizes
+          the risk of formatting an old diskette.  Once the drive
+          begins to format, it is too late to stop it.  The very first
+          part of the disk to be formatted is the "directory", where
+          the names and locations of all the other files are stored. 
+          Further, the drive cannot be stopped once the format begins
+          unless you actually turn off its power.  If you realize two
+          seconds too late that you are re-formatting a disk containing
+          valuable data, your only hope is to turn off the drive, hit
+          BREAK, and refer to Chapter 6.
+
+
+
+
+
+
+                                     Page 24
+          Chapter 4            Formats and Backups            Page 25
+
+
+                                     Backups
+
+          A backup is nothing more than a copy of a diskette onto
+          another diskette,  Backups are a nuisance.  They take time
+          and effort, and they require you to use more diskettes (or
+          cassettes).  However, backups of any important data are
+          essential.  If you accidentally spill coffee on a first-draft
+          report (written on paper), the paper is stained, but it is
+          still readable.  If you spill coffee on a diskette containing
+          your only draft, the entire contents of the diskette are
+          lost.  If there is no backup, many hours of your work can be
+          lost.  The drive itself can destroy diskettes if it is not in
+          good mechanical repair (see Chapter 6 for more details). 
+          Losing the only copy of valuable data feels rather like
+          stepping on your pet hamster.
+
+          Some computers boast two separate drives.  This hardware
+          arrangement is ideal for copying, since the computer can move
+          the disk contents in pieces.  However, the PDD is arranged so
+          that no such convenience is possible; there can be only one
+          PDD connected to your computer at once.  There are two
+          alternatives:
+
+
+             * Back diskettes up to cassette.  This procedure is
+               relatively slow and unreliable (because of the
+               cassette).  Just how unreliable it is depends on the
+               luck you have had with tapes.  However, it has the
+               advantage of being able to occur unattended by you. 
+               Once you begin a backup to cassette, you can leave your
+               computer and do something else.
+
+             * Swap diskettes in the drive.  Using this technique, you
+               load as much of the source diskette (the one you are
+               backing up) into computer memory as possible, then put
+               in the destination diskette and copy the memory contents
+               into it.  Since the computer's memory is not usually
+               enough to hold the entire diskette's contents, you may
+               have to perform several swaps before completing the
+               backup.
+          Chapter 4            Formats and Backups            Page 26
+
+
+                               Copying to Cassette
+
+          POWR-DOS comes with a program called COPY-C.BA to move the
+          contents of a diskette to cassette.  To use it, load in
+          COPY-C from a disk and run it.  It will present the following
+          screen:
+
+
+
+                     ----------------------------------------
+                    |   Disk-to Cassette Backup              |
+                    |                                        |
+                    |         1.  Create Tape from Diskette  |
+                    |         2.  Verify Tape                |
+                    |         3.  Create disk from cassette  |
+                    |         4.  MENU                       |
+                    |                                        |
+                    |   Press Key...                         |
+                     ----------------------------------------
+
+
+          The first step in a backup is to create a tape, so press the
+          "1" key.  (NOTE: not [F1], but the numeral 1).  The following
+          exchange will take place:
+
+
+          Insert diskette to copy...press key
+          Backup will take 10.85 minutes
+          Proceed (y/n)? y[ENTER]
+          Set up tape to record...press key
+          Skipping Leader
+
+
+          (Note:Each time the "press key" message appears, the program
+          stops and waits for you to press a key on the keyboard). 
+          Notice the time estimate.  COPY-C will copy only the sectors
+          of the diskette that are being used, so that an empty
+          diskette will take very little time to copy, and a full
+          diskette will take about 28 minutes.  The program gives you a
+          chance to change your mind once you see how long it will
+          take.  Notice also that the program automatically skips the
+          tape leader when recording, so you can start the tape at the
+          very beginning.
+
+          COPY-C proceeds by copying the diskette sectors "in use" to
+          tape, one sector per tape file.  It prints a message such
+          as, "Create sector 0 (1 or 31)" for each sector it is making,
+          so you always know how far to go.  Once the tape has been
+          recorded, you return to the initial screen.
+          Chapter 4            Formats and Backups            Page 27
+
+
+          Once you have created a tape, you will probably want to
+          verify it.  Once your tapes have verified OK consistently,
+          you could probably skip this step.  Until then, verify
+          everything.  What good is an unreadable backup?
+
+          When you press "2" from the COPY-C menu, the following
+          exchange takes place:
+
+
+          Insert diskette and tape to be
+          verified...press key
+          Set up tape to play back...
+          press key
+          Loading directory (Sector 0)
+          Disk verification will take 10.85 minutes
+
+
+          After this, the sectors will verify one by one.  If there are
+          no problems, COPY-C will return to its main menu when
+          verification is complete.
+
+          When it is time to restore a diskette from tape, press "3" on
+          the COPY-C menu.  The following prompts appear:
+
+
+          Insert a blank formatted diskette
+          FORMAT.BA works best...press key
+          Set up tape to play back...press key
+          Loading directory (Sector 0)
+          Disk creation will take 10.85 minutes
+
+
+          For best results, you should use a diskette newly formatted
+          using FORMAT.BA (see the section on FORMAT.BA below for more
+          details).
+          Chapter 4            Formats and Backups            Page 28
+
+
+                               Copying to Diskette
+
+          Another POWR-DOS application program, COPY, allows you to
+          backup diskettes to other diskettes.  Diskette backups are
+          faster and more reliable, but you menus swap the source and
+          destination diskettes, perhaps several times.
+
+          Before running COPY, it is best to empty your memory of all
+          unnecessary programs.  COPY uses your free memory as a
+          temporary holding area for disk files, so the more free
+          memory there is, the fewer swaps that you must make.
+
+          When you run COPY, it first asks you to insert a destination
+          diskette.  COPY needs a blank, formatted diskette to begin
+          with; it looks at your proposed destination diskette and does
+          one of the following:
+
+
+             * If the diskette is already formatted and blank, it
+               automatically proceeds to the next step.
+
+             * If the diskette needs to be formatted, it will print a
+               message, "diskette unreadable format (y/n)?"  You can
+               then decide to format the diskette or abort the copy.
+
+             * If the diskette already contains readable files, it will
+               print a message, "diskette contains 15 files. Delete
+               them (y/n)?"  You can then decide whether to delete the
+               existing files or abort the copy.
+
+
+          Once the destination diskette is formatted and blank, COPY
+          prompts you to insert the source diskette.  It reads the
+          directory and tells you how many swaps will be needed to copy
+          all the files.  (Each time you remove the source diskette and
+          insert the destination diskette is one "swap").  Then, it
+          begins a list of files that it is copying.
+
+          At this point, all you need to do is to put in the
+          destination and source diskettes as prompted by the program. 
+          Eventually, COPY will print, "Done", and return to your
+          computer's menu.
+          Chapter 4            Formats and Backups            Page 29
+
+
+                                Notes and Options
+
+
+                                 Using FORMAT.BA
+
+          In addition to the LFILES FORMAT command, you can use the
+          utility FORMAT.BA to format diskettes.  There are three
+          reasons why you might want to:
+
+
+             * FORMAT.BA will warn you before re-formatting a diskette
+               that contains files.
+
+             * You can optionally omit the "check" during format, which
+               speed up the format by about 45%
+
+             * FORMAT.BA produces diskettes which accept sector writes
+               almost 20 times faster than LFILES FORMAT.  This
+               increase will only matter for specialized sector-based
+               programs like COPY-C.  Writing to the disk with any of
+               the file-based commands will nullify this advantage,
+               however.
+
+          FORMAT.BA is simple to use.  When you run it, it first asks
+          if you want a "check" during format.  Answer "n" unless you
+          have been having problems with diskettes going "bad".  After
+          that, simply insert the diskette to format; if there are
+          files, FORMAT will ask you if you want them deleted.  If you
+          answer "y", then formatting will begin.
+
+          Formatting is a convenient way to completely remove all
+          files from a diskette.  Also, if a diskette has been
+          "trashed", and gives only ?IO errors when you use it,
+          formatting will often make the diskette usable again,
+          although all data will be permanently lost.  If you have a
+          "trashed" diskette containing valuable files, try using
+          RECOVR.BA (see Chapter 6) before re-formatting.
+          Chapter 4            Formats and Backups            Page 30
+
+
+                               Errors and Recovery
+
+
+                                Formatting Errors
+
+          There are two possible errors from LFILES FORMAT or
+          FORMAT.BA:
+
+
+             * You might get a "?WP Error" message.  This message means
+               that the write-protect tab on the diskette is open. 
+               Remove the diskette, close the tab, and try again.
+
+             * You might get an "?IO Error" message.  Whenever you get
+               this message during formatting, you should discard the
+               diskette or return it for a refund.  If a diskette
+               cannot be formatted, you cannot use it.  Before
+               discarding it, you might try to format it once more, or
+               use a bulk eraser on the disk and try again.
+
+
+
+                              Errors while Copying
+
+          Both COPY and COPY-C will abort with a simple message if
+          there are errors.  The only possible errors arise from
+          problems with reading or writing to the diskettes or tape.
+
+
+
+                                    Chapter 5
+                                 Disk-Based TEXT
+
+
+          D-Text.BA is a POWR-DOS application which simplifies
+          manipulating DOcument files on diskette.  At the heart of
+          D-TEXT is the familiar TEXT program.  To use D-TEXT, load and
+          RUN D-TEXT.BA from diskette or RAM.  D-TEXT.BA is a companion
+          program to DMENU and has similar menus.
+
+
+                                Basic Procedures
+
+
+                              Accessing Disk Files
+
+          When you first run D-TEXT, it displays the names of all the
+          DOcument files on disk. (Unlike DMENU, you cannot display RAM
+          file names, and only DOcument files will ever be displayed). 
+          The display looks similar to the DMENU display, with
+          different function-key selections:
+
+
+                     ----------------------------------------
+                    |Len: 12027   Free: 2560 / 11429   D-TEXT|
+                    |08/22/86 09:09:36                       |
+                    |[CHAP1 ] CHAP2   CHAP3   CHAP4   CHAP5  |
+                    | CHAP6   CHAP7   CHAP8   START   nufile |
+                    |                                        |
+                    |                                        |
+                    |                                        |
+                    |Form Load Kill Prnt      Disk      Menu |
+                     ----------------------------------------
+                        (brackets indicate reverse video)
+
+
+          The function key selection do not change (as they do in
+          DMENU).  The keys have the following functions:
+
+
+
+
+
+
+
+
+
+
+
+                                     Page 31
+          Chapter 5              Disk-Based TEXT              Page 32
+
+
+              [F1]  Form.  This key sets the printout format use by
+                    [F4].  You can add more formats with PRFORM.BA,
+                    explained in the Notes and Options section below.
+
+              [F2]  Load.  This key loads the selected DOcument file
+                    into RAM and enters the TEXT program to modify it. 
+                    Use this key only when you do not want to use
+                    D-TEXT features to access the file.
+
+              [F3]  Kill.  This key KILLs the selected DOcument file. 
+                    Before it does, it asks you to confirm your
+                    intentions with the "y" key, just as DMENU does.
+
+              [F4]  Prnt.  This key prints the selected DOcument file. 
+                    It uses the parameters set with the [F1] key.
+
+              [F5]  Page.  ON the Model 100 (only) this key will page
+                    between two screens of document files if there are
+                    too many to fit on one screen.
+
+              [F6]  Disk.  This key reprints the screen using the
+                    DOcument files on the disk.  Use it when you insert
+                    a new disk into the drive.
+
+              [F8]  Menu.  This key will return you to DMENU, or if
+                    DMENU.BA is not in RAM, you your computer's menu.
+
+
+                                 Printing a File
+
+          D-TEXT provides rudimentary text formatting for printing disk
+          files.  You select a format for the file with the [F1] key,
+          then press [F4].  You will see the prompt "Ready to print
+          (y/n)?" on the message line; press "y" to start, or "n" to
+          cancel.  If you press "y", D-TEXT will print the document,
+          and depending on the format, it may repeat the "ready to
+          print" message at the end of each page.
+
+
+                              Editing a Small File
+
+          You can easily edit any disk file small enough to fit into
+          available RAM.  Simply select the file with the widebar
+          cursor and press [ENTER].  You will see an intermediate
+          screen that looks as follows:
+          Chapter 5              Disk-Based TEXT              Page 33
+
+
+                     ----------------------------------------
+                    |File:    MAP   .DO                      |
+                    |Length:  3738                           |
+                    |Buffer:     0                           |
+                    |Total:   3738  vs. 11449 free in RAM    |
+                    |----------------------------------------|
+                    |<ENTER> to Edit                         |
+                    |     Wrap Strt Stop Set                 |
+                    |     On   Top  End  Buff Files     Menu |
+                     ----------------------------------------
+
+
+          (We call this screen the "file summary" screen).  As long as
+          the message "<ENTER> to Edit" appears, you can press [ENTER]
+          again and edit the entire file.  D-TEXT will load the disk
+          file into RAM automatically and jump to TEXT.  When you are
+          finished with TEXT, press [F8].  You will see the message:
+
+
+          Save Changes (y/n)?
+
+
+          If you made changes to the file and want to save them, press
+          "y", and the disk file will be updated.  If you press "n",
+          D-TEXT will ignore any changes you made while in TEXT, and
+          you will return immediately to its menu screen.
+
+
+                            Appending to a Large File
+
+          If a file is too large to fit into RAM, you will not be able
+          to edit it all at once.  It is necessary to select a portion
+          of it to edit.  If you select a file too large to fit into
+          RAM, then press [ENTER], D-TEXT shows a screen similar to
+          this:
+
+
+                     ----------------------------------------
+                    |File:    LFILES.DO                      |
+                    |Length: 16231                           |
+                    |Buffer:     0                           |
+                    |Total:  16231  vs. 11449 free in RAM    |
+                    |----------------------------------------|
+                    |<ENTER> to Append                       |
+                    |     Wrap Strt Stop Set                 |
+                    |     On   Top  End  Buff Files     Menu |
+                     ----------------------------------------
+          Chapter 5              Disk-Based TEXT              Page 34
+
+
+          Note that the total bytes required exceed the bytes free.  In
+          this case, D-TEXT defaults to an "append"; if you press
+          [ENTER] again, you will go into TEXT with an empty file. 
+          D-TEXT will append any material you enter into the empty file
+          onto the end of the disk file you selected.  In this way, you
+          can build a DOcument file up to 64K, which is the largest
+          possible disk file.
+
+
+                             Modifying a Large File
+
+          When you wish to change a DOcument file too large to fit into
+          RAM, you must select a piece of it small enough to fit into
+          RAM.  We call this piece of the disk file the edit portion. 
+          You have three choices of how to select the limits of the
+          edit portion:
+
+
+             * You can start the edit portion at the beginning of the
+               disk file and stop it somewhere in the middle of the
+               disk file;
+
+             * You can both start and stop the edit portion somewhere
+               inside the disk file; or
+
+             * You can start the edit portion somewhere inside the file
+               and stop it at the file's end.
+
+
+          All three of these options are in addition to appending.  To
+          select one of these options, select the disk file to edit on
+          the D-TEXT menu, then press [ENTER].  When you see the file
+          summary screen, use [F3] and [F4] to set the conditions for
+          the Start and Stop points of the edit portion, respectively. 
+          You will notice that the message will change to "<ENTER> to
+          Set Limits" whenever either Stop or Start are "Set".
+
+          If you choose to set limits, D-TEXT will give you a series of
+          arbitrary limits inside the disk file.  For example, if you
+          have selected "Set" for the start of the edit portion with
+          [F3], the screen might look like this:
+          Chapter 5              Disk-Based TEXT              Page 35
+
+
+                     ----------------------------------------
+                    |; code for POWR-DISK                    |
+                    |        org     60850                   |
+                    |start:                                  |
+                    |        jmp     psu:    ;pointer setup  |
+                    |        jmp     xopn:   ;special open   |
+                    |        jmp     xrd:    ;special read   |
+                    |        jmp     xwr                     |
+                    |<Key> for More, <ENTER> to START        |
+                     ----------------------------------------
+
+
+          The text at the top of the screen shows where the edit
+          portion will start.  When you see this screen, you must
+          decide from the text presented whether this is an appropriate
+          place to "Start" the edit portion.  If it is, press [ENTER];
+          if not, press any other key, in which case D-TEXT will show
+          you the next possible place to "Start" the edit portion.
+
+          Similarly, if you have opted to "set" the stop point for the
+          edit portion, a screen similar to the following will appear:
+
+
+                     ----------------------------------------
+                    |                                        |
+                    |        sta     scr3:                   |
+                    |        call    tod:    ;set up         |
+                    |        mvi     a,1                     |
+                    |        sta     scr2:                   |
+                    |        call    4bb8h   ;new ln if nec. |
+                    |        mvi     m,scr1  ;next 8 files   |
+                    |<Key> for More, <ENTER> to END          |
+                     ----------------------------------------
+
+
+          In this case, the text shows the last characters that will
+          appear in the edit portion.  If they are an appropriate place
+          to stop, press [ENTER]; otherwise, press any other key. 
+          D-TEXT will continue showing you more possible places to stop
+          the edit portion until you either press [ENTER], reach the
+          end of the file, or reach the limit of the RAM.
+
+          After you have selected the limits, D-TEXT automatically puts
+          you into TEXT.  When you are done editing the edit portion,
+          press [F8] to leave TEXT.  D-TEXT will ask you "Save Changes
+          (y/n)?"  If you answer "n", you will return immediately to
+          the D-TEXT menu; if you answer "y", D-TEXT will update the
+          disk file with the contents of the edit portion.  This
+          process can take a while for a large file, so be patient.
+          Chapter 5              Disk-Based TEXT              Page 36
+
+
+          Important Note: The D-TEXT program chooses the Start and Stop
+          points arbitrarily.  In many cases you will see words split;
+          on occasion, you may even see Control-J or Control-M as the
+          first or last charter in an edit portion.  Do not try to
+          "fix" these breaks!  When D-TEXT puts the edit portion back
+          into the disk file, it will restore any breaks automatically. 
+          If you "fix" them while in TEXT, whey will not go together
+          properly.
+
+
+                                Notes and Options
+
+
+                            Adding New Print Formats
+
+          It is possible to add new print formats to D-TEXT.  Each
+          format is in a data statement; you can add as many additional
+          data statements as necessary.  The DATA statement contains a
+          wide variety of information.  In order to simplify the
+          creation of a new DATA statement, we provide a small program
+          called PRFORM.BA, which asks the following questions:
+
+
+             * The number of formats already available in D-TEXT.  If
+               you are not sure, use [F1] to count the different
+               formats.  It is important to correctly answer this
+               question; if you answer with less than the correct
+               number, PRFORM will replace one of the old formats with
+               the new one.  (You can use this behavior to replace or
+               modify existing formats if you wish).
+
+             * The name of this new format.  Use 10 charters or less.
+
+             * The left margin.  How many characters from the left
+               should the printout start?
+
+             * The width of text.  How many characters wide should a
+               printed line be, maximum?
+
+             * Printed Lines per Page.  How many lines of text should
+               be in the body, which excludes top and bottom margins?
+
+             * Spacing.  Answer 1 for single spacing, 2 for double
+               spacing, etc.
+
+             * Print a header?  THe header always consists of the date,
+               time, file name, and page number.  If you answer yes,
+               you can specify the starting page number.  Often, page 2
+               is the first header page.
+          Chapter 5              Disk-Based TEXT              Page 37
+
+
+             * CRLF Pairs?  If your printer requires an additional line
+               feed with a carriage return, answer "yes".  Answer "no"
+               for Radio Shack Printers.
+
+             * Lines at top of page.  How many blank lines will be at
+               the tip of each page.  Note that this number is
+               independent of single spacing or double spacing.
+
+             * Does the printer accept form feed? if not, how may blank
+               lines at the end of the page?
+
+             * Page Pause?  Does the printing process need to pause at
+               the end of each page?
+
+
+          Once you have answered all of these questions, PRFORM will
+          ask you to confirm that you like your responses.  If you do,
+          it will automatically modify D-TEXT to add the new printer
+          format.
+
+
+                                 Editing Options
+
+          The file status screen gives you several options when editing
+          the text file.  Wrap lets you turn the "word-wrap" feature of
+          TEXT off for a given editing session.  Normally, you almost
+          always will want word wrap on, but for some data and program
+          files, it is nicer to work without it.  Buffer allows you to
+          reserve a minimum amount of RAM for adding to a files.  This
+          feature can come in handy if you are dealing with large files
+          and you want to "reserve" room for an anticipated addition. 
+          Finally, the "Top" and "End" settings can be changed for any
+          file, not just large files.  Using this feature, you can
+          exercise considerable control over your DOcument files.
+
+
+                           Accessing the Disk in TEXT
+
+          One highly convenient feature of D-TEXT is your access to
+          disk files from within the TEXT program itself.  [F2] and
+          [F3] can access disk files as described in Chapter 2.  This
+          may seem a minor convenience, but it has many interesting
+          applications.  Two examples:
+          Chapter 5              Disk-Based TEXT              Page 38
+
+
+             * You can use D-TEXT to concatenate large files.  Simply
+               use D-TEXT to "Append" onto one disk file, then loading
+               a second disk file onto the end using [F2].
+
+             * You can CUT and PASTE very large file segments, larger
+               than you could manage in RAM, by saving them to
+               temporary files from within TEXT.
+
+
+                               Errors and Recovery
+
+          D-TEXT handles errors in a very similar fashion to the "menu"
+          phase of DMENU.  The error will be displayed on the message
+          line, and you must press a key to continue the program.  The
+          only difference is that for some errors, you will return
+          automatically to DMENU (or to your computer's menu) after the
+          error.
+
+          D-TEXT must access the disk many times when it reads and
+          updates files.  If an error occurs before you enter the TEXT
+          program, no change will have occurred to the disk, so it is
+          best to start D-TEXT over.  If the error persists, perhaps
+          the file has gotten an error in it.  If an error occurs while
+          you are "saving changes" to a files, there are several
+          possibilities.  Part of the DOcument files may be in RAM, and
+          the DOcument file on disk may contain some or all of the
+          original data.  Also, RECOVR (see Chapter 6) may be able to
+          find additional data on the disk.
+
+
+
+                                    Chapter 6
+                                  Data Recovery
+
+          From time to time, the PDD will malfunction and ruin a
+          diskette.  By some derivative of Murphy's law, you can
+          predict that it will ruin a valuable diskette without a
+          backup.  RECOVR.BA is a POWR-DOS utility that can recover
+          some or all of the data.  Even better, if you accidentally
+          KILL a file, the chances are good that you can recover it -
+          provided that you realize your mistake immediately.
+
+
+                                Basic Procedures
+
+          Before running RECOVR, prepare a diskette to receive the
+          data.  RECOVR moves files from the "damaged" diskette to a
+          destination diskette, which does not need to be empty, but
+          should be formatted and have sufficient room to hold the
+          files.
+
+          Once you have the destination diskette ready, run RECOVR.  It
+          will prompt you:
+
+
+          Insert Source Diskette...press key
+
+
+          Insert the diskette containing the lost data.  After a short
+          pause, the program will respond with one of two messages. 
+          Either:
+
+
+          Directory is damaged.
+
+          or:
+
+          Ignore sectors in use (y/n)?
+
+
+          In the first case, the directory sector itself has been
+          damaged.  This is most often the case when an entire diskette
+          appears to be "trashed", i.e., you cannot even use LFILES to
+          examine its contents.  In the second case, you can look at
+          the diskette contents, but perhaps an important file has been
+          deleted or cannot be read properly.  Normally, you will
+          always want to ignore sectors that the directory has marked
+          "in use", so answer the question with a "y".
+
+
+                                     Page 39
+          Chapter 6              Data Recovery               Page 40
+
+
+          The next message will be a series of messages saying
+          something like "reading sector 1". Eventually, the following
+          screen will appear: 
+
+
+                     ----------------------------------------
+                    | -------------------------------------- |
+                    ||    POWR-DOS Data Recovery Program    ||
+                    | -------------------------------------- |
+                    |    Sectors 2-9    File Length Range:   |
+                    |                   8961 to 10240        |
+                    |    Choose Type:                        |
+                    | ------------------                     |
+                    ||BA   DO   CO  Skip| GO                 |
+                     ----------------------------------------
+
+
+          RECOVR knows that there is a series of sectors that could
+          make a file, but it is not smart enough to know what sort of
+          file it is: DOcument, BAsic, or COmmand.  You can examine
+          each possibility and select a type, or choose to ignore the
+          file altogether, using [F1] to [F4].  For each different
+          file, RECOVR will give some data:
+
+
+             * For DOcument-type files, the first characters in the
+               file;
+
+             * For BAsic-type files, the first several line numbers;
+
+             * For COmmand-type files, the TOP, END, and EXE.
+
+
+          Normally, it is simple, using this data, to decide which type
+          of file.  (If you're not sure, see the notes in the next
+          section.)
+
+          Pressing [F1] to [F4] will do nothing except show you the
+          option; you can press them indefinitely until you can decide
+          which file type to choose.  Once you do decide, press [F5] to
+          GO.  If you choose a file type, RECOVR will ask you for a
+          file name.  You must specify a full name, i.e., including an
+          extension.  Then RECOVR will begin reading the lost file into
+          RAM; eventually, it will prompt you:
+
+
+          Enter Destination Disk...press key
+          Chapter 6              Data Recovery               Page 41
+
+
+          You may need several swaps before the file is completely
+          restored to the destination diskette.  Once the transfer has
+          completed, RECOVR will look for other "lost" files on the
+          diskette; once all files have been recovered or ignored, it
+          prints the message:
+
+
+          All sectors accounted for...
+          Recovered:  nn
+          Ignored:  nn
+          Bad:  nn
+          Allocated:  nn
+          Empty:  nn
+          Press Space Bar for Menu
+
+
+          You now have recovered all you can from the diskette.  If
+          there were any "bad" sectors on the diskette, you should now
+          consider re-formatting it.  Use it carefully until it proves
+          reliable, otherwise discard it.
+
+          Recovered BAsic and DOcument files will usually have some
+          "garbage" at the end.  You should examine them to remove this
+          garbage.
+
+
+                                Notes and Options
+
+                                How RECOVR Works
+          THe PDD divides disks into 80 sectors.  The first sector is a
+          directory, which keeps track of the following information:
+
+
+             * The active files on the disk.  For each file, the
+               directory also stores the beginning and ending sectors,
+               and the length of the file.
+
+             * Which sectors are "in use" on the diskette.  When your
+               computer tries to write more data to the diskette, the
+               PDD always uses an unused sector for the data.
+          Chapter 6              Data Recovery               Page 42
+
+
+          RECOVR takes advantage of a peculiarity of the PDD: It does
+          not store the precise series of sectors in the directory. 
+          Instead, the directory only contains the number of the first
+          sector of the file; then, the first sector "points" to the
+          second, and so on.  The most common way a disks gets
+          "trashed" is by losing the directory; this is logical,
+          because the directory is being updated constantly, whenever
+          any file changes.  Even without the directory, though, the
+          other sectors (provided they are still readable themselves)
+          can be used to form a chain which contains a file.
+
+          There are several implications to this basic recovery
+          procedure:
+
+
+             * If a file contains a bad sector in the middle, it
+               cannot be fully read.  In the case of DOcument and
+               BAsic files, RECOVR can still construct a partial file.
+
+             * RECOVR must assume that the first sector of a file will
+               have the lowest number.  This is nearly always a good
+               assumption, except when dealing with certain cases where
+               a DOcument file has been appended to.
+
+             * The precise lengths of DOcument files and BAsic files
+               are not available.  COmmand file-lengths can be
+               determined from the TOP, END, and EXE values, stored in
+               the file itself.
+
+
+                             Deciding the File Type
+
+          It is usually obvious which file type makes the most sense. 
+          One will look "normal", and the other will be nonsensical or
+          unfamiliar.  Here are a few quick tip-offs:
+
+
+             * A file is almost never a DOcument file unless it
+               contains readable text.  Graphics characters are usually
+               a dead giveaway that a file is not a DOcument file.
+
+             * If there is only one BAsic line number in the first
+               sector of a file, or the numbers are not in ascending
+               order, the file is almost certainly not a BAsic file.
+          Chapter 6              Data Recovery               Page 43
+
+
+             * If END is lower than TOP, or EXE falls outside the range
+               of TOP and END, it probably isn't a COmmand file.  An
+               exception is PCSG (CT and CA) files, which will have a
+               TOP of 65535, and an END equal to the file length less
+               1, and an EXE of 63012 (for the M100).  Unfortunately,
+               there is no easy way to tell whether it is a CA or a CT
+               file except by trial and error.
+
+
+          If you cannot decide which type of file a sector series
+          should be, it is probably best to ignore it.  It might be
+          some leftover data from an old deleted file.
+
+
+                               Errors and Recovery
+
+          Data recovery is more of an art than a science.  RECOVR will
+          work in many cases, but there are cases when it does not.  If
+          you cannot recover your data, you may want to save the
+          diskette in anticipation of receiving help from someone else
+          in the future; however, we cannot guarantee that you will be
+          able to recover anything at all.
+
+
+
+                                    Chapter 7
+                              Command Descriptions
+
+          This chapter describes BASIC commands that POWR-DOS adds or
+          enhances.  Its organization differs from earlier chapters; it
+          contains a series of mini-sections for each command.
+
+          Some commands behave exactly the same with or without
+          POWR-DOS installed, except that they can access disk files
+          after a program OPENs them.  The Tandy 200 manual refers to
+          these commands and functions as "device generic".  The
+          following list summarizes the commands which can access disk
+          files; since their syntax and behavior are identical for disk
+          files as for other files, refer to your computer's manual for
+          more detailed information.
+
+          Special Note: The prefixes ":" and "0:" are completely
+          interchangeable.  The first is short and easy to type; the
+          second gives a measure of compatibility with other disk
+          software.
+
+
+               LOAD "0:fname"
+               SAVE "0:fname"
+               KILL "0:fname"
+               PRINT #n, ...
+               INPUT #n, ...
+               LINE INPUT #n, ...
+               CLOSE n
+               EOF (n)
+               MERGE "0:fname"
+               RUN "0:fname"
+               RUNM "0:fname"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     Page 44
+          Chapter 7            Command Descriptions           Page 45
+
+
+                                DSKI$ (Function)
+
+                                     Purpose
+
+          To provide information about disk files, RAM files, and free
+          space on disk.
+
+
+                                     Syntax
+
+
+          Case 1.   DSKI$ ("file.xx")
+          Case 2.   DSKI$ (":file.xx")
+          Case 3.   DSKI$ ("")
+
+
+                                   Description
+
+          Case 1:   DSKI$ returns the length of the file in RAM in
+                    bytes.  file.xx can be any RAM filename.  If the
+                    file does not exist in RAM, DSKI$ returns a 0
+
+          Case 2:   DSKI$ returns the length of the file on disk in
+                    bytes.  file.xx can be any disk file name.  IF the
+                    file does not exist on disk, DSKI$ returns a 0.
+
+          Case 3:   DSKI$ returns the number of free sectors on the
+                    disk.  Each sector can store 1,280 bytes.
+
+
+                                     Example
+
+          10 INPUT "Disk File Name"; A$
+          20 PRINT "File Len ="; DSKI$(":"+A$)
+          30 PRINT "Free Sectors: "; DSKI$("")
+          40 IF DSKI$("DMENU.BA")>0 THEN RUN "DMENU"
+
+          This program will ask for a file name, print its length,
+          print the free sectors on the disk, then run DMENU only if it
+          exists in RAM.
+          Chapter 7            Command Descriptions           Page 46
+
+
+                                     Errors
+
+          DSKI$ reads from the disk, except in case 1.  Any of the
+          following errors indicate problems accessing the drive:
+
+
+               ?IO - Unreadable Diskette
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - DSKI$ misspelled; missing parentheses, etc.
+              ?NM - Bad file name; file prefix must be RAM:, 0:, or :.
+              ?AO - DSKI$ cannot be used when a disk file is OPENed
+                    for  INPUT, OUTPUT, or APPEND.
+          Chapter 7            Command Descriptions           Page 47
+
+
+                                DISKO$ (Function)
+
+                                     Purpose
+
+          DSKO$ reads sectors from disk to RAM and writes sectors from
+          the RAM to disk.  A sector is 1280 bytes; in addition, DSKO$
+          adds the 12-byte control block to the end of the sector, for
+          a total of 1292 bytes.
+
+
+                                     Syntax
+
+
+          DSKO$ SW, SE, AD
+
+
+                                   Description
+
+          The PDD divides diskettes into 80 sectors of 1280 bytes each. 
+          In addition, each sector has a 12-byte control block
+          associated with it.  Reproducing the sectors and control
+          block of a diskette will produce an identical copy of the
+          diskette.
+           
+          DSKO$ either reads or writes one sector of the diskette,
+          followed by the bytes in the control block.  The three
+          arguments of DSKO$ are all integers.  SW is a switch; if
+          zero, DSKO$ reads a sector from disk to RAM, and if non-zero,
+          DSKO$ writes a sector from RAM to disk.  SE is the sector
+          number, which must be an integer from 0 to 79.  AD is a RAM
+          address; if SW is 0, it is the destination address for the
+          sector data, and if SW is non-zero, it is the beginning of
+          the sector data to be written to disk.
+
+          DSKO$ is a dangerous command.  IF AD is improperly specified,
+          it can cause coldstart; in addition, it can trash diskettes.
+
+
+                                     Example
+
+          10 CLEAR 0,MAXRAM-1292        
+          20 DSKO$ 0, 1, HIMEM                
+          30 POKE HIMEM+20, 0
+          40 DSKO$ 1, 1, HIMEM
+
+
+          This program reads in sector one from a diskette, changes the
+          20th byte to a zero, then re-writes the sector to diskette.
+          Chapter 7            Command Descriptions           Page 48
+
+
+                                     Errors
+
+          DSKO$ reads from and writes to the disk. Any of the following
+          errors indicate problems accessing the drive:
+
+
+               ?IO - Unreadable Diskette
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+               ?WP - Disk Write-protect tab open
+               ?HT - Can happen with user BREAK
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - DSKO$ misspelled; missing operands, etc.
+              ?FC - Bad sector number (not 0-79)
+              ?AO - DSKO$ cannot be used when a disk file is OPENed for
+                    INPUT, OUTPUT, or APPEND.
+          Chapter 7            Command Descriptions           Page 49
+
+
+                                     LFILES
+
+                                     Purpose
+
+          To read contents of disk and RAM directories.
+
+
+                                     Syntax
+
+
+          Case 1.   LFILES
+          Case 2.   LFILES R
+          Case 3.   LFILES TO "file"
+          Case 4.   LFILES R TO "file"   
+
+
+                                   Description
+
+          LFILES outputs a list of files either to the screen (cases 1
+          and 2) or a file (cases 3 and 4).  Without the "R" option,
+          LFILES produces a list of disk files and lengths followed by
+          a message showing the number of free sectors on the disk. 
+          With the "R" option, LFILES produces a list of RAM files and
+          lengths.  Pause message will appear in the listing unless you
+          specify the TO option.
+
+          The TO option (cases 3 and 4) allow you to send the directory
+          listing to the line printer (using "LPT:" for "file") or to a
+          RAM file.  This option gives you access to the directory from
+          within BASIC programs.
+
+
+                                     Example
+
+          10 LFILES TO "temp"
+          20 OPEN "temp" FOR INPUT AS 1
+          30 IF EOF (1) THEN 80
+          40 LINE INPUT #1,A$
+          50 if len(a$)<>17 THEN 30
+          60 T=T+VAL(RIGHT$(A$,5))
+          70 GOTO 30
+          80 CLOSE:PRINT "Total Bytes: ";T
+          90 KILL "temp.do":END
+
+          This program reads a disk directory into a file and adds up
+          all of the file lengths.  Notice that any line containing a
+          file name will be 17 characters long.
+          Chapter 7            Command Descriptions           Page 50
+
+
+                                     Errors
+
+          LFILES reads from the disk in cases 1 and 3.  Any of the
+          following errors indicate problems accessing the drive:
+
+
+               ?IO - Unreadable Diskette
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - DSKI$ misspelled; missing parentheses, etc.
+              ?NM - Bad file name; file prefix must be RAM:, 0:, or :.
+              ?FL - No more room in directory to create RAM file.
+              ?OM - No more memory for creating a RAM file.
+              ?AO - DSKI$ cannot be used when a disk file is OPENed for
+                    INPUT, OUTPUT, or APPEND.
+
+
+          There are several quirks of LFILES TO.  First, the RAM file
+          created by LFILES TO will occasionally contain a blank line
+          at the beginning.  Second, the file lengths created by LFILES
+          R TO "file" (where "file" is a RAM file) will often be
+          incorrect.  Do not use LFILES R TO "file" to obtain RAM file
+          lengths; use DSKI$ instead.  LFILES R TO "file" is useful for
+          determining the names of the files currently in RAM.
+          Chapter 7            Command Descriptions           Page 51
+
+
+                                  LFILES FORMAT
+
+                                     Purpose
+
+          LFILES FORMAT formats a diskette.
+
+
+                                     Syntax
+
+
+          LFILES FORMAT
+
+
+                                   Description
+
+          LFILES FORMAT will format the disk immediately, with no
+          prompt. Once it begins, the only way to stop it is to turn
+          off the drive.
+
+
+                                     Example
+
+          10 ON ERROR GOTO 40
+          20 LFILES
+          30 PRINT "Already Formatted!":END
+          40 IF ERR=18 THEN LFILES FORMAT
+          50 RESUME 60
+          60 END
+
+          This program formats a disk only if it is unreadable.
+          Chapter 7            Command Descriptions           Page 52
+
+
+                                     Errors
+
+          LFILES FORMAT writes to the disk.  Any of the following
+          errors indicate problems accessing the drive:
+
+
+               ?IO - Diskette will not format
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+               ?WP - Disk Write-protect tab open
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - LFILES FORMAT misspelled
+              ?AO - LFILES FORMAT cannot be used when a disk file is
+                    OPENed for INPUT, OUTPUT, or APPEND.
+
+          LFILES FORMAT will work consistently if performed immediately
+          after an LFILES or LFILES TO command.  In other cases, it can
+          "hang" unpredictably; if this happens, press SHIFT-BREAK,
+          type LFILES, and try again.
+          Chapter 7            Command Descriptions           Page 53
+
+
+                                   LFILES OFF
+
+                                     Purpose
+
+          LFILES OFF removes POWR-DOS from memory and deactivates the
+          hooks.
+
+
+                                     Syntax
+
+
+          LFILES OFF
+
+
+                                   Description
+
+          There are two steps involved in removing POWR-DOS.  First the
+          "hooks" which modify the BASIC ROM must be restored to their
+          original values.  Then, the 3K POWR-DOS program module, which
+          exists in RAM as an invisible BASIC file, must be removed. 
+          LFILES OFF performs both of these steps.
+
+          LFILES OFF closes all open files, clears all variables, and
+          stops execution of any running BASIC program.
+
+
+                                     Errors
+
+          There should never be an error with LFILES OFF.  An ?FC error
+          indicates that POWR-DOS is already inactive, i.e., the hooks
+          have been disabled already.  If this happens, refer to the
+          "Errors and Recovery" section of Chapter 1.
+          Chapter 7            Command Descriptions           Page 54
+
+
+                                    LFILES V
+
+                                     Purpose
+
+          LFILES V verifies the POWR-DOS version number and restores
+          all hooks.
+
+
+                                     Syntax
+
+
+          LFILES V
+
+
+                                   Description
+
+          POWR-DOS needs two things to be fully active: the program
+          module must be in memory, and the "hooks" into the BASIC ROM
+          must be installed.  Some software, notably some PCSG ROM
+          programs, deactivate some of these hooks.  LFILES V will
+          restore them.  In addition, it prints out the version number. 
+          It is a handy way to ensure that POWR-DOS is active.
+
+
+                                     Errors
+
+          LFILES V will never result in an error when POWR-DOS is
+          properly installed.  If an ?FC error results, the hooks have
+          been completely deactivated.  The program module may still be
+          in place; see Chapter 1 and the section on MAXRAMC for more
+          details.
+          Chapter 7            Command Descriptions           Page 55
+
+
+                                    LOADM ,F
+
+                                     Purpose
+
+          The LOADM command with the ",F" option allows any file to be
+          loaded from disk into RAM
+
+
+                                     Syntax
+
+
+          LOADM ":file.xx",F
+
+
+                                   Description
+
+
+          The LOADM command in normal BASIC copies the contents of a
+          COmmand file into reserved memory.  You can still use the
+          LOADM command in this way; you can also prefix the COmmand
+          file name with a ":" or "0:" to copy a disk-COmmand file into
+          reserved memory.
+
+          The ",F" option allows you to load a COmmand file into RAM as
+          a file instead of loading it into reserved memory.  THe same
+          option also allows you to load any file, not just COmmand
+          files.
+
+          LOADM has a restriction:  it cannot overwrite a file.  If you
+          attempt to use LOADM to load a file from disk when a file
+          with the same name already exists in RAM, you will get an ?AE
+          ("already exists") error.  You must KILL the RAM file first,
+          then do the LOADM.
+
+          If you load in a BAsic file with LOADM, any running BASIC
+          program will halt and the variables will be cleared.  If you
+          want to incorporate LOADM for a BAsic file into a program,
+          see the notes in Chapter 8.  For any other type of file,
+          LOADM will clear out any FOR-NEXT loops and GOSUB statements. 
+          In other words, you cannot normally use LOADM in a FOR-NEXT
+          loop or a SUBROUTINE.
+          Chapter 7            Command Descriptions           Page 56
+
+
+                                     Example
+
+          10 LOADM ":SORT"
+          20 INPUT "File to Sort:;F$
+          30 LOADM "0:"+F$+".DO",F
+          40 CALL 61000,0,VARPTR(F$)
+
+          This program assumes that a COmmand file called SORT.CO needs
+          a file in RAM to sort.  THe program loads the SORT.CO file
+          into reserved memory (using the "normal" LOADM), then asks
+          for a file name, then loads in that file from disk.  Note
+          that LOADM with the ",F" option always requires an extension.
+
+
+                                     Errors
+
+          DSKI$ reads from the disk.  Any of the following errors
+          indicate problems accessing the drive:
+
+
+               ?IO - Unreadable Diskette
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - LOADM misspelled; missing ",F" at end, etc.
+              ?NM - Bad file name; file prefix must be 0: or :.
+              ?FL - No more room in directory to create RAM file.
+              ?OM - No more memory for creating a RAM file.
+              ?FF - Disk file not found.
+              ?AO - LOADM cannot be used when a disk file is OPENed for
+                    INPUT, OUTPUT, or APPEND.
+              ?AE - LOADM cannot overwrite an existing RAM file.  It
+                    must be KILLed first.
+          Chapter 7            Command Descriptions           Page 57
+
+
+                               MAXRAMC (Function)
+
+                                     Purpose
+
+          MAXRAMC Provides machine-language CALL access to POWR-DOS
+          routines.
+
+
+                                     Syntax
+
+
+          MAXRAMC
+
+
+                                   Description
+
+          MAXRAMC is a descendent of the POWR-DISK jump vectors. 
+          POWR-DISK, a pre-cursor to POWR-DOS, lowers the value of
+          MAXRAM and resides just above it; the first 18 bytes are
+          "jump" vectors to routines inside the code.  On the other
+          hand, POWR-DOS does not reside above MAXRAM at all; yet, we
+          still wanted to provide the ability to CALL POWR-DOS
+          routines, so we added a function, MAXRAMC.
+
+          For a complete description of the routines and data relative
+          to MAXRAMC, see the next chapter.
+          Chapter 7            Command Descriptions           Page 58
+
+
+                                      SAVEM
+
+                                     Purpose
+
+          SAVEM allows you to save any file from RAM to disk.
+
+
+                                     Syntax
+
+
+          Case 1.   SAVEM ":file.xx"
+          Case 2.   SAVEM ":file.xx",A
+
+
+                                   Description
+
+          The SAVEM command, as it performs with your computer's
+          standard BASIC, saves a block of memory to a COmmand file. 
+          In that form, it requires TOP and END addresses.  You can use
+          SAVEM to create a COmmand file directly on the disk using the
+          regular SAVEM, if you specify a ":" or "0:" before the file
+          name.
+
+          However, if you omit the TOP and END addresses, you can save
+          almost any RAM file.  The structure of the file must be
+          obvious from its extension name:
+
+
+             * File extension beginning with "B" are BAsic-type files;
+
+             * File extensions beginning with "C" are COmmand-type
+               files, which includes CT, CW, and CA (Super-ROM types);
+
+             * File extensions beginning with "D" are DOcument-type
+               files.  Note that the "DT" extension used by PCSG's
+               Write-ROM cannot be saved to disk, since it is actually
+               a COmmand-type file.  (In Super-ROM, PCSG wisely changed
+               this extension to type CW).
+
+
+          In addition, you can specify ",A" after a DOcument-type file
+          name to indicate an "appending" save.  If there is already a
+          file on the disk with the same name as the RAM file you are
+          saving, the ",A" option will append the RAM file onto the end
+          of the disk file.
+          Chapter 7            Command Descriptions           Page 59
+
+
+          With the exception of the ",A" option, SAVEM cannot overwrite
+          a file.  If you attempt to use SAVEM to save a file from RAM
+          when a file with the same name already exists on disk, you
+          will get an ?AE ("already exists") error. You must kill the 
+          disk file first, then do the SAVEM.
+
+
+                                     Example
+
+          10 INPUT "File to Save";F$
+          20 INPUT "Save to disk as";D$
+          30 F$=F$+".DO":D$=D$+".DO"
+          40 NAME F$ AS D$
+          50 ON ERROR GOTO 70
+          60 SAVEM":"+D$
+          65 NAME D$ AS F$:END
+          70 IF ERR<>67 THEN RESUME
+          80 INPUT "Append, Overwrite, or Quit";A$
+          90 B$=LEFT$(A$,1
+          100 IF B$ = "O" THEN KILL ":"+F$:RESUME
+          110 IF B$ = "A" THEN SAVEM ":"+F$,a
+          120 RESUME 65
+
+          This program asks the user for a DOcument file to save on
+          disk, then attempts to save it.  If the file exists on disk,
+          it asks the user to select an overwrite or append.  If the
+          user selects append, it uses the ",A" option of SAVEM. 
+          Chapter 7            Command Descriptions           Page 60
+
+
+                                     Errors
+
+          SAVEM writes to the disk.  Any of the following errors
+          indicate problems accessing the drive:
+
+
+               ?IO - Write error or user BREAK
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+               ?WP - Disk Write-protect tab open
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - SAVEM misspelled or illegal use of ",A" option
+              ?NM - Bad file name; file prefix must be 0: or :.
+              ?AO - SAVEM cannot be used when a disk file is OPENed for
+                    INPUT, OUTPUT, or APPEND.
+              ?FF - RAM file not found.
+              ?AE - SAVEM cannot overwrite an existing disk file.  It
+                    must be KILLed first.
+
+
+
+                                    Chapter 8
+                                Programming Tips
+
+          This Chapter does not have the usual three-part structure but
+          contains tips for programmers using POWR-DOS. POWR-DOS gives
+          BASIC programs complete access to the disk, which makes
+          possible some very interesting programs.  The application
+          programs provided with POWR-DOS make use of many of the tips
+          shown in this chapter.
+
+
+                                  Side Effects
+
+          Several BASIC commands have side effects when a program
+          executes them.  As a rule, the Tandy manuals almost totally
+          ignore these side effects, leaving the curious programmer to
+          discover them by accident and aggravation.  In general, there
+          are two types of effects:
+
+
+             * Some commands reset all variables, DEF designations, and
+               dimensions.  An example is CLEAR (which is documented to
+               do so).  Other examples are LOADM and RUNM, (which are
+               not documented to clear variables).  These commands
+               (except CLEAR) have another side effect: they reset all
+               FOR/NEXT loops and all GOSUB return addresses.  In other
+               words, these commands cannot appear in subroutines or in
+               FOR/NEXT loops without errors resulting.
+
+             * Other commands halt program execution.  Examples are
+               EDIT, LOAD, and SAVE.  Normally, these commands also
+               reset all the variables as well, but at least one
+               command (SAVEM) halts the program without resetting the
+               variables.
+
+
+          Nearly every file-related command stops program execution. 
+          Tandy laptop designers obviously thought that users would
+          only use LOAD, SAVE, etc. as commands from the BASIC "Ok"
+          prompt.  However, there are powerful incentives to automate
+          some of the functions, especially with the PDD.
+
+          In general, POWR-DO extensions do not change the behavior of
+          the file-related commands.  However, because the Tandy
+          manuals do not concisely document their effects, here is a
+          summary.
+
+
+
+                                     Page 61
+          Chapter 8              Programming Tips               Page 62
+
+
+          Command        Effect
+
+          LOAD           Stops execution and clears all variables.
+
+          LOADM          Clears all variables.
+
+          SAVE           Stops program execution.  Saving to BA files
+                         clear all variables; saving to DO files (ASCII
+                         saves) does not clear variables.
+
+          SAVEM          Stops program execution, but does not clear
+                         variables.
+
+
+          The POWR-DOS extensions are design to provide the minimum
+          possible disruption to a running program.  See Chapter 7 for
+          the side effects of each command.
+
+
+                              Re-starting Programs
+
+          Whenever you want to save a program file to RAM, or load in a
+          BASIC program, you find that the necessary commands stop
+          program execution.  The following subroutine pokes a text
+          string into the type-ahead buffer:
+
+
+          1000 IFPEEK(2)=125THENB=-86:'100 Val
+          1010 IFPEEK(2)=152THENB=-738:'200 Val
+          1020 L=LEN(A$):FORI=1TOL
+          1030 POKE(KB+2*I),0
+          1040 POKE(KB+2*I-1),ASC(MID$(A$,I))
+          1050 NEXT:POKEB,L:RETURN
+
+
+          This subroutine is an excellent way to restart a program
+          which stops due to a command.  Here is an example:
+
+
+          10 CLEAR 100,53143
+          20 LOADM ":TMPC"
+          30 LOADM ":TASK.DO",F
+          40 A$="Run 60"+CHR$(13):GOSUB1000
+          50 LOADM ":TMPC.BA",F
+          60 CALL 53143
+          ...
+          Chapter 8              Programming Tips               Page 63
+
+
+          Notice that line 50 stops execution: LOADM stops any program
+          that loads another BAsic file.  However, the statement in
+          line 40 sets up the program to re-start itself.  When it
+          runs, the following material will appear on the screen:
+
+
+          Run                      <--- (User types this)
+          OK
+          Run 60
+          ...
+
+          The buffer can hold up to 16 characters.  There are other
+          interesting uses for this subroutine as well, such as
+          "Self-deleting" programs, etc.
+
+
+                             Machine-Language CALLS
+
+          There are twelve machine-language calls into POWR-DOS. 
+          Programs should make these calls relative to MAXRAMC.  The
+          supported calls allow a BASIC or machine-language program to
+          access PDD files beyond the capabilities of OPEN, PRINT#, and
+          INPUT#.  In the documentation below, each call appears as it
+          would be accessed from BASIC; refer to the TANDY CALL
+          documentation to see an equivalence to machine language.
+
+
+                                  CALL MAXRAMC
+
+          Resets POWR-DOS hooks.  This call should not be necessary in
+          general; use LFILES V when possible.
+
+
+                          CALL MAXRAMC+3, mode, address
+
+          Opens the file, whose name is pointed to by "address".  Legal
+          values for "mode" are 1 (output: new files only), 2 (append
+          to existing file), and 3 (input from existing file).  If you
+          try to open a file with an impossible mode (i.e., output to
+          an existing file, or input from a non-existent file), an HT
+          error will result.
+
+          The file name pointed to by "address" should be in a format
+          best described by the following examples:
+
+
+          Name           Format
+          BLAH.BA        "BLAH  BA"
+          C.CO           "D     CO"
+          LFILES.DO      "LFILESDO
+          Chapter 8              Programming Tips               Page 64
+
+
+          The best way to get "address" is with VARPTR. If you don't
+          know how this is done, adhere to the following example, where
+          the file "GRUNT.CO" is prepared for output:
+
+
+          10 B$="GRUNT CO"
+          20 B=VARPTR(B$)
+          30 CALL MAXRAMC+3,1,PEEK(B+1)+256*PEEK(B+2)
+
+
+                          CALL MAXRAMC+6, len, address
+
+          This call allows you to read data from a PDD file previously
+          opened with MAXRAMC+3 with a "mode" of 3.  "Len" is the
+          number of characters to read, which must be from 1 to 255;
+          "address" is the destination memory location for the
+          characters.  Be warned that, if you use a STRING variable, it
+          must be large enough to receive the characters; this CALL
+          won't change the variable length.  For example, to read 25
+          characters into B$:
+
+
+          40 B$=SPACE$(25):' Allocate space
+          50 B=VARPTR(B$)
+          60 CALL MAXRAMC+6,25,PEEK(B+1)+256*PEEK(B+2)
+
+
+                                 CALL MAXRAMC+12
+
+          This command resets the COM settings on the Model 100 to
+          communicate with the PDD.  It's unlikely that this call would
+          be necessary unless you were attempting to set up a
+          telecommunication program that simultaneously uses the PDD
+          and the Model 100's modem.
+
+
+                               CALL MAXRAMC+15,cmd
+
+          This call sends a single-code command to the PDD.  In the
+          context of the current supported calls, the only sensible
+          value for "cmd" is 2, which closes a file.  Your programs
+          should perform a "CALL MAXRAMC+15,2" after any file
+          input/output using the supported calls.  If you forget, files
+          opened for output will not be changed properly.
+          Chapter 8              Programming Tips               Page 65
+
+
+                                 CALL MAXRAMC+18
+
+          This call is intended only for machine-language programs. 
+          The BASIC CALL command cannot set the DE register, so it
+          cannot use this routine effectively.  This routine needs a
+          file opened with mode 3 using MAXRAMC+3.  It reads a count of
+          bytes equal to the DE register pair from the open file to the
+          address starting at HL.
+
+
+                                 CALL MAXRAMC+21
+
+          This call is intended only for machine-language programs. 
+          The BASIC CALL command cannot set the DE register, so it
+          cannot use this routine effectively.  This routine needs a
+          file opened with modes 1 or 2 using MAXRAMC+3.  It writes a
+          count of bytes equal to the DE register pair from RAM at the
+          address starting at HL to the open file.
+
+
+                            CALL MAXRAMC+24, sec, adr
+
+          Reads the sector from the diskette indicated by "sec" to the
+          address in RAM indicated by "adr".  The sector's 1280 bytes
+          and the 12-byte control block are transferred, for a total of
+          1292 bytes.  This call behaves identically to DSKO$
+
+
+                            CALL MAXRAMC+27, sec, adr
+
+          Writes a sector to the diskette indicated by "sec" from the
+          address in RAM indicated by "adr".  The sector's 1280 bytes
+          and the 12-byte control block are transferred, for a total of
+          1292 bytes.  This call behaves identically to DSKO$
+
+
+                                 CALL MAXRAMC+30
+
+          Puts the disk drive into sector-access mode.  The PDD
+          operates in two modes: file-access and sector-access.  It
+          powers up into file-access mode, and any file-related command
+          will put it into file-access mode.  This call, or the sector
+          read/write calls, will put it into sector-access mode
+          Chapter 8              Programming Tips               Page 66
+
+
+                                 CALL MAXRAMC+33
+
+          Searches for a file in the disk directory.  Upon calling, the
+          file name to search for must be in the eight bytes of RAM
+          beginning at 63302 (200 address is 64659) in the format shown
+          under CALL MAXRAMC+3.  Upon exit, the HL register pair
+          contains the length of the file (or 0) and the Z flag is
+          reset if the file exists.  The A register contains the number
+          of free sectors on the disk.
+
+
+                               MAXRAMC+36, 37, 38
+
+          These three bytes are the length, low-byte address, and
+          high-byte address of the COM string used by POWR-DOS.  They
+          allow BASIC programs to open the correct file to communicate
+          directly with the drive regardless of whether it is
+          configured for 9600 baud or 19200 baud operation.  The
+          following lines illustrate how to open a file to access the
+          drive:
+
+
+          10 A$="":A=VARPTR(A$):R=MAXRAMC+36
+          20 POKE A,R:POKE A+1,R+1:POKE A+2,R+2
+          30 OPEN "COM:"+A$ FOR OUTPUT AS 1
+
+
+                                   Error Codes
+
+          POWR-DOS returns error codes when something goes wrong with
+          PDD interaction.  Below is a list of error numbers, along
+          with a brief explanation of each.  NOTE: These error will
+          print out in BASIC unless you use the ERROR statement, which
+          will print out ?UE error for any error number greater than 58
+
+
+          No.  Code      Explanation
+
+          59   NR        RS232 Not Ready.  This error code usually
+                         occurs if the PDD is turned off or
+                         disconnected.  (Yes, we know that the
+                         description is the same as "no resume".)
+
+          60   DN        Drive not responding.  This error happens most
+                         often when an earlier operation ended
+                         unusually.  The best solution is usually to
+                         turn the PDD off, then back on.
+          Chapter 8              Programming Tips               Page 67
+
+
+          61   CM        Communication error.  Your computer and PDD
+                         use a system of checks to make sure no errors
+                         in transmission occur.  If you get a CM error,
+                         check the cable for snugness and try again.
+
+          62   DA        Drive done early.  This error should never
+                         occur unless you attempt to read past the end
+                         of a disk file.  It can happen when using the
+                         CALL MAXRAMC+6 function.
+
+          63   WP        Disk Write Protected.  You are attempting to
+                         modify a disk with the protect tab set to
+                         "no".
+
+          64   DF        Disk Full.  You have exhausted the oceanic
+                         capacity of the PDD, either by using more than
+                         79 sectors, or by creating more than 40 files
+                         on one disk.
+
+          65   ND        No Disk.  There isn't a disk in the drive.
+
+          66   HT        "Hard Trouble".  This error covers any
+                         miscellaneous problem with the PDD.  It rarely
+                         occurs except when using the CALL functions.
+
+          67   AE        File already exists.  You are attempting to
+                         overwrite a file using SAVEM or LOADM ,F (full
+                         file options).
+
+
+          In addition to the above errors, the IO error (#18) can
+          signify a damaged or unformatted disk, and the FF error (#52)
+          means that you are trying to access a non-existent disk file.
+
+
+
+                                   Appendix A
+                            Your Portable Disk Drive
+
+          Entire books could be written on the subject of disk drives,
+          but this short appendix describes only a few matters of
+          prudence and simple curiosity.
+
+
+                               The 3-1/2" Diskette
+
+          Technology has advanced considerably in diskettes for
+          personal computers.  The diskettes used in you r PDD have
+          more potential storage capacity than 5-1/4" Diskettes (which
+          are still the standard for desktop personal computers), yet
+          require less than half the area.  A 3-1/2" diskette holds
+          about 100 kbytes of data when used in your PDD; other disk
+          drives can squeeze as much as 1.44 megabytes onto the same
+          diskettes.
+
+          Further, the 3-1/2" diskette is a step forward in ruggedness
+          and reliability.  No part of the magnetic surface is exposed,
+          as a spring-loaded metal flap conceals the "window" in the
+          firm plastic case.  Be warned, however, that these diskettes
+          are not hermetically sealed: avoid dust and dirt; do not
+          leave diskettes scattered on a desktop under papers, etc.;
+          and do not carry them in pockets of clothing that sheds
+          (sports jackets, etc.)  The other constant enemy of diskette
+          data is magnetic fields.  The wordless warnings on diskette
+          boxes show horseshoe magnets, but remember that speakers,
+          motors, and office paper-clip holders all contain magnets. 
+          You needn't be paranoid, but don't be careless either.
+
+
+                             The Disk-Drive Hardware
+
+          The PDD comprises two basic moving parts: the motor and the
+          head.  The motor keeps the diskette spinning at a constant
+          rate.  The head glides over the diskette to read and write
+          the data.  The head can be in one of 40 different positions
+          relative to the edge of the diskette; each of these 40
+          positions is called a "track".  If you examine the magnetic
+          surface of a used diskette, you may be able to distinguish
+          lines of the tracks from friction with the head.
+
+
+
+
+
+
+                                     Page 68
+          Appendix A                                          Page 69
+
+
+          Diskettes must be "formatted" before the drive can
+          successfully read or write data.  We recommend formatting an
+          entire box of diskettes as soon as the are purchased. 
+          Formatting uses up some of the diskette's  storage ability
+          for magnetic timing marks, so that the drive controller
+          hardware can determine where on the track the head is at any
+          point.  After formatting, there are 2,560 bytes of capacity
+          left on each track of a diskette.  Further, it divides each
+          track into two "sectors" of 1,280 bytes each.  (Other drives,
+          with more capacity, squeeze more bytes per track).
+
+
+                            The PDD Operating System
+
+          It may surprise you that your PDD has software built into it
+          - and contains both RAM and ROM hardware - in order to
+          control the disk hardware.  The PDD is known as an
+          "intelligent" disk drive, since it decides on its own which
+          sectors are available and which are full, whether a file with
+          a certain name exists on the disk, etc.  Thus, the POWR-DOS
+          software merely sends codes conforming to those rules to
+          allow the computer and the drive to communicate.
+
+          There are advantages and disadvantages to this arrangement. 
+          The principle advantage is that code in the computer requires
+          less room.  The principle disadvantage is that the disk drive
+          is more or less limited by its internal operating system -
+          What it's designers intended for its use.  In this case,
+          this limitation means that the files on your PDD must be
+          primarily sequential rather than random access.  While it is
+          possible to do random access, it is far less convenient than
+          sequential access.
+
+          There are several other interesting observations about the
+          PDD operating system:
+
+
+             * The PDD O/S uses a "directory" to keep track of files on
+               a diskette.  Every diskette has a directory, which makes
+               up a sector on the outside track.  Thus, an empty
+               diskette holds 79 more sectors (of 1,280 bytes for a
+               total of 101,120 bytes)
+
+             * The directory cannot hold more than 40 names, limiting
+               the diskette to 40 files maximum, regardless of size.
+
+             * Each file uses at least one sector, no matter how small
+               the file is.
+          Appendix A                                          Page 70
+
+
+             * The PDD does not create "empty" files, i.e., files of
+               zero length.  If you open a file for output and fail to
+               write to it, it will not appear in the directory after
+               closing it.
+
+             * The PDD can only deal with one file at a time, whether
+               for input or for output.
+
+             * PDD file names can be longer than six characters and an
+               extension.  The actual limit appears to be something
+               more like 24 characters, which can also include lower
+               case.  However, POWR-DOS limits names to six characters
+               for compatibility with your computer's files, and to
+               reduce the amount of space required for the POWR-DOS
+               software.
+
+
+
+                                   Appendix B
+                                 Reserved Memory
+
+          Reserved memory is a difficult subject if you are unfamiliar
+          with machine-language programming.  The secret to
+          understanding it is to understand why you need it.  The first
+          section below explains the need for reserved memory and
+          relocation in fairly simple terms.  Then, the following
+          section explains how POWR-DOS avoids some machine language
+          compatibility problems.
+
+
+                            What is Reserved Memory?
+
+          Tandy laptop users are faced with two choices: either accept
+          mediocre performance, or learn how to best use their
+          machine's limited resources.  There are two crucial areas of
+          knowledge: machine-language compatibility and RAM
+          conservation.  To understand both, it is vital to know a few
+          things about your computer's memory.
+
+          The Model 100/200's memory is divided into a number of bytes. 
+          Each byte represents a value from 0 to 255; you can think of
+          a byte as a character in a DOcument file.  The number of
+          bytes depends on the machine and the amount of memory.
+
+          Each byte within a bank has a unique address.  (If there is
+          more than one bank of RAM, the banks are almost completely
+          independent, and there will be one set of addresses for each
+          bank.)  Depending on the amount of RAM, not all addresses are
+          capable of "remembering" the bytes stored to them.  However,
+          the 8192 addresses from 57344 to 65535 are always valid RAM
+          addresses.
+
+          Your computer keeps very careful track of RAM.  Like a good
+          cook in a crowded kitchen, it divides the available space
+          into different sections.  There are four sections in one
+          division that start from the "bottom up", i.e., from the
+          lowest RAM address working upward:
+
+
+            1. BASIC Programs.  The start of BASIC programs mark the
+               start of usable RAM.
+
+            2. DOcument files.  The DOcument files and the PASTE buffer
+               come immediately after the BASIC programs.  THe exact
+               starting address depends on which BAsic files are in
+               memory.
+
+                                     Page 71
+          Appendix B                                          Page 72
+
+
+            3. COmmand files.  The COmmand files come immediately after
+               the DOcument files.  The exact starting address depends
+               on which BAsic files and DOcument files are in memory.
+
+            4. BASIC Variables.  Whatever BASIC variables have been
+               declared in a running program go here.
+
+
+          There is another major division, containing five sections,
+          that builds from the "top down", i.e., starting at highest
+          RAM address and moving downward:
+
+            9. System Memory.  This area is a "scratch pad" for the
+               computer.  The file names that appear on the main menu,
+               as well as numerous other data, are stored in system
+               memory.  All of the System Memory address are fixed.  On
+               the Model 100, the addresses range from 62960-65535; on
+               the Tandy 200, the addresses range from 61104-65535.
+
+            8. Reserved Memory.  This is the area of memory designed
+               for RAM-based machine-language programs.  Its upper
+               limit is the System Memory, which is fixed; its lower
+               limit is HIMEM, as set in the BASIC CLEAR command. 
+               There is no limit to the number of running
+               machine-language programs that can reside in this area,
+               as long as they do not use the exact same addresses.
+
+            7. The file buffers.  Each file buffer takes up 265 bytes. 
+               The number of buffers is set by MAXFILES in BASIC.  The
+               file buffers vary in location; they always end just
+               below HIMEM.
+
+            6. The string area.  This is the area used by BASIC to
+               store the contents of string-type variables.  The size
+               of this area is set by the BASIC CLEAR command.
+
+            5. The stack.  This is a scratchpad area for the computer's
+               processor.  It also stores information about BASIC
+               FOR-NEXT loops and GOSUB statements.
+
+          Whenever you do something that uses memory, you cause the
+          bottom division to grow upward or the top division to grow
+          downward or both.  For example, when you add a character to a
+          DOcument file, you cause the bottom division to grow upward
+          by one byte; when BASIC starts a new FOR-NEXT loop, the stack
+          grows downward by a few bytes.  You run out of memory when
+          the top of the bottom division (the end of section 4) runs
+          into the bottom of the top division (the beginning of section
+          5).
+          Appendix B                                          Page 73
+
+
+          You notice that all files in the computer are in different
+          locations, and that their locations can change.  BASIC
+          programs and DOcument files never need "relocation", since
+          they are designed to be independent of their position in RAM. 
+          However, machine-language programs must always run from the
+          same addresses.  In other words, it is insufficient t specify
+          that they reside "somewhere" in user memory.  The designers
+          of the 100/200 operating systems made provision for fixed
+          locations: the high memory area (section 8, above).  The
+          lower boundary, called HIMEM, is equal to or lower than the
+          higher boundary, called MAXRAM; now files, variables, etc.,
+          will reside between HIMEM and MAXRAM.  Since MAXRAM is fixed,
+          section 8 has the constant address that machine-language
+          programs need.
+
+          Because the Model 100/200's RAM is scarce, most machine
+          language programs use the exact same locations (those
+          directly below MAXRAM) for their "running position".  It is
+          possible to design two or more specific machine-language
+          programs to share the reserved memory, but it is impossible
+          to do this in general.  As a result, if you want to run more
+          than one machine language program, you are out of luck. 
+          Further, some BASIC programs and ROM programs (such as
+          Interactive Solutions for the Model 100) use the memory
+          location in section 8 as a "scratch pad" when they are
+          running; consequently, they corrupt other machine-language
+          programs.
+
+          The Model 100/200's designers anticipated the clashing of
+          machine language addresses.  They created "command" (CO)
+          files.  A CO file exists in the user memory with other files
+          and never clashes, but it cannot be "run" like a BASIC
+          program.  Instead, it is a snapshot of reserved memory
+          containing an image of a runable machine language program. 
+          When you select a CO file on the main menu and press [ENTER],
+          the computer: (1) Copies the "snapshot" from section 3 into
+          section 8, and (2) begins execution of the copy in section
+          8. (NOTE: On the 200, spreadsheet files are CO files also. 
+          This confuses the issue, because they are not "programs".
+          They do not get copied into high memory.)
+
+          There are some implications to CO files:
+
+
+             * HIMEM must be set low enough to load the CO file into
+               reserved memory before running it.  If it is not, the
+               computer will just beep and return to the menu.
+          Appendix B                                          Page 74
+
+
+             * In order to run a CO file from the menu, you must have
+               enough memory to store it twice: once in the CO file,
+               and once in reserved memory.
+
+             * Once a CO file has been copied into reserved memory, it
+               is often possible to remove the CO file from RAM and
+               still execute the program!
+
+
+                                 Enter POWR-DOS
+
+          POWR-DOS is a machine-language program.  So, like all other
+          machine-language programs, it must run in a fixed address. 
+          However, to be most effective, it must be running constantly,
+          which makes relocation a difficult issue.  We provided a
+          relocator with POWR-DISK (a precursor to POWR-DOS), but it
+          was not an ideal solution.
+
+          POWR-DOS take advantage of the only other fixed location in
+          the Model 100/200: the first BASIC program.  You may have
+          noticed that the 100/200 stores BASIC programs in the very
+          lowest part of RAM.  The very first BASIC program does not
+          move once it is installed.  We "disguised" POWR-DOS as a
+          BAsic file, even though it is a machine-language program; in
+          that way, it has a fixed location and is completely out of
+          reserved memory.
+
+          There is one complication to this arrangement.  There are
+          other programs that use the same scheme! Most notably, some
+          software by Dr. David Sumner (who gets the credit for this
+          loading idea originally) and some software by PG Design use
+          this position.  Other software may appear also.  For this
+          reason, you can specify POWR-DOS to load as the second,
+          third, etc. BAsic file by designating an earlier program
+          "immovable".  See chapter 1 for how you do this.  The only
+          problem, of course, is that if you remove a BAsic file below
+          POWR-DOS in memory, you will get into trouble.
+
+
+
+                                   Error Codes
+
+
+          Code      No.       Description
+
+          NF        1         NEXT without FOR.
+          SN        2         Syntax Error.
+          RG        3         RETURN without GOSUB.
+          OD        4         Out of Data.
+          FC        5         Illegal Function Call.
+          OV        6         Overflow.
+          OM        7         Out of Memory.
+          UL        8         Undefined Line.
+          BS        9         Bad Subscript.
+          DD        10        Doubly Dimensioned Array.
+          /0        11        Division by Zero.
+          ID        12        Illegal Direct Statement.
+          TM        13        Type Mismatch.
+          OS        14        Out of String Space.
+          LS        15        String too Long.
+          ST        16        String Formula too Complex.
+          CN        17        Can't CONTinue.
+          IO        18        Input/Output Error or user Break.
+          NR        19        No RESUME in Error Routine.
+          RW        20        RESUME without error.
+          UE        21        Undefined Error Number.
+          MO        22        Missing operand for command.
+          IE        50        Illegal Error Code.
+          BN        51        Bad File Number (MAXFILES too low)
+          FF        52        File not Found.
+          AO        53        File already open.
+          EF        54        Input past End of File.
+          NM        55        Bad File Name.
+          DS        56        Direct Statement in File.
+          FL        57        RAM Directory Full.
+          CF        58        File not Open.
+          NR        59        RS232 Not Ready for Disk Access.
+          DN        60        Drive not Responding.
+          CM        61        Communications Error.
+          DA        62        Drive Done Early.
+          WP        63        Disk is Write Protected.
+          DF        64        Disk is Full.
+          ND        65        No Disk in Drive.
+          HT        66        Miscellaneous Drive Trouble.
+          AE        67        File already exists; can't overwrite.
+
+

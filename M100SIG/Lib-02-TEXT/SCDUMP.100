@@ -1,0 +1,20 @@
+1000 'SCDUMP.100 <Gemini> <Epson>
+1001 'Original by Don Corbitt [73216,1022] - 11/83
+1002 'Modified by Bill Templeton [75655,1056] - 2/85
+1003 DEFINTS
+1004 'Initialize array of print values
+1005 IF SX THEN 1008 ELSE DIM SD%(239),SD$(15)
+1006 FOR SX=0 TO 15:READ SD:SD$(SX)=CHR$(SD)+CHR$(SD):NEXT SX:E$=CHR$(27)
+1007 'Save current cursor position, reset printer, change linefeed length
+1008 SC=POS(0):SR=CSRLIN:PRINTE$"P";: LPRINTE$;"@";E$"3"CHR$(16):FORSY=0TO7'CHR$(24) for Epsons
+1009 'Move cursor on screen, save one line of data in array SD%(239)
+1010 FOR SX=0 TO 39:PRINT@SX+SY*40,;:FOR SZ=-20 TO -15
+1011 SD%(SX*6+20+SZ)=PEEK(SZ):NEXT SZ,SX
+1012 'Setting graphics mode, print top then bottom half of each line
+1013 FORSW=0TO1:LPRINTE$"K"CHR$(224);CHR$(1);'"L" = high resolution; CHR$(240)CHR$(1) for Epsons
+1014 FOR SX=0 TO 239
+1015 IF SW THEN LPRINT SD$(SD%(SX)\16); ELSE LPRINT SD$(SD%(SX) MOD 16);
+1016 'Return cursor to original posision, and return
+1017 NEXT SX:LPRINT:NEXT SW,SY:PRINT@SC+SL*40,"";:RETURN
+1018 DATA 255,63,207,15,243,51,195,3, 252,60,204,12,240,48,192,0
+

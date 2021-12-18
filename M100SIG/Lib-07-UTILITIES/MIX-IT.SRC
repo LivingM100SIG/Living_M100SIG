@@ -1,0 +1,89 @@
+;MIX-IT.ASM -- Source Code for M/L part of MIX-IT.100
+;
+;Phil Wheeler -- 5/17/87
+;
+
+;Concept based on 2MIXED.COM for PC's -- by Eric Grunin
+;Logic and 8085 code original
+;
+	prt
+	org	0	;relocatable
+;ROM Adresses
+;
+chkf	equ	$5aab	;ck file name in directory
+faddr	equ	$5ae3	;get file address
+beep	equ	$7662	;make a beep
+;
+;program starts here
+;
+start	lxi	d,file	;point to file
+	mvi	a,10	;changed by Basic driver
+	call	chkf	;hl points to start of directory entry
+	jz	nofile	;beep and rtn if no file
+	call	faddr	;hl points to start of file
+;
+;setup the storage registers
+;
+	mvi	b,1	;initial flag
+	mvi	c,32	;LC diff = 32
+;character processing
+
+getch	mov	a,m	;file char in a
+	cpi	26	;chk eof
+	jz	fini	;end if eof
+;
+;set flags for following CAP
+;
+	cpi	'.'	;period?
+	jz	setfl	;set end flag
+	cpi	'?'	;question mk?
+	jz	setfl	;set end flag
+	cpi	':'	;colon?
+	jz	setfl	;set end flag
+;
+;Check to see if a CAP
+;
+	cpi	'Z'
+	jnc	loop	;loop if >Z
+	cpi	'A'
+	jc	loop	;loop if <A
+;
+;Check the flag
+;
+	push	a
+	mov	a,b
+	cpi	1
+	jnz	lower
+	pop	a
+	mvi	b,0	;reset flag, keep CAP
+	jmp	loop
+;
+;now make it lower case
+;
+lower	pop	a	;get char back
+	add	c	;up it by 32
+	mov	m,a	;put it in M
+	mvi	b,0	;reset flag
+	jmp	loop
+;
+;set the flag (if '.', '?', or ':')
+;
+setfl	mvi	b,1
+;
+;and loop back
+;
+loop	inx	h	;move pointer forward a byte
+	jmp	getch	;get the next character
+;
+;ending routines
+;
+nofile	call	beep	;beep if no file found
+;
+fini	ret
+;
+;reserve space for file name (modified by Basic driver)
+;
+file	dm	PHONEY.DO
+	db	0
+;
+	end

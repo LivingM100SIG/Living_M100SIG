@@ -1,0 +1,17 @@
+0 'MYTODO.BA (c) 1988, by Bill Thomas     CompuServe 76576,3035
+1 'MYTODO.BA adds notes to NOTE.DO as     well as a check-off line and the date   and time when the note was created.
+2 'Enter the program and a series of      dots are placed on the screen as a      workspace.  Enter any notes or message  which you want printed to NOTE.DO.
+3 'To exit, simply hit ENTER with no      notes on the screen.
+4 'Use SCHEDL to access NOTE.DO in the    conventional manner.
+6 'If the date is not needed, delete      this from line 70:                             LEFT$(DATE$,5)+"><"+
+7 'If the time is not needed, delete      this from line 70:                             +"><"+LEFT$(TIME$,5)
+8 'The simplicity of ENTERing/EXITing     and access through SCHEDL is what       makes this program so nice.
+9 'Delete LINES 1-9 to conserve space.
+10 CLEAR500:CLS:PRINT@13,CHR$(27)"p<ENTER> TO END"CHR$(27)"q"
+20 PRINT@80,STRING$(199,".")+"<":PRINT@40,""
+30 LINEINPUTA$
+40 IFA$=""THENMENU
+50 ONERRORGOTO100
+60 OPEN"NOTE.DO"FORAPPENDAS1
+70 PRINT#1,"___<"+LEFT$(DATE$,5)+"><"+LEFT$(TIME$,5)+"> "+A$:PRINT#1,"":CLOSE:GOTO10
+100 BEEP:CLS:PRINT@18,CHR$(27)"p";ERR;"ERROR in "ERL;CHR$(27)"q":FORX=1TO300:NEXTX:GOTO10

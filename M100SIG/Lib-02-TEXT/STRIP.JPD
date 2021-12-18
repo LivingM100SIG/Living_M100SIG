@@ -1,0 +1,34 @@
+0 'STRIPR.100 (C)3/87 R.W.Hess73267,552
+1 ' modified 4/87 J.P.Diercks73327,2353
+2 'mods include:
+3 'more logical command keys
+4 '[CR?] prompt vanishes after keypress
+5 'Thanks R.W. - neat idea!
+6 '(delete rems in running copy)
+7 '
+13 CLS:MAXFILES=2:DEFSTRC,E:CR=CHR$(13)+CHR$(10)
+14 ONERRORGOTO13
+15 FILES:PRINT:INPUT"Edit CRs in which .DO file";FL$:CLS
+16 IFFL$=""THENMENU
+17 PRINT@4,"At each ? prompt press either"
+18 PRINT@50,"<ENT> to KEEP CR or":PRINT@90,"<SPC> to SPACE it or":PRINT@130,"<BKSP> to STRIP it!!"
+19 PRINT@167,"Stripped file appears"
+20 PRINT@208,"in Main Menu as XX____.DO"
+21 PRINT@286,"Press Spacebar to continue.";:CALL24367:CLS
+22 OPENFL$FORINPUTAS1
+23 MID$(FL$,1)="XX"
+24 OPENFL$FOROUTPUTAS2
+25 IFEOF(1)THENCLOSE:MENU
+26 C=INPUT$(1,1)
+27 E=RIGHT$(E,4)+C
+28 IFASC(RIGHT$(C,1))=9THEN30
+29 IFASC(RIGHT$(C,1))<32THEN25
+30 IFMID$(E,3,2)=CRTHEN32
+31 PRINTC;:PRINT#2,C;:GOTO25
+32 CALL17001:PRINT"Cr?";
+33 CALL17006
+34 A$=INKEY$:IFA$=""THEN34ELSEPRINTSTRING$(3,CHR$(127));
+35 IFA$=" "THENC=" "+C:GOTO31
+36 IFA$=CHR$(13)THENC=CR+C:GOTO31
+37 IFA$=CHR$(8)THEN31
+38 GOTO33

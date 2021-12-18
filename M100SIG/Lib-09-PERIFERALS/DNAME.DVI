@@ -1,0 +1,27 @@
+9 ' DName by David Jensen 71236,1533
+10 'This Program uses DSKO$(A$)
+20 'In order to Label or Comment
+30 'each DISK, erasing the useless
+35 'power on message.
+36 'Which is located at (0,1,13,1)
+37 'The First 18 characters are printed
+38 'during LFiles and 80 Total.
+42 'The Version (Date$) can be adjusted
+44 'Adding Fields can be done by
+45 'copying line 110 with B$ and adding
+46 '+B$ field string in line 130
+90 '
+100 CLEAR400:IFMAXRAM<>58263THENENDELSEPRINT"Disc Name on LFiles has 18Chr Max":LINEINPUT"Enter Disc Name ";NAM$
+110 LINEINPUT"Sucject or Note ";A$
+120 CR$=CHR$(10)+CHR$(13)
+130 A$=NAM$+CR$+A$:IFLEN(A$)>76THENPRINTa$;cr$;"**** Not All Printed *****":A$=LEFT$(A$,76)
+140 PRINT"Today is "DATE$";
+150 PRINT"This date correct Y/N ";
+160 B$=INPUT$(1):print:IFB$="Y"ORB$="y"THEN180
+170 LINEINPUT"Enter Date xx/xx/xx ";DAT$:IF DAT$=""THEN140ELSEDATE$=DAT$:GOTO140
+180 A$=A$+CR$+DATE$+CR$
+185 DAT$=LEFT$(DATE$,2)+"."+MID$(DATE$,4,2)+"."+RIGHT$(DATE$,2)+CR$+LEFT$(NAM$,18)+CR$:NAM$=""
+190 IFLEN(A$)>88THENA$=LEFT$(A$,89)+"VERSION "+DAT$ELSEA$=A$+CHR$(0):GOTO190
+200 DSKO$0,1,13,1,A$
+300 LFILES:END
+

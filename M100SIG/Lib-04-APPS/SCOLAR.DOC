@@ -1,0 +1,193 @@
+
+"Scholar Reviews" and STUDY Copyright 1987 by David Dunn Thomas
+All rights reserved - Distributed under the "Shareware" concept.
+Revised 6-03-87 to permit True/False questions.
+
+                  S C H O L A R    D O C U M E N T A T I O N
+
+        STUDY is a program that enables students to review information or
+study it for the first time as the program utilizes lessons on file, either
+RAM, Tandy portable disk drive, or Chipmunk drive to provide questions,
+additional information, and the correct answers. The program is only 3,365
+bytes in Basic format; the lessons may have up to 100 questions depending on
+the amount of review data provided. Dozens of lessons could be prepared and
+stored on one disk, or in one folder of a Chipmunk disk, to access for one
+STUDY session.
+
+        The important feature of Scholar Reviews is the built-in review
+capability of the program. Whenever the student selects an incorrect answer,
+information is promptly provided that includes the correct answer to the
+question though not necessarily in the same, exact words. Further, when the
+question is correctly answered, learning is enhanced by having the answer
+repeated. The answer may be repeated in the same phraseology or differently
+from that of the question. All of these variations are created via the correct
+formatting of the Scholar Review lesson file.
+
+        The "Scholar Reviews" program, STUDY.BA, is simplicity itself for the
+student to operate for purposes of either learning or reviewing a lesson. The
+more difficult and painstaking operation is the preparation of the lesson
+files for the Scholar to make proper us of STUDY. This file explains use of the
+program as well as preparation of the lesson files.
+
+
+Using STUDY.BA:
+
+        When STUDY is initialized, the student is asked for the lesson they
+wish to review and then whether the lesson file is in RAM or on disk. If the
+file does not exist, the user is dropped out of the program with an
+appropriate advisory message. If the file does exist, but is not in proper
+Scholar Review format, the student will be dropped out of the program either
+immediately or later in the review if there is incorrect formatting in the
+question/answer phase of the program.
+
+        Once embarked, the student will have a series of multiple choice
+questions - each provides four choices. The reviewer is never told that he is
+wrong; rather, if he makes an error he is provided with the correct
+information and then asked the same question again. When the question is
+answered properly, the answer is returned to the student - optionally in a
+different format.
+
+     Example:
+                President of U.S. during World War I:
+
+              1) Woodrow Wilson
+              2) Jack Pershing
+              3) John Rockefeller
+              4) Benjamin Franklin
+              ?
+
+                If an incorrect response is chosen, then the screen displays:
+
+
+                Pershing, Franklin, and Rockefeller
+                were never President of the U.S., but
+                Wilson served from 1913-1921.
+
+                With the correct response, the display is:
+
+                          Correct!
+
+                       Woodrow Wilson
+
+             was President in W. W. I, 1914-1918
+
+
+        Note that lesson formatting provides for INSTRUCTING the student
+instead of merely drilling. That is one of the principal strengths of the
+"Scholar Review" concept, if well executed!
+
+        For some idea of the capabilities of Scholar Reviews, run STUDY with
+the LESSON.DO file from this Library loaded into either RAM or disk. There are
+only thirteen questions in the file, but sufficient to show the flexibility of
+the Scholar Review concept. The program STUDY does NOT have to be modified in
+any way as long as the lesson files are formatted as STUDY expects them.
+
+
+
+Lesson file preparation:
+
+        First line of the file MUST contain three items separated by commas:
+
+        | - Essential Scholar identifier
+        n - The number of questions in the lesson
+      xxx - The title of the lesson - no more than 38 characters
+
+        Example:
+                |,75,Olympic Games
+
+                Indicates there are 75 questions in a lesson on the Olympics.
+
+
+        Thereafter, EACH record must contain either six or ten items (depending
+upon type of question) separated by commas; these may be enclosed in quotes if
+textual material, but the quotes are MANDATORY for the last item - otherwise
+needed only if the text contains numeric information.
+
+Format for Multiple Choice questions:
+
+   1)   n - The number of the ANSWER to the question (1 to 4)
+   2)   | - Essential Scholar identifier
+   3) xxx - The question, no more than 38 characters
+   4) xxx - Possible answer, no more than 35 characters
+   5)     - same
+   6)     - same
+   7)     - same
+   8)   n - Response type identifier; 0 if no change in answer
+                                      1 if the answer is rephrased
+   9) xxx - Alternate answer phraseolgy if item 8 is 1
+            a single letter if item 8 is 0
+  10) xxx - Text of the information to be displayed when an incorrect answer
+            has been chosen; may be up to 160 characters including spaces
+
+        Examples:
+
+3,|,Which listed is a continent?,United States of America,Washington
+ D.C.,Africa,Great Britain,1,is one of the continents.," The seven continents of the world are   North and South America, Asia, Africa,  Europe, Australia,
+and Antarctica."
+
+        In the above, the "1" following "Britain" indicates that the answer
+will be returned with different phraseology than the question.
+
+2,|,John Adams was the nation's first,Treasurer,Vice President,President,Chief
+ Justice,0,a," Later President, and father of another  President, John Adams
+was also the      first Vice President of the new nation."
+
+        Here the question is used for the answer phrase, so "0,a" follows the
+word "Justice."
+
+
+Format for True/False questions:
+
+   1)   n - The number of the ANSWER to the question: 1 = False, 2 = True
+   2)   ~ - Essential Scholar identifier
+   3) xxx - The statement, no more than 38 characters
+   4)   n - Response type identifier; 0 if no change in answer
+                                      1 if the answer is rephrased
+   5) xxx - Alternate answer phraseolgy if item 4 is 1
+            a single letter if item 4 is 0
+   6) xxx - Text of the information to be displayed when an incorrect answer
+            has been chosen; may be up to 160 characters including spaces
+
+
+Composing records:
+
+        Assuming that one has a ready source of questions and answers, perhaps
+the trickiest portion of lesson preparation is composing the last item,
+supplementary information. Note that the information in the above examples is
+enclosed in quotation marks; this is to preserve the leading space for a good
+format, but also because it is ESSENTIAL for proper operation of the program.
+The other spaces in the data are needed to get the well formatted display seen
+when the program is run.
+
+        Tip: Prepare the entire record by starting in BASIC! Decide on the
+correct answer and type it, the comma, the proper identifier (| or ~), the
+comma, and the question. Then use the EDIT command to compose remainder of
+questions, answer(s), and review information. This procedure enables typing of
+precisely the format desired with no concern about spacing as can happen in
+TEXT mode. Finally, "Cut" or "Copy" the record into the paste buffer and exit
+the EDIT mode; proceed to TEXT work file for the lesson and "Paste" the record
+in place.
+
+=======
+6-03-87
+=======
+
+        The STUDY program, sample LESSON.DO, and this file are distributed
+under the "Shareware" concept and are not in the Public Domain. Any person
+that makes use of the program commits themself to making a suitable
+contribution depending upon the number of persons assisted. Any lessons
+developed and distributed must have the Copyright notice found at the
+conclusion of LESSON.DO in this Library.
+
+Comments, questions and contributions may be directed to the author:
+
+Dave Thomas
+2308 Chetwood Circle, #103
+Timonium, MD 21093
+
+Phone: (301) 252-5379
+
+Electronic mail:
+GEnie:          MORTIMER
+Delphi:         MORTIMER
+CompuServe:     70526,1117

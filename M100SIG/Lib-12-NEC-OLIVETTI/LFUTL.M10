@@ -1,0 +1,24 @@
+0 'LFUTL.M10 -- A "universal" Line Feed Utility which implements Hugo Ferreyra's FIXLF.HF1
+1' and Don Corbitt's TELCOM linefeed patch in a single, menu-driven utility.
+2' It is a module of my current on-board Utility program, hence the structure.
+3 'Note that FIXLF.HF1 is copyrighted by Hugo, and released "for non-commercial use only".
+4 ' Olly M10 version, produced with help from Neil Smith of Travelling Software
+5 '
+6 '                Phil Wheeler:10/1/85
+7 GOTO20
+8 MENU
+20 CLS:RV$=CHR$(27)+"p":NO$=CHR$(27)+"q":A=64232:B=63069
+22 KEY8,"Menu"+CHR$(13)+CHR$(254)+CHR$(13)+CHR$(245)+CHR$(62)+CHR$(10)+CHR$(204)+CHR$(68)+CHR$(109)+CHR$(241)+CHR$(201)
+24 PRINT:PRINT"Select Option:":PRINT:PRINT,"P)rnt LF",,"C)omm LF",,"T)op Menu"
+26 ONINSTR("pPcCtT",INPUT$(1))GOTO30,30,40,40,8,8:GOTO26
+30 CLS:F$=" Off ":P=PEEK(A)+256*PEEK(A+1):IFP=63618THENF$=" On "
+32 PRINT:PRINT"Printer LF"RV$F$NO$:PRINT:PRINT,"E)nable",,"D)isable",,"T)op Menu"
+34 ONINSTR("eEdDtT",INPUT$(1))GOTO36,36,38,38,8,8:GOTO34
+36 POKEA,130:POKEA+1,248:GOTO30
+38 POKEA,58:POKEA+1,127:GOTO30
+40 CLS:F$=" Off ":IFPEEK(B)<>0THENF$=" On "
+42 PRINT:PRINT"Upload LF"RV$F$NO$:PRINT:PRINT,"E)nable",,"D)isable",,"T)op Menu"
+44 ONINSTR("eEdDtT",INPUT$(1))GOTO46,46,48,48,8,8:GOTO44
+46 POKEB,1:GOTO40
+48 POKEB,0:GOTO40
+

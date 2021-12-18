@@ -1,0 +1,159 @@
+		SECurities PoRTfolio
+	
+(c) 1984 by Michael A. Lampert	
+	
+	I. Intoduction
+	
+	SECPRT is a program that records your open securities positions, 
+figures your gains or losses based on prices input from keyboard, a ram file, 
+or through the modem (direct connect or acoustic cup). It also keeps track of 
+closed security positions and historic gains and losses as at whatever periods 
+you use the program.
+	Before the first run, edit line 250 to substitute your password for the
+word PASSWORD near the end of the line. Also edit line 260 so PH$= your local 
+Telenet number in place of 5551212 (leave the "+ PH$" after the number.)
+	On the first run do *not* answer the first two questions yes, and do *
+not* use the Historic data part of the program: they malfunction on the first 
+use (but are fine thereafter). The program creates a file (ram or cassette, 
+your choice) called STKLST which keeps your portfolio and liquidated and 
+historic data in compressed form. If you use the modem, a file called QUOTE 
+will also be created.
+	
+	II. Input
+	
+	The program opens with a copyright notice. Then the screen clears and 
+asks if you want input by tape, and if not, input from ram. The input referred 
+to is a record of prior transactions, so on first use answer both "N". (The 
+program uses inkey$ here, so no <enter> needed). In the future, depending on 
+where you've stored old data, answer one "Y". If tape, ready the recorder and 
+hit <C>, as the program instructions.
+	The program will read (from tape or ram) the number of data items, then
+announce itself as it reads unliquidated, liquidated and historic data.
+	When done, it will beep and announce "standby to check input". 
+Liquidated and unliqudated transactions will scroll by, stopping every so 
+often. (Long security names will be displayed truncated to fit the available 
+screen space, and not all of the data stored for each entry will be displayed. 
+This scroll, used frequently in the program, puts titles on the screen bottom, 
+which is scroll protected. If you ever break the program with this line frozen,
+punch the "LABEL" key twice and all will be right.)
+	The screen will go black and an input menu appear.
+	Choice 1 will prompt you to add a security by first asking for its 
+name.(This part of the program requires the use of <enter> to terminate each 
+entry.) The name should be in the form:
+	TICKER SYMBOL-Readable name
+For example:
+	T-ATT
+	CMIBJ-ChaseMan.Puts/9/$50.
+	If the ticker is not the first few characters followed by a dash, (
+except for "other securities" described in the next paragraph), the modem 
+aspects won't work. The program won't error trap this, but it will a security 
+name > 20 letters.
+	Next it will ask if the position is long or short. Then you will type a
+number to reflect (1)NYSE, (2)ASE, (3)OTC, (4)Options, (5)Bonds or (6)Other 
+Securities. Any security for which Dow Jones News Retieval does not list a 
+price should be called an other security.
+	Then you will report the purchase price. For stocks, use the price per 
+share; for options, per 100; for bonds, all in cents. After answering this 
+question the new stock will be inserted in its alphabetic place in its exchange
+listing, then the list of all open securities will scroll, then the program 
+returns to the input menu.
+	Choice 2 on the input menu is change a security. The open securities 
+will scroll past, and you will be asked which number to change. Then you will 
+go through the same prompts as choice 1 , and also asked for a purchase date 
+which must be in the form MM/DD/YY where YY>=82 and <= current year. The 
+program will not realphabetize or change exchange after this activity, so if 
+the change you need to make requires this, delete the old entry (see below) and
+add a new one. Again, after changing a security the open securities scroll, and
+then you return to the input menu.
+	Choice 3 liquidates (sells) a security. The open positions will scroll,
+you choose the number of the position to close, and the total proceeds. Both 
+open and liquidated positions scroll past, so you can confirm the deletion from
+open and addition to closed lists. The program automatically computes gains or 
+losses.
+	Choice 4 deletes entirely the security whose number you type after 
+seeing the list. The deletion is confirmed by the new list scrolling.
+	Choice 5, value the portfolio, leads to a new menu for inputing prices.
+
+	The price by menu lets you choose from (1) keyboard, (2)acoustic cups, 
+(3) modem or (4) QUOTE.DO.
+	Choice 1, keyboard, will list a number, the truncated security name, 
+the number of units, the purchase price and will prompt with a question mark (
+and a footer that says "CUR.PR." in reverse video.) Be sure to format the price
+in the same dollars and cents format used for the purchase price displayed just
+to the left of your input, or the program will GIGO.
+	Choice 2 will notify you it's doing a forced trash collection and then 
+prompt you to dial the phone and press enter. Thereafter it behaves like choice
+3.
+	Choice 3 does the trash collection, then dials telenet. For both 
+choices 2 and 3 you will see a Telenet Dow Jones sign on, then "starting 
+quotes". Each security, preceded by its DJ punctuation (comma, semi, dash, 
+slash) will appear on the screen. If more than 30 seconds elapse with no new 
+ticker symbol appearing, type <shift-break> and after the Ok prompt, type 
+"NEXT:CONT" and the next ticker will appear. If this happens, there will be an 
+error later in the program. When finished the program will say "signing off."
+	Choices 2, 3 and 4 all now lead to "Digesting Quotes". If there is an 
+error, the program will report it and stop. (If during download you had to 
+break, there will almost certainly be an error.) Go to Quote.do, find the 
+error, fix the entry to parallel the others, and rerun the program choosing 
+"QUOTE.DO" as the source of prices. If there are no problems, the program will 
+prompt you to enter from the keyboard the prices of other securities, if any.
+	The screen will clear and I'M CALCULATING will appear. Then the screen 
+will black out and an output menu appear.
+	
+	III. Output
+	
+	Choice 1 produces a truncated report of unliquidated and liquidated 
+transactions on the screen, using the usual scroll and a "hit enter to 
+continue" between unliquidated and liquidated. When concluded, you return to 
+the output menu.
+	Choice 2 produces a fuller listing on printer after prompting you for 
+whether you want liquidated detail. (When you have many liquidated transactions
+accumulated, you'll appreciate why, sometimes, you don't want to see all closed
+transactions). There is a printer ready/busy INP test in line 700. After 
+printing you're returned to the output menu.
+	Choice 3 will save to a cassette file, after prompting you to ready the
+cassette and type <c>. 
+	Choice 4 will save to a ram file. Both choices 3 and for will report 
+what they are saving. **NOTE: Usually you should visit choice 5 before saving**
+. The ram and cassette files are interchangable: if you save to ram, you can go
+into the .DO file, save it to tape and use that as a cassette file; and you can
+use the cassette file to Load a .DO file. When your portfolio gets big, late in
+the year, you may not have enough ram space to save to ram. When done saving to
+either, the program will beep and return to the output menu.
+	Choice 5 will add this session's unliquidated and liquidated profits 
+and losses to an historic file. USE IT OFTEN. When you pick 5, you will be 
+asked if today is a week-ending day, then returned to the output menu.
+	Do not choose choice 6 till you have two or three weeks of data. What 
+happens when you do choose it will be discussed in a moment.
+	Choice 7 will end the program with a "STOP" if, and only if, you've 
+saved data to ram or cassette, else it will curse at you and take you back to 
+the output menu.
+	Choice 6 leads to an inkey choice of (T)able, (G)raph or (R)eturn to 
+output menu. The last choice is obvious. The Table choice will lead to (S)creen
+or (P)rinter to route output; the Graph choice always goes to printer. Either 
+choice leads to Weekend Only, with a Y or N answer. A table of session or 
+weekly summaries of liquidated, unliqudated and total gains or losses will 
+appear. Again 1060 has a printer ready test, which will be triggered if you try
+to use the type ahead buffer to choose both a printed graph and table. When 
+done, you are returned to the Table, Graph, Return line.
+	
+	IV. Misc.
+	
+	A. The program uses Dow Jones & not Compuserve for the quotes because 
+DJ is cheaper.
+	B. DJ just announced a format change in certain quotes. I've inquired 
+and do *not* believe it will foul things up, but if  /CQE becomes the default 
+instead of /CQ, the program may foul.
+	C. Compuserve has announced a new quotes base in decimal instead of 
+eigths. When implemented, it may make more sense (in code savings) than the 
+higher cost.
+	D. The liquidated history excludes dates of purchase and sale. They 
+could be added easily, but you still couldn't use this for Schedule D because 
+of the new IRS rules about shifting commissions.
+	E. If you break but stay in basic, GOTO 30 at the command level will 
+take you to the INPUT MENU; GOTO 600 to the OUTPUT MENU.
+	
+	I've used the program (originally in shorter form on a Model III) for 
+two years. If it causes you problems, please let me know.
+	
+

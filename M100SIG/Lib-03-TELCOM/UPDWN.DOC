@@ -1,0 +1,113 @@
+UPDWN.DOC (UP-DATED 11-26-87 & 12-18-87)
+
+This is the DOCumentation for the UPLD.BAT & DWNLD.BAT ( and now CRLF.BAS)
+files.  These are "user-friendly" DOS .BATch files to be run in the IBM-
+compatible PC to effect ASCII Text File transfers to/from the Radio Shack
+100 series notebook portables.  Both (all three) files can be read or down-
+loaded to the M100 and transferred to the PC [use manually-entered MODE &
+COPY comds as per the UPLD.BAT file], or down-loaded to the PC from
+UPDWN.ARC, and unpack via ARCE.COM or ARC510.EXE.
+
+UPLD.BAT operates at 9600 baud, DWNLD.BAT at 1200 (perhaps there's room for
+improvement with different MODE COM... parameters, my M/S DOS manual is weak
+in this area, & DWNLD @9600 missed some charactors on the TANDY 102 side).
+
+The MODE.EXE (or .COM) file must reside in the default directory or be
+availible via your "PATH."
+
+Read the individual files and/or invoke either with no following parameters
+for complete step-by-step instructions.
+
+These programs were developed using a TANDY 102 and a PCs Limited 286-8
+running "generic" M/S DOS 3.2. They should be useable as is, with any of the
+M100 series machines (100, 102, 200, 300, 600) and any IBM-compatible
+running either PC or M/S DOS version 3.1 and later (See below for more on
+this).
+
+The TEXT SAVE TO function is not limited by BASIC's 255 byte string limit.
+It also adds the linefeed byte [CHR$(10)] after each carriage return
+[CHR$(13)] and sends CTRL-Z [CHR$(26)] at the end of the SAVE (TELCOM UP
+will do neither automatically).  The files recieved are Normal ASCII text
+with CR/LF pairs at the end of each paragraph and Crtl-Z end-of-file
+markers.  Most word processor application programs will accept these files.
+Re-form the paragraphs and you're ready to go.
+
+BASIC, EDLIN (in the default /a mode), LOTUS 123 /File Import Text, and some
+others, will have trouble with those paragraphs longer than 239 or so
+charactors. Shorten the paragraphs TEXT mode before sending to the PC or
+reformat with your PC Word-Processor program before feeding the files to
+these applications.
+
+The use of the "/a" parameter in UPLD.BAT's COPY command adds the CTRL-z
+end-of-file marker to the recieved PC file.
+
+The "/b" parameter in DWNLD.BAT's COPY command sends the CTRL-z end-of-file
+marker to signal the end of transmission.  If no CTRL-z exists in the file
+sent, the "TEXT Load from:.." command will wait for one, requiring you to
+manually interupt it with the shift-break combination.  If more than one
+Ctrl-z exists in the file sent, "Load from:.." will probably quit listening
+when the first is sent.
+
+UPLD.BAT & DWNLD.BAT both display complete documentation of the cabling
+requirements and step-by-step instructions (half a screen) on every use.  PC
+serial ports configured as DTE and a null-modem adapter are assumed. Some PC
+serial port cards can be configured as DCE and then the null-modem adapter
+is not required (check your serial card manual, open the box, and set the
+dip-swithces or jumpers).  ATs and compatibles often have COM1: as a DB9; a
+"pig-tail" DB9/DB25 adapter cable would be required to use it.
+
+If you don't know the address of that spare DB25 on your PC, just keep
+trying DWNLD  FILE  X     (for X=1,2,3 or 4) until your TEXT file comes
+across.
+
+IBM PC DOS 2.1 and some of the special compatible PC harware Mfgr.s versions
+of M/S DOS will not work properly with UPLD.BAT. Apparantly some "bugs" have
+been squashed in the more recent versions of DOS.  These "buggy" DOS
+versions need to recieve a 2nd Ctrl-z byte before the the target file is
+closed.  Also, the carriage-return byte of the CR/LF pair is not passed to
+the target file.
+
+The first problem is cured by inserting a CHR$(154) or GRPH-l byte on a line
+by itself at the end of the TANDY's TEXT file (looks like -> ).  7-bit
+transmission (11-26 update) truncates this to CHR$(26) or Ctrl-z.
+
+The second problem may not be a problem, depending on what you're feeding
+the file to. Some printers and word processors treat the LF alone the same
+as the CR/LF pair that is expected in plain ASCII text files.
+
+CRLF.BAS (included in this .ARC update of 11-26-87) is a "filter" program
+that reads a file without any .EXT and writes a .PRN file with completed
+CR/LF pairs. Whichever ONE of the two is missing, is added.  CRLF.BAS is
+straight ASCII source text for compatibility with both BASICA and GWBASIC in
+the IBM/compatible. It is not intended for use in the M100 series machines
+and no checksum is provided.  It does include some LONG lines of "crunched"
+code for better performance in the interpreted operating mode.  If you own a
+compiler (I don't), you may want to compile it.
+
+TELCOM UP apparently only sends the CRs and thus might be unusable with the
+"buggy" versions of DOS and UPLD.BAT.
+
+I suspect the inclusion of "buffers=20" (or some other number larger than
+the default 2, 99 is the maximum) in your "boot" DOS disk's root directory
+CONFIG.SYS file may help in avoiding overflows with longer files.
+
+I have so far been unsuccessful (in a couple quick tries) in using UPLD.BAT
+with a friend's LEADING EDGE running "LEADING EDGE" M/S DOS 3.2 and who
+knows what serial card.   My PCs LIMITED 286 works very nicely with UPLD.BAT
+under any of: IBM PC DOS 2.1 (with the "bugs") or (all the rest w/o the
+"bugs") 3.1 or "GENERIC" M/S DOS 3.2 or 3.21.
+
+Perhaps a lower baud rate may cure problems with other clones & DOS
+versions and serial port cards.
+
+All DOS versions prior to IBM PC DOS 3.3 will give an error message if you
+attempt to reference COM3: or COM4:.  The batch files will accept reference
+to 3 or 4, it's the earlier DOS that will give that error message as only 1
+and 2 are supported.
+
+Some COMPATIBLE PC special M/S DOS versions refer to the two serial ports as
+COM: and AUX: and may not even include a MODE command in the DOS (use Ctrl-
+Setup on a RAINBOW instead).  Modify the BATch files as appropriate.
+
+
+

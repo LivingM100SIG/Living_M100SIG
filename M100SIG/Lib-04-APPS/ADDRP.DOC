@@ -1,0 +1,87 @@
+Documentation for ADDRP.
+
+This is an adress lable print program.  It uses a file made up using DBNEW.100 
+with the following fields:
+
+1	First Name
+2	Last Name
+3	Street Address
+4	City
+5	State
+6	ZIP
+7	Salutation
+8	xxxx - a 4 digit selection code
+
+The selection code may be made up of either letters or numbers.  They can be 
+chosen to mean anything desired in terms of a selection criteria.  For example 
+a code might be 0fc4 where
+
+0	for future use
+f	family member
+c	christmas list
+4	send letter quarterly
+
+for each catagory several options might be determined.
+
+When selecting names from a master list, any combination of the 4 digits can be
+either ignored or included for selection.
+
+In addition the program allows you to use any string of characters or numbers 
+to select addresses from a master list.
+
+The address file can either be in memory or on tape or any other I/O device 
+normally allowed by the model 100.
+
+It offers you the option of either printing the lables out as they are selected
+or of placing them in another file which you name and then printing them out.
+
+A label is made up of 3 print lines.  The lines can be made up of any 
+combination of fields.  The default is:
+
+Line 1	First Name, Last Name
+Line 2	Address
+Line 3	City, State, ZIP
+
+Defaults also assume a label to be 8 lines long and printing will begin on the 
+fifth character position.
+
+Running the program.
+
+After the initial screen, the program will ask if you want to change any 
+parameters from the defaults.  If you type 'Y' it will give you menues to 
+follow to make changes.
+
+Next it will present you with the files in RAM and ask for a filename.  You can
+use the name of any .DO file in RAM or give a filename such as CAS:filename.
+
+It will then ask you to type an output filename if you want a file of the 
+selected addresses.  If the input file is in RAM you can designate a CAS: file 
+for the output.  Or if the input is from CAS or RAM you can define RAM as the 
+output file.
+
+Next it will promt you for the destination of the lables.  Acceptable outputs 
+are RAM filenames (do not use RAM: in this case, just the filename), LPT: (the 
+default if no other response is given), LCD:....  In the case of anything other
+than RAM do use the colon after the 3 letters.  This is important to proper 
+operation of the program.
+
+Finally it will ask for the selection criteria.  You have two basic choices 
+here:
+
+First, any character/letter string that might occur in any field of any 
+address, including the selection code field.
+
+Second, type 'code'.  This limits you to the code field only and takes you to 
+another menu.  You can type in any combination of the 4 code digits that might 
+occur in one or more addresses.  You can also enter lower case 'x' in any of 
+the 4 digits that you do not care about.  For example, xfxx would select all 
+address that have an f in the second position in the selection code regardless 
+of what is in the other 3 positions.  This is a very useful capability.
+
+At this point the program does its thing.  The only other interaction required 
+is in the event you named a CAS: file for an output file.  After the file is 
+written to cassette it will ask you to rewind the cassette and put it to 'play'
+so it can be read in and then printed out.
+
+Upon completion it returns to the model 100 menu.
+

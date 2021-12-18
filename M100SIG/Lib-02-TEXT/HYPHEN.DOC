@@ -1,0 +1,47 @@
+	INTRODUCTION
+
+    HYPHEN.100 is a companion program to FORMAT.100. It has two functions. First, it reads a text file and tells you how many 
+lines of N characters it will take to print it out with FORMAT.
+    Second, HYPHEN.100 can check each line of output, to determine if it is too long. If so, HYPHEN.100 displays the line and 
+lets you edit it, before writing it out to a new file.
+
+	USING HYPHEN.100
+
+    HYPHEN.100 creates a new file called RECEIVE.DO, which contains the hyphenated document. HYPHEN.100 first asks which file 
+you want, and then asks if you just want a line count.
+    If you type <y>, RECEIVE is opened as a dummy file only, and no text is put into it. Otherwise, HYPHEN.100 asks if you want
+the hyphenated file on tape. If you type <y>, the program opens CAS:RECEIVE as the new file (make sure you have a tape recorder
+hooked up in record mode). Otherwise, you must have enough free memory for the hyphenated file to go in RAM.
+    The program then asks how many characters you want to a line. Remember that HYPHEN.100 is supposed to read text like 
+FORMAT, so it won't automatically word-wrap long words. If you are just counting lines, the program runs until the text has 
+been scanned and displays the line lenth and count.
+    If you chose hyphenating, the program automatically writes a copy of your text file into RECEIVE.DO until it hits a line 
+which would be more than two characters longer than your 'line length'. It displays that line, stops and beeps for your 
+attention.
+    Press any key and a truncateed version of the line also appears, followed by a <_>. That is where the 'edited' line would 
+be cut off. A vertical arrow marks the point corresponding to the desired line length.
+    At the bottom of the screen are the editing commands:
+    <SPACE> adds another character from the long line to the 'edit' line.
+    <ENTER> simply copies the entire long line to the 'edit' line and returns to the main routine (in case you want to override
+the machine's judgement).
+    <-> adds a hyphen and a blank to the end of the edited line, and returns to the copy routine. The text in RECEIVE will now 
+have a hyphen+space in between the text at that point.
+    <b> just adds a blank and returns.
+    <x> doesn't alter the 'edit' line, but will force a line break at that point. It then returns to the main program. For 
+example, if the phrase 'hyphen+space' ran over the end of a line, <x> could be used to cut it in two.
+
+    After the entire text file has been scanned and edited, HYPHEN.100 will display the number of lines of print it will take. 
+FORMAT should be used to print out RECEIVE.DO.
+
+	CUSTOMIZING
+
+    If you alter FORMAT, you should modify HYPHEN.100 as well:
+    If you change the word-break value from '4' in FORMAT (line 2300), change the same numbers in lines 300 and 550 of 
+HYPHEN.100.
+    If you change the underline or backspace characters in FORMAT, change line 70 in HYPHEN.100 accordingly.
+    You can change the line length limits in HYPHEN.100 without modifying FORMAT. The range of acceptable lengths is set by '6'
+in line 200. You can adjust this up or down as you wish-- lower ranges will give you a tighter right margin, but you'll have to
+edit more lines. Higher ranges will reduce editing, but give a sloppier margin.
+    You may also alter the point at which you start editing lines by changing the expressions "SU-2"in line 600 and "SU-1" in 
+line 640 (the latter expression should always be one larger than the former).
+

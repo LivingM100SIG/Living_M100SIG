@@ -1,0 +1,43 @@
+0 'This is a simple and small calculator for the model 200.
+1 'It resets function keys and uses them for most operations.  They are reset 
+2 'to normal settings at end.
+3 'F6 & F7 toggle money and clock totals.
+4 'clock times can be entered in 2 formats: 00:00:00 and 000.  That's
+5 'HR:MI:SE or Min and secs.  Any other format will be rejected.
+6 'once you kill these lines, it runs about 300 bytes...ultimate tiny!
+10 CLS:SCREEN0,1:KEY1,"+"+CHR$(13):KEY2,"-"+CHR$(13):KEY3,"*"+CHR$(13)
+11 KEY4,"/"+CHR$(13):KEY5,"Clr"+CHR$(13):KEY6,"$$$"+CHR$(13)
+12 KEY7,"Clk"+CHR$(13):KEY8,"End"+CHR$(13)
+24 CLEAR:CALL20318
+30 GOSUB50:IFB$=""THENB$="+"
+32 IFNTHENPRINT@121,"00 00 00 or 000";ELSEPRINT@130,"INPUT";
+40 INPUTA$
+41 IFA$="End"THENGOTO95
+42 IFA$="Clr"THENRUN24
+43 IFA$="$$$"THENGOSUB80
+44 IFA$="Clk"THENGOSUB82
+45 IFINSTR(1,"-+*/",A$)THENB$=A$:GOTO30
+46 IFNTHENGOSUB85ELSEA=VAL(A$)
+48 IFA=0THENGOTO30
+49 GOSUB60:GOTO30
+50 CLS:PRINT@50,"Total=";:IFUTHENPRINTUSING"$$#####.##";Z:RETURN
+52 IFNTHENGOSUB96:PRINTH%":"M%":"S%:RETURN
+54 PRINTZ:RETURN
+60 B=Z:ONINSTR(1,"-*/+",B$)GOSUB61,62,63,65:RETURN
+61 Z=B-A:RETURN
+62 Z=B*A:RETURN
+63 Z=B/A:RETURN
+65 Z=B+A:RETURN
+80 IFUTHENU=0:RETURN
+81 U=1:N=0:RETURN
+82 IFNTHENN=0:RETURN
+83 N=1:U=0:RETURN
+85 R=LEN(A$):IFR=8THENGOTO90
+86 IFR=2THENF$=A$:A$="00:00:"+F$:GOTO90
+87 IFR=1THENF$=A$:A$="00:00:0"+F$:GOTO90
+88 IFR=3THENF$=LEFT$(A$,1):G$=RIGHT$(A$,2):A$="00:0"+F$+":"+G$:GOTO90
+89 A$="00:00:00"
+90 SE=VAL(RIGHT$(A$,2)):MI=VAL(MID$(A$,4,2)):HO=VAL(LEFT$(A$,2))
+91 A=SE+(60*MI)+(60*(60*HO)):RETURN
+95 CALL28192,0,28357:CALL33747:MENU
+96 H%=Z/3600:HH=Z-(H%*3600):M%=HH/60:SS=HH-(M%*60):S%=SS:RETURN

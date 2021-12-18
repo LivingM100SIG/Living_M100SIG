@@ -1,0 +1,43 @@
+
+              ADDICT.BA
+
+     Chipmunk Dictionary Utilities
+
+    Copyright 1986 David W. Willman
+ Licensed for use only, Compuserve M100  Forum members.
+
+
+This program takes a word list stored in the RAM file SUSPEC.DO and adds these
+words in alphabetical order into the disk dictionary files DIC-AB.DO thru
+DIC-YZ.DO . The words within SUSPEC.DO must be in all lower case letters,
+each word on a seperate line with no blank lines in between, words arranged
+alphabetically in the file & words must start with a letter but may contain
+a hyphen or appostrophe. Such as set-up by the m/l program loaded by DCPREP
+and spell checked with SPLCHK.BA. The SUSPEC.DO file is not automatically
+killed so it may be added to a back-up dictionary disk.
+
+WARNING: If you edit SUSPEC.DO after running SPLCHK.BA and alter it other
+than just deleting words, make sure the new file still meets the criteria
+above (all small letters & sorted). I suggest you rename the new SUSPEC.DO
+file and run it back through the m/l program and SPLCHK.BA before adding it
+into your dictionary files.
+
+0' ADDICT.CHP  Copyright 1986 David W. Willman
+10 CLEAR256:MAXFILES=3:CLS:PRINT:PRINT"Place Dictionary disk in drive":PRINT"then hit any key to continue.";:A$=INPUT$(1):ONERRORGOTO130:PRINT:OPEN"0:DIC-AB.DO"FORINPUTAS1:CLOSE:CLS:ONERRORGOTO150:OPEN"SUSPEC.DO"FORINPUTAS1:ONERRORGOTO180:C$="00"
+20 IFEOF(1)THENCLOSE:GOTO70ELSELINEINPUT#1,B$:GOSUB90:GOSUB100
+30 IFEOF(2)THEN50ELSELINEINPUT#2,D$:IFB$<D$THEN40ELSEIFB$=D$THEN30ELSEPRINT#3,D$:GOTO30
+40 PRINT#3,B$:IFEOF(1)THENGOSUB120:CLOSE:GOSUB80:GOTO70ELSELINEINPUT#1,B$:GOSUB90:IFB<>ASC(LEFT$(C$,1))ANDB<>ASC(RIGHT$(C$,1))THEN60ELSEIFB$<D$THEN40ELSEIFB$=D$THEN30ELSEPRINT#3,D$:GOTO30
+50 PRINT#3,B$:IFEOF(1)THENCLOSE:GOSUB80:GOTO70ELSELINEINPUT#1,B$:GOSUB90:IFB=ASC(LEFT$(C$,1))ORB=ASC(RIGHT$(C$,1))THEN50ELSECLOSE2,3:GOSUB80:GOSUB100:GOTO30
+60 GOSUB120:CLOSE2,3:GOSUB80:GOSUB100:GOTO30
+70 MAXFILES=1:MENU
+80 KILLH$:NAME"0:TP-DIC.DO"ASH$:RETURN
+90 B=ASC(LEFT$(B$,1))-32:RETURN
+100 IFBAND1THENC$=CHR$(B)+CHR$(B+1)ELSEC$=CHR$(B-1)+CHR$(B)
+110 H$="0:DIC-"+C$+".DO":CLS:PRINT@80,"Adding to file "H$:OPENH$FORINPUTAS2:OPEN"0:TP-DIC.DO"FOROUTPUTAS3:RETURN
+120 PRINT#3,D$:IFNOTEOF(2)THENLINEINPUT#2,D$:GOTO120ELSERETURN
+130 PRINT:IFERR=52THENPRINT"Dictionary disk not in drive."ELSEPRINT"Error #"ERR" in line #"ERL
+140 PRINT"Hit any key to continue.";:A$=INPUT$(1):IFERR<>52THEN170ELSERESUME10
+150 PRINT:IFERR=52THENPRINT"SUSPEC.DO file not found."ELSEPRINT"Error #"ERR" in line #"ERL
+160 PRINT"Hit any key to return to menu.";:A$=INPUT$(1)
+170 CLOSE:MAXFILES=1:MENU
+180 PRINT:PRINT"Error #"ERR" in line #"ERL:GOTO160

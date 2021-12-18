@@ -1,0 +1,123 @@
+RAMDSK.100 and DSKRAM.100 by John Shadel [73537,775]
+----------------------------------------------------
+
+RAMDSK.100 and DSKRAM.100 are backup and restore programs designed for use with
+Powr-Disk by Acroatix. DSKRAM.100 is a modified version of DBAKUP.TDD by Terry 
+Luke [73126,1775]. It will backup all .BA, .DO, and .CO files automatically and
+any files which have been saved as a 7 byte file as in DBAKUP.TDD. It has been 
+modified though to allow the entry of a name for the backup file. This can be 
+used later to retrieve the same files backed up from the RAM using the index 
+name with DSKRAM.100. In this way, one can set up an indexing system on the TDD
+to allow loading a specified set of related programs and data for certain 
+applications if desired, or just to back up the RAM when desired. The index 
+name entered is appended with an "@" symbol to distinquish the index files from
+other files on the diskette. If the index file name aleady exists on the 
+diskette, a message is displayed, and a new name can be entered. The program 
+works with the PCSG 128K ram as before, or an "I" is appended to the last part 
+of the index file name if the 128K ram is not installed.
+
+In order to run this program, Powr-Disk must be in low or high memory or both, 
+and the programs should be run from BASIC using the RUN ":RAMDSK.BA" format. 
+This allows the program to run in the BASIC buffer, and it is removed at the 
+end of the backup. Powr-Disk is also restored to the RAM, and is not erased 
+when the option is given to kill the RAM directory.
+
+Running the program RAMDSK.100
+------------------------------
+
+First, be sure that Powr-Disk is loaded in high-memory (preferred) or in 
+low-memory. If Powr-Disk is in low-memory (shows on the Menu screen) it will be
+backed up to the TDD. Then insert the Diskette which contains RAMDSK.100 and go
+to Basic. Type in RUN":RAMDSK.BA" and press Enter. After a moment, you will see
+displayed:
+
+FULL Ram Backup to Disk
+
+Load Backup Diskette and Press RETURN
+
+At this point, insert the diskette you wish to record the RAM to in the TDD, 
+and press return. You will then see:
+
+FULL Ram Backup to Disk
+
+Index File 
+
+Type in a four character name for your Index file and press RETURN. If you 
+see:
+
+File Already Exists-Press Return
+
+then you have selected an Index name that is already on the diskette. Press 
+RETURN and enter another name.
+
+You should then see:
+
+                Working...
+
+displayed, and all of the files will be recorded to the diskette. When finished
+you will see:
+
+FINISHED
+
+KILL DIRECTORY IN RAM? - <Y> or N
+
+
+
+
+
+If you answer yes, all of the RAM files resident in memory will be erased 
+except for Powr-Disk, and the Basic buffer will be cleared out (which contains 
+RAMDSK.BA). You will then be returned to the Menu. If you answer N, a message 
+will display:
+
+ALL DONE - POWR-DISK IS ACTIVE
+
+and the program will end with Powr-Disk still in high memory, and all of the 
+RAM files intact.
+
+Before using this program, it is necessary to insert the names of your .CO 
+files which you wish the program to recognize in the program staring on line 
+270, so that they will be backed up using the proper starting and ending 
+addresses. 
+
+Various error messages are displayed indicating Disk Write protection and Drive
+not Ready, or line number and error number if the error is not defined. 
+
+Running the program DSKRAM.100
+------------------------------
+
+The initial steps in running this program are the same as running RAMDSK.100, 
+up to the running of the program from Basic. That is, Powr-Disk must be loaded 
+in memory, and RUN":DSKRAM.BA" typed in from Basic. When the program begins you
+will see:
+
+FULL Ram Restore from Disk
+
+Load Restore Diskette and Press RETURN
+
+At this point, put in the diskette containing the files and index file you with
+to restore and press Enter. You will then see:
+
+PRESS <ENTER> FOR FILE LIST
+
+If you do not know the name of the Index file, press Enter, and all of the 
+files on disk will be listed. If you already know the name, enter it here and 
+press Return. The file name must begin with the "@" character, and end with the
+Bank number (or "I" if no additional RAM banks are present). You will then 
+see:
+
+ @xxxxx.DO GROUP OF FILES
+ xxxxxx WAS DATE LAST BACKED UP
+
+will then display showing the Index name and the date it was last backed up. If
+during the restore process, a file name on the TDD matches a file in RAM, a 
+message will display asking if you wish to overwrite the file or skip it. When 
+the process is completed you will see:
+
+KILL DIRECTORY IN RAM? - <Y> OR N
+
+If you answer "Y", the Index file will be erased from the RAM. "N" will leave 
+the index file intact. The program will then display ALL DONE, and you will be 
+return back to the menu. The Basic buffer will be erased, and Powr-Disk will 
+still be active. At this point you have restored the files indexed by the index
+file name you typed in.

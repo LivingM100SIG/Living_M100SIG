@@ -1,0 +1,187 @@
+        Remote PC Terminal Emulation Using the Radio Shack Model 100
+              with PCAnywhere (Version 2.1) 
+DISCLAIMER:  THE USER OF THIS FILE ACKNOWLEDGES THAT ALL INFORMATION 
+OBTAINED FROM THIS FILE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND,
+EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE AND THAT THE ENTIRE
+COSTS OF ALL NECESSARY REMEDIES IS WITH THOSE WHO CHOOSE TO ACT ON SUCH 
+INFORMATION AND NOT WITH THE AUTHOR OF THIS FILE.  THE LATTER PROVIDES THIS 
+INFORMATION SOLELY AS A PUBLIC SERVICE WITHOUT MONETARY COMPENSATION WHATEVER 
+ TO MEMBERS OF THE COMPUSERVE MODEL 100 SIG AND TO THE PUBLIC DOMAIN.  TO THE 
+BEST OF MY KNOWLEDGE THE INFORMATION BELOW IS ACCURATE, BUT I HAVE MADE   
+MISTAKES BEFORE SO USE IT AT YOUR OWN RISK. 
+
+     Within the past year, a new software product, called PCAnywhere (Dynamic 
+Microprocessor Associates Inc., 1986) has been introduced which is billed as 
+allowing almost any computer or ASCII terminal to be used as a remote terminal 
+for an IBM PC compatible computer.  It accomplishes this by translating 
+the keyboard escape sequences and screen attributes of the remote  
+computer or terminal so as to emulate an IBM PC keyboard and display, allowing 
+it to control most PC functions remotely over the telephone lines.  Set up 
+properly, many non-IBM compatible computer or ASCII terminals can  
+be made to run popular but memory intensive programs such as Lotus 123,  
+Dbase III+, Websters New World Spell Checker, Wordstar 3.3, and others.  
+     My motivation for experimenting with the PCAnywhere package was to see if 
+this communication package could be used with the Radio Shack Model 100, 
+equipped with Disk Video Interface, to emulate an 80X25 IBM PCXT display and/or 
+an 80X24 ASCII terminal to run popular MSDOS programs remotely which otherwise
+would not run on the Model 100 due to its incompatible 8 bit Z80 based 
+operating system and its severe memory limitations (ordinarily a max of 32 k).   
+For this purpose, I have used the following equipment:  a 32k Model 100, DVI, 
+Worldport 1200 baud external modem & cable; Ultra Computer 640k PCXT clone 
+equipped with 20 mb Seagate ST225 Hard disk, OMTI controller, 2400 US Robotics 
+Direct Internal Modem; X10 remote telephone switch and remote responder.  With 
+this hardware appropriately configured to allow communication over ordinary 
+telephone lines between the two computers, I have been able to turn my computer 
+on and off remotely and to produce a PC emulation which seems quite adequate  
+for my purposes.  Programs for which I have obtained satisfactory results 
+to date include Lotus 123 (version 2), Dbase III+, the Websters New World 
+Spellchecker, File Express, Wordstar 3.3, and In Control Project Manager.  
+Programs which have not worked satisfactorily have included all 
+telecommunication packages as well as memory resident programs which use 
+interupt 16 on the PCXT in a manner which is incompatible with its use in the 
+PCAnywhere program.   
+    In this report, I will be limiting myself solely to addressing special   
+considerations in customizing the RS Model 100/DVI combination for use as a 
+remote terminal for a PCXT compatible computer.  The reader is referred to the 
+PCAnywhere documentation for specific instructions on the theory, operation, 
+and use of the PCAnywhere program.  In order to use the PCAnywhere 
+communications package to configure a non MSDOS compatible computer or 
+terminal, such as the Model 100/DVI combination, to run as a remote terminal 
+for a PCXT compatible, you must first run the AINSTAll program remotely from 
+the Model 100 with DVI.  To do this, the M100/DVI must be able to 
+support one of the numerous terminal emulations supported by PCAnywhere.  
+Although this fact is nowhere documented in either the Model 100 or DVI 
+manuals, the DVI apparently supports the DEC VT-52 terminal emulation since the 
+ major DVI escape codes correspond to all the major VT-52 escape sequences.  
+Therefore, when running AINSTALL on your PC select the VT-52 terminal option.  
+It is then simply a matter of entering the specific DVI screen attribute and 
+cursor movement escape sequences from the DVI manual into the appropriate 
+prompts from the AINSTALL program menu according to the instructions contained 
+in the PCAnywhere manual (See addendum for the DVI Escape Codes to be used).  
+In addition to modifying the screen attributes, I recommend modifying the 
+prearranged PCAnywhere keyboard sequences, which are used to emulate the PC 
+keys and key sequences, to take full advantage of preexisting keys and key  
+sequences on the Model 100.  For example, I would recommend customizing the 
+predefined PCanywhere keyboard combinations to make full use of the pre- 
+existing M100 cursor movement keys, which the PCanywhere AINSTALL program allows 
+you to do in its "change keyboard sequence" option.  For example, you can  
+replace the predefined PCanywhere 3 key sequences for PgUp and PgDn to the 
+much less awkward 2 key combinations on the Model 100 of ESC - up cursor and  
+ESC - down cursor respectively.  I also like to substitute the 2 key ESC-tab     
+combination on the Model 100 for the predefined PCanywhere 3 key sequence in 
+order to refresh the screen when I occasionally get garbage characters.
+     Special consideration needs to be paid to a problem posed by the
+the way the Model 100 uses the 25th line (Status line) of the DVI display.
+Most IBM computers use 25 row displays rather than the 24 row display 
+used by most non-IBM computers and terminals.  The Radio Shack DVI does support 
+25 rows; however, the 25th row is typically reserved for the function key 
+status line which you ordinarily toggle out of by depressing the "label" key.  
+Unfortunately, simply configuring the AINSTALL program menu for 25 rows and 
+then toggling out of the status line does not allow the DVI to function 
+properly.  Nor does configuring PCanywhere for 80 columns and 24 rows 
+necessarily solve the problem.  Apparently different MS-DOS applications write 
+to the screen using PCanywhere in ways which use the 25th (bottom status) line  
+very differently (sometimes even within the same application!).  This often  
+results in overwrites to the wrong line and resulting garbage on the screen.  
+While PCAnywhere provides a screen refresh key to eliminate such garbage on  
+the screen, this can be an annoying and time consuming inconvenience at 1200 
+baud, which is the baud rate I operate at for reliability. 
+     The simplest away out of this dilemna is to use a DOS shell program in 
+running PC programs on your hard disk remotely from your M100/DVI.  This 
+apparently standardizes the screen output in applications run from the 
+DOS shell program.  I have experimented with the shareware program Hard Disk 
+Manager II and thus far have been able to write all major applications to 
+the DVI screen with no further difficulty.  I have discovered, however, that to  
+do this I must first toggle out of the Tandy function line before enterring 
+the HDM2 DOS shell program.  I have accomplished this by calling a batch  
+file from the PCAnywhere initial command line which prompts for a pause 
+in the execution of the batch file.  At the pause I then toggle out of 
+the M100 status line by depressing the label key before enterring HDMII  
+automatically from the batch file.   You might want to take this opportunity   
+to execute a program like MJOG (memory jogger -- a calendar reminder), as I have   
+done, before the pause command in your batch file (useful but not necessary).
+     Other useful functions of the PCanywhere program, as implemented on the
+Model 100/DVI combination, include the ability to toggle between the upper 24
+lines of the display and the lower 24 lines of the display where necessary
+for a particular application, remote printing through the serial port of the
+Model 100 (must use 300 baud internal modem for this), and password protection
+including the use of password tables so that different users may access your
+computer using different passwords, terminal emulators, baud rates etc. (helps 
+for customer support).  If you get disconnected in an application, PCanywhere
+has the ability to return you to the exact point you left off in an 
+application before you got disconnected by dialing back in and logging back
+on.  If you freeze up the remote keyboard, that's where the x10 remote 
+telephone responder comes in handy for a cold boot.  Although PCanywhere`s
+Control-Alt-Del warmboot feature does not work on the Model 100/DVI, it
+is a relatively simple matter to call a warm-boot utility directly from a
+batch file on your PC which then accomplishes the same task from the PC end.
+     Although the PCanywhere ASEND remote file transfer program does not work
+with nonIBM compatible terminals, it is possible nonetheless to transfer files
+over the telephone lines by toggling to another communications program which
+contains a host mode.  My personal favorite is PROCOMM 2.42 which has a 
+host mode which supports x-modem file transfers and DOS system access.  In
+order to get from PCanywhere to Procomm, I create a batch file which invokes
+another favorite IBM utility of mine called reconfigure.com.  This program
+allows you to reconfigure your autoexec.bat and config.sys files after
+rebooting (warmbooting) the system.  This batch file warm boots my system, 
+reconfigures my autoexec.bat and config.sys files, and then automatically  
+invokes PROCOMM host mode using autologon commands from within  
+PROCOMM.  I can then transfer my files between my computers, enter DOS from   
+within PROCOMM, and then invoke a second batch command to reconfigure my 
+system a second time to warm boot my system and return me to PCanywhere.  
+This, of course, requires that you hang up the phone each time your reboot.  
+     To date, I have been unable to configure either the m100 or T102 alone, 
+with or without the Ultimate ROM II 80 column emulator, to emulate 
+satisfactorily my PCXT clone using the PCAnywhere package.  Sorry, folks, but 
+the DVI appears to be the best way to use the M100 for this purpose.  I have no 
+experience with the T200 or T600 and thus have no way of knowing if their VT-52 
+emulation modes might be used for this purpose.  Also, I have been unable 
+to get the VT100.100 emulator program to work properly with PCanywhere on M100    
+at 300 baud (lack of reverse video capability is a real drawback here).
+     I would appreciate any comments or experiences from others in the SIG 
+who may be experimenting along similar lines. 
+
+ADDENDUM
+
+Suggested escape codes for PCanywhere AINSTALL program options using the
+Tandy Model 100/Disk Video Interface combination and other parameters.
+*Numbers given refer to ASCII equivalents of Escape codes for various 
+screen attributes.  You may want to experiment with these as I have. 
+
+        CURSOR UP                               27  65
+        CURSOR DOWN                             27  66 
+        CURSOR RIGHT                            27  67 
+        CURSOR LEFT                             27  68 
+        CURSOR HOME                             27  72 
+        CURSOR SCREEN                           27 106 
+        CLEAR TO END OF LINE                    27  75 
+        CLEAR TO END OF PAGE                    27  74 
+        INSERT LINE                             27  76 
+        DELETE LINE                             27  77 
+        POSITION LEAD IN                        27  89 
+        NORMAL VIDEO                            27 113 
+        HIGHLIGHT VIDEO                         27 113 
+        REVERSE VIDEO                           27 112 
+        REVERSE HIGHLIGHT                       27 112 
+        BLINK VIDEO                             27 102 
+        BLINK/HIGHLIGHT                         27 102 
+        BLINK/REVERSE                           27 102 
+        UNDERLINE/BLINK                         27 102 
+        UNDERLINE/BLINK/HIGHLIGHT               27 102 
+        UNDERLINE/BLINK/REVERSE                 27 102 
+        SEND ROW OR COLUMN FIRST                  R 
+        OFFSET ROW                                32 
+        OFFSET COLUMN                             32 
+        TERMINAL WIDTH                            80 
+        TERMINAL HEIGHT                           24 
+        TERMINAL EMULATION                      VT-52 
+ 
+Good luck! 
+End of file 
+
+     
+
+
+
+

@@ -1,0 +1,133 @@
+                        CY-GEN.BA
+
+    GY-GEN.BA helps you generate a file named CY-REG.DO, which you can MERGE
+into CYPHER.BA to alter that program's "registers".  Registers are simply
+randomly scrambled strings consisting of the 94 ASCII characters between 33 and
+126.  From these registers are chosen characters to replace the original text.
+
+    If you already have an unrelated file named CY-REG.DO, then rename it or
+save it to cassette or disk.
+
+    To free memory before you run CY-GEN.BA you can eliminate the registers in
+the copy of CYPHER.BA in RAM.  BUT, if you've still got files encoded with that
+version of CYPHER or if you may receive such files, then be sure to save a copy
+of that version under a unique name (CYPH-A.BA, CYPH-B.BA, CYPH-C.BA, etc.).
+Run CYPHER and press <BREAK> at the "File?" prompt at the beginning of the
+program, then type
+
+	36 <ENTER>
+	37 <ENTER>
+	38 <ENTER>
+	etc.
+
+until you get a "?UL Error" message.  If you've plenty of free memory, it would
+be faster to type "edit36- <ENTER>" then select (F7) and delete (F6) all of the
+register lines UP TO (not including) line 131.
+
+    You'll then be ready to MERGE the new registers from CY-REG.DO into
+CYPHER.BA.  Of course, if you're going to transmit enciphered files over
+networks such as CompuServe, then you'll have to find a means of getting the
+new set of registers and keywords to your correspondent.  CY-REG files are in a
+form that can be encoded by CYPHER and then be printed in ASCII or barcode,
+transmitted or saved onto a cassette or disk.
+
+
+USING CY-GEN.BA
+
+    When you run CY-GEN, you are admonished to draw cards containing the 94
+characters from ASCII 33 to 126 from a "hat", as this is the best method of
+insuring true random selection.  Simply cut up 24 index cards into quarters, go
+to the next screen by pressing any key, and copy each character at the top onto
+a piece of card.  Be sure to underline each character as a number of them may
+be confused.
+
+    You can, if you wish, choose the characters from those displayed on the
+screen, but just as computers cannot generate truly random numbers, neither can
+you.  You'll always have proclivities toward one character over another.  When
+you run CY-GEN the characters you enter are removed from the display.  If you
+_do_ choose characters from the display, just choose from the remaining
+characters in a random fashion until none remain.
+
+    Back to the opening screen...  You can run CY-GEN at different times to
+build up a set of registers, adding one or more register strings each time.  If
+CY-REG.DO already exists, CY-GEN will inform you of that and ask if you want to
+APPEND new registers to the file.  If you answer NO, then you will be asked
+"Are you sure? Y/N".  If you answer YES, the old CY-REG.DO file will be erased.
+
+    Don't alter CY-REG.DO from Text.  If you do, CY.GEN.BA may not properly
+count the number of registers already created.  Should this happen, you can
+break this rule and enter CY-REG.DO from the main menu.  Check that the lines
+are numbered consecutively from 36, which should contain the Z(0) string, up to
+the last you've entered [the highest possible line number is 129, which would
+contain Z(93)].  So the lines should go 36 Z(0)=..., 37 Z(1)=..., 38 Z(2)=...
+etc.
+
+    If a down arrow appears below the opening screen, then press any key to
+proceed.
+
+    The main screen shows all of the characters which appear on the
+100/102/200's keyboard and the bottom of the screen appear the GRaPH keys
+combinations to select the remaining six characters.  If you press a key which
+is not between ASCII 33 and ASCII 126, or if you select a character that has
+already been chosen, then the computer beeps at you.  When a character is
+chosen, it is deleted from the screen.  CY-GEN does not allow you to make a
+mistake.
+
+    When all of the characters have been chosen, the number of registers in
+CY-REG.DO is displayed and you are asked whether you want to add another.  If
+you have reached the maximum number of registers - 94 [Z(0) to Z(93)], which
+occupy lines 36 to 129 - you'll instead be returned to the main menu.
+
+
+MERGING CY-REG WITH CYPHER
+
+    When you've completed CY-REG.DO, run CYPHER and press <BREAK> at the
+"File?" prompt.  If CYPHER.BA contains the same number or fewer registers than
+CY-REG.DO then type:
+
+	MERGE"CY-REG" <ENTER>
+
+    The new registers, however many, will be merged into the program.
+
+    But if CYPHER has more registers than CY-REG and you want to eliminate the
+extra lines, then enter the CY-REG.DO file and find the last line number.  Go
+back to CYPHER, <BREAK> and type in the excess line numbers as shown earlier.
+Then merge CY-REG as above.
+
+
+CLEARING STRING SPACE
+
+    Before you run CYPHER, be sure that you have CLEARed enough memory in Line
+10 for the new registers.  Each register contains 94 characters, so multiply
+the number of registers by 94 and add 99.  Then type EDIT10 <ENTER> and change
+the "CLEARnnn" at the beginning of the line to the new number.
+
+For instance, if you merged in 31 registers [Z(0) to Z(30)], at the "Ok"
+prompt, type in 31 multiplied by 94 plus 99 as follows:
+
+	Ok
+	?31*94+99 <ENTER>
+	 3013
+	Ok
+
+then type "edit10" and change the CLEAR569 at the beginning of the line to
+CLEAR3013 (the result above).  Press F8 to exit Edit.
+
+If you get the message
+
+	?OS Error in line (whatever)
+
+then you've likely forgotten to clear enough string space in line 10.
+
+
+MEMORY REQUIREMENTS
+
+    CYPHER requires 978 bytes plus the number of bytes you've CLEARed to run. 
+(The version on CompuServe, with five registers, thus requires "1547 Bytes
+free" at the main menu.)  If you have very little memory you'll get an "?OM
+Error".  CYPHER checks to see whether it has the number of bytes required and,
+if not, the message "NOT ENOUGH MEMORY" will appear.  In either case, return to
+the menu and clear some memory.
+
+
+    --- James A. McGreevy, CompuServe #70206,1115

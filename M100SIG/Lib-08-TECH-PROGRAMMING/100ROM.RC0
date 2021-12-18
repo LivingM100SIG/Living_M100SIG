@@ -1,0 +1,377 @@
+
+
+                     ------------------------
+                     | Model 100 System Map |
+                     ------------------------
+
+                          Copyright 1985
+                     Revision Date: 09/30/85
+                   Compiled and Researched by:
+                       Robert D. Covington
+            Systems Information Management Consultants
+      [Not associated with The Covington Group, N. Y., N. Y.]
+
+    This document may be duplicated and distributed free of
+charge to any individuals who desire it.  Any duplications of
+this document, however, must inluce all of the information
+contained here-in, with no deletions or changes.
+    The author and distributors of this document make no 
+expressed or implied warrantees as to the validity of the 
+information contained here in.
+
+
+                           - File formatts -
+ .BA Files:
+           2 bytes -  Address of next line
+           2 bytes -  Line number
+           Up to 255 characters ending with a null
+           EOF is 3 consecutive nulls
+
+ .DO Files:
+           Text ended with a EOF character 1AH
+
+ .CO Files:
+           2 bytes -  Address to load to
+           2 bytes -  Number of bytes to load (-start 6)
+           2 bytes -  Transfer address
+
+
+   - File Descriptor Block (Address Given by VARPTR(#file)) Format -
+
+Byte:
+      0 - File status (0-not open, 1-open for input, 2 open for 
+          output or append)
+  2 & 3 - Address of file directory entry
+      4 - File device (248-RAM, 249-MoDeM, 250-LinePrinTer, 
+          251-WAND, 252-COM, 253-CASsette, 254-CRT, 255-LCD)
+      6 - Offset from buffer start (see bytes 9) for start of next 
+          record
+      7 & 8 -  Relative position of next 256 byte block from
+          beginning of file
+      9 - Start of 256 byte buffer for data transfer
+
+                 - Floating Point Accumulator Format -
+
+---------------------------------------------------------------
+ FAC1   |  FAC2   |     DP    |    SP    |  Integer |   SP
+Address | Address |   Format  |  Format  |  Format  | Register
+---------------------------------------------------------------
+FC18H   | FC69H   |   S & E   |  S & E   |    -     |    C
+FC19H   | FC6AH   |   BCD M   |  BCD M   |    -     |    B
+FC1AH   | FC6BH   |   BCD #   |  BCD #   |   LSB    |    E
+FC1BH   | FC6CH   |   BCD #   |  BCD L   |   MSB    |    D
+FC1CH   | FC6DH   |   BCD #   |    -     |    -     |    -
+FC1DH   | FC6EH   |   BCD #   |    -     |    -     |    -
+FC1EH   | FC6FH   |   BCD #   |    -     |    -     |    -
+FC1FH   | FC70H   |   BCD L   |    -     |    -     |    -
+---------------------------------------------------------------
+
+  LSB =  Least significant byte of intger
+  MSB =  Most significant byte of integer.  Bit 7 contains the sign 
+        of the integer
+BCD L =  Least significant BCD byte
+BCD H =  Most significant BCD byte
+BCD # =  Middle BCD bytes.  Each digit of the number is represented 
+        by one of the values in the two nibbles in each byte
+S & E =  Sign and exponent of each number.  Bit 7 contains the sign 
+        of the floating point number. Bit 6 must be set.  Bits 0-5 
+        determine where the decimal point is to be inserted.  For 
+        example, if this byte contained a 65, the sign would be 
+        positive and the decimal point would be placed between the 
+        first and second digits (#.###....)
+
+
+                  - Option ROM Important Addresses -
+
+40H = 54H
+41H = 43H - Required for ROM to be detected on BOOT
+42H - 47H - Name of file associated with ROM program
+
+Code at 7E24H-7E43H executed on BOOT to handle option ROM.
+Code at 0365H loaded at F605H on BOOT to detect option ROM.
+
+                    - Model 100 Hardware Port Map -
+
+A0H -  Modem control port
+      Output:
+        Bit:
+            0 - Modem telephone relay (1-Modem connected to phone 
+                line)
+            1 - Modem enable (1-Modem chip enabled)
+
+B0H -  8155 PIO Command/Status Register
+      Output:
+        Bit:
+            0 - Direction of Port A (0-input, 1-output)
+            1 - Direction of Port B (0-input, 1-output)
+        2 & 3 - Port C definition (00 - All input, 11 - All output, 
+                01 - Alt 3, 10 - Alt 4 (see Intel technical sheets 
+                for more information))
+            4 - Enable Port A interrupt (1 - enable)
+            5 - Enable Port B interrupt (1 - enable)
+        6 & 7 - Timer mode (00 - No effect on counter, 01 - Stop 
+                counter immediately, 10 - Stop counter after TC, 11 
+                - Start counter)
+      Input:
+        Bit:
+            0 - Port A interrupt request
+            1 - Port A buffer full/empty (input/output)
+            2 - Port A interrupt enabled
+            3 - Port B interrupt request
+            4 - Port B buffer full/empty (input/output)
+            5 - Port B interrupt enabled
+            6 - Timer interrupt (status of TC pin)
+            7 - Not used
+
+B1H -  8155 PIO Port A
+      Output:
+        8 bit data port for printer output, keyboard column strobe, 
+        and LCD
+        In addition, the first 5 bits of this port is used to 
+        control the 1990 real time clock chip.  The configuration of 
+        these five bits are:
+        Bit:
+            0 -  C0
+            1 -  C1
+            2 -  C2
+            3 -  Clock
+            4 -  Serial data into clock chip
+
+
+B2H -  8155 PIO Port B.
+      Output:
+        Bit:
+            0 - Column 9 select line for keyboard.  This line is 
+                also used for the CS-28 line of the LCD.
+            1 - CS 29 line of LCD
+            2 - Beep toggle (1-Data from bit 5, 0-Data from 8155 
+                timer)
+            3 - Serial toggle (1-Modem, 0-RS232)
+            4 - Software on/off switch for computer
+            5 - Data to beeper if bit 2 set.  Set if bit 2 low.
+            6 - DTR (not) line for RS232
+            7 - RTS (not) line for RS232
+
+B3H -  8155 PIO Port C
+      Input:
+        Bits:
+            0 - Serial data input from clock chip
+            1 - Busy (not) signal from printer
+            2 - Busy signal from printer
+            3 - Data from BCR
+            4 - CTS (not) line from RS232
+            5 - DSR (not) line from RS232
+            6-7 - Not avaiable on 8155
+
+B4H -  8155 Timer register.  LSB of timer counter
+
+B5H -  8155 Timer register.  MSB of timer counter
+
+B8H -  Same as port B0H
+
+B9H - Same as port B1H
+
+BAH - Same as port B2H
+
+BBH - Same as port B3H
+
+BCH - Same as port B4H
+
+BDH - Same as port B5H
+
+C0H -  Bidirectional data bus for UART (6402) (C0H-CFH same)
+
+
+D0H -  Status control register for UART, modem, and phone (6402) 
+      (D0H-DFH same)
+      Output:
+        Bits:
+            0 - Stop Bits (1-1.5, 0-2)
+            1 - Parity (1-even, 0-odd)
+            2 - Parity Enable (1-no parity, 0-parity enabled)
+            3 - Data length (00-5 bits, 10-6 bits, 01-7 bits, 11-8 
+                bits)
+            4 - Data length (see bit 3)
+      Input:
+        Bits:
+            0 - Data on telephone line (used to detect carrier)
+            1 - Overrun error from UART
+            2 - Framing error from UART
+            3 - Parity error from UART
+            4 - Transmit buffer empty from UART
+            5 - Ring line on modem connector
+            6 - Not used
+            7 - Low Power signal from power supply (LPS not)
+
+E0H -  Keyboard input and misc. device select (E0H-EFH same)
+      Output:
+        Bits:
+            0 - ROM select (0-Standard ROM, 1-Option ROM)
+            1 - STROBE (not) signal to printer
+            2 - STROBE for Clock chip (1990)
+            3 - Remote plug control signal
+      Input:
+            8 bit data row from keyboard strobe
+
+F0H - LCD display data bus (F0H-FFH same)
+
+
+                  - Model 100 Keyboard Matrix -
+
+           ------------------------------------------------
+          7 |  L    K    I    ?    *    ->   Ent  f8   Brk
+Row       6 |  M    J    U    >    &    <-   Prt  f7   
+In        5 |  N    H    Y    <    ^    Up   Lbl  f6   Cap
+          4 |  B    G    T    "    %    Dwn  Pst  f5   Num
+0E0H-     3 |  V    F    R    :    $    +    Esc  f4   Cde
+0EFH      2 |  C    D    E    ]    #    -    Tab  f3   Gph
+(224-     1 |  X    S    W    P    @    )    Del  f2   Ctl
+239)      0 |  Z    A    Q    O    !    (    Spc  f1   Sft
+           ------------------------------------------------
+         bit  0    1    2    3    4    5    6    7    0
+             [----------- 0B1H or 0B9H -----------] [0B2H]
+             [----------- 177  or 185 ------------] [178 ]
+                           Column Strobe
+
+Note:     This table is incorrectly documented in Radio Shack's 
+         "Model 100 Technical Reference Manual" (26-3810)
+
+
+                     - Math Routine Summary -
+
+-------------------------------------------------------------
+Function       Single Precision    Double Precision    Integer
+-------------------------------------------------------------
+    +               37F4H               2B78H           3704H
+    -               37FDH               2B69H           36F8H
+    *               3803H               2CFFH           3725H
+    /               380EH               2DC7H           0F0DH
+    ^               3D7FH               3D8EH           3DF7H
+ Compare            3498H               34FAH           34C2H
+-------------------------------------------------------------
+
+
+                     - RIM and SIM Bit Maps -
+
+SIM Bit 0: RST 5.5 mask (set mask) RIM Bit 0: RST 5.5 mask
+        1: RST 6.5 mask (set mask)          1: RST 6.5 mask
+        2: RST 7.5 mask (set mask)          2: RST 7.5 mask
+        3: Mask set enable                  3: Int. enable
+        4: Reset RST 7.5 flip/flop          4: RST 5.5 pending
+        5: Not used                         5: RST 6.5 pending
+        6: SOD change enable                6: RST 7.5 pending
+        7: SOD pin output                   7: SOD pin input
+
+Note: SOD pin is used for cassette I/O on Model 100
+
+
+             - Model 100 Special Control Characters -
+
+--------------------------------------------------------------
+Control Code |  Print  | Routine |                            
+  Sequence   | Address | Address |        Description         
+--------------------------------------------------------------
+Beep (7)         4229H     7662H   Beep
+Tab (9)            -       4480H   Tab cursor
+LF (10)          4225H     4494H   Move down one line
+Home (11)        422DH     44A8H   Home cursor
+CLS (12)         4231H     4548H   Clear screen
+CR (13)            -       44AAH   Move cursor to beginning of 
+                                   next line
+ESC A              -       4469H   Move cursor up one line
+ESC B              -       446EH   Move cursor down one line
+ESC C              -       4453H   Move cursor to the right
+ESC D              -       445CH   Move cursor to the left
+ESC E              -       4548H   Clear screen
+ESC H              -       44A8H   Home cursor
+ESC J              -       454EH   
+ESC K            425DH     4537H   Erase from the cursor to the 
+                                   end of the screen
+ESC L            4258H     44EAH   Insert blank line at current 
+                                   line
+ESC M            4253H     44C4H   Delete current line
+ESC P            4249H     44AFH   Turn cursor on
+ESC Q            424EH     44BAH   Turn cursor off
+ESC T            4235H     4439H   Protect line 8
+ESC U            423AH     4437H   Unprotect line 8
+ESC V            423FH     443FH   Stop automatic scrolling
+ESC W            4244H     4440H   Resume automatic scrolling
+ESC X            4262H     444AH   
+ESC Y            427CH     43AFH   Set cursor position.  
+                                   Coordinate for cursor (row 
+                                   and column) follow ESC Y 
+                                   sequence
+ESC j              -       4548H   Clear screen
+ESC l              -       4535H   Erase current line
+ESC p              -       4431H   Start inverse video mode
+ESC q              -       4432H   Cancel inverse video mode
+
+
+                       References & History
+
+    This documented was created with well over 200 hours of 
+sweating over a Model 100 ROM disassembly.  I started my first 
+research on the Model 100 ROM about 2 hours after purchasing it 
+(Note: I had one of the first 100's off the production line.  I 
+believe I purchased my 100 in June of 1983).  After I figured 
+out how to use TELCOM, I downloaded a BASIC Z-80 disassembler 
+that friend of mine (Mike Livorsi) wrote from my Model 3.  After 
+making a few changes to the disassembler, I was able to get it 
+to work on the Model 100.  Then, I tested my Model 100's 
+parallel printer port by printing a disassembly of the Model 
+100's ROM on my old LP8 (note:the disassembly requires a 3 inch 
+note book to fit in).  A day later, I came back to my Model 100 
+and found what every machine language addict loves; a complete 
+dissasembly of the ROM.
+    At this point, I had a big problem; where to start.  At the 
+time, the only documentation for the 100 was the Instruction 
+Manual.  "Hacker reliefs" like schematics, memory maps, 
+debuggers, etc. could only be found in the dreams of the infant 
+portable hackers.
+    What did I end up doing?  Well, I decided to write a little 
+BASIC program to search for specific bytes in ROM.  This program 
+was used initially for finding the text string "Ok" in ROM.  
+Once I found out where the message was in ROM, I then searched 
+for any ML instructions that referenced the message.  Then, on a 
+warm July night in St. Louis, I found what I was looking for; a 
+16 bit register load that referenced the message "Ok" followed 
+by a CALL instruction.  This was the key I needed to open the 
+door to the Model 100's ROM.  With my experience from the Model 
+1/3/Coco ROMs, I knew that the load/CALL sequence I found was 
+used to print a text string on the screen.  From this little 
+information, I was able to interrogate the subroutine called and 
+find out how the display operated.  In addition, since "Ok" is 
+only printed at BASIC ready, I was able to trace out the 
+keyboard input routines and eventually, the entire BASIC 
+interpreter.
+    About 200 or so hours later, I documented most of the Model 
+100's ROM.  At this time, I knew enough about my Model 100 to 
+write just about any machine langauge program that I needed.
+    When I started writing ML programs for the 100, I found one 
+problem with my ROM documentation; it was too hard to find a 
+particular ROM address.  What I needed was an organized 
+collection of all my notes, "chicken scratches", etc.
+    From this came the memory map you hold in your hand right 
+now.  In this memory map, I basically included the information 
+that I use the most when ML programming.  I did not include a 
+lot of information on how the ROM handles certain task, but I 
+did include information that can be used by external stand alone 
+ML programs.
+    In creating this document, I had a little help along the 
+way with figuring out a few things.  Below is a list of sources 
+I used to help me determine or verify what certain things in the 
+Model 100 did:
+
+Model 100 User Manual, Radio Shack
+
+Model 100 Service Manual (26-3801), Radio Shack
+
+Microsystem Components Handbook, Volume 1, Intel (1984)
+
+MOS Microprocessors and Peripherals, Advanced Micro Devices
+    (1983)
+
+Microsoft BASIC Decoded & other Mysteries for the TRS-80, by
+    James Lee Farvour, IJG (December 1982)
+
+"Inside the 100", by David P. Sumner, 80 Micro (December 1983)

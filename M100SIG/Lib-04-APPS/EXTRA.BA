@@ -1,0 +1,131 @@
+EXTRA.BA: A helping hand for writers by Carmen Paone [72677,42]
+
+This revised version of EXTRA.100 and EXTRA.200 won't cause machine language
+conflicts in your laptops.
+
+EXTRA.BA will work on the 100, 102, and 200.
+
+Under the other two versions, a user could go back to the program menu and
+select another function. This version requires you to re-enter the program
+from the main menu.
+
+EXTRA.BA was created to overcome machine language problems with the NODE ROM
+chip, ROM2/Cleauseau and other unreported M/L hangups.
+
+The other two versions of EXTRA are still available in DL4 and DL10
+
+--------------------------------------
+
+As a writer who faces deadlines, I always wanted certain features at
+my fingertips in my Model 100
+
+Features such as
+
+* Search and replace
+
+* Story length
+
+* Rename function
+
+* Byline writer
+
+* Boilerplate feature
+
+When you hit the F1 key for the first time, you might think there is
+something wrong with EXTRA.BA because all you will see is a blank screen.
+
+There's nothing wrong and you didn't waste your connect time.
+
+You are sitting in a TEXT file called STORY.DO. Start writing your
+article.
+
+When you are finished with the stry or want to use one of the features
+of EXTRA.BA, just hit the F8 key and you will back at the menu of your laptop.
+
+All of the features of EXTRA.BA will only work on STORY.DO.
+
+When you select S&R, you will see a message of "A)uto or Q)uerry" will
+pop up.
+
+The Auto mode will automatically search for the string you are seeking
+and replace it with the corrected string.
+
+In the "Q" mode, you will see the string appear on the screen and be
+asked if you want to
+
+R)eplace the string
+
+S)kip the string
+
+Q)uit the S&R function.
+
+On "Quit" the lines of the article will be counted and you will be
+returned to the EXTRA.BA menu.
+
+In the Length of story mode, if you get an EF error, that means that
+you are trying to measure an empty file.
+The byline feature puts your name and publication in your story.
+
+The boilerplate feature can be used to store names and addresses and other
+information which can be cut and pasted into your story.
+
+--------------------------------------
+
+Cut and paste the program below the dotted line, place it in another
+.DO file and run that file through BASIC to make EXTRA.BA come alive.
+
+
+
+I modfified Steve French's very fine global search program for
+EXTRA.BA
+
+.......................................
+
+
+0 ' EXTRA.BA a revision of EXTRA.100 and EXTRA.200 
+0 ' by Carmen Paone [72677,42]
+1 CLS:MAXFILES=1:F$="STORY.DO":OPENF$FORAPPENDAS1:CLOSE
+2 CLS:KEYON:ONKEYGOSUB25,29,10,17,27,24
+3 LINE(1,10)-(238,47),1,B:LINE(2,11)-(237,48),1,B
+4 PRINT@122,"<F1>"TAB(9)"<F2>"TAB(14)"<F3>"TAB(21)"<F4>"TAB(28)"<F5>"TAB(35)"<F6>
+
+5 PRINT@82,TAB(21)"Rename
+6 PRINT@162,"Story"TAB(9)"S&R"TAB(14)"Length"TAB(21)"Byline"TAB(28)"Plate"TAB(35)"Menu
+7 PRINT@283,"EXTRA.BA by Carmen Paone [72677,42]";
+8 PRINT@1,DAY$,DATE$:PRINT@30,TIME$:FORA=0TO1:NEXT:IFINKEY$=""THEN8
+9 GOTO8
+10 OPENF$FORINPUTAS1:N=0:CLS:PRINT@52,"MEASURING STORY":PRINT@80,STRING$(40,61);
+11 A$=INPUT$(9,1):ONERRORGOTO12:N=N+9:GOTO11
+12 IFERR<>54THENRESUME
+13 PRINT@160,STRING$(40,61);:PRINT@132,"LENGTH  ":PRINT@145,"INCHES":N=N+16
+14 PRINT@139,(INT(10*(N/29*10.25/72)))/10:CLOSE
+15 FORT=1TO999:NEXT
+16 PRINT@212,"HIT SPACEBAR":B$=INPUT$(1):IFB$=" "THEN1
+17 CLS:PRINT@40,STRING$(40,42):PRINT@125,"<B>yline or <R>ename story":PRINT@200,STRING$(40,42);
+18 M$=INKEY$:IFM$=""THEN18
+19 IFM$="B"ORM$="b"GOTO21
+20 IFM$="R"ORM$="r"GOTO23
+21 A$="*1*/l*By2*By Carmen Paone@Eagle//Times@":OPENF$FORAPPENDAS1:PRINT#1,A$:
+22 CLS:PRINT@170,"*****ENTRY MADE*****":FORT=1TO499:NEXT:GOTO1
+23 INPUT"NAME (+.DO)   :";N$:NAMEF$ASN$:GOTO1
+24 MENU
+25 A$="STORY"+CHR$(0):A=VARPTR(A$):IFPEEK(1)=171THENX=29118ELSEX=24079
+26 CALLX,0,PEEK(A+1)+256*PEEK(A+2)
+27 A$="PLATE"+CHR$(0):A=VARPTR(A$):IFPEEK(1)=171THENX=29118ELSEX=24079
+28 CALLX,0,PEEK(A+1)+256*PEEK(A+2)
+29 CLS:MAXFILES=2:GOTO40
+30 IFEOF(1)THENCLOSE:KILL"story.do":NAME"TEMP.DO"AS"STORY.DO":GOTO1ELSEP=1:OS$="":LINEINPUT#1,IS$
+31 M=INSTR(P,IS$,SS$):IFM=0THENOS$=OS$+MID$(IS$,P):GOTO34
+32M=M-P:OS$=OS$+MID$(IS$,P,M):IFQ=0THENOS$=OS$+RS$ELSEGOSUB35:IFI<3THENOS$=OS$+SS$ELSEIFI<5THENOS$=OS$+RS$ELSE37
+33 P=P+LEN(SS$)+M:IFP<LEN(IS$)THEN31
+34 PRINT#2,OS$:PRINT@135,"Line"L:L=L+1:GOTO30
+35 CLS:PRINTOS$CHR$(27)"p"SS$CHR$(27)"q"MID$(IS$,M+P+LEN(SS$))
+36 PRINT@282,"(R)eplace, (S)kip or (Q)uit?";:GOSUB39:I=INSTR(1,"SsRrQq",I$):CLS:RETURN
+37 PRINT#2,OS$+SS$+MID$(IS$,M+P+LEN(SS$))
+38 IFEOF(1)THEN30ELSELINEINPUT#1,IS$:PRINT#2,IS$:GOTO38
+39 I$=INKEY$:IFI$=""THEN39ELSERETURN
+40 CLEAR1000:DEFINTA-Z
+41 PRINT@52,"(A)uto or (Q)uery";:GOSUB39:I=INSTR(1,"AaQq",I$):IFI=0THENPRINT:GOTO41ELSEIFI>2THENQ=1ELSEQ=0
+42 PRINT@80,STRING$(40,241);:LINEINPUT"            SEARCH FOR:";SS$:IFLEN(SS$)=0THENMENU
+43 PRINT@160,STRING$(40,241);:LINEINPUT"            REPLACE WITH: ";RS$
+44 F$="STORY.DO":OPENF$FORINPUTAS1:OPEN"TEMP.DO"FOROUTPUTAS2:CLS:GOTO30

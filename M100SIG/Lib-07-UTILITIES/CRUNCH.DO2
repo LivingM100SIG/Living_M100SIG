@@ -1,0 +1,98 @@
+Documentation for CRUNCH.CO - Updated 26 June 86
+  File compression for a Model 100 is a great idea, but I found CRUNCH.100 to 
+be very slow. I thought if I could convert it to run under TCOMP.121 that it 
+would be much faster and therefore much more useable. I feel I have been 
+partially succsessful.
+ Crunch.CO is 2.5K long, almost twice the size of Crunch.100, but because it 
+converts a file internally it can process a file almost twice as large as 
+Crunch 100 can.
+ As for speed I used for a test, a 10,353 byte text file. Crunch.100 took over 
+30 minutes to compress it to 7,358 bytes and over 16 minutes to expand it. 
+Crunch.CO took only one minute and thirty seconds to compress the same file to 
+7,359 bytes. The bad news is that took 10 minutes to expand the file. That's 
+was with no other files in memory.
+ I'm still not sure why it takes so long for the expansion, but I think the 
+answer lies in lines 520 - 550 in Crunch.SR2. Maybe one of you M/L types could 
+get some good results with dissassembly. The more files in memory, the longer 
+Crunch will take.
+ Crunch.CO is stored in hex format as Crunch.HX2 and should be converted with 
+CHANGE.BA in this library. Change.BA will create a .CO file ready to run. Since
+this is a M/L program, BACKUP any files that you don't want to lose. Until you 
+get the hang of it, I would backup the text file you going to work with the 
+first couple of times.
+ To load and run Crunch.CO I use a small basic loader:
+
+   0 CLEAR 256,60368 : RUNM "Crunch
+
+ When run, Crunch.CO will show the files in RAM and ask for a file name. Do not
+type in the extension. If the file does not exist you will be returned to the 
+main menu.
+ When Crunch.CO is finished it will beep, but you may not be finished. I have 
+not been able to find a way to delete a character in a text file through basic.
+This deletion normally needs to be done after compression, but there may be 
+some stray characters leftover after expansion, if so you will be taken into 
+the text file. At that point you should press Function Key 1, then press and 
+hold the GRPH key and press [k] twice, release the GRPH key and press ENTER. 
+The cursor should move to two left arrows, on one side of the arrows there will
+be text, the othe side will look like garbage. Press Function Key 7 (Sel), then
+CTRL - Down Arrow. The cursor will move to the end of the text, when it does 
+press Function Key 6 (Cut). You can then return to the menu.
+ I did not include the size counter as it was not accurate and if you've had 
+your M100 for more than a month you've probably already have something that 
+will tell you the new file size. Also Crunch.CO will not change the file name.
+WARNING: DO NOT USE CRUNCH.CO ON ANY FILE THAT CONTAINS A CHR$(26) (CTRL-Z). 
+This shouldn't be a problem, but it will certainly mess up your ram! Also make 
+sure that the first character in the text file is not a GRPH-L (Right Arrow, 
+CHR$(154)), that is how Crunch.CO knows whether to expand or compress the file.
+
+ You may have noticed that a file compressed with Crunch.CO will use one more 
+byte than one compressed with Crunch.100. This is because of the GRPH-L. This 
+means that files compressed with Crunch.100 should not be expanded with 
+Crunch.CO until you enter the compressed file first and type a GRPH-L (Right 
+Arrow) as the first character.
+ Crunch.CO only needs about 200 bytes to compress a file, so a 24K file can 
+easily be compressed. If you run out of memory the computer will beep and you 
+will be returned to the menu. Clear out some files and try again.
+ Crunch.SR2
+  I have also uploaded the TCOMP source code as CRUNCH.SR2. You will only want 
+this if you want to make changes or see how it all happens.
+
+   1-  8 Input the file name
+  10- 90 Search the Ram File Dir
+     100 Compress if first char is 154
+ 140-150 How many of each Char (C)
+ 160-192 Sort the 46 most used Char (C)
+ 200-212 Input 46 most used Char (E)
+ 220-230 End
+ 235-290 Compress
+ 300-380 Expand
+ 390-490 Compress
+ 500-555 Expand
+ 600-615 Output Char
+ 620-630 Input Char
+
+ Crunch.SR2 is compiled from 60368 to 62905. Since there are no FOR-NEXT loops 
+Change LINE 7071 in Tcomp to read:
+     :VT=VT+2: 
+ The following lines will fill in from 62906 to 62959. After compiling and 
+saving the .CO file to RAM, run this program.
+
+10 CLEAR256,60368:LOADM"crunch
+20 FORX=62906TO62951:POKEX,0:NEXT ' Array - PEEK(N)
+30 FORX=62952TO62957:POKEX,32:NEXT 'NAME
+40 POKE62958,68:POKE62959,79 :'DO
+50 SAVEM"crunch",60368,62959,60368
+
+ Crunch.SR2 will run as a basic program if you change line 10 and 50 in the 
+above program to read:
+
+ 10 CLEAR 256,62906
+ 50 RUN "Crunch
+
+ Then use the program as a loader.
+
+ Well I probably forgot something, so if you have any questions Send E-Mail to:
+
+ Fred Edelkamp
+  [70506,223]
+

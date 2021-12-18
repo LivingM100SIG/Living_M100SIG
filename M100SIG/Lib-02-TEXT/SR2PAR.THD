@@ -1,0 +1,131 @@
+SR2PAR.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+These messages address the question of how to use the Model 100 as a serial-
+to-parallel converting printer interface.  What software is needed?? None!
+Read on.
+
+Message range: 173039 to 173119
+Dates: 8/17/88 to 8/18/88
+
+
+Sb: #Serial to Parallel?
+Fm: Pete Lyall 76703,4230
+To: Sysop
+
+
+I was looking for a utility that will allow me to use the model 100 as a
+glorified serial to parallel converter and printer buffer... I have a system
+that is physically distant from my computer room (in the house) and wanted to
+set it up to use a serial port for the line printer. This way, I could overcome
+the limitaions of a parallel interface (distance wise) in routing the cable to
+the computer room. Then, passing it through the m100 would allow me to convert
+it back to parallel, and possibly provide some buffering as well.
+
+Has this been done? If not, is it safe to assume that BASIC is too slow for the
+task? Thanks!
+
+
+Fm: Alan Rowberg 76703,4421
+To: Pete Lyall 76703,4230
+
+Just go into telcom and set STAT to match the serial line and press F4 to go
+online and then F5 to log to printer.  No special software is needed.
+
+
+Fm: Tony Anderson 76703,4062
+To: Pete Lyall 76703,4230
+
+Yes, as Alan points out, simply use TELCOM for the function.  Unfortunately it
+will not function as a buffer, having only a 64 character internal buffer, but
+if it responds to the printer's "wait" handshaking, it should send the ^S-^Q
+wait handshaking (via the RS-232 line) to the originating computer.  If that
+computer recognizes those commands for dataflow, you've got just what you want,
+but without the buffer part being needed.
+
+Generally, TELCOM will operate as fast, or faster, than the printer can, so you
+should have no problem between computers, but will be limited to the actual
+printer speed; and of course, the process, without a buffer, will tie up both
+computers for the entire printing process.
+
+
+Fm: Pete Lyall 76703,4230
+To: Alan Rowberg 76703,4421
+
+Thanks for the comeback, and for slapping me with the obvious (grin)! I was
+kind of hoping to circumvent the screen in the interest of speed.. is this
+possible? Will the M100 keep up at 9600? 4800?
+
+
+Fm: Pete Lyall 76703,4230
+To: Tony Anderson 76703,4062
+
+Thanks for the comeback... As I also later asked Alan, is there a way to
+circumvent screen (LCD) I/O here? This may help speed (BTW - I have an R/S
+Printer Buffer, so printer speed is probably not going to be the limiting
+factor, at least not for the first 64k). Also, is the TELECOM program smart
+enough to send an Xoff when the printer flow-controls the M100?
+
+Lastly - I bought Carl Oppendahl's (sp?) book a while back - I note that he
+mentions a Screen/Printer output flag... is this flag honored under TELECOM, or
+just under BASIC? If both, this may be the answer!
+
+
+Fm: Tony Anderson 76703,4062
+To: Pete Lyall 76703,4230
+
+I don't know exactly how TELCOM will handle flow control since I've never had a
+need to try it in this mode.  But it manages with everything else, so why not
+try it, and let us know.
+
+There is a small program in Lib. 3 that you can use to turn on/off the screen
+scroll by assigning those functions to the normally unused F6 and F7 function
+keys in TELCOM.  The program is TELUTL.100, by Bill Templeton, 75655,1056.
+There are two files there with the same TELUTL name, so be sure you get the
+right one.
+
+Just a push of the button, and the screen locks up, all incoming data is
+written over and over on the same line, and high-speed COM rates are possible.
+But what printer do you have that will truck along at 4800 or 9600 baud?  Ah!
+you intend to put that print buffer in the line between M100 and printer, thus
+making the computer only a protocol converter.  OK.  But were you aware you can
+buy protocol converters, serial to parallel, or vice versa, for less than a
+hundred bucks?  And if you want, you can add print buffering in various amounts
+and still stay under $200?  Might be more efficient.
+
+If you can give me a page reference in Opedahl's book, I can look it up and see
+what you're talking about.
+
+
+Fm: Alan Rowberg 76703,4421
+To: Pete Lyall 76703,4230
+
+Wow, you have a printer that can keep up at 9600 baud?  (grin)
+  No, the M100 will stop at 600 baud, unless you use one of the special
+programs here that allow you to turn off the screen.
+
+
+Fm: Pete Lyall 76703,4230
+To: Tony Anderson 76703,4062
+
+Don't have the book handy - It's in the chapter on LCD control though.
+
+Also - while the buffers are available <$200, I *have* an m100 on hand, and
+lots of other items waiting for that $0>?<$200 to be spent on them ;^}!
+
+
+Fm: Pete Lyall 76703,4230
+To: Alan Rowberg 76703,4421
+
+Alan - well.... the printer won't keep up at 9600, but the print buffer ahead
+of it will ;^}... I have a Tandy PT-64 (or something like that). Tony mentioned
+a file called TELUTL.100 in LIB3. Are there *other* goodies that just disable
+the screen altogether?
+
+
+Fm: Tony Anderson 76703,4062
+To: Pete Lyall 76703,4230
+
+No.

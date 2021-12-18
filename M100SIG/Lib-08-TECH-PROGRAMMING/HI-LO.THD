@@ -1,0 +1,217 @@
+HI-LO.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Did you ever wonder what two bytes were needed to poke an address into a two-
+byte location?  This thread has some programs which relate to this question.
+They take a decimal address as an input and provide two decimal numbers (0
+to 255) to be poked into memory.  Sorta trivial as a programming exercise,
+but fun and perhaps instructive!
+                 <<Updaded on 12/12/87>>
+
+Message range: 161994 to 162504
+Dates: 12/5/87 to 12/14/87
+
+
+Fm: RANDY HESS 73267,552
+To: PHIL WHEELER
+
+I put this together from your program [FNDFIL.100, DL8]. if there isn't ono
+in DL8 is it worth (that's one) uploading or do you do these calc's in your
+head? (grin)
+
+100 CLS:INPUT"Address to HI/LO byte";I:IFI=0THEN160
+140 B1=256*(I/256-INT(I/256)):B2=INT(I/256)
+150 PRINT:PRINT"Low order byte ="B1:PRINT:PRINT"High order byte ="B2
+155 PRINT@290,"PRESS SPACEBAR";:CALL24367
+160 CLS:PRINT"HI/LO bytes to address:":PRINT:INPUT"Low order byte";B1:INPUT"High order byte";B2
+165 PRINT:PRINT"Address is: "B1+256*B2
+
+Thanks, Randy
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552
+
+The one I use (HI-LO.BA) is only two lines to do the same thing. Will send
+mine when next I come in with M100.
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552
+
+I use a similar program to break a decimal number into the Hi/Lo form used in
+assembly language programming, the 8080 convention.  I've been using LOHIHX
+from DL8 for conversions the other way.  I like your routine in line 140, but
+it _does_ calculate the integer value twice, which consumes CPU time.  Not too
+important, but it offends my "efficient programming" sense.
+
+ 1 CLS:PRINT:INPUT" What number";N
+ 2 X1=INT(N/256):X2=N-(X1*256)
+ 3 PRINT" Lo byte ="X2"  Hi byte ="X1
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552
+
+Randy, here is LO-HI.BA (gotta ^C to end, but what the heck!):
+
+10 INPUT "DECIMAL"; D:PRINT "Byte 1 =";256*(D/256-INT(D/256))
+20 PRINT "Byte 2 =";INT(D/256):GOTO10
+
+
+Fm: Leonard Erickson 70465,203
+To: Phil Wheeler 71266,125
+
+        Try this:
+        10 INPUT "DECIMAL";D
+        20 IF D <= 32767 THEN PRINT "Byte 1 =";D MOD 256:
+                              PRINT "Byte 2 =";D \ 256
+           ELSE D=D-65535:GOTO 20
+
+        Much faster... also a lot more obvious what it is doing!
+
+
+Fm: Tony Anderson 76703,4062
+To: Leonard Erickson 70465,203
+
+Leonard, Below modification to your program allows it to display the values
+>32767 in normal form, as opposed to display in negative values.  Of course it
+adds bulk to the routine, but makes it more comprehensible to us beginners.
+
+ 0 'Fm: Leonard Erickson 70465,203
+ 1 'Message #162324
+ 10 INPUT "DECIMAL";D
+ 20 IF D <= 32767 THEN PRINT "Byte 1 ="D MOD 256:PRINT "Byte 2 =";D \ 256
+    ELSE D=D-65535: PRINT "Byte 1 =";255+D MOD 256:PRINT "Byte 2 =";255+D \ 256
+
+Suppose it can be refined further?
+
+
+Fm: Leonard Erickson 70465,203
+To: Tony Anderson 76703,4062
+
+Hey, I figure I was doing quite well. I composed that program *on-line*!!! (I
+was half expecting a few "But it doesn't work" responses....)
+
+
+Fm: Tony Anderson 76703,4062
+To: Leonard Erickson 70465,203
+
+Well, it does... although I found it interesting that the MOD command has the
+same limitation as Integer numbers, i.e. a range of -32768 to 32767.  Don't
+like working with negative numbers, so played around with it a bit trying to
+get "normal" notation.
+
+What shall we save this as?  HILO.BYT?  Haven't the foggiest idea of a good
+name for this one.
+
+Fm: Leonard Erickson 70465,203
+To: Tony Anderson 76703,4062
+
+Hold on! It just dawned on me that there is a sneakier way to do it. Next msg
+will have a tested program!
+
+
+Fm: Leonard Erickson 70465,203
+To: Tony Anderson 76703,4062
+
+Here it is:
+
+10 INPUT "Decimal";D:
+        IF D>32767 THEN D%=D-65536 ELSE D%=D
+20 PRINT"Low byte : ";PEEK(VARPTR(D%)):
+        PRINT"High byte: ";PEEK(VARPTR(D%)+1):
+        GOTO10
+
+
+Fm: Tony Anderson 76703,4062
+To: Leonard Erickson 70465,203
+
+Huh!  Very interesting.  Now if you can get rid of the IF statement, you can
+make it a one-liner.
+
+
+Fm: Leonard Erickson 70465,203
+To: Tony Anderson 76703,4062
+
+I can get rid of it, but the result is *ugly*. I'll upload it so you can see.
+
+
+Fm: Leonard Erickson 70465,203
+To: Tony Anderson 76703,4062
+
+Ok, it isn't *quite* as ugly as I had feared:
+
+10 INPUT "Decimal";D:
+        D%=D+(D>32767)*65536:
+        PRINT"Low byte : ";PEEK(VARPTR(D%)):
+        PRINT"High byte: ";PEEK(VARPTR(D%)+1):
+        GOTO10
+
+
+Fm: Tony Anderson 76703,4062
+To: Leonard Erickson 70465,203
+
+What do you mean "ugly"?  It looks about the same as the previous versions...
+for screen output that is, and that's what's really important.  It seems to get
+the same answers.  So congratulations, a one-liner that gets the Lo/Hi
+structure of a decimal number.  Not bad for a "simple" programming exercise.
+(grin)
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Mine was a one-liner, too.  Turned it into two lines to get it in a msg without
+extra CR's!
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Well, did you feel slighted, boobie?  I'll go back and look at yours again, but
+in the end analysis, as you said, it's only a programming exercise. (grin)
+
+
+Fm: Denny Thomas 76701,40
+To: Tony Anderson 76703,4062
+
+Uh, Boobie?
+
+
+Fm: Phil Wheeler 71266,125
+To: Denny Thomas 76701,40
+
+"Boobie" -- was used by a humorist of the 50's(?) whose name I can't recall.
+Before your time, Denny!  Who was that, Tony?
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Geez, I can't remember the guy's name... but do recall the incessant spiel...
+"You say the world's getting to you?  Your doggie died, and they arrested you
+for burying him in the back yard?  You say you went fishing and only caught an
+old tire?  Is that your problem, boobie?"
+
+Wow, the 50's was a long time ago...
+
+
+Fm: RANDY HESS 73267,552
+To: Tony Anderson 76703,4062
+
+Tony, Phil, Leonard,
+Since I started this BYT/AD.BA THD on
+5DEC87 I feel honor bound to atest to
+the brevity of Mr. Wheeler's reply to
+my inquiry. However, circumstances
+compel me to complete the circle with
+an additional line of code, which, when
+added to Leonard's program really does
+
+:INPUT"Low byte ";L:INPUT"High byte";H:PRINT"Decimal =";(256*H)+L:RUN
+
+Thanks for your "input"!
+Happy Holidays, Randy

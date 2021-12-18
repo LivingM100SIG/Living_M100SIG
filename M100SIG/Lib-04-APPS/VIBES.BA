@@ -1,0 +1,64 @@
+0 'PC Program Analyzes Vibration" by Harold j. Levy ,Ref Machine Design 4/24/86 p.104 as enterd by Mark Stangl 7/6/86.
+1 'This is a "correct" entry of the public domain progam for the R/S m100.
+2 'Reprints of the article may be obtained from the magazine.  Note the published version is full of typos.
+3 'Basically it is a simple spring mass vibration program.  It may easily be expanded on.
+10 INPUT"No. of masses";M:N=2*M
+15 DIMS(M,M),X(N),P(M),W(M),K1(N),K2(N),K3(N),K4(N),XDOT(N),MM(M)
+20 FORI=1TOM
+30 PRINT"Enter mass of no."I
+31 INPUTMM(I):NEXTI
+70 FORI=1TOM
+80 PRINT"Enter no. of springs for mass"I
+90 INPUTNI
+100 FORL=1TONI
+110 INPUT"Enter the other mass no. and value of   the spring";J,SP
+130 S(I,I)=S(I,I)+SP
+140 IFI<>JTHENS(I,J)=S(I,J)-SP
+150 NEXTL,I
+160 INPUT"Enter the no. of forces";NF
+170 FORI=1TONF
+180 INPUT"Enter Mass no., force, freq (rad/sec)  ";J,P(J),W(J)
+190 NEXTI
+210 INPUT"Enter maxtime, time step";TM,H
+211 PRINT:PRINT"Time ";
+212 FORI=1TOM
+216 PRINT"X("I")",:NEXTI:PRINT
+224 PRINTINT(1E4*T+.5)/1E4;
+225 FORI=1TOM
+227 PRINTINT(1E4*X(I)+.5)/1E4;:NEXTI
+228 PRINT
+230 GOSUB1000
+270 IFT<=TMTHEN224
+280 END
+300 'Runge Kutta method
+1000 GOSUB2000
+1010 FORI=1TON
+1020 K1(I)=H*XDOT(I)
+1030 X(I)=X(I)+.5*K1(I):NEXTI
+1040 T=T+.5*H
+1050 GOSUB2000
+1060 FORI=1TON
+1070 K2(I)=H*XDOT(I)
+1080 X(I)=X(I)-.5*(K1(I)-K2(I))
+1090 NEXTI
+1100 GOSUB2000
+1110 FORI=1TON
+1120 K3(I)=H*XDOT(I)
+1130 X(I)=X(I)-.5*K2(I)+K3(I)
+1140 NEXTI
+1150 T=T+.5*H
+1160 GOSUB2000
+1170 FORI=1TON
+1180 K4(I)=H*XDOT(I)
+1190 X(I)=X(I)+(K1(I)+2*K2(I)-4*K3(I)+K4(I))/6
+1200 NEXTI
+1210 RETURN
+1220 'eval root of the RHS of the diffeque
+2000 FORI=1TOM
+2010 XDOT(I)=X(I+M):NEXTI
+2020 FORI=1TOM
+2030 XDOT(I+M)=P(I)*SIN(W(I)*T)
+2040 FORJ=1TOM
+2050 XDOT(I+M)=(XDOT(I+M)-S(I,J)*X(J))/MM(I)
+2060 NEXTJ,I
+2070 RETURN

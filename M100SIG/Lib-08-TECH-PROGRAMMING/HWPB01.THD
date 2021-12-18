@@ -1,0 +1,230 @@
+HWPB01.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+HWPB = HardWare ProBlem.  This file is a collection of messages about a
+specific problem report related to the RS-232 port distorting characters --
+and some of the diagnostic analyses that were offered.  For reference, in
+case it comes up again.  The final outcome will be added -- when and if
+reported.
+
+Message range: 158067 to 158231
+Dates: 10/11/87 to 10/14/87
+
+
+Sb: #hardware problem??
+Fm: Ronn Lucas 75665,1201
+To: all
+
+Having a strange problem here. Trying to log in to CompuServe with the Model
+100, and when typing the User ID, the comma comes back as a $. If I put the
+machine in half duplex, I see ",$", so it would appear the M100 at least
+_thinks_ it's sending out a comma. This machine has had a PG Design chip
+providing an additional 7 banks of 32K, but I removed the chip and flipped the
+switch on the underside of the computer in an attempt to reinitialize the
+memory. I also went into Basic and typed "clear 256, MAXRAM". But the comma
+continues to echo as $, and there are some other strangenesses as well when I
+use the graph key, like capital letters coming from the top (numberic) row of
+the keyboard.
+
+It seems like I need to totally clear the memory, but I thought I did that. Is
+there something I'm not doing? Or does this sound like a hardware problem?
+
+
+Fm: Tony Anderson 76703,4062
+To: Ronn Lucas 75665,1201
+
+Sounds more like you've got a problem in the keyboard.  Some of the characters
+are doing funny things.  Perhaps you've got a hairline crack in the circuit
+board someplace; or a thingamajig has crapped out, and needs to be replaced.
+
+Do these same problems occur when entering text into a TEXT file?  Or just in
+TELCOM? -- Weird!
+
+
+Fm: Phil Wheeler 71266,125
+To: Ronn Lucas 75665,1201
+
+As Tony asks -- only in Telcom (sounds that way if half duplex gives the result
+you noted)?  AND -- only on CIS?  Try another service (e.g. BBS) and see what
+happens.  If this happens only AFTER logon, it could be your CIS DEFALT setting
+(don't know how, tho).  If on CIS only, try another node -it could be that your
+local node is messed up in some way.
+
+I have in the recesses of my mind the faint memory of a similar report a long
+time ago.  But I cannot recall the outcome -- or who it was.
+
+
+Fm: Phil Wheeler 71266,125
+To: Ronn Lucas 75665,1201
+
+comma and $ differ by 8 -- and only in the fourth bit of the code (see M100
+manual).  Now, what are some of the other mappings you are getting, Ronn? A
+difference of 8 is usually significant in a computer, since it can come from a
+single bit being lost.  See if this "4th bit" thing (0 when it should be one)
+is a pattern.  May be in the UART conversion from parllel to serial data.
+
+
+Fm: Ronn Lucas 75665,1201
+To: Phil Wheeler 71266,125
+
+Thanks for the response, Phil. The only other weird things happen only when I
+use the graph key. By itself, the alpha keyboard works fine. And if I type the
+PPN into a text file and copy it, then dial up CIS and logon, if I paste the
+user ID I still get the $ coming back.
+
+The PG Design chip uses a program with a bunch of POKEs in it to bank switch.
+Do those all get restored to their "normal" values when you flip the switch on
+the underside of the Model 100? Or do I have to do something else to get rid of
+that program?
+
+The stat _is_ set to M7I1E, but I'll try hooking the Model 100 to a friend's
+Mac, and see what gets transmitted. The problem doesn't happen _after_ logon; I
+never get past the 1st half of the PPN (ie past the comma) on anyone's account.
+And this account works fine from the Mac.
+
+It never occurred to me to try another service (he says slapping himself on the
+forehead); I don't have the M100 at hand, but will check that out soon.
+
+
+Fm: Ronn Lucas 75665,1201
+To: Tony Anderson 76703,4062
+
+Thanks, Tony. I believe you're right about a crack in the keyboard (though see
+my message to Phil).
+
+Strangely, this Model 100 (my 2nd) was one of the last they made before
+introducing the 102. I would have expected hardware problems with the much
+older one first. The other one's not here, or I'd obviously be trying Telcom in
+that beast as well.
+
+Not only don't I have a problem with the comma in TEXT files, but I even typed
+the PPN into a file and copied it, went into TELCOM and called up CIS, and at
+the ID prompt tried doing a paste. No dice. The comma still came back as a $. I
+wonder if that by itself indicates software rather than hardware being at
+fault?
+
+My guess is that I've got the remains of a machine language program (for bank
+switching with the PG Design chip) still lingering in the memory. All those
+POKEs scare me. Do they all disappear when you shut off the switch on the back,
+or is some more voodoo required?
+
+
+Fm: Tony Anderson 76703,4062
+To: Ronn Lucas 75665,1201
+
+I doubt that any remains of a ML program would cause the problem you describe,
+since to do so, your output to the COM routine would have to be looping through
+the ML routine all the time, and the routine would have to set up to change
+commas to dollar signs.... and have no other effect.  It'd have to be a pretty
+specifically written bit of code to work that way without creating any cold
+starts.  If you turn off the memory switch on the bottom of the case, and leave
+it off overnight, the RAM chip power should drain away, and when you turn on
+the switch again the next day, your memory should be in the same pristine,
+clean, empty state it was in when you bought the machine.  Nothing could be
+"hanging around, hooked into TELCOM" after that.  It's referred to as a "Arctic
+Start" - the coldest of the cold.  You lose EVERYTHING!
+
+After reading Phil's analysis, the missing or changed bit, that seems to be the
+most logical source of the problem  That might mean a defective chip somewhere
+in the chain... I haven't the foggiest idea of which one, though. Does the
+comma get changed with direct keyboard input, too?  If from both the autosend
+feature (from the RAM file), or the Paste Buffer, AND the keyboard, then I'd
+suspect something in the UART or external to the machine.  But if the keyboard
+input works OK, then the problem has to be internal.
+
+
+Fm: Phil Wheeler 71266,125
+To: Ronn Lucas 75665,1201
+
+Peculiar stuff!  I take it that it only happens on TECOM, not TEXT -- tho I
+don't think you have confirmed that.
+
+Tieing to another machine and seeing what happens is important.
+
+The fact that you get the same thing with a text file sent out with PPN says it
+is not the keyboard -- no surprise, since half duplex shows the lcomma as one
+of the chars.  Would be interesting to know if half-duplex echo goes thru the
+uart.
+
+PG RAM stuff should have zero effect, I believe -- and definitely none after a
+cold start.
+
+
+Fm: Phil Wheeler 71266,125
+To: Ronn Lucas 75665,1201
+
+If you have not done a complete memory purge overnite, that is the very first
+thing to try.  I'm not optimistic re the gains -- but the price is right!
+<grin>
+
+
+Fm: Denny Thomas 76701,40
+To: Ronn Lucas 75665,1201
+
+  That sounds suspiciously like the problem I had with my second M100 - I also
+bought it during the final closeout before the T102 was introduced. Mine wasn't
+just partially bad, it's telcom chip was gone completely, but I wonder if there
+is some correlation. Luckily, I sent it back the next day and got a newcould it
+be that the last units had some weak UART chips?
+
+
+Fm: Ronn Lucas 75665,1201
+To: Denny Thomas 76701,40
+
+Yea, it looks like the entire telcom chip in this one's bad as well. Hooked it
+up to the Mac today, and most of the keyboard is sending out characters other
+than what are on the keycaps. And not a comma in the bunch. We'll see what
+Radio Shack service has to say tomorrow.
+
+
+Fm: Ronn Lucas 75665,1201
+To: Phil Wheeler 71266,125
+
+The problem shows up only in Telcom. Hooked the Model 100 up to the Mac today,
+and most of the keyboard is sending out wrong characters. I'll take it in
+tomorrow, but it looks like the entire Telcom chip went down. Hope the repair
+costs less than a new laptop. Overnight memory purge was a good idea, but
+didn't change anything with the comma/$.
+
+I guess I didn't notice the problem with the PPN because the number row is
+mostly accurate, and I never got past where the comma should be to find any of
+the other problems.
+
+
+Fm: Ronn Lucas 75665,1201
+To: Tony Anderson 76703,4062
+
+See my messages to Phil and Denny. Looks like the entire Telcom chip went down.
+Thanks for your help tracking this down.
+
+
+Fm: Phil Wheeler 71266,125
+To: Ronn Lucas 75665,1201
+
+Numbers from 0 to 8 have bit 4 at 0 -- so they would be unaffected in my
+theory. Make that 0 to 7.  But 8, 9 would give 0 and 1 -- still numbers, so you
+might not pick it up right away.  It does sound like the UART (or something
+closely related).
+
+Past history suggests they may want to changeout the entire mother board --
+while in this case it may be a single chip.  If so (and the chip can be
+purchased as a part) you may wnat to look into alternate repair possibilites.
+On the otherhand, if you can give them a really good set of symptoms -- and
+point to the UART -- they may give the component-level repair a shot.
+
+
+Fm: Ronn Lucas 75665,1201
+To: Phil Wheeler 71266,125
+
+You're exactly right... 0-7 did come out normal, and 8 & 9 did give 0 & 1. I
+now better understand your previous message, and will definitely ask to have
+the UART (whatever that is) checked out.
+
+
+Fm: Tony Anderson 76703,4062
+To: Ronn Lucas 75665,1201
+
+Well, at least you have a better handle on the problem now, and can describe it
+in more detail to the service department. Good luck.

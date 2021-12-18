@@ -1,0 +1,91 @@
+PRESS.FNT   Demonstration programs that print small or large font "PRESS ENTER"
+prompts on the screen.
+
+Copyright 1990 Tony B. Anderson
+
+Information contained in this article is licensed for use by members of
+CompuServe's Model 100 Forum; the information contained in this file may not be
+sold or distributed in any form without the express written permission of the
+author.  This article is not public domain, and may not be distributed on disk
+collections of public domain or shareware programs.
+
+
+
+These two programs are examples of using SMALL.FNT and LARGE.FNT to create a
+unique "PRESS ENTER" prompt.  In the case of SMALL, it puts PRESS ENTER: on two
+lines in the lower right corner of the screen, and includes a flashing cursor.
+LARGE, prints a two-line high PRESS ENTER at the bottom middle of the screen,
+along with a flashing cursor in the lower right-hand corner.
+
+If you use the large version, you will have to restrict your normal screen
+display to the top 6 lines (14 in the 200), to allow for the two blank lines
+for the PRESS ENTER prompt.  With the small version, you can use the bottom
+two lines, as long as you leave about ten spaces at the end of each line to
+allow room for the PRESS ENTER prompt.  This prompt also looks nice with a box
+around it - I'll leave that programming up to you.
+
+
+0 ' PRESS.SML  Prints a small "PRESS ENTER" on two lines at the bottom right corner of the screen
+1 ' Copyright 1990 Tony B. Anderson         All Rights Reserved
+2 ' Licensed for personal use only to members of CompuServe's Model 100 Forum;
+3 ' Not for sale or unauthorized distribution.
+4 '
+5 ' This program prints "The Quick Brown Fox" on the first 6 lines of a 100/102
+6 ' or first 14 lines of a 200, followed by a two-line "PRESS ENTER", to show
+7 ' you what it looks like. To delete the quick brown fox, simply delete line
+8 ' 115 of the program.
+9 '
+14 DATA 0,0,0,1,0,2,0,3,0,4,1,0,1,2,1,4,2,0,2,4,255,255: ' E
+23 DATA 0,0,0,1,0,2,0,3,0,4,1,0,2,0,2,1,2,2,2,3,2,4,255,255: ' N
+25 DATA 0,0,0,1,0,2,0,3,0,4,1,0,1,2,2,1,255,255: ' P
+27 DATA 0,0,0,1,0,2,0,3,0,4,1,0,1,2,1,3,2,1,2,4,255,255: ' R
+28 DATA 0,1,0,4,1,0,1,2,1,4,2,0,2,3,255,255: ' S
+29 DATA 0,0,1,0,1,1,1,2,1,3,1,4,2,0,255,255: ' T
+61 DATA 1,2,1,4,255,255: ' :
+100 IFPEEK(1)=171THENS=639:X=116 ELSE S=319:X=52: ' test for 200 or 100/102
+110 CLS:Y=205:A=-4
+115 M$="  The Quick Brown Fox Jumped Over The":FORM=1TOS-79STEP40:PRINTM$:NEXT
+120 RESTORE25:GOSUB135:GOSUB135:RESTORE14:GOSUB135:RESTORE28:GOSUB135:RESTORE28:GOSUB135
+122 A=-4:X=X+6 : ' advance printing to next line by resetting X, start at "beginning" of line by resetting A
+124 RESTORE14:GOSUB135:GOSUB135:RESTORE29:GOSUB135:RESTORE14:GOSUB135:RESTORE27:GOSUB135:RESTORE61:GOSUB135
+126 PRINT@S,"";:Q$=INPUT$(1):MENU
+130 ' 
+135   A=A+4
+140     READC,R:IFC+R=510THEN150
+145     PSET(C+A+Y,R+X):GOTO140
+150   RETURN
+
+
+0 ' PRESS.LRG  Prints a double-sized "PRESS ENTER" on the bottom two lines of the screen
+1 ' Copyright 1990 Tony B. Anderson         All Right Reserved
+2 ' Licensed for personal use only to members of CompuServe's Model 100 Forum;
+3 ' Not for sale or unauthorized distribution.
+4 ' 
+5 ' This program prints "The Quick Brown Fox" on the first 6 lines of a 100/102
+6 ' or first 14 lines of a 200, followed by a two-line "PRESS ENTER", to show
+7 ' you what it looks like. To delete the quick brown fox, simply delete line
+8 ' 115 of the program.
+9 '
+18 DATA 0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12, 1,0,1,1,1,2,1,3,1,4,1,5,1,6,1,7,1,8,1,9,1,10,1,11,1,12, 2,0,2,1,2,5,2,6,2,11,2,12, 3,0,3,1,3,5,3,6,3,11,3,12, 4,0,4,1,4,5,4,6,4,11,4,12, 5,0,5,1,5,5,5,6,5,11,5,12: ' E1
+19 DATA 6,0,6,1,6,5,6,6,6,11,6,12, 7,0,7,1,7,5,7,6,7,11,7,12, 8,0,8,1,8,11,8,12, 9,0,9,1,9,11,9,12,255,255: ' E2
+32 DATA 0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12, 1,0,1,1,1,2,1,3,1,4,1,5,1,6,1,7,1,8,1,9,1,10,1,11,1,12, 2,0,2,1, 3,1,3,2, 4,2,4,3, 5,3,5,4, 6,4,6,5, 7,5,7,6: ' N1
+33 DATA 8,0,8,1,8,2,8,3,8,4,8,5,8,6,8,7,8,8,8,9,8,10,8,11,8,12, 9,0,9,1,9,2,9,3,9,4,9,5,9,6,9,7,9,8,9,9,9,10,9,11,9,12,255,255: ' N2
+36 DATA 0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12, 1,0,1,1,1,2,1,3,1,4,1,5,1,6,1,7,1,8,1,9,1,10,1,11,1,12, 2,0,2,1,2,5,2,6, 3,0,3,1,3,5,3,6, 4,0,4,1,4,5,4,6, 5,0,5,1,5,5,5,6, 6,0,6,1,6,5,6,6, 7,0,7,1,7,5,7,6: ' P1
+37 DATA 8,1,8,2,8,3,8,4,8,5, 9,2,9,3,9,4,255,255: ' P2
+40 DATA 0,0,0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8,0,9,0,10,0,11,0,12, 1,0,1,1,1,2,1,3,1,4,1,5,1,6,1,7,1,8,1,9,1,10,1,11,1,12, 2,0,2,1,2,5,2,6, 3,0,3,1,3,5,3,6, 4,0,4,1,4,5,4,6, 5,0,5,1,5,5,5,6, 6,0,6,1,6,5,6,6, 7,0,7,1,7,5,7,6: ' R1
+41 DATA 8,1,8,2,8,3,8,4,8,5, 9,2,9,3,9,4, 2,6,3,6, 3,7,4,7, 4,8,5,8, 5,9,6,9, 6,10,7,10, 7,11,8,11, 8,12,9,12,255,255: ' R2
+42 DATA 0,2,0,3,0,4,0,9,0,10, 1,1,1,2,1,3,1,4,1,5,1,9,1,10,1,11, 2,0,2,1,2,5,2,6,2,11,2,12, 3,0,3,1,3,5,3,6,3,11,3,12, 4,0,4,1,4,5,4,6,4,11,4,12, 5,0,5,1,5,5,5,6,5,11,5,12, 6,0,6,1,6,5,6,6,6,11,6,12, 7,0,7,1,7,5,7,6,7,11,7,12: ' S1
+43 DATA 8,1,8,2,8,3,8,6,8,7,8,8,8,9,8,10,8,11, 9,2,9,3,9,7,9,8,9,9,9,10,255,255: ' S2
+44 DATA 0,0,0,1, 1,0,1,1, 2,0,2,1, 3,0,3,1, 4,0,4,1,4,2,4,3,4,4,4,5,4,6,4,7,4,8,4,9,4,10,4,11,4,12, 5,0,5,1,5,2,5,3,5,4,5,5,5,6,5,7,5,8,5,9,5,10,5,11,5,12, 6,0,6,1, 7,0,7,1, 8,0,8,1, 9,0,9,1, 255,255: ' T
+100 IFPEEK(1)=171THENS=639:X=113 ELSE S=319:X=49 : ' test for 200 or 100/102
+110 CLS:Y=54:A=-12
+115 M$="  The Quick Brown Fox Jumped Over The":FORM=1TOS-79STEP40:PRINTM$:NEXT
+120 RESTORE36:GOSUB135:GOSUB135:RESTORE18:GOSUB135:RESTORE42:GOSUB135:RESTORE42:GOSUB135
+122 A=A+12: ' to create a blank space between words
+124 RESTORE18:GOSUB135:GOSUB135:RESTORE44:GOSUB135:RESTORE18:GOSUB135:RESTORE40:GOSUB135
+126 PRINT@S,"";:Q$=INPUT$(1):MENU
+128 '
+135   A=A+12
+140     READC,R:IFC+R=510THEN150
+145     PSET(C+Y+A,R+X):GOTO140
+150   RETURN

@@ -1,0 +1,108 @@
+DUAT.100- WEATHER MODEL100 DUAT DOWNLOAD FOR TRS80 MODEL 100, 102
+
+DUAT.100 was created to automate the downloading of specific "weather
+products" from CONTEL DUAT service in early 1990. Some familiarity with the
+100's logon string and TELCOM program, is assumed. DUAT.100 controls all the
+communications routine from BASIC by CALLing the com routines as required. It
+is based on a program I wrote during the FAA's experimental phase when the
+DUAT prototypes were being tested, and so has been more-or-less in use for
+some time in this earlier guise.)
+
+By early summer, 1990, all the DUAT providers were pumping out weather data,
+airport and enroute information, warnings, notices, and so on used by the
+aviation community, but often with an unbelievable, unnecessary "data
+overkill". Many pilots haul out their laptops or microcomputers, log on to
+the service, then request menu items that suggest they'll get just the
+weather data they need for a planned flight. In the process, they must
+patiently wait online while they are admonished not to carry the remains of
+former President Ferdinand Marcos of the Philippines. And during summer
+afternoons they receive mandatory tornado warnings for the central twister
+belt even though their planned route lies in Maine or Oregon. Now, DUAT.100
+allows pilots with model 100's or 102's to specify as much or little
+information as they require, and then it GETS the info without fooling
+around.
+
+The above brief background suggests that pilots KNOW what they want in the
+way of weather data. If this is you, then DUAT.100 will obviate those
+frustrations! If you forgot to request a terminal forcast, or want to see
+whether it's changed, then when you run DUAT.100, you can request that FT
+all by itself.
+
+The best weather-briefing outside standing in the Flight Service Station
+live, is obtained from EMI AeroComp here on CIS. I consider it the "reference
+standard," and it's so GOOD you just won't find any regular pilot/users who
+can fault it. (At least as far as today's state of WX briefings is
+concerned.) The Contel version of the DUAT weather-and-briefing service is,
+however, the best one going. I've tried them all.
+
+DUAT has built-in protections to discourage access by non-pilots, so to use
+the service you need to BE one. To get started on this service, have your
+PILOT CERTIFICATE NUMBER handy, then connect your modem to 1 800 767- 9989.
+Set communications protocols for any baud rate from 300 to 2400. The system
+is sophisticated enough to detect and accommodate your preference in parity
+and word length, but I find "none" and "8" respectively are the defaults.
+Other combinations will probably work OK, but you can see the host program
+saying, "Oh, aah, yeah, even parity, 7 bits, OK, stand by one..." Follow the
+prompts for first-time users, call their 800 help number if you need to, and
+try it in the non-automatic mode for a while. To use DUAT.100 on Contel DUAT
+most successfully, go back online and set your user defaulte to a
+40-character screen width for the MODEL100, and set screen size for the
+highest number it will accept. (I never found the "scroll all" command on
+Contel! I just tell it my screen accommodates 512 lines....)
+
+DUAT.100 has been reasonably debugged and works very well on the TANDY TRS80
+MODEL 100 and compatibles. It uses the CALL statement abundantly to access
+screen, UART and COM functions directly from BASIC. These CALL locations are
+specific to the 100 and 102, but they make screen and com handling very nice!
+All of the CALL addresses can be found in "Hidden Powers of the TRS80 Model
+100" by Christopher L. Morgan (pub. Waite)
+
+After making the changes noted below to accommodate your personal signon
+defaults, connect your MODEL 100 to the telephone network, and set the
+answer/originate switch to "originate." It should not be necessary to set the
+communications parameters in TELCOM (They are M8N1E): these are done for you
+by CALLing routines that first initialise the UART and then set up the
+protocols for you. (Line 190: CALL28326,0,785. The "785" sets switches for
+300 baud, 8 bits, no parity, 1 stop bit.)
+
+Line 40 contains the 800 access number for CONTEL DUAT as well as the signon
+string. This string is EXACTLY the same one you keep in ADRS.DO to find and
+call the service automatically; however the string is concatenated from a
+couple of string fragments with PW$ and AC$ stored in line 10. Edit line 10
+to change these strings to equal YOUR password and access code. After that,
+you may go so far as to edit line 40, where you can reconstruct the single
+logon string to incorporate your own password and access. At that time, you
+should remove them from line 10. Delete lines 1-7 if you want. Lines 20 and
+30 should stay at the top of the program code: BASIC scans for line numbers
+in GOTO statements, and it should find the address quickly near the
+beginning. Otherwise, it may be hard to keep up with the data flow when the
+program is loading your weather data.
+
+Run the program. The first screen wants you to enter a "LOCID." This is a
+3-letter "LOCATION IDENTIFIER" such as VNY or SNA. One or two of the letters
+can be a number. It won't take 4-character strings. Press backspace if you
+goof and want to re-enter, then re-enter the ENTIRE 3-character LOCID. If you
+enter AIRPORT IDENTIFIERS, you can enter as many as you like. Press ENTER
+when you have entered your last location request.
+
+The screen then clears and shows you a menu of weather products. Select 1 or
+more of these with FUNCTION KEYS. Note the audible feedback. Press F8 when
+you have chosen what you want. DUAT.100 then logs onto DUAT, gets your
+requested items, signs off, and gives you a the data one screenful at a time.
+Press the spacebar to view each screen. Feel free to route the output to a
+printer by changing PRINT to LPRINT in line 270.
+
+As you may know, or learn, you can't request all weather products at all
+location identifiers. You gotta use a little sense! If you ask for WINDS
+ALOFT, for example, at an AIRPORT LOCATION, then DUAT will say "soandso does
+not report this weather type. Therefore, as a general rule ---
+
+If you enter AIRPORT IDENTIFIERS, you can REQUEST Hourly reports, terminal
+forecasts, notams, pireps. (CONTEL DUAT is pretty smart, and does an
+excellent job of delivering UA's within probably 50 miles of the airport(s)
+you select. It is a nice feature.) If you enter VOR's you can request winds
+aloft. (These are pretty neat, too.) If you enter RADAR WEATHER sites you can
+request RADAR WEATHER. The only radar weather sites around where I live are
+VQN (Volens, Virginia) and NHK (Patuxent Naval Air Station or Japan
+Broadcasting Company). I guess BPT is also one of these. Check your FSS.
+

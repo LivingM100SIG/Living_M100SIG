@@ -1,0 +1,403 @@
+
+
+                     ------------------------
+                     | Model 100 System Map |
+                     ------------------------
+ROM: Part V
+                          Copyright 1985
+                     Revision Date: 09/30/85
+                   Compiled and Researched by:
+                       Robert D. Covington
+            Systems Information Management Consultants
+      [Not associated with The Covington Group, N. Y., N. Y.]
+
+    This document may be duplicated and distributed free of
+charge to any individuals who desire it.  Any duplications of
+this document, however, must inluce all of the information
+contained here-in, with no deletions or changes.
+    The author and distributors of this document make no 
+expressed or implied warrantees as to the validity of the 
+information contained here in.
+
+
+5146H -  Entry to TELCOM
+
+515BH -  TELCOM Ready re-entry point for TELCOM commands
+
+5185H -  Start of TELCOM instruction vector table.  Each entry starts 
+        with a 4 byte instruction name followed by a 2 byte routine 
+        vector.
+
+51A2H -  End of TELCOM instruction vector table
+
+51C0H -  TELCOM STAT instruction routine
+
+51C7H -  Print current STAT (RS232 settings for TELCOM) and return to 
+        TELCOM ready
+
+51EDH -  Set STAT (RS232 settings for TELCOM) and return to TELCOM 
+        ready
+
+522FH -  TELCOM CALL instruction routine
+
+524DH -  TELCOM FIND instruction routine
+
+52BBH -  Disconect phone line and disable modem carrier
+         Exit:
+                A - New contents of port 0BAH
+
+52D0H -  Connect phone line and enable modem carrier
+         Exit:
+                A - New contents of port 0A8H
+           C flag - Set
+
+52E4H -  Lift telephone and wait for a carrier.   The carrier must be 
+        present for more than 2 seconds to qualify a carrier detect.
+         Exit:
+             C flag - Set if shift break pressed
+             Z flag - Set if carrier present
+
+5310H -  Pause for about 2 seconds
+         Exit:
+          BC & AF - Destroyed
+
+532DH -  Execute logon sequence pointed to by HL.  This routine is 
+        used to drive the Model 100 autodialer
+         Entry:
+               HL - Points to logon buffer
+
+540AH -  Dial the digit that is present in the A register.  The ASCII 
+        equivalent of the number is printed on the screen at the 
+        current cursor position as this routine is dialing.
+         Entry:
+                A - Digit to dial
+         Exit:
+               All registers destroyed
+
+5455H -  TELCOM TERM instruction routine
+
+550DH -  Start of function key vector table for TERM commands in 
+        TELCOM.  Each 2 byte vector corresponds to each function key.
+
+551BH -  End of function key vector table for TERM
+
+5523H -  TELCOM PREV function routine
+
+553EH -  TELCOM FULL/HALF function routine
+
+5550H -  TELCOM ECHO function routine
+
+559DH -  TELCOM UP function routine
+
+567EH -  TELCOM DOWN function routine
+
+571EH -  TELCOM BYE function routine
+
+5791H -  Print the buffer pointed to by HL till a null or '"' is 
+        found.  Printing begins at the start of a line.  If the 
+        cursor is not at the begining of the line, a CR is sent.
+         Entry:
+               HL - Points to the start of the buffer to be printed
+
+5797H -  MENU Statement.  Go to main menu
+
+59ADH -  Convert filename from right justified extention (name padded 
+        with spaces to cause extention to be last two characters) to 
+        normal filename with "." delimeter for extention.
+         Entry:
+               DE - Points to right justified extention filename (8 
+                    characters)
+               HL - Points to the start of the destination buffer for 
+                    the converted filename
+         Exit:
+               HL - Points to end of destination buffer where the 
+                    filename is stored.  Filename is terminated with 
+                    a null.
+               DE - Points to end of source filename
+                A - Destroyed
+
+5A12H -  Print time, day, and date on the first line of the screen 
+        (used on main menu).  The screen is cleared prior to printing
+         Exit:
+               All registers destroyed
+
+5A15H -  Same 5A12H but screen is not cleared.  Line is still printed 
+        on top line of screen.
+         Exit:
+               All registers destroyed
+
+5A58H -  Print the buffer pointed to by HL.  Printing terminates with 
+        a null.
+         Entry:
+               HL - Points to the buffer to be printed
+         Exit:
+               HL - Points to the terminating null
+                A - 0
+
+5A62H -  Move the memory pointed to by DE to the memory pointed to by 
+        HL for A number of bytes.  HL and DE are incremented after 
+        each byte moved
+         Entry:
+               DE - Points to start of source memory
+               HL - Points to start of destination memory
+                A - Number of bytes to move
+         Exit:
+          DE & HL - Incremented past last byte moved
+                A = 0
+
+5A6DH -  Compare the buffer pointed to by DE to the buffer pointed to 
+        by HL for C bytes or until a null is found in the buffer 
+        pointed to by DE.
+         Entry:
+               DE - Points to start of first buffer
+               HL - Points to start of second buffer
+                C - Number of bytes to compare
+         Exit:
+                A = 0 if the compare was ended with a null
+                C - Number of bytes remaining until compare would 
+                    have been successful.
+          HL & DE - If compare is successful, these registers are 
+                    incremented past the last byte compared.  If the 
+                    compare ended with a null, DE points to the 
+                    null.  If compare is unsuccessful, these 
+                    registers point to the offending characters
+           Z flag - Set if compare is successful
+
+5A79H -  Clear function key definition table
+         Exit:
+               All registers destroyed
+
+5A7CH -  Set new function key table.  The table contains the function 
+        key definitions up to 16 characters for each of the 8 
+        function keys.  The last byte of each entry should have the 
+        high bit set to signify the end of the function key 
+        definition.  Empty entries should contain an 80H.
+         Entry:
+               HL - Points to function key table
+         Exit:
+               All registers destroyed
+
+5A9EH -  Display function keys on 8th line if enabled
+         Exit:
+               All registers destroyed
+
+5AA9H -  Search directory for filename
+         Entry:
+               DE - Points to buffer containing filename.  The buffer 
+                    is terminated with a null.
+         Exit:
+               HL - Address of file directory entry
+           Z flag - Set if file was not found
+               All other registers destroyed
+
+5AE3H -  Get start address of file
+         Entry:
+               HL - Points to the file's directory entry
+         Exit:
+               HL - Points to start of file
+               DE - Points to directory entry + 2
+
+5B68H -  Entry to ADDReSS
+
+5B6BH -  Enter ADDReSS using the filename pointed to by DE.
+         Entry:
+               DE - Points to the filename to use with ADDReSS 
+                    terminated with a null
+
+5B6FH -  Entry to SCHEDuLe
+
+5B72H -  Enter SCHEDuLe using the filename pointed to by DE.
+         Entry:
+               DE - Points to the filename to use with SCHEDuLe 
+                    terminated with a null
+
+5BF5H -  FIND instruction for ADDRSS/SCHEDL
+
+5BF7H -  LFND instruction for ADDRSS/SCHEDL
+
+5C3FH -  Find the text in the buffer pointed to by HL in the text file 
+        pointed to by DE.  All lowercase letters are converted to 
+        uppercase prior to compare.
+         Entry:
+               HL - Points to string to search for.  The string must 
+                    end with a null
+               DE - Points to where search is to begin in the text 
+                    file
+         Exit:
+               BC - Points to the start of the found string in the 
+                    file.
+               DE - Points to the start of the record where the 
+                    string was found
+           C flag - Set if string found
+
+5C6DH -  Incremented DE past the next CRLF in the text file.
+         Entry:
+               DE - Points to a text file
+         Exit:
+               DE - Points to the byte following the next CRLF in the 
+                    text file
+                A - Destroyed
+
+5C74H -  Check the next byte(s) in the buffer pointed to by DE for a 
+        CRLF.
+         Entry:
+               DE - Points to buffer where CRLF check is to be made
+         Exit:
+               DE - Incrmented once if no CRLF is found or twice if a 
+                    CRLF is found
+           Z flag - Set if CRLF found
+
+5CEFH -  Start of ADDRSS/SCHEDL instruction vector table.  Each entry 
+        starts with a 4 byte instruction name followed by the 
+        instruction's 2 byte vector address
+
+5D00H -  End of ADDRSS/SCHEDL instruction vector table
+
+5D64H -  Wait for character from keyboard and convert it to uppercase 
+        if nescessary.  All function keys are converted into their 
+        pre-programmed text.
+         Exit:
+                A - Uppercase character from keyboard
+
+5D6AH -  Home Cursor
+        Exit:
+               HL - Destroyed
+
+5D70H -  Print time on top line of screen until a key is pressed.  
+        When a key is pressed, the cursor returns to its original 
+        position prior to the call.
+
+5DEEH -  Entry to TEXT
+
+5E51H -  EDIT Statement
+
+5F2FH -  Wait for a space to be entered on keyboard
+         Exit:
+                A - Space (20H)
+
+6018H -  Start of TEXT control character vector table.  Each 2 byte 
+        vector entry corresponds to the ASCII value of the control 
+        character (ex. The address at 6018H points to the routine for 
+        ^A which has an ASCII value of 1)
+
+6055H -  End of TEXT control character vector table
+
+6056H -  TEXT ESCape routine
+
+607CH -  TEXT control P routine
+
+608AH -  TEXT control I routine
+
+60BEH -  TEXT control M routine
+
+60DEH -  TEXT right arrow and control D routine
+
+60E2H -  TEXT down arrow and control X routine
+
+610BH -  TEXT control H routine
+
+6151H -  TEXT left arrow and control S routine
+
+6155H -  TEXT up arrow and control E routine
+
+617AH -  TEXT control F routine
+
+618CH -  TEXT control A routine
+
+61C2H -  TEXT control T routine
+
+61D7H -  TEXT control B routine
+
+61FDH -  TEXT control R routine
+
+620BH -  TEXT control Q routine
+
+6210H -  TEXT control W routine
+
+621CH -  TEXT control Z routine
+
+6242H -  TEXT control L routine
+
+628FH -  TEXT control C routine
+
+6431H -  TEXT control O routine
+
+6445H -  TEXT control U routine
+
+6551H -  TEXT control N routine
+
+65C3H -  Move the memory pointed to by HL to the memory pointed to by 
+        DE until a null (0) is found.
+         Entry:
+               HL - Points to start of source buffer
+               DE - Points to start of destination buffer
+         Exit:
+               HL - Preserved
+               DE - Points to the byte following the null
+                A = 0
+
+6691H -  TEXT control Y routine
+
+6713H -  TEXT control G routine
+
+6774H -  TEXT control V routine
+
+6B61H -  Insert a character into a text file
+         Entry:
+               HL - Points to place to insert character
+                A - Character to insert
+         Exit:
+               HL - Incremented past inserted character
+                B - Character inserted
+           C flag - Set if out of memory
+               All other registers destroyed
+
+6B6DH -  Inset BC number of spaces in memory
+         Entry:
+               HL - Points to place where insertion is to begin.
+               BC - Number of spaces to insert
+         Exit:
+               HL - Preserved
+           C flag - Set if out of memory
+               All other registers destroyed
+
+6B9FH -  Delete BC number if characters in a text file.
+         Entry:
+               HL - Points to place where deletion is to begin.
+               BC - Number of characters to delete
+         Exit:
+               HL - Preserved
+               All other registers destroyed
+
+6BDBH -  Move the memory poined to by HL to the memory pointed to by 
+        DE for BC bytes.  HL and DE are incremented on each byte 
+        transfered (same as LDIR).
+         Entry:
+               HL - Points to end of source memory
+               DE - Points to end of destination memory
+               BC - Number of bytes to move
+         Exit:
+          HL & DE - Incremented past last character moved
+                A - Destroyed
+
+6BE6H -  Move the memory pointed to by HL to the memory pointed to by 
+        DE for BC bytes.  HL and DE are decremented on each byte 
+        transfered (same as LDDR).
+         Entry:
+
+               HL - Points to end of source memory
+               DE - Points to end of destination memory
+               BC - Number of bytes to move
+         Exit:
+          HL & DE - Decremented past last character moved
+                A - Destroyed
+
+6BF1H -  Start of ROM program catalog entries
+
+6C48H -  End of ROM programs catalog entries
+
+6C49H -  Entry to BASIC
+
+6CD6H -  Re-initialize system.  User files are not lost.
+
+6CE0H -  Warm Start Reset Entry

@@ -1,0 +1,34 @@
+1 'Print Utility for CGP115 and M100
+2 'John McDevitt [70526,601]
+3 'The program is menu driven and gives you the ability to:
+4 'Switch between 40 and 80 columns
+5 'Print out day, date, and time
+6 'Print formatted program listings (program must be in ASCII format)
+7 'Let me know if you have any problems or comments
+8 'program will not work properly unless you download with both upper and lower case
+100 CLEAR2000:DEFINTA-Z:DEFSTRD,I,N,P:X=-1:D=DAY$+" "+DATE$+" "+TIME$
+110 CLOSE:CLS:PRINT@5,CHR$(27)"p";" Print Utility Selection ";CHR$(27)"q"
+120 PRINT:PRINT" <1> 40 Columns"," <2> 80 Columns"," <3> Print Day, Date, & Time"
+125 PRINT" <4> Print ASCII Format Program Listing  <5> Menu",," <6> Quit";:IFX=-1THEN200
+130 PRINT@X,;:I=INPUT$(1):K=VAL(I):ONKGOTO200,300,400,500,800,900:BEEP:GOTO130
+200 LPRINTCHR$(18):LPRINT"S1":LPRINTCHR$(17):X=85:GOTO130
+300 LPRINTCHR$(18):LPRINT"S0":LPRINTCHR$(17):X=125:GOTO130
+400 LPRINTD:GOTO130
+500 CLS:FILES
+510 PRINT@280,"File Name";:INPUTN
+520 OPENNFORINPUTAS1
+530 LPRINT"**** PROGRAM LISTING -- ";N;"' ****":LPRINTTAB(5)D:LPRINT
+540 I=INPUT$(1,1):IFEOF(1)THENC=1
+550 P=P+I
+560 IFI<>":"ANDI<>CHR$(10)THEN540
+570 IFI=CHR$(10)THENP=LEFT$(P,LEN(P)-2)
+580 IFI=":"THENP=LEFT$(P,LEN(P)-1)
+590 LPRINTP
+600 IFI=":"THENP=":   "ELSEP=""
+610 IFC<>1THEN540
+620 N=N+".DO"
+630 CLS:PRINT:PRINT" <1> Kill ";N," <2> Return":PRINT@161,"<"+CHR$(229)+"> SELECT":PRINT@162,;
+640 I=INPUT$(1):K=VAL(I):ONKGOTO700,110:BEEP:GOTO640
+700 KILLN:GOTO110
+800 MENU
+900 CLS:END

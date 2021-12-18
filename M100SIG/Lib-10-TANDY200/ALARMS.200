@@ -1,0 +1,12 @@
+100 CLS:PRINT:PRINTTAB(20)DATE$"  "TIME$:YR$="":MO$="":DA$="":HO$="":MI$="":TE$="":T$="":YR$=MID$(DATE$,7,2):PRINT"Which year?   ("YR$")";:INPUTYR$
+200 MO$=MID$(DATE$,1,2):PRINT"Which month?  ("MO$")";:INPUTMO$:IFLEN(MO$)=1THENMO$="0"+MO$
+300 DA$=MID$(DATE$,4,2):PRINT"which day?    ("DA$")";:INPUTDA$:IFLEN(DA$)=1THENDA$="0"+DA$
+400 HO$=MID$(TIME$,1,2):PRINT"What hour?    ("HO$")";:INPUTHO$:IFLEN(HO$)=1THENHO$="0"+HO$
+500 MI$="00":PRINT"Which minute? ("MI$")";:INPUTMI$:IFLEN(MI$)=1THENMI$="0"+MI$
+600 PRINT"What text?":INPUTTE$
+700 AL$=MO$+"/"+DA$+"/"+YR$+","+HO$+":"+MI$+":00,A,"+TE$:PRINT:PRINT"Alarm setting is:":PRINT:PRINTAL$:PRINT:PRINT"Is the setting okay?"
+750 T$=INKEY$:IF(T$="y"ORT$="Y")THEN800ELSEIF(T$="N"ORT$="n")THEN100ELSE750
+800 OPEN"NOTE.DO"FORAPPENDAS1:PRINT#1,AL$:CLOSE
+900 CLS:PRINT:PRINT"Your alarm is set.":PRINT:PRINT"Set more alarms?"
+930 T$=INKEY$:IF(T$="y"ORT$="Y") THEN100 ELSE IF(T$="N"OR T$="n")THEN MENU ELSE 930
+

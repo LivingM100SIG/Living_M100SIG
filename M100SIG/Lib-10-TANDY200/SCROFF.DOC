@@ -1,0 +1,64 @@
+********  Documentation for SCROFF.200  ********
+            (c)1987  Wilson Van Alst
+                       [76576,2735]
+
+
+   As M100 users found out when they tried to use 1200 Baud external modems with
+their machines, TELCOM communication speed is limited by relatively slow LCD 
+scrolling routines in ROM.  For the 100, that limit is about 600 Baud unless you
+disable scrolling.
+   The T200 screen is faster, allowing 1200 bps communication with no LCD 
+slowdown, but it will not handle 2400 Baud.
+   Thus, SCROFF.200 -- a loader to install a bit of m/l code that turns TELCOM's
+<F6> key into an on/off toggle for LCD scrolling.
+---------
+INSTALLATION:
+   Download SCROFF.200 as a document and convert it to a BASIC program in the 
+usual way.  It doesn't care what you call it, but for purposes of this 
+discussion, we'll assume it's SCROFF.BA.
+   When you run the program, the first menu page will tell you whether TELCOM's 
+<F6> key is already in use.  If it is, you'll have to decide whether you want to
+change its function.  Be advised: there may be ice on this road; so be sure your
+important files are backed up before going further.
+   If you choose the INSTALL option, it will check again for potential conflicts
+and instruct you what to do if it finds one.  If there are none, it gives you a 
+choice of where to put the 10 bytes of m/l code that perform the LCD toggle.
+   At this point, options <1> or <2> will "hide" that code in an area where 
+BASIC stores its <F> key functions.  I have installed the SCROFF code in a dark 
+corner behind the BASIC "Menu" key -- but some people use that area for a 
+routine that adds linefeeds to <CR>'s enroute to their printer or RS232 port.  
+So, you're given the chance to install the SCROFF stuff behind the BASIC "Run" 
+key, instead.  (In either case, the chores performed by those keys in BASIC will
+not be changed; though you should be aware that re-defining the chosen key, 
+after SCROFF code is installed, could invite disaster.)
+   Options <3> or <4> of the INSTALL menu allow you to put the SCROFF routine at
+the top of accessible RAM (it will load underneath any m/l programs currently 
+installed, and HIMEM will be re-set to protect it), or at another address that 
+you specify.
+   Once the SCROFF code is installed, SCROFF.BA can be killed.
+--------
+REMOVAL:
+   The first program menu in SCROFF.BA allows you to remove the m/l routine, 
+wherever it's installed.  It will re-set the <F6> key in TELCOM to the coldstart
+value (i.e., the key will do nothing).   Beware of the "Remove" option if 
+another program is already using TERM's <F6>:  it will poke ten 0's into the 
+middle of the other program's code -- with unredictable results.
+--------
+THANKS:
+   To Tony Anderson for documenting the TERM <F6> hook at 62783.
+--------
+NOTES:
+   The other key address in this routine is at EF0Bh (61195d).  The normal value
+there is 0.  Any other value will disable scrolling.
+   This is the m/l routine that is CALLed by the <F6> hook:
+
+	PUSH	PSW
+	LDA	EF0B
+	CMA
+	STA	EF0B
+	POP	PSW
+	RET
+
+--------
+
+

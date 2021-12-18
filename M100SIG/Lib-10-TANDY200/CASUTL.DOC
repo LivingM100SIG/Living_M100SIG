@@ -1,0 +1,86 @@
+
+
+  CASUTL is a file save and load program.  It also verifies what has been saved.
+
+  It records time and date on files, and file size on any file.  Date and file
+ size are visible only on the files that had been saved previously with CASUTL.
+
+  It is downloaded as a Basic program
+ listing.  Run it and specify an
+ execution address to create the program file CASUTL.CO.
+
+Run the program(HIMEM needs to be changed first, if the execution address is
+ below HIMEM) and do one of the following:
+
+
+::: Save :::
+
+Full file name - 
+  The file extension, no matter what it is, is restored when loaded back.
+
+A semicolon (;) - 
+  Writes a 5 second silence, followed by one byte ;.CO file.  This is
+ identified as "gap", when loading and verifying.  Consequently, do not use a
+ semicolon as the first character of file names.
+
+An asterisk (*) - 
+  Saves all files in ram, excluding CASUTL itself.  There is a 3 second silence
+ between each file.  After the last file, a one byte ;;.CO file is saved, to
+ indicate end of batch, so that the program can know where to stop when
+ loading/verifying a batch.
+
+
+::: Load :::
+
+ ; -
+  Looks for the file name ;.CO, and stops the cassette and prints the message
+ "Found - Gap" when it is encountered.
+
+ . -
+  Loads whatever file comes next, excluding the gap(;.CO)
+
+ * - 
+  Batch load.  Loads every file on cassette, until file name ;;.CO is
+ encountered, or memory runs out.
+
+ ? - 
+  Looks for text file blocks, and loads  it as file ?.DO.  By adding a file
+ name to ?, the text file blocks can be name as, or appended if that file
+ already exists.  For example, enter ?MYF to load them as MYF.DO, or append to
+ MYF.DO.  This would be useful in recovering parts of a text file lost due to
+ IO error in one of the file blocks - if IO error occurs while trying to load
+ a text file, the rest of file blocks that come after the point of error cannot
+ be loaded, without some trickery.
+
+
+::: Verify :::
+
+ ?
+  Displays text file blocks until the last block is encountered.
+
+ . -
+  Verify whatever file comes next.
+
+ * -
+  Verify all files until ;;.CO is encountered.
+
+  Verify is successful if OK message appears, else is not and you will get an
+ IO error.
+  When verifying text files, its content is echoed on the screen.
+
+
+
+  During any of the above three operations, SHIFT-BREAK aborts the current
+ operation, reports IO error, and returns to the program menu.
+
+  Press ENTER to exit the program - returns to where it was called from.
+
+  CASUTL can be called to do a single operation and return, by calling its Top
+ location+3.  When calling its Top+3, the parameters are:
+
+  CALL N+3,ASC(C$),VARPTR(F$)
+
+ N is the Top, C$ is a single command character(F,S,L, or V), and F$ is the
+ file name ending with a CHR$(0) - F$=F$+CHR$(0).
+
+

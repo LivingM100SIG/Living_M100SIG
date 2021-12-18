@@ -1,0 +1,86 @@
+	HELPER.BA by Carmen Paone [72677,42] is a Model 100/102 utility for the Node DATAPAC.
+	It includes a KILL and RENAME features which can be used on RAM files. Also included is a call to the Node from Ram.
+	The user who uses POWER-DISK can reset his Telcom stats with the LFILESMENU feature.
+	The CIS feature puts the user in Telcom by a call to the top of the ADRS.DO file. Make sure your Compuserve login is at the top of the ADRS.DO file.
+	You can include your favorite CO program on the first line of the key driven menu. A press of Key 6 will take you to Line 62 of the program.
+	Call 63013,8 checks to see if the Node is formatted.
+	F$="XXX.CO". Put the title of your favorite CO program in between the single quote marks.
+	Clear 256,XXXXX. String space is cleared for this program. You have to fill in the starting address in where the X's are located.
+	If you don't know know the starting address, just go into BASIC and type LOADM "Pgm1"
+	Of course, you will be putting your program title in between the quotes.
+	If all goes well, you will see this on your screen
+	TOP XXXXX
+	END XXXXX
+	EXE XXXXX
+	? OM ERROR
+	Know you will know the starting adress of your program.
+	The More key will take you to Screen 2 of the program. Here is space for seven more CO programs.
+	The listings for these programs can be found from Lines 30 through 57.
+	Cut and paste the program below the dotted line and put the contents of your buffer into a HELPER.DO file.
+	Run the DO file through BASIC and save it as HELPER.BA.
+
+
+.......................................
+0 REM  HELPER.BA BY CARMEN PAONE [72677,42] No rights reserved
+1 CLS:FORT=1TO499:NEXT:PRINT@2,STRING$(36,42)
+2 FORT=1TO499:NEXT:PRINT@55,"HELPER.BA"
+3 FORT=1TO499:NEXT:PRINT@82,STRING$(36,42)
+4 FORT=1TO499:NEXT:PRINT@135,"HOW TO TAME"
+5 FORT=1TO499:NEXT:PRINT@162,STRING$(36,42)
+6 FORT=1TO499:NEXT:PRINT@215,"THE DATAPAC"
+7 FORT=1TO499:NEXT:PRINT@242,STRING$(36,42):FORT=1TO499:NEXT:GOTO8
+8 CLS:LINE(1,4)-(239,54),1,B:LINE(5,8)-(235,50),1,B:LINE(6,9)-(234,49),1,B:PRINT@169,"  **** HELPER ****"
+9 PRINT@83,DAY$,DATE$:PRINT@109,TIME$:FORA=0TO1:NEXT
+10 PRINT@280,"Kill Name Node Lmnu Cis Pgm1 More Menu";:KEYON:ONKEYGOSUB13,18,24,25,26,58,28,27
+11 IFINKEY$=""THEN9
+12 GOTO9
+13 CLS:PRINT:PRINT:FILES:INPUT"FILE";F$:KILLF$:PRINT@209,"**** FILE KILLED ****":FORT=1TO499:NEXT:GOTO14
+14 CLS:PRINT@166,"KILL ANOTHER FILE [Y/N]"
+15 M$=INKEY$:IFM$=""THEN15
+16 IFM$="Y"ORM$="y"GOTO13
+17 IFM$="N"ORM$="n"GOTO8
+18 CLS:PRINT:PRINT:FILES:INPUT"OLD";A$:INPUT"NEW";B$:NAMEA$ASB$
+19 PRINT@209,"**** FILE RENAMED ****":FORT=1TO499:NEXT:GOTO20
+20 CLS:PRINT@167,"RENAME ANOTHER FILE [Y/N]"
+21 M$=INKEY$:IFM$=""THEN21
+22 IFM$="Y"ORM$="y"GOTO18
+23 IFM$="N"ORM$="n"GOTO8
+24 CALL63013,1
+25 LFILESMENU
+26 CALL21067
+27 MENU
+28 CLS:LINE(1,4)-(239,54),1,B:LINE(5,8)-(235,50),1,B:LINE(6,9)-(234,49),1,B:PRINT@129,"  **** CO FILES ****":PRINT@280,"Pgm2 Pgm3 Pgm4 Pgm5 Pgm6 Pgm7 Pgm8 Back";
+29 KEYON:ONKEYGOSUB30,34,38,42,46,50,54,57:GOTO29
+30 CALL63013,8
+31 CLEAR256,XXXXX
+32 F$="XXX.co"
+33 CALL63013,22,VARPTR(F$)
+34 CALL63013,8
+35 CLEAR256,XXXXX
+36 F$="XXX.co"
+37 CALL63013,22,VARPTR(F$)
+38 CALL63013,8
+39 CLEAR256,XXXXX
+40 F$="XXX.co"
+41 CALL63013,22,VARPTR(F$)
+42 CALL63013,8
+43 CLEAR256,XXXXX
+44 F$="XXX.co"
+45 CALL63013,22,VARPTR(F$)
+46 CALL63013,8
+47 CLEAR256,XXXXX
+48 F$="XXX.co"
+49 CALL63013,22,VARPTR(F$)
+50 CALL63013,8
+51 CLEAR256,XXXXX
+52 F$="XXX.co"
+53 CALL63013,22,VARPTR(F$)
+54 CLS:CALL63013,8
+55 CLEAR256,XXXXX
+56 F$="XXX.co"
+57 CALL63013,22,VARPTR(F$)
+58 GOTO8
+59 CALL63013,8
+60 CLEAR256,XXXXX
+61 F$="XXX.co"
+62 CALL63013,22,VARPTR(F$)

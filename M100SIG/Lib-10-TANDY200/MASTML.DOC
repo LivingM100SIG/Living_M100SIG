@@ -1,0 +1,76 @@
+M/L MASTER PROGRAM FOR THE MODEL 200:
+
+    This program allows a number of machine langauge programs to be 
+used, without having to keep the program both as a .CO file, and above
+HIMEM. The program works by remembering what the last M/L program used
+was.
+
+    This program can be used with any machine language programs which 
+are not self modifying.
+
+Program operation:
+
+    For this program to operate correctly, all M/L program calls must 
+be through the program. The response of the program when entered 
+depends on the current HIMEM setting, and what was last run. Each case
+is listed below.
+
+HIMEM=MAXRAM:
+
+     The program lists out the current .CO files, and asks you to 
+chose one. Entering the letter for a file will cause that file to be 
+loaded into high memory, deleted as a .CO file, and then executed.
+
+HIMEM=?????, No previous program run:
+
+    If the program has no record of a program being loaded, and HIMEM 
+is below MAXRAM, it will say unknown file loaded, give you the current
+HIMEM value, and ask you if you wish to continue. If you say yes, you 
+go to the .CO file selection menu, and whatever was above HIMEM is 
+lost.
+
+HIMEM=Start address, previous program run:
+
+    If the current value of HIMEM is the starting address for the 
+previous program run, (which is the case under normal operation), you 
+will told what program has been found, and given the option of exiting
+with no action taken, running the program, or saving the program back 
+as a .CO file. If the latter option is chosen, you will then go to the
+.CO file selection menu.
+
+HIMEM=?????, previous program run:
+
+    If there was a M/L program loaded by this program, and HIMEM is 
+altered, you will get the message HIMEM altered, FILENAME lost, where 
+FILENAME is the name of the .CO program which has been lost. You 
+should, if you never mess with HIMEM or run other programs outside of 
+this program, never get this message.
+
+Notes and limitations:
+
+    It will appear after running this program that all your M/L files 
+are gone. They are not gone, they are just made invisible. To make 
+them visible, see the program DIRUTL or similar.
+
+    Users of Multiplan, take heed. Multiplan messes with memory, do 
+not leave anything there if you are going to use Multiplan, save it 
+back as .CO file first.
+
+    There is a limitation on the total number of M/L files in the 
+directory, and that number is 15, because most people don't have more 
+than that, and that's all the lines I've got.
+
+    There is no limitation on the starting address, you can have more 
+than one program with the same starting address, so long as you don't 
+run them or load them outside of this program.
+
+    The program saves information on the last program run in an 
+invisible text file named "@@@". This file name is reserved if you use
+this program, there can be no other files by that name, either .CO, 
+.BA, or .DO.
+
+Any comments/suggestions/etc are welcomed.
+
+Richard Haw [71706,334]
+
+

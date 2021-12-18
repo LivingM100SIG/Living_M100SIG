@@ -1,0 +1,28 @@
+Another GW-BASIC tip:
+
+Copyright 1990 Tony B. Anderson, All Rights Reserved
+
+
+If you're attempting to convert Model 100 family BASIC programs to run under
+GW-BASIC, you may find a problem in converting the Model 100 PRINT@ statements
+to the corresponding LOCATE X,Y notation used in GW-BASIC.
+
+The below program makes such conversions rapidly, assuming you have one of the
+Model 100-type computers to run it in.  It runs in any; the 100, 102 or 200.
+
+Simply type in the number following the PRINT@ statement, and it returns the
+Row and Column numbers needed in the GW-BASIC LOCATE statement.
+
+
+0 ' M100 PRINT@ to GWB LOCATE Conversions
+1 ' Copyright 1990 Tony B. Anderson, All Rights Reserved
+10 CLS:PRINT@41,"PRINT@ vs LOCATE X,Y conversion":PRINT
+20 INPUT" Model 100 screen position: ";N
+30 PRINT
+40 R=INT(N/40):C=N-(R*40)+1:R=R+1
+50 PRINT" Equals: Row (X):"R;CHR$(8);", Column (Y):"C
+60 PRINT:PRINT" Another? (Y/N) ";
+70 Q$=INPUT$(1):IFQ$=CHR$(13)THEN100
+80 Q$=CHR$(ASC(Q$)AND223):PRINTQ$
+90 IFQ$="Y"THEN PRINT@120,CHR$(27)"J":GOTO20
+100 MENU

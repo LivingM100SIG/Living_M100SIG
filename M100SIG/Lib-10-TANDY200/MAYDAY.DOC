@@ -1,0 +1,103 @@
+	** MAYDAY.200 INSTRUCTIONS **
+
+	   (C)1989 Wilson Van Alst
+
+--------------------------------------
+	Introduction:
+
+   MAYDAY is a fast, small (30-byte) .DO-file recovery program for the T200 
+computer.  After a cold start, it will let you restore TEXT files if they 
+still exist in RAM (and in most cases they do).
+   Aside from this document, you need to download MAYDAY.200 -- a BASIC 
+program that creates the recovery routine as a machine language file called 
+MAYDAY.CO.
+   The BASIC program is not needed to run MAYDAY.CO; so once you have the m/l 
+file you your menu, you can get rid of the .BA file.
+
+--------------------------------------
+	Using MAYDAY.CO:
+
+ o For multi-bank computers:
+   If you have more than one RAM bank in your T200, you should keep a copy of 
+MAYDAY.CO in the bank that is least likely to suffer a cold start.  Or, you 
+can keep it in _two_ banks, virtually guaranteeing it'll be available no 
+matter which bank goes down.
+   Right after a cold start, move to the bank containg MAYDAY.CO and use <F4> 
+to copy the program into the bank that crashed.  Return to that bank, select 
+MAYDAY with the widebar cursor, and press <ENTER>.  The program runs in a 
+buffer above MAXRAM; so there's no need to CLEAR memory before running it.
+   Skip to the part of these instructions called "Recovery Hints:".
+
+ o For single-bank computers:
+-   MAYDAY.CO should be stored as a .CO file on cassette.  (It could also be 
+kept on disk; but during recovery you would have to load your DOS before 
+loading MAYDAY, and the DOS would probably over-write a lot of the memory 
+you're trying to save.)
+    After a cold start, stay in the bank that crashed, and connect your tape 
+recorder.  Then go into BASIC and type:
+
+	RUNM"CAS:MAYDAY"
+
+		...followed by <ENTER>.
+   The program will load and run, and in a few seconds you'll return to the 
+main menu.
+
+--------------------------------------
+	Recovery Hints
+
+   After you've run MAYDAY, you'll see a 19,400-byte file named "FOUND.DO" on 
+the menu.  It contains everything that was recoverable from your computer's 
+memory after the crash.
+   You will use the <SELECT>, <CUT> and <PASTE> functions to restore your 
+original .DO files; but first pay attention to this WARNING:
+
+	IF YOU PUT MORE MATERIAL IN
+	THE PASTE BUFFER THAN YOUR
+	REMAINING MEMORY CAN HOLD,
+	YOU WILL NOT BE ABLE TO
+	<PASTE> THAT MATERIAL TO A
+	NEW FILE.
+
+   With that in mind, you should make efforts to free as much memory as 
+possible by eliminating "garbage" from FOUND.DO -- before cutting and pasting 
+the material you want to recover.
+
+   If you had BASIC programs in RAM before cold-starting, they will be at the 
+start of FOUND.DO in their 'tokenized' form.
+   The "garbage" from these .BA files can be eliminated by <SELECT>ing and <
+CUT>ing it, and not putting it anywhere.
+
+   There will also be "garbage" that follows the useful material in FOUND.DO. 
+It, too, should be eliminated with the <SELECT> and <CUT> process.
+
+   Finally, you'll be left with the material you want.  You should still keep 
+the WARNING in mind and be judicious about the size of the blocks you <SELECT>
+and <CUT> for movement to a new file.
+
+   To help you locate the dividing line between two previous files within 
+FOUND.DO, MAYDAY inserts a graphics character as an end-of-file marker.  It is
+the small right-arrow created by pressing the <GRPH> and <L> keys 
+simultaneously.  You can use the <F1> 'Find' function to search for this 
+character in FOUND.DO.
+
+--------------------------------------
+	Nothing's Perfect:
+   When you move MAYDAY.CO into a cold-started bank, the program over-writes 
+the first 45 bytes of user memory.  If you formerly had a BASIC program larger
+than 45 bytes in that bank, you should not lose any part of your previous TEXT
+files.  But, if you had no .BA programs, you'll lose a small section at the 
+start of the first .DO file.  Not ideal; but not terrible, considering the 
+alternatives.
+   By the way, if you accidentally run MAYDAY.CO in a "good" bank, it should 
+do no harm.  It will create a file named FOUND.DO, but it will not write 
+anything there.  You can simply kill FOUND.DO, and the bank will be just as it
+was.
+
+--------------------------------------
+If you need further support, or have comments, please leave a message on the 
+M100 Forum:
+		Wilson Van Alst
+		  76576,2735
+		    2/25/89
+
+

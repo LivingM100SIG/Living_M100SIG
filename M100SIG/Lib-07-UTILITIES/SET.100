@@ -1,0 +1,46 @@
+10 CLS
+20 ON ERROR GOTO 440
+30 PRINT @ 82,"Time is ";TIME$;" of ";DATE$;", "DAY$
+40 PRINT:PRINT"  Do you want to make any changes?"
+50 A$=INKEY$
+60 PRINT @ 90,TIME$;
+70 IF A$="" THEN 50
+80 IF A$="y" OR A$="Y" THEN 90 ELSE END
+90 CLS
+100 PRINT @82,"Which would you like to change?"
+110 PRINT:PRINT"<1> for time change"
+120 PRINT"<2> for date change"
+130 PRINT"(Day is changed with date.)"
+140 INPUT A
+150 IF A<>1 AND A<>2 THEN 90
+160 IF A=1 THEN INPUT"Input new time HH:MM:SS";T$ELSE 200
+170 TIME$=T$
+180 CLS: PRINT @ 82,"Time is ";TIME$;" of ";DATE$;", "DAY$
+190 GOTO 250
+200 IF A=2 THEN INPUT"Input new date MM/DD/YY";D$
+210 DATE$=D$
+220 GOTO 300
+230 DAY$=DA$
+240 CLS: PRINT @ 82,"Time is ";TIME$;" of ";DATE$;", "DAY$
+250 PRINT:PRINT" Any other changes?"
+260 C$=INKEY$
+270 PRINT @90,TIME$;
+280 IF C$=""THEN260
+290 IF C$="Y" OR C$="y" THEN90ELSE END
+300 M=VAL(LEFT$(D$,2)):D=VAL(MID$(D$,4,2)):Y=VAL(RIGHT$(D$,2)):Y=Y+1900
+310  IF M>2 THEN 340
+320 M=M+12
+330 Y=Y-1
+340 N=D+2*M+INT(.6*(M+1))+Y+INT(Y/4)-INT(Y/100)+INT(Y/400)+2
+350 N= INT((N/7-INT(N/7))*7+.5)
+360 IF N=0 THEN DA$="SAT"
+370 IF N=1 THEN DA$="SUN"
+380 IF N=2 THEN DA$="MON"
+390 IF N=3 THEN DA$="TUE"
+400 IF N=4 THEN DA$="WED"
+410 IF N=5 THEN DA$="THU"
+420 IF N=6 THEN DA$="FRI"
+430 GOTO 230
+440 CLS:PRINT@ 80,"ENTRY error. Use correct time or date   format!"
+450 FOR T=1 TO 1000:NEXT
+460 RESUME 10

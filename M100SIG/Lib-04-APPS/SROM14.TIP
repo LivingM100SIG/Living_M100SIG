@@ -1,0 +1,81 @@
+SuperROM Tip #14 by Paul Globman
+    Copyright (c) 1986, 1990
+--------------------------------
+Successful spreadsheet analysis usually requires a certain amount of decision
+making.  Unfortunately, SuperROM does not support...
+
+   IF... THEN... ELSE (IF)
+
+They offer an example on page 74 of the Lucid manual as follows:
+
+Suppose you need to calculate the price of a service that was priced at $10 per
+hour, but had a 4 hour minimum.
+
+The Lucid manual goes on to offer a solution that requires the use of a lookup
+table.  This may be the only way to accomplish this task with the Lucid ROM,
+but with SuperROM the technique is quite different.
+
+I have spent a fair amount of time learning the SuperROM and would like to 
+report that I am able to perform...
+
+        IF...THEN...ELSE 
+
+...decisions within a single cell of LUCID, without having to refer to any
+outside table (TBL).
+
+This comes from the use of RELATIONAL OPERATORS, which the LUCID manual does
+not discuss.  The LUCID DATABASE manual discusses (very) briefly the use of 
+relational operators for criteria selection in the 'report definition block'
+for output.
+
+Relational operators can be used in any cell to obtain a TRUE(-1) or a FALSE(0)
+value and when multiplied by -1 yeilds some fantastic options. Please note
+examples:
+
+A1 = number of hours worked on a job.
+Minimum charge is for 4 hours.
+B1 = billable hours
+
+The formula for cell B1 is:
+
+       -(A1<=4)*4-(A1>4)*A1
+
+ The first '-' is equal to 'IF' 
+       the '*' is equal to 'THEN'
+ Additional '-'s are read as 'ELSE IF'
+
+So the above example is:
+
+ IF A1<=4 THEN 4 ELSE IF A1>4 THEN A1
+
+If the first IF is false the cell value will be zero unless an ELSE IF is 
+included.
+
+Now enter some data in cell A1 and watch the results.   Cell B1 will display 
+the number of hours billed.  Multiply B1 by the hourly rate ($10) and you get 
+the amount billed.
+
+Pretty POWERFUL indeed!! This formula is the essence of the decision making 
+processes in some financial spreadsheets.  
+
+This can be used for tax calculations like:
+
+IF deductions > 3000 THEN display deductions - 3000 ELSE display 0.  (A6=total deductions)
+
+NEW CELL FORMULA: -(A6>3000)*(A6-3000)
+
+
+Or how about applying 5% discount on total sales (A5) exceeding $20...
+
+NEW CELL FORMULA:+A5+(A5>20)*(.05*A5)
+
+
+(NEW CELL is another cell, ex:cell B1)
+
+I developed this aspect of SuperROMs use of relational operators in June 1986.
+I informed PCSG back then, hoping to find a way of enlightening other SuperROM
+users.  I hope some of you M100SIG users can make adequate use of this info.
+
+
+Paul Globman [72227,1661]
+

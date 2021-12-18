@@ -1,0 +1,363 @@
+PGM002.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+A potpourri of messages on programming hints, tips and problems.  This one
+discusses use of VARPTR to locate a file from a running Basic program,
+issues related to determining the space needed to load and run a Basic
+program (some interesting algorithms and ideas, here!), and James Yi's
+NOWRAP (aka TEXT.CO) from a couple of aspects.
+
+
+Message range: 149284 to 150395
+Dates: 6/2/87 to 6/16/87
+
+---------------------------------------------------
+Use of VARPTR to Locate a File from a Basic Program
+---------------------------------------------------
+
+Sb: #VARPTR
+Fm: RANDY HESS 73267,552
+To: Tony Anderson, 76703,4062 
+
+Tony, I'm working on a program in which I need to call another file in RAM and
+use it's address in the form: A$="TEST":CALLxxxxx,0,VARPTR(A$) I can't get this
+to work. I found this core routine in SORT.BA, DL7 but I need it to work
+_without_ any keyboard input. Just: get the file's adress, plug it in the call,
+and away we go. Doing it without keyboard input tho keeps missing the files
+address by 5-9 bytes. I hope my question makes sense and, if so, HEEEEELP!.
+Thanks, Randy Hess
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+First, see the file TXTJMP.THD in DL8.  If that doesn't work, come back for
+some peek and poke advice.
+
+
+Fm: Will Linden 72737,2150
+To: RANDY HESS 73267,552 
+
+
+  I think the formula for a file address is:
+   DIR=PEEK(VARPTR(#1)+2)+256*PEEK(VARPTR(#1)+3)   [The "#" may be important]
+   FILAD=PEEK(DIR)+256*PEEK(DIR+1).
+
+  Let us know how it works.
+
+------------------------------------------------------------------
+Determining the Free Memory Needed to Load and Run a Basic Program
+------------------------------------------------------------------
+
+Sb: #Memory...
+Fm: Cris Agnew 72245,731
+To: Tony Anderson 76703,4062 
+
+I need to make sure there is sufficient memory before I attempt to load data
+into the program. It is not the size of the program. it is the size of the file
+that a user would want loaded into memory for use with the program that is
+running. Is there a better and faster way other than setting a ONERR GOTO to
+trap an OM error as the program is loading the data into memory?
+
+I hope I made myself clear. Let me know if you want more information as to what
+I am trying to do.
+
+
+Fm: Tony Anderson 76703,4062
+To: Cris Agnew 72245,731 
+
+Oh....   I don't know of _any_ way to determine how much RAM space is going to
+be required by a program _before_ it is run.  You can make a "guesstimate" of
+course, but the dynamic variable allocating of the OS makes it hard to be
+accurate.  Is there some way to determine the size of what you're going to add
+to RAM before you do it?  If you can, then a simple comparison with FRE will
+give you a yes/no answer.  Seems like I recall having to do that with one of my
+early programs... one of the lines at the begining was
+
+IF FRE(0) < 3500 THEN (not enough space message)
+
+I don't know if that might be useful in your situation, unless you can
+determine how much data the user is actually going to be using.
+
+
+Fm: Denny Thomas 76701,40
+To: Cris Agnew 72245,731 
+
+  You can use the FRE(0) command in a program to find out how much memory is
+left for you to use. I just tried a "A=FRE(0)" and got a valid number. You
+could then clear everything except a predetermined amount, say 2000 bytes.
+Something like:
+10 A=fre(0)
+20 CLEAR A-2000
+
+  Of course you'd have to check if there is a minimun of 2k bytes available to
+start with and you will lose the value contained in A after you do the CLEAR.
+  Is that what you had in mind?
+
+
+Fm: Cris Agnew 72245,731
+To: Tony Anderson 76703,4062 
+
+no, no, no....not determining how much RAM space is going to be required by a
+*program*..
+
+..to determine how much RAM is going to be required for a *variable*.
+
+The only way I know is listed below..
+
+100 open f$ for input as #1 105 if eof(1) then close:goto 115 110 line input
+#1,z$:y=y+1:goto105 115 onerr goto 1000 120 dim c%(1,y) 125 goto (start of
+program)
+
+... 1000 if err=7 then print "Out of Memory.":end
+
+Is there a better way of doing it?
+
+
+Fm: Cris Agnew 72245,731
+To: Denny Thomas 76701,40 
+
+I understand there is no such statement as "ON KEY GOTO..", only "ON KEY GOSUB"
+is available.
+
+The question is how do I "pop" the RETURN stack? I understand the side effects
+for the lack of this command leads to an increase of memory useage for any
+unused stacks.
+
+The reason I need to "pop" the GOSUB-RETURN stack is because my program is
+heavily peppered with error-handling routine, that which, if any error occured,
+would reset the GOSUB-RETURN stack. It would regendered (sp) the RETURN
+statement useless.
+
+Is there a way to solve this problem?
+
+
+Fm: Scott Hibbard 70536,674
+To: Cris Agnew 72245,731 
+
+     I think you're looking for this:
+
+ Memory_required = 8 + (x * (array_size + 1))
+
+ Where: x = 2 for integer variables
+        x = 3 for strings
+        x = 4 for single precision
+        x = 8 for double precision
+
+For strings, the size computed is only for the POINTERS to the strings, not the
+memory required for the actual string contents.  Numeric variable arrays take
+up exactly the memory calculated above.
+
+ I know this works for single dimension arrays ... would assume multi
+dimensioned would just require taking the product of all.
+
+
+Fm: Cris Agnew 72245,731
+To: Scott Hibbard 70536,674 
+
+Thanks Scott! That's exactly what I was looking for.
+
+I'd like to make sure I understand your last statement...to adjust the formula
+for mulit-dimensioned array, it would be like this:
+
+Memory_required = 8 + (n * (X * Y * Z + 1))
+
+ Where X, Y, Z is the multi-dimension (my program uses 3-dimension arrays).
+
+Is that correct?
+
+
+Fm: Scott Hibbard 70536,674
+To: Cris Agnew 72245,731 
+
+     Did a little investigation on multi-dim'ed arrays, try this:
+
+Mem_rqrd = (2 * ND) + 6 + (X * (N1 + 1) * (N2 + 1) * .... * (NN + 1))
+
+Where:  x  = as in earlier message
+        ND = number of dimensions
+        N1 = size of 1st dimension
+        N2 = size of second dimension
+        NN = size of Nth dimension
+
+Example:        Z(5,2,12), single precision
+                Mem_rqrd = (2 * 3) + 6 + (4 * (5 + 1) * (2 + 1) * (12 + 1))
+                         = 948
+ How's that?
+
+
+Fm: Tony Anderson 76703,4062
+To: Cris Agnew 72245,731 
+
+Actually, you're beyond my thinking on this.  I know that we know (somewhere)
+exactly how many bytes are used by variables of specific types, which could be
+added up by the programmer (you) and a line added as I illustrated to cause an
+abort if not enough space, but I don't believe there's a way of dealing with
+dynamic reformatting of strings, unless you allow 255 for each, as allowed by
+BASIC.
+
+I was hoping someone else would jump in with some ideas for you... Did Scott's
+message help any?
+
+
+Fm: Tony Anderson 76703,4062
+To: Cris Agnew 72245,731 
+
+You could put a short ML routine in a variable, and call it with the VARPTR
+statement, as is done in the XMODEM programs.  It is thus totally independent
+of where it's actually located in RAM.  The ML routine, could pop the stack and
+return to the calling point.  Look at the file XMODEM.DOC in DL3 for an
+explanation of how the technique works, and XMODEM.312 for an example of the
+code.
+
+Since the code would consist of only a couple of bytes, i.e. POP and RET, it
+could be hidden away in one of the unused bytes in a function key definition
+and called anytime needed, with a direct CALL statement to a known address.
+Probably much cleaner.  Your program could poke the POP and RET code into the
+F-key def. when it started.
+
+
+Fm: Tony Anderson 76703,4062
+To: Cris Agnew 72245,731 
+
+No, come to think of it, it would be a little more complex than that... when
+you do a CALL, the return address is pushed onto the stack, and if you pop that
+off, then on return, it would send you to _exactly_ the address you were trying
+to get off the stack to begin with. ...
+
+What you'd have to do, is to CALL the ML routine, then pop the return address
+into one of the registers, then pop off the unwanted address, then push the
+return address back on the stack and then return...  Would look like this, I
+guess...
+
+100 CALL nnnnn (whereever you stick it.
+
+        POP B
+        POP H
+        PUSH B
+        RET
+
+(maybe...)
+
+
+Fm: Leonard Erickson 70465,203
+To: Cris Agnew 72245,731 
+
+        ON KEY GOSUB, ON COM GOSUB, ON MDM GOSUB and ON TIME$="...." GOSUB are
+*not* normal gosubs!
+        They are true interrupts. The line number(s) after the GOSUB are stored
+in reserved RAM. When the specified condition (say key F1 is pressed, for
+example) the program finishes the current statement, executes the subroutine
+and resumes operation on the statement following.
+        Thus your ON ERROR GOTO shouldn't interfere. (unless the error occurs
+in the interrupt subroutine).
+        Note that ON KEY GOSUB *requires* a KEY # ON satement.
+
+
+Fm: Cris Agnew 72245,731
+To: Leonard Erickson 70465,203 
+
+Thanks Leonard, you are right. I forgot about that.
+I'll help you clarify further...ON ERROR GOTO *does not* interfere and the ON
+xxx GOSUB interrupt RETURN stack are not cancel out. So therefore, when the
+BASIC interpreter encounters a RETURN, it will still return to the caller
+defined in the stack.
+
+Thanks for pointing this out. Really appreciate it.
+
+
+Fm: Leonard Erickson 70465,203
+To: Cris Agnew 72245,731 
+
+Well, when I first got the 100 (waaaayy back ...) I remember checking the ON
+xxx GOSUB stuff pretty carefully. I couldn't believe that it did what the
+manual seemed to imply!
+
+Then, of course, there were the people who used ON COM/MDM and had a GOTO
+instead of a RETURN... Took the massed brainpower of the SIG a week to figure
+out what could be causing this guy's terminal program to get an OM error.
+
+
+------------------------------------------------------------------------
+Use of the Alternate LCD Buffer for Running M/L Programs; Translation of
+ROM Code to RAM to Create Modified Versions of the ROM Software
+------------------------------------------------------------------------
+
+
+Sb: #149846-#NOWRAP.100 Upl
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062 
+
+NOWRAP.100 seems to work fine.  It goes beyond expectation in that it seems
+completely compatible with Supera: I get all the Supera text enhancements while
+running TEXT.CO from the menu!
+
+TEXT.CO is also the clue to getting macros in Text, I suspect.  James has
+essentially taken a piece of the ROM text editor and moved it to RAM, with a
+very minor change (MVI A,0 <--> MVI A,1) to do his wordwrap disable magic.
+Presumably, you could insert some code to intercept F7 (or some other key code
+) and go off into MACRO program.  And if the next instruction in ROM is also
+pulled back into RAM (as is done in NOWRAP.200, which is why it's 3 bytes
+longer in M/L), you could maybe (with some other "adjustments" leave TEXT.CO
+for Telcom, or wherever you choose -- even the arctic north! (grin).
+
+I'm forever trying to justify columns of numbers and words, and use '-----' to
+underline titles.  NOWRAP will make that possible, now.  Nifty!  Wonder how
+many othere clever goodies James Yi has up his sleeves.
+
+BTW -- Are you familiar with other programs that use the "Alt LCD buffer" in
+the M100?  Seems like a good way to go for some applications, and there are a
+few bytes available up there!
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125 
+
+James is the principle user of that technique, and some of his other 200
+programs in DL10 use the technique.  FCHK (ml checksum) i}is one, of course,
+that I like and use.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125 
+
+Your message contains much "juicier" information when read offline, and
+cogitated for a few...
+
+I had thought of that technique of loading a modified copy of the ROM code to
+another location, and jumping to it to do whatever you needed.  The problem
+with it seemed to be you needed a way to change a jump vector to get into the
+modified code, via F6/7 etc.  Which apparently doesn't exist.  or if it does,
+it's hard-coded in the ROM.  I believe that's the technique used by some of the
+commercial programs, using one of the system hooks to get you to the alternate
+routine.  Don't recall which program I was using when I had the brilliant
+illumination, "That's how they did that..."
+
+What I was looking for at one time was a way to duplicate the keyboard scan
+routine background task to look for the jumpt to macro, and it may still be
+usable; just have to find the right hook, or find the time to explore Mike's
+messages on the subject.  He has an interesting article on this technique in
+the #2 issue of Laptop User, and E-plexed me an advance copy.  You may remember
+his "Unkey" article some time ago -- that technique may also be usable.
+
+As you say, James' use of the alternate screen buffer to load and execute a ML
+routine is real sharp!  I like the technique, and of course in the 200, you
+have twice the space to work with. (grin)  I don't recall any similar use of
+the buffer in programs for the 100... was hoping the contest would provide
+some.  More later...
+
+
+Fm: Denny Thomas 76701,40
+To: Phil Wheeler 71266,125 
+
+  Just tried out NOWRAP.100 (TEXT.CO) in a pretty hostile environment: UR-2.
+You can't get into it directly, since there is no way to run a M/L program from
+the menu in BASIC, so I made a little loader just to run it. I was able to get
+to work with no drama in regular text so I thought I'd go for the BIG ONE and
+try it with ROMView 80. Well, it worked there also. I first had the width set
+for 80, but realized that would kinda defeat the purpose of the program, so I
+reset to 60 and it dutifully diabled the wrap on those teeny little characters.
+Now, the next thing is to make it work through the interrupts so you can go
+into T-WORD text and have it operate there. Wadda ya tink?

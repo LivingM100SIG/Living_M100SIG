@@ -1,0 +1,130 @@
+0 ' HELLO.BA 3.1  March 3/85
+1 ' Douglas MacKay [72326,1725]
+2 ' c1985 Winnipeg Free Press
+3 ' For use of CIS M100 SIG members
+4 ' only. Not for resale.
+5 ' Program for reporters to estimate
+6 ' typeset story length and file to
+7 ' office. Requires edit in Line 810
+8 ' (system ph. no.), Line 240 (set yr
+9 ' system's start-of-file code), and
+10 'Line 290 (set end-of-file code).
+11 'Also Line 830 for newspaper name.
+12 'See HELLO.DOC
+20 CLS:SCREEN0
+25 LINE(33,5)-(212,41),1,B:LINE(35,7)-(210,39),1,B:LINE(37,9)-(208,37),1,B
+30 PRINT@88,CHR$(128)+"  "+CHR$(34)+"Hello, sweetheart,  "+CHR$(128):PRINT@133,"get me rewrite!"+CHR$(34)"
+35 PRINT@247,CHR$(171)+" 1985 All rights reserved"
+55 FORT=1TO500
+60 NEXTT
+80 CLS:PRINT@84,"Send a story? <s>?":PRINT@164,"Word count?   <w>":PRINT@244,"Exit to Menu  <e>"
+81 PRINT@185,"< >";:PRINT@186,"";
+82 X$=INPUT$(1):PRINT@186,X$
+84 IFX$=""THEN82
+86 IFX$="s"ORX$="S"THEN100
+88 IFX$="w"ORX$="W"THEN1010
+90 IFX$="e"ORX$="E"THENMENUELSE81
+100 MAXFILES=5:CLEAR500,HIMEM:DEFINTQ:Q=2:ONERRORGOTO460
+130 CLS:PRINT@84,"Manual dialing?    <m>":PRINT@131,"or":PRINT@164,"Automatic dialing? <a>":PRINT@244,"Exit to Menu       <e>"
+135 PRINT@150,"< >";:PRINT@151,"";
+140 W$=INPUT$(1):PRINT@151,W$
+150 IFW$=""THEN140
+160 IFW$="m"ORW$="M"THENGOTO700
+170 IFW$="a"ORW$="A"THENGOTO800
+180 IFW$="e"ORW$="E"THENMENUELSE135
+190 OPEN"MDM:7E2D"FOROUTPUTAS1
+200 CLS:PRINT" ":FILES:PRINT" "
+210 INPUT "    Name of file to be sent";N$
+220 IFN$="Menu"THENMENU
+230 OPENN$FORINPUTASQ
+240 CLS:PRINT#1,:'Insert start of message code here. e.g.CHR$(2)CHR$(2)
+250 M$=INPUT$(1,Q)
+260 PRINT#1,M$;
+270 PRINTM$;
+280 IFEOF(Q)THENGOTO290ELSE250
+290 PRINT#1,:'Insert end of message code here. e.g.CHR$(23)
+300 SOUND7456,15
+310 CLS:PRINT@127,"Another to go (y/n)?"
+320 PRINT@153,"< >";:PRINT@154,"";:
+330 R$=INPUT$(1):PRINT@154,R$
+340 IFR$=""THEN330
+350 IFR$="y"ORR$="Y"THENQ=Q+1:GOTO200
+360 IFR$="n"ORR$="N"THEN370ELSE310
+370 CLOSE
+380 FORN=1TO35
+381 READX,Y:SOUNDX,Y
+382 DATA12538,6,0,2,11172,6,0,2,9394,6,0,2,7900,8,7456,6,0,2,7900,6,0,2,8368,6,0,2,9394,6,0,2
+383 DATA12538,6,0,2,11172,6,0,2,10544,18,9394,6,0,2,11172,6,0,2,10544,6,0,2
+384 DATA12538,6,0,2,7900,6,0,2,8368,6,0,2,9394,6,0,2,0,0
+385 NEXTN
+390 CLS:PRINT@88,"Session complete."
+400 PRINT@128,"Hit any key to":PRINT@168,"return to the Menu."
+420 PRINT@226,"- Thanks!"
+430 Z$=INKEY$
+440 IF Z$=""THEN430
+450 MENU:END
+460 SOUND11172,15:IFERR=52ORERR=55THEN580
+470 IFERR=51THEN490
+480 IFERR=53THEN500ELSE510
+490 CLS:PRINT@84,"Maximum number of files (4)":PRINT@124,"has been sent. To dial again"
+491 PRINT@164,"and send more, please type Y.":GOTO520
+500 CLS:PRINT@84,"That story appears to have":PRINT@124,"been sent. You can continue"
+501 PRINT@164,"now with other files, or quit.":GOTO590
+510 CLS:PRINT@205,"Error code";ERR;"in line ";ERL
+520 PRINT@246,"Continue <y/n>?"
+530 PRINT@262,"< >";:PRINT@263,"";:
+540 E$=INPUT$(1):PRINT@263,E$
+550 IFE$="y"ORE$="Y"THENRESUME100
+560 IFE$="n"ORE$="N"THENRESUME370
+570 GOTO530
+580 CLS:PRINT@164," No such "+CHR$(34)+".DO"+CHR$(34)+" file.      "
+590 PRINT@246,"Continue <y/n>?"
+600 PRINT@262,"< >";:PRINT@263,"";:
+610 E$=INPUT$(1):PRINT@263,E$
+620 IFC=1ANDE$="y"ORE$="Y"THENCLS:RESUME1085ELSEIFE$="y"ORE$="Y"THENRESUME200
+630 IFC=1ANDE$="n"ORE$="N"THENRESUME1340ELSEIFE$="n"ORE$="N"THENRESUME370
+640 GOTO600
+700 CLS
+710 PRINT@84,"1) Dial the office.
+720 PRINT@124,"2) When you hear the tone,"
+730 PRINT@167,"you're ready to transmit."
+740 PRINT@204,"3) Ready <y/n>?";:PRINT@221,"< >";:PRINT@222,"";:
+750 A$=INPUT$(1):PRINT@222,A$
+760 IFA$="y"ORA$="Y"THEN780
+770 IFA$="n"ORA$="N"THEN130ELSE700
+780 GOTO190
+800 '**Dialer(exEdJuge'sEMAIL4)**
+810 PH$="555-5555":CLS
+830 PRINT@50,"Your paper's name here":PRINT@93,"< >-";PH$
+840 PRINT@166,"<Enter> to dial number"
+850 PRINT@208,"<9>   for outside line"
+860 PRINT@248,"<e>   for previous menu";:PRINT@94,"";
+870 PA$=INPUT$(1):PRINT@94,PA$:CLS
+875 IFPA$="e"ORPA$="E"ORPA$="m"ORPA$="M"THEN130
+880 LG$=PA$+"=="+PH$+"<>":M=VARPTR(LG$) :AD=PEEK(M+1)+(PEEK(M+2)*256)
+890 PRINT@130,"If busy or no answer,"
+900 PRINT@167,"hit BREAK then F8 for Menu."
+910 PRINT@51,"Dialing...";
+920 CALL21200:CALL21293,0,AD
+930 GOTO190
+1010 ' **COUNT.BA.**
+1020 ' To adjust estimate, alter
+1060 ' divisor (now 250) in Line 1210
+1080 CLS
+1085 CLEAR1000,HIMEM:MAXFILES=2:A=0:B=0:C=1:FILES:ONERRORGOTO460
+1090 INPUT"What file should be counted";F$
+1100 IFF$="Menu"THEN1340ELSE1110
+1110 CLS:OPENF$FORINPUTAS1
+1120 PRINT@170," Counting ..."
+1130 IFEOF(1)GOTO1190
+1150 LINEINPUT#1,A$
+1160 A=A+LEN(A$)
+1170 B=B+1
+1180 GOTO1130
+1190 CLS:PRINT"    ";CHR$(27)+"p"+F$+CHR$(27)+"q :";:PRINT@10," ";:PRINTUSING"#####";A;:PRINT" bytes"
+1200 PRINT@50," ";:PRINTUSING"#####";INT(A/6);:PRINT" words"
+1210 T=A/250:T=T+.05:T=INT(T*10)/10
+1220 PRINT@89," ";:PRINTUSING"####.#";T;:PRINT" inches of type"
+1230 GOTO1085
+1340 GOTO80
+

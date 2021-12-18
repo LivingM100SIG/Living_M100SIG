@@ -1,0 +1,264 @@
+
+          CUSTOMIZING TYPEFACES ON THE EPSON FX PRINTER 
+
+                                        Jay Holovacs 
+                                        CIS 74756,413 
+                                        (Address any comments or questions 
+                                        by Easyplex mail or contact me at:) 
+                                        95 King George Rd. 
+                                        Warren, NJ 07060 
+
+
+
+              An excellent feature of the popular Epson FX series of 
+          printers is support for user-defined typefaces in printer RAM.  
+          For example, once a character set is downloaded into the 
+          printer, text from the TEXT utility or a word processor can be 
+          printed in the alternate typeface, or even switching back and 
+          forth between it and the standard face just as if it were a part 
+          of the printer ROM.  This allows for interesting possibilities 
+          including special typefaces (old English, extra bold, block, 
+          company logo) or even exotic foreign (such as Cyrillic, Hebrew 
+          or even 'Klingon' alphabets).  The characters are defined in a 
+          manner similar to graphics, however character definition is a 
+          separate capability, which can be printed much faster than 
+          constructing characters individually from graphics commands.  
+          Most of the special features, such as super and subscripts, 
+          underlining, emphasized print, proportional print, double strike 
+          and pica/elite will work with user supplied character sets. 
+              When I first started working with this feature of the 
+          printer, I soon found that the major problem with implementing 
+          these features as described in the Epson manual is the tedious 
+          conversion of pencilled graphics into binary codes follwed by 
+          preparation for the actual download into the printer.  To 
+          simplify this drudgery, I began to develop FONTFX.BA, a typeface 
+          editor program.  FONTFX allows for graphic editing, saving, 
+          downloading and modification of typefaces.  Type data can be 
+          stored in RAM, cassette or disk files (using Acroatix or 
+          Travelling Software DOS) for downloading at the start of a 
+          printing session or for future editing.  FONTFX is written for 
+          the M100 but is suitable for M200; users may want to modify 
+          screen placement to take advantage of the larger screen size, 
+          but this is not required. 
+
+          RUNNING FONTFX: 
+              You will first be prompted for the file name of an existing 
+          file to edit.  If this is a new session, simply hit Enter. 
+              The next screen is the command line.  Hit E for edit.  You 
+          will be prompted for an ASCII value to edit, then for its 
+          charistics: whether it is a descender character (such as 'y' or 
+          'g') and start and end of the character in dot columns.  To 
+          accept default characteristics, simply hit enter at each prompt 
+          (65='A', 'No' 0 and 11 are the defaults).  Once these entries 
+          are completed, the character is drawn on the screen (blank is 
+          default).  The characteristics can be changed later, so normally 
+          it is good to start with the defaults when first developing a 
+          character. 
+
+
+
+
+
+
+
+
+
+
+                               EPSON Typefaces     2  
+
+              Once in the Edit mode, the following choices are available 
+          as key-commands (use upper case for commands): 
+
+            EDIT returns you to the top of the edit screen, the ASCII or 
+            characteristics can then be changed. 
+
+            FILL the current pixel location (as indicated by the pixel 
+            cursors along the top and side of the character frame). 
+
+            CLEAR the current pixel. 
+
+            BLANK erases the currently selected character. 
+
+            MOVE is followed by a choice of 5 subcommands (Up, Down, Right 
+            Left and [enter]=abort).  Entering the key command will move 
+            the entire shape one pixel in the indicated direction. 
+
+            SAVE the current set of character definitions as a file (can 
+            be RAM, cassette, or with proper DOS, direct-to-disk). 
+
+            LOAD an existing character set file.  Note: if you have 
+            characters in the program, they will be overwritten by this 
+            command. 
+
+            DOWNload the current character set to printer.  You will be 
+            given the opportunity to select which ASCII values will be 
+            downloaded, also the opportunity to copy the ROM characters 
+            into RAM first (this allows default to any standard characters 
+            which have not been redefined.) 
+
+            TEST prompts for a string, which then will be printed out, for 
+            the purpose of evaluating the characters on paper.  You will 
+            be able to choose standard or proportional spacing. 
+
+            KLONE copies a specified ASCII into another.  This is a useful 
+            starting point for characters that are similar such as Q and O. 
+
+            QUIT exit program.  If changes have been made since last Save, 
+            you will be notified and given a chance to reconsider. 
+
+            Use the four ARROW KEYS to manipulate the bit cursor locations. 
+
+            KEY COMMANDS which prompt for additional information (Save, 
+            Load etc.) can be aborted by entering a null in response to 
+            the prompts. 
+
+          NOTE: When loading or quitting, a warning message will appear if 
+          the character data has been modified since it was last saved, 
+          providing the opportunity to save the current definitions before 
+          losing them. 
+
+          USING YOUR NEW TYPEFACE: 
+
+              PIXEL SPACING: The FX printer places a limitation on dot 
+
+
+
+
+
+
+
+
+
+
+                               EPSON Typefaces     3  
+
+          placement in that dots cannot be directly adjacent right to 
+          left, therefore a horizontal gap of at least one pixel must 
+          remain between pixels on the same row.  Pixels may be directly 
+          vertically or diagonally adjacent.  Even though the white space 
+          is quite noticeable on the screen, there is considerable overlap 
+          on paper and the result is not nearly so drastic as might be 
+          expected.  It is helpful to frequently download and test 
+          characters to get an accurate feel for the procedure. 
+              Simulating of curved lines and various slopes is not really 
+          as difficult as might be imagined from looking at the large 
+          character frame.  Use the Download feature frequently at first 
+          to get a good feel for the techniques of character description. 
+              Once created and saved, typeface files can be downloaded 
+          before a printing session by running FONTFX, loading the 
+          appropriate file and going directly to the Download command. 
+              Once the data is downloaded to the printer, the alternate 
+          typeface can be summoned by the sequence 
+          CHR$(27);CHR$(37);CHR$(N);CHR$(0).  If N=0 then standard 
+          typeface is used, if N=1 then RAM type is used.  Many word 
+          processing programs provide a means to embed control sequences 
+          like the above directly in your text.  Unfortunately, this 
+          command is not directly available in the standard text dump 
+          built into the M100 because it has no means to embed a CHR$(0), 
+          however the command can be sent from BASIC, then you can switch 
+          over to text to utilize the RAM type. 
+              DESCENDERS: When a descender is specified in the 
+          characteristics, the pixels are entered in the same manner as 
+          usual, however the entire frame will be shifted one pixel down 
+          on paper when the character is printed. 
+              PROPORTIONAL SPACING can be specified when printing with the 
+          usual embedded sequence--CHR$(27);CHR$(112);CHR$(1)--however you 
+          must supply the proportional information to the printer when 
+          editing the typeface.  The characters in the Epson FX consist of 
+          12 columns (numbered 0-11) by 8 rows.  The 12th column is always 
+          blank.  The user can specify the start and end positions which 
+          the printer will use when in porportional mode (in standard mode 
+          the full width is always printed). 
+              Once you get the character visually the way you like it, 
+          center it appropriately in its work area, so that the character 
+          will be centered when printing in nonporportional mode as well.  
+          Hit E to get back to the top of the editing sequence and 
+          re-enter the ASCII.  Determine the first column which will be 
+          considered to start the character (it may include one or two 
+          blank columns in front of the actual character) and enter this 
+          value, then enter the ending column (which must be at least 5 
+          greater than the start position).  The character is now ready 
+          for proportional printing.  The editor will still accept data 
+          for all columns, and this data will be saved in files, but data 
+          beyond the last column specified will be ignored by the printer 
+          when in proportional mode. 
+
+          BOTH DESCENDER DATA AND LENGTH DATA CAN BE CHANGED AS DESIRED BY 
+          RE-EDITING A CHARACTER. 
+
+
+
+
+
+
+
+
+
+
+
+                               EPSON Typefaces     4  
+
+          COMMENTS ON THE PROGRAM: 
+
+              PROGRAM STRUCTURE: In order to keep the program logic 'wide 
+          open' for user modification, FONTFX as listed here is clearly 
+          not trimmed back in size.  Extensive comments, and mnemonic 
+          (rather than 2 character) variable names are used.  Packing this 
+          program, either by hand or using a packer program will 
+          significantly cut this size if size is critical.  Additionally, 
+          the structure is strongly modular in nature, with the purpose of 
+          each module defined by its comments.  BASIC by its nature does 
+          not enforce structure (as Pascal, C or others), however, taking 
+          the effort to construct the program with a structured philosophy 
+          from the beginning helps significantly as the program expands 
+          beyond its original concept. 
+              To keep the file size compact, I have restricted the 
+          changeable ASCII's to 33-127 which is the range normally used by 
+          text type programs, however the Epson will accept 255 different 
+          characters.  By changing DIMensions of CD and altering the value 
+          subtracted from CHAR in lines 910 and 911, you can modify to 
+          define as many characters as desired. 
+              ERRORS: A significant amount of time goes into the design of 
+          a typeface, therefore it is important to be able to recover in 
+          running condition from an IO error; file errors are fairly 
+          extensively trapped, with error messages; the more common file 
+          errors will not stop the program. 
+              Lines 1615-1620 cover disk access errors (Acroatix, these 
+          lines can be user modified for TS or similar DOS) and can be 
+          deleted if you are not using the portable disk drive. 
+              Line 1690 is a catch-all for miscellaneous errors.  Program 
+          execution stops, and if you can fix the problem by changing 
+          value of an offending variable (NOT by changing a program line 
+          however) and resuming at the same statement, the program can 
+          then be CONTinued without losing the current work. 
+              Note that line 1608 RESUMEs to line 100 rather than to the 
+          subroutine level of the error statement.  From what I can 
+          gather, when a memory overflow error occurs, the subroutine 
+          stack is lost; and the program must resume at its lowest level 
+          (I have only tried this technique on the M100).  All other types 
+          of errors that I have encountered can be RESUMEd on the same 
+          level from which the error occured. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

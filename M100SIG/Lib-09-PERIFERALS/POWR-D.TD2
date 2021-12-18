@@ -1,0 +1,49 @@
+Loading POWR-DOS from the TDD2
+------------------------------
+
+A previous file deals with loading POWR-DOS from the TDD2.  Here is a more
+flexible, and probably easier, approach.
+
+1) Start with FLOPPY2 installed above 60000.  Use it to load FREMEM.BA from
+   the Utility Disk and PL.BA from the (TDD1) Acroatix distribution disk.
+
+2) Use FREMEM.BA to zap FLOPPY2 from high memory. You will need that space.
+
+3) Make the following change to Line 145(in my version) of PL.BA:
+
+   Replace 'CLEAR 0,HIMEM+20'
+
+   by 
+
+   'CLEAR 0,HIMEM+20:SAVEM "PL.CO",HIMEM,62959,HIMEM:STOP'
+
+   i.e., you add two statements.
+
+4) With the POWR-DOS disk in a TDD1, run PL.BA and specify Powr-Dos (p) at
+   the prompt.  After a bit, you will get PL.CO on the menu.  If you run
+   PL.CO, you will install POWR-DOS in low memory, with all the usual
+   prompts regarding what can be moved and what cannot.
+
+5) In Basic, do CLEAR 256, MAXRAM and reinstall FLOPPY2 per the TDD2
+   manual.
+
+6) Use FLOPPY2 to save PL.CO to a TDD2 disk.
+
+7) Now, whenever you want to load POWR-DOS, load FREMEM.BA & PL.CO, use
+   FREMEM to clear FLOPPY2, and load PL.CO and run it -- as you would any
+   CO program. You no longer need the POWR-DOS diskette to install it; it's
+   all in the file PL.CO! When you finish, PL.CO can be killed -- to be
+   reloaded again when needed.
+
+This approach should load either POWR-DOS or TINY, but I've verified only
+the former.
+
+This will not give you POWR-DOS's sector modes -- since that aspect of the
+TDD2's ROM is different than that of the TDD1 (software like RECOVR.BA
+using that capability of PD may hang).  Nor will it let you use all 40 file
+names.  It may or may not give you the full 200K space in 40 files or less
+(LFILES does report 180 sectors free in an empty disk). But it will give
+you the POWR-DOS convenience of a DOS which sits low in RAM.
+
+Phil Wheeler -- 71266,125
+9 July 1987

@@ -1,0 +1,37 @@
+CHPFRE.THD
+        (c)1989 Golden Triangle, Inc.
+        (c)1989 Wilson Van Alst
+
+Fm: Eiji Miura
+To: David G.
+
+David,
+
+Try this code for finding free disk space on Chipmunk.  One important thing is
+that you must access the disk somehow before you run this program so that the
+CDOS can read necessary information into RAM.  This code works with CDOS
+v3.45b for the M100.
+
+
+  10 I=0:FORG=0TO239:H=PEEK(57967+G):IFH=0THENI=I+1
+  20 NEXT
+  30 PRINT 1.5*I"K free on disk"
+
+    =+=+=+=+=+=
+
+Fm: Tony Anderson
+To: David G.
+
+Eiji's solution is nice, providing you have loaded the Chipmunk main directory
+into RAM prior to running your program, or by opening a file on the disk prior
+to use.  Open a file you know is there, then close it.  That puts the
+directory information in RAM.  Works for versions 3.45 and also 3.24.
+
+    =+=+=+=+=+=
+
+
+Starting message #: 183275  Starting date: 13-May-89  22:27:27
+ Participants:
+Eiji Miura 76703,4311
+David G. 75116,3666
+Tony Anderson 76703,4062

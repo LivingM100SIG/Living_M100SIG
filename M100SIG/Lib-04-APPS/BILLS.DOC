@@ -1,0 +1,58 @@
+	BILLS.BAS is a program I whipped up a few years ago to help me keep
+track of who owed how much for what in our household. Since at one point we had
+six people paying shares this is not a trivial task!
+	It can handle up to 15 different categories of bill. The number of
+categories is the first number in the DATA statement in line 65000. It is used
+to DIMension some of the arrays, as well as for the READ that loads the category
+names & flags into the appropriate arrays from line 65010.
+	Line 65010 *must* start with 0,Payment followed by the bill flags &
+names. Flags are either 0 (false) or -1 (true). If they are true then that bill
+category will be listed when <E>nter is chosen from the menu. The name follows
+the flag. There *must* be a comma between them. And if the bill name is more
+than one word it should be enclosed in quotes.
+	Up to 16 people can be handled. The number of people is the second item
+on line 65000.
+	Line 65020 contains the flags & names for the people. If someone moves,
+just change their flag from -1 to 0. This will mean that they will no longer be
+listed as a choice for <M>ake Payment or <P>rint Bills.
+	After changing lines 65000, 65010, and 65020 to fit your circumstances,
+you need to initialize the system. From BASIC type:
+
+	OPEN "0:BILLS.DAT" FOR OUTPUT AS 1
+	CLOSE
+
+	This will give you an empty file to start off with.
+
+		Operation
+	While this program is menu driven, some points need explaining.
+
+1. All dates *must* be in MM/DD/YY format. Giving the wrong date will cause
+   problems when printing bills.
+
+2. <E>nter Bills wills "Who is paying shares", answer y or n. It will then
+   prompt for "Equal shares". If you answer y, it will split the bill evenly
+   among the people you have indicated as paying shares. If you answer n, it
+   will prompt for the amount owed by each of the share payers. The total must
+   match the amount entered as the amount of the bill!
+3. All amounts are stored as double precision numbers. Thus you have 14
+   significant digits. Since all amounts are rounded to the nearest cent on
+   bills you may occasionally get a bill that says that John Doe had a balance
+   of $5.00, added a bill of $4.33 and now has a balance of $9.34! This is due
+   to the 'breakage' being carried over.
+4. The program has to read the entire file at startup, so as time goes on it
+   will take longer and longer for the menu to come up. Use the <C> function to
+   create a new file (carrying over current balances) when necessary. It
+   creates a new file named BILLS.NEW. Rename BILLS.DAT to something else &
+   then rename BILLS.NEW to BILLS.DAT
+   I use BILLS.84, BILLS.85, etc.
+5. To guard against data loss, all transactions are echoed to the printer. Thus
+   it must always be on. <L>ist file will print out a complete audit trail. Even
+   so I recomend using BACKUP (or BACKUP.SNG) to maintain a backup of your data
+   file.
+6. This program stores all of the data in a packed form. Thus the file contains
+   NULL ^@ CHR$(0), CAN ^Z CHR$(26), and DEL CHR$(127). This means that it
+   cannot be loaded into RAM! Nor can it be copied to CAS! Doing so will result
+   in an unusable copy!!!!!
+
+
+		Leonard Erickson 70465,203

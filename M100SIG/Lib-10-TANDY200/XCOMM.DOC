@@ -1,0 +1,89 @@
+XCOMM.DOC [9/4/89]
+Copyright (c)1989 by James Yi [73327,1653]
+
+XCOMM is a simple terminal program with Ascii, Xmodem, Xmodem 1K,
+ and Ymodem Batch file transfer protocols.
+
+It is 1710 bytes and relocatable as it is loaded by the
+ Basic loader.  Before running XCOMM.CO, clear HIMEM by going to Basic and
+LOADM the file, and then CLEAR 255,Top  where Top is the first address you see
+when it's LOADMed.
+
+It is not fully featured, like TELCOM, in order save memory space, for those
+times when you might need it.
+But it has all the basic neccessary functions.
+Except getting the phone connected, if using the internal modem.
+You can do that by exiting to Basic while online with TELCOM and
+ RUNM"XCOMM", or use the following simple Basic driver.
+If using external modem, you can just run XCOMM by itself without doing
+anything first.  It will connect with the modem all by itself.
+
+
+1 'Phone dialer for Tandy 200
+2 'Connects XCOMM with the internal 300 baud modem.
+3 OL=25010:'Pick up phone
+4 RO=25032:'Modem relay on
+5 W2=25102:'2 second time delay
+6 T1=36751:'Enable touch tone dial
+7 T0=36737:'Disable touch tone dial
+8 TD=36670:'Touch tone dial one digit
+9 AC=25046:'Turn on carrier
+11 AR=34526:'Activate RS232 port
+12 DR=34741:'Deactivate RS232 port
+13 DM=25018:'Put phone on hook, turn off modem relay, turn off carrier
+20 C$=CHR$(0)+CHR$(205)+CHR$(74)+CHR$(135)+CHR$(119)+CHR$(201):C=VARPTR(C$):C=PEEK(C+1)+PEEK(C+2)*256
+30 LINEINPUT "Dial: ";D$
+40 CALL OL:CALL RO:CALL W2
+45 CALL T1:FOR D=1 TO LEN(D$):CALL TD,ASC(MID$(D$,D,1)):NEXT:CALL T0:PRINT
+50 CALL AR,,846:'Activate serial port
+60 FOR W=1 TO 2000:CALL C+1,,C:IF ASC(LEFT$(C$,1))=0 THEN 100 ELSE NEXT
+90 PRINT "No Carrier":CALL DR:CALL DM:END
+100 PRINT "Carrier detected"
+110 CALL AC:'Turn on carrier
+120 RUNM"xcomm"
+125 PRINT:PRINT"Logoff?";:R$=INPUT$(1):IFR$<>"y"THEN120
+130 CALL DR:CALL DM
+140 END
+
+
+At the "Baud?" prompt when the program is first ran, type the number
+ corresponding to the baud rate:
+
+0 = 300 baud, internal modem.
+
+External modem:
+3 = 300
+4 = 600
+5 = 1200
+6 = 2400
+
+
+Function keys:
+
+F2 - Download.
+
+F3 - Upload.
+
+F4 - Toggle Full/Half duplex.
+
+F5 - Toggle Echo to printer.
+
+F6 - Goto Menu without disconnecting modem.  Then enter BASIC,TEXT, go back to
+ XCOMM, etc.  Warning: Exit from TEXT disconnects modem.
+
+F8 - Exit - RETurns to where it was called from.
+
+The function keys are not visible.
+
+It can download or upload to and from a device that you specify with the file names. (0:file, RAM:file, file, etc.)
+
+Download or upload can be aborted by pressing ESC key.  The program will abort,
+ but if the other side doesn't abort within reasonable amount of time, try
+ pressing CTRL-X a few times.
+
+Holding down SHIFT while up/downing lets you see the contents of the blocks
+ being transferred.
+
+Ymodem is usually faster than Xmodem, and Xmodem 1K sightly faster than Ymodem
+ because Ymodem transfers extra two blocks containing file name, length, date.
+It will display this information when downloading with Ymodem.

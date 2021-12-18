@@ -1,0 +1,131 @@
+NPL -- Node-PDD Link  Version 1.0
+(c)1992 by James Yi
+
+This file contains instructions on how to use NPL.100 and NPL.200
+
+NPL is a file transfer utility for moving files directly to and from the Node Datapac and Tandy Portable Disk Drive 1&2.  It allows wildcard file name and has batch command feature to ease multiple file transfer.
+
+NPL.100 is for the Model 100/102 and NPL.200 is for the Tandy 200.
+It will work with both PDD-1 and PDD-2.
+The program loader is in text form, which should be converted to a Basic program, then by running the Basic program, a machine language program named NPL.CO is created.
+The Top/End address for NPL.CO is determined by the current HIMEM setting of your system at the time of running the Basic program; the End address will be HIMEM address minus 1.  Before running NPL.CO, clear proper space for it by setting the HIMEM at equal or below the program's Top address.  HIMEM can be set to a certain value by using Basic's CLEAR statement: CLEAR 0,nnnnn
+
+When you successfully run NPL.CO, you will see the prompt "L_N:-P:0>"
+Here is what that prompt means:
+  L_  denotes "Link"
+  N:  denotes Node as source directory.
+  P:0 denotes PDD as destination; 0 is the directory bank#. If you have PDD-2, which has two directory banks, 0=1st bank, 1=2nd bank.
+
+If the disk drive is not connected to the serial port or if it has powered down, the program reminds you to correct the situation by displaying the message "Disk Not Ready".
+
+
+To exchange source and destination directories, type:
+  A  (then press ENTER)
+You will see in the prompt swapping of positions of letters N and P; the letter that displays first denotes source.
+
+To select the directory bank of PDD-2, type:
+  GG 0 ( or 1)
+If PDD is the source,
+  G  0 ( or 1)
+
+To copy files from source directory to destination, type:
+  C filename
+Note you need to type a space between C and filename.
+
+To copy files in reverse direction:
+  CC filename
+
+To delete files after they are copied, include "-d":
+  C(CC) filename -d
+
+To rename a file as it is copied, supply a second file name:
+  C(CC) filename newname
+"-d" can be used here also.
+
+To display source directory:
+  V
+  or just press ENTER
+
+To display destination directory:
+  VV
+
+To display file sizes, include "-l":
+  V(VV) -l
+
+To delete source directory files:
+  D filename
+
+To delete destination directory files:
+  DD filename
+
+To exit program, press ESC.
+
+
+To run a machine language file on the source directory, type the name of the program, with or without extension.  For example, if the program you wish to run is SORT.CO, just type "SORT.CO" or "SORT".  In order to run it successfully, there has to be enough free RAM to hold the program; it is loaded first into the free area, then copied into its proper run location just as NPL itself exits, in order to avoid address conflicts.
+
+
+A sequence of commands can be executed by typing the name of the text file that contains the command sequences.  Use the text editor to create the command file, putting each command in a seperate line.  For example, if the file "SV.DO" contains the following lines:
+  C file1
+  C file2
+  C file3
+then by typing "SV.DO" or just "SV", those 3 files will be copied.
+This batch command feature works only if the source directory is set to Node.
+Batch command files can be nested, that is a command file may call up another command file.
+
+
+You can use wildcards in file names:
+  *  substitutes any number of characters, including 0.
+  ?  substitutes one character.
+  =  works same as *, but prompts for Y/N.
+  ~  negates the match of one character following it.
+
+For example, if the following files exist:
+  1> FA.DO
+  2> FB.DO
+  3> PG.BA
+  4> TG.BA
+  5> X.CO
+
+ * selects all 5 files
+ F* selects 1,2
+ *BA selects 3,4
+ *G* selects 3,4
+ ?.* selects 5
+ ??.* selects 1,2,3,4
+ =.DO selects 1,2 and prompts Y/N
+ P=BA selects 3 and prompts
+ ~P*  selects 1,2,4,5
+ =B*  selects 2,3,4 and prompts
+
+
+If you do not supply a file name for commands that require it, you will be prompted for each file and asked for "Y" or "N" response.
+
+Using wildcards, a single command may process more than one file.  You may wish to stop in the middle of a multi-file copy or delete process.  To do that, press down NUM lock, and it will abort after current file is completely copied or deleted.
+
+To abort a process when it prompts Y/N, press ^C or ESC or ENTER instead of Y/N.
+To pause the directory display, press any key, then press ^C or ESC or ENTER to abort or any other key to continue.
+
+If the program hangs up because PDD powered down and it tried to access it, SHIFT-BREAK to get out of it.
+
+If a file to be copied in already exists, that file is automatically overwritten.
+
+
+Error codes:
+  18  PDD access error  - caused by SHIFT-BREAK during disk access or hang up.
+   7  Not enough memory to run a machine language file, or HIMEM is not low enough for that file.
+  63  Not enough space on Node or PDD to create a file - If the file that failed to be created is on Node, that file will have size of 0, but still occupies space; simply delete it to reclaim the space.
+  96  Too many files on PDD - 40 is the maximum in one directory bank.
+  51  This can happen if batch command is nested too deep; only 4 levels are allowed.
+  52  File not found
+
+
+With a $10 donation, you will receive a diskette containing a beefed-up version of this program with an easier to use graphical menu and other convenience features, such as the ability to read files, rename, edit text files, save/load files in RAM.
+I welcome suggestions as to what you would like to see included in future versions.
+
+ James Yi
+ 2101 Burton Dr. #1052
+ Austin, TX 78741
+
+ Compuserve ID: 73327,1653
+
+

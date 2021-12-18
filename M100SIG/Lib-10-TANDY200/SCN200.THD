@@ -1,0 +1,62 @@
+SCN200.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This short file contains some useful information re Tandy 200 system memory
+usage, in the area of the LCD buffer.  Of interest to programmers only, I
+suspect!
+
+Message range: 172278 to 172296
+Dates: 8/1/88 to 8/1/88
+
+
+Sb: #Screen help
+Fm: RANDY HESS 73267,552
+To: James Yi 73327,1653
+
+ HELP! I've studied your T200 LCDIO and SCROLL files and can't seem to make the
+connection between the 8192 graphics field bytes (204.8 lines), the 5120
+"displayed" bytes (128 lines), the circular screen buffer (64048-64687) and the
+"pointer" address [PEEK(65196)+PEEK(65197)*256]. HOW does this address relate
+to the screen buffer??
+  Specifically, I'm trying to make my BIBLIO library program work with the 200
+and I need to be able to read data off the screen after trying to CLOAD
+programs from a cassette recorder. After each attempted load a message
+displays, of course, and BIBLIO re-runs and IDs the file and type by reading
+the "screen": not a problem with the 100 but a challenge on the 200!
+ I could try putting a unique character in PRINT position 0 after a CLS and
+then search 64048-64687 (with a "circular" FORNEXT loop no less (grin)) but was
+hoping you could suggest something less "crude" based on your unraveling of the
+LCD workings.
+
+
+Fm: James Yi 73327,1653
+To: RANDY HESS 73267,552
+
+  PEEK(65198)*40 will give you where @0 position is in the LCD buffer(64048 to
+64048+639)
+
+So in order to find the lcd buffer address of @ position S just add the value
+of offset in 65198 and mod it by 640:
+1 OF=PEEK(65198):'row offset
+2 AD=64048+(OF*40+S)MOD640
+
+Using the above formula, I think line 54 in the BIBLIO program would probably
+look something like this:
+
+54 AD=64048+(Peek(65198)*40+S)MOD 640:FOR X = AD to AD+9...
+
+I assumed 65024 is the beginning of the LCD buffer in M100, and that line 54
+reads the chrs in the first 10 columns of a row(Row#(0-7)=S/40?).
+
+
+Fm: RANDY HESS 73267,552
+To: James Yi 73327,1653
+
+ THANKS! That's exactly what I needed! Glad to see somebody else has a copy of
+BIBLIO/BIBPWR. I'll put you on my list of users for future updates. BTW, could
+the "12 second" save time in your LCDSAV(??) program be cut simply by having
+previously cleared some HIMEM and saving the info as a .CO file? I hope you say
+yes because I think between your screen/print routines and my graphic program
+PALETE I could make a 200 version (hint, hint).

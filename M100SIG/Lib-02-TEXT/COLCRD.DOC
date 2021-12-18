@@ -1,0 +1,62 @@
+   COLCRD.BAS is another column program based upon COLUMN.100 by Bill
+Stauffer, 70435,237 in dl2 to develop a multiple column file output
+or printout. This program splits larger files up by pages for the
+normal 8 1/2 X 11 size paper. (pays attention to page perforations)
+It also adds outputs to rotary type file cards and labels. See
+COLCRD.MOD for use and instructions for this. It also replaces the
+headers with a title line (optional.)The input files can be in RAM,
+on cassette (CAS:) or on disks (0:xxx with approriate DOS), with an
+extension of DO. You do not have to enter the ext. when the file 
+input is requested. The output file (no ext.) can be to RAM, Cassette
+ Disks, LCD:, CRT:(DVI), and printers (LPT:). It uses no special
+Calls, Peeks or Pokes.The only special codes are  the printer codes.
+ The program is self-explanatory and it prompts you thru all the 
+steps. It should work on the 100/102 and the 200
+  It was written with the printer codes for a GEMINI 10X printer,
+so these will have to be changed for other printers. An explanation
+of the program and codes follow:
+
+Line 10: Clear enough space (memory) for your file
+            OS error in line 110 - clear more space
+         Dim V The number of lines in your original file
+            BS error in line 110 - increase size of DIM V
+
+Line 175: These are the output file parameters that were selected in line
+          170.They are contained in the Data statements at the end. The
+          line numbers (1000+K1)of the Data statements correspond to the
+          number (K1) of the type of output you want.
+             EC: Characters per line
+             N:  # of lines you want on the form.
+             N1: Maximum # of lines on each form.
+             F: My printer codes for pica, elite and condensed 
+                 fonts (pitch).(10, 12, 17 characters per inch)
+You can change these values to fit your need or your printers need.
+
+     PRINTER CODES
+       Line 15:  S= CHR$(27) Printer Escape Code
+       Line 512: W = Font (pitch) printer codes selected at menu. 
+           Mine: W = S+CHR$(66)+CHR$(F)
+       Line 518: Sends codes to printer.
+       Line 525: Sends top of form (TOF) to printer. If you don't have 
+                 a TOF code, substitute "GOSUB 700" for LPRINT CHR$(12).
+
+     PRINTER PROBLEMS:
+           See alternate print module in COLCRD.MOD
+
+     If worse comes to worse and all else fails, never use LPT: as an
+     output. You can then use your word processor and printer set up
+     programs to print the files out.
+
+     2 - SIDED OUTPUT
+           See 2 sided output module in COLCRD.MOD
+
+     COLCRD.MOD
+       Contains 3 modules that can be merged into COLCRD.BAS.It also
+contains their instructions. Use cut and paste to remove the modules.
+
+I hope this info will get this program to work with your printer.
+If you are having problems contact me by EMAIL or by message.
+
+Try some TEXT files!!
+
+Ralph D. Walthall , [74016,1660]

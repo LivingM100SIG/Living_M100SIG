@@ -1,0 +1,265 @@
+
+
+
+
+    100/100 Documentation
+
+
+    F7 will bring up the prompt to enter "<T>ext or <B>asic.  If  DIRACC  is
+       loaded  and  DIRPOK has been run, pressing 'T' will bring the user to
+       TEXT, where a file can be  created,  or  edited  off-line  for  later
+       uploading. F8 will exit text and reenter TELCOM.  Pressing 'B' at the
+       previous  prompt  will bring the user to BASIC, where programs can be
+       run or files killed.  Exiting to Menu, however, will  disconnect  the
+       line.   To  reenter  TELCOM,  press  F6,  which  should be defined as
+       "CALLHIMEM"+chr$(13).  Running the DIRACC loader program will set the
+       F6 function key to do this.
+
+    MODEL 100 FUNCTION KEYS WITHIN VT100 MODE
+
+    The Model 100's 40 column by 8 line screen is a window into one sixth of
+    a normal 80 column  by  24  line  VT100  screen.   In  VT100  mode,  the
+    following keys are used for special functions:
+
+    F1 will  show  Section  1 of the VT100 screen As illustrated in FIGURE 1
+       below, this is the upper most left sixth of the  screen  (lines  1-8,
+       columns 1-40)
+    F2 will show Section 2, the middle left sixth of the screen (lines 9-16,
+       columns 1-40)
+    F3 will show Section 3, the lower left sixth of the screen (lines 17-24,
+       columns 1-40)
+    F4 will  move  down  four  rows  from  whatever  vertical and horizontal
+       position is presently being viewed.
+    F5 will display columns 1-40  at  the  present  vertical  position.   If
+       already at the left margin, no action will be taken
+    F6 will display columns 21-60, showing the middle section of the screen.
+       The  vertical position  coincides with the current vertical position.
+    F7 will display the left side  of  the  screen,  columns  41-80  in  its
+       present vertical position.
+    PASTE  -the PASTE function key- will return to the original screen where
+       the cursor is presently located and exit view mode.  The PASTE key is
+       also used to exit fast mode and resume full echo to the screen.
+    F8 will return to TELCOM.  The screen will not clear, so any prompt  you
+       had at the cursor will remain.
+    CODE  e (e for exit) will return to TELCOM, but it will clear the screen
+       before doing so.
+    LABEL will bring up the row and column  number  of  the  present  cursor
+       location  in the bottom left corner of the screen.  This display will
+       disappear automatically as soon as the screen needs to scroll, or can
+       be erased immediately if it covers important text by  pressing  PASTE
+    PRINT  -the  PRINT function key- will print the screen to the printer if
+       it is attached and turned on.  If no  printer  is  connected  to  the
+       parallel  port,  no  action is taken.  The screen printed is the full
+       80x24 screen of the VT100, not just the small Model 100 window.
+
+
+
+
+
+
+
+
+                                    page -5-
+
+
+
+
+
+
+
+
+    100/100 Documentation
+
+
+
+
+                         |-----F6------|
+               |-------F5-------|------F7-------|
+              c1        c21    c41    c61        80
+               ____________________________________
+               |         |      |      |        | |
+               |                |               | F4
+               |      F1 |      |      |        |--
+               |   (Section 1)  |  (Section 4)  |||    PASTE
+               |         |      |      |        |||
+               --------------Line 8--------------\/     key
+               |         |      |      |        | 4
+               |                |               |        to
+               |      F2 |      |      |        | r
+               |   (Section 2)  |  (Section 5)  | o    Resume
+               |         |      |      |        | w
+               --------------Line 16------------- s
+               |         |      |      |        |
+               |                |               | d
+               |      F3 |      |      |        | o
+               |   (Section 3)  |  (Section 6)  | w
+               |         |      |      |        | n
+               --------------Line 24-------------
+
+                            FIGURE #1 
+
+                 Moving Around the VT100 Screen
+
+
+    GRAPH 'a' will send a CTRL A to the host computer.  A CTRL A is used  in
+       some  editing  programs, including command line editing on the VAX to
+       switch between insert and replace mode.  Since the SHIFT  Left  Arrow
+       generates  the same code as CTRL A, and has been mapped to become the
+       PF4 function key (see below), some way is needed to generate a CTRL A
+       to send to the host.  The GRAPH a will send such a code  (ASCII  Code
+       1).
+
+    CODE  'x'  toggles between XON/XOFF enabled, and disabled.  It may never
+       be required.  It  was  put  into  100/100,  because  some  electronic
+       switches interpret the XOFF character sent out as an actual character
+       and  invalidates  the  choice.  It is usually only required at speeds
+       greater than 300 baud, using an external modem, where the  screen  on
+       the  Model  100  cannot keep up with the characters received and when
+       the switch being used sends a full screen of information, rather than
+       a single line prompt, before a choice is  allowed.   Pushing  CODE  x
+       will  turn  off  XON/XOFF  if  it is on, and turn it on if it is off.
+       When returning to TELCOM, whichever mode has been set using the  STAT
+       command will be used, regardless of the toggle state inside the VT100
+       emulator.
+
+    GRAPH  'f' enters "fast mode" in which characters received from the host
+
+
+                                    page -6-
+
+
+
+
+
+
+
+
+    100/100 Documentation
+
+
+       are not echoed to the  screen  in  order  to  speed  up  performance.
+       Instead  only cursor movement and the column/row display in the lower
+       left corner are shown.  Transmission can  then  be  stopped  and  the
+       screen viewed with the function keys.  The PASTE key exits fast mode.
+
+    GRAPH  NUMBER  KEYS  produce  the  code  of the number keys on the VT100
+       keypad, if in application mode.  The number keys used  here  are  not
+       the  ones  at the top of the Model 100, but the ones used to generate
+       numbers when the NUM key is depressed.  The keys produce  the  keypad
+       equivalents in application mode, not the numbers.  The keypad keys on
+       a  VT100  produce  two  different sets of code when pressed, either a
+       special application  code,  or  the  numbers.   Application  mode  is
+       typically used in applications like word processing and editing where
+       rather  than produce a number, a function is produced when the key is
+       depressed.  If you are in an application  that  uses  the  keypad  to
+       produce  numbers,  press  the NUM key and use the same keys.  A VT100
+       will automatically switch between application mode and  numeric  mode
+       for these keys, but 100/100 will not.  If you are using the GRAPH key
+       combination  and  it  doesn't  seem  to  be  working, try the NUM key
+       instead.
+
+       One exception to the GRAPH number key is the '1' (one)  or  'j'  key.
+       Unfortunately,  GRAPH  j  is not recognized by the Model 100 as a key
+       being pressed, therefore the user must press GRAPH  SHIFT  J.   Since
+       the  three  key  combination  can be somewhat awkward, GRAPH 'h' will
+       produce  the  same  code.   Either  combination   will   work.   Both
+       combinations  are  less  than  desired  and  may  cause the user some
+       consternation until experience makes their use a habit.  Until  then,
+       the  user  is likely to press GRPH j more than once and wonder why no
+       response is obtained.  The limitation  of  the  Model  100,  however,
+       makes this situation unavoidable.
+
+       In  addition  to  the  number  keys, GRPH . (period) will produce the
+       keypad period, GRPH , (comma) will produce the keypad comma,  GRPH  '
+       (single  quote) the keypad enter, and GRPH / (slash) will produce the
+       keypad minus.  The slash was chosen rather than the minus  sign,  for
+       two  reasons; one was its proximity to the other keys, rather than on
+       the top row of the keyboard. The other is that the GRPH - combination
+       on the Model 100 is used to produce the ASCII code 96, the  backslash
+       character.   The  GRPH  '  (single quote) was chosen to represent the
+       keypad ENTER key since it sits right next to the  ENTER  key  on  the
+       Model 100.
+
+    CODE  SHIFT  R will reset the screen.  The screen is cleared, the cursor
+       is homed, top and bottom margins are reset to 1 and 24  respectively,
+       and tab stops are set to their defaults.
+
+    PF Function Keys are produced by using the SHIFT Arrow Keys.  
+
+    PF1  -sometimes  the  GOLD  key on the VT100- is emulated with the SHIFT
+       Left Arrow key.
+    PF2 is SHIFT Right Arrow key
+
+
+                                    page -7-
+
+
+
+
+
+
+
+
+    100/100 Documentation
+
+
+    PF3 is SHIFT Up Arrow key
+    PF4 is SHIFT Down Arrow key
+
+
+    The Key Layout for the VT100 keypad keys looks like the following, where
+    the top characters in the box represent what is on the Model 100 key and
+    the bottom most character in the box, between the '- -'  respresents the
+    keypad equivalent on the VT100 keypad.
+
+                                         ---------------------
+                                         |SHFT|SHFT|SHFT|SHFT|
+                Model 100 Cursor Keys -> | <- | -> | /\ | \/ |
+                (Use SHIFT + Cursor Key) | PF1| PF2| PF3| PF4|
+                                         ---------------------
+                   -------------------
+                   |  &  |  *  |  (  |
+                   | 7/7 | 8/8 | 9/9 |
+                   | -7- | -8- | -9- |    Use GRPH + Key
+                   ----------------------
+                      |     |     |     |
+                      | U/4 | I/5 | O/6 |
+                      | -4- | -5- | -6- |
+                 -------------------------------------
+                 |     |SHIFT|     |     |  :  |  "  |
+                 |  H  | J/1 | K/2 | L/3 |  ;  |  '  |
+                 | -1- | -1- | -2- | -3- |     |-ENT-|
+                 -------------------------------------
+                        |     |  <  |  >  |  ?  |
+                        | M/0 |  ,  |  .  |  /  |
+                        | -0- | -,- | -.- | --- |
+                        -------------------------
+                                          (Minus)
+
+                                 FIGURE #2
+
+                           Keypad Emulation Keys
+
+
+Deactivating F6 and F7 after removing VTEMUL.CO
+
+To prevent jumping to non-existent code after removing this program run
+this small BASIC program:
+
+10 POKE 64268,243:POKE 64269,127
+20 POKE 64270,243:POKE 64271,127
+
+
+
+
+
+
+
+
+
+                                    page -8-
+
+
+
+
+

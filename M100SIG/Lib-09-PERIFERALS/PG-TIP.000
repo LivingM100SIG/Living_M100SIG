@@ -1,0 +1,107 @@
+TIP FILE FOR PG RAM WITH OLD MENU.BA
+------------------------------------
+Phil Wheeler [71266,125] -- 9/13/86
+
+
+The old (currently delivered) MENU.BA program for the PG RAM's
+(all sizes) has some known problems.  A new program is scheduled
+for delivery to purchasers of the 128K and 224K by the end of
+September (1986!). It will be compatible with all but the original
+32K board (maybe even with that - I haven't asked), and presumably
+will be available as an upgrade to current owners of 32K and 64K
+boards.
+
+This file describes the problems I know of with the current
+software, and how I avoid them -- and notes some of the promised
+features of the new program.
+
+1. Loading
+
+The current Menu programs require that ALL Basic programs be
+removed before it is loaded.  The 'UR-2' Ultimate ROM II menu
+entry looks like a Basic program in this context.  Kill it, too!
+
+The new program will have a single loader for all banks.  It will
+ask how many total banks you have installed and which one you are
+in.  It will shove itself into the bottom of RAM (without needing
+your Basic programs removed) and make itself invisible so it
+cannot be inadvertently killed.
+
+2. NAME Bug
+
+The current program does not trap lower case entries, nor does it
+force the extension to be the same.  You can rename 'FILEN.BA' to
+'filen.do' with DISASTEROUS results.  Avoid this by using CAPS
+LOCK when renaming, and providing the extension.
+
+The new program will force CAPS and retain the old extension.
+
+3. Open File (aka Cold Start) Bug
+
+The main cause of cold-starts with current PG RAM boards is
+turning off the computer (or letting it power off on its own)
+while in a bank other than Bank 1.  Due to a pointer problem,
+several things can happen, most of them very bad, when you turn on
+again -- in Bank 1.  I avoid this very successfully by: (1)
+Setting POWER CONT in all but Bank 1; and (2) Always returning to
+Bank 1 before turning off the computer.
+
+If you do not follow this approach (or forget to), then when next
+you do turn on, IMMEDIATELY cycle through all banks using the
+designated F-keys.  This will reset the pointers and you will be
+OK.
+
+The new program fixes this problem, presumably in all its guises.
+Peter (the 'PG' in PG Designs) gave it his personal attention.
+
+4. Compatibility
+
+I use many of the add-on products available for the Model 100,
+including Super ROM, Ultimate ROM II, Powr-Disk, TS-DOS, Disk
+Power 100, the TDD and the Chipmunk -- as well as much of the
+software here on the SIG.  Here are some compatibility notes.
+
+     o FLOPPY.CO (TDD file manager) is incompatible as it stands.
+       A patch to fix it is given in the latest versions of the PG
+       Designs manual.  See TDDTIP.006 (DL5) for this simple
+       patch.
+
+     o Disk Power 100, in its current version, is totally
+       incompatible with the MENU.BA utility -- since they both
+       require the same location in RAM to operate.  My favored
+       solution is that Ultrasoft provide a version of DP100 which
+       will relocate itself to just above other low-RAM resident
+       programs (including SUPERA; see below).
+
+     o SUPERA used to be incompatible.  Versions available  for
+       about the past year are compatible, due to cooperation
+       between Micro Demon (David Sumner) and PG Designs (Peter
+       VanHeusden).
+
+     o Super ROM appears to be totally compatible.
+
+     o Ultimate ROM turns off the Menu utility; just type '0MENU'
+       at the M100 main menu to get it back.  I use this combo all
+       the time, and it is no problem.
+
+     o TS-DOS and Powr-Disk appear to be totally compatible.
+
+     o DSKPWR (DL5) has a slight incompatiblity, in that it does
+       not overwrite the complete screen when run.  It requires
+       you to hit F8 and rerun it -- or to turn off the Menu
+       program before running -- and type '0MENU' at exit.  Again,
+       no big thing.
+
+     o I have not tried using the Chipmunk with the expansion RAM
+       installed, although it is possible.  They have a physical
+       conflict, in that the Chipmunk header board takes the same
+       spot as the RAM board.  PG designs does sell an adapter
+       which lets you use them together,but then the header board
+       is not internal.  I have heard some reports of cold starts
+       with this combination, but they could relate to the problem
+       in Section 3.
+
+5. Bank Switch Program
+
+The old bank switch program for the 64K RAM will work with the new
+units, if '>3' is replaced with '>N', where N = total banks.

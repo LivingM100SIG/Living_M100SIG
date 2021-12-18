@@ -1,0 +1,50 @@
+;LOMEM.SRC -- the source file for LOMEM.200, in DL10
+;James Yi  73327,1653
+;Copyright 1987
+;Uploaded Sept. 25, 1987
+
+
+;---BEGIN---
+
+/a:/d:/o60000;ORG
+
+/.2
+hl=.6:call 4556;print prompt
+call 21744;input
+
+call 2327;DE=value of ascii
+;E=size
+lhl 62702;current lomem
+a=#160:add e:d=a:sub h;H=new lomem
+b=a;B=new-current
+;del if -, ins if +
+c=#0:l=c;256 bytes blocks only
+jnc .7;insert
+
+;delete
+push bc;keep negative value of len
+a=h:sub d:b=a;len=ABS(len)
+h=d;insert at end
+call 33498;del bytes at HL, len BC
+pop bc
+jmp .8
+
+/.7
+call 33448;ins bytes at HL, len BC
+jc .2
++bc;HL=new lomem
+
+
+/.8
+lda 63074:add b:sta 63074;adjust ending of unsaved Basic prgm
+
+a=h:sta 62703;adjust LOMEM end
+sub #160:sta 40960;adjust LOMEM size
+jmp 11362;reset file pointers, exit
+
+
+;input prompt data
+/.6:/['Lomem size (x256)' 0
+
+
+;---END---

@@ -1,0 +1,65 @@
+100 GOTO 165
+105 ' Permission is granted to members of CompuServe's TRS 80 Mod 100 SIG and members of the Syracuse, NY Software City B/B TRS 80 Mod 100 SIG to use the program for their personal use only.  Copies must not be given to others.
+110 ' This notice must remain with all copies of the program.
+115 X=F*PI: SN=INT((SIN(X)*3)+4.5): RETURN: ' plot pos is sin of frac of cycle
+120 MO=VAL(LEFT$(D$,2)): DA=VAL(MID$(D$,4,2)): YR=VAL(MID$(D$,7)): 'figure days
+125 IF YR<100 THEN YR=1900+YR
+130 JF=-INT((14-MO)/12)
+135 Z=DA-32074+INT(1461*(YR+4800+JF)/4)
+140 Y=Z+INT(367*(MO-2-12*JF)/12)
+145 D=Y-INT(3*INT((YR+4900+JF)/100)/4)
+150 RETURN
+155 PRINT@285,CHR$(154);" Press any key to continue. "CHR$(155);
+160 IF INKEY$=""THEN 160 ELSE CLS: RETURN
+165 PI=6.2831852: SCREEN 0,0: CLS: LINE (11,8)-(227,55),1,BF: PRINT CHR$(27)"p"
+170 PRINT@94,"BIORHYTHM": PRINT@168,"Copyright  March 1986": PRINT@210,"by David O. Rowell": '3961 Cherry Vly Tpk, Marietta, NY  13110
+175 PRINT@87,CHR$(150)CHR$(149): PRINT@108,CHR$(150)CHR$(149): PRINT@206,CHR$(148): PRINT@230,CHR$(148);
+180 GOSUB 160: PRINT CHR$(27)"q";
+185 PRINT"Do you want an introduction (Y/N)?";
+190 ZZ$=INKEY$:IFZZ$=""THEN190
+195 IF INSTR("Nn",ZZ$) THEN 320
+200 CLS:PRINT@15,"BIORHYTHM"
+205 PRINT"The purpose of biorhythm is to predict a";
+210 PRINT"physical, emotional and intellectual"
+215 PRINT"pattern that indicates your up and down"
+220 PRINT"days for any period of time.  Biorhythm"
+225 PRINT"can show which days were good or bad for";
+230 PRINT"you beginning with your birth.": GOSUB 155
+235 PRINT"It can also show you which future days"
+240 PRINT"will be good or bad for you.  These"
+245 PRINT"predictions are based on scientific"
+250 PRINT"studies to determine why accidents occur": GOSUB 155
+255 PRINT"It was learned through these studies"
+260 PRINT"that a physical cycle occurs every 23"
+265 PRINT"days, an emotional cycle occurs every 28";
+270 PRINT"days and an intellectual cycle occurs   every 33 days.  An especially critical"
+275 PRINT"time was found to be when a cycle       changes from hi to lo or vice versa.";: GOSUB 155
+280 PRINT"This program plots the relative strength";
+285 PRINT"of the three cycles on a graph extending";
+290 PRINT"for 35 days.  Seven day periods are"
+295 PRINT"marked on the axis for reference.  The"
+300 PRINT"cycles are marked P, E and I.  The"
+305 PRINT"vertical position indicates the cycles'"
+310 PRINT"strength between low and high."
+315 GOSUB 155
+320 CLS:PRINT"TYPE DATES IN THIS FORMAT - MM/DD/YY"
+325 PRINT:PRINT"As an example, May 8, 1983 should be"
+330 PRINT"entered as 05/08/83."
+335 PRINT:INPUT"What is your birthdate";BD$: D$=BD$: GOSUB 120: BD=D
+340 PRINT:INPUT"Date to begin biorhythm plot";PD$: D$=PD$: GOSUB 120: PD=D
+345 TD=PD-BD: DA=1: CLS
+350 FORJ=0TO6: PRINT@(J*40+2),CHR$(245);: NEXTJ
+355 FOR J=0TO35: WK=INT(J/7)-(J/7)
+360 IFABS(WK)<.001THENW$=CHR$(250)ELSEW$=CHR$(241)
+365 PRINT@122+J,W$: NEXTJ
+370 PRINT@41,"+";: PRINT@120,"CR";: PRINT@201,"-";
+375 FORJ=TD TO TD+35: DA=DA+1
+380 F=(J/23)-INT(J/23): GOSUB 115: P=SN: PRINT@(280-(P*40)+DA),"P";
+385 F=(J/28)-INT(J/28): GOSUB 115: E=SN: PRINT@(280-(E*40)+DA),"E";
+390 F=(J/33)-INT(J/33): GOSUB 115: I=SN: PRINT@(280-(I*40)+DA),"I";
+395 NEXT J
+400 PRINT@284,"P - phys.  E - emot.  I - intel.";: GOSUB 160
+405 PRINT@40,"Do you want to plot more charts for the same birthday (Y/N)?"
+410 ZZ$=INKEY$: IF ZZ$="" THEN 410
+415 IF INSTR("Yy",ZZ$) THEN CLS: PRINT@45,"birthdate - ";BD$: GOTO 340
+420 MENU

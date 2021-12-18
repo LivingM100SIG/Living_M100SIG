@@ -1,0 +1,39 @@
+This is the kludge that I've developed as a first solution to the disk/screen 
+problem for FIG4TH.
+FORTH stores everything to disk in the same manner, as "screens" consisting of 
+16 lines of 64 characters.  Shorter lines are padded out with spaces.  The 
+system is organized so that virtual memory is implemented on disk.  That's 
+great but the M100 doesn't support the TDD.  In this version of figFORTH disk 
+has been emulated in RAM so that some of FORTH's features can be used.  In the 
+future this capability can be bootstrapped to give us real disk support.
+There are three screens simulated in RAM in these locations:
+      screen 	start	end
+	1	E000	E3FF
+		57344	58367
+	2	E400	E7FF
+		58368	59391
+	3	E800	EBFF
+		59392	60415
+Screens contain only text information.  Text files are a pain to deal with 
+since they don't sit still in memory.  But, .CO files have their boundries 
+stored as part of the file enabling the system to store them and restore them 
+to their original location.  We use what support the system gives us.  Store a 
+screen in lo-memory from BASIC by SAVEM"name",start,end.  Restore it by placing
+the widebar cursor over it and pressing ENTER.  This way you can deal with one,
+two or all screens in one file.  The screen will go back where it came from.
+I propose that any screens uploaded to the SIG for the FIG4TH system be 
+uploaded as HEX files to be converted back with CHANGE.BA.  The file extension 
+should be .SCR.
+With a little skull work there is no big trick in updating a file already in lo
+-memory from within FORTH.  Also locations can be changed at will.
+Fig deals with the disk in blocks of 128 characters (that is with the original 
+version of ENCLOSE) or two lines of a screen at a time.  Its internal buffers 
+are also arrainged in that manner.
+What's lacking is a disk drive primative routine to read and write to a 
+specific track and sector on the disk.  Given that, the remainder of the 
+figFORTH listing will enable virtual memory.  The word CALL is written in low 
+level in FIG4TH to enable use of the ROM routines.  I'm hoping that one-of-
+these-days I'll understand FLOPPY.CO and the ROMs well enough so that FIG4TH 
+can talk to the disk without any mysterious system crashes.
+
+GoFORTH and enjoy!   Dave Rowell

@@ -1,0 +1,128 @@
+
+BUG REPORT - fair warning!
+1) Fig remembers which screens are in its buffers.  Due to the manner that this
+is done fig thinks that the first disk block (128 char) of screen 1 is in 
+memory after a cold start, a warm start, EMPTY-BUFFERS etc..  This means that 1
+LIST will often show the first two lines as blank when they are not.  If you 2 
+LIST 3 LIST (or something similar) you'll fill the internal buffers with 
+something other than screen one then 1 LIST will work fine.  LOAD  will 
+MISBEHAVE in a similar fashion, makes a mess!
+2) This is not exactly the same editor that is described in "Starting FORTH" 
+although it's very close.  "S" works differently here.  "M" has a bug that I 
+haven't yet identified.
+
+Oh, by-the-way, a FIG4TH screen is 16 lines of 64 characters each.  That is 
+literal!
+
+OK, now, just what do all those new words do?
+
+The cursor referred to below is the EDITOR's cursor, displayed as |.
+
+X	eXtract	( -- )
+Copies the current line into the INSERT buffer, and removes it from the screen.
+  All following lines are moved up, line 15 is blank.
+
+T	Type	(n -- )
+Type line n from the current screen.  Set the cursor to the start of the line. 
+About the only way to do that.
+
+L	List	( -- )
+Like the FORTH word LIST but obtains the screen number from the user variable 
+SCR.
+
+N	Next	( -- )
+Increments the current screen number by one.
+
+B	Back	( -- )
+Decrements the current screen number by one.
+
+P	Put	( -- )
+P text
+Any following text will be copied into the INSERT buffer.  The INSERT buffer 
+will be copied into the current line, replacing its previous contents.  If the 
+text consists of one or more blanks the current line will be erased.
+
+WIPE	wipe	( -- )
+Erases the current screen.
+
+COPY	copy	( from, to -- )
+Copy one screen to another.
+
+F	Find	( -- )
+F text
+Any following text is copied into the FIND buffer.  The contents of the FIND 
+buffer are compared to the contents of the current line.  If a match is found, 
+the line is displayed with the cursor positioned just after the end of the 
+search string.  If no match is found the search string is echoed to the screen 
+and the error message "NONE" is output.
+
+E	Erase	( -- )
+Erases backward from the cursor by the number of characters in the FIND buffer.
+  Use after the F command.
+
+D	Delete	( -- )
+D text
+Any following text is copied into the FIND buffer.  The D command is a 
+combination of the F and E commands.
+
+TILL	Till	( -- )
+TILL text
+Any following text is copied into the FIND buffer.  Starting from the current 
+cursor position TILL searches for a match with the contents of the FIND buffer.
+  If a match is found TILL deletes all the text on the line from the current 
+cursor position up to and including the end of the matched text.
+
+S	Search	( last scr#+1 -- )
+S text
+Any following text is copied into the FIND buffer.  Starting at the top of the 
+screen and continuing to the end of the "last screen" S searches for a match to
+the FIND buffer.  Whenever a match is found the line containing the match is 
+typed out along with the line number and screen number.
+
+I	Insert	( -- )
+I text
+Any following text is copied into the INSERT buffer.  The I command copies the 
+INSERT buffer into the current line at the cursor position.  Text to the right 
+of the cursor will be pushed to the right and will be pushed off the line and 
+lost if the length exceeds 64 characters.
+
+U	Under	( -- )
+U text
+Any following text will be copied into the INSERT buffer.  The screen is spread
+at the line just below the current line leaving a blank line.  All following 
+lines will be pushed down.  Any text on line 15 will be lost.  The INSERT 
+buffer will be copied into the blank line and that line will become the current
+line.
+
+R	Replace	( -- )
+R text
+Any following text will be copied into the INSERT buffer.  The R comand is a 
+combination of the E and I commands.  To be used after a find command.
+
+M	Move	( block#, line# -- )
+Any following text will be copied into the INSERT buffer then M copies the 
+INSERT buffer to the block specified UNDER the specified line.  The original 
+block number is restored and the next line becomes current.  HAS A BUG
+
+| 		( -- )
+Character is SHIFTed GRPH - (chr$(124) 7C H).  Used as a terminator for all 
+commands allowing text input, such as P, F, R etc.  Allows more than one 
+command on a line.  Don't use | in any text to be put on the screen!
+
+WHERE	Where	( -- )
+A FORTH word, not an EDITOR word.  Use when a compile time error occurs during 
+loading.  Converts the block # to a screen #, makes that screen current and 
+prints the line in which the error occurred.  The cursor is printed under the 
+line in error to show the approximate location of the error.  Enables the 
+EDITOR.  Neat word, thanks.
+
+We give many thanks to S.H. Daniel, the author, and the FORTH INTEREST GROUP 
+for publishing this version of the editor used in "Starting FORTH".  As line 
+editors go, it's not bad!  Published in "FORTH DIMENSIONS" Vol III/3 page 80 
+ff.  Public domain, but I expect the author reserves some rights.  The high 
+level MATCH words are by Peter Midnight and were part of the above article.
+There is a lotta good stuff in FORTH DIMENSIONS.  After you join the FORTH 
+INTEREST GROUP maybe you should buy the back issues.  Check around there may 
+well be a local chapter of FIG.
+
+GoFORTH and enjoy.   Dave Rowell

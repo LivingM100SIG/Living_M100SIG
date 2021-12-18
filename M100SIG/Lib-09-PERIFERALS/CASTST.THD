@@ -1,0 +1,197 @@
+
+	(c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Dorian Grey
+To: SYSOP (X)
+
+    I have had a 200 Laptop for some years but only recently tumbled to the
+fact that there is a lot more that can be done with this machine than
+Tandy/Radio Shack indicates.
+
+I have a PC and am fairly conversant with DOS but I know nothing about
+programming.  My 200 is stock (only one bank) and I have a Tape "drive" which I
+have used (I only seem to get back about half of what I save.
+
+I use the 200 primarily for WP and telecommunications so I would like to be
+able to off load files to my cassette but be assured of getting them back later
+(Since I don't have a null modem cable I transfer my data to my PC by modem.)
+
+                - 0 -
+
+Fm: Tony Anderson
+To: Dorian Grey
+
+Well, to begin with, with only one bank of RAM available, you need a reliable
+external storage device.  A cassette machine won't cut it.  Cassettes have
+always been unreliable, and particularly slow.  You can get a used disk drive
+for between $75 and $125, depending on model, or a new one by mail order for
+about $165, or at your local Radio Shack for $229 more or less, depending on
+whether they're on sale this week.
+
+Second, you should fill up the machine with the other two banks of RAM for
+extra storage space, as well as being able to increase your operating
+convenience. There are currently only two companies, aside from Radio Shack,
+who are advertising RAM expansions; American Cryptronics (714) 540-1174, and
+Purple Computing (800) 732-5012.
+
+If you don't want to spring for a disk drive or RAM banks at this time, the
+very least you should do is get an RS-232 cable and null modem, so you can
+transfer your files to the PC for storage.  There are several programs here
+which make saving stuff to the PC effortless.  A cable and adapter should be
+less than $25.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Dorian Grey
+
+   One of the first files you should get is FLTIBM in Lib 2.  It's a program
+for the PC that lets you exchange files with the laptop at 9,600 Baud -- much
+better than using the modem.
+   Don't know about your problems with tape storage.  Cassettes are slow, but
+most people have found them better than 50-50 when it comes to reliability.  In
+my own experience, I've found the two most significant factors to be
+record/playback volume, and cassette quality.  On volume, you want to 'record
+low, play high' (kinda like the stock market) -meaning you don't want to
+saturate the tape during recording, if you have any way to control record
+volume, and you should hit the computer pretty hard on playback.  Regarding
+cassettes, it's not the frequency response of the tape that counts, but the
+smoothness of the cassette's feed mechanism -- because, above all, the computer
+wants consistent speed as the tape passes the record/playback head(s).  For the
+same reason, short tapes are better than long ones, especially on "medium
+quality" tape decks, because they present less drag for the motor to handle.
+   A couple of other hints.  On one particular recorder, I had problems with
+hum when operating both the computer and the tape deck from AC supplies.
+Switching one, or the other, or both, to batteries fixed things.  However, if
+you're using batteries on the recorder, make sure they're reasonably fresh; bad
+batts will make the tape play sloooowwwwly, irritating the computer's fine ear
+for binary music. Low batteries are even worse if you're recording, of course,
+because you'd produce a tape that will play back accurately only if you can
+approximate that same slow speed condition.  Also, on marginal tapes you may
+have better luck if you issue the SOUND OFF command before playback.
+   Finally, you should get a copy of James Yi's CASUTL program for the T200.
+It adds some nice date/time information to files as you record them (without
+changing the file itself), and it lets you recover partial data from text files
+that, for whatever reason, won't load properly in toto.
+
+		- 0 -
+
+Fm: Dorian Grey
+To: Wilson Van Alst
+
+       Thanks so much for the thoughtful reply to my questions.  What you had
+to say about volume was most intersting.  I've always kept it at "5" for both
+recording and playback as that is what the Tandy instruction book said to do.
+
+As for my recorder it is a RADIO SHACK cassette player that is "supposedly"
+specifically for recording from/to the Tandy Laptops.  Although, with the
+exception of the nomenclature stamped on the case, the thing looks just like a
+regular RS cassette recorder.  It would be just like those guys to do something
+like this:
+                       TANDY GUY ONE
+       Say, nobody's buying those mono cassette players anymore!  Everybody
+wants stereo and we got thousands of the mono units; whatrwe gonna do?
+
+                       TANDY GUY TWO
+       I know!  We'll put new cases on 'em that say "Computer Cassette
+Recorder" and sell 'em to those people that bought 102's and 200's.  Their
+gonna need something to store their data on anyway.
+
+BTW, I've had a few other people suggest using CASUTL to get my lost files back
+but one thing that's not clear fromn the DOC on that is, will it help recover
+files from cassette that *were not* saved with CASUTL?
+
+Also, what do you mean by using the SOUND OFF command?  Where and how is that
+implemented?
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Dorian Grey
+
+Dorian,
+   You may be right about the Tandy decks.  One of the =least= reliable
+recorders I ever used was a fresh-from-the-box CCR-81 "Computer Cassette
+Recorder."  Unfortunately, I didn't pin my problems to the machine until after
+the warranty had expired -- so that deck is now a doorstop.
+   On the other hand, I've had very good luck with a CCR-82 that I bought used
+as part of a M100 package deal.  The '82 is smaller, and has features that make
+you think it really =was= designed for computer data. So who knows?
+   Aside from the semi-technical stuff I talked about last time, the key to
+sucess is a little experimentation -- which is pretty simple because there are
+only a limited number of variables involved.
+   Use this little program to write a bunch of short files all on one side of a
+single cassette:
+
+ 10 n=n+1
+ 20 print@90,"File #"n;
+ 30 open"cas:test"foroutputas1
+ 40 print#1,string$(40,48+(nmod10))
+ 50 close
+ 60 goto10
+
+   Since most small tape decks use auto-level circuitry that won't let you
+change recording levels manually, you won't be making any adjustments during
+the record process.  After you've got several minutes' worth of files, bail out
+of the above program by holding down the <CTRL><C> keys continuously until
+BASIC gives you its "Ok" prompt.
+   Now you can experiment with playback levels using this program:
+
+ 10 open"cas:test"forinputas1
+ 20 ifeof(1)thenrun
+ 30 lineinput#1,a$
+ 40 printa$;
+ 50 goto20
+
+   As your recorded files skip past, they'll produce a series of printed lines
+on the screen.  Each line is made of a single digit, from 1 to 0, repeated 40
+times:
+
+          1111111111111111111111111111111111111111
+          2222222222222222222222222222222222222222
+
+                ...etc.
+   Now start messing with the playback volume.  If the program produces an "?IO
+Error," just press <f4> to get it running again and continue the
+experimentation.  You'll find a cut-off point on the low end of the volume
+range where you stop getting input.  You may find a similar point at the high
+end, where input either stops completely or gets squirrely.
+   I'd suggest a "standard" playback setting 2/3 of the way towards the high
+end of the usable range.  If you can't find =any= setting that produces
+reliable playback, you've probably got a rotten recorder -although there could
+be problems with the cable (try the wiggle test) or even in the computer
+circuits that modify the tape's audio signal into digital waveform.
+   Almost forgot: you turn the computer's 'squawker' off by entering BASIC and
+typing "SOUND OFF" (without the quotes), followed by the <ENTER> key.  Again,
+this may have a marginal effect on reliability. And, re. CASUTL, yes, it will
+read files, or partial files, that were recorded in "standard" format.
+
+		- 0 -
+
+Fm: Gene Nestro
+To: Wilson Van Alst
+
+This is not a joke...try turning the recorder upside down! Myself and many
+others found this to work.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Gene Nestro
+
+   Terrific idea.  Now I have an upside-down doorstop.  <grin>
+   I don't mean to belittle this solution (if it works, it works!), but if I
+had taken the recorder back under warranty -- and the Tandy folks had said,
+"Nope.  It's fine.  Just turn it upside down." -- I would have gone ballistic.
+   If the turn-over trick helps someone recover a lost file, though, that's
+neat.
+		- 0 -
+
+Starting message #: 188626  Starting date: 11-Oct-89  18:28:19
+ Participants:
+Dorian Grey 70032,1513
+Tony Anderson 76703,4062
+Wilson Van Alst 76576,2735
+

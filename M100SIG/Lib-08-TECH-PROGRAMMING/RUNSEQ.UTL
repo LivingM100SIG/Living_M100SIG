@@ -1,0 +1,11 @@
+0 'Utility to run P.Wheeler's RESEQ.100    (nee James Yi's RESEQ.200). Value of   A in line 4 MUST equal address chosen
+2 ' when making RESEQ.CO (Which must       also be loaded to use this program).    R.W.Hess, 11/02/87
+4 CLS:A=XXXXX:PRINT@12,"RESEQ.CO Utility":PRINT@80," HIMEM is now";HIMEM;". This utility will  load RESEQ.CO from";A;"to";A+396
+6 PRINT" M/L code between these two addresses    will be lost! (Press <ENTER> to abort)":FORX=1TO3000:NEXT 
+8 C$=CHR$(44):R$=CHR$(13):Q$=CHR$(34)
+10 CLS:FILES:PRINT:LINEINPUT".BA file to Re-Line: ";F$:IFF$=""THEN20
+12 CLS:PRINT"Begin 'new' ";F$;" with line #";:LINEINPUT" ? ";S$:IFS$=""THEN20
+14 PRINT@90,;:LINEINPUT"New line interval ? ";I$:IFI$=""THEN20
+16 K$="LOAD"+Q$+F$+R$+"CALL"+STR$(A)+C$+I$+C$+S$+R$:GOSUB18:CLS:CLEAR256,A:LOADM"RESEQ":END
+18 FORI=1TOLEN(K$):POKE65449+2*I,ASC(MID$(K$,I)):POKE65450+2*I,0:NEXT:POKE65450,I:RETURN
+20 BEEP:CLS:MENU

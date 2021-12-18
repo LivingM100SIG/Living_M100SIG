@@ -1,0 +1,20 @@
+0 'PWRPCH.001  (c)1988 Wilson Van Alst
+0 'Creates v4.01 of PWRMNU.100, adding
+0 'user confirmation before a file can
+0 'be killed.
+0 '
+0 'To make the patch:
+0 '	Name this file PWRPCH.DO
+0 '     Enter BASIC
+0 '	Use <F2> to LOAD "PWRMNU.BA"
+0 '	Type: MERGE"PWRPCH.DO" <CR>
+0 'At the 'OK' prompt, return to the
+0 'main Menu, and the change will be
+0 'in place.
+0 '
+0 'PWRMNU.100 by Wilson Van Alst
+1 'v4.1  (c)1988   [76576,2735]
+2 'All rights reserved
+3 'Includes Patch 001
+18 L=PEEK(-104):X(4)=X(4)XORL:FORI=0TOQSTEP8:IFPEEK(S+I)-62THENNEXT:GOTO41ELSEFORK=2TO4:IF(2^K)ANDLTHENFORU=0TO4:PRINT@279+5*K+U,;:CALL17786:NEXT
+41 IFX(4)AND16THENPRINT@245,H"KKill?? ";:IFASC(INPUT$(1))AND95XOR89THENRUN7ELSE22ELSE22

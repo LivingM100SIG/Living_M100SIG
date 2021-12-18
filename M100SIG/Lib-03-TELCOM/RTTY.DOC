@@ -1,0 +1,53 @@
+RTTY.100 is a (mostly) BASIC program to allow the RS Model 100
+to transmit and receive Baudot 5 level RTTY code.  Speeds
+of 60, 66, 75, and 100 WPM are supported.  Both received and
+transmitted text can be echoed to a printer, and the RTS control
+line can be used for transmitter control.
+ 
+This program uses the RS-232 port, and requires an external TU
+(terminal unit) to convert the receiver audio into RS-232 levels,
+and from RS-232 levels back into tones for transmission.  I am
+using a Flesher Corp. TU-300, but any TU with RS-232 compatible
+signal levels should work.  Note that the TU-300 does NOT support
+RS-232 xmit control - external circuitry is required.
+ 
+Program Operation:
+
+The program begins in receive mode with echo to printer disabled,
+at 60 WPM.  Function keys F1 thru F4 set the speed to 60, 66, 75,
+and 100 WPM respectively.  F5 toggles in and out of xmit, F6 sets
+letters mode and starts a new line, F7 toggles the echo to printer
+mode, and F8 returns to Menu.
+
+About thirty characters are buffered in receive mode, and will be
+transmitted as soon as transmit is selected.  If any character is
+typed which does not exist in Baudot, you get beeped, and nothing
+is sent.  Letters may be typed in upper or lower case - they are 
+converted to upper case before transmission, but are echoed in
+lower case (also to the printer, if enabled).  This could be useful
+to differentiate received from transmitted text on a printout.
+
+If I understood more about the LABEL line, I would allow the
+LABEL key to toggle the last line with a description of the
+function keys.  Any takers??
+
+Machine Language Calls
+
+Several M/L calls are used in this program.  For those interested
+who do not have access to references, they are listed below.
+
+16969 (4249H) - Turns on cursor
+19268 (4B44H) - Print the character in A reg on LCD
+27967 (6D3FH) - Print the character in A reg on LST
+28210 (6E32H) - Send character in A reg to RS-232 port
+
+In addition, a machine language routine is read into array ML.  The
+entry point at ML(0) checks for received characters - if none are
+present, it returns with X(0) = 0.  If a character has been received,
+X(0)=1, and the character is in X(1).  The entry at ML(9) converts
+the character in the A reg to upper case, and places it in the
+variable pointed to by HL.  This allows transmitted text to be typed
+in lower case and automatically converted to upper case (Baudot has
+no lower case).
+
+Steve Alverson WB8HRV 75236,341

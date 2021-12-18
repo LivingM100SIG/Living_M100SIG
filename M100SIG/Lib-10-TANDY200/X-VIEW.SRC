@@ -1,0 +1,279 @@
+;********************************
+;*  X-VIEW.200 by Paul Globman  *
+;*                [72227,1661]  *
+;*      Copyright (c) 1989      *
+;********************************
+;
+ALTBUF:	EQU 63572
+BEEP:	EQU 20293
+BOTTOM:	EQU 4F96H
+COMPAR:	EQU 6E11H
+FILES:	EQU A144H	;XOS code
+FILL:	EQU 5DC2H
+FILTYP:	EQU A1D5H	;XOS code
+GET_B:	EQU A186H	;XOS code
+HOOK04:	EQU F50DH	;keyscan
+HOOK28:	EQU F53DH
+HOOK32:	EQU F545H	;TXT F8 HOOK
+LINE:	EQU A18FH	;XOS code
+MAKUPR:	EQU 6D22H
+MENU:	EQU 40961	;XOS code
+MOVE:	EQU 41BAH
+PRINT:	EQU 11CCH
+TEXT:	EQU 731BH	;TEXT program
+VF2:	EQU FFF0H
+WRAP:	EQU F20CH
+;
+ 	org altbuf
+	entry
+vtinst:	lhld hook04	;chr chk hook04
+	shld Fkey8+1	;save for later
+	shld done+1
+	lxi h,vt	;vt check
+	shld hook04	;now at hook04
+;
+	lhld hook32	;txt menu hook
+	shld Fkey8+7	;save it
+	lxi H,Fkey8	;menu fkey
+	shld hook32	;at our command
+	shld hook28
+;
+	call filtyp	;get attr byte
+	cpi 192
+	cnz BEEP	;.DO files only
+	jnz Fkey8
+;
+	inx h
+	xchg
+	lhli		;ADR OF FILE IN
+	jmp TEXT	;HL -  ENTR TXT
+;======================================
+;Menu hook (F8 keypress to exit V_TEXT)
+;
+Fkey8:	LXI H,0		;Restore GETKEY
+	SHLD hook04
+	LXI H,0		;Restore F8
+	SHLD hook32
+	JMP menu	;return to MENU
+;======================================
+;RST 7 hook from GETKEY
+;
+VT:	push psw
+	push b
+	push d
+	push h		;save registers
+;
+	DESP 26		;LOOK AT SP 26
+	LHLI		; BYTES BACK
+	LXI D,29609
+	RST 3		;CMP TO 29609
+	JNZ bye
+;
+	lhld ef06h	;save cursor
+	shld e1+1	;location
+;
+	lda fd0dh	;
+	ani 00001111y	;test for GRPH
+	cpi 00001100y	; plus CODE
+	jz vtog		;toggle mode
+;
+	cpi 00000011y	;test for SHIFT
+	jnz bye		; plus CTRL
+;
+	lda wrap	;toggle word-
+	xri 1		; wrap
+	sta wrap
+	jmp ex1
+;======================================
+vtog:	call 4f59h	;label line off
+	call draw	;split the lcd
+	mvi a,4		;set bank #2
+	call files	;display files
+	call eeolcd	;erase to end
+;
+	lxi h,vfile	;fill filename
+	mvi b,6		;storage area
+	mvi a,32	;with blanks
+	call fill
+;
+	call bottom	;ask for file-
+	lxi h,vmsg	;name on bottom
+	call print	;line
+	call 4f6dh
+	call 54f6h	;get vfile name
+	rst 2
+	ana a		;test filename
+	jz exit		;go to EXIT:
+	mvi a,7		;if name not
+	cmp b		;proper
+	jc exit
+;
+	dcr b		;move filename
+	lxi d,vfile	;and make it
+	push d		;upper case
+	xchg
+	call move
+	pop d
+	call makupr
+	call lookup	;go to work!!
+;
+exit:	MVI A,1		;check <ENTER>
+	CMP B
+	jnz ex1
+ptr:	lxi h,0		;previous view?
+	mov a,h
+	cmp l
+	CNZ REPLAY
+ex1:	call 8056h	;restore lcd
+e1:	lxi h,0		;restore cursor
+	call 4f9bh
+	call 13f3h
+;
+bye:	pop h
+	pop d
+	pop b
+	pop psw		;restore reg's
+done:	jmp 0		;jmp to hook
+;======================================
+lookup:	lxi h,f2b5h-11	;first slot
+loop:	lxi d,11
+	dad d
+loop1:	mvi b,4		;bank #2
+	call get_b	;get byte
+	cpi ffh		;end of dir
+	jz beep		;beep and ret
+;
+	cpi 192		;DO file
+	jnz loop
+;
+	inx h		;get file adrs
+	call get_b
+	sta ptr+1
+	inx h
+	call get_b	;ptr holds file
+	sta ptr+2	;location
+;
+	mvi b,6		;get filename
+	inx h		;from bank 2
+	lxi d,vf2	;directory and
+name:	push d		;compare it
+	push b		;with filename
+	mvi b,4		;entered by
+	call get_b	;user.
+	pop b
+	pop d
+	stax d
+	inx h
+	inx d
+	dcr b
+	jnz name
+	inx h
+	inx h
+;
+	push h
+	mvi c,6
+	lxi h,vfile
+	lxi d,vf2
+	call compar
+	pop h
+	jnz loop1	;no.  try again
+replay:	push h		;fix stack for
+	push h		;loop to begin:
+;======================================
+begin:	pop h		;correct stack
+	pop h
+beg1:	call draw	;position curs
+	call eeolcd	;cls lower lcd
+	call bottom	;position curs
+	lhld ptr+1	;pntr to file
+	mvi b,4		;set bank 2
+p_loop:	call get_b	;get file data
+	cpi 26
+pp1:	cz beep
+	jz 12f7h	;eof
+	push h
+	call p_chr	;print to lcd
+	pop h
+	inx h		;next byte
+	jmp p_loop	;do it again
+;======================================
+p_chr:	cpi 32
+	jnc ok		;printable chr
+	cpi 9
+	jz ok		;tabs ok
+	cpi 10
+	jz ok		;line feeds ok
+	cpi 13
+	jz ok		; <cr>'s ok
+	push psw
+	mvi a,'^'	;display ctrl
+	rst 4		;chrs as "^"
+	pop psw		;plus chr
+	adi 64
+ok:	cpi 13
+	cnz 5a05h	;rst 4 (print)
+	cz lf1		;jmp if <CR>
+;
+	lhld ef06h	;end of lcd?
+	lxi d,2810h	;if yes then
+	rst 3		;jump to print
+	cz lf		;and scroll
+;
+g_chr:	call 8b03h	;get user input
+	rz
+	cpi 27		;ESC to abort
+	jz ex
+	cpi 32		;spacebar to
+	rnz		;pause
+g1:	call 12f7h
+	cpi 30
+	jz begin	;UP ARROW
+	cpi 31
+	jz marker	;DOWN ARROW
+	cpi 32
+	jnz g1		;loop if not
+	ret		;spacebar
+;======================================
+marker:	pop h		;fix stack for
+	pop h		;loop back
+	dcx h
+m1:	dcx h		;look for prev
+	call get_b	;<CR> and set
+	cpi 13		;marker there
+	jnz m1
+	shld ptr+1
+	jmp beg1
+;-----------------------
+ex:	pop h		;fix stack for
+	pop h		;exit
+	jmp pp1
+;-----------------------
+lf:	pop b
+	pop d
+	pop h
+	inx h		;get next byte
+	push h
+	push d
+	push b
+	mvi b,4
+	call get_b
+	rst 4		;print it
+lf1:	lxi h,010Ah	;make scroll
+	call 4f9bh	;position line
+;
+	call 4f72h	;delete line
+	jmp bottom	;position for
+			;new line
+;======================================
+draw:	lxi h,0109h	;point to top
+	call 4f9bh	; of bottom
+	mvi b,40	;draw bar
+	jmp line
+;-----------------------
+eeolcd:	mvi a,'J'	;Erase to End
+	jmp 4f8fh	;Of LCD
+;-----------------------
+vmsg:	db 'X-View:',0		;data
+vfile:	db 0,0,0,0,0,0,0	;stored
+;-----------------------
+	end

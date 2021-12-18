@@ -1,0 +1,82 @@
+10 REM People, Chipmunk version, by Mark Lutton, 73106,1627 5/28/85.  Public Domain.
+11 REM Based on "Animal".
+12 REM This version requires a Chipmunk (TM) disk drive.  It builds a data base
+13 REM on the disk.
+15 DEFINTA-Z
+20 CLEAR 1000
+30 REM initialize
+31 PRINT "Make sure the Chipmunk is connected"
+32 PRINT "and has a disk in it and then hit ENTER."
+33 LINE INPUT R$
+35 REM open file.
+40  MAXFILES=1:'see if file exists
+45 ON ERROR GOTO 7500:OPEN "0:PEOPLE.DA" FOR INPUT AS #1
+46 ON ERROR GOTO 0
+50 CLOSE 1
+55 OPEN "0:PEOPLE.DA" FOR RANDOM AS #1
+56 FIELD #1,A$:120,Y%:2,N%:2
+60 PRINT"I'm learning all about people."
+61 PRINT"In fact, if you think of a person"
+62 PRINT"I can probably guess who it is. If I"
+63 PRINT"don't guess right, I'll remember"
+64 PRINT"that person and get it right next time."
+99 REM main loop
+100 Q$= "Are you thinking of a person":GOSUB8000
+110 IFR$="Y"THEN120
+115 PRINT"Well, either think of one or type Q to"
+116 PRINT"quit!!!":GOTO100
+120 INPUT"Is this person male or female";R$
+130 R$=LEFT$(R$,1):IFR$="M"ORR$="m"THENP=1ELSEIFR$="F"ORR$="f"THENP=2ELSEIFR$="Q"ORR$="q"THENGOSUB9000:GOTO120ELSEGOTO120
+199 REM loop down tree
+200 GET #1,P:REM get rid of spaces on right
+201 I=INSTR(A$,CHR$(0))-1
+202 IFI<1ORI>=120 THEN 209
+203 A$=LEFT$(A$,I)
+209 IFY%=0THEN300
+210 Q$=A$:GOSUB 8000
+220 IFR$="Y"THENP=Y%:ELSEP=N%
+230 GOTO200
+299 REM guess person
+300 PRINT"I know! It's ";A$;"!"
+310 Q$="Am I right":GOSUB 8000
+320 IFR$="Y"THENPRINT"Yay! I got one!  Let's try another.":GOTO 100
+399 REM guessed wrong.
+400 LINEINPUT"I give up. Who is it? ";P$
+410 PRINT"Please type a question that would"
+420 PRINT"distinguish ";A$
+430 PRINT"from ";P$;":"
+440 LINEINPUTQ1$
+450 PRINT"For ";P$
+460 Q$="the answer would be...":GOSUB 8000
+499 REM add new person to tree
+500 PRINT"Hmmm... I'll remember that..."
+505 A2$=A$
+510 L=LOF(1)+1:IFR$="Y"THENY1=L:N1=L+1ELSEY1=L+1:N1=L
+520 A$=P$+CHR$(0):Y%=0:N%=0:PUT#1,L
+530 L=L+1:A$=A2$+CHR$(0):Y%=0:N%=0:PUT#1,L
+540 A$=Q1$+CHR$(0):Y%=Y1:N%=N1:PUT#1,P
+550 GOTO100
+6999 REM open file.
+7500 IF ERR=52 THEN 7520
+7510 PRINT "Error Code ";ERR;" in line ";ERL:STOP
+7520 PRINT "PEOPLE.DA file not found."
+7530 Q$="Do you want me to create the file":GOSUB 8000
+7540 IF R$<>"Y" THEN END
+7550 REM initialize the file
+7560 OPEN "0:PEOPLE.DA" FOR RANDOM AS #1
+7565 FIELD #1,A$:120,Y%:2,N%:2
+7570 A$="Ronald Reagan"+CHR$(0):Y%=0:N%=0
+7580 PUT #1,1
+7590 A$="Jane Fonda"+CHR$(0):Y%=0:N%=0
+7600 PUT #1,2
+7610 CLOSE #1:RUN
+7999 REM input to print q$, get r$=y, n or q.
+8000 PRINTQ$;:INPUTR$:R$=LEFT$(R$,1)
+8010 IFR$="q"ORR$="Q"THENGOSUB9000
+8020 IFR$="y"ORR$="Y"THENR$="Y":RETURN
+8030 IFR$="n"ORR$="N"THENR$="N":RETURN:ELSEGOTO8000
+8999 REM quit
+9000 INPUT"Do you really want to quit now";R$
+9010 R$=LEFT$(R$,1):IFR$="Y"ORR$="y"THEN9020ELSER$=" ":RETURN
+9020 CLOSE 1:PRINT"Goodbye.":END
+9999 REM End of People

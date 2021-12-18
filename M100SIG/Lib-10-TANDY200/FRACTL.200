@@ -1,0 +1,44 @@
+0 'FRACTL.200 by Jeremy Nichols (73527,2164) 17 April 1988
+1 'Adapted from FRACT.100 by Mike Weiblen (72506,2072) [DL6]
+2 'Concept found in "Fractals" by Peter Sorensen in BYTE, Sep 1984
+3 'FRACT.100 program by Greg Turk
+4 'Printing routine uses LCDPRT.200 by James Yi (DL10).  
+5 'For starters, try these settings:
+6 '	Lambda = 0,1	Scale = 2.5	(Dragon)
+7 '	Lambda = 3,0	Scale = .7	(Bubbles)
+8 '	Lambda = 1,0	Scale = 2.5	(Cloud)
+9 'and allow to run for a LONG time!
+10 SCREEN0,0:CLS:CX=120:CY=64:X=.50001:Y=0
+11 PRINT@7,"Fractals for the Tandy 200"
+12 PRINT@82,"Type Control-P at any time to print."
+13 PRINT@122,"Fractal will continue after printing."
+14 PRINT@207,"Press any other key to stop":PRINT
+15 PRINT@290,"[S]tart a fractal"
+16 PRINT@330,"[Q]uit":PRINT
+17 B$=INKEY$:IFB$=""THEN17
+18 IFB$="s"ORB$="S"THEN20
+19 IFB$="q"ORB$="Q"THENMENUELSE17
+20 INPUT"Lambda (X,Y)";LX,LY:LA=LX:LB=LY
+21 S=LX*LX+LY*LY:LX=4*LX/S:LY=-4*LY/S
+22 INPUT"Scale ";SC:SK=SC:SC=2*CY/SC
+23 PRINT"One moment please":FORI=1TO10:GOSUB36:NEXT
+24 CLS:ONERRORGOTO35
+25 PRINT"L(x)= ";LA
+26 PRINT"L(y)= ";LB
+27 PRINT"S= ";SK
+28 PSET(CX+SC*(X-.5),CY-SC*Y)
+29 B$=INKEY$:IFB$=""THEN34
+30 IFASC(B$)<>16THEN10
+31 LOADM"LCDPRT.CO"
+32 M=40:H=16:L=256'M=left margin[0-127], H=# of lines[0-16], L=linefeeds[Yes=256,No=0]
+33 CALL63574,M,H+L
+34 GOSUB36:GOTO28
+35 RESUME34
+36 TX=X:TY=Y
+37 X=TX*LX-TY*LY:Y=TX*LY+TY*LX
+38 X=1-X:T=Y
+39 S=SQR(X*X+Y*Y)
+40 Y=SQR((S-X)/2):X=SQR((S+X)/2)
+41 IFT<0THENX=-X
+42 IFRND(1)<.5THENX=-X:Y=-Y
+43 X=1-X:X=X/2:Y=Y/2:RETURN

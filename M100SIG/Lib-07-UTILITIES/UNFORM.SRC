@@ -1,0 +1,479 @@
+UNFORM	ORG	57000	;May be located at any address
+	ENT	57000
+;May be adapted for any computer
+;as long as copyright notice
+;remains in final version
+;
+;Formatted for Custom Software assembler
+;ROM routines
+;
+;Check directory for filename
+;Entry:  D = buffer with name
+;A=length of filename +".DO"+1
+;Exit:  H = address of file directory
+;Z flag set if file not found
+;all other registers destroyed
+FILCHK	EQU	$5AAB
+;
+;Get start address of file
+;Entry:  H = file directory
+;Exit:  H = start of file
+;D = directory entry +2
+GETFIL	EQU	$5AE3
+
+KYREAD	EQU	$7242	;Get keystroke without cursor flashing
+KEYPRT	EQU	$4B44	;Print character on LCD
+UPCASE	EQU	$0FE9	;Convert filename to uppercase if needed
+FILES	EQU	$1F3A	;List RAM files
+CURSOR	EQU	$427C	;Position cursor - H = column, L = row
+CLS	EQU	$4231	;Clear screen
+NEGVID	EQU	$4269	;Negative video
+POSVID	EQU	$426E	;Positive video
+BEEP	EQU	$4229	;Beep
+;
+;Delete BC number of characters in TEXT ;Entry:
+;H = start of deletion
+;Exit:
+;H preserved, all other registers
+;destroyed
+DELETE	EQU	$6B9F
+;
+;Alternate LCD buffer
+;used here for RAM-saving storage
+;of lines from file
+BUFFER	EQU	$FCC0
+MENU	EQU	$5797	;Model 100 menu
+DISPLA	EQU	$1BE0	;Display B characters from H buffer
+ASCII	EQU	$39D4	;Display HL in ASCII form
+;
+;
+;Display introduction message
+	CALL	CLS	;Clear screen
+	MVI	H,15	;Currsor column
+	MVI	L,2	;Cursor row
+	CALL	CURSOR	;Position cursor
+	CALL	NEGVID	;Negative video
+	DISP	INTRO1	;Print intro line on LCD
+	CALL	POSVID	;Positive video
+	MVI	H,20	;Cursor column
+	MVI	L,3	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	INTRO2	;Print intro line on LCD
+	MVI	H,8	;Cursor column
+	MVI	L,4	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	INTRO3	;Print intro line on LCD
+	MVI	H,9	;Cursor column
+	MVI	L,6	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	INTRO4	;Print intro line on LCD
+	MVI	H,3	;Cursor column
+	MVI	L,7	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	INTRO5	;Print intro line on LCD
+	CALL	AWAIT	;Wait for keystroke
+;
+;Get name of file from keyboard
+GETNAM	CALL	CLS	;Clear LCD
+	CALL	FILES	;Display RAM files
+	MVI	H,7	;Cursor column
+	MVI	L,7	;Cursor row
+	CALL	CURSOR	;Position cursor
+	CALL	NEGVID	;Negative video
+	DISP	CHOOSE	;Print "select file" line on LCD
+	CALL	POSVID	;Positive video
+	MVI	H,21	;Cursor column
+	MVI	L,8	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	EXTNSN	;Print ".DO" on LCD
+	MVI	H,15	;Cursor column
+	MVI	L,8	;Cursor row
+	CALL	CURSOR	;Position cursor
+;Set B letter counter at 0 -
+;Maximum 6 letters in file name
+	MVI	B,0
+;Point H toward area to store 
+;file name as it's input
+	LXI	H,STORE
+LOOP2	CHAR		;wait for character
+	CALL	UPCASE	;Convert input character to uppercase
+	CALL	KEYPRT	;Display character
+	CPI	$08	;Check for "delete"
+	JZ	DELET	;If "delete," get another character
+	CPI	$0D	;Compare with ENTER key (end of word)
+	JZ	CHECK	;If end of word, jump to next routine
+	MOV	M,A	;Store character in STORE
+	INX	H	;Next memory location in STORE
+	INR	B	;Count of most recent letter
+	MOV	A,B
+	CPI	6	;check if 6th character has been reached
+	JNZ	LOOP2	;Loop if not last letter
+ENTER	CHAR		;Get character after 6th
+	CPI	$0D	;Check for Enter key
+	JZ	CHECK	;If Enter key
+	CALL	BEEP	;If not Enter key
+	JMP	ENTER
+;
+;Check if file is in RAM
+;
+;Increase count of letters
+;in A by 4 to
+;length of file name + ".DO" + 1
+CHECK	ADI	4
+;Add ".DO" to stored file name
+	MVI	M,'.'	;Store period
+	INX	H	;Next memory location in STORE
+	MVI	M,'D'	;Store "D"
+	INX	H	;Next memory location in STORE
+	MVI	M,'O'	;Store "O"
+	INX	H	;Next memory location in STORE
+	MVI	M,0	;Store 0 (end of file name)
+	LXI	D,STORE	;File name location for FILCHK
+	CALL	FILCHK	;Check directory for file name
+	JNZ	GOFILE	;File in RAM
+NOPE	CALL	BEEP	;File not in RAM
+	CALL	CLS	;Clear LCD
+	MVI	H,10	;Cursor column
+	MVI	L,5	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	STORE	;Print file name on LCD
+	DISP	NO	;Display "File not in RAM" message
+	CALL	AWAIT	;Wait for keystroke
+	JMP	GETNAM	;Return to get another name
+;Await keypress subroutine
+AWAIT	MVI	H,13	;Cursor column
+	MVI	L,8	;Cursor row
+	CALL	CURSOR	;Position cursor
+	CALL	NEGVID	;Negative video
+	DISP	PRESS	;Print "Press any key" on LCD
+	CALL	POSVID	;Positive video
+LOOP1	CALL	KYREAD	;Wait for keystroke
+	RNZ		;Return if any key is pressed
+	JMP	LOOP1	;No key pressed
+GOFILE	CALL	GETFIL	;Go to the file in RAM
+	SHLD	FLSTRT	;Store start of file for later
+;
+;Start measuring lines
+;
+;B will contain counter
+;looking for most characters
+;in one line
+	MVI	B,0
+;C will contain length of longest line
+;updated as longer lines are found
+	MVI	C,0
+;Line being measured is stored in
+;alternate LCD buffer
+LINCHK	LXI	D,BUFFER
+LOOP3	MOV	A,M	;Get character from file
+	CPI	$1A	;Check for EOF
+	JZ	ENDFIL	;If EOF, jump
+	CPI	$0D	;Check for end of line
+	JZ	COMPAR	;Jump if end of line
+	STAX	D	;Store letter in BUFFER
+	INX	D	;Next space in BUFFER
+	INR	B	;Increment character counter
+	MOV	A,B	;Get character count
+	CPI	150	;End program if line >=150
+	JZ	TOOLNG	;Jump if line is too long
+	INX	H	;Increment to next space in BUFFER
+	JMP	LOOP3
+COMPAR	INX	H	;Get past $0A (^J) at end of line
+	INX	H
+	MOV	A,C	;Get count on longest line to date
+;Is latest line (B)
+;longer than longest (C)?
+	CMP	B
+	JNC	NOCHG	;New line not longer
+;New line IS longer -  New length in C
+	MOV	C,B
+	PUSA		;Store all info on previous line
+;
+;Move all characters in
+;most recent line to BUFFER + 151
+	LXI	H,BUFFER	;Point to BUFFER
+	LXI	D,BUFFER+151	;Point to BUFFER + 151
+	LXI	B,150	;Maximum number of characters in line
+	LDIR		;Move characters
+	POPA		;Get back info on previous line
+NOCHG	MVI	B,0	;reset line character counter
+	JMP	LINCHK	;Check next line
+;If any line in file >= 150 bytes,
+;end program
+TOOLNG	CALL	CLS	;Clear LCD
+	CALL	BEEP	;Beep
+	MVI	H,1	;Cursor column
+	MVI	L,3	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	LONG1	;Print 1st Too Long message
+	MVI	H,6	;Cursor column
+	MVI	L,5	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	LONG2	;Print 2nd too long message
+	CALL	AWAIT	;Wait for keystroke
+EXIT	CALL	MENU	;Terminate program
+ENDFIL	PUSH	B	;Store longest line length (from C)
+	CALL	CLS	;Clear LCD
+	MVI	H,1	;Cursor column
+	MVI	L,1	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	LINLTH	;Print line length message
+	POP	B	;Retrieve longest line length from C
+	MOV	L,C	;Line length to L for ASCII call
+	MVI	H,0	;So H = line length
+	PUSH	B	;Store longest line length in C
+	CALL	ASCII	;Display line length
+	MVI	H,1	;Cursor column
+	MVI	L,2	;Cursor row
+	CALL	CURSOR	;Position cursor
+	DISP	FOLLOW	;Display "following" message
+	DISP	STORE	;Display file name
+	MVI	H,1	;Cursor column
+	MVI	L,4	;Cursor row
+	CALL	CURSOR	;Position cursor
+	CALL	NEGVID	;Negative video
+	POP	B	;retrieve longest line length
+	LXI	H,LINLEN;Point to line length storage
+	MOV	M,C	;Store longest line length
+;Move longest line length to B for DISPLA
+	MOV	B,C
+	LXI	H,BUFFER+151	;Point to longest line
+	CALL	DISPLA	;Display longest line
+	CALL	POSVID	;Positive video
+	MVI	H,5	;Cursor column
+	MVI	L,8	;Cursor row
+	CALL	CURSOR
+	DISP	CONT	;Display "Continue?" message
+CTINUE	CHAR		;Get character from keyboard
+	CALL	UPCASE	;Convert to upper case
+	CPI	'Y'
+	JZ	START	;If Yes
+	CPI	'N'
+	JZ	EXIT	;If No
+	JMP	CTINUE	;If anything else
+;
+;Start unformatting
+START	CALL	CLS	;Clear LCD
+	MVI	H,10	;Cursor column
+	MVI	L,3	;Cursor row
+	CALL	CURSOR
+	DISP	WORK	;Display "Unformatting" message
+	LDA	LINLEN	;Load longest line length
+	ADD	A	;Double line length
+	MVI	C,0
+;Subtract 3 arriving at 2/3 line length
+LOOP4	SUI	3
+;C contains count 2/3 of longest line -
+;Increment C
+	INR	C
+	JNC	LOOP4
+	MOV	A,C	;Get 2/3 length
+	STA	THIRDS	;Store length
+	LHLD	FLSTRT	;Point to start of file
+;Set flags at 0
+;Only necessary if program is CALLed
+	MVI	A,0
+	STA	ENDER
+	STA	NEW
+	STA	OLD
+LNSTRT	MVI	B,0	;B contains count of current line
+	MVI	A,0
+	STA	TAB	;Initialize tab counter
+;Initialize first-character-is space
+;flag
+	STA	SPACE
+	MOV	A,M
+	CPI	$20	;Check for space as 1st character
+	CZ	SPACST	;If space, increment space counter
+	CPI	$09	;Check for tab
+	CZ	TABCNT	;If tab, increment tab counter
+	CZ	SPACST	;If tab, increment space counter
+	CPI	$0D	;Check for end of line
+	JZ	PROCES	;Jump if end of line
+LOOP5	CPI	$1A	;Check for end of file
+;If end of file, set end flag
+	CZ	ENDBYT
+	JZ	PROCES	;If end of file, process last line
+	CPI	$09	;Check for tab
+	CZ	TABCNT	;If tab, increment tab counter
+	INX	H	;Next character
+	INR	B	;Increment count of current line
+	MOV	A,M	;Get character from file
+	CPI	$0D	;Check for end of line
+	JZ	PROCES	;Jump if end of line
+	JMP	LOOP5	;Get another character
+PROCES	CPI	$1A	;Check for end of file
+	CZ	ENDBYT	;If end of file
+	SHLD	NEXTPT	;Store address of new carriage return
+	LHLD	LASTPT	;Point to old carriage return
+	MOV	A,H	;Get old carriage return address
+	CPI	0	;Check if H has 0 flag
+;If H has zero flag, do not change
+;previous carriage return
+	JZ	KEEPO
+	LDA	NEW	;Check for saving last return
+	CPI	0
+	JNZ	KEEPO	;Jump to keep old routine
+	LDA	SPACE
+;Check if space or tab was 1st character of current line
+	CPI	0
+;If space or tab at top of current line
+;do not change previous carriage return
+	JNZ	KEEPO
+LINE	MOV	A,B	;Get line length
+	CPI	0	;Check for blank line
+	JZ	KEEPON	;Jump if blank line
+	PUSH	A
+	LDA	THIRDS	;Get 2/3 length
+	MOV	C,A
+	POP	A
+	CMP	C	;Compare with 2/3 line length
+;If less than 2/3
+;do not change current
+;carriage return
+	CC	KEEPN
+	LDA	TAB	;Get tab count
+	CPI	1	;Check for tabs
+;If more than 1 tab, don't
+;change this or previous line
+	JNC	KEEPON
+	LDA	OLD	;Get old carriage return flag
+	CPI	1
+	JZ	advanc	;End process if not 0
+	DCX	H	;Point to last character of previous line
+	MOV	A,M	;Get last character of previous line
+	INX	H	;Point to previous carriage return
+	CPI	$2E	;Check for period
+	JZ	TWOSPC	;If period, add two spaces
+	CPI	$21	;Check for exclamation point
+	JZ	TWOSPC	;If exclamation point, add two spaces
+	CPI	$3F	;Check for question mark
+	JZ	TWOSPC	;If question mark, add two spaces
+	CPI	$3A	;Check for colon
+	JZ	TWOSPC	;If colon, add two spaces
+;Replace carriage return with one space
+	MVI	M,$20
+	INX	H	;Point to ^J
+;BC contains number of characters
+;to delete
+	LXI	B,1
+	CALL	DELETE	;Delete ^J
+	LHLD	NEXTPT	;Point to recent carriage return
+;To compensate for deleted ^J, move back pointer one
+	DCX	H
+	SHLD	NEXTPT	;Store modified carriage return
+	LDA	ENDER	;Check for end of file
+	CPI	0
+	JNZ	EXIT	;End program if end of file
+	JMP	ADVANC	;Start another line
+;Keep old carriage return
+KEEPO	MVI	A,0
+	STA	NEW	;Reset last carriage return flag
+	MVI	A,1
+	STA	OLD	;Set save old flag
+	JMP	LINE
+;Keep old & new carriage returns
+;Since previous carriage return
+;will not be deleted, 0
+;put in LASTPT as flag
+KEEPON	MVI	A,1
+	STA	NEW	;Set last carriage return flag
+ADVANC	MVI	A,0
+	STA	OLD	;Zero old carriage return counter
+	LHLD	NEXTPT	;Point to most recent carriage return
+	SHLD	LASTPT	;Move it to previous storage
+	INX	H	;Go past ^M
+	INX	H	;Go past ^J
+	LDA	ENDER	;Check for end of file
+	CPI	0
+	JNZ	EXIT	;End program if end of file
+	JMP	LNSTRT	;Start another line
+;Keep new carriage return
+KEEPN	STA	NEW	;Set NEW flag
+	RET
+;Flag space or tab as 1st character in line
+SPACST	STA	SPACE	;Put number in space counter
+	RET
+TABCNT	PUSA		;Push all registers
+	LXI	H,TAB	;Point toward tab count storage
+	MOV	A,M	;Get current figure
+	ADI	1	;Add one to tab count
+	MOV	M,A	;Store new figure
+	POPA		;Get back previous registers
+	RET		;Return to get next character
+;Replace carriage return with two spaces
+TWOSPC	INX	H
+	INX	H	;Advance 2 bytes to check for end of file
+	MOV	A,M
+	CPI	$1A	;Check for end of file
+	JZ	EXIT	;End program
+;Go back to carriage return if not
+;end of file
+	DCX	H
+	DCX	H
+	MVI	M,$20	;Change to space
+	INX	H	;Point to ^J
+	MVI	M,$20	;Change to space
+	LDA	ENDER	;Check for end of file
+	CPI	0
+	JNZ	EXIT	;End program if end of file
+	JMP	ADVANC	;Start another line
+ENDBYT	STA	ENDER	;Set end of file flag
+	RET		;Return
+;Deleting character entered in
+;file name
+DELET	MOV	A,B
+	DCR	A	;Decrement counter
+;If too many letters are deleted beep
+;and go back to top of loop
+	JM	BEEPER
+	DCR	B
+	DCX	H
+	JMP	LOOP2	;Get another character
+BEEPER	CALL	BEEP	;Beep
+	MVI	B,0
+	JMP	LOOP2
+HOLD	JMP	HOLD
+INTRO1	DM	 UNFORM.CO 
+	DB	0
+INTRO2	DM	by
+	DB	0
+INTRO3	DM	Don Zeikel [CIS 75775,1430]
+	DB	0
+INTRO4	DB	$AB	;Copyright symbol
+	DM	1987, all rights reserved.
+	DB	0
+INTRO5	DM	Removes unnecessary carriage returns.
+	DB	0
+NO	DM	  IS NOT IN RAM!
+	DB	0
+PRESS	DM	 PRESS ANY KEY 
+	DB	0
+STORE	DS	9
+CHOOSE	DM	 SELECT .DO FILE TO UNFORMAT 
+	DB	0
+EXTNSN	DM	.DO
+	DB	0
+LONG1	DM	FILE HAS LINE OF 150 OR MORE CHARACTERS.
+	DB	0
+LONG2	DM	IT IS ALREADY UNFORMATTED!
+	DB	0
+LINLTH	DM	Formatted line length: 
+	DB	0
+FOLLOW	DM	The following is a line from 
+	DB	0
+LINLEN	DS	1	;Store length of longest line
+FLSTRT	DW		;Store address of file
+LASTPT	DW		;Store address of last carriage return
+NEXTPT	DW		;Store address of present carriage return
+SPACE	DS	1	;Flag if space or tab starts line
+TAB	DS	1	;Tab counter
+ENDER	DS	1	;End of file flag
+NEW	DS	1	;Keep new carriage return flag
+OLD	DS	1	;Keep old carriage return flag
+THIRDS	DS	1	;2/3 longest line length
+CONT	DM	CONTINUE (Y/N)?
+	DB	0
+WORK	DM	UNFORMATTING...
+	DB	0
+	END

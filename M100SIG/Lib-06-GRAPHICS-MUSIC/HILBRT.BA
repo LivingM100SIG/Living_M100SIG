@@ -1,0 +1,37 @@
+0  '"HILBRT.BA" Recursive Hilbert curve
+1  ' generator. Adapted from Applesoft
+2  ' version in BYTE of June 1986 in
+3  ' an article by Michael Ackerman.
+4  ' See the magazine article to see
+5  ' how it works!
+6  ' Phil Wheeler -- 71266,125
+7  ' 30 Jan 1987
+8  '
+9  '
+10 CLS:DEFINTA-Z:PRINT"Hilbert Curve":PRINT:INPUT"Order <1-5>";RD ' <--Try higher orders with Tandy 200
+20 DY=65/2^RD' <--Try 130 or so for Tandy 200
+30 TU=-1
+40 DX=0:X=140:Y=0 ' <--Try X=80 or 90 for starters with Tandy 200
+50 GOSUB100
+70 PRINT@160,"Press ENTER to"
+75 PRINT"continue, ESC"
+80 PRINT"to exit";
+85 A$=INKEY$:IFA$=CHR$(13)THEN10ELSEIFA$=CHR$(27)THENMENUELSE85
+100 RD=RD-1
+110 TU=-TU
+120 TE=DY:DY=-TU*DX:DX=TU*TE
+130 IFRD>0THENGOSUB100
+140 X0=X:Y0=Y:X=X+DX:Y=Y+DY:LINE(X,Y)-(X0,Y0)
+150 TU=-TU
+160 TE=DY:DY=-TU*DX:DX=TU*TE
+170 IFRD>0THENGOSUB100
+180 X0=X:Y0=Y:X=X+DX:Y=Y+DY:LINE(X,Y)-(X0,Y0)
+190 IFRD>0THENGOSUB100
+200 TE=DY:DY=-TU*DX:DX=TU*TE
+210 TU=-TU
+220 X0=X:Y0=Y:X=X+DX:Y=Y+DY:LINE(X,Y)-(X0,Y0)
+230 IFRD>0THENGOSUB100
+240 TE=DY:DY=-TU*DX:DX=TU*TE
+250 TU=-TU
+260 RD=RD+1
+270 RETURN

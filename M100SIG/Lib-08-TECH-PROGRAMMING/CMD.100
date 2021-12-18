@@ -1,0 +1,46 @@
+        CMD.100 by Paul Globman
+           Copyright (c) 1990
+
+The Model 100, as designed, provides several programs supplied in ROM and 
+the ability to design and write programs that will run in RAM.  If you go into 
+BASIC you can enter direct commands, such as FILES or LOAD "PRGRAM" and the 
+Model 100 will display the files or load the program PRGRAM.BA.
+
+This is fine but you must be in BASIC for these commands to have any meaning.
+ At the menu of the Model 100 you can use the widebar cursor to select a 
+program you wish to run, but wouldn't it be nice if you could type in 
+"commands" and make the Model 100 do what you want?
+
+Well you can type in a filename and press ENTER, and that file will run, 
+but it's not quite the same as typing a command... or is it?
+
+Suppose you have a program like RUN.BA or KILL.BA (see Portable 100, Jan. 
+1989).  These programs can be made into "commands" by...
+
+  a) making them invisible so they do not appear as programs
+
+  b) removing the .BA so you only need to type RUN<cr> or KILL<cr>.
+
+RUN and KILL are unique programs in the sense that they only operate on the 
+file that is under the menu widebar cursor.  By making them invisible and 
+removing the .BA, these programs take on the characteristics of commands 
+instead of programs.
+
+Select the program you wish to make into a command, such as RUN.BA.  With the 
+cursor over RUN.BA, type CMD.BA<cr>.  RUN.BA will disappear, but don't 
+worry... it's still there.  It's invisible and the .BA was removed, so 
+you can use RUN as a command from the menu when running a .CO program that 
+would normally require HIMEM to be properly prepared.
+
+0 REM CMD.BA (c) 1990 by Paul Globman
+1 A=64929+2*PEEK(65006):A=PEEK(A)+256*PEEK(A+1)::POKEA,PEEK(A)OR8:POKEA+9,32:POKEA+10,32:MENU
+
+
+CMD.BA is used to make a file invisible and remove the file extension.  I have 
+only experimented with BASIC programs and feel confident that the use of 
+CMD.BA with basic programs will work as expected.  
+
+NOTE: If you run CMD.BA from the menu by selecting it with the cursor and 
+pressing enter, it will operate on itself and become invisible (and the 
+.BA will be removed).
+

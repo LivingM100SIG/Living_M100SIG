@@ -1,0 +1,16 @@
+
+0 'ONOT0.BA
+1 'A loader to create a machine language program to turn '0' to 'O'
+2 'for Don Zeikel
+3 '
+4 '                Phil Wheeler:6/10/87
+5 '
+7 GOTO20
+8 MENU
+20 CLS:RV$=CHR$(27)+"p":NO$=CHR$(27)+"q":A=64228
+22 KEY8,"Menu"+CHR$(13)+CHR$(254)+CHR$(48)+CHR$(192)+CHR$(62)+CHR$(79)+CHR$(201)
+30 CLS:F$=" Off ":P=PEEK(A)+256*PEEK(A+1):IFP=63615THENF$=" On "
+32 PRINT:PRINT"0 --> O Translate"RV$F$NO$:PRINT:PRINT,"E)nable",,"D)isable",,"M)enu"
+34 ONINSTR("eEdDmM",INPUT$(1))GOTO36,36,38,38,8,8:GOTO34
+36 POKEA,127:POKEA+1,248:GOTO30
+38 POKEA,243:POKEA+1,127:GOTO30

@@ -1,0 +1,20 @@
+0 'INSRTS, prints label inserts for hanging folders, (C) Copyright 1991 by Henry Glover, 72256,2564
+1 CLS:DEFSTRA-E:PRINT@41,"Select label size:":PRINT@167,"1"SPACE$(12)"2"SPACE$(12)"3":LINE(7,27)-(77,43),1,B:LINE(87,25)-(157,46),1,B:LINE(167,25)-(231,46),1,B
+2 S=VAL(INKEY$):IFS<1ORS>3THEN2
+3 CLS:Y=81:Z=1:IFX>1THENPRINT"new label or hit <ENTER> to exit program"ELSEPRINT"turn printer on"
+4 IFS=3THENX=19ELSEX=21
+5 PRINT@Y,"line"Z"to read: ";:Y=121:A="":PRINTSTRING$(X,239);STRING$(X,8);
+6 E=INPUT$(1):IFE=CHR$(13)THENPRINTSPACE$(X-LEN(A)):IFZ=2THEN12ELSE11
+7 IFLEN(A)=0ANDE=CHR$(8)THENBEEP:GOTO6
+8 IFE=CHR$(8)THENPRINTE;CHR$(239);E;:A=LEFT$(A,LEN(A)-1):GOTO6
+9 IFLEN(A)=>XTHENBEEP:GOTO6
+10 PRINTE;:A=A+E:GOTO6
+11 IFA=""THENV=192:W=217:GOSUB15:MENUELSEB=A:Z=2:PRINT@0,"hit <ENTER> to skip line 2"+SPACE$(14):GOTO5
+12 D=STRING$((X-LEN(B))/2," "):IFZ=0THENB=D+BELSEC=D+B:B=A:Z=0:GOTO12
+13 IFU=0THENU=1:V=218:W=191ELSEV=195:W=180
+14 GOSUB15:GOSUB16:GOSUB16:C="":IFS>1THENGOSUB16:GOTO3ELSE3
+15 LPRINTCHR$(V)+STRING$(X,196)+CHR$(W):RETURN
+16 LPRINTCHR$(179)+C+SPACE$(X-LEN(C))+CHR$(179):C=B:RETURN
+17 'Size of different brands of plastic tabs may vary slightly. This program gives you a choice of 3 label sizes to accomodate those differences.
+18 'A trial run will tell you which size label you need - snip out the label along the cut-out lines and try slipping it into your plastic tab - select that size which gives the snuggest fit.
+19 'Thanks to Tony Anderson for his key input routine in lines 5-10!

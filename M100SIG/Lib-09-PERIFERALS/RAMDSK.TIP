@@ -1,0 +1,83 @@
+     RAMDSK.TIP  by Paul Globman
+                 copyright (c) 1990
+
+This file will describe various entry addresses into RAMDSK.CO (c) which will
+allow the user to perform certain Datapac operations from a BASIC program.
+
+RAMDSK.CO is a file transfer program which lists the Datapac files and allows
+ the user to move files between system RAM and Datapac RAM.  KILL and RENAME
+functions are also provided, and all operations are function key driven and
+require immediate user interaction.
+
+One of the features of the Node ROM (which normally comes with the Datapac), is
+ the ROM entry point for a CALL from BASIC which would allow a variety of
+operations to be performed under program control.  Most of those ROM operations
+can also be accomplished with the RAMDSK.CO program so the user has not lost
+programming capabilities.
+
+Entry points:     M100       T200
+-------------------------------------
+  FREE            61896      60053
+  KILL            61942      60099
+  LOAD            62300      60444
+  NAME            61998      60155
+  SAVE            62055      60212
+  SAVE1           62061      60218
+
+After RAMDSK.CO has been LOADM'ed into its operating address, a BASIC program
+may CALL the above locations.  The user will be prompted for input and when the
+operation is complete, the BASIC program will resume.
+
+NOTE: CALL FREE must precede CALL SAVE each time CALL SAVE is used (this
+applies to CALL SAVE1 also).
+
+SAVE and SAVE1 are identical in function however SAVE will display RAM files 
+and SAVE1 will not.
+
+These entry points will require user input but it is possible for the BASIC
+program to preset the user input (ie. load the keyboard buffer) so the
+appropriate input is encountered by the routine that is requesting input.  The
+following example will save the RAM file TEST.DO to the Datapac and overwrite
+the previous version (if one existed).
+
+If the operation is aborted by not "replacing" a duplicate filename, the
+routine will not return to BASIC but instead will remain in the RAMDSK.CO
+program.  A "Y" can be included in the keyboard string after the second <cr>
+to force replacement if necessary (see line 3 of sample program below).
+
+
+0 REM -------------  SAVE TO DATAPAC
+1 CLEAR99,59838:LOADM"RAMDSK":K=-738
+2 FR=60053:S1=60218
+3 F$="TEST.DO"+CHR$(13)+CHR$(13)+"Y"
+4 F=LEN(F$):POKEK,F:K=K-1
+5 FORI=1TOF:J=I*2
+6 POKEK+J,ASC(MID$(F$,I))
+7 POKEK+J+1,0:NEXT
+8 CALLFR:CALLS1
+
+
+This program is for the Tandy 200.  For the Model 100, only the first two line
+need be changed to...
+
+1 CLEAR99,61681:LOADM"RAMDSK":K=-86
+2 FR=61896:S1=62061
+
+
+The LOAD routine will bring .DO and .CO files into RAM and continue in the
+BASIC program.  When LOADing a .BA program, the newly loaded program becomes
+the ACTIVE program and when the routine returns to BASIC an error may occur
+because the active program has been changed.  If the keyboard buffer had the
+string RUN+CHR$(13) (after the name of the program to be loaded) then the newly
+loaded BASIC program can be "chained" to as RUN<cr> will be entered from the
+keyboard buffer.
+
+These entry locations would make it possible to auto-backup files from RAM to
+Datapac, or Datapac to disk.  Groups of programs/files can be loaded as "sets"
+of files.  Expanded database manipulation and other applications are now
+possible using these new programming opportunities available with RAMDSK.CO.
+
+I would be happy to answer any questions directed to me on the SIG or in email.
+
+
+Paul Globman [72227,1661]

@@ -1,0 +1,271 @@
+The Good, The Bad, The Ugly
+---------------------------
+This file presents a dynamic relocation scheme (DRS) for writing relocatable 
+8085 code. Good points:
+
+1) All 3-byte instructions are handled, including conditional & unconditional 
+jumps and calls, memory references, and immediate loads.
+
+2) The method simulates PC-relative addressing, so the resulting code is 
+"relocatable" in the STRONG sense of being truly position-independent. This 
+means, e.g., that the code can be loaded into a BASIC string or integer array -
+that these move in memory while BASIC is running won't hurt. Or the code can be
+saved in a .CO file & executed directly where it sits (no need for a LOADM). 
+Etc.
+
+3) The method is uniform & easy to apply; a largely mechanical translation of 
+existing programs is feasible.
+
+Bad points: (no free lunch!)
+
+1) There's a 3-byte space penalty for each instruction with a position-
+dependent (PD) operand. (PD means that the operand's value depends on the ORG 
+address: PD operands are precisely those that need to be changed when the code 
+moves)
+
+2) The support routines (61 bytes) MUST start at a fixed location (of your 
+choosing, of course).
+
+3) There's a significant time penalty for faking PC-relative addressing, but 
+that's true of ANY DRS.
+
+4) 2-byte instructions with PD operands aren't handled; again, no "reasonable" 
+DRS CAN handle them. In practice, this restriction is rarely noticed.
+
+
+Basic Idea
+----------
+ALL PD operands are replaced by offsets. Support routines dynamically compute 
+what their values SHOULD be. E.g.:
+
+	org	anything
+loop	lhld	joe
+	inx	h
+	shld	joe
+	jmp	loop
+joe	ds	2
+
+is changed to:
+
+loop	call	$rel;a support routine
+	lhld	15
+	inx	h
+	call	$rel
+	shld	8
+	call	$rel
+	jmp	-17
+joe	ds	2
+
+A call to $rel has been placed before each instruction with a PD operand, and 
+each PD operand has been replaced by the offset FROM the first byte of the 
+operand field TO the operand's value. The crucial point is that these offsets 
+do NOT depend on the position of the code in memory: "joe" is 14 bytes after 
+"lhld", REGARDLESS of where the program is. $rel computes the ACTUAL memory 
+location FROM the offset.
+
+
+Counting Bytes is Too Painful!
+------------------------------
+You don't have to: any assembler that's not a toy has a special symbol 
+representing the current PC value:
+
+loop	call	$rel;a support routine
+	lhld	joe-$-1
+	inx	h
+	call	$rel
+	shld	joe-$-1
+	call	$rel
+	jmp	loop-$-1
+joe	ds	2
+
+does the same thing ("$"=current PC, in ROM2). This pattern is rigid - always 
+change:
+
+	opcode	PDadr
+to:
+	call	$rel
+	opcode	PDadr-$-1
+
+Complication: if "opcode" is a call (conditional or not), you MUST call "$relc"
+instead of "$rel". Calls require significantly different handling.
+
+
+The Support Routines
+--------------------
+$rel & $relc MUST be assembled at a fixed starting address. Pick any address 
+you like, but $rel & $relc MUST NOT MOVE! The following is cut-&-paste ROM2 
+source code - just stick on an ORG and assemble it:
+
+;Run-time relocation handlers:
+;
+;$rel  handles lxi,lhld,shld,lda,sta,&
+;      jumps.
+;$relc handles calls.
+;
+;To convert a position-dependent
+;instruction (i.e., one of the above
+;with an operand whose value depends on
+;ORG) to position-INdependent code:
+;
+;  1) precede the instruction by "call
+;     $rel" or "call $relc".
+;  2) replace the operand ("adr") by
+;     "adr-$-1".
+;
+;E.g., change:
+;	lxi	d,temp+3
+;to:
+;	call	$rel
+;	lxi	d,temp+3-$-1
+;and change:
+;	cc	panic
+;to:
+;	call	$relc
+;	cc	panic-$-1
+;In general, change:
+;	op	PDadr
+;to:
+;	call	$rel;($relc for calls)
+;	op	PDadr-$-1
+;
+
+ldh	mac	;hl=w[de]
+	db	EDh;undocumented opcode
+	end
+;That was a ROM2 macro - if you don't
+;use ROM2, replace "&ldh:" below by
+;something that will make YOUR
+;assembler assemble a byte containing
+;ED hex.
+$rel	equ	$
+	xthl	;save hl;hl=^op
+	push	d
+	push	psw
+	mov	a,m;a=op
+	sta	instr
+	inx	h;hl=^ofs
+	xchg	;de=^ofs
+	&ldh:	;hl=ofs
+	dad	d;hl=ofs+^ofs=PDadr
+	shld	instr+1
+	xchg	;hl=^ofs
+	inx	h
+	inx	h;hl=return address
+	shld	jump+1
+	pop	psw
+	pop	d
+	pop	h
+instr	ds	3;op PDadr: relocated
+;		 instruction built here
+jump	jmp	0;return to program
+
+$relc	equ	$
+	xthl	;save hl;hl=^op
+	push	psw
+	mov	a,m;a=op
+	sta	cinstr
+	inx	h;hl=^ofs
+cinstr	call	doCall;opcode varies
+;fell thru: don't do call
+	inx	h
+	inx	h
+	pop	psw
+	xthl	;restore hl;push return
+	ret
+doCall
+;stack: HL,AF,junk
+;   HL: ^ofs
+	push	d
+	xchg	;de=^ofs
+	&ldh:	;de=ofs
+	dad	d;hl=ofs+^ofs=PDadr
+	shld	cjump+1
+	xchg	;hl=^ofs
+	inx	h
+	inx	h;hl=return address
+	pop	d
+	pop	psw;toss junk
+	pop	psw
+	xthl	;restore hl;push return
+cjump	jmp	0;jump to callee -
+;		 "natural" return adr
+;		 is on stack
+	end
+
+
+Macros
+------
+The following cut-&-paste Polar ROM2 "include" file makes the whole process 
+painless. Give it a name (say, "name"!), put "&name" near the start of your 
+source code file, and just use the "r" macro as illustrated:
+
+;relocation include file begins
+$rel	equ	57900;put YOUR val here
+$relc	equ	57929;put YOUR val here
+
+r	mac	;#1=opcode;#2=operand
+	call r@#1
+	#1   #2-$-1
+	end
+;e.g.,
+; &r:	cz;	sub
+; &r:	sta;	temp+1
+; &r:	jmp;	error
+; &r:	lxi;	sp,stkbeg+STKSIZE
+
+r@lxi	equ	$rel
+r@lhld	equ	$rel
+r@shld	equ	$rel
+r@lda	equ	$rel
+r@sta	equ	$rel
+r@jmp	equ	$rel
+r@jz	equ	$rel
+r@jc	equ	$rel
+r@jp	equ	$rel
+r@jpe	equ	$rel
+r@jnz	equ	$rel
+r@jnc	equ	$rel
+r@jm	equ	$rel
+r@jpo	equ	$rel
+
+r@call	equ	$relc
+r@cz	equ	$relc
+r@cc	equ	$relc
+r@cp	equ	$relc
+r@cpe	equ	$relc
+r@cnz	equ	$relc
+r@cnc	equ	$relc
+r@cm	equ	$relc
+r@cpo	equ	$relc
+;relocation include file ends
+
+All of that is just support for the "r" macro defined in the file, which is 
+used as follows:
+
+loop
+ &r:	lhld;	joe
+	inx	h
+ &r:	shld;	joe
+ &r:	jmp;	loop
+joe	ds	2
+
+"r" automatically inserts the proper call (to $rel or $relc), computes the 
+offset, and will trigger an assembly error if you attempt to use it on an 
+instruction (like "mvi" or "pop") that doesn't make sense.
+
+
+Hint
+----
+Once your program is "ready", assemble it twice using two different origin 
+addresses & compare the code: should be IDENTICAL, since all the PD info should
+have been stripped. If not, you've missed a PD value somewhere, or applied the 
+technique to a NON-PD value.
+
+
+Comments, questions, attacks, improvements, etc., most welcome. BIG & special 
+thanks to Polar Engineering & Consulting for breaking their backs to get macros
+& "include" files into their superb ROM2 package - couldn't live without it!
+
+
+Tim Peters  CIS 72227,2416
+

@@ -1,0 +1,69 @@
+34' CRTMMC.ETJ by Evan Jones,POB 343,Ann. Va. 22003 Copyright 1988 
+35' When merged with CRDTMP.BAS the following additions are available:
+36' A "Card" or Template of any size not limited to LCD size can be created.
+37' The "large" template can be used with CRDMCD.ETJ merged with CRDFIL.BAS
+38' After starting a prompt pushing cursor, <ESC>, or <TAB> keys before
+39' completion of prompt with <ENTER> erases started prompt and starts fresh
+40' prompt at new position.
+41' pushing <BKSP> beyond starting point of prompt doesn't result in error
+42' Rows can be temporarily numbered during template creation to assist with
+43' prompt location.  The 1st row is numbered 0 and if selected done automatically
+44' Cursor keys move small arrow to each prompt during screen review
+45' scrolling template if larger than   LCD display.  During review template can
+46' still be accepted at any point by   pushing "Y".
+47' Install program by loading CRDTMP.BAS into BASIC and CDTMMC.ETJ into RAM
+48' type MERGE "CDTMMC" and push <ENTER> CRDTMP.BAS will then operate as above
+110IFPEEK(2)=152THENAL=599:AK=639ELSEAL=279:AK=319
+112M=AK+1
+145PRINT@241,"Push <R> if rows are to be numbered     else <ENTER> to proceed?";:Q$=INPUT$(1):IFQ$=CHR$(13)THEN150ELSERR=1
+160CLS:IFRR=1THENGOSUB590
+164FORA=1TON
+220GOSUB500
+230
+240
+250PRINT@M-55,"ALL OK? (Y/N)";:Q$=INPUT$(1)
+255GOSUB700:IFCR=1THENCR=0:GOTO250
+260PRINT@M-55,SPACE$(13);:IFQ$=""THEN390
+280CLS:IFRR=1THENGOSUB590
+282FORA=1TON
+285TS(0)=TS:GOSUB600:IFTS<>TS(0)THENNN=A:GOSUB510
+290PRINT@(P(A)-TS),CHR$(27);"p";A$(A);CHR$(27);"q";
+310PRINT"OK?(Y/N)";:Q$=INPUT$(1):PRINT@(P(A)-TS),A$(A);SPACE$(8);
+330PRINT@(P(A)-TS),SPACE$(LEN(A$(A))):GOSUB410
+410PRINT@(P(A)-TS),"*";
+420Q$=INKEY$:IFQ$=""THEN420ELSEQ=ASC(Q$):PRINT@(P(A)-TS+LEN(R$))," ";
+422IFQ=8ANDR$<>""THENR$=LEFT$(R$,LEN(R$)-1):PRINT@(P(A)-TS),R$"* ";:GOTO470
+424IFQ=13THENR$=R$+": "+CHR$(32):PRINT@(P(A)-TS),R$;:GOTO480
+426IFQ=27THENP(A)=((P(A)+39)\40)*40:TS(0)=TS:GOSUB600:IFTS(0)<>TSTHENNN=A:GOSUB510
+428IFQ=9THENPRINT@(P(A)-TS)," ";:P(A)=(P(A)+8)-(P(A)MOD8):TS(0)=TS:GOSUB600:IFTS(0)<>TSTHENNN=A:GOSUB510:GOTO410ELSE410
+425GOSUB760:IFCR=1THENCR=0:PRINT@(P(A)-TS),SPACE$(LEN(R$)+1):R$=""
+430P(A)=P(A)+40*((Q=30)-(Q=31))+(Q=29)-(Q=28):GOSUB800:TS(0)=TS:GOSUB600:IFTS(0)<>TSTHENNN=A:GOSUB510
+440A=A
+460PRINT@(P(A)-TS),R$"*";
+500A=1:TS=0:NN=N
+510CLS:IFRR=1THENGOSUB590
+520IF(P(A)+LEN(A$(A))-TS)>ALTHENTS=TS+40:GOTO520
+530FORYY=1TONN
+540IFP(YY)<TSOR(P(YY)+LEN(A$(YY)))>(TS+AL)THEN554
+550PRINT@(P(YY)-TS),A$(YY);
+554NEXT
+560IF(P(A)+LEN(A$(A))-TS)>ALTHENTS=TS+40:GOSUB510:GOTO560
+570PRINT@(P(A)-TS),A$(A);
+580RETURN
+590FORAA=(TS+36)TO(TS+AL-40)STEP40:PRINT@AA-TS,INT(AA/40):NEXT
+600IFP(A)<TSTHEN620ELSEIFP(A)>TS+ALTHEN640
+610RETURN
+620TS=P(A):TS=(INT(TS/40))*40
+630GOTO610
+640TS=P(A)-AL+LEN(A$(A))+40:TS=(INT(TS/40))*40:GOTO610
+700IFQ$=CHR$(29)ORQ$=CHR$(30)THEN710ELSEIFQ$=CHR$(28)ORQ$=CHR$(31)THEN740ELSERETURN
+710TS(0)=TS:GOSUB780:A=A-1:IFA=0THENA=1
+720GOSUB600:IFTS<>TS(0)THENNN=N:GOSUB510
+730CR=1:GOSUB790:RETURN
+740TS(0)=TS:GOSUB780:A=A+1:IFA>NTHENA=N
+750GOTO720
+760IFQ=29ORQ=28ORQ=30ORQ=31ORQ=9ORQ=27THENCR=1:RETURNELSERETURN
+780PRINT@(P(A)-TS+LEN(A$(A))-1)," ":RETURN
+790PRINT@(P(A)-TS+LEN(A$(A))-1),CHR$(155):RETURN
+800IFP(A)<0THENP(A)=P(A)+40
+810RETURN

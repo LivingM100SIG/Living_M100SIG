@@ -1,0 +1,61 @@
+        Documentation for UNIXV.100, a terminfo listing to allow use
+        of the Model 100 as a terminal with System V UNIX systems.
+        For System V, AT&T uses a small file to describe a particular
+        terminal, rather than an entry in a huge /etc/termcap file.
+        This terminfo has been tested on an AT&T 3B2 and a 6300 PLUS,
+        and has been derived from TERMCP.100.
+
+        To compile the terminfo, copy UNIXV.100 to a file with a "t"
+        extension, like m100.t. Then issue the command:
+
+                        tic -v m100.t
+
+        You must be root or superuser to create a terminfo file.
+
+        To use a 200 or the DVI, change the name on the first line,
+        and the line and column information.  Be sure the name does
+        not refer to an existing terminal.
+
+        Function keys are simulated by pressing <ESC> then the number
+        that corresponds to the key, such as <ESC>2 for F2.  You have
+        to be reasonably quick about the sequence.
+
+        The basic definitions I can recall: (by line)
+
+        Auto margin (wrap), use xon-xoff, ?, ? (Can't remember),
+        Screen size,
+        Bell, Carriage Return, New line,
+        Index (scroll one line up), Reverse index,
+        Cursor movement: up, down, forward, back,
+        Keys: up, down, forward, back, backspace,
+        Standout (reverse video), Remove standout,
+        Cursor invisible, Normal,
+        Erase to end of: display, line,
+        Insert line, Delete line,
+        Home, Clear, Cursor position (added to a <SPACE> or dec. 32),
+        Function key simulation.
+
+        I do not like reverse video on the DVI with a TV, and delete
+        the standout line in that file.  You will have to use a
+        separate file for a 100 and a DVI, as there is a bug in tic
+        that does not let you refer to an existing terminal.  I have a
+        dvi and dvi40 description, for 80 and 40 column displays.
+
+        The only bug I know of is occasional garbage characters with
+        vi at above 4800 baud.  Use <CTRL> L to redraw the screen.
+        Since most people will use a 100 only long enough to transfer
+        files back and forth over a serial line, I do not consider it
+        a major problem.  Everything is fine at 300 or 1200 baud,
+        although I would suggest setting noredraw in vi at 300.
+
+        I set up my .profile to execute a tty command and if I am
+        using a modem port, export m100 as TERM, then copy my model 100
+        .exrc file in.  I have noredraw and wrapmargin=0 set for the 40
+        column screen. Otherwise, I export a default terminal, and
+        copy in a .exrc file with redraw and wrapmargin=10.
+
+        I did this about a year ago, and should have posted it then.
+        I am posting it now (along with my ramblings) because my 6300
+        did not have documentation for tic.
+
+        Stephen Ricker   73076,3320

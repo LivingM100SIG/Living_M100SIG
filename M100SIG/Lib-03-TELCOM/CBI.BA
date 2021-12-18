@@ -1,0 +1,64 @@
+1 POWER100:CLEAR1000:CLS:SOUNDON:A$=STRING$(39,128)
+2 NM$="":ADDRESS$="":ID$="":BEEP:PRINTA$:PRINT"CBI System Credit Check":PRINTA$:PRINT:PRINT"Custom Programing by Robert H. Merriman":PRINTSTRING$(12," ");"Copyright  1986":PRINTSTRING$(13," ");"CIS 76010,371"
+3 PRINT"   P.O.Box 8612, Va Beach, VA  23450";:FORI=1TO1000:NEXTI:CLS:MAXFILES=3
+5 LGN$="":'    INSTRUCTIONS                                                     PLACE CURSOR ON SECOND QUOTE MARK AND   TYPE IN YOUR USER ID AND SECURITY CODE  THEN PRESS THE <F8> FOLLOWED BY <F4>.   (EXAMPLE: ###XX##-XX<F8><F4>)
+10 IFLGN$=""THEN12ELSE20
+12 BEEP:BEEP:BEEP:PRINT"Your logon sequence has not been set.":PRINT:PRINT"See Instructions for setting":PRINT"your logon sequence":PRINT:PRINT"You will only have to do this once.":PRINT:PRINT"Press <ENTER> when ready";
+15 X$=INKEY$:IFX$=CHR$(13)THENEDIT5ELSE15
+20 NBR$=""'   INSTRUCTIONS                                                      PLACE CURSOR ON SECOND QUOTE MARK AND   TYPE IN YOUR LOCAL ACCESS PHONE NUMBER  FOLLOWED BY THE <F8> THEN <F4>.         (EXAMPLE 4661619<F8><F4>)
+21 IFNBR$=""THEN22ELSE50
+22 BEEP:BEEP:BEEP:PRINT"Your local access number":PRINT"has not been set.":PRINT:PRINT"See Instructions for setting.":PRINT:PRINT"You will only have to do this once.":PRINT:PRINT"Press <ENTER> when ready";
+23 X$=INKEY$:IF X$=CHR$(13)THEN EDIT 20 ELSE 23
+50 CLS
+51 LINEINPUT"Enter First Name     :";FN$
+52 LINEINPUT"Enter Middle Initial :";MI$
+53 LINEINPUT"Enter Last Name      :";LN$
+54 LINEINPUT"Enter Suffix         :";SU$
+55 LINEINPUT"Spouse's First Name  :";SP$
+56 PRINT:PRINT"Is this a joint search <Y or N>?":X$=""
+57 X$=INKEY$:IF X$="Y" OR X$="y" THEN NM$="NJ-":GOTO 60
+58 IF X$="N" OR X$="n" THEN NM$="NM-":GOTO 60
+59 GOTO 57
+60 CLS
+61 LINEINPUT"Enter Street Number    :";SN$
+62 PRINT    "Enter Street Name less":LINEINPUT"street designator      :";S2$
+63 LINEINPUT"Street Designator      :";SD$
+64 LINEINPUT"City                   :";CITY$
+65 LINEINPUT"State                  :";STATE$
+66 LINEINPUT"Zipcode                :";ZIPCODE$
+70 CLS:
+71 PRINT:PRINT:PRINT"Social Security Number":LINEINPUT"      ###-##-####     :";SSN$:IF SSN$<>""THEN 80
+72 CLS:PRINT:PRINT"Enter Birthdate":LINEINPUT"     ##/##/##     :";BD$
+80 NAM$=NM$+LN$+","+FN$+","+MI$+","+SU$+","+SP$+"."
+81 ADDRESS$="CA-"+SN$+","+S2$+","+SD$+","+CITY$+","+STATE$+","+ZIPCODE$+"."
+82 IF SSN$<>"" THEN ID$="ID-SSS-"+SSN$+".":GOTO 90
+83 IF BD$<>"" THEN ID$="ID-BDS-"+BD$+"."
+90 CLS:PRINT:PRINT NAM$:PRINT ADDRESS$:PRINT ID$:PRINT
+91 PRINT "Is this correct <Y or N>":X$=""
+92 X$=INKEY$:IFX$="Y" OR X$="y" THEN 100
+93 IFX$="N" OR X$="n" THEN 1
+94 GOTO92
+100 CLS:PH$=NBR$+"<=^M^M?S?I?G?N?-?O?N="+LGN$+",KTO,P."+CHR$(19)+"?P?R?O?C?E?E?D=>"
+101 PRINT"Press <ENTER> when phone line is clear.":PRINT"Press <SHIFT><BREAK> to abort."
+102 X$=INKEY$:IFX$=CHR$(13)THEN110ELSE102
+110 M=VARPTR(PH$)
+120 AD=PEEK(M+1)+(PEEK(M+2)*256)
+125 CLS:PRINT:PRINT:PRINT"Calling CBI System now.... ";
+130 CALL 21200
+140 CALL 21293,0,AD
+200 OPEN "MDM:7I1D" FOR INPUT AS 1
+210 OPEN "MDM:7I1D" FOR OUTPUT AS 2
+230 OPEN "REPORT.DO" FOR OUTPUT AS 3
+240 PRINT:PRINT #2,NAM$:PRINT#2,ADDRESS$:PRINT#2,ID$:PRINT#2,CHR$(19):CLEAR256
+250 LINEINPUT #1,Z$:PRINT".";
+260 PRINT #3,Z$:T%=INSTR(Z$,"END OF REPORT"):IF T%=0 THEN 250
+270 PRINT #2,CHR$(4):BEEP:BEEP:BEEP:CLOSE
+280 CALL 21179
+290 CLS:PRINT"File Received":PRINT"Enter a six letter name that you would":PRINT"like to save this file under.":PRINT:PRINT"Do not use REPORT or any":LINEINPUT"existing filename  :";NN$:NAME"REPORT.DO" AS NN$+".DO"
+295 CLS:BEEP:PRINT"File saved under new name of ";NN$:PRINT"Would you like me to print the file?
+300 X$=INKEY$:IFX$="Y"ORX$="y"THEN400
+310 IFX$="N"ORX$="n"THENMENU
+320 GOTO300
+400 OPEN NN$ FOR INPUT AS 1
+410 IF EOF(1)THENPRINT"DONE":CLOSE:BEEP:END
+420 LINEINPUT#1,Z$:LPRINTZ$:GOTO410

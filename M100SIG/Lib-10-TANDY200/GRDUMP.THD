@@ -1,0 +1,59 @@
+GRDUMP.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This is a short thread of captured messages, on the identification and
+solution to problems with the GRaphics DUMP program GRDUMP for the Tandy
+200.
+
+Message range: 168098 to 168208
+Dates: 4/25/88 to 4/27/88
+
+
+Sb: #GRDUMP
+Fm: Curtis Karnow 73047,3120
+To:  73327,1653 
+
+Got GRDUMP from dl10. Very nice. But on my epsom printer this program insists
+of skipping lines so that screen dump doesn't fit together i.e. there's 'white
+lines' between each line of output. Even when I run a little program that makes
+sure (with any program, including TEXT) that lines will touch vertically. What
+to do? Any other vreader of this message with suggestions for good screen dump
+programs for the 200-- so Ican dump bar charts, pie charts, etc--?
+
+
+Fm: Tony Anderson 76703,4062
+To: Curtis Karnow 73047,3120
+
+The problem you are experiencing with the Epson printer is due to the default
+setting of 6 lines per inch, and the fact that your printer is only using 8 of
+the 9 pins in the printhead.  Setting your line spacing to 8 lines per inch may
+help, since that will cover up the "white line" where the 9th pin should strike
+but doesn't.
+
+See your printer manual, it probably has a lot of space devoted to graphics
+displays; I have two Epson's and both of the manuals devote over 50% to graphic
+control and display.  In the appendix, you'l find printer control codes that
+will change the line spacing to whatever you want/need.
+
+
+Fm: James Yi 73327,1653
+To: Curtis Karnow 73047,3120
+
+The line spacing has to be smaller, and to do that, modify DATA line 9100.
+Try substituting the 15th data item, 24, in line 9100 with a smaller value,
+like 21 or 18, etc.
+
+
+Fm: Curtis Karnow 73047,3120
+To: James Yi 73327,1653
+
+Thanks to both Tony A. and James Li, the following modifications create good
+pie and bar charts on my Epson LX-80: just before  LOADM'ing the dump program,
+i set line spacing to 8lines per inch; i modify the dump program as Li
+suggests, using the value "11" instead of 24 in line 9100, then after the
+machine program runs, I reset the printer with one line, (ESC @). Anyone who
+wants more detail, just ask. The point is that line spacing and resetting the
+printer can all be done within in the confines of the program calling the dump
+routine.

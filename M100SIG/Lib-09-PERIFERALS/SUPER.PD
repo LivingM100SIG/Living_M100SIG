@@ -1,0 +1,29 @@
+   USING POWR-DISK WITH SUPER ROM
+   ------------------------------
+
+There have been several questions raised regarding the 
+compatibility of POWR-D and Super ROM.  Apparently running 
+SuperROM resets some pointers used by POWR-D, with the result that
+it is non-functional after using Super.  It has been noted that PD
+will not save CA & CT files.  In fact, after running Super, it 
+won't save BA files either.
+
+There is a simple way to remedy this situation.  After running 
+SuperROM and then exiting to the main menu, enter basic and type 
+'CALL MAXRAM'.  Apparently this resets the pointers and you can 
+then use PD -- and it will then save the Super ROM files.
+
+If you are using one of the SIG menu programs (PDMENU.TDD or 
+MENU.JR) you can add this command to the program; for example, the
+latest PDMENU.TDD would have a first line looking like this:
+
+0 POKE-86,0:CLS:CALLMAXRAM:CLEAR100:DIMT(5):GOSUB14:LFILESTO:REM 
+PDMENU.V05 PD V100.1.1
+
+I believe this is the approach suggested by Acroatix in a message 
+several weeks ago.  I'm not sure why it works, but it does!  It 
+may be useful if PD shows incompatibilities with other software or
+ROM's.
+
+Phil Wheeler -- 71266,125
+

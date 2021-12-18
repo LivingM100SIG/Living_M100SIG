@@ -1,0 +1,81 @@
+10 ' CASLAB.100 - CASSETTE LABEL MAKER
+20 ' Bob McAteer CIS 71436,703
+30 ' St. Albans, WV   05/03/86
+40 ' ----------------------------------
+50 'THIS PROGRAM IS TOBE USED WITH       CASSETTE LABELS ON A TRACTOR FEED FORM
+60 ' ----------------------------------
+70 'Margin may be adjusted to fit your     form in lines 630-700 by changing the   value of n in LPRINT TAB(X+n)A$(1)
+80 'The exception is cassette number        which is moved by adding blank          spaces to "    ";A$(4)
+90 'Each line will be centered on the       label and multiple copies can be        made. The top line is set for 28        characters the other lines are set      for 30 characters.
+100 'Included is the use of MAXLEN.LDR       By Paul J. Lancaster CIS 72226,2233
+110 READP:CLEAR256,P:READP,Q,R,A$:C=P+Q+R
+120 CLS:PRINT:PRINT"               Working...";
+130 FORJ=PTOQ:READX:C=C+X:POKEJ,X:NEXT:READZ
+140 IFC<>ZTHENSOUND9394,9:PRINT"Checksum is wrong":END
+150 BEEP:PRINT:PRINT
+160 CLS:CLEAR500:DIMA$(6)
+170 CALL 57857   'Enable RST7 interrupt
+180 PRINT"             CASSETTE LABEL  MAKER"
+190 PRINT"Line =================================="
+200 POKE 57856,28'Set Max line 
+210 LINEINPUT"No 1 ";A$(1)
+220 POKE 57856,30'Set Max line 
+230 LINEINPUT"No 2 ";A$(2)
+240 LINEINPUT"No 3 ";A$(3)
+250 POKE 57856,4'Set Max line 
+260 LINEINPUT"No 4 Cassette # ";A$(4)
+270 POKE 57856,30'Set Max line 
+280 LINEINPUT"No 5 ";A$(5)
+290 LINEINPUT"No 6 ";A$(6)
+300 LET LA=LEN(A$(1))
+310 LET LB=LEN(A$(2))
+320 LET LC=LEN(A$(3))
+330 LET LE=LEN(A$(5))
+340 LET LF=LEN(A$(6))
+350 LET X=18-(LA/2)
+360 LET Y=18-(LB/2)
+370 LET Z=18-(LC/2)
+380 LET V=18-(LE/2)
+390 LET W=18-(LF/2)
+400 CALL 57864   'Disable for INPUT$ statement
+410 CLS:
+420 PRINT"(1)  ";TAB(X)A$(1)
+430 PRINT"(2)  ";TAB(Y)A$(2)
+440 PRINT"(3)  ";TAB(Z)A$(3)
+450 PRINT"(4)  ";A$(4)
+460 PRINT"(5)  ";TAB(V)A$(5)
+470 PRINT"(6)  ";TAB(W)A$(6)
+480 CALL 17001:PRINT"  <P>rint - <N>ew - <C>hange - <E>nd  ":CALL 17006
+490  Q$=INKEY$:IF Q$=""THENGOTO490
+500 IF Q$="N"ORQ$="n"THEN160
+510 IF Q$="E"ORQ$="e"THEN730
+520 IF Q$="P"ORQ$="p"THEN600
+530 IF Q$="C"ORQ$="c"THEN550
+540 GOTO460
+550 CALL 57857: POKE 57856,30'Set Max line 
+560 CLS:PRINT:PRINT:PRINT"    Change Line # ";:INPUT C
+570 PRINT"    Line:";A$(C)
+580 LINEINPUT"    New :";A$(C)
+590 GOTO300
+600 INPUT"HOW MANY COPIES ";C
+610 IF C<1THEN600:IF C>50THEN600:
+620 FOR I=1TOC
+630 LPRINT TAB(X+5)A$(1)
+640 LPRINT TAB(Y+5)A$(2)
+650 LPRINT TAB(Z+5)A$(3)
+660 LPRINT:LPRINT"     ";A$(4)
+670 LPRINT:LPRINT
+680 LPRINT TAB(V+5)A$(5)
+690 LPRINT TAB(W+5)A$(6)
+700 LPRINT:LPRINT:LPRINT
+710 NEXT I
+720 GOTO 410
+730 MENU
+740 DATA57856,57956,0,"MAXLEN"
+750  DATA40,33,15,226,34,224,250,201,33,243,127,34,224,250,201,229
+760 DATA42,122,246,35,124,181,194,33,226,33,243,127,34,224,250,225
+770 DATA201,213,22,0,58,0,226,95,33,132,246,205,4,55,209,223
+780 DATA225,208,58,166,255,254,55,202,90,226,254,49,202,79,226,254
+790 DATA0,202,50,226,205,41,66,62,0,50,166,255,195,50,226,62
+800 DATA1,50,170,255,62,8,50,171,255,201,62,1,50,170,255,62
+810 DATA13,50,171,255,201,129609

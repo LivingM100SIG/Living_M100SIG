@@ -1,0 +1,79 @@
+This file contains some disassembly of the Model-100 ROMs from
+4000 hex to 4FFF hex.  If you have updates or corrections, 
+please contact Robert Briggs [70515,1262].
+.
+.
+.
+;
+; This routine prompts for input with ? and then 
+; drops into the "get a line routine".
+;
+4644    ld      a,'?'
+4640    rst     4       ; (20 hex)  display "?"
+4641    ld      a,' '
+4643    rst     4       ; (20 hex)  display a space
+;
+; get a line from the keyboard and echo to display
+;
+4644    call    421a      ;  check for input$ from file (?)
+4647    jp      nz,4703   ; go do it if so
+464a    ld      a,(f63ah) ; (??)
+464d    ld      (fafch),a ; (??)
+4650    ld      de,f685h  ; DE => keyboard buffer
+4653    ld      b,1       ; (?) get one character (?)
+4655    call    12cbh   ; get a character from keyboard
+4658    ld      hl,4655 ; set return to 4655 hex
+465b    push    hl      ; simulated...
+465c    ret     c       ; ... jr c,4655
+465d    cp      07fh    ; delete ?
+465f    jp      z,46a0  ; ... treat as back space
+4662    cp      20h     ; control character ?
+4664    jp      nc,46cc ; ... go do it if so
+4667    ld      hl,466d ; HL => table -3
+466a    ld      c,07    ; 7 table entries
+466c    jp      4378    ; go do table look up / dispatch
+;
+466f    defb    03      ; break character
+4670    defw    4684    ; break routine entry
+4672    defb    08      ; back space
+4673    defw    46a0    ; back space routine
+4675    defb    09      ; tab character
+4676    defw    46ca    ; tab routine
+4678    defb    0dh     ; carriage return
+4679    defw    4696    ; CR handler (exit routine)
+467b    defb    15h     ; CTL-U
+467c    defw    46c3    ; restart line routine
+467e    defb    18h     ; CTL-X
+467f    defw    46c3    ; restart line routine
+4681    defb    1dh     ; left arrow
+4682    defw    46a0    ; handle as back space
+;
+; handle CTL-C (break)
+;
+4684    pop     hl      ; remove loop return
+4685    ld      a,05eh  ; caret (shift 6)
+4687    rst     4       ; display it
+4688    ld      a,'C'   ; load up a "C"
+468a    rst     20      ; display it
+468b    call    4222    ; output CR,LF to display
+468e    ld      hl,f685 ; Hl => keyboard input buffer
+4691    ld      (hl),00 ; "null" string
+4693    dec     hl      ; HL => one char before buffer
+ 
+  
+  
+  
+4694    scf             ; set carry (no input)
+4695    ret             ; exit
+;
+; normal exit routine
+;
+4696    pop     hl      ; remove loop return
+4697    call    4222    ; CR,LF to display
+469a    xor     a       ; zero terminate...
+469b    ld      (de),a  ; ...input string
+469c    ld      hl,f684 ; hl => one cahr before buffer
+469f    ret             ; done, exit
+
+
+

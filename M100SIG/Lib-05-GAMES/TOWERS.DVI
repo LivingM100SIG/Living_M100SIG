@@ -1,0 +1,70 @@
+100 '< < TOWERS.DVI > >  TOWERS of HANOI Game for M100 with DVI
+105 'Copyright 01/28/88 by Wm. T. Stauffer 70435,237
+110 '----- INITIALIZE -----
+120 CLS:SCREEN1:WIDTH80:M=1:ONERRORGOTO730
+130 ES$=CHR$(27):RS$=ES$+"p":NS$=ES$+"q":EP$=ES$+"J":EL$=ES$+"K":C1$=ES$+"P":C0$=ES$+"Q":B1$=ES$+"e":B0$=ES$+"f"
+140 KEYON:ONKEYGOSUB,,,120,,,,660
+150 '----- PRINT SCREEN -----
+160 PRINTRS$;"                                 TOWERS OF HANOI                                ";NS$;C0$
+170 D0$="       ï       ":DD$(1,2)="      ï1ï":DD$(1,3)="     ïÿ2ÿï":DD$(1,4)="    ïÿï3ïÿï":DD$(1,5)="   ïÿïÿ4ÿïÿï"
+175 DD$(1,6)="  ïÿïÿï5ïÿïÿï":DD$(1,7)=" ïÿïÿïÿ6ÿïÿïÿï":DD$(1,8)="ïÿïÿïÿï7ïÿïÿïÿï"
+180 FORX=1TO3:FORY=1TO8:P(X,Y)=(408+((X-1)*25))+(80*(Y-1)):NEXTY,X
+190 FORX=1TO3:FORY=1TO8:IFX>1ORX=1ANDY=1THENDD$(X,Y)=D0$
+200 PRINT@P(X,Y),DD$(X,Y):NEXTY,X
+210 FORZ=5TO55STEP25:PRINTTAB(Z) "üçççççççççççççççççççþ";:NEXT:PRINT
+215 FORZ=4TO54STEP25:PRINTTAB(Z)"üï                   ïþ";:NEXT:PRINT@1135,"A":PRINT@1160,"B":PRINT@1185,"C"
+220 '----- SELECT NUMBER OF DISKS -----
+230 PRINT@1450,"You must transfer the disks from the left to the right tower, one
+240 PRINT@1530,"at a time, never putting a larger disk on a smaller disk.
+250 BEEP:PRINT@1702,"How many disks do you want (7 max.)?";
+260 S$=INKEY$:IFS$=""THEN260ELSES=VAL(S$):IFS<1ORS>7THEN260
+270 Z=9-S:FORY=1TO8:IFY<ZTHENDD$(1,Y)=D0$
+280 PRINT@P(1,Y),DD$(1,Y):NEXT
+290 '----- SELECT DISK TO MOVE -----
+300 GOSUB680
+310 BEEP:PRINT@1455,EL$;"Move #";M;"     Which disk would you like to move?";
+320 DR$=INKEY$:IFDR$=""THEN320ELSED=VAL(DR$)
+330 IFD>7ORD<1THEN320
+340 '----- CHECK IF REQUESTED DISK IS USED -----
+350 IFD<Z-1THENGOSUB690:PRINT@1624,"That disk is not being used!":GOTO310
+360 '----- LOCATE DISK -----
+370 FORX=1TO3:FORY=1TO8:IFMID$(DD$(X,Y),8,1)=DR$THEND1$=DD$(X,Y):GOTO400
+380 NEXTY,X
+390 '----- CHECK IF REQUESTED DISK IS BELOW ANOTHER -----
+400 IFDD$(X,Y-1)=D0$THEN430
+410 GOSUB690:PRINT@1625,"That disk is below another one.":PRINTTAB(30)"Make another choice.":GOTO310
+420 '----- BLINK REQUESTED DISK -----
+430 GOSUB690:PRINT@P(X,Y),B1$;D1$;B0$;
+440 '----- SELECT NEEDLE -----
+450 PRINT@1440,EL$;TAB(27)EL$;"Place disk on which needle?";
+460 N$=INKEY$:IFN$=""THEN460
+470 IFN$="A"ORN$="a"THENN=1:GOTO520
+480 IFN$="B"ORN$="b"THENN=2:GOTO520
+490 IFN$="C"ORN$="c"THENN=3:GOTO520
+500 GOTO460
+510 '----- LOCATE EMPTY SPACE ON NEEDLE -----
+520 FORU=8TO1STEP-1:IFDD$(N,U)=D0$THEN540ELSENEXTU
+530 '----- CHECK IF DISK TO BE PLACED ON A LARGER ONE -----
+540 IFU=8ORVAL(MID$(DD$(N,U+1),8,1))>VAL(MID$(D1$,8,1))THEN570
+550 PRINT@1600,EP$:PRINTTAB(14)"You can't place a larger disk on top of a smaller one":PRINT@P(X,Y),D1$:GOTO310
+560 '----- MOVE SELECTED DISK & RESET OLD LOCATION-----
+570 DD$(X,Y)=D0$:PRINT@P(X,Y),D0$:DD$(N,U)=D1$:PRINT@P(N,U),D1$
+580 '----- CHECK IF DONE -----
+590 FORN=1TO2:FORV=1TO8:IFDD$(N,V)<>D0$THENM=M+1:GOTO300ELSENEXTV,N
+600 MM=0:FORW=1TOS:MM=1+(MM*2):NEXT
+610 BEEP:GOSUB680:IFM>MMTHEN630
+620 PRINT@1452,RS$;"  Congratulations, you have completed the task in";M;"moves  "
+625 PRINT@1630,"  THE MINIMUM POSSIBLE  ";NS$;:GOTO640
+630 PRINT@1460,"You have performed the task in";M;"moves":PRINT:PRINTTAB(20)"It could have been performed in";MM;"moves"
+640 GOTO640
+650 '----- FUNCTION KEYS -----
+660 BEEP:CLS:PRINT@996,"M E N U":MENU
+670 '----- SUBROUTINES -----
+680 PRINT@1440,EP$:GOTO700
+690 PRINT@1600,EP$
+700 PRINT@1840,"    F1        F2        F3        F4        F5        F6        F7        F8";RS$
+710 PRINT@1920,"ïÿÿÿÿÿÿÿÿïïÿÿÿÿÿÿÿÿïïÿÿÿÿÿÿÿÿïï   RUN  ïïÿÿÿÿÿÿÿÿïïÿÿÿÿÿÿÿÿïïÿÿÿÿÿÿÿÿïï  MENU  ";NS$;:RETURN
+720 '----- ERROR TRAP -----
+730 BEEP:CLS:PRINT"Error ";ERR;" in Line ";ERL
+740 IFINKEY$=""THEN740ELSEEDIT
+

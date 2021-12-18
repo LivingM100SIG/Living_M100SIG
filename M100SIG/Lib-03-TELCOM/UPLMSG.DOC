@@ -1,0 +1,47 @@
+UPLMSG.CO
+A Model 100 Message Upload Routine      By Ron Bean  6/86
+
+WHAT'S THIS PROGRAM FOR??
+
+   This program allows you to compose messages offline and then upload them to
+a BBS. TELCOM F3 is not very sophisticated at this; it insists on adding CR's
+every 10-132 chrs, which makes most BBS's think you're starting a new
+paragraph. That's not fatal if you set it for about 70, but Many BBS's drop
+characters between lines, and a few can't keep up with 300 baud. This program
+will accomodate those systems.
+
+HOW DO I MAKE IT WORK??
+
+   UPLMSG.LDR creates a 350-byte CO file ending at the address you specify, and
+POKEs the start address into the TELCOM F7 vector at $FB0E.
+   Load UPLMSG.CO from either the main menu (which enters TELCOM) or BASIC (You
+can write a program to CLEAR space and load the M/L, or include it in a dialer
+program such as DIAL.101 or REDIAL.100). Then log on to the BBS and type the
+command to enter a message (usually <L>eave or <E>nter or <P>ost), and enter
+the name & subject. When you get the first line number prompt press F7.
+   At the "Filename:" prompt enter the name of the file you want to upload
+(without the .DO extension).
+   At the "Width:" prompt you can enter a number from 0 to 65535, although it
+will limit itself to 254. If you enter less than 20 it will not add CR's.
+   At the "Wait for Echo?" prompt enter y or Y if you want it to wait for the
+BBS to echo each character before sending the next. This will slow things down
+by at least half, but if the echo is wrong it will send a backspace and resend
+the chr.
+   At the "Prompt:" prompt enter the character it should wait for after sending
+each line (usually : or ) or > ). If you don't enter one it will use CR.
+   You should then see your message type itself into the BBS, pausing after
+each CR to wait for the next prompt. When it's done, exit the BBS's message
+editor (usually with another CR), list the message to make sure everything's
+OK, and save it. It's up to you to make sure the message isn't longer than the
+BBS can handle.
+
+POSSIBLE BUGS
+
+   To accomodate wordwrap, whenever the program recieves a backspace from the
+BBS it enters a delay loop. If this loop is too short and you are waiting for
+echo, it will reject and resend each character 3-5 times. IF you have this
+problem, look at line 106 of the loader for the string 11FF04. Change the 04 to
+anything from 02 to 07 (or whatever works best).
+I must confess don't know whether the program will BREAK reliably. I've seen
+two versions of the keyboard matrix; it looks for PAUSE at $FFA2. You can
+change this in lines 104 and 105 where it says 3AA2FFFE80 (lda $FFA2; cpi $80).

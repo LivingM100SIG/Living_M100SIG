@@ -1,0 +1,260 @@
+
+                                                                             
+     Anybody  who  has  ever stayed up nights wondering  how  the 
+pinout of the option rom socket (M11) in an M100,102 compares  to 
+a JADEC standard EPROM like a 27256 can now rest easy....
+
+M100,102                 Standard
+Opt. Rom.      Desc.       Eprom
+Socket                   (27256)
+
+     1         Vcc       28,1           
+     2         A10       21 
+     3         A7        3
+     4         A6        4
+     5         A5        5
+     6         A4        6
+     7         A3        7
+     8         A2        8
+     9         A1        9
+     10        A0        10
+     11        D0        11
+     12        D1        12
+     13        D2        13
+     14        GND       14
+     15        D3        15
+     16        D4        16
+     17        D5        17
+     18        D6        18
+     19        D7        19
+     20        A11       23        
+     21        OE_       22 
+     22        A13       26
+     23        N/C       N/C
+     24        A12        2
+     25        A9        24
+     26        A8        25
+     27        CE_       20
+     28        A14       27   
+
+Now  comes  the  tricky  part,  what to do with  this  new  found 
+knowledge.  There are many options.  Which one you choose depends 
+on what you want to use the option rom for.  Let's go over a few.
+
+     I  write mostly machine language programs and soon  after  I 
+purchased  my  m100 I discovered a great little program  on  tape 
+from  Tandy  called  ZBGASM which is a Assembler /  Debugger  for 
+80c85 and works great in an m100.   The problem with writing  m/l 
+programs  is  that when you start to mess with the  higher  brain 
+functions  of the monitor rom it tends to wipe out your mem  when 
+it  crashes.   I got real tired of loading ZBGASM off cass 2 or 3 
+times an hour an figured there had to be a better way.  
+     I found some one with INTSOL a canned prg from Tandy on chip
+and tried to track it down,  the chip mfg. but had no luck. I got 
+a schematic and traced out the pinout put could not cross ref  to 
+anybody. 
+     Turns out Tandy makes a little circuit board that you solder 
+a eprom to then you insert the board into the socket,  Great!.  I 
+ordered  one and was very dissapointed.   The workmanship is very 
+poor.  The  biggest problem was the board just barely and I  mean 
+just,  fit  into the socket.  It was very hard to  put  in,  even 
+harder  to  get out and it mutilated the hell out of  my  socket. 
+This was not the answer. But if your interested the part  # is
+     AXX-7113  and  you have to order them from  :Tandy  National 
+Parts  900 E.  Northside Dr.  Fort Worth Texas  76012. Last one i 
+got (1/87) cost me $7.77!! 
+     After  designing several jury rigged wire wrapped adapter  I 
+decided to mod the actual mother board.  It requires that you cut 
+a  dozen  traces and install about 12 jumpers.  Its not  for  the 
+begginer  but  not  all  that  hard either if  you  can  do  some 
+precision soldering.   If any one wants the details on how to  do 
+it let me now.  
+     Anyway  the end result is that I have the option rom  socket 
+wired  as a standard eprom socket the best part being that  there 
+are  no visible modifications,  no little cables with rom sockets 
+on the end.   Now if you are familiar with the store bought proms 
+that RS sells like INTSOL and MSPLAN you know that the chips  are 
+mounted  on  a  little plastic carrier device that fits  in  that 
+wierd side-swipe socket.  It makes the chips very easy to  insert 
+and  remove and it is also keyed to prevent mis-insertion and  it 
+makes  it absolutly impossible bend or break off one of the  prom 
+pins.  Without them though trying to rig some way to get the chip  
+to  stay in the socket is a real ,pain if not immpossible.  So  I 
+went  out  and  found them.   It's a Molex part #  50-39-5288   I 
+obtain   them  localy,   they  actually  stock  them,   at   TIME 
+Electronics, 1301 W. Geneva Dr., Tempe Az. 85282  602-967-2000.
+I can't remember what they cost me but I bought 20.
+     I  strongly recommend the main board mod because it's  quick 
+and  clean  and once you do it you can forget it.  There  is  one 
+slight  drawback  though,  you can no longer simply plug  in  the 
+canned stuff like INTSOL and MSPLAN,  That is you will no  longer 
+be  able to use the Original chip you buy,  you will have to copy 
+and burn it into a standard EPROM. But I'm assumming that if your 
+interested  in   customizing your own Option Roms that  you  have 
+access to a prom burner. You will also have to rig an adapter for 
+your  prom burner so it can read those screwed up chips but  with 
+the cross pinout table above that should be no big deal.
+I am also assuming you have access to an Assembler program (I saw 
+sevral listed in this library).  
+     Now Let's get to the juicy part ,  Software.
+
+     There are basically two ways to use the option rom; 
+The  first is as a Ram loader.   When you select the  Option  Rom 
+from  the main menu this type of rom simply copys a block of  mem 
+from  the  option rom to the ram and then jumps to  the  execution 
+address  of that Program.   If you recall my problem with  ZBGASM 
+earlier  I  didn't want to hassel loading it from  the  cassette. 
+Well with my ram loader rom I don't.
+     If  I  want to run ZBGASM on my m102 I just insert my  EPROM 
+marked ZBUG into the back,  turn on my computer and there on  the 
+main  menu  next to SCHEDL is an entry named ZBGASM.  I move  the 
+cursor over it,  hit ENTER and I'm in!  And if my m/l program I'm 
+playing  with takes a dump all over my ram,  I press reset go  to 
+ZBGASM  and  I'm back.   I LIKE IT!!   From there  there  was  no 
+stopping me, Every program I owned on tape was in PROM. 
+
+     The  second  way to use the Option Rom is to actually run  a 
+program in the rom.   But this has some draw backs .  You see the 
+monitor rom,  the one that runs the 102 and the option rom share 
+the  same location in memory,  the low 32k  0000-7FFFh,  and  you 
+can't  use both at the same time.   There is a 'softswitch'  that 
+selects  which  rom  the mpu will read.  It's  called  STROM  for 
+Standard Rom.   The switch is no big deal you can even toggel  it 
+from basic, of course if you do your entire machine will crash!
+     To  Select  the  standard  rom (default)
+  Output a 00 to 0E8h (232d)
+ you  can't do this from basic because if strom isn't 0 you can't 
+run basic,     it's in the wrong chip!
+     To select the Option Rom :
+     output 01 to 0E8h (232d) or in basic OUT 232,1 
+!!!!!!!!!!!!!!!!!!Don't  Try this if you have the last chapter of 
+your novel in Memory!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     The point I'm trying to make is that with out access to your 
+monitor  rom you can't do much unless you do it all yourself i.e. 
+write your own monitor and stick it in your opt rom.  There is  a 
+way,   though  it's  to complicated to go into  detail  here.  It 
+involves  jumping  to an intermediate handshake program  in  ram, 
+which  is in neither mon rom or opt rom.  If you wanted to run  a 
+subroutine  from  the opt rom you would have to  constantly  jump 
+back and forth,  It's not impossible obviously but when you start 
+considering all the interrupts it gets complicated real fast. I'd 
+love to discuss it with somebody though.  Anyway I digress,
+     I'm  sure  all of you are waiting for me to tell you how  to 
+'solid state your tapes'. well here goes.
+
+     After you have modified your m100 or m102 to accept standard 
+Eproms you will need to write a short little 'boot' to load your 
+program  in ram and stick it in the front of  your  EPROM.  Let's 
+followed the steps I took in doing ZBGASM.
+1. I loaded ZBGASM , by tape, into my 102 using CLOADM
+   my 102 told me the following:
+     START: 54272
+     END:   62475
+     EXEC:  54272
+This  is very nice for it tells me where it is in ram ,  how long 
+it is and where to jump to execute it.
+
+2.  Figure  out  how  the hell the 102 decides  weather  it  will 
+recognize a chip in the opt rom. Don't worry I'll tell.
+
+     When ever you restart the 102,  cold or warm,  it jumps to a 
+little handshake program in hi ram,  above F5F0 (62960), which is 
+off  limits  to us in case you didn't know,  anyway  this  little 
+routine toggles STROM to Opt. and reads starting at address 0040h 
+(64) and looks for an ASCII 'AB' If it finds it it will read  the 
+next  six  bytes  (0042-0047)  into  the  directiry  table.  ONLY 
+UPPERCASE. 
+
+3.I  proceeded  by taking a 27c256 EPROM and  burning  'ABZBGASM' 
+into  memory  locs  0040-0047h,  I popped it in the old  102  and 
+turned it on and right there next the ever present SCHEDL was  my 
+ZBGASM.  Wow,  Exciting  isn't it.   I would try this first. It's 
+alot easier to troubleshoot something simple. 
+
+4.  I don't remember how,  probably dumb luck,  but I figured out 
+that if you run the Opt.rom,  I placed the cursor over ZBGASM and 
+hit  ENTER,  that the mon rom jumped to 0000 (that's Hex) in  the 
+EPROM. It toggeled STROM and every thing. So I wrote my 'Boot'
+
+5. The Boot 
+                    
+
+              2500 A.D. 8085 CROSS ASSEMBLER   -   VERSION 3.01a
+              --------------------------------------------------
+
+                       INPUT  FILENAME :  BOOT.ASM
+                       OUTPUT FILENAME :  BOOT.OBJ
+
+
+
+    1   
+    2   
+    3                         	;****************************************************************
+    4                         	;   OPTION ROM BOOT FOR M100,M102
+    5                         	;	BY MARLIN BIALLY  2/87             
+    6                         	;*************************************************************
+    7                         	;
+    8   0000                  		ORG	00000H
+    9          0B F4          	ENDNEW	EQU	0F40BH		;END OF ZBGASM 62475 
+   10          FD D3          	BEGNEW	EQU	0D3FDH		;LOAD ZBGASM HERE 54272(SWCH IN FRONT OF IT)
+   11          FD 01          	ROMSTOW	EQU	001FDH		;ZBGASM IN ROM HERE
+   12   
+   13   0000   F3             		DI			;DON'T WANT TO HASSEL WITH INT'S
+   14   0001   C3 48 00       		JMP	BOOT		;JUMP AROUND RESET VECTORS AND LABEL
+   15   
+   16   0040                  		ORG	0040H
+   17   0040   41 42          		STRING	'AB'		;THE 'AB' IS MANDATORY BY M100
+   18   0042   5A 42 47 41    		STRING	'ZBGASM'	;THIS IS VERSION LABLE	LIMIT 6 UPPERCASE
+        0046   53 4D 
+   19                         	;
+   20                         	;
+   21   0048   2A FD D3       	BOOT	LHLD	BEGNEW		;THIS IS WHERE IT GOES
+   22   004B   11 FD 01       		LXI	D,ROMSTOW	;THIS IS WHERE IT COMES FROM
+   23   004E   1A             	BOOT1	LDAX	D		;GET A BYTE FROM ROM
+   24   004F   77             		MOV	M,A		;STICK IT IN RAM
+   25   0050   23             		INX	H		; NEXT RAM LOC
+   26   0051   13             		INX	D		; NEXT ROM LOC
+   27   0052   7C             		MOV	A,H		;GET HIGH STOP
+   28   0053   FE F4          		CPI	0F4H		;IF WERE NEAR THE END CONTINUE...
+   29   0055   C2 4E 00       		JNZ	BOOT1		;..ELSE DO ANOTHER
+   30   0058   7D             		MOV	A,L		;GET END LOW
+   31   0059   FE 04          		CPI	04H		;ARE WE DONE NOW?
+   32   005B   C2 4E 00       		JNZ	BOOT1		;NO, DO ANOTHER 
+   33   005E                  		
+   34                         	;
+   35   005E   C3 FD D3       	RUN	JMP	BEGNEW		;GO RUN THE PROGRAM IN RAM
+   36   
+   37                         	;************************************************************
+   38                         	; THIS IS LOADED IN RAM IMMEADIATLY BEFORE THE PROGRAM TO 
+   39                         	; TOGGLE strom BACK TO STANDARD ROM.
+   40                         	;***********************************************************
+   41                         	;
+   42   01FD                  		ORG	01FDH
+   43                         	;
+   44   01FD   AF             	SWCH	XRA	A		;SET A=0
+   45   01FE   D3 E8          		OUT	0E8H		;STROM = 0 /STANDARD ROM
+   46   0200                  		
+   47   
+   48   0200                  		END
+
+
+*************  S Y M B O L I C   R E F E R E N C E   T A B L E  *************
+
+
+BEGNEW    = D3FD    BOOT        0048    BOOT1       004E    ENDNEW    = F40B
+ROMSTOW   = 01FD    RUN         005E    SWCH        01FD    
+
+
+
+         LINES ASSEMBLED :    48             ASSEMBLY ERRORS :    0   
+
+6.  I  loaded this immeadiatly followed by the actual ZBGASM code 
+(ZBGASM  starts at 0200h) into my EPROM burner Buffer and  Burned 
+an  Eprom the rest is history.   I leave it to you to figure  out 
+how to get your 'Tape code out of your M102 memory and into  your 
+Burner software.  
+
+ Well that's enough for one night. Feel free to ask questions.
+      
+
+  

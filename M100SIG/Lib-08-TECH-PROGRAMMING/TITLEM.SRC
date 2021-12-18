@@ -1,0 +1,122 @@
+Source code for TITLEM.100
+
+F100          00100         ORG     0F100H
+4231          00110 CLS     EQU     4231H
+F100 C5       00120 PLOT    PUSH    BC
+F101 D5       00130         PUSH    DE
+F102 CD4C74   00140         CALL    744CH
+F105 D1       00150         POP     DE
+F106 C1       00160         POP     BC
+F107 C9       00170         RET
+F108 2139F6   00180 SETCUR  LD      HL,0F639H
+F10B 73       00190         LD      (HL),E
+F10C 213AF6   00200         LD      HL,0F63AH
+F10F 72       00210         LD      (HL),D
+F110 C9       00220         RET
+F111 C5       00230 PRINT   PUSH    BC
+F112 D5       00240         PUSH    DE
+F113 CD444B   00250         CALL    4B44H
+F116 D1       00260         POP     DE
+F117 C1       00270         POP     BC
+F118 C9       00280         RET
+F119 CD3142   00290 ENTRY   CALL    CLS
+F11C 06F0     00300         LD      B,240
+F11E 1600     00310         LD      D,0
+F120 15       00320         DEC     D
+F121 14       00330 LOOP1   INC     D
+F122 1E00     00340         LD      E,0
+F124 CD00F1   00350         CALL    PLOT
+F127 1E3F     00360         LD      E,63
+F129 CD00F1   00370         CALL    PLOT
+F12C 05       00380         DEC     B
+F12D C221F1   00390         JP      NZ,LOOP1
+F130 06DC     00400         LD      B,220
+F132 160A     00410         LD      D,10
+F134 15       00420         DEC     D
+F135 14       00430 LOOP2   INC     D
+F136 1E0A     00440         LD      E,10
+F138 0E0A     00450         LD      C,10
+F13A CD00F1   00460 LOOP3   CALL    PLOT
+F13D 1C       00470         INC     E
+F13E 0D       00480         DEC     C
+F13F C23AF1   00490         JP      NZ,LOOP3
+F142 0E0A     00500         LD      C,10
+F144 1E2B     00510         LD      E,43
+F146 CD00F1   00520 LOOP4   CALL    PLOT
+F149 1C       00530         INC     E
+F14A 0D       00540         DEC     C
+F14B C246F1   00550         JP      NZ,LOOP4
+F14E 05       00560         DEC     B
+F14F C235F1   00570         JP      NZ,LOOP2
+F152 063E     00580         LD      B,62
+F154 1E01     00590         LD      E,1
+F156 1D       00600         DEC     E
+F157 1C       00610 LOOP5   INC     E
+F158 1600     00620         LD      D,0
+F15A CD00F1   00630         CALL    PLOT
+F15D 16EF     00640         LD      D,239
+F15F CD00F1   00650         CALL    PLOT
+F162 05       00660         DEC     B
+F163 C257F1   00670         JP      NZ,LOOP5
+F166 0617     00680         LD      B,23
+F168 1E14     00690         LD      E,20
+F16A 1D       00700         DEC     E
+F16B 1C       00710 LOOP6   INC     E
+F16C 160A     00720         LD      D,10
+F16E 0E0A     00730         LD      C,10
+F170 CD00F1   00740 LOOP7   CALL    PLOT
+F173 14       00750         INC     D
+F174 0D       00760         DEC     C
+F175 C270F1   00770         JP      NZ,LOOP7
+F178 0E0A     00780         LD      C,10
+F17A 16DC     00790         LD      D,220
+F17C CD00F1   00800 LOOP8   CALL    PLOT
+F17F 14       00810         INC     D
+F180 0D       00820         DEC     C
+F181 C27CF1   00830         JP      NZ,LOOP8
+F184 05       00840         DEC     B
+F185 C26BF1   00850         JP      NZ,LOOP6
+F188 0657     00860         LD      B,87
+F18A 1E24     00870         LD      E,36
+F18C 164E     00880         LD      D,78
+F18E 15       00890         DEC     D
+F18F 14       00900 LOOP9   INC     D
+F190 CD00F1   00910         CALL    PLOT
+F193 05       00920         DEC     B
+F194 C28FF1   00930         JP      NZ,LOOP9
+F197 160E     00940         LD      D,14
+F199 1E04     00950         LD      E,4
+F19B CD08F1   00960         CALL    SETCUR
+F19E 060F     00970         LD      B,15
+F1A0 21ADF1   00980         LD      HL,MESS
+F1A3 7E       00990 LOOPA   LD      A,(HL)
+F1A4 CD11F1   01000         CALL    PRINT
+F1A7 23       01010         INC     HL
+F1A8 05       01020         DEC     B
+F1A9 C2A3F1   01030         JP      NZ,LOOPA
+F1AC C9       01040         RET
+F1AD          01050 MESS    DEFM    'Bob'''s Computer!'
+     42 6F 62 27 73 20 43 6F 6D 70 75 74 65 72 21
+F119          01060         END     ENTRY
+00000 TOTAL ERRORS
+33005  TEXT AREA BYTES LEFT 
+
+
+CLS    4231 00110   00290 
+ENTRY  F119 00290   01060 
+LOOP1  F121 00330   00390 
+LOOP2  F135 00430   00570 
+LOOP3  F13A 00460   00490 
+LOOP4  F146 00520   00550 
+LOOP5  F157 00610   00670 
+LOOP6  F16B 00710   00850 
+LOOP7  F170 00740   00770 
+LOOP8  F17C 00800   00830 
+LOOP9  F18F 00900   00930 
+LOOPA  F1A3 00990   01030 
+MESS   F1AD 01050   00980 
+PLOT   F100 00120   00350 00370 00460 00520 00630 00650 00740 
+                    00800 00910 
+PRINT  F111 00230   01000 
+SETCUR F108 00180   00960 
+

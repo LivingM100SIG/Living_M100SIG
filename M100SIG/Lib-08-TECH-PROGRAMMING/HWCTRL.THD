@@ -1,0 +1,137 @@
+HWCTRL.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This thread file has two basic, but related, topics.  One is use of the
+Model 100 as a TDD device for the deaf by use of the cassette port (software
+control of the connections at that port).  The other theme is oriented to
+more general applications of the Model 100 for hardware control, using the
+RS-232 port.
+
+Message range: 152244 to 152539
+Dates: 7/9/87 to 7/13/87
+
+
+TDD Model use of the Model 100
+------------------------------
+
+Sb: #TDD Modem in the M100
+Fm: Martin Zimmerman 72757,3076
+To: Bob Andersen 70526,1233
+
+Great news! I browsed around the rest of this system and found that there
+exists some programs for the IBM and the COCO that emulate a TDD modem via
+thier casstte port.  After doing some research on the Model 100 hardware, I
+have found that the cassette port can be controled 100% from software.  Since
+the TDD is a half duplex device, the computer is NEVER recieving AND
+transmitting at the same time, this is the capability of the cassette port on
+the Model 100.  The mark and space frequencies are 1200 and 1400 Hz for a TDD
+modem, and the one that the M100 uses for cassette I/O are 1200 and 2400 Hz.
+By peeking at the ROM routines that generate these frequencies I can modify
+them to generate the TDD frequencies.  The ROM already has a routine for
+determining the frequency of a wave-form at the cassette port, so recieving is
+a simple task.  It now looks as though the only harware needed will be an
+adapter for acoutic cups to a cassette cable or a direct-connection adapter
+from the cassette port to the phone-line.  In the direct connect case, the
+cassette relay could be used to pulse dial... If we go the acoustic cup
+connection, then the harware cost of the ENTIRE project is in the under $5.00
+range.  Not bad for a modem, eh? Camz.
+
+
+Fm: Bob Andersen 70526,1233
+To: Martin Zimmerman 72757,3076
+
+A nice piece of work!  Would appreciate hearing from you when it is
+operational. Regards, Bob A.
+
+
+Fm: bob scott 73125,1437
+To: Martin Zimmerman 72757,3076
+
+I may be able to help you out.  I wrote a dialer routine for the cassette port
+for an Aussie sig memeber who had a "crippled" export M100 (no dial routines).
+Only hardware was a 15 cent 600 ohm resistor. bob
+
+
+Fm: Martin Zimmerman 72757,3076
+To: bob scott 73125,1437
+
+Great stuff!  I think I have to get the Modem software written in the meantime,
+but when I go to add the dialer bit... I'll get back to you!  Thanks! Camz.
+
+
+Fm: Bob Andersen 70526,1233
+To: Martin Zimmerman 72757,3076
+
+Interestingly enough, two weeks ago I had disassembled DATAW (Tech. Ref. Manual
+P.88) at address 6F5B(hex) in order to use the cassette port to generate a
+sequence of 1 Khz pulse bursts for a test fixture.   In order to avoid jitter
+due to the 4msec clock tics, I ran my routine with interupts disabled.
+
+Calculating the frequecies based on a clock of 4.9152 Mhz and 14 T states per
+software tic, I concur that the frequencies used by the cassette routines are
+1200 and 2400 Hz.
+
+A possible fly in the ointment is the fact that discriminate between 1200 and
+1400 Hz in the presence of telephone line noise is a much more severe
+requirement than discriminating between 1200 and 2400 Hz assuming a cassette
+recorder with relatively low noise.  In my opinion this translates to a system
+with poor noise immunity, which is what we might expect from an ultra low cost
+modem.
+
+It may still be worth tracking down the Exar chips in order to compare
+performance of the two systems.
+
+What do you think?
+
+
+Fm: Martin Zimmerman 72757,3076
+To: Bob Andersen 70526,1233
+
+True enough.  They have done this trick with IBM's and COCO's, I might download
+the info file on that and see what they say about noise, an Camz.
+
+
+Hardware Control with the Model 100
+-----------------------------------
+
+Sb: #hardware control
+Fm: Jon Payne 76576,2713
+To: [F] All
+
+I am looking for a controller board to operate some equipment as programmed by
+the m100. It should plug into the rs232 port and be capable of both receiving
+input and sending output. Any ideas?
+
+
+Fm: Wayne Day 76703,376
+To: Jon Payne 76576,2713
+
+I've forwarded your message to ALL in the hopes that other folks might see it
+and be able to help you out a bit...
+
+You might check through the back issues of BYTE magazine for two things.. ads
+from companies that do process control equipment (which sounds like basically
+what you're looking for) as well as articles from Steve Ciarcia's Circuit
+Cellar.  Steve is a homebrewer of the 1st class, and some of his past articles
+might be what you need.
+
+
+Fm: Ran Talbott 70506,60
+To: Jon Payne 76576,2713
+
+Sibec,  Single Board Systems,  and MicroMint (Steve Ciarcia)  all sell small
+single-board computers based on various micros.  All have ads in Byte,  as do
+others whose names escape me at the moment.  Some units are based on chips with
+built-in BASIC interpreters.
+
+Another possibility is a MultiBus CPU board.  THere are lots of them on the
+surplus market,  and many of them come with one or 2 serial and parallel ports.
+MultiBus chassis can be had pretty cheaply (as a matter of fact,  I'll give you
+a steal of a deal on one if you're in the San Jose area).  This would require
+some sort of development system for assembling code and burning EPROMs,
+though.
+
+
+

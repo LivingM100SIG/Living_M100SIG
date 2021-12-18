@@ -1,0 +1,35 @@
+0 REM LOGON 3/30/84 by Rick Perry [75665,1045]
+1 CLEAR500:DEFINTA-Z:DIMM(15):CLS:FORN=0TO15:READM(N):NEXT
+2 A$="7I1E"+CHR$(0):V=VARPTR(A$):CALL6118,0,PEEK(V+1)+PEEK(V+2)*256
+3 CLOSE:OPEN"adrs"FORINPUTAS1:LINEINPUT"Find:";A$
+4 CALL6+VARPTR(M(0)),0,VARPTR(A$):IFA$="MENU"THENMENU
+5 IFEOF(1)THEN3ELSELINEINPUT#1,Y$:I=INSTR(Y$,":")
+6 B$=LEFT$(Y$,I):CALL6+VARPTR(M(0)),0,VARPTR(B$)
+7 IFINSTR(B$,A$)=0THEN5ELSEJ=INSTR(I,Y$,"<"):IFJ=0THEN5
+8 PRINTLEFT$(Y$,J)">";:B$=INPUT$(1):PRINT
+9 IFB$=CHR$(27)THEN3ELSEIFASC(B$)<>13THEN5
+10 CLOSE:A$=MID$(Y$,I+1,J-I-1)+CHR$(0)
+11 PRINT"Calling "LEFT$(Y$,I);:V=VARPTR(A$)
+12 CALL21293,0,PEEK(V+1)+PEEK(V+2)*256:CALL21172:PRINT:N=0:X=0
+13 N=N+1:CALLVARPTR(M(0)),0,VARPTR(X)
+14 IFX=0THEN17ELSEB$=INKEY$:IFB$=""ANDN<1000THEN13
+15 CALL21179:IFB$>""THEN3ELSEPRINT"NO CARRIER":N=0
+16 N=N+1:CALL21264:IFINKEY$>""THEN3ELSEIFN<9THEN16ELSE11
+17 PRINT"CONNECT":BEEP:CALL21264:A$=MID$(Y$,J)+CHR$(0)
+18 V=VARPTR(A$):CALL21392,60,PEEK(V+1)+PEEK(V+2)*256:CLEAR0:CALL21608
+19 DATA-4147,30574,201,-18562,20424,32291,26147,4463
+20 DATA2,-5683,6449,6865,-5683,4623,3347,-5688
+21 ' This program will retrieve a phone number and auto-logon sequence
+22 'from the ADRS.DO file and attempt to logon to a host computer.
+23 ' After dialing, if no carrier is detected within 20 seconds,
+24 'or if you press any key, the program will hang up.
+25 'After waiting 20 seconds more, it will retry the number
+26 'unless you press any key.
+27 ' If the carrier is detected, it will BEEP and procede through
+28 'the auto-logon sequence as specified in the ADRS line,
+29 'then jump to TELCOM's Term mode.
+30 ' At the "Find:" prompt, enter a string to search for
+31 'in the ADRS file or press F8 to return to the Menu.
+32 ' When the string is found press ENTER to begin auto-dial,
+33 'or press ESC to return to the "Find:" prompt,
+34 'or press any other key to continue searching.

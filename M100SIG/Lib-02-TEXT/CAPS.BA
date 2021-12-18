@@ -1,0 +1,19 @@
+10 'CAPS.100 (c) 1989 M.J. Nugent, Jr.
+20 'Public domain. Distribute freely.
+30 READ SCRN, PRTR, UL, UM, NL, NM, XL, XM
+40 DEV=SCRN:DEV$="screen":GOSUB 70
+50 DEV=PRTR:DEV$="printer":GOSUB 70
+60 MENU
+70 LSB=PEEK(DEV):MSB=PEEK(DEV+1)
+80 IF LSB=UL AND MSB=UM OR LSB=NL AND MSB=NM THEN POKE DEV,LSB XOR XL:POKE DEV+1,MSB XOR XM:RETURN
+90 BEEP
+100 PRINT "Cannot change ";DEV$;"--press any key..."
+110 IF INKEY$="" THEN 110
+120 RETURN
+130 DATA 64226, 64228, 233, 15, 243, 127, 26, 112
+140 '
+150 'For other computers, replace line 130 data with the following:
+160 'Tandy 200 use 62735, 62739, 20,  16, 168, 156, 188, 140
+170 'NEC 8201/8300 use 63956, 63960, 182, 18, 219, 127, 109, 109
+180 '
+190 'If capitalization is not desired on the screen, delete line 40. If not desired on the printer, delete line 50. If not desired on either, what are you doing with this program, anyway?

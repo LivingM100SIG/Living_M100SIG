@@ -1,0 +1,71 @@
+LFKYO.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Continuing in our tradition of providing the world's foremost support to the
+KC-85 computer, here is yet another informational file on this distant
+relative of the Model 100.  This file discusses the poke to add a linefeed
+on Telcom transmissions.
+
+Message range: 159832 to 160277
+Dates: 11/6/87 to 11/12/87
+
+
+Sb: #TELCOM LF patch
+Fm: Neil Smith 76257,3227
+To: All K85 owners
+
+According to my calculations, the TELCOM linefeed patch should be at address
+63073.  Can anybody confirm this for me?  (POKE63073,1 should add linefeeds to
+all carriage returns in uploaded files, while POKE63073,0 should restore the
+default--no linefeeds.)  The other way to check it is to PEEK the previous five
+bytes, which should contain 11, 0, 100, 255, and 0. 63073 should also be 0 if
+you haven't already tried the above POKE, and 63074 should be 53.
+  This is a bit embarrassing, but I have misplaced my notes on what value is
+returned when you do a PEEK(1) on a K85 (and this info has not made it into the
+PGMTIP.010 file yet).  Could someone please check this for me, too?
+
+
+Fm: Phil Wheeler 71266,125
+To: Neil Smith 76257,3227
+
+Looks good, based on my earlier dump of high RAM in a Kyo.  Next bytes are a
+RAM version of Stat.  11 didn't show up tho -- but not in my M100 either.
+
+
+Fm: Neil Smith 76257,3227
+To: Phil Wheeler 71266,125
+
+Phil - Thanks for coming to my recue once again.  I guess I'll assume it's
+correct.  (Although I still hope some K85 owner who reads this can test it,
+plus give me the PEEK(1) value again.)
+
+
+Fm: Phil Wheeler 71266,125
+To: Neil Smith 76257,3227
+
+Yes, a test is best.  My info is from comparing M100 and Kyo high RAM dumps (I
+have complete ROM/RAM dumps for both machines).  But I never tried it in the 3
+weeks I had my hands on a Kyo.
+
+
+Fm: Neil Smith 76257,3227
+To: Phil Wheeler 71266,125
+
+Uh - If you have the ROM dump handy, could you give me the PEEK(1) value again?
+(I can't find which file I put it in last time you gave it to me.  {sheepish
+grin})
+
+
+Fm: Phil Wheeler 71266,125
+To: Neil Smith 76257,3227
+
+First 3 bytes are c3 e1 79 ----> E1.
+
+
+Fm: Neil Smith 76257,3227
+To: Phil Wheeler 71266,125
+
+Thank you!  I have written it on my copy of PGMTIP.010 so I can't lose it
+again.

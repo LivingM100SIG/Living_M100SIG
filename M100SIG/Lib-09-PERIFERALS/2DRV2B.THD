@@ -1,0 +1,308 @@
+2DRIV2.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The file 2DRIVE.TDD in Lib 9 discusses developing a dual-TDD system for the
+Tandy computers.  This is the second THD of messages discusses the
+implementation of such a system, and results from the first users.  These
+messages focus on software utilities to support the dual-TDD system.
+  ** Uploaded as two pieces: 2DRV2A.THD & 2DRV2B.THD **
+
+Message range: 175594 to 175804
+Dates: 10/16/88 to 10/19/88
+
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+I thought that would pique your interest. (grin)
+
+To begin with, in using the LINEINPUT statement, with it's inherent limitation
+or holding lines less than 256 characters, we have to assume that files (either
+on disk or in RAM) can exist in one of three states:
+
+1) all lines in the file are less than 256 characters, and end with a carriage
+return.  LINEINPUT will read the entire "line" up to the carriage return.
+
+2) all lines in the file are longer than 256 characters (free-form paragraphs)
+with carriage returns intermixed in the text. (usually at the end of a
+"paragraph")  In which case, LINEINPUT will read 256 character "groups" (if
+properly cleared before attempting successive "reads").  Any "group" may be
+shorter than 256 characters if that group contained a carriage return in the
+original text.
+
+3) an intermix of the above two cases.
+
+Allright, now assume that we use LINEINPUT to read data from file 1, and print
+it to file 2.  If the source file is of type 1 (short terminated lines), the
+form: "LINEINPUT#1,A$ - PRINT#2,A$" will exactly duplicate the input file.  But
+if the file is of type 2, it will break up the text in the output file into 256
+byte lines, each of which is terminated by a carriage return. Not a duplication
+of the original file, at all.  If the original file is of type 3, intermixed
+text, then the duplicate file will be a mixture of short, terminated lines, and
+256-byte, terminated lines.
+
+If you use the form: "LINEINPUT#1,A$ - PRINT#2,A$;" the duplicate file will
+contain concatenated lines, since the ";" prevents the writing of carriage
+returns, even when they are supposed to be there!  Thus, you end up with one
+long text file, with no terminated lines, and no paragraphing.
+
+To get it to work properly, you would have to test the A$ string to see if it
+contained a c/r, and print accordingly.
+
+A$="":LINEINPUT#1,A$
+IFINSTR(A$,CHR$(13))THENPRINT#2,A$ ELSE PRINT#2,A$;
+(Go back for more)
+
+Am I incorrect?
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+Well, while it was discovered while exploring the best way to copy files that
+were larger than RAM, it was not aimed specifically at that problem... it was,
+as stated, a test to see if you could have two files open at one time.
+
+Obviously, one wouldn't want to transfer an entire file a couple of lines at a
+time, nor would one want to dedicate space to an array that might not be used
+in copying every disk variation possible.  The solution to that is to clear as
+much RAM space as possible so that the program works in the "file copy mode",
+then to utilize that same space, if necessary, in copying larger than RAM .DO
+files.  That involves creating a buffer file in RAM, filling it with as much of
+the original file as possible, then copying it out to the second disk. This
+involves setting MAXFILES=3, losing an extra 256 bytes to overhead; 1 = the
+open source disk file, 2 = the RAM copy, and 3 = the destination disk file.
+
+The alternative here, in setting MAXFILES=2, is to close the source file each
+time you write to the destination file, which means reopening the source file,
+and re-reading up to the point you broke off the first time. - a time waster.
+
+In the long run, if the source file will fit in RAM, the "file copy mode" is
+used; if it won't, then the segmented buffer mode must be used.  But hey, it
+does work. (grin)
+
+Yes, you could open the destination file only once, at the top of the routine.
+To save that directory update time - and I may explore that, now that we know
+you can have two disk files open at one time.  You need only open and close the
+RAM buffer as needed. That's still MAXFILES=3, though.  Remember the compromise
+necessary to keep as much free RAM available as possible.  The program is
+designed to make as few "switches" as possible, and copying a few lines at a
+time isn't the way to go.
+
+BTW, with the LINEINPUT situation, I've gone to INPUT$(1,1) technique.  Much
+slower, but copies exactly.  But still exploring.  Problem is, it takes 15-20
+minutes per run, then time to analyze the results.  Very time-consuming tests.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062
+
+   This is a line from the routine I sent you a couple of messages ago:
+
+ 100 iflen(a$(j))=255thenprint#2,A$(j);elseprint#2,A$(j)
+
+   Forget about the array for a minute: a$(j) could be any string created with
+LINEINPUT.
+   I believe you'll find this technique handles the LINEINPUT situation
+properly -- printing the lines with a carriage return if they had one in the
+original file, and leaving them as a segment if that's how they were pulled
+from the original.
+   There is no way to "test" for a carriage return at the end of a LINEINPUTted
+string, since the CR does not become part of that string -- any more than a
+comma delimiter becomes part of a string created by a the INPUT command.
+   Hope this is what you were looking for.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062
+
+   There's really no reason for that 3rd file.  If you 'fall back' to a large
+array on too-big files, you can CLEAR the space for that array (if you wanna
+get creative, you can set your DIM and CLEAR statements according to the
+current FRE(0) available) at the start of the fallback routine, then CLEAR a
+smaller number at the end.  There is nothing in this technique that forces you
+to CLOSE the disk A (input) file and lose your pointer.
+   I'm not saying the 3rd-file buffer won't work; but it seems like an
+unnecessary and somewhat time-consuming middle step, requiring some awkward
+code to keep track of how big the buffer file is and when it should be switched
+from input to output.
+   I guess the thing to do is: try both ways!
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+I didn't study your program example, since it didn't apply to what I was doing
+at that exact moment.  And I often don't have the time to go over messages
+until later in the evening.  However, there is a test for whether a string
+contains a carriage return, which I thought of while I was taking my mother to
+dinner this evening.  If a string = 255 characters, then it does not have a
+carriage return.  If it is less than 255 characters, then it does contain a
+carriage return, or you have reached an EOF.  But your example is exactly what
+is needed, and will be tried later this evening.  Thanks.
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+But if you dimension, you must dimension for a specific number of lines, like
+DIM A$(200). (or whatever)  If you start to fill those lines, and the array
+becomes so large that you exceed memory size, 200*255 = 51,000, then you get an
+OM error and abort.  I'd rather give up 256 bytes of overhead for an extra file
+buffer, and KNOW that I wasn't going to get an abort in mid-run.
+
+The buffer technique has been working for nearly a week, but has been going
+through refinements.  The LINEINPUT method discussed above will be tried this
+evening, too.  But I don't want to get involved in CLEAR's because I'm holding
+lots of variables in memory while moving these files back and forth, and don't
+want to lose anything along the way.
+
+We have to assume here, that there will be no .BA or .CO file on disk which is
+too large to fit in RAM.  Otherwise, you couldn't load and run it.  So we're
+dealing only with .DO files that are too large for RAM.  And it's really not
+awkward to keep track of how big a buffer file is, as you're writing to it;
+just add up the lenths of what you stick into it.  When FILE=FRE(0)-(something)
+your file is full.  Switch and copy to the second disk.
+
+Undoubtedly, there will be better programs come along.  There are better 1200
+baud modem drivers available now, than I first posted in the file 1200BD.PGM,
+when noone else had a 1200 baud modem.  But this one will work, given the
+limitations we have, and can be improved by more capable programmers.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062
+
+   You ought to take your mother to dinner more often, but I'm sure she's told
+you that.  (grin)
+   What I had in mind was something like:
+
+ 10 MOTOROFF:MAXFILES=2:printtime$
+ 12 CLEARFRE(0)-500:A=FRE(A$)\255
+ 14 DIMA$(A)
+ 20 OPEN"file1"FORINPUTAS1
+ 30 MOTORON
+ 40 CALL***
+ 50 OPEN"test"FORAPPENDAS2
+ 70 MOTOROFF
+ 80 CALL***
+ 90 FORI=1TOA
+ 95 IFEOF(1)THEN120
+100 LINEINPUT#1,A$(I)
+110 NEXT
+120 MOTORON
+130 CALL***
+140 FORJ=1TOI-1
+150 IFLEN(A$(J))=255THENPRINT#2,A$(J);ELSEPRINT#2,A$(J)
+160 NEXT
+170 IFEOF(1)THENMAXFILES=1:CLEAR256,MAXRAM:BEEP:printtime$:END
+180 GOTO70
+
+   If you find a spare moment you might try a time-trial with this, versus the
+3rd-file buffer, to see if there's any significant difference.
+   The above routine will, as you note, massacre any variables your program is
+carrying, but there's usually a way to work around that problem.  A little peek
+here, a little poke there....
+
+p.s. in the 3rd-file technique, seems like you could avoid the "cumulative
+total" code with a simple
+
+ IF FRE(0) < [something] then CLOSE#...
+
+   ...so forget what I said about awkward code.
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+Well, I've found that you can't open both files at the "top" as previously
+mentioned.  You have to actually be connected to the drive where you want to
+open the file.  Otherwise you run into that "can't open two files" problem.  So
+it becomes something like this:
+
+MOTOROFF (connect to drive #1)
+OPEN":file1"FORINPUTAS1
+MOTORON  (connect to drive #2)
+OPEN":file2"FOROUTPUTAS2
+MOTOROFF
+(Read data from drive 1)
+MOTORON
+(Write data to drive 2)
+MOTOTOFF
+ etc, etc, etc.
+
+I've never tried a call to "***"... will give it a try, and see what happens.
+ (grin)  But your program sample is pretty much like the logic I'm already
+using, except that I write to an interim buffer.  If the source file's lines
+are short lines, <255 characters, you will transfer less data with your mEt?od
+in one "pass" than I can with the buffered approach.  If the lines are all 255
+characters, or mostly all 255 char., then both approaches will transfer an
+equal amount of data.  In this case, the important thing is to transfer as much
+data as possible in one pass.
+
+I understand your approach; it's neat, clean, and logical.  It's also pretty
+close to what I'm using.  But there are cases where it is less efficient than
+the buffer approach.  That's all I'm saying.
+
+Re the test, IF FRE(0)<(something)...  that might not work.  With some previous
+tests, when you have a file opened for output, all of available RAM is made
+available for that file, and FRE(0) returns 192. That was discovered some time
+ago when folks added FRE(0) and FILES to F6/F7 in TELCOM.  It was thought that
+pressing F6 when downloading would give you an idea of how much RAM was left
+for downloading (^S, F6, ^Q or abort).  That didn't work, since FRE(0) was
+always 192.  But I'll have to test it in this context to see.
+
+BTW, when you gonna have your two-drive setup working?
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+Nope, I was wrong.  (make a note of the date)  You CAN use FRE(0) as a tested
+value during output to a file.  As the file grows, the value shrinks.  And
+presumably, vice versa, and Verse Visah.
+
+
+Fm: Tony Anderson 76703,4062
+To: bob scott 73125,1437
+
+You'll find a new program of interest in Lib. 9.  FORMAT.2DR will format an
+entire box of disks at one sitting, by alternating between drives, and
+formatting each one in turn.  Time saver when you buy a new box of disks.
+
+Also, if you haven/t already got it, let me recommend FORMAT.TDD (also in Lib
+9) for formatting disks with or without the DOS loaded, one at a time.
+
+
+Sb: Dual-Disk Stuff
+Fm: Tony Anderson 76703,4062
+To: All
+
+Well, for all you anxious forum members who have been chomping at the bit to
+get some software for your new dual disk drive setup (I know there are some of
+you out there),  If you have the Tandy 200, and TDD-1's, and if you're using
+Power-Disk as a DOS, boy!  Have I got a deal for you!
+
+Right now, in Library 9, are two new programs that take advantage of your
+advanced, state-of-the-art, leading edge of technology, disk drive setup.
+
+FORMAT.2DR is a dual-disk formatter, which will allow you to format a whole box
+of ten diskettes at one sitting, by formatting disks alternately in both
+drives, until all are finished.  Back and forth, back and forth... whir-click-
+whir-click.  It's just wonderful.
+
+COPIER.2DR is a dual-disk backup utility that copies an entire disk to a new
+blank (formatted) disk in the second drive in one sitting.  Between 10 and 25
+minutes, depending on disk content.  It can also be used for "selectively
+copying" files from one disk to another, or copying files from a series of
+disks onto a single disk. (Woweee!)  Instructions and generic commentary will
+be found in the COPIER.DOC file.
+
+Now let's get some new programs available that can take advantage of this
+dual-drive capability.  Go to it!
+
+For you slower types, who haven't converted over to dual-drive systems yet,
+you'll find out how in the file 2DRIVE.TDD in Library

@@ -1,0 +1,74 @@
+	*** FYLDOS.200 and FYLDOS.100 ***
+		Wilson Van Alst
+		   76576,2735
+
+   It can be a chore, but every now and then you gotta do it: catalog those 
+disk files and get a handle on all the ones you've forgotten about, where your 
+backups are hidden, how full your disks are getting, and maybe even who's on 
+first.
+   FYLDOS will make that chore easier and significantly faster than it has been
+in the past.
+   And if you've got a *lot*_ of disks, you'll appreciate the fact that FYLDOS 
+operates without any other DOS in your computer.  That means you can entirely 
+clear your RAM -- except for the 650 bytes of FYLDOS -- to create the catalog 
+file.  (No, it's not _necessary_ to remove your usual DOS in order to run 
+FYLDOS program.  And if you do kill the main DOS, naturally, you'll have to re-
+install it.)
+   A couple of other features make this program unique.  It uses machine 
+language to retrieve information from the TDD.  The m/l runs in an area set 
+aside for TELCOM; so it does not eat up any usable RAM and it should not 
+conflict with any .CO files loaded in the HIMEM area of your computer.  The 
+machine language makes FYLDOS very speedy.  It also avoids the occasional 
+"false file size" problem that has plagued other TDD directory programs.
+
+	What FYLDOS Does:
+   FYLDOS creates a formatted list of TDD directory information.  The name of 
+each disk file, its size, and the name of the disk it's on, are written to a 
+.DO file in RAM.  A final entry for each disk indicates the amount of free 
+space remaining.
+   The program is intended for use with the TDD1 (the earlier, 100K drive).  It
+also works with the TDD2, but returns directory information for only the first 
+40 files on each disk.
+   FYLDOS is computer-specific -- meaning the T200 version won't run in the 
+M100/102, and vice versa.  In fact, attempts to run the wrong program carry the
+risk of crashing your computer.
+
+	   Running FYLDOS
+   It's pretty simple.  You run the program the same way you run any other 
+BASIC file from the main menu.
+   FYLDOS will prompt you for the name of the disk currently in your TDD.  You 
+can enter a name of any length, but only the first eight characters are written
+to the catalog file.  If you use numbers instead of alphas to identify your 
+disks, the program automatically adds the sign '#' to the front of the number.
+   As soon as you enter the disk name, you should hear the usual 'click-whirr' 
+-- and almost immediately the names of the disk's files will start flashing on 
+the LCD.  They are simultaneously being written to a RAM file called AAATDD.DO,
+which is destined to become your catalog document.
+   It's over so soon??  You may be surprised (pleasantly, I hope) at how fast 
+FYLDOS finishes with the first disk, beeps, and prompts you for another one.  
+At this point, you put in the new diskette, enter its name, and wait for the 
+next beep.  And so on.
+   To end the logging session, press <ENTER> any time you see the "Disk Name:" 
+prompt, and you'll return to the main menu.  You can quit this way, then come 
+back later for more: information is written to AAATDD.DO in the "append" mode 
+and will not be destroyed the next time you run FYLDOS.
+
+	Catalog Techniques with FYLDOS
+   I've found I can process a bin of 40 mostly-full disks in about 10 minutes 
+with this program.
+   I use a Library 4 program called COLUMN.BA to print the original version of 
+AAATDD.DO, giving me a list of files broken down by disk.
+   Then I run SORTHI.CO to alphabetize the files in AAATDD.DO, followed by 
+COLUMN.BA to print that list.
+   If AAATDD.DO is very large, it can be moved to disk for the COLUMN.BA 
+printouts.  (You use a '0:' prefix when COLUMN prompts you for the file name.  
+Your main DOS, of course, must be installed at this point.)
+
+	Final Comments
+   There is a lot that could be done to make FYLDOS fancier, or to integrate 
+its disk-access routine into a more comprehensive file directory system.  I 
+will try to help anyone working toward this kind of customization, as long as 
+he or she is willing to share the result with this forum.
+		Wilson Van Alst
+		[76576,2735]
+

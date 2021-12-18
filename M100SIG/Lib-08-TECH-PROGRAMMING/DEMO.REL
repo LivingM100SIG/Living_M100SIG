@@ -1,0 +1,107 @@
+   This file contains:
+
+1. A BASIC loading program that creates a machine-code demo routine,
+BELL.CO, with end address chosen at load time.
+
+2. A discussion of how relocatable assembly code can be loaded
+on the Model 100.
+
+3. The assembly source listing of BELL.CO.
+-------
+PART 1:
+
+1 REM Demonstration of relocatable machine code loader
+2 REM by Rick Perry, CIS-75665,1045
+3 REM Generated program, BELL.CO, will beep 5 times then return to Menu.
+4 REM Default "End address" is current value of HIMEM-1
+5 ONERRORGOTO80:Y=HIMEM-1:PRINT"End Address ("Y") ";:INPUTY
+10 IFY>=MAXRAMTHENERROR6
+15 READC:X=Y-C:CLEAR0,X-1:DEFSNGD-Z
+20 ONERRORGOTO:X=HIMEM+1:READC:Y=X+C
+25 CLS:PRINT@95,"LOADING..."
+30 FORK=XTOY:READZ:C=C+Z:POKEK,Z:NEXT
+35 READL:C=C+L:IFL<0THEN45ELSEK=X+L:R=PEEK(K)+256*PEEK(K+1)+X
+40 P=INT(R/256):POKEK,R-256*P:POKEK+1,P:GOTO35
+45 IFC<>990THEN70
+50 CLS:PRINT"The relocatable demo, BELL.CO,"
+55 PRINT"has been created.":PRINT
+60 PRINT"HIMEM must be"HIMEM"or lower"
+65 PRINT"to use this version.":SAVEM"bell",X,Y,X
+70 SOUND9394,10:PRINT"CHECKSUM IS WRONG":PRINT"PLEASE RE-DOWNLOAD PROGRAM"
+75 PRINT"AND TRY AGAIN":END
+80 SOUND9394,10
+85 IFERR=5ORERR=7THENPRINT"Too low, or not enough memory."ELSEPRINT"Too high."
+90 PRINT:RUN
+95 DATA11,14,5,205,41,66,13,194,2,0,195,151,87,7,-1
+100 REM *** last line ***
+----------
+PART 2:
+
+   Many existing software products, like the RS Disk/Video interface,
+ProAid, Text Power, etc.., have their code located as high as possible
+in RAM, and simply remain loaded there (i.e. are not also stored in a
+.CO file). Designers of new software then have a problem choosing an
+origin for their code so that it can coexist with these other
+routines.
+
+   Since machine-code files themselves can not be made relocatable on
+the Model 100, and since the 8085 instruction set lacks a relative
+addressing mode, one way of producing relocatable machine code
+routines is by using a loading program that adjusts the absolute
+addresses at load time depending on the origin or end address chosen.
+
+   The demo program above demonstrates this concept. The DATA
+statement on line 95 is actually the output produced by my assembler.
+The first data item represents the end address of the code, relative
+to a zero origin. That's 11 in this case, so it's followed by 12
+values containing the actual code byte-by-byte. In this code, any
+absolute addresses which will need to be relocated, have been set to
+their value relative to a zero origin.
+
+   Following the code in the DATA stmt, comes the list of offsets
+where absolute addresses must be fixed. This list contains only one
+item in this case, the 7, and is terminated by a -1.
+
+   By comparing the items in the DATA stmt with the source listing in
+part three, you'll see that the symbolic address 'loop' has an offset
+value of 2, and is referenced at relative address 7. The loader pgm
+will POKE in the correct absolute value computed with respect to the
+chosen origin at load time.
+
+   For production tape-loaded software, only the relative end address
+is needed in the data statement for the loader. The remaining values
+can be placed in a tape text file to be read by the loader pgm, in
+order to save space.
+-------
+PART 3:
+
+; *** Assembly source listing *** of relocatable demo program
+; that rings terminal bell five times then exits to menu.
+; 'loop' is a symbolic address that will have to be relocated
+; depending on the origin used at load time.
+
+bell    equ     @H4229.         ; ROM routine to ring terminal bell
+menu    equ     @22423.         ; M100 Menu jump address
+
+        rel                     ; makes it 'relocatable'
+
+        mvi     c,#     5.      ; start counter at five
+
+loop    call    @       bell    ; ring the bell
+        dcr     c               ; decrement counter
+        jnz     @       loop    ; continue for five times
+
+        jmp     @       menu    ; exit to menu
+
+*** Assembler Symbol Table Listing ***
+
+ASMBL   Mon  03/05/84  07:37:22
+
+origin:  0      0000 R
+end:     11     000B R
+
+BELL     16937  4229
+MENU     22423  5797
+LOOP     2      0002 R
+
+*** end of file ***

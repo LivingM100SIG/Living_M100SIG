@@ -1,0 +1,43 @@
+0  ' CODER.BA Encryption program. Revised 7/16/87
+1 ' Features: All in Basic without
+2 ' calls. Therefore easily translated
+3 ' to other machines. Suitable for 
+4 ' Electronic Mail. Uses only ASCII 
+5 ' 33 to 126, AND ignores CR's & LF'S 
+6 ' & Spaces, including extras added in
+7 ' transmission. Marks File start 
+8 ' with "XX  X" for correct
+10 ' Start point of Decoding. 
+11 'User has the option, whether to
+12 'print Spaces & Extras. Also,
+13 'now runs faster.
+15 CLEAR0:CLEAR1000:MAXFILES=2:DEFINTF,N,R,Y,Z:DEFSTRX
+20 CLS:INPUT"Source File";F1$:INPUT"Target File";F2$
+30 PRINT"1] Code":INPUT"2] Decode";F:IFF<>1ANDF<>2GOTO30
+34 IFF=2THENR=1:GOTO40
+35 INPUT"1] Spaces 2] No Spaces";R:IFR<>1ANDR<>2GOTO35
+40 INPUT"Enter a 4 digit Number";NU:NU$=STR$(NU):NU$=RIGHT$(NU$,LEN(NU$)-1)
+50 N1$=LEFT$(NU$,1)+RIGHT$(NU$,1)
+55 IFVAL(N1$)>20THENN1=VAL(LEFT$(N1$,1))+VAL(RIGHT$(N1$,1))ELSEN1=VAL(N1$)
+60 N2$=MID$(NU$,2,2)
+65 IFVAL(N2$)>20THENN2=VAL(LEFT$(N2$,1))+VAL(RIGHT$(N2$,1))ELSEN2=VAL(N2$)
+70 OPENF1$FORINPUTAS1:OPENF2$FOROUTPUTAS2
+72 IFF=1THENPRINT#2,"XX  X";
+74 IFF=2THENGOSUB200
+80 IFEOF(1)GOTO150
+90 X=INPUT$(1,1):IFASC(X)>32GOTO100
+95 IFR=1GOTO130ELSEGOTO80
+100 Y=Y+1:Z=ASC(X)
+110 IFF=1THENZ=Z+YMODN1+N2ELSEZ=Z-YMODN1-N2
+115 IFZ<33THENZ=Z+94
+116 IFZ>126THENZ=Z-94
+120 X=CHR$(Z)
+130 PRINT#2,X;
+140 GOTO80
+150 CLOSE:MENU
+200 IFEOF(1)GOTO250
+205 A$=INPUT$(1,1)
+210 IFA$<>"X"GOTO200
+220 B$=B$+A$:IFLEN(B$)<5THENA$=INPUT$(1,1):GOTO220
+240 IFB$="XX  X"THENRETURN
+250 CLS:PRINT@130,"INVALID FILE":FORN=1TO1000:NEXT:CLOSE:MENU

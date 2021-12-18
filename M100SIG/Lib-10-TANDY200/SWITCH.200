@@ -1,0 +1,54 @@
+SWITCH.200 BY CARMEN PAONE [72677,42]
+
+Have you ever had to exchange blocks of text between two .DO files on your
+Tandy 200?
+
+The old procedure was to call up one file, put the desired data
+into the paste buffer, and then go back to the RAM menu to access the target
+file.
+
+SWITCH.200 will allow you to flip back and forth between two files with the
+push of an F-key.
+
+Information can easily be exchanged between two files in no time at all.
+
+In order to make SWITCH.200 work, the user will have to type in the names of
+two files, he wishes to access.
+
+The files will be renamed as "F1.DO" and "F2.DO". When the user is finished
+exchanging data in the files, he can use the ""SWITCH"" option to restore the
+original filenames.
+
+Cut and paste the program below the dotted line and put it into a .DO file
+called "SWITCH"
+
+Run the .DO file through BASIC and save it as "SWITCH.BA".
+
+
+================WARNING===============
+
+This program will cause conflicts with other ROM chip-based programs that
+reside in the Alternate LCD buffer on the 200.
+
+Some examples of these programs are ROM chips such as ROM2/Cleauseau or the
+NODE DATAPAK ROM chip.
+
+A freeze-up on the screen and garbled files will result from this conflict.
+
+
+......................................
+
+
+
+0 REM SWITCH.200 BY CARMEN PAONE [72677,42]
+1 CLS:PRINT@80,STRING$(40,239);:PRINT@202,"SWITCH.200"STRING$(8,155)STRING$(8,154)"002.HCTIWS":PRINT@320,STRING$(40,239);:PRINT@600,"FILE1 FILE2     NAME  SWITCH       MENU";:KEYON:ONKEYGOSUB5,8,,3,4,4,,11
+2 GOTO2
+3 CLS:Y$="f1":Z$="f2":PRINT@40,:FILES:PRINT:INPUT"RENAME #1:";A$:NAMEA$+".DO"ASY$+".DO":PRINT:INPUT"RENAME #2:";B$:NAMEB$+".DO"ASZ$+".DO":CLS:PRINT@40,:FILES:FORT=1TO1999:NEXTT:GOTO1
+4 CLS:PRINT@40,:FILES:Y$="F1":Z$="F2":PRINT:INPUT"SWITCH #1:";A$:NAMEY$+".DO"ASA$+".DO":PRINT:INPUT"SWITCH #2:";B$:NAMEZ$+".DO"ASB$+".DO":CLS:PRINT@40,:FILES:FORT=1TO1999:NEXTT:GOTO1
+5 CLS:F$="F1.do":OPENF$FORAPPENDAS1:IFLEN(F$)=0THENBEEP
+6 VP=VARPTR(#1):CLOSE:DI=PEEK(VP+2)+256*PEEK(VP+3):AD=PEEK(DI)+256*PEEK(DI+1):FORI=63574TO63620:READX:POKEI,X:NEXTI:DATA 229,213,197,245,235,42,80,246,229,33,0,0,34,210,239,57,34,80,246,213,62,1
+7 DATA 33,114,248,195,39,115,225,225,34,80,246,205,226,131,175,50,50,239,61,50:DATA 10,239,195,4,22:CALL63574,,AD:SCREEN,0:RUN1
+8 CLS:F$="F2.do":OPENF$FORAPPENDAS1:IFLEN(F$)=0THENBEEP
+9 VP=VARPTR(#1):CLOSE:DI=PEEK(VP+2)+256*PEEK(VP+3):AD=PEEK(DI)+256*PEEK(DI+1):FORI=63574TO63620:READX:POKEI,X:NEXTI:DATA 229,213,197,245,235,42,80,246,229,33,0,0,34,210,239,57,34,80,246,213,62,1
+10 DATA 33,114,248,195,39,115,225,225,34,80,246,205,226,131,175,50,50,239,61,50:DATA 10,239,195,4,22:CALL63574,,AD:SCREEN,0:RUN1
+11 MENU

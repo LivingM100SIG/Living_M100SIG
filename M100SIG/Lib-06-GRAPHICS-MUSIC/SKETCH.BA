@@ -1,0 +1,162 @@
+10 'SKETCH.BA (c) 1989 by R.H.Pigford 
+15 'last upgrade 1/27/91
+20 'uses GRAFIX.CO (c) 1989 R.H.Pigford
+25 GOTO290
+30 A$=INKEY$:IFA$=""THEN30ELSERETURN
+35 'pixel editing
+40 CLS
+45 D=1
+50 A$=INKEY$
+55 IFA$=>"a"THENIFA$<="z"THENA$=CHR$(ASC(A$)AND223)
+60 IFA$=CHR$(32)THEND=1-D:GOTO175
+65 IFA$=CHR$(85)THENX=X-1:GOTO175'U
+70 IFA$=CHR$(1)THENX=X-12:GOTO175's-lft
+75 IFA$=CHR$(79)THENX=X+1:GOTO175'O
+80 IFA$=CHR$(6)THENX=X+12:GOTO175's-rt
+85 IFA$=CHR$(56)THENY=Y-1:GOTO175'8
+90 IFA$=CHR$(20)THENY=Y-16:GOTO175's-up
+95 IFA$=CHR$(75)THENY=Y+1:GOTO175'K
+100 IFA$=CHR$(2)THENY=Y+16:GOTO175's-dn
+105 IFA$=CHR$(55)THENX=X-1:Y=Y-1:GOTO175'7
+110 IFA$=CHR$(57)THENX=X+1:Y=Y-1:GOTO175'9
+115 IFA$=CHR$(74)THENX=X-1:Y=Y+1:GOTO175'J
+120 IFA$=CHR$(76)THENX=X+1:Y=Y+1:GOTO175'L
+125 IFA$=CHR$(17)THENX=0:GOTO175'ctrl+lft arrow
+130 IFA$=CHR$(18)THENX=239:GOTO175'ctrl+rt arrow
+135 IFA$=CHR$(23)THENY=0:GOTO175'ctrl+up arrow
+140 IFA$=CHR$(26)THENY=63:GOTO175'ctrl+dn arrow
+145 IFA$="T"ORA$="t"THENSOUND1000,2:GOTO210
+150 IFA$="D"THEN545
+155 IFFD=1THENGOSUB570
+160 IFA$=CHR$(4)THENSOUND15000,2:FD=0
+165 IFA$="/"THEN270
+170 IFA$=CHR$(27)THEN335
+175 IFX<0THENX=0
+180 IFX>239THENX=239
+185 IFY<0THENY=0
+190 IFY>63THENY=63
+195 IFD=1THENPSET(X,Y)ELSEPRESET(X,Y)
+200 GOTO 50 'loop back
+205 'find cursor position
+210 C=INT(X/6):R=INT(Y/8):L=(R*40)+C
+215 L1=L'save first curs vals
+220 L$=INKEY$:IFL$=""THEN220
+225 IFL$=CHR$(13)THENSOUND5000,2:GOTO50
+230 IFL$<>CHR$(8)THEN250
+235 IFL>319THENL=319:GOTO245
+240 L=L-1:IF L<L1THENL=L1
+245 PRINT@L," ";:GOTO220
+250 IFL>319THEN220
+255 PRINT@L,L$;:L=L+1
+260 GOTO220
+265 'go to GRAFIX.CO
+270 CALL GF 'start of GRAFIX
+275 IFPEEK(PF)=0THEN440'prflag
+280 GOTO 50
+285 'intro and menu for SKETCH.BA
+290 GOSUB800:CLEAR100,GF:E$=CHR$(27):CLS
+295 GOSUB800:GOSUB700
+300 PRINT@125," "E$"pENTER"E$"q key to continue or...":LINE(35,31)-(35,23),1:LINE-(65,23),1
+305 PRINT@205," "E$"pQ"E$"quit":LINE(35,47)-(35,39),1:LINE-(41,39)
+310 GOSUB30:IF A$="Q"ORA$="q"THENMENU
+315 IFA$<>CHR$(13)THEN310
+320 ONERRORGOTO330:LOADM"GRAFIX":GOSUB800
+325 E$=CHR$(27):GOTO 335
+330 CLS:BEEP:PRINT"Could NOT loadm "E$"p GRAFIX.CO "E$"q!":PRINT"Hit <"E$"pANY"E$"q> key!";:GOSUB30:MENU
+335 PRINTE$;"W";' enable scroling
+340 CLS:GOSUB705:PRINT@40,"<Q>uit":PRINT@55,"<I>nstructions"
+345 PRINT@80,"<N>ew Sketch":PRINT@95,"<E>dit EXIST.CO file.":LINE(0,7)-(239,7),1
+350 LINE(2,30)-(235,63),1,B:LINE(76,20)-(85,20),1:LINE-(85,30),1:LINE(216,20)-(225,20),1:LINE-(225,30),1
+355 PRINT@161,E$"p/"E$"q Screen SAVE + Multiple PRINT Functs."
+360 PRINT@201,E$"pT"E$"q Type TEXT at dot then "E$"pENTER"E$"q"
+365 PRINT@241,E$"pD"E$"q Set 1st dot, "E$"pD"E$"q DRAW LINE to 2nd dot."
+370 PRINT@281,E$"pESC"E$"q Erase picture and return here.";:LINE(5,32)-(5,63),1
+375 A$="":GOSUB30:A=INSTR("QqIiNnEe",A$):IFA=0THEN375ELSEON(A+1)/2GOTO380,585,385,395
+380 MENU
+385 PRINTE$;"V";:GOTO40'no scroll
+390 'look for existing Ram .CO filename then pass it's start addr to GRAFIX
+395 CLS:FILES:PRINT"Enter your existing PIX.CO ":PRINT"filename (w/o ext.).";:INPUTSI$:IFLEN(SI$)=0THENBEEP:GOTO335
+400 L=LEN(SI$):IFL>6THENBEEP:GOTO335
+405 N$=SI$:GOSUB505:SI$=N$
+410 PRINTE$+CHR$(M);:SI$=SI$+".CO"
+415 PRINTSI$+"  Correct? <Y/N>"
+420 GOSUB30:IFA$="N"ORA$="n"THEN395
+425 GOSUB900:IF NF=1 THEN 335
+430 CALL FZ,,DS 'pass the RAM start Addr to HL register- FILLCD:
+435 PRINTE$;"V";:GOTO 45
+440 CLS:PRINT"<1> Save Buffer to RAM File."
+445 PRINT"<2> Return to EDITING Sketch."
+450 PRINT"<3> Go to Main Menu (lose this sketch)."
+455 GOSUB30:A=VAL(A$):IFA<1ORA>3THENBEEP:GOTO455ELSEONAGOTO465,460,335
+460 CALL FZ,,BS:PRINTE$;"V";:GOTO45
+465 CLS:FILES:PRINT"Save Sketch File";:INPUTSN$:N$=SN$:GOSUB505
+470 SN$=N$:PRINTSN$+".CO";
+475 PRINT" Correct? <Y/N>":GOSUB30:IFA$="N"ORA$="n"THEN465
+480 SX$=SN$:T=0:T=INSTR(SX$,"."):IFTTHENSN$=LEFT$(SX$,T-1)ELSESN$=SX$
+485 ON ERROR GOTO 500
+490 PRINT"Hit <F4> -> SKETCH  or <F8> -> MENU."
+495 SAVEMSN$,BS,BE-1,0 'dumps to BASIC
+500 BEEP:PRINT"RAM FULL! ... returning EDITING.";:GOTO 440
+505 A$="":B$="":C$=""'capitalize
+510 FOR W=1TOLEN(N$):B$=MID$(N$,W,1)
+515 B=ASC(B$)
+520 IF(B>96) AND (B<123) THEN C$=CHR$(ASC(B$) AND 223):GOTO530
+525 C$=B$
+530 A$=A$+C$
+535 NEXTW:N$=A$:RETURN
+540 'record points, draw/erase  line
+545 IFFD=0THENX1=X:Y1=Y:FD=1:SOUND1047,2:GOTO50
+550 X2=X:Y2=Y
+555 IFD=1THENLINE(X1,Y1)-(X2,Y2),1ELSELINE(X1,Y1)-(X2,Y2),0
+560 FD=0:FB=0:SOUND1760,2:GOTO50
+565 'make the DRAW or BOX anchor pixel  flash
+570 IFZ=0THENPRESET(X1,Y1)ELSEPSET(X1,Y1)
+575 Z=1-Z:RETURN
+580 'instructions
+585 CLS:GOSUB705:PRINT@40,"A drawing program, using the keys"
+590 PRINT"forming the keypad for the        & * ("
+595 PRINT"dot drawing directions.  Togggle  U   O"
+600 PRINT"the dot on/off with the           J K L"
+605 PRINTE$"p space bar "E$"q.  Combine Shft+ARROWS"
+610 PRINT"to jump 16 dot's, and use Cntrl+ARROWS"
+615 PRINT"to move to edges.            ----more>";:LINE(201,13)-(236,41),1,B:GOSUB30
+620 CLS:PRINT"With the dot on a normal character"
+625 PRINT"location, hit "E$"pT"E$"q to initiate TEXT on"
+630 PRINT"screen.  Use "E$"pENTER"E$"q when done."
+635 PRINT"Use "E$"pD"E$"q once to set anchor point for"
+640 PRINT"a line. Move, hit "E$"pD"E$"q again to DRAW line."
+645 PRINT"If the second dot is 'off', the line"
+650 PRINT"will erase.  Cancel 2nd "E$"pD"E$"q with Crtl-D." 
+655 PRINT"With your SKETCH on screen,   ----more>";:GOSUB30
+660 CLS:PRINT"<ESC> = erase sketch, go to Main Menu."
+665 PRINT"</> to bring up the "E$"p GRAFIX "E$"q options :"
+670 PRINT"  <P>rint screen. Choose from 12 "
+675 PRINT"    possible Width/Height combinations."
+680 PRINT"  <S> Scans screen, asks SAVE filename?"
+685 PRINT"    Dumps to BASIC. Use F4 to RUN again.";
+690 PRINT"  <Q>uit = return to SKETCH editing."
+695 PRINT"That's all.        Any Key -> MAIN MENU";:GOSUB30:GOTO 335
+700 PRINT@41,"Newark, DEL. Uses Himem"GF"to"BE;
+705 PRINT@0," "E$"pSKETCH.BA"E$"q & "E$"pGRAFIX.CO"E$"q "CHR$(171)"1989 R.H.Pigford"
+710 LINE(77,0)-(77,7),1:LINE(5,0)-(5,7),1
+715 RETURN
+795 'find appropriate address values
+800 SI$="GRAFIX.CO":GOSUB900
+805 IF NF=1THENEND
+810 GF=PEEK(DS+3)+256*PEEK(DS+4)'start GRAFIX.CO
+815 PF=PEEK(DS+5)+256*PEEK(DS+6)'PRFLAG: addr.
+820 BS=PEEK(DS+7)+256*PEEK(DS+8)'BUFFER: start addr
+825 BE=PEEK(DS+9)+256*PEEK(DS+10)'end
+830 FZ=PEEK(DS+11)+256*PEEK(DS+12)'FILLCD
+835 CLS:RETURN
+895 'get FILE.CO addr references
+900 SS$="     "
+905 SP$=SI$:T=INSTR(SP$,"."):IFTTHENSP$=LEFT$(SP$,T-1)
+910 SP$=SP$+SS$
+915 SP$=LEFT$(SP$,6):FORD=63919TO64128STEP11:T=PEEK(D)
+920 IFT=160ANDPEEK(D+3)=ASC(SP$)THENFORI=2TO6:IFPEEK(D+2+I)=ASC(MID$(SP$,I))THENNEXTI:DS=256*PEEK(D+2)+PEEK(D+1):SP$=SP$+".CO":NF=0:GOTO935
+925 NEXTD:SP$=SP$+".CO":PRINTSP$+" NOT FOUND!";:BEEP:FORT=1TO300:NEXTT:NF=1:GOTO940
+930 'get appropriate RAM addr of .CO file and pass to GRAFIX.CO
+935 DS=DS+6 'move to actual file data
+940 RETURN
+

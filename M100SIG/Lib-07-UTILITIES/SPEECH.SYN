@@ -1,0 +1,48 @@
+
+     <SPEECH UNIT FOR M100/200>
+
+If you ever used a soldering iron or a bread board, you can make your 100/200/
+600 talk for under $30.
+Radio Shack carries SP0256 speech chip that can be easily interfaced with a 
+parallel printer port in back of 100/200 or any other computer with Centronics 
+port  .The chip costs $12 and few neccessary parts can be dug up from junk box 
+or purchased for a few bucks.  
+
+Instructions:
+A) Gather parts:
+
+1) SP0256 chip: it comes with a complete circuit diagram and list of external 
+components.
+
+2) 26 pin IDC connector: you can use larger ones and cut it down to fit.
+
+small speaker and amplifier(not needed if you install LM386 audio amplifier as 
+shown on the diagram.)
+
+   Note: if you can't find 3.120 MHz crystal, 3.14 MHz that Radio Shack has 
+will work.
+B) Wire up the components as shown on the diagram.
+C) Lead interfacing wires from the speech unit and the IDC connector and 
+connect the points on left column(corresponding port pins on IDC pins) with 
+those in the right column(speech chip pins)
+
+   Par port <->	SP0256
+
+   STROBE(1) -	ALD(20)
+   PD0(3)    -	A1(18)
+   PD1(5)    -	A2(17)
+   PD2(7)    - 	A3(16)
+   PD3(9)    -	A4(15)
+   PD4(11)   -	A5(14)
+   PD5(13)   -	A6(13)
+   BUSY(21)  - 	LRQ(9)
+   GROUND(any even# pins) - Vss(1)
+D) next, plug the circuit to the printer port.
+E) to create speech, send the proper codes to the speech unit by LPRINT CHR$() 
+command.
+
+  I suggest using a socket for the SP0256 if you are soldering.  You'll need 
+separate power supply.  If you know how, you can use the computer power supply.
+But remember, the unit draws lots of current.
+
+If you have any problems, contact.

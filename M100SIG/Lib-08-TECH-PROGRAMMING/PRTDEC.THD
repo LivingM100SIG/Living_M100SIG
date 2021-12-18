@@ -1,0 +1,113 @@
+PRTDEC.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Printing decimal numbers with truncated precision is often needed by Basic
+programmers.  These message discuss ways to use PRINT USING and INT for this
+purpose.  Note that you can modify these approaches slightly to get rounding
+-- but this is left as an exercise for the reader of the THD!
+
+Message range: 157672 to 157698
+Dates: 10/4/87 to 10/5/87
+
+
+Sb: #decimal truncate
+Fm: James Yi 73327,1653
+To: All
+
+I lost my Basic manual, so when these things come up, I have to ask.
+Does anyone know if it is possible to truncate decimal places, so that only cer
+tain amount of digits in the decimal places can be displayed?
+
+
+Fm: Eiji Miura 76703,4311
+To: James Yi 73327,1653
+
+You can use PRINT USING statement.  The format is
+
+  PRINT USING "format"; expression list
+
+For example, to have two decimal places, "format" will be something like
+"######.##"
+
+10 A=3.14159265
+20 PRINT USING "######.##"; A
+
+This program will output 3.14.
+
+
+Fm: Tony Anderson 76703,4062
+To: James Yi 73327,1653
+
+Yes.  You can truncate with the PRINT USING type of statement, where you
+specify the format.  Since it covers 3 pages in the manual, it's sort of
+difficult to summarize here... send me your address.
+
+An alternate way is to force the number into a specific number of decimal
+places, and then just display the number.  Here's an example which will force a
+number to 2 decimal places:
+
+10 X=17.123456789012345
+20 Y=INT(X*100)/100
+30 PRINT Y
+
+To scale for three decimal places, change both 100's in line 20 to 1000, etc.
+
+
+Fm: James Yi 73327,1653
+To: Eiji Miura 76703,4311
+
+Thanks Eiji, but I was looking for a Basic statment that would specify decimal places for just PRINT x.
+
+
+Fm: James Yi 73327,1653
+To: Tony Anderson 76703,4062
+
+Well, it doesn't look like there is one, but I was hoping for a single Basic
+statement that would truncate decimal places of all numbers following it,
+which is very convenient when you have many different variables to print.
+
+I guess the next best alternative is PRINTUSING, which I'm not familiar with.
+3 pages!?.
+
+
+Fm: Tony Anderson 76703,4062
+To: James Yi 73327,1653
+
+Yep, there are a lot of options to PRINT USING.
+
+However, what's wrong with the formula I gave you?  You can reduce it to a
+single statement if you want....
+
+PRINTINT(X*100)/100
+
+If you have a "bunch" of variables to print, just do the same thing to each
+variable.
+
+However, I believe what you're looking for may be doable with the PRINTUSING
+statement, in the form,
+
+PRINTUSING,"###.##";A,B,C
+
+Or something like that. But it won't format the list of variables for you...
+just print them, one right after the other. It's difficult to say, when all we
+have to go on, is, "print a bunch of variables".
+
+
+Fm: James Yi 73327,1653
+To: Tony Anderson 76703,4062
+
+The variables are components of vectors,and it would be nice if all
+three numbers could neatly fit in a single line,making it more readable.
+Since I want to attach "i","j", and "k" to each numbers, PRINT USING
+"#",a,b,c might not work. After looking at it again, I'll go with
+PRINTINT(x/1000)*1000.
+
+
+Fm: Tony Anderson 76703,4062
+To: James Yi 73327,1653
+
+Careful about where you put the "/" and "*"... what you listed won't work. It
+returns a zero.  Gotta be INT(X*1000)/1000, not (X/1000)*1000.
+

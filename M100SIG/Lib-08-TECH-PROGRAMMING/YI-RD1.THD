@@ -1,0 +1,184 @@
+YI-RD1.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+James Yi is a prolific M/L programmer who has uploaded some exciting new
+code in recent months.  Alas the source code is written in his own assembly
+language (for his own assembler).  This set of messages relates to
+translating his nemonics into more standard Intel-type code.
+
+Message range: 159383 to 159847
+Dates: 10/29/87 to 11/7/87
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653
+
+I'm looking into converting your RESEQ.200 for 100 use.  But it will have to
+run in user RAM, since the M100 alt LCD buffer is not big enough to hold it!
+
+Some questions:
+ 1) I assume the high RAM addresses at 65500+ are being used as a buffer, and
+that I can simply use addresses in the program area itself for the M100
+version.  Can't find any equivalent space in M100 system RAM (tho it may exist
+).
+ 2) Biggest problem is that I have trouble reading your SRC code! Example: In
+one place you have "hl=[de".  What is that supposed to do?  There are other
+things I'm not sure of, too.  Best bet will be to get a source and let you read
+it to see if it's close!
+ 3) Another reading problem: e=#5.  Is this MVI  E,5 ? (i.e., does #5 mean a
+decimal number as it seems?).  But then what does cmp#',' mean -- CPI  ',' ?
+ 4) Finally (for now!), what does the "token list" at the end do? "/[136 140
+."  doesn't tell me much.
+
+
+Fm: James Yi 73327,1653
+To: Phil Wheeler 71266,125
+
+65500+(65362+ on T200) addr, I think are available on M100 and it's the Telcom
+buffer, safely assuming, since the chrs viewed online can be seen there off
+line.
+
+hl=[de, is the undocumented op-code.  it loads hl with content of addr pointed
+by de.
+Ones I use frequently are:
+
+-bc    ;8d 'Subtract BC from HL
+srh    ;16d 'Shift Right HL w/o carry
+sld    ;24d 'Shift Left DE
+[de=hl ;217d 'store HL at addr of DE
+hl=[de ;237d 'load HL from addr of DE
+
+I use decimal, and e=#5 means MVI E, 5d
+And cmp ',' or cmp #',' means
+ CPI ',' or CPI 34d
+
+"/[136 140...  is a list of numbers, the bracket indicating a string of data,
+either numerical or ascii.
+
+The numbers are Basic token codes, and it's the same on 100.
+With CSA, equiv would be something like:
+    DB 136d
+    DB 140d
+    ...
+    DB 0d
+
+And /['character' 0
+means
+    DM  character
+    DB  $00
+
+
+Hmm..  maybe I should learn to use Custom Software Assembler..
+Where can I obtain it for T200?
+
+Are the lcd buffers for both current and prev screen next to each other?
+If so, you have 320+320=640 bytes!
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653
+
+You're right!  There is a chance to stuff it in there. I'll look at the other
+buffer you mention.  If the whole thing can go into high RAM, it will be a big
+plus!
+
+Another question: I've always assumed that the '/.4' (for example) is a unique
+subroutine label.  But now I find several '/.1' labels (under .6,
+7, .10 and .13), each seemingly an internal loop.  Maybe I understand less than
+I thought!  What IS the format?
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653
+
+Then, from reading last message, what is 'a=[de'?
+
+
+Fm: James Yi 73327,1653
+To: Phil Wheeler 71266,125
+
+The compiler updates the value of a label every time it reappears.
+So, if the ML code that refers to .1 is compiled before another .1 is
+encountered, the code will be assigned with the value defined by the 1st .1
+
+As an example,
+
+A) /.1=1000
+B) JMP .1
+C) /.1=2000
+D) JMP .1
+
+at B, the code is equal to JMP 1000, and at D, JMP 2000.
+So the same label can be used more than once, as long it is accessed before it
+changes to another value.
+
+The following will not work if you wanted to JMP to 3000.
+
+A) JMP .1
+B) /.1=3000
+C) /.1=0
+
+The compiler makes 2 passes, and on 1st pass, .1 at A is not yet defined, then
+it's defined 3000 at B, and redefined at C, with 0.
+Then on 2nd, code at A will be equal to JMP 0, not JMP 3000, since it's
+redefined at C on the 1st pass.
+If we put JMP .1 in between B and C, then it would work.
+
+a=[de means LDAX D, and [de=a means STAX D.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653
+
+James, I assume that inc h means inr h and inc hl means inx h (the h means
+increment the 8 bit register and the hl means increment the register pair).
+Coorect?
+
+
+Fm: James Yi 73327,1653
+To: Phil Wheeler 71266,125
+
+yes, that's correct..
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653
+
+Some more questions.  First is the label line after '/.23', namely:
+
+ /b1:/.127:/f1;call hook+1
+
+What does the code at the end mean?  That is:
+
+ /.221
+ /j61308;use INPUT buffer
+ /.224:/f1:/.225:/f1
+ /.222:/f39:/.223
+ /j.221
+
+Could you give me this in a more conventional format?
+
+
+Fm: James Yi 73327,1653
+To: Phil Wheeler 71266,125
+
+"/b1:/.127:/f1"-  is to set .127 the addr of 55d, of ORA #55d, in .23, by
+backing up one(/b1), label it and back forward.
+Because if entry is made at .23, carry is cleared by ORA, but if it's made at
+.127, carry is set by STC, 55d.
+
+The stuff at the end, /.221...  is equiv to:
+jy224   equ     on/off status(61308)
+jy225   equ     buffer data pointer(61309)
+jy222   equ     buffer(61310)39 bytes
+jy223   equ     buffer+39(61349)
+
+or using ram at the end of program:
+
+jy222   dm      0123456789012345678901234567890123456789        ;39 bytes
+jy223   db 0
+jy224   db 0
+jy225   db 0
+

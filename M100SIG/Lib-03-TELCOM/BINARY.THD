@@ -1,0 +1,364 @@
+BINARY.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The Model 100 family has built-in upload and download capability for ASCII
+files.  Because all laptop programs and files in this forum are ASCII, the
+Model 100 comes fully equipped for file transfers here.  However, there
+may be rare instances when binary file downloads into the Model 100 have
+utility.  This heavily-edited thread discusses this issue -- and the
+uniqueness of the binary files (CO and BA) in the Model 100 family.
+
+Message range: 156637 to 156769
+Dates: 9/13/87 to 9/16/87
+
+
+Fm: Jon Kaplan 73337,1414
+To: Phil Wheeler 71266,125
+
+I found something interesting that might interest you in light of the
+conversations we've had.
+
+Someone on the Microsoft forum turned me on to a way of downloading ML files on
+the M100.  There is an unpublish and little known command: REAd /INT that will
+cause an 8 bit file to come down int hex format.
+
+It is an odd format with 9 leading bytes and 2 trail plus a CR LF on each line.
+The extra bytes are an error checking system, but I've been stripping them off
+with a simple basic program with no problem with errors.
+
+So far I've managed to download, ARC-E, FLTIBM and several arc files this way.
+Admittedly, it's a pretty counterproductive thing to do to an ARC file, but it
+let's me read things I couldn't get otherwise.
+
+And, yes, I'm aware of the hex version of FLTIBM but MAKEHC.BAS seems to be
+hiding on the IBMSW forum. I found all the other HC's but that one. Jon Kaplan
+
+
+Fm: Phil Wheeler 71266,125
+To: Jon Kaplan 73337,1414
+
+Good info, Jon.  I believe you are getting Intel hex format -- and we do have
+programs (even for the Model 100) to make the conversions.
+
+
+Fm: Tony Anderson 76703,4062
+To: Jon Kaplan 73337,1414
+
+READ/INT is a command that specifies a binary file is to be sent in Intel HEX
+format.  It's a documented command, and the sysops know about it.  But the only
+binary files we have here are for the 600, which doesn't need that sort of
+command, since the 600 can download binary directly into RAM, which the
+100/102/200/NEC/M10/KYO cannot.  It doesn't seem too important for us to push a
+command that has no application in this forum. The real problem lies in
+UPLOADING a binary file.  The 100 family won't, without X-Tel software, and
+X-Tel doesn't have enough of an installed customer base to warrant our
+implementing a new "protocol" for neophytes to deal with.  I'm convinced that
+the majority of our members are not technically inclined people, but are
+business/professional folks who are more interested in getting a program to do
+a job, than in understanding what makes it tick.  The conversion of .DO files
+into BASIC programs is as technical as they'll ever get. To that sort of user,
+binary files would only present problems that were not understandable, and not
+surmountable.
+
+
+Fm: Jon Kaplan 73337,1414
+To: Tony Anderson 76703,4062
+
+I called it undocumented because it isn't in the book CIS charged me good
+money to get, and it isn't it the help listings. Just cause you guys who
+work there know about it doesn't make it documented by my definition of the
+word. I wasn't trying to confuse anyone, only to accomplish a specific task
+I was having trouble doing. Since I was told it was impossible, and I found
+a way to do it, I thought I'd pass it along.
+
+
+#: 156648 S3/Telcom
+    13-Sep-87  23:34:05
+Sb: #156644-#xmodem
+Fm: Tony Anderson 76703,4062
+To: Jon Kaplan 73337,1414
+
+Well, of course, there's a lot of stuff that isn't in the CompuServe books. ...
+The software and CompuServe itself changes so rapidly that anything printed is
+out of date almost as soon as it's available.  I would imagine that the
+READ/INT command is discussed more in those forums where it would be useful.
+
+It may also be that it's a command that was once useful... in the early days of
+the service... and is no longer "documented", but is still active in the
+software.  There are many such commands.  They're still there, but no one talks
+much about them any more.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Actually, I think Jon has a point on this one.  One is that you can download
+binary files for a PC (such as FLTIBM) into the Model 100 (in the hex format),
+pipe them to the PC as an ASCII file, and there convert them to a COM file on
+the PC (given a loader for the PC -- which could be a BASIC program, also
+pulled in via the M100 as a "carrier").  It does expand the things which can
+be done here, and the utility of the M100 for "bootstrapping".
+
+I think it deserves being a file in DL3 -- some sort fo TELTIP file.
+
+Admittedly the uses are obscure -- but you never know.  We have even more
+obscure theings in the DL's, and our users are TELCOM oriented.
+
+
+Fm: Eiji Miura 76703,4311
+To: Phil Wheeler 71266,125
+
+I wish I knew this info. (how to download PC COM files into the M100) before.
+When I didn't have a modem for my PC (well, I still don't own one), I had
+trouble getting your FLTIBM to the PC.  You have provided .HX1 and .HX2, but to
+convert them into .COM files, I needed HC.COM from IBMSW, which I couldn't do
+because it was stored in BIN there.  I don't even remember how I got FLTIBM
+into my PC now.
+
+Most of times PC com files are too big to fit into the M100's RAM, unless you
+have a disk drive.
+
+
+#: 156681 S3/Telcom
+    14-Sep-87  23:17:41
+Sb: #156679-xmodem
+Fm: Phil Wheeler 71266,125
+To: Eiji Miura 76703,4311
+
+SOMEWHERE in the IBM forums there is a HC.BAS, which you can run to make
+HC.COM.  Without that, all is lost!  If you can download HC.COM, you can get
+FLTIBM.COM direct.  Hmmmmm...wonder if some mental giant figured he could save
+space by deleting the BAS form of HC?
+
+
+Fm: Phil Wheeler 71266,125
+To: Eiji Miura 76703,4311
+
+Program was MAKEHC.BAS.  I can find it NOWHERE in CIS today!  Gone!! But with
+HC.com a new one can be made, of course.
+
+
+
+Fm: Leonard Erickson 70465,203
+To: Tony Anderson 76703,4062
+
+
+We have at least *some* hex files, and more that require a loader. I wonder
+if there are enough to justify a program that would download using READ /INT
+and build the target file in the 100? It *should* be doable. And if it makes
+a .CO file, a utility ought to be able to relocate it...
+
+
+Fm: Tony Anderson 76703,4062
+To: Leonard Erickson 70465,203
+
+I guess I miss the point of your message.  We have no binary files for the
+100/102/200/NEC/M10 or KYO machines.  We have HEX files which do not have to
+be downloaded with a "Send it in Hex code" command since they are already in
+hex code, and can be downloaded as ascii files, which TELCOM handles without
+problems.
+
+A loader is a loader is a loader.  Why reinvent the wheel?  Do we need a new
+loader or CHANGE-type program to convert HEX files downloaded with a READ/INT
+command.... files that do not now exist?
+
+
+#: 156678 S3/Telcom
+    14-Sep-87  22:18:49
+Sb: #156668-#xmodem
+Fm: Leonard Erickson 70465,203
+To: Tony Anderson 76703,4062
+
+Well if we *know* it is in Intel hex format (as opposed to all the other HEX
+formats running around here) it would be possible to download directly to a .CO
+file. This would save RAM and user frustration.
+        The only question on this part is: will the program to do this be too
+big to gain any benefit for the direct dl to a CO file.
+        And as I recall, Intel hex includes checksums, so it would be likely
+that the dl would be good (or the dl would abort with a error msg).
+        For that matter, *I* may have some us for this. I've got a machine with
+a busted RS-232 port (that I can't afford to fix right now). It can't read M100
+disks, but it *can* read M100 tapes (Model 4).
+        Until today, the only way I could get files from CIS to it was to
+download them *at work* and run them thru a program that will write M4 disks on
+a PC. Now I can do the dl at home (and at 2400 instead of 1200) using this
+"unneeded" information.
+
+
+Fm: Tony Anderson 76703,4062
+To: Leonard Erickson 70465,203
+
+Let me see if I understand this... and I'm really trying to understand why you
+all consider this so important...
+
+You're proposing to write a new TELCOM emulator that can download a binary
+file, and load it directly into the computer as a .CO file, from an INTEL HEX
+reading of a binary file.  Right?
+
+What binary files?  There aren't any.
+
+Do you suppose that PC binary programs are going to work when downloaded to the
+M100 as a .CO file?
+
+Seems like what you're proposing is a program that solves a non-existant
+problem.  X-Tel, a commercial program can upload and download binary image
+files.  Aside from some of the advanced programmers who transfer programs and
+files that way, there are no such files available here.
+
+However, if you want to write such a program, go right ahead, and good luck. I
+just don't see the point.
+
+
+Fm: Denny Thomas 76701,40
+To: Tony Anderson 76703,4062
+
+Nope, He wants to download a PC (binary) program into the M100 in a form that
+won't be corrupted by the way that the M100 assumes all binary files should be
+either BA or CO. A true binary file is neither. That way, it could be
+transfered to the PC via normal TELCOM.
+
+I have had the same problem at work. If I don't have a telcom program for a PC,
+there is no way to get one unless I get a disk from someone else who has
+software of some kind. I could have downloaded the PC files to my Chipmunk,
+gone to work with the Munk and files in hand, and hooked directly to the comm
+port and used those kludgey MS-DOS comm commands get the files transfered.
+After that, I'm up and running.
+
+
+Fm: Tony Anderson 76703,4062
+To: Denny Thomas 76701,40
+
+Wait a minute... I don't understand that... What do you mean that a "true
+binary file is neither"?  Both Tokenized BASIC and Assembly Language programs
+are binary in nature; that is, they contain instruction codes represented by
+numbers between 0 and 255.
+
+Are you talking about REAL machine code instruction with zero's and one's as
+being the "true" binary?
+
+
+Fm: Denny Thomas 76701,40
+To: Tony Anderson 76703,4062
+
+A true binary file is not in BA or CO form. BA and CO files CAN be binary, but
+they would be uninteligible to an MS-DOS machine, just as 'true binary' files
+get trashed by loading them into an M100.
+
+
+Fm: Tony Anderson 76703,4062
+To: Denny Thomas 76701,40
+
+OK, Denny.... youo keep telling me that a "true binary" file isn't a BA or CO
+file.  You tell me what it ISN'T.  Can you tell me what it IS?  I seem to have
+no point of reference as to what you're talking about, and telling me what it
+isn't, doesn't give me a clue as to what it is!
+
+
+Fm: Denny Thomas 76701,40
+To: Tony Anderson 76703,4062
+
+Ok, They are binary files that have information in the front that tells the
+M100 operating system location and size. The OS takes that info and uses it to
+make assumptions about the file. If the info is incorrect, or in the case of
+'true binary' files the info isn't required to be there, the file could be made
+to be larger or smaller, or crash altogether.
+
+That's why you can't directly load a 'true binary' file into the M100 without
+it getting distroyed. It would be one of the major coincedences of all time if
+the first few bytes were properly formatted to not crash the file. (I wish
+Spock were here to caluclate the odds)
+
+The exact layout of the first few bytes is not within arms reach right now,
+ (still at work) but it is given in Inside The M100 and also the Covington RAM
+map here in DL8.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Young Denny speaks with straight tongue!  M100 assumes all no-ascii files are
+in a M100 model, either CO or BA.  Typical OS makes no such assumption, and
+uses directory/FAT to store the type of info which M100 stores in the file
+istself.  Ergo -- cannot put most BIN files in M100.  M100 files are "true
+binary" but a very small subset.
+
+
+Fm: Tony Anderson 76703,4062
+To: Denny Thomas 76701,40
+
+In the programming schools I've gone to, "binary" was described as pure machine
+code at the bit level which drove the machine.  Those bits could be assembled
+into 8-bit chains, and became "tokens", which are used in assembly language;
+i.e. C9 = RET = Return instruction.  Therefore, C9 (201 decimal) = 11001001.
+The 11001001 is "true binary" which is virtually never used in programming any
+more, it's too primitive.  There was, at one time, an Altair computer where you
+had to flip switches on the front panel to enter your 0's and 1's, but 8 of
+them were still considered a "word", and could be interpreted as a single
+number.
+
+Now how does all that relate to what you folks are trying to tell me? What does
+that have to do with READ/INT and the fact that we have no binary files here to
+download?  Why should we support kludge downloading of another machine's binary
+files with the M100 family?
+
+The reason we do not have binary files in the data library, and do not promote
+downloading in binary form, is because the M100 prefer's ASCII.  Not because
+it's impossible.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Note that FLTIBM.CO1, FLTIBM.CO2, FLTKP.COM & CHECK.COM are all binary files
+for another computer (PC or Kaypro) which support the M100 family of computers
+and Forum users (FYI -- CHECK.COM was Dave's tool for doing checksums while
+on-line with his T1000, and was done by me at his request).
+
+Any of these files can be downloaded into the M100 as hex files, and then
+transferred to the hjose computer, and translated to COM format for use there.
+
+None of these files can be downloaded in binary format in the Model 100 etal.
+M100 will not allow generic binary files, only specific M100-model files -- BA,
+CO and pseudos (CA, CW, CT).
+
+
+Fm: Denny Thomas 76701,40
+To: Tony Anderson 76703,4062
+
+Your description of 'binary' is exactly correct, but doesn't have anything to
+do with what we are discussing. We are talking about an arbitrary name given to
+a file to differentiate it from an ASCII file. It could just as easily been
+called a "true brazelsnorf" file. I can't imagine why it was called binary in
+the first place, but we are stuck with it since all files that are uploaded as
+exact ram images have the /binary suffix added to it. In any case, a M100 ram
+image file wouldn't qualify as a 'true brazelsnorf' file either. It's a
+modified brazelsnorf file with special header info.
+
+Nobody says we should have binary files *here* but it would be nice to be able
+to do the 'kludge' download of a PC file if needed. Like I said, I could have
+used this feature just a couple of weeks ago if I knew it existed.
+
+
+Fm: Eiji Miura 76703,4311
+To: Tony Anderson 76703,4062 
+
+I think Denny originally wanted to mention that M100 cannot accept binary files
+like some other computers can.  You can download BA or CO file, which was
+written specifically for M100 with Xtel, but even with Xtel, you cannot
+download a binary file that are written for other computers into M100 and then
+transfer it to other computers.
+With PC, I can dowload Mac binary file, for example, and can transfer it to Mac
+later, but M100 cannot do it because its binary format is different.
+
+
+Fm: Tony Anderson 76703,4062
+To: Eiji Miura 76703,4311
+
+Really.  That seems strange.  I haven't gotten into that sort of thing, so have
+no experience with it at all.  I understand that the first two bytes of a CO
+file indicate where the file is supposed to load and all that, but when you
+download it in binary, it's just two numbers... two characters.  I guess that
+if they are not within the normal M100 loading range, the OS will have problems
+figuring out what to do about it....

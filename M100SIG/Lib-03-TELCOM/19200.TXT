@@ -1,0 +1,329 @@
+
+19200.TXT                                                           Page 1 of 8
+
+This file contains a description of the operation of a Model III program called
+"FLTRAN/CMD", which is used to transmit information to and from the Model 100
+at 19.2K baud.  Enough information is contained herein for people using other
+machines to duplicate this process either manually using a smart terminal
+program, or automatically using a program written similar to FLTRAN.
+
+
+Summary of Model 100 Capabilities:
+----------------------------------
+The Model 100 can be used to transmit and receive TEXT files at baud rates up
+to 19,200 baud with no additional software other than the basic ROM.  These
+text files are limited in that they cannot contain the following characters:
+
+    NUL   CHR$(0)   Hex 00
+    SUB   CHR$(26)  Hex 1A  -- [EOF]
+    DEL   CHR$(127) Hex 7F
+
+These characters are ignored by the Model 100 ROM, and CHR$(26) [EOF] is
+interpreted as an "End of Transmission" character.
+
+
+The Model 100 can also transmit and receive BASIC programs as long as the
+limitations above are met, and they are in ASCII format.  Fortunately, the
+ROM can automatically translate a "tokenized" BASIC file as it is transmitting
+through the RS-232 port; simillarly, it can "detokenize" an Ascii BASIC file
+as it is being received through the RS-232.
+
+
+Summary of Model 100 File Transfer Requirements:
+------------------------------------------------
+To achieve high speed file transfers of both BASIC and TEXT files, a HOST
+must provide the following capabilities:
+
+   XON/XOFF Support - Software control to pause/resume a file transfer
+   Capture Buffer   - Ability to capture data from the RS-232 into a buffer
+                      in RAM.  If this buffer becomes full, the HOST should
+                      be programmed to send an XOFF to pause the transmission,
+                      dump the data received to some storage medium (eg disk),
+                      then send an XON character to resume the transmission.
+   "Null Modem"     - This device is often required for file transfers between
+                      two computers without using a Modem.  There are articles
+                      relating to the building of these devices available, or
+                      they can be purchased from computer or parts stores.
+                      NOTE:  Not all HOST systems require these!!!
+
+19200.TXT                                                           Page 2 of 8
+
+Optionally, to automate the file transfer, the HOST system could provide some
+programming logic to send a CHR$(26) [EOF] at the end of a download to the
+Model 100, and automatically close the receive buffer upon receipt of the EOF
+character CHR$(26).  This automation is provided by FLTRAN/CMD, but can be
+simulated manually by most smart terminal programs.
+
+
+Description of FLTRAN/CMD:
+--------------------------
+FLTRAN is a program that runs on a TRS-80 Model III that allows files to be
+transferred between the Model 100 and the Model III's diskettes.  The Model
+III files must always be in ASCII format:  The Model 100 will NOT receive
+a BASIC program that is tokenized on the Model III end.
+
+When FLTRAN is first executed, a small menu is displayed to determine if a file
+is to be either:
+
+  1.  Sent to the Model 100 from the Model III; or
+  2.  Received from the Model 100 to the Model III.
+
+Upon making this selection, the program will request a file name to be sent
+or received.  Any valid Model III filespec (a filename, optionally followed by
+an extension, password, and/or drive specifier; in that order) may be entered.
+After the entry of the file name, the program will execute its send or receive
+routine, depending on the original selection made by the operator.  FLTRAN
+assumes that the Model 100 is correctly set up after the file name is entered:
+
+  If the send routine is used, the program assumes that the Model 100 is
+  waiting for a file to be transmitted to it through the RS-232.
+
+  If the receive routine is used, the program will wait for a file to be sent
+  from the Model 100 through the RS-232.
+
+19200.TXT                                                           Page 3 of 8
+
+During the send routine, the program will send the contents of the selected
+disk file through the RS-232 to the Model 100.  Each character sent is echoed
+to the video screen, so the operator may witness the progress of the transfer.
+The program will wait continually scan the RS-232 input port to see if the
+Model 100 transmits an XOFF pause character.  If an XOFF is found, a routine
+is executed that waits for an XON to be transmitted from the Model 100 before
+resuming the transmission.  At the end of the file, the program will look at
+the last character transmitted.  If it was not an EOF character, then the
+program will automatically send an EOF to the Model 100.
+
+
+During the receive routine, the program will continually scan the RS-232 port
+for data coming from the Model 100.  After EVERY character received, the
+program will perform the following routine:
+
+   Send an XOFF to the Model 100;
+   Place the character received in a RAM buffer;
+   Determine if the RAM buffer should be dumped to disk and emptied;
+   Echo the character received to the video display;
+   Send an XON to the Model 100 to resume the transfer.
+
+The XOFF and XON characters sent slow the actual throughput somewhat, but
+allow the video screen to keep up with the transmission.  The Model III has
+a one-byte RS-232 buffer, and in actual practice, the above routine has NOT
+resulted in the loss of any characters.
+
+When an EOF is received from the Model 100, the program will dump the contents
+of the RAM buffer to disk.  Note that the program stores the EOF character at
+the end of the disk file.
+
+
+The receive routine in FLTRAN additionally "filters" out any line feed
+characters (hex 0A) received after a carriage return character (hex 0D).  This
+is to insure compatibility between Model III programs and Model 100 programs.
+
+Conversely, the send routine will check to see if a line feed character (hex
+0A) follows a carriage return character (hex 0D).  If not, the program will
+automatically append a line feed character.  Again, this is to insure
+compatibility between the Model 100 and the Model III.
+
+This filtering action may not be necessary for other computers that wish to
+duplicate the operation of FLTRAN, such as CP/M system that use line feeds
+followed by carriage returns.
+
+19200.TXT                                                           Page 4 of 8
+
+Procedures to use on the Model 100:
+-----------------------------------
+The procedures for sending and receiving BASIC program and Ascii TEXT files
+are similar, but handled differently.  This section will show the actual
+procedures for sending and receiving both BASIC and TEXT files:
+
+
+1.  Send BASIC program from Model 100 to HOST system:
+
+    On the Model 100, select BASIC from the Main menu screen and press ENTER.
+
+    Type the following BASIC command line:
+
+    LOAD "<file>"
+
+    where <file> is the actual file name of the program to be sent from
+    the Model 100 to the HOST.  Note that this <file> is assumed to be
+    a "compressed" (or tokenized) .BA file.  If it is stored in Ascii format,
+    (i.e. as a .DO file), use the procedure in #3 (Send TEXT file from Model
+    100 to HOST system).  After the file name is typed, press the ENTER key.
+
+    When the OK prompt appears, type the following command line, but do NOT
+    press the ENTER key just yet!
+
+    SAVE "COM:98N1E"
+
+    (This presupposes that the baud rate will be 19,200 baud.  See the table
+    below if a different baud rate is to be used).
+
+    Set up the HOST system at this time to receive a file from the Model 100.
+    When the HOST system is ready, press the ENTER key on the Model 100.
+
+    When the OK prompt appears again, the file will have been transmitted to
+    the host system.  Note that the file appears as an Ascii file on the HOST
+    system.  If the HOST system is automated (eg. if FLTRAN or a similar
+    program is used), then the next step will NOT have to be performed:
+
+    On the HOST system, write the received file to disk.
+
+19200.TXT                                                           Page 5 of 8
+
+2.  Send BASIC file from HOST system to the Model 100:
+
+    On the Model 100, select BASIC from the Main MENU screen and press ENTER.
+
+    Type the following command line:
+
+    LOAD "COM:98N1E"
+
+    and press ENTER.  (This presupposes that the baud rate will be 19,200 baud.
+    See the table below if a different baud rate is to be used.)
+
+    Set up the HOST system at this time to send a file from the HOST to the
+    Model 100.  The file on the HOST system MUST be a BASIC program (with
+    line numbers) and in ASCII format (not tokenized).
+
+    When the HOST system is completed the transmission, it should send an EOF
+    character (^Z or CHR$(26)).  This can be done automatically, or manually.
+
+    The BASIC program will be on the Model 100 in tokenized format.  It can
+    now be SAVEd, or used in any way.
+
+
+3.  Sending a Model 100 TEXT file to HOST system:
+
+    A TEXT file on the Model 100 has the extension ".DO".  On the Model 100,
+    select the file to be transmitted from the MENU and press the ENTER key.
+
+    The Model 100 will display the first few lines of the file.  At this point,
+    press the F3 (Save) function key, or press CTRL-G.  The bottom line of the
+    display will read:
+
+    Save to:  _
+
+    Type the following:
+
+    COM:98N1E
+
+    But do NOT press the ENTER key just yet!
+
+    On the HOST system, set up to receive a file from the Model 100.  When the
+    HOST system is ready, press ENTER on the Model 100.
+
+    The Model 100 will then send the file to the HOST system through the RS-232
+    port.
+
+    At the end of the transmission, if a non-automated transfer is taking place
+    (eg. not using FLTRAN or a similar program), then the HOST system should be
+    manually instructed to save the file to disk.
+
+19200.TXT                                                           Page 6 of 8	
+
+4.  Sending an Ascii TEXT file from the HOST system to the Model 100:
+
+    On the Model 100, select "TEXT" from the Main MENU and press ENTER.
+
+    When asked for the "File to Edit?" enter the name of the file to be
+    received from the HOST.  Note, that if an existing file is used, this
+    procedure can be used to append the transmitted file ANYWHERE in the
+    file, as determined by the Cursor Position.
+
+    When the text screen is displayed, press the F2 key or type CTRL-V.
+    The message "Load from:" will appear on the bottom line of the display.
+
+    Type the following:
+
+    COM:98N1E
+
+    and press the ENTER key.
+
+    At this time, set up the HOST system to transmit an Ascii file to the Model
+    100 through the RS-232 port.  At the end of the transmission, the operator
+    my have to manually supply a ^Z (CHR$(26) - EOF) to indicate the end of the
+    transmission if an automated transfer is not being performed.
+
+    At this time, the file should appear on the Model 100.
+
+
+Miscellaneous notes and comments:
+---------------------------------
+
+    There is no "direct" way of sending machine language (.CO) files between a
+    Model 100 and a HOST system.  A transfer could be done, however, if one or
+    two application programs are used on the Model 100, such as UNLOAD.100 and
+    HEXLDR.100.  These programs are used to "translate" machine language files
+    to and from "Intel Hex Format".  The resulting "Intel Hex" file could then
+    be transmitted between the Model 100 and the HOST system as an Ascii TEXT
+    file.
+
+19200.TXT                                                           Page 7 of 8
+
+    Note that the procedures for sending and receiving BASIC and TEXT files use
+    absolutely NO overhead on the Model 100!!!
+
+    The Model 100, when faced with an error condition, is not too "friendly" to
+    the HOST system.  Usually, if it is receiving, it just sends an XOFF
+    without sending a corresponding XON character.  This condition can happen
+    for many reasons, the most common being:
+
+    ?OM Error    -  No more RAM space for file
+
+    ?DS Error    -  A BASIC program was received that was not formatted
+                    properly.  At this point, the last line will probably
+                    contain the last correctly received line of the program.
+                    The file can either be edited on the HOST system, or
+                    received as a TEXT file and edited on the Model 100 and
+                    then be converted to a BASIC program.
+
+
+    This document presupposes that the FLTRAN program is being used.  The
+    parameters above use the communication status COM:98N1E.  This can be
+    changed to suit the HOST system used.  The 98N1E is interpreted as:
+
+    9 - Baud Rate      (19,200 baud)
+    8 - Word Length    (8 bits)
+    N - Parity         (No Parity checking)
+    1 - Stop Bits      (1 Stop bit)
+    E - XON/XOFF       (Enabled)
+
+    Other values for the above are shown in the tables below:
+
+    Baud rate:
+    1 -    75 Baud
+    2 -   110 Baud
+    3 -   300 Baud
+    4 -   600 Baud
+    5 -  1200 Baud
+    6 -  2400 Baud
+    7 -  4800 Baud
+    8 -  9600 Baud
+    9 - 19200 Baud
+
+
+    Word Length:
+    6 - 6 bits (Not used very often)
+    7 - 7 bits (Will not transmit Model 100 graphics)
+    8 - 8 bits
+
+19200.TXT                                                           Page 8 of 8
+
+    Parity:
+    I - Ignore Parity (Usually used with Word Length = 7)
+    O - Odd Parity    (Not often used)
+    E - Even Parity   (Usually used with Word Length = 7)
+    N - No Parity     (Usually used with Word Length = 8)
+
+
+    XON/XOFF:
+    E - Enable   - Recommended for high speed transfers
+    D - Disable  - Not recommended for high speed transfers
+
+
+
+Please send comments and/or suggestions regarding this file to:
+
+    larry gensch
+    [72236,3516]
+

@@ -1,0 +1,60 @@
+                  Adidas Net for the Tandy 600
+
+     Having finally replaced my ancient Z-80 CP/M system with an
+MSDOS machine, I was thrilled to be able to replace the serial
+line between my Tandy 600 and my desktop system with a fully
+implemented Adidas Net.
+
+     It took a bit of experimenting to be able to read and write
+Tandy 600 3-1/2" disks on my XT clone's 3-1/2" 1.4Mb (720Kb
+controller) drive.  I fooled around with DRIVPARM on the XT and
+with ZAP600 on the Tandy 600 to no avail -- I couldn't get a
+combination of device parameters which would read all of a file
+on the XT, and when I wrote stuff from the XT and tried to read
+it in the Tandy I got zilch.
+
+     The solution, it turns out, is to FORMAT the 3-1/2" disk on
+the XT's drive after having set the following device parameters
+using DRIVPARM:
+
+     DRIVPARM.COM  ver 1.0 (beta)  02-26-88   by Daniel Fandrich
+
+     Device parameters for B:
+     --------------------------------
+            DRIVE DESCRIPTION:
+            Special Functions:   $00
+             Device Type (/F):   $02   3.5" 720k floppy drive
+            Device Attributes: $0000
+     Number Of Cylinders (/T):    80
+                   Media Type:   $00
+
+            MEDIA DESCRIPTION:
+             Bytes Per Sector:   512
+     Sectors Per Cluster (/L):     2
+             Reserved Sectors:     1
+          Number Of FATs (/A):     2
+        Root Dir Entries (/R):   112
+                Total Sectors:   720
+        Media Descriptor (/M):   $F8   hard disk
+              Sectors Per FAT:     2
+       Sectors Per Track (/S):     9
+                   Heads (/H):     1
+             Hidden Sectors_L: $0000
+             Hidden Sectors_H: $0000
+
+          Total Disk Capacity:  360k
+
+     The command line for setting the above parameters with
+DRIVPARM is:
+
+     drivparm b: /f:2/t:80/l:2/a:2/r:112/m:$f8/h:1
+
+     After setting the device parameters via Daniel Fandrich's
+excellent program, or via the clumsier CONFIG.SYS line, I format
+a single sided 80 track disk in the XT.  This disk may be written
+to from the XT or from the Tandy 600.
+
+     To implement Adidas Net on your system, format your Tandy
+600 disks on a 3-1/2" drive using the above specs; slip on your
+Adidas running shoes; and jog back and forth between the two
+machines.  It beats hell out of 9600bps serial transfers!

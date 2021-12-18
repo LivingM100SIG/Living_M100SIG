@@ -1,0 +1,96 @@
+SAD.BA generates a directory listing for a Chipmunk disk. The first section is 
+organized by folder, and reports DETAILED information for each file. The second
+section gives summary statistics. Output can be directed to any device; a "line
+width" option is supported.
+
+Each entry is of the form:
+
+name       cDate     mDate     kind tag
+  cluster_trace = length
+
+E.g.:
+
+TMPC.CO    10/04/85  10/06/85  CO e
+  16,22,23,24,25,26,27(2:127) = 9599
+
+TMPC.CO was created on the 4th, modified on the 6th, is a CO file, and has tag 
+"e" in the allocation map (see below). It's stored beginning in cluster 16, 
+continues in cluster 22, and so on. Cluster 27 is the last cluster allocated to
+it, and the last byte used is the 127th byte of cluster 27's 2nd sector. 
+Altogether, TMPC.CO is 9599 bytes long.
+
+"name" is fiddled with to put the "." where you expect to see it.
+
+"kind" can be "DO", "BA", "CO", "FOLDER", or "?nnn?" if the code on disk is 
+garbage.
+
+"tag" is a meaningless letter assigned by the program to identify the file in 
+the allocation map at the end of the listing. Tags are assigned in order from 
+"A" to "Z", then from "a" to "z", & then from "0" to "9"; if the disk has more 
+than 62 files, all files past the 62nd are assigned tag "!". "A" always 
+identifies the "root" folder in cluster 0.
+
+A folder always occupies exactly one cluster, so only the cluster number is 
+reported for a folder - the ending sector, byte, and length are omitted.
+
+Following the file entries you'll find a summary listing like this:
+
+ 55 files (including folders)
+
+Clusters (240)
+  folder         10   4.17%
+  file          121  50.42%
+  reserved        0   0.00%
+  free          109  45.42%
+
+Bytes (368,640)
+  folder     15,360   4.17%
+  file used 145,235  39.40%
+  file lost  40,621  11.02%
+  reserved        0   0.00%
+  free      167,424  45.42%
+
+Allocation map
+    0....5....0....5....0....5...9
+  0 AZHvwaWCiWjEjnnkeOOOPQeeeeeeff
+ 30 gIkxkkKNlllllFLLUGtuuuRRTyLLzz
+ 60 oozmmmmmmLpoVVmmDaZBXSZcYLbZqr
+ 90 rrXX22bXYYMMYZcqqhsrrrrsJ00000
+120 111KKKYK--cc--d---------------
+150 ------------------------------
+180 ------------------------------
+210 ------------------------------
+
+Should be self-explanatory!
+
+"file lost" is the number of "left over" bytes in terminal file clusters - the 
+entire cluster is reserved, but the bytes at the end can't be used for 
+anything. They're "lost". Saving lots of little files is an excellent way to 
+waste your disk space, as CDOS allocates space in 1.5K chunks. Remarkably 
+enough, CDOS will even allocate 1.5K on the disk to "store" an EMPTY file!
+
+The "allocation map" shows the disk layout, using the mysterious "tags". If you
+look at the "e"'s in the map, you'll see they correspond exactly to the cluster
+trace given for TMPC.CO above. "-" means the cluster is free. A "?" means the 
+cluster is "reserved": the cluster cannot be reached from the CDOS menus, but 
+is nevertheless marked in the allocation table. Some ways this can happen: (1) 
+if CDOS finds a bad cluster while formatting the disk, it will mark the cluster
+as bad in the allocation table. (2) DSKO$ or ML can be used to reserve 
+arbitrary clusters; e.g., INSURE.DIR does this. (3) Sometimes CDOS erroneously 
+makes useless copies of clusters. This is rare, and seems only to happen if 
+CDOS "freezes" while saving a file. In ANY case, a "?" is a POSSIBLE sign of 
+trouble - DISKPP.BA can be used to investigate further.
+
+Hint: for a large, heavily used file, disk performance can be improved by 
+ensuring that the file occupies contiguous clusters (to minimize seek time). 
+The cluster traces & allocation map above can tell you at a glance how badly 
+fragmented your files are, & contain all the information you need to fool CDOS 
+into rearranging them (no, I won't explain how: if you understood it, you 
+already know how to do it!).
+
+
+Thanks to Tim Ekdom & Don Corbitt for their Chipmunk contributions - the solid 
+info they shared made this program possible.
+
+Tim Peters  CIS 72227,2416
+

@@ -1,0 +1,122 @@
+EPSON.DOC
+
+EPSON.SET is a versatile, user-friendly, general purpose printer set up program
+for the EPSON FX80 printer.  It is command driven with automatic command 
+completion and verification.  It may be used alone, or as one of the 
+cornerstones of a powerful customizable wordprocessing system comprised of Jim 
+Irwin's PRN100, the EPSCHR.GEN custom character genreator, and the EPSCHR.100 
+program for loading the Model 100's CHR$(128)-CHR$(255) into the FX80's RAM.  
+This package gives the Model 100 full math/science word processing capabilities
+including Greek, math/science characters, custom characters, super/subscripts, 
+and many other features.  The package takes only about 5K of ram when loaded.
+    The following files from this SIG are required:
+        EPSON.SET         EPSCHR.100
+        EPSCHR.GEN        EPSGR.EEK
+plus Jim Irwin's
+        PRN100.BAS        PRN100.DOC
+        PRN100.LDR        PRN100.MOD
+        PRN100.OBJ
+
+
+INSTALLATION INSTRUCTIONS
+
+1.  Use the PRN100 files to load the machine language print program PRINT.CO as
+per Jim Irwin's instructions in PRN100.DOC  Edit line 20 of PRN100.BAS to set 
+I=59850 so as to allow ample space for your custom printer control codes, then 
+run PRN100.BAS to enter control codes as described in PRN100.MOD  I suggest the
+following codes for math/science word processing applications:
+
+^B+ 27,69                  Bold-on
+^B- 27,70                  Bold-off
+^D+ 27,71                  Doublestrike-on
+^D- 27,72                  Doublestrike-off
+^E+ 27,52,27,37,0,0        Italic-on
+^E- 27,53                  Italic-off
+^F+ 27,83,1,15,27,65,6     Fineprint-on
+^F- 27,84,18,27,50       Fineprint-off
+^H+ 8,27,106,12,94,27,74,12   Backspace, reverse 1/18" and 
+                               place ^ over previous character
+^H- 8                      Backspace
+^L+ 27,74,18               0.5 linefeed (1/12")
+^L- 27,106,18              0.5 reverse linefeed (-1/12")
+^R+ 27,37,1,0              Select custom Greek/Math characters
+                               set in printer RAM
+^R- 27,37,0,0              Select standard character set in 
+                               printer ROM
+^S+ 15,27,83               ^S+1 selects subscript and
+                           ^S+0 selects superscript
+^S- 18,27,84               Sub/super scripts-off
+^U+ 27,45,49               Underline-on
+^U- 27,45,48               Underline-off
+NOTE:  Typestyle is assumed to be pica and linespacing 6 lines/inch for these 
+printer control codes.  Unpredictable results may result from other other 
+settings.
+
+2.  Save EPSON.SET as in RAM as SETFX.BA  (it replaces SETFX.BAS if you have 
+previously downloaded it from this SIG).  
+
+3. Load EPSCHR.GEN and save as FXGEN.BA (it replaces FXGEN.100).  Download 
+EPSGR.EEK into the file CHAR.DO.  It contains data for loading the Greek 
+alphabet to the FX80.  Create and add any additional custom characters which 
+you desire to the file CHAR.DO using FXGEN.BA
+
+4.Type the BASIC command CLEAR256,57000 to clear (more than enough) space for 
+the GREEK/MATH custom character data to be stored as a machine code data file. 
+Then, run option 6 on the menu of FXGEN.BA to copy the custom character data in
+CHAR.DO into a compact machine code data file (requiring only about 13 bytes 
+per character).  The program will tell you the top address and end address used
+by the machine code character data file.  (Note: the end address will be 59849,
+just above the top address 59850 of program PRINT.CO created in step 1 above.)
+
+5. Enter the BASIC command
+      CLEAR256,topaddress
+where topaddress is the top of the custom character machine code data file 
+obtained in step 4.
+
+6. Save PRINT.CO together with the machine language custom character data and 
+the custom printer control codes to tape in a single file with the command
+
+SAVEM"PRINT",topaddress,62972,60503
+
+where topaddress is again the top address of the custom character data obtained
+in step 4.
+
+6.  Download the basic program EPS100.CHR, load and save as MOD100.BA
+This program, which is called by one of the options of SETFX.BA, reads the data
+for the Model 100's special character set directly from the screen, then 
+calculates the equivalent FX80 data and loads it into the FX80's RAM as CHR$(
+128)-CHR$(255).  It takes only about 90 seconds to do all 128 characters.
+
+If no further custom characters will be generated for awhile, the files CHAR.DO
+and FXGEN.BA may be saved to tape and killed now, leaving the the following 
+files for math/science word-processing with the Model 100:
+
+       SETFX.BA       MOD100.BA       PRINT.CO
+
+If you like, you may also kill PRINT.CO as it is now called directly by the 
+machine code CALL 60503 from the main menu of SETFX.BA
+
+
+USE OF EPSON.SET AND PRINT.CO FOR MATH/SCIENCE WORDPROCESSING
+
+Mathematical formula including subscripts may be readily entered in TEXT-mode 
+using ^P (i.e., control-P) to insert the printer control codes to shift between
+the printer's RAM and ROM for Greek and special math symbols,to insert super/
+subscripts, to forward and reverse linefeed and so forth.  For example, a 
+text.DO file containing
+
+  x^L-^H-.^L+ = f^S+1y^S-(^R+g^R-)
+
+would print as the mathematical equation "x dot equals f-sub-y of gamma" when 
+the SETFX.BA menu option GREEKCHR$ is used to first load the Greek alphabet 
+into the printer's RAM and the SETFX.BA option PRINT is used to call Jim 
+Irwin's machine language PRN100.  The equation "y-hat equals integral from 
+alpha to beta of f(x)dx" might be entered as
+  
+  y^H+ = ^R+(GRPH-i)^S+1a^H-^L-b^L+^R-^S-f(x)dx 
+
+
+Mike Safonov
+3606 Barry Ave.
+Mar Vista, CA 90066
+

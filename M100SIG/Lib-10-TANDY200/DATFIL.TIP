@@ -1,0 +1,48 @@
+     DATFIL.TIP by Paul Globman
+         Copyright (c) 1990
+ 
+DATFIL.CO was written to compensate for the removal of CRDFIL.BA from the
+M100SIG Data Libraries, and to provide continued usefulness of existing
+templates and utility programs.
+
+DATFIL has one minor distinction from CRDFIL, which is the insertion of a
+space after the prompt.  This was done because a space is an often used
+separator between the field prompt and the field data, and by including it as
+a program function, the user is not required to include the space after
+each prompt.
+
+Although this program difference was a mindful and deliberate attempt to
+improve upon the now unavailable CRDFIL, it is remotely possible for an 
+existing CRDFIL template to display awkwardly when using DATFIL.
+
+Any display problems created by the addition of this space, can easily be
+rectified by...
+
+a)deleting the space that exists in the prompt.
+b)reducing the prompt by one character.
+c)adjusting the print position of the offending data field.
+
+If you cannot sufficiently correct your data field display, and the DATFIL.CO
+program is not usable unless it duplicates the CRDFIL output EXACTLY,
+then you can modify DATFIL.CO as follows...
+
+1)LOADM"DATFIL" and take note of the TOP, END, and EXE addresses.
+
+2)Model 100 users must CLEAR256,TOP to avoid the OM? error.
+
+3)For DATFIL.100, AD=62715
+  For DATFIL.200, AD=63807
+  For DATFIL.CMD, AD=63823 (XOS)
+
+4)Insert the correct AD in line 20, and the correct TOP/END/EXE info in line50
+
+ 10 REM DATFIL.TIP (c) 1990 by P.Globman
+ 20 LOADM"DATFIL":AD=XXXXX
+ 30 IF PEEK(AD) <> 255 THEN BEEP:STOP
+ 40 POKE AD,254:KILL"DATFIL.CO"
+ 50 SAVEM"DATFIL",TOP,END,EXE
+
+5)The resulting DATFIL will not insert a space and the user will be required
+to incorporate that space into the prompt data.  This fix is a last resort
+option if (a), (b), or (c) above does not rectify the display.
+

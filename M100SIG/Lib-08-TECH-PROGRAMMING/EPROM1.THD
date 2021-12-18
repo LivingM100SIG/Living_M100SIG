@@ -1,0 +1,159 @@
+EPROM1.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The Model 100/102/200 are designed to accept an auxilary ROM.  Several
+commercial ROM's are available (e.g., Super ROM and Ultimate ROM II) and
+have been proven popular -- and there are custom ROM burning services
+advertized.  It is possible to "roll your own", and users here have done so.
+These messages discuss the desirablility of programming a "math ROM" for the
+Model 100.  A companion file (EPROM2.THD) discusses some of the "techno-
+mechanical" issues involved.
+
+Message range: 166820 to 166974
+Dates: 4/1/88 to 4/4/88
+
+
+Sb: #a "math" rom?
+Fm: SCOTT T. SCHAD 73720,1166
+To: All
+
+I'm considering tackling a "math" rom for the model 100, similar to the math
+and curve-fitting roms for my HP-71B.  It seems to me that lots of model 100
+applications are engineering/controller-oriented, and the 100 sorely needs
+BASIC commands for trig functions in degrees, matrix math, base 10 logarithms,
+etc.  But my question would be:  how can I make the routines available to
+BASIC?  I'm a m/l novice, and while I can deal with separate .CO files I have
+trouble visualizing a way to hook into BASIC and enhance it.  Any comments,
+discussion, pointers to previous work would be appreciated. <STS>
+
+Followup:  a Forth rom seems like another real possibility, given the high
+caliber of the Forth implementation to be found in the DL's.  The HP-71B is, to
+my knowledge, to only portable computer that can take Forth in rom, but it is
+nibble-based and hard to use as a learning tool.  A model 100 Forth chip
+coupled with Brodie's Learning Forth would be THE ideal teaching tool,
+especially since a page-by-page comparison of his book with M100 4th appears in
+the DL's.  Forth would at least let one "get at" the machine in a better way
+than BASIC and a less demanding way than Assembler. Many of the higer-level
+math routines I am considering implementing are commonly found as Forth
+algorithms.
+
+Of course you'd have to work out compatibility with the new Tandy disc drive,
+but at least with a rom-based Forth you would have room for more than three
+screens.
+
+
+Fm: JAY HOLOVACS 74756,413
+To: SCOTT T. SCHAD 73720,1166 
+
+SCOTT (these are off-the-cuff comments not really thought out, but might be of
+interest to you.)  A forth kernal in ROM could be very interesting there are a
+couple of forth adaptations in the DL's but the effort of porting fig forth to
+rom may be worth it.  If you get the permission of fig, there 8080 model should
+be almost a perfect fit, with changest only for m100 file structure.  the TDD
+does not favor track and sector reads/writes so the easiest bet would be to use
+.do files as text streams rather than have a true screen oriented forth.
+Compiled programs could be saved as .co memory image files. some suppliers
+(such as Traveling Software) offer a rom burning service, possibly they could
+involve some of the m100 expertise required for such a project (bank switching
+is not for the faint hearted) if you can find enough takers to make the costs
+worth while. Good Luck Jay Holovacs
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: JAY HOLOVACS 74756,413 
+
+Using .DO files seems like an ideal solution, given that the editor is already
+in rom.  I have nothing against screen-oriented Forths, (I know I should use
+the term "block-oriented" now), but having used a couple of Forths on the
+Macintosh and one on an Amiga that digested standard text files I much prefer
+it.  I frankly am not knowledgeable enough to tackle the disc I/O problem...but
+I have downloaded all the Forth files in the DL and find they furnish 90% of
+the work which would be required for an implementation.  There may not be a
+large market.  But I can think of no better play toy than a model 100 with
+Forth in rom.  It might be possible to port lots of good software to the model
+100, if the Forth model was rigiorous enough.
+
+The HP-71B forth chip is "nibble-based", using 4-bit "words" and 20-bit
+numbers, etc.  It is just non-standard enough that learning the language on a
+71B is tough. But the speed increase is remarkable. Comparable 71B BASIC
+program execute 10 times slower than Forth routines.  And you can easily call
+routines in Forth from BASIC and vice-versa.  Wouldn't it be nice to have some
+Forth 64-bit integer words floating around in high memory that you could call
+from BASIC for super-precision financial calculations, etc.?
+
+The whole idea excites me.  And if my talents aren't sufficient to bring it to
+fruition, perhaps the TS folks can help.  I'd be willing to fund a limited run
+of the chips, just to sell them at cost to interested parties. <STS>
+
+
+Sb: #166820-#a "math" rom?
+Fm: Stan Wong 70346,1267
+To: SCOTT T. SCHAD 73720,1166 
+
+A math or a Forth rom sounds interesting.  I've spent quite a bit of time
+fooling with building my own rom so I can add a few points (I got it to start
+working but dropped the project before I finished.  I'll get around to
+finishing and publishing my findings one of these days).
+
+First, if the code is operating out of the option rom, the Basic rom is not
+available so any CALLs for Basic service must be provided for in the option
+rom.
+
+Second, if you intend to call these functions from Basic there must be a fixed
+place that must be set up in memory to intercept the call and switch roms back
+and forth.  It's all doable but the math rom part might get a bit trickey
+programming-wise.
+
+I'm not familiar with Forth to venture any opinions.  If you decide to go ahead
+with the project, I'll try to finish up my rom project and publish the results.
+
+
+#: 166916 S8/Tech/Programming
+    03-Apr-88  17:00:59
+Sb: #166912-a "math" rom?
+Fm: Paul Globman 72227,1661
+To: Stan Wong 70346,1267 
+
+You can have the option ROM call STD ROM routines and return to the OPTION ROM.
+Tricky code, but once understood, is easily implemented.
+
+I am uncertain as to how soon that material will be published, but if knowing
+that it can be done will inspire you to forge ahead, then "go for it"!
+
+
+Fm: SCOTT T. SCHAD 73720,1166
+To: Stan Wong 70346,1267 
+
+Your comments have clarified the picture more than you know.  And while I would
+look forward to seeing your techique for making eproms I wonder if you might
+well have a little 'cottage industry' of custom chip-making should things take
+off.  Lots of us have wanted this or that program on a rom for years, but the
+$500 initial setup that TS or PCSG charges is unreasonable.  How much hardware
+would someone need to burn his own chips?  Can the model 100 be the controller?
+
+
+Fm: Stan Wong 70346,1267
+To: SCOTT T. SCHAD 73720,1166 
+
+Cottage industry?  Yes I guess I could but soldering those EPROMS to the
+circuit carrier is messy for klutz like me.  Actually, I stopped at the point
+where I could load a .CO file into the EPROM and read it back into RAM, sort of
+like a romdisk.
+
+My next step was to allow multiple .COs to be loaded and read back. The step
+after that was to allow Basic programs to be stored (a few minor technical
+details to be worked out first).  What would be hard is to get a Basic program
+to run from the rom.  From Paul Globman's message (#166916) it sounds doable
+but I haven't figured out all the details yet.
+
+If you are interested in something like this, let me know and we can pursue it
+further.
+
+
+Fm: JAY HOLOVACS 74756,413
+To: SCOTT T. SCHAD 73720,1166 
+
+Well...good luck.  I'm sure a number of people on the sig would be interested
+in a more or less reasonable unit if it ever can be put together Jay

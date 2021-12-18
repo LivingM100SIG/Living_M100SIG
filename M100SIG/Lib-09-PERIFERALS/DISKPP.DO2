@@ -1,0 +1,263 @@
+
+
+
+        USING DISKPP.BA
+
+            Run DISPP.BA from a disk or from the  RAM  menu.   Following
+        the title screen display, the main menu appears.   If  the  disk
+        you want to analyze/modify is not already in the  drive,  insert
+        it now.  (You may also insert  a  different  disk  any  time  at
+        either menu.)  Select which operation you wish to perform:
+
+            1)  Display Directory:  displays  the  contents  of  the  24
+        entries in the selected main or folder directory are  displayed,
+        with type, name, start cluster, and bytes in  the  last  sector.
+        You can use this option to find where a particular  file  starts
+        or a folder sub-directory is stored.  The  date  bytes  are  not
+        displayed.  Respond to the  pompts  for  main/folder  directory,
+        which copy, and screen/printer output.  If displaying  a  folder
+        directory, enter the cluster in which  it's  located.   Pressing
+        the ESCape key will  exit  the  scrolling.   Then  you  have  an
+        opportunity to display a single entry.  If  desired,  enter  the
+        number of the entry to be displayed.  Throughout the  program  a
+        distinction is  made  between  the  main  directory  and  folder
+        directories.  The same operations work on both, but with  folder
+        directories you'll be prompted to enter the  cluster  number  in
+        which the folder directory  is  located.   This  information  is
+        found in the parent directory for that  folder.   If  you  don't
+        know the cluster number, start searching at the main directory.
+
+            2)  Display Allocation Table:  displays the contents of  the
+        240 bytes of the  allocation  table  (or  prints  them  in  four
+        columns on a printer).  The same options to  exit  scrolling  or
+        display a single byte apply.
+
+            3)  Trace File  Chain:   this  option  traces  and  displays
+        cluster numbers which are linked in the allocation  table.   The
+        data can also be output to a  printer.   By  specifying  forward
+        trace and entering the start cluster of a file you can see which
+        clusters it uses; or if the chain is broken, where it ends.   If
+        the file chain ends normally, the number of sectors used in  the
+        last  cluster  will  be  displayed.   On  the  other  hand,   by
+        specifying backward trace and a  cluster  number,  you  can  see
+        where the chain starts and thus by correlating that  information
+        with a directory entry, which file that cluster is linked to, if
+        any.
+
+            4)  Display Clusters:  the contents of  individual  clusters
+        may be examined with this option.   Enter  the  desired  cluster
+        number.  The track and sector numbers are  displayed  and  their
+        contents are printed  directly to the screen.  BA and  CO  files
+        contain many non-ASCII  values which may do  strange  things  to
+        the display.  Continue on to the next cluster with the space bar
+        or press <Enter> to return to the menu.
+
+            5)  Type Text File:  with  this  option  you  can  send  the
+        contents of a disk-based text file to any M-100 device, even  if
+        the file is too large to fit into memory  and/or  contains  long
+
+
+                                    - 3 -
+
+
+
+
+
+
+
+
+
+        lines.  For example, you could use this  option  to  transmit  a
+        larger-than-RAM file  through  the  RS-232  port.   Specify  the
+        directory, main or folder, where  the  file  is  located.   (Use
+        option one to find out.)  If the desired file is  located  in  a
+        folder, enter the cluster number of the folder directory.   That
+        directory's contents will be displayed.  Then enter the filename
+        (with extension, if it has one) of the  file  to  read  and  the
+        output device/filename.  For example, LPT: for the  printer,  or
+        any other valid device/filename.   The  screen  is  the  default
+        device.
+
+            6)  Recover Files:  this option takes you to a  second  menu
+        with which data on the disk can  be modified as explained below.
+
+            The Recover Files selection brings up  a  second  menu  with
+        which data on the disk  can  be  altered,  hopefully  to  permit
+        recovery of  a  clobbered  file.   (Take  note  of  the  warning
+        message!!)  For various reasons, once in a great  while  a  data
+        byte on a disk may be altered.  If this occurs  in  a  directory
+        cluster or in the allocation table, it will affect  the  ability
+        to load a file or access a folder menu.  If we can modify  those
+        bytes we can recover the affected file(s).  Also,  sometimes  we
+        slip up and inadvertantly delete a file.   Deleted files can  be
+        recovered if nothing else has been written on the disk since  it
+        was deleted.  The file name is still in the directory,  but  its
+        type byte has been changed to  zero  and  the  allocation  table
+        bytes for that file have been changed to zero.  So it's a matter
+        of tracing the file chain with the Display  Clusters  option  to
+        find out in which clusters the file is stored, and then altering
+        the  allocation  table  entries  for  those  clusters  and   the
+        directory type entry.
+
+            1)  Modify Directory:  answer the prompt for main  directory
+        or folder directory.  If you select folder directory, enter  the
+        cluster number in which it's stored.  Enter the  number  of  the
+        entry to modify.  That  entry  is  displayed  for  confirmation.
+        Then enter the type,  filename  (with  extension,  if  desired),
+        start cluster, and bytes in the last sector.  If  no  change  is
+        desired in any item,  just  press  the  <Enter>  key  after  the
+        prompt.   Both  copies  of  the  directory   are  modified   and
+        "Operation  complete"  is  displayed.   If  an   error   message
+        displays, nothing  is  modified.   This  option  is  useful  for
+        restoring deleted  files  or  clobbered  files.   You  can  also
+        "build" a directory entry for clusters you wish to recover.   Be
+        sure to modify the corresponding allocation table bytes.
+
+            2)  Modify Allocation Table:  enter the number of  the  byte
+        to  modify and  what  you  want  it  to  be.   Both  copies  are
+        modified.  If you exit DISKPP and then want to save  a  file  to
+        the same disk on which you just modified the  allocation  table,
+        eject the disk and re-insert it into the drive.  Otherwise, CDOS
+        will just re-write the former (unmodified) allocation table from
+        its copy in memory back to disk, and your changes  will  not  be
+        effective.
+
+
+                                    - 4 -
+
+
+
+
+
+
+
+
+
+
+            3)  Copy Sector/Cluster:  answer the prompt by pressing  "S"
+        if you want to copy only one sector and "C" if you want to  copy
+        a whole cluster.  You may copy from one place to  another  place
+        on the same disk or from one disk to another.   Just  make  sure
+        you have the right disk in the drive at the "Insert..."  prompt.
+        A bad directory cluster may  be  restored  by  copying  it  from
+        another disk that has the same files  in  the  same  order  (for
+        example, an duplicate made as a backup).  Or if  only  one  copy
+        was clobbered, you may be able to restore it by copying from the
+        good sectors.  The main  directory  copy  one  is  on  track  0,
+        sectors 1 and 3; copy two is on track 0, sectors 2 and  4.   The
+        allocation table copy one is on track 0, sector 5; copy  two  is
+        on track 0, sector 6.
+
+            4)  Fix CRC error:  use this option when a file doesn't load
+        and the message "?CC  Error  -  Press..."  is  displayed.   This
+        prevents you  from  loading  a  file  when  the  data  has  been
+        corrupted or the disk medium damaged.  Even if the data has been
+        corrupted you might want to load the file involved  into  memory
+        to examine it or to repair it.  But you won't be  able  to  load
+        this file or read the affected sector from CDOS or  from  Basic.
+        First, try to load the file from CDOS several times.   Sometimes
+        this problem is only temporary.  If that doesn't work, find  out
+        which sector is producing the  CRC  error.   Using  options  one
+        through four of the top menu, find out which clusters  the  file
+        occupies and display those clusters.  Watch for  the  CRC  error
+        message and take note of the track and sector where  it  occurs.
+        The disk will sound like it's "spinning its wheels" when  a  CRC
+        error is imminent.  Then select the CRC Fix menu item and answer
+        the prompts with those  track  and  sector  numbers.   The  data
+        contained in that sector will be displayed on the screen.  If it
+        looks like the correct sector, press the space bar to  write  it
+        back out to the disk.  Usually this procedure  will  cancel  the
+        CRC error.  You can verify  that  it  has  by  redisplaying  the
+        appropriate cluster or by exiting  to  Basic  and  executing  in
+        immediate mode: ? DSKI$(0,TR,SE,0); DSKI$(0,TR,SE,1) where TR  =
+        track number; SE = sector number.  Please keep in mind that this
+        procedure only enables you to retrieve the file.   It  does  not
+        guarantee that the data therein is unaltered.  Altered  data  is
+        difficult to find in BA files  and  impossible  to  find  in  CO
+        files.  If you fix a CRC error  in  a  directory  or  allocation
+        table sector, it's advisable to then copy  from  a  good  sector
+        back to the sector you just "fixed".
+
+            5)  Rename Directory:  answer the prompt with  "M"  or  "F".
+        Renaming the main directory renames the  disk.   If  renaming  a
+        folder, enter its cluster number.  This  operation  changes  the
+        name stored in the first slot of the directory sectors, but does
+        not changes its entry in its parent directory.   So,  if  you're
+        changing a folder name, you'll also  have  to  modify  its  file
+        entry in its parent directory by using option one of this  menu.
+        Verify the current name, then enter the new name in lower case.
+
+
+                                    - 5 -
+
+
+
+
+
+
+
+
+
+
+            6)  Exit to top menu:  self explanatory.
+
+            The operations above alter data on your disk, so  don't  use
+        them on a good disk if you don't understand  what  you're  doing
+        and aren't convinced they work!
+
+            Note on disk errors:  all  disk  read/write  operations  are
+        error trapped.  Except for "Fix CRC",  none  of  the  operations
+        write over disk errors.  You'll want to know if and  where  disk
+        errors occur.  If an error occurs,  a  message  with  the  error
+        number and track and sector where it ocurred will be  displayed.
+        Take note.  Refer to the Chipmunk manual for explanation of  the
+        error numbers.  If it's a CRC error  (67),  you'll  be  able  to
+        "fix" it.  RF (65) errors cannot be fixed with DISKPP.  You  may
+        be able to salvage part of the file involved with the Type  File
+        or Modify Directory options.  Then,  reformat  the  disk  (after
+        moving good files) or change the allocation table bytes  of  the
+        clusters involved to 254 so that CDOS will not try to use  those
+        clusters.  Several operations  require  reading  the  allocation
+        table first,  so  if  those  sectors  are  bad,  the  associated
+        operations  cannot  be  performed.   Fix  the  allocation  table
+        first.
+
+            Note  on  conventions:   prompts  that  call  for  a  single
+        keypress response, such as a (Y/N) or a numbered  menu  item  do
+        not need the <Enter> key pressed.  Prompts that  call  for  data
+        entry need the desired input followed by  an  <Enter>  keypress.
+        Generally, pressing the <Enter>  key  at  a  data  input  prompt
+        aborts the operation and returns you to a  menu.   In  addition,
+        pressing function key F8 anywhere in the program will  cause  an
+        exit to the main menu.
+
+            My reference for the description  of  CDOS  was  information
+        supplied by Don Corbitt, the  original  designer  of  CDOS,  and
+        released by  Holmes  Engineeing.   CDOS  and  the  Chipmunk  are
+        copyrighted by Holmes Engineering and Portable Computer  Support
+        Group.
+
+            DISKPP.BA is still considered to be an experimental program,
+        designed to help us learn about and work with CDOS.  If  we  can
+        use it to recover lost files, so much the better, but please use
+        it at your own risk.  Back up your files, then play around  with
+        it and have some fun.  Version 3.0 of DISKPP  is  for  use  with
+        CDOS versions 3.24 and subsequent.  DISKPP is (c)  1985  by  Tim
+        Ekdom.  License granted to all SIG members  and  Chipmunk  users
+        for execution and duplication as necessary to  fulfill  personal
+        non-commercial use.  Bug reports, comments and questions  should
+        be directed to me at the User ID shown below.
+
+
+        Tim Ekdom
+        October, 1985
+        CIS: 72575,1473
+
+
+                                    - 6 -
+
+
+
+
+
+

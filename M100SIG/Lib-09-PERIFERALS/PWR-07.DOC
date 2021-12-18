@@ -1,0 +1,196 @@
+
+
+
+                                    Chapter 5
+                                 Disk-Based TEXT
+
+
+          D-Text.BA is a POWR-DOS application which simplifies
+          manipulating DOcument files on diskette.  At the heart of
+          D-TEXT is the familiar TEXT program.  To use D-TEXT, load and
+          RUN D-TEXT.BA from diskette or RAM.  D-TEXT.BA is a companion
+          program to DMENU and has similar menus.
+
+
+                                Basic Procedures
+
+
+                              Accessing Disk Files
+
+          When you first run D-TEXT, it displays the names of all the
+          DOcument files on disk. (Unlike DMENU, you cannot display RAM
+          file names, and only DOcument files will ever be displayed). 
+          The display looks similar to the DMENU display, with
+          different function-key selections:
+
+
+                     ----------------------------------------
+                    |Len: 12027   Free: 2560 / 11429   D-TEXT|
+                    |08/22/86 09:09:36                       |
+                    |[CHAP1 ] CHAP2   CHAP3   CHAP4   CHAP5  |
+                    | CHAP6   CHAP7   CHAP8   START   nufile |
+                    |                                        |
+                    |                                        |
+                    |                                        |
+                    |Form Load Kill Prnt      Disk      Menu |
+                     ----------------------------------------
+                        (brackets indicate reverse video)
+
+
+          The function key selection do not change (as they do in
+          DMENU).  The keys have the following functions:
+
+
+
+
+
+
+
+
+
+
+
+                                     Page 31
+          Chapter 5              Disk-Based TEXT              Page 32
+
+
+              [F1]  Form.  This key sets the printout format use by
+                    [F4].  You can add more formats with PRFORM.BA,
+                    explained in the Notes and Options section below.
+
+              [F2]  Load.  This key loads the selected DOcument file
+                    into RAM and enters the TEXT program to modify it. 
+                    Use this key only when you do not want to use
+                    D-TEXT features to access the file.
+
+              [F3]  Kill.  This key KILLs the selected DOcument file. 
+                    Before it does, it asks you to confirm your
+                    intentions with the "y" key, just as DMENU does.
+
+              [F4]  Prnt.  This key prints the selected DOcument file. 
+                    It uses the parameters set with the [F1] key.
+
+              [F5]  Page.  ON the Model 100 (only) this key will page
+                    between two screens of document files if there are
+                    too many to fit on one screen.
+
+              [F6]  Disk.  This key reprints the screen using the
+                    DOcument files on the disk.  Use it when you insert
+                    a new disk into the drive.
+
+              [F8]  Menu.  This key will return you to DMENU, or if
+                    DMENU.BA is not in RAM, you your computer's menu.
+
+
+                                 Printing a File
+
+          D-TEXT provides rudimentary text formatting for printing disk
+          files.  You select a format for the file with the [F1] key,
+          then press [F4].  You will see the prompt "Ready to print
+          (y/n)?" on the message line; press "y" to start, or "n" to
+          cancel.  If you press "y", D-TEXT will print the document,
+          and depending on the format, it may repeat the "ready to
+          print" message at the end of each page.
+
+
+                              Editing a Small File
+
+          You can easily edit any disk file small enough to fit into
+          available RAM.  Simply select the file with the widebar
+          cursor and press [ENTER].  You will see an intermediate
+          screen that looks as follows:
+          Chapter 5              Disk-Based TEXT              Page 33
+
+
+                     ----------------------------------------
+                    |File:    MAP   .DO                      |
+                    |Length:  3738                           |
+                    |Buffer:     0                           |
+                    |Total:   3738  vs. 11449 free in RAM    |
+                    |----------------------------------------|
+                    |<ENTER> to Edit                         |
+                    |     Wrap Strt Stop Set                 |
+                    |     On   Top  End  Buff Files     Menu |
+                     ----------------------------------------
+
+
+          (We call this screen the "file summary" screen).  As long as
+          the message "<ENTER> to Edit" appears, you can press [ENTER]
+          again and edit the entire file.  D-TEXT will load the disk
+          file into RAM automatically and jump to TEXT.  When you are
+          finished with TEXT, press [F8].  You will see the message:
+
+
+          Save Changes (y/n)?
+
+
+          If you made changes to the file and want to save them, press
+          "y", and the disk file will be updated.  If you press "n",
+          D-TEXT will ignore any changes you made while in TEXT, and
+          you will return immediately to its menu screen.
+
+
+                            Appending to a Large File
+
+          If a file is too large to fit into RAM, you will not be able
+          to edit it all at once.  It is necessary to select a portion
+          of it to edit.  If you select a file too large to fit into
+          RAM, then press [ENTER], D-TEXT shows a screen similar to
+          this:
+
+
+                     ----------------------------------------
+                    |File:    LFILES.DO                      |
+                    |Length: 16231                           |
+                    |Buffer:     0                           |
+                    |Total:  16231  vs. 11449 free in RAM    |
+                    |----------------------------------------|
+                    |<ENTER> to Append                       |
+                    |     Wrap Strt Stop Set                 |
+                    |     On   Top  End  Buff Files     Menu |
+                     ----------------------------------------
+          Chapter 5              Disk-Based TEXT              Page 34
+
+
+          Note that the total bytes required exceed the bytes free.  In
+          this case, D-TEXT defaults to an "append"; if you press
+          [ENTER] again, you will go into TEXT with an empty file. 
+          D-TEXT will append any material you enter into the empty file
+          onto the end of the disk file you selected.  In this way, you
+          can build a DOcument file up to 64K, which is the largest
+          possible disk file.
+
+
+                             Modifying a Large File
+
+          When you wish to change a DOcument file too large to fit into
+          RAM, you must select a piece of it small enough to fit into
+          RAM.  We call this piece of the disk file the edit portion. 
+          You have three choices of how to select the limits of the
+          edit portion:
+
+
+             * You can start the edit portion at the beginning of the
+               disk file and stop it somewhere in the middle of the
+               disk file;
+
+             * You can both start and stop the edit portion somewhere
+               inside the disk file; or
+
+             * You can start the edit portion somewhere inside the file
+               and stop it at the file's end.
+
+
+          All three of these options are in addition to appending.  To
+          select one of these options, select the disk file to edit on
+          the D-TEXT menu, then press [ENTER].  When you see the file
+          summary screen, use [F3] and [F4] to set the conditions for
+          the Start and Stop points of the edit portion, respectively. 
+          You will notice that the message will change to "<ENTER> to
+          Set Limits" whenever either Stop or Start are "Set".
+
+          If you choose to set limits, D-TEXT will give you a series of
+          arbitrary limits inside the disk file.  For example, if you
+          have selected "Set" for the start of the edit portion with
+          [F3], the screen might look like this:
+

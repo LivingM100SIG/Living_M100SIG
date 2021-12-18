@@ -1,0 +1,499 @@
+
+
+                     ------------------------
+                     | Model 100 System Map |
+                     ------------------------
+ROM: Part II
+                          Copyright 1985
+                     Revision Date: 09/30/85
+                   Compiled and Researched by:
+                       Robert D. Covington
+            Systems Information Management Consultants
+      [Not associated with The Covington Group, N. Y., N. Y.]
+
+    This document may be duplicated and distributed free of
+charge to any individuals who desire it.  Any duplications of
+this document, however, must inluce all of the information
+contained here-in, with no deletions or changes.
+    The author and distributors of this document make no 
+expressed or implied warrantees as to the validity of the 
+information contained here in.
+
+
+0DABH -  Main Evaluation Routine.  This routine handles all 
+        evaluations of math operations and functions.
+         Entry:
+               HL - Points to text to evaluate plus 1.  This routine 
+                    assumes that an RST 10H was executed prior to 
+                    entering the routine.  To adjust for this, either 
+                    execute a RST 10H or INC HL prior to entering the 
+                    routine.
+         Exit:
+               HL - Incremented past evaluated expression
+             FAC1 - Usually contains the result of the evaluated 
+                    expression.
+
+0F0DH -  Integer Divide (FAC1=DE/HL)
+
+0F1CH -  Evaluate the function in the buffer pointed to by HL.
+         Entry:
+               HL - Points to the buffer containing the compressed 
+                    function and parameters.
+         Exit:
+             FAC1 - Usually contains the result of the function.
+
+0F47H -  ERR Function
+
+0F56H -  ERL Function
+
+0F7EH -  VARPTR Function
+
+0F86H -  VARPTR(#buffer) Function
+
+0F92H -  VARPTR(variable) Function
+
+0FDAH -  Variable evaluation routine
+
+0FE8H -  Get the character pointed to by HL, convert it to upper case 
+        if needed, and place it in the A register.
+         Entry:
+               HL - Points to buffer
+         Exit:
+                A - Next character in buffer
+
+0FE9H -  Convert the character in the A register to uppercase if 
+        necessary.
+         Entry:
+                A - Character
+         Exit:
+                A - Character converted to UC
+
+1054H -  NOT Function
+
+1069H -  RST 28H routine (see 28H).
+
+108CH -  OR Function
+
+1097H -  AND Function
+
+10A2H -  XOR Function
+
+10ADH -  EQV Function
+
+10B5H -  IMP Function
+
+10C8H -  LPOS Function
+
+10CEH -  POS Function
+
+10D1H -  Load the integer in the A register into FAC1.
+         Entry:
+                A - Integer from 0-255 to put in FAC1
+         Exit:
+                A - Destroyed
+
+10E6H -  Check for a running program.  If a program is not running, 
+        generate an Illegal Direct (ID) error.
+         Exit:
+                A - Destroyed
+           Z flag - Reset if program is running
+
+10EFH -  Generate ID error
+
+1100H -  INP Function
+
+110CH -  OUT Statement
+
+1112H -  Evaluate the expression in the buffer pointed to by HL 
+        leaving the result in DE.  If the result is greater than 
+        32767, an overflow error is generated.
+         Entry:
+               HL - Points to buffer of expression to evaluate.  The 
+                    buffer must end with a null or colon.
+         Exit:
+               DE - Result of expression
+               HL - Incremented past expression in buffer
+                A - Destroyed
+           Z flag - Set if the evaluated expression is an 8 bit 
+                    number.  If so, the result of the operation will 
+                    be just in the E register.
+
+1113H -  Same as 1112H except that the evalutation starts at HL-1.
+
+112DH -  Evaluate the expression in the buffer pointed to by HL 
+        leaving the result in the A register.  If the result is 
+        greater than 255, a function error is generated.  If the 
+        result is greater than 32767, an overflow error is generated.
+         Entry:
+               HL - Points to buffer to be evaluated.  The buffer 
+                    must end with a null or colon.
+         Exit:
+               HL - Incremented past expression in buffer
+            A & E - Evaluated expression
+                D - Destroyed
+
+112EH -  Same as 112DH except that evaluation starts at HL-1.
+
+113BH -  LLIST Statement
+
+1140H -  LIST Statement
+
+11A2H -  Send the buffer pointed to by HL to the screen.  Text must 
+        end with a null.
+         Entry:
+               HL - Points to print buffer
+         Exit:
+               HL - Points to ending null
+                A = 0
+
+1284H -  PEEK Function
+
+128BH -  POKE Function
+
+1297H -  Evaluate the expression in the buffer pointed to by HL 
+        leaving the result in DE.  This routine differs from 1112H in 
+        that it will properly evaluate numbers up to 65535.  If the 
+        result of the operation is greater than 65535, an overflow 
+        error will occur.
+         Entry:
+               HL - Points to buffer to evaluate.  The buffer must 
+                    end with a null or colon.
+         Exit:
+               DE - Evaluated expression
+               HL - Incremented past expression in buffer.
+
+12CBH -  Wait for a key from the keyboard.  All function keys are 
+        converted into their pre-programmed text.
+         Exit:
+                A - Character entered
+           C flag - Set if special character
+
+13A5H -  Toggle function key label line if enabled.
+         Exit:
+                A - Destroyed
+
+13DBH -  Check keyboard queue for pending characters
+         Exit:
+                A - Destroyed
+           Z flag - Set if no characters pending
+
+1419H -  POWER Statement
+
+1431H -  Normal TRAP (low power) interrupt routine
+
+143FH -  Turn off computer
+
+1459H -  POWER CONT Statement
+
+1461H -  POWER ON Statement
+
+1470H -  Output character to printer without tab expansions
+         Entry:
+                A - Character to print
+
+148AH -  Start tape and load tape header.  If an error or Shift Break 
+        is pressed, generate an I/O error.
+
+1494H -  Generate I/O error
+
+14A8H -  Turn cassette motor on
+
+14AAH -  Turn cassette motor off
+
+14B0H -  Read a byte from tape and update checksum
+         Entry:
+                C - Current checksum
+         Exit:
+                A - Character read off tape
+                C - Updated checksum
+
+14C1H -  Write a byte to tape and update checksum
+         Entry:
+                A - Character to write to tape
+                C - Current checksum
+         Exit:
+                C - Updated checksum
+
+14D2H -  LCD Device control block
+
+14D8H -  LCD and LPT file open routine
+
+14E5H -  LCD file output routine
+  
+14EDH -  Pop all registers off stack in the order AF, BC, DE, and HL.  
+        This routine is only useful if jumped to.  If a call is done, 
+        stack integrity is lost.
+
+14F2H -  CRT device control block
+
+14FCH -  RAM device control block
+
+1506H -  RAM file open routine
+
+158DH -  RAM file close routine
+
+15ACH -  RAM file output routine
+
+15C4H -  RAM file input routine
+
+161BH -  Special RAM file I/O
+
+167FH -  CAS device control block
+
+1689H -  CAS file open routine
+
+16ADH -  CAS file close routine
+
+16C7H -  CAS file output routine
+
+16D2H -  CAS file input routine
+
+1754H -  LPT device control block
+
+175AH -  LPT file output routine
+
+1762H -  COM device control block
+
+176CH -  MDM file open routine
+
+176DH -  COM file open routine
+
+179EH -  COM file close routine
+
+17A8H -  COM and MDM file output routine
+
+17B0H -  COM and MDM file input routine
+
+17CAH -  Special COM and MDM I/O routine
+
+17D1H -  MDM device control block
+
+17D8H -  MDM file close routine
+
+17E6H -  Set RS232 parameters to string pointed to by HL.  String must 
+        be in the same format as used by TELCOM.
+         Entry:
+               HL - Points to parameter string
+                D - 2 if Modem is used
+           C flag - Set if RS232, reset of Modem
+
+1877H -  WAND device control block
+
+1889H -  EOF Function
+
+1904H -  TIME$ Function
+
+190FH -  Read time from system clock and store it in the buffer 
+        pointed to by HL
+         Entry:
+               HL - Points to start of time buffer.  The buffer will 
+                    be filled with the time in the format hh:mm:ss.
+         Exit:
+               HL - Incremented to the end of the buffer.
+               All other registers destroyed
+
+1924H -  DATE$ function
+
+192FH -  Read date and store it in the buffer pointed to by HL.
+         Entry:
+               HL - Points to start of date buffer.  The buffer will 
+                    be filled with the date in the format mm/dd/yy.
+         Exit:
+               HL - Incremented to the end of the buffer
+               All other registers destroyed
+
+1955H -  DAY$ function
+
+1962H -  Read day and store it in the buffer pointed to by HL.
+         Entry:
+               HL - Points to start of day buffer.  The buffer will 
+                    be filled with the current 3 letter day 
+                    abbreviation.
+         Exit:
+               HL - Incremented to the end of the buffer
+               All other registers destroyed.
+
+19A0H -  Update the in memory clock values starting at F923H with the 
+        time in the internal hardware clock
+
+19ABH -  TIME$ Statement
+
+19B3H -  Update the internal clock chip with the values in the in 
+        memory time table starting at F923H
+
+19BDH -  DATE$ Statement
+
+19F1H -  DAY$ Statement
+
+1A78H -  IPL Statement
+
+1A96H -  Erase current IPL program (table)
+         Exit:
+                A - Destroyed
+
+1A9EH -  COM and MDM Statements
+
+1AB2H -  KEY() Statement
+
+1AC3H -  KEY STOP/ON/OFF Statements
+
+1B0FH -  ON TIME$ Statement
+
+1B32H -  RST 7.5 interrupt routine (see 3CH).
+
+1BB8H -  KEY Statement
+
+1BBDH -  KEY LIST Statement
+
+1BE0H -  Send B number of characters from the buffer pointed to by HL 
+        to the screen.  Any control characters (0-31 and 127) are 
+        converted to spaces for printing.
+         Entry:
+               HL - Points to buffer to print
+                B - Number of characters to print
+         Exit:
+                A - Destroyed
+               HL - Incremented past last byte printed.
+
+1C57H -  PSET Statement
+
+1C66H -  PRESET Statement
+
+1C6DH -  LINE (graphic) Statement
+
+1D90H -  CSRLIN Function
+
+1D9BH -  MAX Function
+
+1DA7H -  MAXRAM Function
+
+1DB2H -  MAXFILES Functions
+
+1DB9H -  HIMEM Function
+
+1DC3H -  WIDTH Statement
+
+1DC5H -  SOUND Statement
+
+1DE5H -  SOUND OFF Statement
+
+1DE6H -  SOUNF ON Statement
+
+1DECH -  MOTOR Statement
+
+1DF1H -  MOTOR ON Statement
+
+1DF5H -  MOTOR OFF Statement
+
+1DFAH -  CALL Statement
+
+1E22H -  SCREEN Statement
+
+1E5EH -  LCOPY Statement.  This routine will print the textual 
+        contents of the screen on the printer..
+         Exit:
+          HL, DE, and AF are destroyed.
+
+1F3AH -  FILES Statement
+
+1F42H -  Display Catalog
+         Exit:
+               All registers are destroyed
+
+1F91H -  KILL Statement
+
+1FBEH -  Kill a text file
+         Entry:
+               HL - Address of directory entry
+               DE - Start address of file
+
+2037H -  NAME Statement
+
+20FEH -  NEW Statement
+
+21FAH -  Count the number of characters in the buffer pointed to by 
+        HL. Buffer ends with a null
+         Entry:
+               HL - Points to the buffer to count
+         Exit:
+                E - Number of characters in the buffer pointed to by 
+                    HL
+                A - Destroyed
+
+220FH -  Open a text file
+         Entry:
+          (FC93H) - Filename (8 bytes).  DO not required
+         Exit:
+               HL - Points to start of text file
+               DE - Points to directory entry
+           C flag - Set if file already exist, reset if it is a new 
+                    file.
+
+2280H -  CSAVE Statement
+
+22B9H -  Save the buffer pointed to by HL to tape.  After execution of 
+        this routine, return resumes at BASIC ready.
+         Entry:
+               HL - Start of buffer to save
+               DE - Number of characters to save
+         Exit:
+               All registers destroyed
+
+22CCH -  SAVEM Statement
+
+22DDH -  CSAVEM Statement
+
+2377H -  CLOAD Statement
+
+2413H -  Load a record from the cassette and put it in the buffer 
+        pointed to by HL.
+         Entry:
+               HL - Points to start of receiving buffer
+               DE - Number of bytes to load.
+         Exit:
+               All registers destroyed
+
+2491H -  LOADM and RUNM Statement
+
+24A7H -  CLOADM Statement
+
+2542H -  Move memory pointed to by HL to the memory pointed to by DE 
+        for B number of bytes.  HL and DE are incremented on each 
+        cycle of the move.
+         Entry:
+               HL - Points to the start of the source memory
+               DE - Points to the start of the destination memory
+                B - Number of bytes to move
+         Exit:
+          HL & DE - Incremented past last byte moved
+                A - Destroyed
+
+260BH -  CAS open for output for BASIC files
+
+260EH -  CAS open for output for TEXT files
+
+2611H -  CAS open for output for Command files
+
+2650H -  CAS open for input for BASIC files
+
+2653H -  CAS open for input for text files
+
+2656H -  CAS open for input for Command files
+
+273AH -  STR$ Function
+
+27B1H -  Print buffer pointed to by HL until a null (00H) or '"' is 
+        found.  Print begins at current cursor position.
+         Entry:
+               HL - Points to buffer to be printed
+
+290FH -  Move the memory pointed to by BC to the memory pointed to by 
+        DE  L times.  BC and DE are incremented on each cycle of the 
+        move.
+         Entry:
+               BC - Points to the start of the source memory
+               DE - Points to the start of the destination memory
+                L - Number of bytes to move
+         Exit:
+          HL & DE - Incremented past last byte moved
+                A - Destroyed

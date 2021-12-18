@@ -1,0 +1,102 @@
+      Documentation For TOOLKT.PMS
+---------------------------------------
+By Peter Stanwyck 73117,2006
+   1 Kaiser Plaza, Suite 2050
+   Oakland, California 94612
+Licensed only for private use of CIS M100 Sig Members--Program and Documen-
+tation not available for redistribution in whole or in part.
+    (c)1986  ALL RIGHTS RESERVED
+---------------------------------------
+         General Instructions
+---------------------------------------
+(1)  TOOLKT will RELINE-PACK-LIST- CHECKSUM-FYTE a basic program stored
+in Ascii (.DO) format. It will RESET function keys; facilitate DATA entry to
+any DATA file; and automatically resets DATE$ to "86" (Line#1)
+
+(2) RELINE & PACK create TTEM for temporary storage, and will at
+conclusion KILL the object file and RENAME TTEM with the object file name.
+
+(3) Only LIST and CHECKSUM can be used with Cassette Files. If so, file NAME
+should be preceeded by CAS: and RECORDER should be at ready prior to
+naming the file.
+
+(4) All options (except REKEY) begin by requesting the .DO file. In DATA
+you can name and open a NEW file but all other options require you to NAME
+an existing file.  It is not necessary to use the .DO extention.
+
+(5) Both LIST and Fyte require your PRINTER to be on line, and assume
+continuous feed paper.
+
+(6) If the reserved string space is inadequate for a particular object file
+it can be increased for FYTE in Line#71 and for all other options in Line#25.
+
+(6) Excising particular applications or other customization is not recommended
+as the options are heavily integrated and in addition to obvious subroutines
+the program has numerous branches between functions.  If you run FYTE on
+TOOLKT.PMS you will have a schematic of the branching to assist you.
+
+---------------------------------------
+                RELINE
+(1) ReLn will renumber program lines and match them to GOTO,GOSUB,THEN
+ELSE,RESUME,RUN & RESTORE branches, including multiple ON XXX GOTO/SUB.
+
+(2) You are first asked to exclude from renumbering lines at the top and bottom
+of your program, and then the increment of the new line# and the start Line#.
+
+(3) The program will not prevent you from using a configuration which will
+result in the renumbering of lines which will result in new line#s which
+are higher than bottom line#'s not to be renumbered. i.e. if you exclude from
+renumbering all line#>=100 and have 20 line less than that and you specify
+increments of 10,starting at 10--Your first 20 lines would be 10 to 200
+and the origional lines>=100 would be left intact. Be Careful!
+
+(4) The program will prevent specifying a starting line# which is less than the
+LINE# of bottom excluded lines. i.e. You can specify exclusion of line#=>100
+and specify the start line# at 150.
+---------------------------------------
+                PACK
+(1)  Will remove blanks not imbedded in quote marks.
+
+(2)  After file selection you will have the option of removing REM statements.
+If selected will remove entire line if the line is solely REM. Be CAREFUL of
+those program which branch to REM line.
+---------------------------------------
+                LIST
+LIST prints a formatted listing of a BASIC program breaking lines at each
+semicolan not imbedded in quote marks 
+---------------------------------------
+                FYTE
+(1) Will assist in fyteing the byte. It first compute the number of unpacked
+and REM Bytes, files size, line length and average line length.
+
+(2) It will then determine for each Line the Line# of every line which
+BRANCHES TO IT.
+
+(3) Finally it will print a report with this DATA which can then be used to
+fyte the byte as your own programming technique dictates.
+
+(4) In program like TOOLKT which use the word REM in other than REM state-
+ments, you will get an inacurate REM count
+
+---------------------------------------
+               RKEY
+RKEY resets function keys, allocated string space, himem, and maxfiles to
+the M100 default status.
+---------------------------------------
+               DATA
+(1) DATA will open for APPEND a new or existing data file and allow a single
+line entry to that file.
+
+(2) The single line may be formatted: NAME:456-1234: or delimited: XXX;XXXX
+
+(3) Can be used for regular data entry but conceived to facilitate programmer
+in creating sample data for program tests.
+---------------------------------------
+               CSUM
+Along the lines of Woods Martins program, will evaluate the total of the
+ascii value of every character in a program.  Be sure to delete all
+extraneous characters 
+---------------------------------------
+Please, your comments and bugs to Peter Stanwyck 73117,2006
+        End User  Oakland, Ca.
+---------------------------------------

@@ -1,0 +1,42 @@
+TDDMON.100 -- A Disk Examine and Patch Utility
+----------------------------------------------
+
+TDDMON.100 is a utility for examining TDD disks on a sector/byte
+basis, one sector at a time, with POWR-DOS installed.  It is based
+on MONTOR.100 (DL4), which is based on LOOKIT.100 by Joel Hassell,
+also in DL4.
+
+When you run this program you will be asked for a starting sector.
+The program will read the sector into RAM (HIMEM to MAXRAM, with
+HIMEM=MAXRAM-1292).  It then enters the examination and patch
+mode -- where you can change a byte just by typing in a new hex
+value. The left column of numbers is the sector (one or two
+digits, in decimal) and the row's offset from the start of the
+sector (four hex digits). 
+
+Move within the sector using the cursor keys (alone, shifted or with
+CTRL). Note that MAXRAM is at 050C hex -- so here and beyond you are
+in SYSTEM RAM!  Similarly, if you go back before 0000 hex, you
+may be in a buffer or a RAM file.  Do not patch anything in these
+areas!!  The new version of 10/11/86 shows you when you have gone
+below HIMEM ("LoRAM") or above MAXRAM ("HiRAM"); but the last four
+bytes of the highest "normal" line are above the sector.
+
+Be careful not to hit the function keys in this mode.  They can modify
+the byte under the cursor!
+
+To get out of this mode, hit the ESC key.  You will then be given
+some options, which are pretty self-explanatory.  One option,
+Write Sector to Disk, will replace the sector on the disk by the
+one in RAM -- so you can change disk contents a byte at a time.
+Another option lets you dump the sector to a RAM file of your
+chice; this can be used for recovering ASCII files (ONLY).
+
+This is definitely a hackers tool!  It is offered for use in the
+current thrust to utilize POWR-DOS effectively.  It has NO error
+trapping.  Use it at your own risk, especially the "Write Sector
+to Disk" option!
+
+Phil Wheeler [71266,125]
+Torrance, CA
+10/11/86

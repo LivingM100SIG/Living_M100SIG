@@ -1,0 +1,82 @@
+These are some of my observations about the TDD2.
+  I was interested in the new drive because my Model 100 is constantly on the 
+road, and I really only have room for 10 disk in my briefcase.  Unfortunately I
+have over 30 disks, and Murphy's Law states that you'll always leave the disk 
+you need at home.  Another compelling reason was that Splchk's dictionary was 
+taking up two disk plus another one for the programs SPLCHK.BA, LOOKUP.BA and 
+DCPREP.BA.
+ The first thing I did after getting the drive was to boot it using the new IPL
+program.  I am thrilled, no more DIP switches, but you must run IPL with the 
+disk in the drive, write protected and the drive off.  The DOS will not load 
+with another program in Himem or with ROM+ installed.  AFTER typing RUN you 
+turn the drive on.
+ A few seconds later you are returned to the main menu and a new file called 
+FLOPPY is present and Maxram is lowered to 60000.  FLOPPY is a 43 byte M/L 
+program loader, it checks to make sure the DOS is installed and then EXEC's it.
+  The DOS is a very crude form of DSKMGR.  One thing I like about it was it 
+showed if the disk batterys were low.  However you don't see the RAM files 
+until you press SAVE, but you do see the disk files when you press LOAD.  
+Although you can load from a disk formated on the TDD1 it can't write to one, 
+no matter what DOS you may be using.  To Maintain some compatibility with other
+M/L programs I went into basic and saved the program by typing:
+SAVEM "FLOPY2.CO",60000,62959,60000
+ I then saved it two my "DOS" disk in Bank 0.  If you use FREMEM.BA to remove 
+the hidden M/L program and loader, you can use FLOPY2.CO in the normal M/L 
+conflict modes.
+ To make a backup with the new TDD2 a BASIC program is supplied on the Utility 
+Disk, BACKUP.BA.  Unfortunately it will not make a backup from a TDD1 disk to a
+TDD2 disk.  I cleaned out one of my Power-DOS banks (I have 128K) and loaded 
+COPY.BA.  COPY.BA will work fine as is, as long as there are no files on the 
+destination disk.  The TDD2 can not use any of the sector-access modes of Powr-
+DOS (DSKO$, CALL MAXRAMC+24 and CALL MAXRAMC+27.) So I changed Line 9 to:
+ 9 ONERRORGOTO26:LFILES FORMAT
+
+This fix will allow you to format a disk for the TDD2 and copy from a TDD1 
+disk.  The problem is that there is still 100K in Bank#2 to fill.
+ There seems be be no problem using the old TDD1 DOS's as long as you don't 
+have more then 40 files.  Since I consider DMENU.BA to be rather slow, I once 
+again switched banks to one holding DSKMGR.CO.  I then manually copied the 
+second dictionary disk to the new dictionary disk.  I still had some room left 
+and added SPLCHK.BA and LOOKUP.BA.  As for DCPREP.BA I made a version I called 
+PREP.CO that is stored right under Maxram (62138,62959,62138), and saved that 
+to the last free sector on the disk.  Maybe it's just my copy of DCPREP.BA but 
+I think Line 900 of the program should read:
+900 DATA821,46
+
+My copy read: '900 DATA812,46' and that can cause a cold cold start, as it 
+would poke into memory above MAXRAM.
+
+  SPLCHK.BA seems to work just fine, I would change Line #2 to:
+2 MAXFILES=3:DIMF(25):DN=1:ONERRORGOTO22:FORN=0TO25:F(N)=DN:NEXT
+
+  This stops it from searching for all the dictionary files, since they are all
+on the same disk.  Saves quite about two minutes, and you don't have to babysit
+the program.
+
+  Booting Powr-DOS?  I have not been able to get Powr-DOS to boot off of the 
+TDD2.  I have tried both the new and old IPL.BA and also PL.BA.  No luck.  What
+I have done is using CHANGE.BA I changed 'powr-d.os' to 'POWDOS.BA' and used F7
+to make it visible.  Then I pressed the label key and and found it located at 
+32769, I then went into basic and typed:
+PRINT MAXRAMC
+  Which gave me 32775 (the exec address.)  I then Saved 'POWDOS.BA' on my Powr-
+DOS Disk.  And wrote the following program and saved it as POWIPL.BA:
+
+10 FORI=63932TO64130STEP11:IFPEEK(I-2)<>128THEN30
+20 A$="POWDOSBA":FORX=1TO8:IFPEEK(I+X)=ASC(MID$(A$,X,1))THENNEXTX:GOTO50
+30 NEXTI
+40 BEEP:PRINT"POWDOS.BA not found":END
+50 P=PEEK(I)*256+PEEK(I-1):IFP=32769THENA$="powr-dos":GOTO70
+60 BEEP:PRINT"POWDOS.BA Located at"P"not at 32769":END
+70 FORX=1TO8:POKE(I+X),ASC(MID$(A$,X,1)):NEXTX:POKEI-2,136:CALL32775:MENU
+
+  Now if I need to install Powr-DOS, I IPL FLOPY2 and load POWIPL.BA and 
+POWDOS.BA.  It is very important to load POWDOS.BA last with Floppy!!!  (If you
+are using another DOS, kill all BASIC files and load POWDOS.BA first, then 
+POWIPL.BA).
+  Running POWIPL.BA will change the name back to 'powr-d.os' and make it 
+invisible and then call the M/L program.  If you keep a program under Powr-DOS 
+or if you have a Model 200 you'll have to come up with your own numbers.
+  The first thing you should do after installing Powr-DOS is to load FREMEM.BA 
+with Powr-DOS and kill off FLOPPY. This is because FLOPPY will load a BASIC 
+program under Powr-DOS, therefore moving it and causeing a cold start.

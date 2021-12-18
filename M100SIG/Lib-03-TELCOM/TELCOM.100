@@ -1,0 +1,34 @@
+10 REM This is probably the shortest
+11 REM useful program on this SIG.
+12 REM After executing this program,
+13 REM the TELCOM program will have
+14 REM two additional functions:
+15 REM F6 - Space - Returns an Ascii
+16 REM	    text string containing the
+17 REM	    number of Free bytes of RAM
+18 REM	    left on the system.
+19 REM F7 - Files - Returns the names
+20 REM	    of all files currently in
+21 REM	    RAM.
+22 REM
+23 REM These functions are status
+24 REM reports and will display at
+25 REM the current cursor position.
+26 REM The screen will scroll, if
+27 REM necessary.  This information is
+28 REM NOT transmitted through the
+29 REM RS-232/Modem port.
+30 REM
+31 REM To reset F6 and F7 back to their
+32 REM previous undefined state, it
+33 REM will be necessary to perform a
+34 REM COLD START, or the program can
+35 REM be re-executed with line 110
+36 REM modified to read:
+37 REM	    110 DATA 210,0,210,0
+38 REM (Actually, this patch will
+39 REM substitute an error BEEP for the
+40 REM non-existant functions.
+100 FORX=1TO4:READN:POKEX+64267,N:NEXTX
+110 DATA172,126,58,31
+120 REM Replace line 110 with:				DATA 201,0,201,0		to reset TELCOM F6 & F7

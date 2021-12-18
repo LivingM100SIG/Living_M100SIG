@@ -1,0 +1,129 @@
+CIS FILENAME: PROCAL.DOC
+
+              ***** PROCAL.100 - DOCUMENTATION - 09/28/87 ******
+
+I designed this program because I needed it. As a commercial producer-director
+in a french TV station in Montreal (Quebec/Canada) I work on several
+different accounts (clients) at the same time. I needed a way:
+
+1) to have a complete picture of my schedule (a calendar is for me a good
+   visual planning tool to see the entire forest as well as the individual
+   trees)
+
+2) to isolate individual client activity in order to provide a production
+   schedule for each individual client.
+
+So here is (PRO)JECT (CAL)ENDAR or in my line of business the Production Board.
+PROCAL.100 will output a monthly calendar (it requires a 80 column printer).
+See 2 sample files in PROCAL.FIL.
+
+
+NOTE.DO FILE MANAGEMENT
+
+It requires that you maintain a sorted NOTE.DO file (using NOTE.DO, you can
+still use SCHDL Model 100 Program). You keep your file in order as you enter
+records or you sort the file with any other sorting program. You must be
+consistent when you enter or edit your records with TEXT.
+Each record represents a task concerning a specific project. With PROCAL.100,
+each record in the NOTE.DO file must contain the following 6 (six) fields in
+this sequence:
+
+1) DATE (MM/DD) - only month and day,
+2) START-FINISH TIME (09H00-19H00) - use the 24 hour format for sort purposes,
+3) ABBREVIATED TASK (AS IT WILL APPEAR ON THE CALENDAR - MAX. 10 CHARS),
+4) ADDITIONAL DESCRIPTION OF TASK,
+5) LOCATION (WHERE YOU WILL PERFORM THIS TASK),
+6) PROJECT NAME (this field must be in UPPER CASE / CAPITAL LETTERS)
+
+Each field is separated by a comma ',' and each record is terminated by [enter].
+To work properly, PROCAL.100 requires that you ALWAYS enter the SAME number of
+commas or delimiters (6 pieces of data separated by 5 commas).
+
+Here is a sample NOTE.DO file suitable for PROCAL.100 (use only CAPITAL letters
+- my decision in designing the program):
+
+(This file was used to produce the two sample calendars found in PROCAL.FIL)
+
+LIMITS: 150 items per month, 20 items per day.
+
+(sample NOTE.DO file follows)
+--------
+09/03,12H00,PAYCHECK,WITH 2 BONUS,OUR OFFICE,PERSONAL
+09/04,18H00,BIRTHDAY,MY SON FRANCIS,AT HOME,PERSONAL
+09/09,09H00-12H00,CONCEPT,ANALYZE STORYBOARD,MY OFFICE,XYZ DETERGENT
+09/11,17H00,BID,SUBMIT OUR FINAL BID,ABC AGENCY,XYZ DETERGENT
+09/17,12H00,PAYCHECK,WITH NO BONUS GO TO BANK AS SOON AS POSSIBLE,OUR OFFICE,PERSONAL
+09/18,18H00-24H00,CASTING,FOR FEMALE PART,CASTING AGENT,XYZ DETERGENT
+09/22,09H00-10H30,MEETING,WITH NEW CLIENT FOR ESTIMATE,ON PREMISES,CAR DEALER
+09/22,13H00-17H00,PRE-PROD.,PRE-PRODUCTION MEETING WITH ABC AGENCY,OUR OFFICE,XYZ DETERGENT
+09/25,13H00-14H00,CONTRACT,SIGN PRODUCTION CONTRACT,OUR OFFICE,CAR DEALER
+09/27,09H00-22H00,SHOOTING,INCLUDING TESTIMONIALS,STUDIO 'B',XYZ DETERGENT
+09/28,09H00-17H00,EDITING 1,ROUGH CUT ONLY,OFF-LINE SUITE,XYZ DETERGENT
+09/29,09H00-12H00,EDITING 2,FINE CUT WITH MUSIC,ON-LINE SUITE,XYZ DETERGENT
+09/30,20H30,ON-AIR,DELIVER COPY BEFORE NOON,CFTM-TV,XYZ DETERGENT
+10/03,09H00-20H00,SHOOTING,EDITING WILL BE DONE IN NOVEMBER,PREMISES,CAR DEALER
+--------
+(end of sample NOTE.DO file)
+
+
+Sample run of program
+---------------------
+
+Prompt no.1:
+"Is NOTE.DO file sorted?"
+
+If your file is sorted, you may answer by 'Y', 'y', 'YES' or 'yes'. I use a
+subroutine to capitalize your answer (convert each letter to CAPITAL/UPPER
+CASE) and use only the first character of your answer.
+If your file is not sorted, (any other answer than yes) PROCAL.100 will run
+your favorite sorting program that must be present in RAM. (see line 46 to
+customize).
+
+Prompt no.2:
+"Which month (1-12)?"
+
+PROCAL.100 is designed to output 1 month at a time.
+
+Prompt no.3:
+"Which project?"
+"(1) All"
+"(2) Specific project"
+
+If you select (1) all projects for this month will be outputted EXCEPT
+'PERSONAL' project. So this way, you can still use this program for your
+PERSONAL LIFE and keep it PRIVATE.
+
+If you select (2), only this one project will be outputted. You can plan your
+personal life by selecting (2) and 'PERSONAL' as the project name.
+
+Prompt no.4:
+"Project name?"
+
+You can use upper or lower case (CAPITALIZATION ROUTINE) and/or only a
+part of the project name (INSTR$ function).
+
+
+Prompt no.5:
+"Which day of the week is the first of   (the month selected)"
+"(1 to 7) i.e. 3 = Tuesday"
+
+It was the simplest way around the problem! You must refer to the standard
+calendar on the wall to inform PROCAL.100.
+
+Prompt no.6:
+"Output dev:filename?"
+
+You can output to any legal device. The default (just [enter]) is PRINTER.
+
+EDIT LINE 82 to insert your name, title, company  etc.
+
+The variable names I used for this program are french mnemonics as this
+program was first written in french.
+See 'variables table' and documented rem's within the program itself.
+
+Finally, excuse my english... I am a French Canadian!
+
+I hope my modest program will help you plan your projects!
+
+Jean-Luc Crevier CIS [73720,2456]
+a newcomer in the MODEL 100 (Tandy 102) community!

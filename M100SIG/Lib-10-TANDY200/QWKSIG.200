@@ -1,0 +1,68 @@
+     QWKSIG.200 (c)1989 Paul Globman
+          All rights reserved
+
+QWKSIG.200 contains two programs: QWKSIG.INT (internal modem) and QWKSIG.EXT 
+(external Hayes-comp. modem).  They were written and tested to permit reliable,
+unattended capture of new M100SIG threads with as small a program as practical.
+They are intended for FREQUENT SIG visitors.
+
+Download this file and remove all extra CIS characters.  Checksum it and decide
+which program/s you will use.  Replace the words "phone#", "user.id" and 
+"pass.word" with your LOGON data.  (Note that the data is split between two 
+lines of code in QWKSIG.EXT.)  If your CIS profle names PCS-154/M100SIG as your
+"TOP" menu then you can change "GO M100SIG" to "T" in the logon sequence but 
+the programs will work fine as written.
+
+Using TEXT, copy the desired program code and PASTE it into BASIC.  Then
+save as a .BA file and copy it somewhere for back-up.
+
+OPERATION is VERY simple. Just cursor over the program and press <ENTER>.
+QWKSIG logs on, goes to the M100SIG, downloads any "new" threads and appends
+them to a RAM file named SIG.DO, logs off and returns to the main menu.
+SIG.DO will contain all unread threads including CompuServe's sign-off message
+with your connect time.
+
+
+QWKSIG.200 makes some assumptions about the way you use the M100 SIG:
+
+1) QWKSIG expects that you have your SIG message option set to "NEVER" pause 
+between messages: this is the only way that the "RTN" command will deliver an
+unprompted stream of unread messages.
+
+2) QWKSIG assumes that you will always have enough RAM available for new
+threads.  If you run QWKSIG at least once a day with a fairly empty bank then
+you should not have any problems.  If you DON'T visit the SIG daily or can't 
+devote sufficient RAM to capture ALL unread threads each time you visit then 
+consider one of the following.
+
+      a) Visit the SIG more frequently.
+      b) Reduce the number of sections you visit automatically.
+      c) Don't use QWKSIG.
+-----------------------------------------------------------------------------
+
+Additional comments:  This program can work unattended, so the Tandy 200's
+BASIC 'POWER TIME$,DATE$,QWKSIG.BA' command might be an appropriate way to
+execute QWKSIG when you are not available to manually execute the program.  See
+the Tandy 200 BASIC Reference Manual for details (page 49).
+
+QWKSIG.INT was beta tested by Randy Hess, who also contributed to this project by writing the docs.  
+---------------------------------------
+0 'QWKSIG.INT (c) 1989 by Paul Globman
+1 CLEAR256:MAXFILES=3:DEFSTRA
+2 A="phone#<==^C?:user.id^M?:pass.word^M?!GO M100SIG^S^M>"
+3 P=VARPTR(A):CALL25040:CALL25131,0,PEEK(P+1)+256*PEEK(P+2):A="MDM:7I1ENN"
+4 OPENAFORINPUTAS1:OPENAFOROUTPUTAS2:OPEN"SIG"FORAPPENDAS3:PRINT#2,CHR$(17)
+5 A=INPUT$(1,1):PRINTA;:IFA<>"!"THEN5ELSEPRINT#2,"RTN;BYE
+6 LINEINPUT#1,A:PRINTA:PRINT#3,A:IFINSTR(A,"Connect time =")=0THEN6ELSECLOSE:CALL25018:MENU
+---------------------------------------
+---------------------------------------
+0 'QWKSIG.EXT (c) 1989 by Paul Globman
+1 CLEAR256:MAXFILES=3:DEFSTRA:A4="COM:57I1ENN":A3="phone#"
+2 A2="==^C?:user.id^M?:pass.word^M?!GO M100SIG^M"
+3 CLOSE:OPENA4FORINPUTAS1:OPENA4FOROUTPUTAS2:PRINT#2,"ATZ":CALL25102:PRINT#2,"ATX4S7=15DT"A3
+4 LINEINPUT#1,A:PRINTA:IFINSTR(A,"BUSY")ORINSTR(A,"NO ")THEN3ELSEIFINSTR(A,"CONNECT")=0THEN4
+5 CALL25102:V=VARPTR(A2):CALL25301,0,PEEK(V+1)+256*PEEK(V+2):OPEN"SIG"FORAPPENDAS3
+6 A=INPUT$(1,1):PRINTA;:IFA<>"!"THEN6ELSEPRINT#2,"RTN;BYE
+7 ONERRORGOTO9
+8 LINEINPUT#1,A:PRINTA:PRINT#3,A:IFA<>"NO CARRIER"THEN8ELSEMENU
+9 RESUME8

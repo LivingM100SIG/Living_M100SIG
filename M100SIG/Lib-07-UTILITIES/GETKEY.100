@@ -1,0 +1,21 @@
+100  ' Demonstration Routine to show use of the "new and improved" keyscan 
+110  ' subroutine which scans for all keys, including F1-F9 , and which shuts
+120  ' off ^S and ^C within BASIC while scanning
+130 PRINT"waiting for key input"
+140 GOSUB 220
+150  ' The subroutine returns B%=0 for ASCII characters and B% =255
+160  ' for F keys.  A% contains the ASCII character value or F key number
+170 CLS:IFB%=0THENPRINT"ASCII ";A%ELSEPRINT"the F";A%;"  key"
+180  ' Shows the results. Breaks and F key interrupts are now re-enabled.
+190 PRINT "Continue demonstration (y/n)?";:A$=INPUT$(1)
+200 IF A$="y" OR A$= "Y"THENCLS:GOTO100
+210 END
+220  ' Bob Andersen's "new and improved" keyscan routine for the Model 100
+230 POKE63056,128 
+240  ' Disable breaks
+250 IF PEEK(65450)=0GOTO250 
+260  ' Wait for a character in the keyboard buffer
+270 A%=PEEK(65451):B%=PEEK(65452):CALL29250:POKE63056,0 
+280  ' Grab the character codes, remove character from buffer, reenable breaks
+290 RETURN
+

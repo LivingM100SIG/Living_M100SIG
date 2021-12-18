@@ -1,0 +1,52 @@
+0 CLS:PRINT"BELT LENGHT PROGRAM REF:MD 9/2/85
+10 PI=3.14159:A$="###.##
+15 PRINT"Enter configuration choice
+20 PRINT"1. Open 
+30 PRINT"2. Outside idler
+40 PRINT"3. Crossed
+50 PRINT"4. Inside idler
+60 PRINT"5. Right angle
+70 INPUTN
+100 INPUT"First pitch diameter";D(1)
+110 INPUT"Second pitch diameter";D(2)
+120 INPUT"Center Distance";C(1)
+130 IFN=1ORN=3THENC(2)=C(1):D(3)=D(1):Q=2
+190 ONNGOTO200,400,200,400,600
+200 B(1)=0:B(2)=0:B(3)=0:L=0
+210 FORP=1TOQ
+215 IFD(P)+D(P+1)>2*C(P)THENPRINT"Check input values":END
+220 K=1:H=0
+230 W(P)=PI*(D(P)+D(P+1))/2
+250 IFN=2 AND(P=2 ORP=3) ORN=3THENK=-1
+260 Y(P)=(D(P)-K*D(P+1))^2/4
+270 T(P)=SQR((C(P))^2-Y(P))
+300 A(P)=PI/2-ATN(ABS(D(P)-K*D(P+1))/2/T(P))
+310 L(P)=T(P)+W(P)/2+(PI/4-A(P)/2)*ABS(D(P)-K*D(P+1))
+320 IFN=2ANDP=3THENH=2*PI:B(3)=-B(3)
+330 U(P)=L(P)-(H+B(P))*D(P)/2
+340 L=L+U(P)
+350 NEXT
+360 R=(C/C(1)-(E*COS(A(1)))/(C(1)*SIN(A(1))))*ABS(D(1)-D(2))/2
+370 IFD(1)>D(2)THENM=E/SIN(A(1))+RELSEM=E/SIN(A(1))-R
+380 IF((N=4)AND(S>M)OR(N=2)AND(V>M))THEN760
+390 GOTO700
+400 INPUT"Enter idler pitch diameter";D(3)
+410 INPUT"Enter center distance D1 to idler";C(3)
+420 INPUT"Idler offset";E
+430 IFC(3)>=C(1) ORE>=C(3)THENPRINT"Check input values":END
+440 C=SQR((C(3))^2-E*E)
+450 C(2)=SQR((C(1)-C)^2+E*E)
+460 D(4)=D(1):Q=3:L=0
+470 B(1)=ATN(E/C):B(2)=ATN(E/(C(1)-C)):B(3)=PI-B(1)-B(2)
+480 S=(D(1)-D(3))/2:V=(D(3))/2
+590 GOTO210
+600 W=PI*(D(1)+D(2))/2
+610 L=SQR(4*C(1)*C(1)+D(1)*D(1)+D(2)*D(2))+W
+700 FORP=1TOQ
+710 PRINT"d("P")="USINGA$;D(P)
+720 NEXT
+730 PRINT"c(1)="USINGA$;C(1)
+740 IF((N=2)OR(N=4))THEN PRINT"c(2)="USINGA$;C(2):PRINT"c(3)="USINGA$;C(3):PRINT"offset E="USINGA$;E
+750 PRINT"Belt lenght is"USINGA$;L;:END
+760 PRINT"Idler does not touch the belt
+

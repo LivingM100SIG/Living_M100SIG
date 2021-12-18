@@ -1,0 +1,314 @@
+
+	(c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Bob Withers
+To: eric sakara
+
+What programs are talking about in your message to 72517,256 to access a TPDD
+from MS-DOS?  I've looked everywhere both here and on the IBM forums.
+
+		- 0 -
+
+Fm: Tony Anderson
+To: Bob Withers
+
+Aside from the commercial program LAPDOS, which is available from Club 100
+in the San Francisco area, in Library 9, you'll find:
+
+
+ [72517,526]
+ TDIR.BAS                  12-Sep-90 1685               16
+
+    Keywords: TDD PDD TREAD TWRITE TDIR TERASE TREWD DESKTOP MS-DOS GWBASIC
+    LAPDOS SAKERS
+
+    FOR MS-DOS COMPUTERS to display directory of disk in Tandy Portable Disk
+    Drive 1. Requires GWBASIC or a compatible BASIC. Documentation in
+    TREWD.DOC. Related files: TREAD.BAS, TWRITE.BAS, TERASE.BAS. Checksum =
+    113,248
+
+
+ [72517,526]
+ TERASE.BAS                12-Sep-90 1630               17
+
+    Keywords: TDD PDD TREAD TWRITE TERASE TDIR TREWD DESKTOP MS-DOS GWBASIC
+    LAPDOS SAKERS
+
+    FOR MS-DOS COMPUTERS to erase files from Tandy Portable Disk Drive 1.
+    Requires GWBASIC or a compatible BASIC. Documentation in TREWD.DOC.
+    Related files: TREAD.BAS, TWRITE.BAS, TDIR.BAS. Checksum = 108,593
+
+
+ [72517,526]
+ TREAD.BAS                 12-Sep-90 2470               19
+
+    Keywords: TDD PDD TREAD TWRITE TERASE TDIR TREWD DESKTOP MS-DOS GWBASIC
+    LAPDOS SAKERS
+
+    FOR MS-DOS COMPUTERS to read files from Tandy Portable Disk Drive 1.
+    Requires GWBASIC or a compatible BASIC. Documentation in TREWD.DOC.
+    Related files: TERASE.BAS, TWRITE.BAS, TDIR.BAS. Checksum = 162,248
+
+
+ [72517,526]
+ TREWD.DOC                 12-Sep-90 7293               22
+
+    Keywords: TDD PDD TREAD TWRITE TDIR TERASE TREWD MS-DOS GWBASIC DESKTOP
+    LAPDOS SAKERS
+
+    Documentation for related programs TREAD.BAS, TERASE.BAS, TWRITE.BAS and
+    TDIR.BAS. These programs are FOR MS-DOS COMPUTERS to read/write/ erase/get
+    directory of the Tandy Portable Disk Drive 1.
+
+
+ [72517,526]
+ TWRITE.BAS                12-Sep-90 3010               19
+
+    Keywords: TDD PDD TREAD TWRITE TDIR TERASE TREWD DESKTOP MS-DOS GWBASIC
+    LAPDOS SAKERS
+
+    FOR MS-DOS COMPUTERS to write files to Tandy Portable Disk Drive 1.
+    Requires GWBASIC or a compatible BASIC. Documentation in TREWD.DOC.
+    Related files: TREAD.BAS, TERASE.BAS, TDIR.BAS. Checksum = 195,643
+
+		- 0 -
+
+Fm: SEAN DWYER
+To: Tony Anderson
+
+Tony, The documentation for TWRITE.BAS and TREAD.BAS specifies a TPDD1 and
+makes no mention of its successor, the 200K TPDD2.  Will these programs work
+on the latter?  If so, how does one change the DIP switches?  On openning the
+window on the bottom of the TPDD2, I found a solid, silver colored plate.  I
+chickened out of an attempt to remove the outer casing when buttons and
+thingies began popping off, so I never found out if the plate was sheet metal
+or just a silver tape. Any advice you can offer would be appreciated Thanks in
+advance, Sean
+
+		- 0 -
+
+Fm: Tony Anderson
+To: SEAN DWYER
+
+I'm afraid I don't know if those programs will work with a TDD-2, I don't use
+them - or a TDD-2.  I have no interest in, or need to use a TDD with a PC.
+
+In any event, I'd suspect that they have the same problem all the other
+pre-TDD-2 programs have, not being able to read the second bank directory.
+
+Dip switches?  There are no dip switches in a TDD-2.  They were removed from
+the TDD-2 design.  The "silver plate" is actually a sheet of foil which covers
+the entire bottom of the printed circuit board.  Probably has to do with
+shielding RF radiation, to comply with FCC rules.
+
+If you're interested in using a TDD with a PC, my advice would be to download
+one of the programs and the DOC file and see if it works.  If so, download
+another one, and see if IT works.  Otherwise, give Club 100 a call, and buy
+LapDOS, which has been a reliable and useful program from Traveling Software
+for many years.  For only $40, you'll have full disk access, including both
+disk directories in the TDD-2, providing they have the most recent version to
+sell.  I have no idea what their arrangement was with Traveling Software, or
+if they were left to scrounge up whatever they could, like was done with the
+Acroatix DOS's that were released to us when they were no longer interested in
+selling them.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: SEAN DWYER
+
+   I don't think those programs will work with a TDD2, for the reason you
+surmise: the later drive offers no way to change communication speed, while
+Don Saker's programs requires slowing drive access from 19.2 to 9.6 KBaud.
+
+		- 0 -
+
+Fm: Bob Withers
+To: Wilson Van Alst
+
+FYI - I downloaded those programs and you're right about the PDD2.  I modified
+the basic programs under MSDOS to switch to 19.2K baud and TDIR and TREAD
+worked.  TWRITE appeared to work but did not actually update the disk.  I
+didn't try TERASE.  I also didn't know how to switch the drive to bank 1.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Bob Withers
+
+   "...modified the basic programs ... to switch to 19.2 KBaud..."  Can you
+elaborate on this -- i.e., how you made the modification and how valid the
+technique may be across the gamut of DOS machines?
+   It's interesting that TWRITE failed after 'going through the motions.' I'll
+have to explore that when I get a half-day or so free.
+   The general switch between Bank 0 and Bank 1 in the TDD2 is in bit 6 of the
+block form byte -- the one immediately following the 'ZZ' in the drive command
+string.  Changing this bit, of course, also requires a change in the command
+block checksum.  For an example of a BASIC program that accesses both
+directory banks in the TDD2, see FYLDOS.120 in Library 9.
+
+                - 0 -
+
+Fm: Bob Withers
+To: Wilson Van Alst
+
+Van, When IBM designed the original PC they allowed for two serial adapters
+and assigned a range of ports to support each.  Some vendors have extended
+this to allow 4 serial adapters but as far as I know all IBM compatibles
+support the same set of ports for COM1 and COM2.  As a matter of fact most DOS
+terminal programs talk directly to these ports because DOS and BIOS support
+for RS232 is minimal and, in some cases buggy.  Anyway following is the port
+assignments for the IBM PC/XT/AT (I don't know about PS/2):
+
+    COM1     COM2      Selected Register         DLAB state
+     3F8      2F8      Transmit buffer              0 (write)
+     3F8      2F8      Receive buffer               0 (read)
+     3F8      2F8      Divisor latch LSB            1
+     3F9      2F9      Divisor latch MSB            1
+     3F9      2F9      Interrupt Enable Reg
+     3FA      2FA      Interrupt ID Reg
+     3FB      2FB      Line Control Reg
+     3FC      2FC      Modem Control Reg
+     3FD      2FD      Line Status Reg
+     3FE      2FE      Modem Status Reg
+
+Of primary interest in baud rate generation is the Line Control Reg (3FB/2FB)
+which is used to set the Divisor Latch Bit (DLAB) equal to 1 which allows
+access to the Divisor Latch.  Bit 7 of the LCR is the DLAB bit.  The Divisor
+Latch holds a 16 bit number that is used to count clock ticks of about 1.843
+Mhz.  The ROM only supports rates up to 9600 I guess for the same reason we
+only have 640K RAM available,  because when they did it it seemed like enough.
+Anyway the divisors used to generate various baud rates are:
+Baud Rate    Divisor                          300          384    180h
+1200           96     60h
+                       2400           48     30h
+                       4800           24     18h
+                       9600           12      Ch
+
+By extrapolation shows that a divisor of 6 would give us a baud rate of 19200.
+
+To set the 19200 baud rate use the BIOS routine or built in language features
+to set the baud rate to 9600 using whatever wordsize, etc you want.  Then read
+the Line Control Reg, Save it, Set bit 7 (DLAB)  on,  write new divisor, reset
+DLAB bit on LCR.  Following is BASIC code which does this:
+
+             OPEN "COM1:9600,E,8,1,BIN" AS 1
+             X% = INP(&H3FB)
+             OUT &H3FB,X% or &H80
+             OUT &H3F8,6
+             OUT &H3FB,X%
+
+Whew!  In return will you send me some more info in the PDD2?  Would
+appreciate any tech data you can spare.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Bob Withers
+
+   I can't tell you how much I appreciate that tutorial on the PC com ports.
+I'm guessing this kind of information is available in one of the many books on
+MS-DOS -- and I'd love to get your recommendation(s).
+   Meantime, I'm happy to tell you anything I can about the TDD2.  Just so I
+don't repeat a bunch of stuff you already know, why don't you tell me what
+info you need -- and I'll see if I can dig it up.
+
+		- 0 -
+
+Fm: Bob Withers
+To: Wilson Van Alst
+
+The com info I gave you came from the IBM PC/XT Technical Reference.  If you
+shop around in places that carry surplus computer equipment you can usually
+pick one up for $10-15.  Two other books I'd recommend are "The Programmer's
+PC Sourcebook", by Thom Hogan,  Microsoft Press, ISBN 1-55615-118-7; and
+"Programmer's Problem Solver for the IBM PC,XT &  AT", by Robert Jourdain,
+Prentice Hall Press,  ISBN 0-89303-787-7.  The former presents a multitude of
+information in table form without much text.  The latter is more of a how-to
+kind of book.
+
+As to what I'd like to know about the PDD2:  I've kinda figured out that it is
+a request/response based system.  Looks like all requests start with "ZZ" (I
+guess to allow the drive to sync to a new request),  followed by a command
+code, then a length N, then N request unique bytes, then some optional request
+unique bytes.  For example TDIR.BAS sends ZZ 07 00 F8 0D which I'm guessing is
+command 7, data len 0 with F8 as a command unique byte.  PDD2 responds 12 01
+00 EC which I have no idea how to interpet.  Could you 1) let me know if I'm
+I'm on the right track here, and 2) give me a list of command codes, format of
+each command request, and what the responses mean.   I'm in the process of
+disassembling FLOPPY basically for my own info but I'd appreciate anything you
+could throw my way.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Bob Withers
+
+   Many thanks for those literature recommendations.
+   You are, indeed, on the right track with the TDD request/response scheme --
+except that, in your example from TDIR.BAS, the F8 output byte is a
+ones-complement checksum.  The trailing 0D byte is just a CR, supposedly
+ignored by the TDD (as a practical matter, the program might work better
+without it).
+   In the response packet from the drive, the trailing EC byte is also a ones
+complement checksum.
+   The general format for sending commands (or data) to the drive is:
+
+       "ZZ" C L [D] K
+
+               ...where C is the type of command, L is the length of
+subsequent data, [D] is actual data if any, and K is a checksum for the entire
+string from C through [D].
+   The TDD response packet is structured the same way, minus the leading "ZZ"
+bytes.
+   I do not have a tabulated list of all the TDD2 commands and their possible
+responses; but if I can locate one, I'll pass it along.
+
+		- 0 -
+
+Fm: Stan Wong
+To: Wilson Van Alst
+
+I'm butting in late on this thread but some PDD commands do require the
+trailing 0Dh character.  I haven't figured out the pattern to it but some
+commands need it and some don't.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Stan Wong
+
+   I won't dispute you on this -- 'cause you've worked with this stuff more
+recently than I have (and you're smarter).  If you come up with a list of
+commands that absolutely =do= need the 0Dh, Bob and I would both be grateful.
+
+		- 0 -
+
+Fm: Bob Withers
+To: Wilson Van Alst
+
+Thanks for the info about accessing the PDD.  I'm pretty well finished
+disassembling FLOPPY for the PDD2 and I think I'm getting there as far as
+finding what commands can be sent to the drive.  I'm still a little fuzzy on
+the meaning of the response string since FLOPPY ignores most of what is
+returned.
+
+I also noticed that FLOPPY for the PDD2 uses command code 0Ch to initiate a
+request while all the info I've seen in the SIG libraries uses 07h.  I've
+tried 07h on the PDD2 and it works but attempts to access bank 1 return in
+error.  I don't have a PDD1 but I'm assuming that when the PDD2 see an init
+request with a command code of 07h it assumes it is talking to a PDD1 version
+of FLOPPY.
+
+		- 0 -
+
+Starting message #: 30206   Starting date: 08-Oct-90  15:59:59
+ Participants:
+Bob Withers 72510,3322
+eric sakara 73347,201
+Tony Anderson 76703,4062
+SEAN DWYER 72637,1716
+Wilson Van Alst 76576,2735
+Stan Wong 70346,1267

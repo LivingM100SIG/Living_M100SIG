@@ -1,0 +1,61 @@
+
+     Experience with the original version of LP3OF9.CO and many requests from
+fellow SIGers have caused me to rewrite the program and to produce a 
+version that supports Epson printers.  The graphics control codes for the Epson
+printers differ so much from those for the Radio Shack machines that it was 
+easier to write another version than patch the first one.  All versions of 
+LP3OF9.CO are copyrighted, but SIG usersare authorized to copy them forpersonal
+use.  Please don't use them for commercial purposes or distribute copies
+to non-SIG members without written permission.
+     In order to use these programs to print 3-of-9 bar codes, you need a dot-
+matrix printer capable of printing around 100 dots per inch and compatible 
+with either Radio Shack or Epson control codes.  Radio Shack printers are
+placed into the graphics mode by a CHR$(18) and "condensed" resolution is
+selected by a CHR$(20).  Epson printers use a CHR$(27);"L" command to go into
+"dual density graphics" mode and they require the computer to communicate the
+number of graphics bytes to be sent with CHR$(n1);CHR$(n2) where n1 is the LSBY
+of the number and n2 is the MSBY, using 16 bit arithmetic.  If you own aprinter
+that does not conform to the above requirements, contact me via the SIG or 
+EMAIL and I'll be happy to try to make the program work with your machine (I 
+love challenges).
+     To use the machine language program, first download either LP3OF9.OBJ (for
+Radio Shack printers - Checksum=212,739) or EP3OF9.OBJ (for Epson printers -
+Checksum=215,515) into a RAM file named "LP3OF9.DO".  These files are Intel
+format assembler listings of the machine language programs.  You must then use
+HEXLDR.100 (from DL7) or a similar loader to load the M/L into your M100.  All
+lines in the listing begin with a colon (":") except the last.  The last two
+lines are ":00000000" and"$".  Except for the colons and the "$", the files
+should contain only those characters used in hexadecimal notation (0-9 and
+A-F). Delete all extraneous characters from the file before you try to load it
+with HEXLDR.
+     Once you have the machine language program loaded, it is convienient to 
+have a BASIC program to load and call it.  Alternatively, you can SAVEM it 
+with an Exe address (which is the same as the Top address for these programs), 
+and call it from the menu.  A short BASIC program that automatically clears 
+the correct amount of RAM and loads the program, then restores the HIMEM value 
+to MAXRAM when coding is through is:
+          10 CLEAR256,610##
+          20 LOADM"LP3OF9"
+          30 CALL610##
+          40 CLEAR256,MAXRAM
+where "##" is 40 for the Radio Shack version and 15 for the Epson version.  I
+use this approach over the menu call because it manages the memory better and
+it preserves the integrity of the operating system.
+     These programs will print out 3-of-9 barcode from text files that contain 
+ONLY the characters supported by the 3-of-9 standard.  Any other characters 
+will produce an error condition.  The text will automatically be limited to 23
+characters per line, and a carriage return will force a new line.  Up to 24 
+lines may be printed per 11 inch page.
+     LP3OF9 is intended as a demonstration of the barcode capabilities of dot
+matrix printers and the Model 100.  It cannot be used by itself to print out
+BASIC files, etc., because of its limited character set.  However, you may find
+a reason to save the barcode you have printed.  An easy and inexpensive way to
+do this is to spray the printed pages with a fixative intended to preserve
+charcoal drawings. You can obtain this at art supply stores and many college
+campus bookstores.  This treatment prevents the printing from smearing when the
+wand is run over it.
+     I hope these enhanced versions of LP3OF9 will help SIG members become 
+familiar with the barcode system.  Someday we may be able to use it to 
+enter programs from the magazines, etc. Just think; no more data lines to type!
+                          Merrill Parks
+                           [70536,1366]

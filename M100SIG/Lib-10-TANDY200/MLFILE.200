@@ -1,0 +1,128 @@
+MLFILE.200 is from Don Corbitt's MLFILE.DOC
+Converted for Model 200 by James Yi  06/16/88
+
+	How to Open Files From Machine Language (Including disk files)
+	File input/output consists of five steps, as follow:
+	1) Set MAXFILES.  This controls how many files can be open at once.
+	2) OPEN file.  Files can be open for INPUT, OUTPUT or APPEND.
+	3) SELECT a file for input/output.
+	4) INPUT from selected file.  File must be open for INPUT.
+OR	4) PRINT to selected file.  File must be open for OUTPUT or APPEND.
+	5) CLOSE an open file.
+
+MAXFIL	EQU	9BE1H	;SET MAXFILES
+SETMAX	EQU	4C4AH	;make the new maxfile setting valid.
+;MAXFIL and SETMAX changes the number of file
+;buffers available.  It resets the
+;stack, so don't save anything there
+;that you ever want to see again
+;Sample call --
+FILCNT	EQU	1	;MAXFILES=1
+	MVI	A,FILCNT ;FILE COUNT
+	CALL	MAXFIL
+	CALL	SETMAX
+
+
+UINPUT	EQU	54F0H
+;UINPUT lets you input the file name
+;from keyboard.  Returns the file name
+;in HL+1(RST 2 tests the input and
+;moves HL by +1)
+GETLEN	EQU	2D43H
+;GETLEN returns the length of file name in E.  HL should point to the name.
+GETFNM	EQU	5ACAH
+;GETFNM returns the device, given a file
+;name.  HL should point to the name,
+;with the length in E.  Returns with 
+;device in D, Z if no device (add your
+;own default device)
+;Sample call --
+
+RAMFIL	EQU	0F8H	;default device
+
+AGAIN	CALL	UINPUT
+	RST	2	;Null input?
+	JZ	AGAIN
+;HL points to the file name
+	CALL	GETLEN
+	CALL	GETFNM
+	JNZ	TEMP1
+	MVI	D,RAMFIL
+TEMP1:	.....
+
+
+OPEN 	EQU	5BD1H
+;OPEN is the BASIC ROM routine to open
+;a file.  The file name should be in
+;the FILNAM(0F746H) buffer in HIMEM (put there by GETFNM routine above),
+;HL points to a null chr,
+;the file buffer to use in A,
+;device type in D, and the mode in E
+;(INPUT=1, OUTPUT=2, APPEND=8).
+;Sample call --
+NULL	EQU	7	;Location of a 0
+;D is passed from GETFNM routine above
+	MVI	A,1	;FILE 1
+	MVI	E,2	;FOR OUTPUT
+;NOTE: If you try to append(E=8) an ;output only device(LPT, LCD, etc.),
+;you will get a ?NM error
+	LXI	H,NULL	;POINT TO 0
+	CALL	OPEN
+
+SELECT	EQU	5B7EH
+;SELECT selects a given file buffer for
+;input or output.  The buffer number
+;should be in A.  Note that after this
+;call, ALL IO will take place from the
+;current file.  Be sure to set
+;IOPTR(0F73FH) to 0000 once you've
+;finished your IO
+;Sample call --
+	MVI	A,1	;FILE 1
+	CALL	SELECT
+
+PUTC	EQU	5A05H
+;PUTC outputs to LCD, or LPT, or 
+;current output file (if SELECT called).
+;Sample call --
+	MVI	B,0
+LOOP	MVI	A,'A'
+	RST	4	;or CALL PUTC
+	DCR	B
+	JNZ	LOOP
+	LXI	H,0
+	SHLD	IOPTR
+
+CLOSEI	EQU	5BF7H
+;CLOSEI will close the file in A, and
+;reset the IO pointer(IOPTR) to default (0000)
+;Sample call --
+	MVI	A,1
+	CALL	CLOSEI
+	RET
+
+CLOSEA	EQU	5CE6H
+;CLOSEA will close all files.
+;Sample call --
+	CALL	CLOSEA
+	RET
+
+GETC	EQU	5D36H
+;Gets a char in A from current device
+;Sample call --
+	MVI	A,1	;BUFFER #1
+	CALL	SELECT
+	CALL	GETC
+	LXI	H,0
+	SHLD	IOPTR
+	JC	ERREF	;EOF ERROR
+	...
+
+You can now read and write to any device from Assembly Language.  Have fun.
+	Don Corbitt
+	32K Ideas, Uninc
+	261 N 400 E #303
+	Provo, UT 84604
+
+
+

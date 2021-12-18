@@ -1,0 +1,30 @@
+0 'TOWANG.BA.  Comments to Howard Benner, 70235,1337. v.2  1/28/84
+1 'TOWANG.BA is a short file transfer program for sending from the 100
+2 'to any communicating Wang word processor that can emulate a TTY
+3 'terminal.  It autodials numbers you insert in line 199 (up to 4), 
+4 'establishes a connection, sets parameters to M7E1E, lists all files.
+5 'Your Wang parameters should be set to 300 baud, even parity.
+6 'During transmission, the text is displayed on the 100's screen, with a
+7 '"]" at each point where the 100 has sent a dummy character to defeat the
+8 'Wang's quirk of eating the first character after a CR/LF.
+9 'It may or may not work with other hardware that eats initial bytes.
+10 CLS:MAXFILES = 2:GOSUB100:FILES
+20 LINEINPUT"File to Transfer: ";FN$
+30 CLS:OPENFN$ FOR INPUT AS 1
+40 OPEN"MDM:7E1E" FOR OUTPUT AS 2
+50 I$=INPUT$(1,1)
+60 PRINTI$;:IFASC(I$)<>10THENPRINT#2, I$;
+70 IFASC(I$)=10 THEN PRINT"]";: PRINT#2," ";
+80 IF NOT EOF(1) THEN 50 ELSE PRINT TIME$:PRINT"]";DATE$
+90 PRINT#2,TIME$:PRINT#2," ";DATE$: CLOSE:BEEP:END
+100 CLS:PRINT"Phone number to call"
+110 FOR X=1 TO 4:PRINT" <"X"> ";:READN: PRINTN:NEXT:PRINT" < 5 > ";" OTHER"
+120 INPUT"  ";N$:N=VAL(N$):RESTORE
+125 IFN<>5THENFORX=1TON:READPN:NEXT ELSEINPUT"Number :";PN
+130 PH$=STR$(PN)+"<>"
+140 PRINT" Calling ";PH$
+150 M=VARPTR(PH$)
+160 AD=PEEK(M+1)+(PEEK(M+2)*256)
+170 CALL21200:CALL21293,0,AD:CLS:RETURN
+199 DATA 2125551212, 5551212, 95551212, 1212
+

@@ -1,0 +1,377 @@
+
+
+                     ------------------------
+                     | Model 100 System Map |
+                     ------------------------
+ROM: Part IV
+                          Copyright 1985
+                     Revision Date: 09/30/85
+                   Compiled and Researched by:
+                       Robert D. Covington
+            Systems Information Management Consultants
+      [Not associated with The Covington Group, N. Y., N. Y.]
+
+    This document may be duplicated and distributed free of
+charge to any individuals who desire it.  Any duplications of
+this document, however, must inluce all of the information
+contained here-in, with no deletions or changes.
+    The author and distributors of this document make no 
+expressed or implied warrantees as to the validity of the 
+information contained here in.
+
+
+3FA0H -  TIME$ ON Statement
+
+3FB2H -  TIME$ OFF Statement
+
+3FB9H -  TIME$ STOP Statement
+
+4009H -  Clear all COM, TIME, and KEY interrupt definitions
+         Exit:
+               HL, A, and B destroyed
+
+407FH -  RESTORE Statement
+
+409AH -  STOP Statement
+
+409FH -  END Statement
+
+40DAH -  CONT Statement
+
+40F1H -  Check to see if the current character in the buffer pointed 
+        to by HL is an alpha character
+         Entry:
+               HL - Points to character to check
+         Exit:
+                A - Character pointed to by HL
+           C flag - Reset if character is a letter
+
+40F2H -  Check to see if the character in A is a letter
+         Entry:
+                A - Character to check
+         Exit:
+                A - Preserved
+           C flag - Reset if character is a letter
+
+40F9H -  CLEAR Statement
+
+4174H -  NEXT Statement
+
+4222H -  Send CRLF to screen or printer
+         Exit:
+                A = 10
+
+4225H -  Send LF to screen or printer
+         Exit:
+                A = 10
+
+4229H -  BEEP Statement.  Beep computer.
+         Exit:
+                A = 7
+
+422DH -  Home cursor
+         Exit:
+                A = 11
+
+4231H -  CLS Statement.  Clear screen
+         Exit:
+                A = 12
+
+4235H -  Protect line 8.  An ESC T is printed.
+         Exit:
+                A = 84
+
+423AH -  Unprotect line 8.  An ESC U is printed.
+         Exit:
+                A = 85
+
+423FH -  Stop automatic scrolling.  An ESC V is printed.
+         Exit:
+                A = 86
+
+4244H -  Resume automatic scrolling.  An ESC W is printed.
+         Exit:
+                A = 87
+
+4249H -  Turn the cursor on.  An ESC P is printed.
+         Exit:
+                A = 80
+
+424EH -  Turn the cursor off.  An ESC Q is printed.
+         Exit:
+                A = 81
+
+4253H -  Delete current line on screen.  An ESC M is
+        printed.
+         Exit:
+                A = 77
+
+4258H -  Insert line at current line.  An ESC L is printed.
+         Exit:
+                A = 76
+
+425DH -  Erase from cursor to end of line.  An ESC K is printed.
+         Exit:
+                A = 75
+
+4262H -  Send ESC X
+         Exit:
+                A = 88
+
+4269H -  Start inverse character mode.  An ESC p is printed.
+         Exit:
+                A = 112
+
+426EH -  Cancel inverse character mode.  An ESC q is         printed.
+         Exit:
+                A = 113
+
+4270H -  Send escape sequence
+         Entry:
+                A - Character after escape (27)
+
+427CH -  Set the current cursor position
+         Entry:
+                L - Column (1-40)
+                H - Row (1-8)
+         Exit:
+                A - Destroyed
+
+428AH -  Erase function key display
+         Exit:
+           HL & A - Destroyed
+
+42A5H -  Set and display function keys
+         Entry:
+               HL - Start address of function key table (see 5A7CH 
+                    for the format of the table)
+         Exit:
+               All registers destroyed
+
+42A8H -  Display function key line
+         Exit:
+               All registers destroyed
+
+4313H -  Print the character in the A register to the screen.  This 
+        routine is used by RST 20H to print characters on the screen.
+         Entry:
+                A - Character to output
+
+4373H -  Control code routine for LCD output (RST 20H)
+
+438AH -  Start of lookup table for RST 20H control characters.  Each 
+        entry starts with the ASCII value of the character followed 
+        by the two byte vector address.
+
+43A1H -  End of special ASCII character lookup table
+
+43AFH -  ESC Y routine (Set cursor position)
+
+43B2H -  ESCape routine (27).  This routine puts the LCD output 
+        routine into ESCape mode.  The following characters processed 
+        throught the video driver will be used to determine the 
+        escape sequence.
+
+43B8H -  Start of lookup table for LCD escape sequences.  Each entry 
+        starts with the one byte escape letter followed by the two 
+        byte vector address.
+
+43F9H -  End of escape vector lookup table
+
+43FAH -  ESCape sequence processor.  This routine is used after the 
+        escape mode has been enabled (see 43B2H).
+
+4431H -  Escape p routine (start inverse video)
+
+4432H -  Escape q routine (cancel inverse video)
+
+4437H -  Escape U routine (unprotect line 8)
+
+4439H -  Escape T routine (protect line 8)
+
+443FH -  Escape V routine (Stop automatic scrolling)
+
+4440H -  Escape W routine (Resume automatic scrolling)
+
+444AH -  Escape X routine
+
+4453H -  Escape C routine (move cursor to the right)
+
+445CH -  Escape D routine (move cursor to the left)
+
+4461H -  Backspace routine (08H)
+
+4469H -  Escape A routine (move cursor up one line)
+
+446EH -  Escape B routine (move cursor down one line)
+
+4480H -  Tab routine (09H)
+
+4494H -  Linefeed routine (0AH)
+
+44A8H -  Verticle tab (0BH) and ESC H routine (home cursor)
+
+44AAH -  Carriage return routine (0DH)
+
+44AFH -  Escape P routine (turn cursor on)
+
+44BAH -  Escape Q routine (turn cursor off)
+
+44C4H -  Escape M routine
+
+44EAH -  Escape L routine (insert line on screen)
+
+4535H -  Escape l routine (erase current cursor line)
+
+4537H -  Escape K routine (erase from cursor to the end of the screen)
+
+4548H -  Form feed (0CH), CLS, ESC E, and ESC j routine
+
+454EH -  Escape J routine
+
+463EH -  Input line and place at F685H.  Print characters as they are 
+        entered.  Start input with a "? ".
+         Exit:
+            F685H - Text input from keyboard
+               HL - Loaded with F685H
+           C flag - Set if input aborted by a control C
+
+4644H -  Same as 463EH but no "? " is printed.
+
+4684H -  Input routine 463EH Control C handler
+
+4696H -  Input routine 463EH ENTER handler
+
+46A0H -  Input routine 463EH backspace, left arrow, control H handler
+
+46C3H -  Input routine 463EH Control U & X handler
+
+46CAH -  Input routine 463EH Tab handler
+
+478BH -  DIM Statement
+
+4790H -  Find the address of the variable in the buffer pointed to by 
+        HL.  This routine returns the same result as BASIC's VARPTR 
+        instruction.
+         Entry:
+               HL - Points to the buffer containing the variable name
+         Exit:
+               HL - Incremented past variable name
+               DE - Address of variable descriptor table (like VARPTR)
+          (FB65H) - Variable type
+
+4991H -  USING Function
+
+4B44H -  Vector of RST 20H.  Send the character in A to the screen or 
+        printer (see RST 20H).
+
+4B55H -  Print the character in the A register on the printer.  Expand 
+        tabs into spaces if nescessary.
+         Entry:
+                A - Character to output
+
+4B92H -  Reinitialize screen back to the LCD.  This routine sends a CR 
+        to the printer if needed to empty the print buffer on the 
+        printer.
+
+4BABH -  LCD character output routine
+         Entry:
+                A - Character to output
+
+4BB8H -  Send a CRLF to screen if needed to end the current line.  
+        This routine assures that the next text printed on the screen 
+        will start at the beginning of a line.
+         Exit:
+                A - Destroyed
+
+4BEAH -  INKEY$ Function
+
+4C84H -  Get information for the file number in the A register.  This 
+        routine performs the same as VARPTR(#x).  If A is greater 
+        than MAXFILES, a BN error is generated.
+         Entry:
+                A - File number (1-maxfiles)
+         Entry:
+               HL - Points to file number descriptor table (see 
+                    VARPTR(#x).
+           Z flag - Set if file is not already opened
+
+4CCBH -  OPEN Statement
+
+4D59H -  LCD, CRT, and LPT file close routine
+
+4D6EH -  RUN statement with text following the RUN
+
+4D70H -  LOAD Statement
+
+4D71H -  MERGE Statement
+
+4DCFH -  SAVE Statement
+
+4E28H -  CLOSE Statement
+
+4E8EH -  INPUT$ Function
+
+4F0AH -  Zero the memory starting at HL for B number of bytes
+         Entry:
+               HL - Start of buffer to zero
+                B - Number of bytes to zero
+         Exit:
+               HL - Incremented past last byte zeroed
+                A = 0
+                B = 0
+
+4F0BH -  Fill the memory starting at HL with the byte in the A 
+        register for B number of bytes
+         Entry:
+               HL - Start of buffer to fill
+                A - Character to fill buffer with
+                B - Number of bytes to fill
+         Exit:
+               HL - Incremented past last byte filled
+                B = 0
+
+4F2EH -  Routine called by the PRINT statement to initialize a PRINT #.
+
+4F5BH -  LINE INPUT # statement
+
+504EH -  Generate NM error
+
+5051H -  Generate AO error
+
+5054H -  Generate DS error
+
+5057H -  Generate FF error
+
+505AH -  Generate CF error
+
+505DH -  Generate BN error
+
+5060H -  Generate IE error
+
+5063H -  Generate EF error
+
+5066H -  Generate FL error
+
+506BH -  LOF Function
+
+506DH -  LOC Function
+
+506FH -  LFILES Function
+
+5071H -  DSKO$ Function
+
+5073H -  DSKI$ Function
+
+50F1H -  Start of device name table.  Each entry starts with the text 
+        name of the device ending with a FFH.
+
+5112H -  End of device name table
+
+5113H -  Start of device control block vector addresses.  Each two 
+        byte pointer corresponds to the name in the device name table 
+        at 50F1H.  This pointer points to the device's DCB which 
+        contains the vectors for device open, close, output, and 
+        input.
+
+5122H -  End of device control block vector addresses

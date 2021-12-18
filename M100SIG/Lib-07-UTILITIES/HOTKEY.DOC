@@ -1,0 +1,221 @@
+
+
+
+
+
+
+            [From Portable 100 magazine, Sep. '88, p. 21. Modified and
+            uploaded by author for use of CompuServe members. Please
+            request permission to upload to other services.]
+            
+            HOTKEY: Escape Artist
+            Burn up your keyboard with simple, two-key commands.
+            by Mike Nugent
+            
+                  HOTKEY is a little utility that performs some special
+            magic with simple, two-key commands. Whether you're in
+            BASIC, TEXT, ADDRSS, SCHEDL, or Detroit, this mini-Houdini
+            can:
+            
+            * Display the current day, date, and time
+            * Automatically type the day, date, or time
+            * Send a form feed to your printer
+            * Offer a choice of five-space or eight-space tabs
+            * Turn itself off
+            
+                  It can be customized, uses only 379 bytes of RAM, and
+            as a bonus, even fixes the Model 100 "date bug." Sound good?
+            Then on with the show!
+                  First, the program must not be modified, except that
+            remark lines need contain only the line number and the
+            apostrophe (or REM). Save the program to RAM as HOTKEY.BA
+            (it expects that name!). And save it to tape or disk as
+            well, as a backup for later use.
+                  CAUTION: Because HOTKEY uses machine language,
+            mistakes here can vaporize your files. Before proceeding,
+            backup anything important! 'Nuff said.
+            
+            INSTALLING HOTKEY
+                  To install HOTKEY, first kill all other .BA programs
+            except PG Design's MENU.BA, Micro Demon's SUPERA, and Tri-
+            Mike's DVORAK, if you use any of those. Note that some BASIC
+            programs don't show a .BA extension (for example, Traveling
+            Software's UR-2, RANDOM, TWORD+). When in doubt about a
+            file, kill it. Now run HOTKEY.BA. It installs in less than a
+            minute, shrinking itself to 379 bytes, then returns to the
+            main menu, ready to use. If you get a Load Error message,
+            see the LOAD ERROR section below. Never edit the installed
+            HOTKEY.BA! You can list it (it will look weird), but don't
+            edit it!
+            
+            USING HOTKEY
+                  To turn HOTKEY on, just run it. The menu quickly
+            returns, and HOTKEY.BA disappears. Why? So you can't kill
+            it. Killing it while it's active can cause a cold start. It
+            will reappear when you turn it off.
+                  HOTKEY commands work anywhere except TELCOM's Term
+            mode and the main menu. To execute a command, press ESC
+            followed by the appropriate key:
+            
+
+
+
+
+
+
+
+
+
+
+
+                  Hotkey Meaning
+            
+                  ESC-V   (View) Display day/date/time on top line until
+                                 any key is pressed
+                  ESC-D   (Date) Type current date in MM/DD/YY format
+                  ESC-T   (Time) Type current time in HH:MM:SS format
+                  ESC-W   (Week) Type day of the week, e.g., "Mon"
+                  ESC-F   (Form) Send form feed to printer
+                  ESC-O   (Off)  Turn HOTKEY off
+                  ESC-TAB (Tab)  Five-space tab
+            
+                  The Date, Time, and Week commands actually type the
+            information as though it came from the keyboard. The View
+            command only displays it on your screen. The Form command
+            sends a form feed, CHR$(12), to the printer or beeps if the
+            printer isn't ready. This is handy for printing multiple
+            files to a buffered printer. Pressing ESC-F after each print
+            command ensures that your files are separated by form feeds;
+            no need to wait until one report has printed before printing
+            the next one. Whereas the normal TAB types a tab character,
+            CHR$(9), ESC-TAB types the necessary number of spaces to
+            produce a five-space tab. The Off command turns HOTKEY off,
+            beeps to acknowledge the command, and makes HOTKEY.BA
+            visible again on the main menu.
+            
+            EXTRAS
+                  Have you met the notorious Model 100 date bug, the
+            one where, for no apparent reason, it's suddenly next year?
+            HOTKEY ends this game of musical years and keeps you solidly
+            planted in 1988 (or whatever year you're actually living
+            in). Each year, you can change the last data item in line
+            580 to match the current year.
+                  You can customize some features of HOTKEY. If you
+            prefer date and time in the shorter MM/DD and HH:MM format,
+            change the 9 in line 840 to a 6.
+                  To change the printer character the Form command
+            sends, replace the 12 in line 880 with another value. A
+            value of 15, for example, puts some printers into condensed
+            mode.
+                  Though I don't advise it, changing "238, 8" in line
+            600 to "127, 127" leaves HOTKEY visible when active. It will
+            appear on the menu as +OTKEY.BA, the + being an extra
+            safeguard against its accidental demise. But many DOS's and
+            utilities can easily zap it and blow your machine off into
+            the weeds.
+            
+            LOAD ERROR
+                  Packing machine code into a .BA program (as HOTKEY
+            does) can be a complex affair, because you can't predict
+            where the program will reside in memory. Since the values of
+            certain bytes depend on the program's location, sometimes a
+            byte contains a value BASIC misinterprets. The Load Error
+            message warns you of such a byte. You must move the code
+            higher in memory, a byte at a time, until all the bytes are
+            acceptable to BASIC. Here's how:
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            1. Type NEW and press ENTER. Type KILL "HOTKEY.BA" and press
+               ENTER.
+            2. Load a fresh copy of HOTKEY.BA from disk or cassette, and
+               save it to RAM as HOTKEY.BA.
+            3. Edit line 10. Insert an X right after the REM, making it
+               REMX.
+            4. Edit line 110. Change the +5 to +6
+            5. Edit line 2000. Change the +5 to +6.
+            6. You've moved the program up one byte in memory.
+            
+                  Try running it again. If it still fails, repeat steps
+            1-6, inserting another X (for example, REMXX) and adding 1
+            more to the numbers in lines 110 and 2000. Keep repeating
+            these steps until it works. One or two X's usually does the
+            trick. If you've added 5 or 6 X's, I suggest you carefully
+            double check your program listing for errors.
+            
+            COMPATIBILITY
+                  Compatibility with other programs depends on how they
+            handle a system vector that HOTKEY uses:
+            
+            1) TS-DOS likes it just fine.
+            2) There's no conflict with MENU.BA.
+            3) It's completely compatible with DVORAK (of course!).
+            4) SUPERA turns HOTKEY off, and vice versa, so use them one
+               at a time.
+            5) Ultimate ROM II (v1.22) cooperates with a few exceptions:
+                 a) UR-2 programs exit to the main menu rather than to
+                    UR-2's menu.
+                 b) After using HOTKEY's View command with UR-2's VIEW80
+                    activated, the screen clears completely. Scrolling up
+                    or down restores the missing lines.
+                 c) CTRL-J, CTRL-O, and CTRL-L functions of UR-2's TEXT
+                    are disabled with HOTKEY active. To reenable them, turn
+                    HOTKEY off via its ESC-O command.
+                 d) After exiting a text file from UR-2, the main menu
+                    shows TEXT as TEXT. (with an added period).
+                 e) These problems appear to be harmless so far, but be
+                    cautious. With any new software, make frequent backups
+                    until you know what works with what.
+            6) Ultimate ROM II (v2.07 and v2.12) are incompatible.
+            
+            FUTURE POSSIBILITIES
+                  I meant HOTKEY to be a small, simple utility. But
+            with all those other keys on the keyboard just begging to
+            become part of HOTKEY's repertoire, I wasn't sure when to
+            stop adding commands. I can easily imagine HOTKEY growing
+            larger and more powerful in the future. If you'd care to
+            share your ideas and comments, please contact me care of
+            Portable 100 magazine or directly via CompuServe ID
+            71426,1201. Or just drop by Tri-Mike East--and bring a
+            pizza!
+            
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            ATTENTION TANDY PORTABLE DISK DRIVE USERS!
+            
+                  Tandy's FLOPPY is fatal to any .BA program containing
+            machine language, including SUPERA, MENU, DVORAK, and now
+            HOTKEY. Fortunately, you can patch FLOPPY to prevent it from
+            moving .BA programs around in memory. I've published the
+            patches in Portable 100 magazine.
+                   Model 100/102 users with the PDD-1 (original 100K
+            drive) should refer to the Sep. '88 P100, p. 22; Tandy 200
+            users with the PDD-1 should refer to the Nov. '88 P100, p.
+            15.
+                  Although those articles also show PDD-2 (200K drive)
+            patches, those were further improved and appear in the March
+            '89 P100, p. 6. All PDD-2 users should refer to that
+            article.
+
+

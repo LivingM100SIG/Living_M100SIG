@@ -1,0 +1,85 @@
+                   RUN-CO.100
+-
+     RUN-CO is a VERY simple to use 274 byte M100/102/200 utility program that 
+AUTOMATICALLY clears HIMEM, and RUNs any RAM or DISK based .CO program without 
+any input from you except FILENAME (+ DOS prefix if possible and desired).
+-
+     SET-UP:
+     Download RUN-CO.DOC (this file) and RUN-CO.100 or RUN-CO.200 as 
+appropriate; checksum, and SAVE as RUN-CO.BA which can be run from RAM or DISK.
+YOU MUST FIRST DECIDE HOW TO MODIFY Line 5 FOR YOUR COMPUTER so PLEASE read the
+"Important Information" section below before continuing. It could save you a 
+COLD-START!
+-
+     OPERATION:
+     You will see a list of loaded RAM files. At the prompt, type in a .CO file
+name from the list or a DISK file name with prefix if your DOS permits. DO NOT 
+include the .CO extension. Press <ENTER>. That's all! Your chosen program will 
+load and run. When your .CO program is finished it will return to wherever its 
+author intended: either to "where called", in this case, since RUN-CO is a 
+BASIC program, to BASIC; or to the MAIN MENU.
+     After you have chosen Line 5 values as described below, you will find that
+selecting RUN-CO and pressing <ENTER> at the filename prompt is a quick way to 
+reset HIMEM and return to the main menu. Feel free to rename RUN-CO if you use 
+a "MAXRAM" version in one bank and a different value in another. (I run an 
+invisible version from a function key in each bank.) 
+-
+     CREDITS:
+     The credit for the heart of RUN-CO goes to Ed Geise who wrote POWR-DOS and
+used the idea in DMENU.BA. I thought it was too neat an idea to remain buried 
+in that fine but BIG multi-op menu prog. Send comments and (heaven forbid) any 
+problems to me. 
+-
+Randy Hess
+73267,552
+WATS 800-228-3309
+Omaha, Ne
+7/14/88
+-
+                       IMPORTANT INFORMATION
+-
+     RUN-CO makes .CO program use so simple that a few general words here about
+overall .CO program management could save some frustration later. I will 
+briefly discuss the two "H"'s of .CO programs: "HOOKS" and HIMEM.
+-     
+     HOOKS: MANY .CO programs set up electronic "hooks" in your computer when 
+they are run. These are special internal routines which are *NOT* disabled 
+simply by running another .CO program in the same HIMEM space! They usually 
+stay behind, waiting to ambush the first poor soul who happens to run some code
+past a "hook" and gets caught UNLESS YOU "UN-INSTALL" ANY .CO PROGRAM *EXACTLY*
+THE WAY THE AUTHOR DESCRIBES IN THE INSTRUCTIONS!  This seems like a simple 
+rule but we all forget it from time to time with very cold results. MOST of the
+better M/L programs around make some reference to un-loading procedures if they
+operate in HIMEM.
+     DOS programs, M/L text formatters, spread sheets; just about ANY 
+commercial and MANY SIG programs ALL use hooks of some kind. When in doubt READ
+THE INSTRUCTIONS! If there are no specific unloading instructions then chances 
+are good (but NOT certain) that returning to the FACTORY main MENU, after 
+leaving the program, has returned things to normal.
+-
+     HIMEM:  RUN-CO first clears MAXRAM (see below for other values) and trys 
+to RUNM your chosen program; it fails with Error 7, then reserves the proper 
+HIMEM using your program's TOP address and runs your program. 
+     RUN-CO does NOT SAVEM .CO programs! It only RUNs them and running a .CO 
+program, particulary from DISK, does NOT leave ANY indication behind when you 
+leave the program, other than a lowered HIMEM, that your .CO program is STILL 
+in HIMEM between its TOP and MAXRAM. When you run another .CO program, it will 
+probably load OVER the previous program. Therefore: DON'T re-run a loaded .CO 
+program by using a CALL command unless you are ABSOLUTELY certain which program
+is loaded! After a while, we can easily forget the correct execution CALL for 
+the current program (or even which program is loaded) and the wrong CALL is a 
+sure, quick ticket to a COLD-START! Simply re-run RUN-CO (with consideration 
+always of the "hook" discussion above) and you should not have any problems.
+-
+     LINE 5:  Considering the proliferation of M/L programs all competing for 
+the same HIMEM and the simplicity of .CO program operation now afforded by RUN-
+CO I have written line 5 to CLEAR256,MAXRAM. This will set HIMEM = MAXRAM every
+time you use RUN-CO and ensure that programs (or users) who rely on HIMEM = TOP
+can depend on that relationship.
+-
+     >>> NOTE: If you keep .CO programs permanently loaded in HIMEM (like 
+DSKMGR.CO) You MUST change "MAXRAM" in line 5 to YOUR "regular" HIMEM value or 
+you COULD lose that code. This assumes that any other .CO programs you run with
+RUN-CO have been created to live with your HIMEM program(s).
+-     (now return to OPERATION: above)
+

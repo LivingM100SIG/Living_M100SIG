@@ -1,0 +1,113 @@
+10 ' savings calculator
+11 '
+12 ' future value of a sum and annuity
+15 ' by Paul Massaria,72227,2233
+20 ' varibles defined
+21 ' n.......# of years
+22 ' fv......future value of a starting sum
+23 ' s.......starting sum
+24 ' i.......interest rate
+25 ' o.......menu choice varible
+26 ' r.......contribution amount for menu #2
+27 ' a.......future value of an annuity
+28 ' f.......sum desired under menu #3
+29 ' x.......required contribution to get sum(f)
+49 CLS
+50 PRINT "this program will do 3 calculations:"
+52 PRINT " 1 calculate the future value of a sum"
+53 PRINT "over a # of years at a chosen interest  rate."
+54 PRINT:PRINT "HIT ANY KEY TO CONTINUE"
+55 K$=INKEY$:IF K$=""THEN 55
+56 CLS:PRINT "2) calculate the future value of a"
+57 PRINT "series of contributions over a # of     years and chosen interest rate"
+58 PRINT "e.g. Annuity"
+59 PRINT:PRINT "HIT ANY KEY TO CONTINUE"
+60 K$=INKEY$:IF K$=""THEN 60
+61 CLS:PRINT "3) calculate the size of a contribution to an annuity to get a chosen"
+62 PRINT "future sum"
+63 PRINT:PRINT "HIT ANY KEY TO CONTINUE"
+64 K$=INKEY$:IF K$=""THEN 64
+65 CLS:PRINT "This program presumes annualy compound- ing. The program can be adapted for"
+66 PRINT "compounding other than annual."
+67 PRINT "If interested contact me by EMail."
+68 PRINT "HIT ANY KEY TO ENTER MENU"
+69 K$=INKEY$:IFK$=""THEN 69
+100 CLS
+101 REM SET VARIBLES TO ZERO
+102 N=0:S=0:I=0:FV=0:O=0:R=0:A=0:F=0:X=0
+110 PRINT "TYPE THE NUMBER CORRESPONDING TO YOUR   DESIRED CALCULATION & hit'enter'"
+120 PRINT"1 FUTURE VALUE of a set amount"
+130 PRINT"2 FUTURE VALUE of an ANNUITY"
+140 PRINT"3 AMOUNT of CONTRIBUTION to an ANNUITY"
+150 PRINT"4 end"
+160 INPUT "type 1 - 4";O
+162 IF O > 4 THEN 110
+165 ON O GOTO 200,300,400,500
+200 CLS
+210 PRINT "How many years in your plan"
+215 INPUT N
+220 PRINT "What is your starting sum"
+225 INPUT S
+230 PRINT "What is your predicted interst rate"
+232 GOSUB 1000
+235 INPUT "rate";I
+236 IF I<1.00 THEN GOSUB 2000
+237 I=I/100
+239 PRINT
+240 FV=(S*(1+I)^N)
+245 PRINT "your future value will be"
+247 PRINTUSING "$$###########,###.##";FV
+248 PRINT:PRINT "HIT ANY KEY TO RETURN TO MENU"
+249 K$=INKEY$:IF K$=""THEN249
+250 GOTO 100
+300 CLS
+310 PRINT "How many years in your plan"
+315 INPUT N
+320 PRINT "What will be your contributions per year"
+325 INPUT R
+330 PRINT "What is your predicted interest rate"
+332 GOSUB 1000
+333 PRINT
+335 INPUT "rate";I
+336 IF I<1.00 THEN GOSUB2000
+337 I=I/100
+340 A=((((1+I)^N)-1)/I)*R
+345 PRINT "The future value of your annuity is"
+346 PRINTUSING"$$#########,###.##";A
+349 PRINT:PRINT "HIT ANY KEY TO RETURN TO MENU"
+350 K$=INKEY$:IFK$="" THEN 350
+351 GOTO 100
+400 CLS
+410 PRINT "What future sum are you seeking"
+415 INPUT F
+420 PRINT "How many years will you wait"
+425 INPUT N
+430 PRINT "What is your predicted interest rate"
+431 GOSUB 1000
+435 INPUT "rate";I
+436 IF I<1.00 THEN GOSUB 2000
+437 I=I/100
+440 X=(F/((((1+I)^N)-1)/I))
+445 PRINT "Your required contribution is"
+446 PRINTUSING "$$##,###.##";X
+447 PRINT:PRINT "HIT ANY KEY TO RETURN TO MENU"
+448 K$=INKEY$:IF K$=""THEN 448
+450 GOTO 100
+500 END
+1000 ' display for interest rate
+1001 PRINT" **************************************"
+1002 PRINT "*INPUT INTEREST RATE AS A WHOLE NUMBER*"
+1003 PRINT "*   DO NOT INPUT AS A FRACTION!       *"
+1004 PRINT "* for example: 13.5% is 13.5 NOT .135 *"
+1005 PRINT " ************************************** "
+1020 RETURN
+2000 ' routine for possible rate error
+2001 CLS
+2005 BEEP
+2010 PRINT "ARE YOU SURE ... "
+2015 PRINT "You chose a rate of "; I"%"
+2017 PRINT
+2020 PRINT "Input your rate again"
+2030 I=0
+2040 INPUT "your rate";I
+2050 RETURN

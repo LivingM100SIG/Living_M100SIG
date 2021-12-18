@@ -1,0 +1,261 @@
+
+
+
+            To change your PASSWORD, log-on to CIS manually and type GO
+        PASSWORD. You will be asked to type your old password. You must type
+        it exactly the way it is. If you are correct you will be asked for
+        your new PASSWORD. And then to be sure there are no errors, you will
+        be asked to type it again. If the change is successful you will be
+        told so by CIS. Don't forget to change it in your log-on sequence in
+        your ADRS.DO file as well.
+
+            When you enter a PASSWORD at CIS it is encoded by their mainframe
+        and not even the CIS employees have access to it. When you are
+        logging-on using EM8SIG your PASSWORD will not appear on the screen
+        as it is transmitted. However, of necessity, it IS in your ADRS.DO
+        file. Anyone with a minor knowledge of computers could see it by
+        accessing that file. If you only use EM8SIG in the privacy of your
+        own home, you will probably never have any problem with this.
+        However, if you regularly use EM8SIG.400 from an office, or while on
+        the road, you might want to consider storing ADRS.DO on disk or tape
+        rather than leaving it in RAM. Another point to consider is that
+        there are some excellent encryption programs in library 4 of the
+        M100SIG.
+
+
+                                   LOG ON SEQUENCE
+
+            Now back to the Log-On Sequence again. Let's take it apart and
+        see what it does.
+
+            CIS is the identifier, or CIS2, or DAL, which ever you choose.
+        The next series of numbers is the phone number from which you will
+        access CIS. [A tip here: If you regularly access CIS long distance as
+        I do, it is considerably cheaper to cross state lines rather than
+        dialing a number within the State. As an example, I live in
+        north-central Oklahoma. My normal CIS access number is located in
+        Oklahoma City in area code 405. I can, also, dial Tulsa in area code
+        918. But by dialing Wichita, KS, to the north in area 316, I get a
+        cheaper long distance rate. If this is your situation you might want
+        to check it out with your local phone company.] The next character is
+        a "=" which is a timed pause to give CIS time to answer you once the
+        receiver has been "picked up." If you have trouble here, you might
+        try using two "="'s such as "<==". This will double the length of your
+        pause. In the majority of cases, however, one "=" is enough. Next is
+        "^C" which stands for "control C." To enter this into your sequence
+        type capital "6" and capital "C". This is the character used to
+        signify a "break" and triggers the following query from CIS.
+
+
+            CIS will ask your M100/102 what your User ID is. The "?U" tells
+            EM8SIG to wait until it "sees" the "U" in "User ID" and then
+            start transmitting the next set of characters which is your ID
+            number. The "^M" following your number is typed as capital "6"
+            and capital"M" and is the symbol for "control M", or <ENTER>. In
+            other words EM8SIG will transmit your ID number and then execute
+            an <ENTER> to complete the action.
+
+
+
+
+
+
+                                       14
+
+
+        
+
+
+            Now CIS asks the M100/102 for your Password. Again the "?P"
+        instructs EM8SIG to wait till it "sees" the "P" in "Password" and
+        then begin transmitting the next series of characters or your
+        individual password, followed by the "^M" (control M or <ENTER>) The
+        last two characters, ">:", tell CIS the log-on sequence is closed.
+
+
+            Now lets take a look at a portion of my ADRS.DO file to see how
+        it's done.
+
+
+                 CIS:13166898765<=^C?U72300,3203^M?PPASS*WORD^M>:
+                 CIS2:19187498801<=^C?U72300,3203^M?PPASS*WORD^M>:
+                 CIS3:19187498850<=^C?U72300,3203^M?PPASS*WORD^M>:
+                 DAL:9531971<=^C?U72300,3203^M?PPASS*WORD^M>:
+                 WIC:6898765<=^C?U72300,3203^M?PPASS*WORD^M>:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                       15
+
+
+        
+
+
+                                       PIN.DO
+
+
+           Set up your PIN or PINS file in the following manner. If the
+        person's name and ID are strictly to be used for EMAIL then the
+        following format will work:
+
+           George Sherman [72300,3203. NOTE: the "[" is mandatory for EMAIL
+           to find the ID.
+
+           However, if the name is to be used for SIG messages you -must- set
+        up the name and ID is this manner, use of upper or lower case is
+        optional.
+
+                ]TONY ANDERSON [76703,4062
+                ]SCOTT T. SCHAD [73720,1166
+                ]DENNY THOMAS [76701,40
+                ]EIJI MIURA [76703,4311
+                ]MIKE NUGENT (TMN East) [74126,1201
+                ]STAN WONG [70346,1267
+
+           NOTE: the "]" is mandatory for Forum addresses and can be placed
+           anywhere within the line BUT -everything- to the -right- of the
+           "]" will be used as the Forum message's "To:" entry. However, it
+           will do this -only- if you precede each name with a code word of
+           no more than 6 letters such as this:
+
+                TA]TONY ANDERSON [76703,4062
+                STS]SCOTT T. SCHAD [73720,1166
+                POWR]DENNY THOMAS [76701,40
+                EIJI]EIJI MIURA [76703,4311
+                MIKE]MIKE NUGENT (TMN East) [74126,1201
+                STAN]STAN WONG [70346,1267
+
+
+            If an entry does not have a "]", then the program considers it an
+        Email ONLY listing.
+
+            Two more important points with regard to the address listings
+        are, first, the "[ID" should be the LAST entry on each line. And,
+        second, no spaces can be between the "[" and the "ID". "[ 70346,1267"
+        is -wrong- and will result in a program error.
+
+            I have also set up in my PIN file the following:
+
+                ]ALL
+                ]SYSOP
+
+            The reasoning behind all of the above will become apparent when
+        we discuss writing messages off-line using EM8SIG.400 on page 22.
+
+            Your PIN.DO file will probably start off small with only one or
+        two names in it. But as you use EM8SIG more, and make more "friends"
+        through your contacts, you will find the file getting larger almost
+        every week.
+
+
+
+
+                                       16
+
+
+        
+
+
+                                  PROGRAM OPERATION
+
+
+            Now that all the hard work has been done, the initial setup of
+        the program, the rest is easy and fun.
+
+            For the following I'm going to make some assumptions. First, that
+        you have elected to make M100SIG your default forum and that you have
+        set item six (6) on the "Auto Forum" screen to "NO". Second, you
+        should have, by now, followed the instructions in Appendix A and set
+        your profile correctly. Most of the problems we encounter with users
+        of EM8SIG are because these profiles have -not- been set correctly.
+
+            Turn on your M100/102 and using the arrows position the curser
+        over EM8SIG and press <ENTER>. After your opening banner has run, you
+        will be at the Option Screen (see page 4).
+
+
+                                    FIRST LOG-ON
+
+
+            Begin the auto-log-on sequence by pressing F2. Your screen will
+        change to the TELCOM mode and you will see the statement in reverse
+        video, "Please wait; finding PHONE #". Beneath that will be your
+        default listing, in my case "CIS" followed by the phone number to be
+        called. Note that "<>" follows the phone number but that your ID and
+        PASS*WORD are NOT shown. On the next line the notice, "Calling CIS:"
+        or whatever your listing is, and then each number appears as it is
+        dialed by the on-time sub. In the event of a "busy," or "no answer"
+        access phone number, EM8SIG will automatically hang-up, wait, and
+        then redial until a connection with a modem-tone has been made or a
+        user predetermined number of tries (default=20) has been reached. In
+        that event, the program will leave the user a message, terminate, and
+        return to the Option Screen.
+
+            If you seem to obtain an excessive amount of Error 82 messages,
+            and you experience no problems in manually dialing CIS, then try
+            slowing the program's dialing rate to 10 pps from its default
+            setting of 20 pps. This is accomplished by editing line 17 and
+            changing the "POKE63019,20" to "POKE63019,1".
+
+            Assuming everything goes as planned, just sit back and enjoy the
+        show. You will see EM8SIG log on to CIS, transmit your ID and
+        PASS*WORD (although - again- the PASS*WORD will not be visible), then
+        switch to EasyPlex and check for waiting Email. If you have mail
+        waiting and you have chosen "LPT:" as your download destination for
+        Email, your printer will come to life and begin printing your
+        messages. If, on the other hand, you have left the incoming Email
+        path set at "README.DO", EM8SIG will open that file in RAM if it
+        exists, or set up a new file with that name if it does not, and
+        deposit your messages there.
+
+
+
+
+
+
+
+
+                                       17
+
+
+        

@@ -1,0 +1,26 @@
+
+	Both Program A and B provide variable bank switch for the Portable Computer Support Group's 64K RAM expansion unit. 
+	With either of these programs you may bank switch both backward and forward -- and skip over banks.
+	They should also work for its 96K units: Simply add a program line duplicating the last program line and make it POKE-2,211:POKE-1,3:CALL-2. That is, the number preceding :CALL-2 represents the destination bank (minus one... i.e., the techie folks call bank 1 "bank 0").
+	CAUTION: Program B (with the INKEY$ statement) for some reason will sometimes capture the destination bank numeral in the buffer and put it in the SELECT field on the menu. No harm, you'll just get a BEEP. This could interfere with IPL programs in destination banks, however. Its advantage is that it runs without hitting <enter> once the destination bank # is typed.
+	Program A accomplishes the same, trouble free, just type in destination bank # plus <enter>
+	Enjoy. Cecil Richmond 71666,1175
+
+   -- Program A --
+
+5 INPUT"SWITCH TO WHICH BANK? 1) 2) 3)";S
+6 ONSGOTO101,102,103
+101 POKE-2,211:POKE-1,0:CALL-2
+102 POKE-2,211:POKE-1,1:CALL-2
+103 POKE-2,211:POKE-1,2:CALL-2
+
+  -- Program B --
+
+5 CLS:PRINT,,"  SWITCH FROM <2> TO BANK (1) (3) ?"
+10 S$=INKEY$
+12 IFS$=""THEN10
+15 IFS$="1"THENPOKE-2,211:POKE-1,0:CALL-2
+16 IFS$="2"THENPOKE-2,211:POKE-1,1:CALL-2
+17 IFS$="3"THENPOKE-2,211:POKE-1,2:CALL-2
+
+END END END

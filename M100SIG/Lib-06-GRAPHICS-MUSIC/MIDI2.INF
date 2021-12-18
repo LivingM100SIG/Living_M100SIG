@@ -1,0 +1,101 @@
+If you have read my disappointing results of previous attempts at M100-MIDI 
+interfacing (see MIDI.INF), you will be pleased to know that, at last, YHWH has
+rewarded my efforts.
+
+Let me quote R. A. Penfold, from his book MIDI PROJECTS, to illustrate the 
+problems one encounters in this endeavor.
+
+"The MIDI system is essentially the same as the RS232 serial ports fitted to 
+many home computers, but in points of detail there are problems which would 
+make it highly unlikely that a serial output from a computer could be used to 
+drive a MIDI input. The first problem is that MIDI interafaces use standard 5 
+volt TTL levels, and normally have opto-isolator inputs to avoid problems with 
+earth loops. RS232C ports use signal levels of nominally plus and minus 12 
+volts (plus and minus 5 volts in the case of the RS423) with no form of 
+isolation at the inputs. This incompatibility could be overcome with suitable 
+signal processing stages, but there is a more difficult problem with the baud 
+rate. 31250 baud is not a standard rate, and it is not one that can be achieved
+with any home computer I have encountered. It might be possible to modify the 
+serial interface to operate at the correct baud rate, but this would almost 
+certainly render it unusable for other purposes, and would probably not be a 
+very good idea." (p.5)
+The following two programs are only for the most basic MIDI I/O, and only made 
+to work with a Yamaha PSR-70 electronic keyboard. I am sure, however, that they
+can be modified to work with any MIDI system. And of course, one can add many 
+routines to these skeleton programs to print and edit the music.
+1 CLS:MAXFILES=2
+10 OPEN"com:98n1d"FORINPUTAS1:OPEN"music.do"FOROUTPUTAS2
+
+The MIDI bit stream consists of one start bit, 8 data bits, and one stop bit. 
+No parity bits are generated. The baud rate chosen is incorrect, but this will 
+be taken care of in the next line.
+
+20 OUT180,5:OUT181,64:OUT176,195
+
+Let me explain this line. Port 180 is the 8155 timer register's lower byte. 
+Poking a 5 in there causes the clock speed to be divided by 5. Port 181 is the 
+upper byte of the timer register. Setting bit 7 with the 64T puts the output in
+the "continuous square wave" mode. Port 176 is the command register of the 
+8155. C3H is the "START" (bits 6 and 7) command, without which the baud would 
+remain at 19200, and bits 1 and 2 set ports A and B in the output mode. For 
+further info on this chip see Intel's EMBEDDED CONTROLLER HANDBOOK, pages 11-31
+to 11-44.
+
+25 ONCOMGOSUB30
+26 COMON:N=1
+27 FORX=1TO10:NEXT:N=N+1:PRINT@160,N:GOTO27
+
+The "n" counter is my cheap way of timing the notes. 
+
+30 N$=INPUT$(1,1):IFN$<CHR$(160)THENN$=N$+INPUT$(2,1):N$=LEFT$(N$,2)+CHR$(64+
+ASC(RIGHT$(N$,1))):PRINT@80,N$;" ";:PRINT#2,N;",";N$;",";:N=1
+
+The first byte of a MIDI data string representing a note is 144 plus the MIDI 
+channel number. Since there are 16, numbered 0 to 15, the largest byte 
+representing a note will be chr$(159). The reason I had to include this filter 
+was a 5 Hz stream of 254T's, and some initial 255T's. I may have to modify this
+filter in order to receive other types of MIDI commands. The next two bytes are
+the note value and the velocity byte, respectively. The PSR70 recognizes 60 
+note values, from 36T to 96T. Now, about the Velocity byte. Mr. Penfold's book 
+explains that notes are gated "on" by a 144+channel#, as explained above, and 
+gated "off" by 127+channel#. The velocity byte, then, indicates the level of 
+force with which the keys are struck. However, the PSR70 ALWAYS has the 144+
+channel# as the primary byte, and the velocity byte is used to gate the notes 
+on (64T) and off (0). Note that I add 64 to the value of the velocity byte to 
+avoid problems with storing chr$(0)'s. This 64, of course, is subtracted before
+sending the data back to the piano. Now, the final line:
+
+40 RETURN
+
+Here's the output program. It will send the music received by the program above
+right back to the piano, at the same tempo. It needs no further explanation.
+
+1 CLS:MAXFILES=2
+10 OPEN"com:98n1d"FOROUTPUTAS1:OPEN"music.do"FORINPUTAS2
+20 OUT180,5:OUT181,64:OUT176,195
+25 IFEOF(2)THENCLOSE:END
+30 
+INPUT#2,N:PRINT@120,N:FORX=1TON:FORY=1TO10:NEXT::PRINT@160,X:NEXT:INPUT#2,N$:PR
+INT#1,LEFT$(N$,2);CHR$(ASC(RIGHT$(N$,1))-64);
+40 GOTO25
+
+Now let me go over the hardware. You will need a male 25-pin subminiature D-
+type connector, two 5-pin male DIN plugs, about 12 feet of small-guage coaxial 
+cable, and one small rectifier diode. Cut the cable in half. Solder an end of 
+one of the cables, and the cathode (banded end) of the diode to pin 2 of the 25-
+pin connector. Solder the other cable to pin 3. Twist the grounding sheaths 
+together and solder them both, along with the anode end of the diode, to pin 
+7. Now, the core of each cable goes to pin 4 of the DIN plugs, and the ground 
+sheath is soldered to pin 5. Look closely at the numbers on the plugs; they are
+not in order. Label the DIN plugs whichever way seems best to you, keeping the 
+following in mind: The cable going to pin 2 of the RS-232 plug outputs the MIDI
+information from the computer, and will therefore be connected to the MIDI IN 
+jack of the keyboard. The cable going to pin 3 sends data from the piano's MIDI
+OUT jack to the RS-232 jack on the model 100-102.
+
+I hope I've included all the information necessary to get you started. Please 
+EMAIL me with questions, comments, modifications, etc...John Comeau 70641,57
+or send it to:
+2011 NW 55th Ave., Apt.109-S
+Lauderhill, FL 33313
+

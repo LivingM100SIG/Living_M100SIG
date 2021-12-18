@@ -1,0 +1,36 @@
+     Revised 10-25-86
+     For any novices out there, peeking around the sectors with Powr-Dos is 
+easy, and doesn't require (as I had feared) understanding of machine language. 
+I have put together three VERY short programs that do everything.  They have no
+prompts or error checks, but are easy to fool around with
+     One warning: backup any important files you have in RAM.  These programs 
+cannot hurt your disks, but they MIGHT do something funny to your RAM.  I have 
+noticed that poking a sector right under MAXRAM, which is demonstrated in the 
+Powr-Dos manual, corrupts some Supera function keys, for example.
+
+
+To load a sector to RAM (input sector number...the directory is 0 and the 
+others are numbered 1 to 80):
+
+10 CLEAR256,MAXRAM-1292
+20 X=0:INPUTX
+30 DSKO$0,X,HIMEM
+
+To read a sector's ASCII equivilant (input # of bytes after the beginning, [ 
+ENTER] alone gives whole sector):
+
+10 CLS
+20 X=0:INPUTX
+30 FORI=HIMEM+XTOMAXRAM
+40IFPEEK(I)>31THENPRINTCHR$(PEEK(I));:NEXTELSENEXT
+
+To print the decimal numbers in each byte followed by their ASCII equivilants (
+input the same as the second program above):
+
+10 CLS
+20 X=0:INPUTX
+30 FORI=HIMEM+XTOMAXRAM
+40 PRINTPEEK(I);
+50IFPEEK(I)>31THENPRINTCHR$(PEEK(I))ELSEPRINT
+60 NEXT
+

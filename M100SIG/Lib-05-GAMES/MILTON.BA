@@ -1,0 +1,63 @@
+10 REM Milton, v1.0 by Mark Lutton 73106,1627.  12/19/85.
+11 REM You might think this is similar to an electronic game made by Milton Bradley a few years ago.
+40 CLS:PRINT:PRINT:PRINT "                 MILTON":PRINT"Adapted for Tandy 100/200 by Mark Lutton":PRINT
+50 CLEAR 1000
+60 DEFINT A-Z:DIM S1$(9), S2$(9),N$(10),S(10),R(9),Q$(9),V$(9)
+70 RESTORE 7000:FOR I=0 TO 9:READ Q$(I),V$(I):NEXT I
+100 PRINT "Would you like instructions?";:GOSUB 5000:PRINT A$:IF A$="N" OR A$="n" THEN 120
+110 IF A$<>"Y" AND A$<>"y" THEN 100:ELSE GOSUB 9000
+120 INPUT "How many players (1 to 9)";NN:IF NN<1 OR NN>9 GOTO 120
+130 FOR P=1 TO NN
+140 PRINT "Name of player ";P;:INPUT "";N$(P):NEXT:F=0
+150 CLS:PRINT"Here are the phrases.  Watch carefully!"
+160 RESTORE 8000:FOR I=1 TO 10
+170 READ S1$,S2$:PRINT S1$;" ";S2$
+180 GOSUB 5100:NEXT
+190 PRINT:PRINT "      Hit any key to begin!":GOSUB 5000
+1000 CLS:FOR I=1 TO 10:S(I)=0:NEXT
+1010 FOR I=0 TO 9:R(I)=I:NEXT
+1020 FOR I=9 TO 1 STEP -1:J=RND(1)*I:K=R(I):R(I)=R(J):R(J)=K:NEXT
+1030 RESTORE 8000:FOR I=0 TO 9:K=R(I):READ S1$(K),S2$(K):NEXT
+1040 FOR I=0 TO 9:R(I)=0:NEXT:G=0
+1050 F=F+1:IF F>NN THEN F=1
+1060 P=F:PRINT "This time ";N$(P);" goes first.":GOSUB 5100
+2000 IF G=10 THEN 3000
+2010 R=RND(1)*10:IF R(R)=1 THEN 2010
+2020 CLS:PRINT "It's your turn, ";N$(P)
+2030 PRINT S1$(R);"... ";
+2040 GOSUB 5000:A=ASC(A$)-ASC("0"):IF A<0 OR A>9 THEN 2040
+2050 PRINT S2$(A)
+2060 T = RND(1)*10:IF R=A THEN 2080
+2070 PRINT Q$(T):GOSUB 5600:GOTO 2090
+2080 PRINT V$(T):GOSUB 5500:S(P)=S(P)+10:R(R)=1:G=G+1
+2090 GOSUB 5100
+2100 P=P+1:IF P<=NN THEN 2000
+2110 P=1:GOTO 2000
+3000 CLS:PRINT "End of this round.  Scores:"
+3010 FOR I=1 TO NN:PRINT N$(I);":  ";S(I):NEXT
+3020 PRINT "Play again?";:GOSUB 5000:PRINT A$:IF A$="Y" OR A$="y" THEN 1000:ELSE IF A$="N" OR A$="n" THEN 3030:ELSE GOTO 3020
+3030 MENU
+5000 A=RND(1):A$=INKEY$:IF A$<>"" THEN 5000
+5010 A=RND(1):A$=INKEY$:IF A$="" THEN 5010
+5020 RETURN
+5100 FOR L=1 TO 3000:NEXT:RETURN
+5500 SOUND 6269,4:SOUND 4697,4:SOUND3728,4:SOUND3134,8:SOUND3728,4:SOUND3134,8:RETURN
+5600 FOR I=8000 TO 15000 STEP 300:SOUND I,1:NEXT:FOR J=1 TO 5:SOUND I,2:NEXT
+5610 RETURN
+7000 DATA "RIDICULOUS!","CORRECT!","That's ABSURD!","Right!","Impossible!","Absolutely RIGHT!"
+7010 DATA "No way, Jose!","Out of sight!","Uh-uh.  Sorry.","Way to go!!","Yukko!","You got it!"
+7020 DATA "That doesn't make sense!","Absolutely Correct!","HUH??? WHAT???!!","Yee-Haw!","Perish forbid!!","Indubitably!"
+7030 DATA "Ludicrous!","Very good!"
+8000 DATA "Drive your","car.","Flush your","toilet.","Roast a","turkey.","Crack your","whip."
+8010 DATA "Kiss my","lips.","Lick a","stamp.","Pet your","kitty cat.","Floss your","teeth."
+8020 DATA "Read a","book.","Wear your","hat."
+8030 REM You can put in other sentences if you want, but nothing NASTY!
+9000 CLS:PRINT "MILTON is a game for 1 to 9 players,    similar to Concentration.  There are 10 short sentences in the program.
+9010 PRINT "Each sentence ending has a number from  0 to 9 and you have to guess what the   numbers are.  Players take turns.       Hit any key to continue."
+9020 GOSUB 5000
+9030 CLS:PRINT "The first part of the sentence is       displayed, for instance:                Drive your ...."
+9040 PRINT "The correct ending is 'car'.  If you    think 5 is 'car', hit the 5 key.  If youthink 0 is 'car', hit 0."
+9045 PRINT "Hit any key to continue.":GOSUB 5000
+9055 CLS:PRINT"You get 10 points for each correct      guess and no points for wrong guesses."
+9060 PRINT "Clear as mud?  Good.  Let's play.       Hit any key.":GOSUB 5000
+9070 RETURN

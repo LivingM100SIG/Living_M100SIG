@@ -1,0 +1,109 @@
+
+
+***** documentation for xmodsk.100 *****             rev.10/12/86
+
+
+xmodsk.100 is a modification of sxm.ba a modification of Rick Perry's
+'xmodem' allowing you data transfer via rs 232 even if you use the built
+in modem of m100.
+
+xmodsk.100 works fine with AMPRO little board computer using the
+utility 'pip' of cp/m dos. It should work with any cp/m desktop without
+problems.
+A modification for ms dos should be possible by changing the 'pip'
+comands in ms dos comands.
+
+IMPORTANT: cp/m system and 'pip' must be on each disk you want transfer
+data to.
+
+You also have to open a little file called 'year' containing just '86'.
+That ensures a correct year in date$ after leaving the program.
+
+Uploading from disk is not implemented.
+But xmodsk.100 keeps track of your logon times in a file 'cislog'.
+
+All functions of TELCOM including dialing of normal phone calls
+remain intact.
+
+
+BUT THERE IS A CATCH!
+
+M100 needs a tiny little change in its hardware that means you have to
+be able to handle a soldering iron in a professonal way otherwise you
+will ruin your nice little m100.
+
+Partslist:
+ T1,T2    npn transistor   (rs part# 276-1603)     2 pcs
+ R1,R2    resistor 3.3kohm (rs part# 271-1328)     2 pcs
+          part of pc-board (rs part# 276-148)      1 pc
+
+Procedure:
+
+Put T1,T2,R1,R2 on a piece (about stamp size) of the pc-board and make the
+following connections
+        T1-base to T2-collector
+        T1-base to R1
+        T1-emitter to T2-emitter
+        T2-base to R2
+        wire-1 to T2-emitter
+        wire-2 to T1-collector
+        wire-3 to free end of R1
+        wire-4 to free end of R2
+Now connect the free ends of
+        wire-1 to pin 20 of IC M25 (gnd)
+        wire-2 to anode of diode D16
+        wire-3 to pin 35 of IC M25 (pb6)
+        wire-4 to pin 36 of IC M25 (pb7)
+The idea of the whole procedure is to find a way to keep relais RY2
+energized if the program switches to com:.
+If you can do it you will have a fast and reliable mass storage during
+your sessions with cis just for
+
+        *** 5.60$can ***.
+
+If you are member of a user group there shouldn't be any problem to find
+a fellow doing the job for you.
+
+
+The main modifications against sxm.ba are in lines :
+
+09 causes a fast 'down' to ram: but
+10 enables a 'down' to cas: or com: using
+   the xoffon protokoll.
+15 if p=4 (= 'down' to com:) there are
+   subroutine jumps to line 43 or 44.
+16 ...poke-190,175 - reenables the xoffon procedure.
+20 sends <CR> automaticly to start xmodem downloading
+27 and
+30 also make subroutine jumps to line
+   43 and 44 for the xmodem protokoll.
+43 forh=0to2:a(h)=peek(h-122):next - saves the buffer pointers
+   out186,64orinp(186) - saves rel. RY2
+   this is the comand the hardware change was made for.
+   call28277,0,2304 - changes the baudrate to 19,200
+   poke-190,0 - disables the xoffon procedure which makes trouble
+   in cp/m dos.
+   out186,247andinp(186) - switches from mdm: to com:.
+44 call28277,0,768 - resets baudrate to 300.
+   out186,8orinp(186) - switches back to mdm:.
+   forh=0to2:pokeh-122,a(h):next - restores the buffer pointers.
+57 if you answer the question 'save to:' with 'dsk:' then a cp/m - pip
+   comand will be sent to open a .txt file on disk.
+59 in case of down to ram: by just inputting the file name
+   (without ram:) d will be set to +1 enabling the fast trf in line 9.
+74 opens 'year' to ensure a correct year after leaving the program.
+83 opens a com: file for output as #4.
+88 lets you start the session exact on time.
+90 opens a com: file for input as #3 to check the correct settings in
+   the desktop.
+91 checks the settings in the desktop.
+92 if there is no desktop (you are travelling) you can continue without
+93 starts 'pip' of cp/m dos.
+94 checks the settings again.
+101 opens the file 'cislog' and registers start and end of the session.
+
+I'm sure this will start some kind of discussion and I will appreciate
+any kind of feedback.
+
+
+Dieter F. Barth [71246,313]

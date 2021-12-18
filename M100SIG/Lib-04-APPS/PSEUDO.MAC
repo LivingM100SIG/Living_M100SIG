@@ -1,0 +1,119 @@
+;chipmunk dbms - Aug 6, 1984
+;(C) Copyright 1984 Don Corbitt of Holmes Engineering 75655,1516
+;For personal use only.  Note - as this is a freebee, I make no
+;promises that it is fully debugged.
+	INCLUDE	M100.DEF
+;Most of these addresses can be found
+;in M100 Rom Routines, TRS80 
+;Microcomputer News, November 1983, p44
+
+finddo	equ	208fh		;find .DO file
+findco	equ	2089h		;find .CO file
+findba	equ	20a6h		;find .BA file
+	INCLUDE	CHIPMUNK.DEF
+start:	lxi	h,fmsg		;copyright notice
+	call	prcrstr		;print string (CR/LF if not at start of line)
+	jmp	st2		;continue
+st1:	call	beep		;sound bell, and re-enter filename
+st2:	lxi	h,dbkeys	;function key table
+	call	stdspf		;set and display function keys
+	lxi	h,f1msg		;'Enter name of data file: '
+	call	prcrstr
+	call	inlin		;read a line from keyboard
+	rst	2
+	rz			;no input - done
+	push	h
+	lxi	h,st1		;beep and try again
+	shld	errvec		;on error go to st2 - reenter file name
+	xthl
+	call	strlen		;get length of string
+	call	movfil		;put name in FILNAM
+	rnz			;not RAM: file
+	call	finddo		;find .DO file
+	rz			;file not found
+	xchg
+	shld	0fdd7h		;start of file
+	lxi	h,loop
+	shld	errvec		;on error come here
+loop:	call	5d5dh		;reset stack
+	xra	a		;output to lcd:
+	sta	0f675h		;print to LCD or LPT
+	lxi	h,lmsg		;main prompt for entry of commands
+	call	prcrstr
+	call	inlin		;get input from keyboard
+	inx	h
+	mov	a,m
+	ana	a
+	jz	loop
+	lxi	d,mtable	;table of names and addresses of functions
+	call	matchit		;do it
+	rnz			;match
+	jmp	loop
+	
+findsb:	;find something in string in current file
+	xra	a
+	db	1
+lfndsb:	;find and output to printer
+	mvi	a,0ffh
+	sta	0f675h		;output to...
+	call	5db1h
+l1:	call	5c3fh		;look for match
+	jnc	loop		;no match
+	call	4bb8h		;crlf if not at start of line
+l3:	ldax	d
+	cpi	eof		;end of .do file
+	jz	l4		;therefor last match found
+	rst	4		;print char
+	inx	d
+	cpi	lf
+	jnz	l3		;next line
+	lda	0f675h
+	ana	a
+	cz	chget		;wait for a char
+	jmp	l1		;get next line
+
+l4:	call	crlf
+	jmp	loop
+
+addsb:	;add the string after 'ADD ' to current .DO file
+	call	strlen		;get length of string
+	push	h		;start of string
+	mov	c,e
+	mvi	b,0
+	inr	c
+	inr	c		;space for cr/lf
+	lhld	0fdd7h		;start of .do file
+	push	h
+	call	makhol		;make hole in file for new string
+	pop	d		;destination of data
+	pop	h		;source of data
+	jc	errom		;out of memory error
+	call	ldirsb		;move it
+	xchg
+	dcx	h
+	mvi	m,lf
+	dcx	h
+	mvi	m,cr
+	jmp	loop
+
+dbkeys:	dc	'Find '
+	dc	'Add '
+	db	80h,80h
+	dc	'Lfnd '
+	db	80h,80h
+	db	'Menu',cr+80h
+
+mtable:	db	'FIND'
+	dw	findsb
+	db	'ADD '
+	dw	addsb
+	db	'LFND'
+	dw	lfndsb
+	db	'MENU'
+	dw	menu
+	db	0ffh
+
+lmsg:	db	'Pseudo: ',0
+fmsg:	db	'(C) 1984 Don Corbitt, 75655,1516',0
+f1msg:	db	'File name: ',0
+	end	start

@@ -1,0 +1,45 @@
+KYPEEK.INF
+George W. Flanders [73300,2772]
+April 8, 1988
+
+	Very often the M-100 user's programming objective is to squeeze as
+much BASIC code as possible into as few bytes as possible. One of the common
+needs in programming is to get user entry in response to prompts.
+	Recently I was attempting to find a better (shorter) way to detect a
+(Yy) reply in response to a (Y/N) prompt. The addresses -104 to -111 are
+not extremely well documented, but I set up a short input program to detect the
+changes in these addresses when a key is struck. It soon became clear that when
+you press the "Y" key, shifted or unshifted, the address -109 suddenly
+holds a value of 32!
+	This was an old program line:
+
+10 A$=INKEY$:IFA$=""THEN10ELSEA=ASC(A$)AND95:IFA=89THENY=1:RETURNELSEY=0:RETURN
+(52 bytes in tokenized BASIC)
+
+	Now, using the new method, the line became:
+
+10 IFINKEY$=""THEN10ELSEY=ABS(PEEK(-109)=32):RETURN
+(34 bytes in tokenized BASIC)
+
+The saving of 18 bytes might not seem a lot, but when this and other program-
+ming 'tricks' add up, you can manage to shave off a lot of bytes.
+	I continued to explore and discovered the following, which might
+open up some possibilities:
+
+ADDR	VAL=1	=2	=4	=8	=16	=32	=64	=128
+----	----	----	----	----	----	----	----	----
+-104	F1	F2	F3	F4	F5	F6	F7	F8
+-105	SPACE	BKSP	TAB	ESC	PASTE	LABEL	(note)	ENTER
+-106	9	0	-	=	L.arw	R.arw	U.arw	D.arw
+-107	1	2	3	4	5	6	7	8
+-108	O	P	[	;	'	,	.	/
+-109	Q	W	E	R	T	Y	U	I
+-110	A	S	D	F	G	H	J	K
+-111	Z	X	C	V	B	N	M	L
+
+(note) I have to believe that PEEK(-105)=64 when the "PRINT" key is pressed.
+Even inside a BASIC program, however, pressing that key immediately performs
+the LCOPY function, and we can't see what value was in that address.
+	Attempts to POKE values into these addresses seem to have no effect.
+I suspect the background task, or any subsequent keypress, changes all un-
+struck addresses back to nulls!

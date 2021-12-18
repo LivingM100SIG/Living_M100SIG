@@ -1,0 +1,91 @@
+
+RENAME.CO
+
+CDOS does not permit renaming disks and folders.  Perhaps the amount of memory
+needed to implement that function was thought to be more than it was worth.
+However, if you're like me, you've changed you mind on what to name a disk
+or folder more than once (and regreted it!)  RENAME.CO is a quick and easy
+one-step program to rename disks and folders.
+
+To create RENAME.CO, cut these instructions and load the program code below
+into Basic.  Removing CDOS isn't required.  Run the program.  If all goes well,
+you'll receive the "Finished" message and RENAME.CO will be in the RAM file
+directory.  A data error will produce an error message.
+
+To use RENAME.CO, place the disk to be renamed into the drive and bring up
+the disk directory with F1.  Open the folder to be renamed (or leave it at
+the top level to rename the disk) and return to the RAM directory with F1.
+Don't skip those steps....they are necessary to set the data bytes which
+point to the clusters containing the folder directory and its parent
+directory.  Run RENAME.CO from the RAM file menu or from Basic.  (Don't remove
+CDOS!)  The name of the current folder (or disk) will be displayed.  If this
+isn't the right one, press Enter or Shift/Break on the prompt to abort.
+Otherwise, type the new name and press Enter.  If all goes well, the folder
+and its entry in the parent directory will be renamed and you'll be returned
+to the RAM file menu.  A disk error produces an error message.  Press any key
+to return to the menu.  Note: RENAME.CO uses the memory between its end
+address and the beginning of CDOS for data storage.
+
+RENAME.CO is (C) 1985 by Tim Ekdom, all rights reserved. License granted to
+all M-100 SIG members and Chipmunk users to execute and duplicate as necessary
+for personal, non-commercial use only.
+
+Tim Ekdom
+Sept 30, 1985
+CIS: 72575,1473
+
+
+0 ' Loader program for RENAME.CO
+1 ' By Tim Ekdom  72575,1473
+2 ' Sept 1985
+10 CLS:PRINT
+20 IFHIMEM<>MAXRAMANDHIMEM<>56816THEN500
+30 IFMAXRAM<57436THEN600
+40 IFFRE(0)<1500THEN700
+50 CLEAR256,56816
+60 PRINT"Creating RENAME.CO ..."
+70 FORAD=56816TO57436:READBY:POKEAD,BY:CK=CK+BY:NEXTAD
+80 IFCK<>74319THENPRINT"Incorrect checksum...load aborted":END
+90 CLS:PRINT:PRINT"Finished"
+100 SAVEM"RENAME.CO",56816,57436,56816
+110 END
+500 PRINT"HIMEM <> MAXRAM. Is there a ML program"
+510 PRINT "loaded (other than CDOS) that you want":PRINT"saved? (Y/N)"
+520 A$=INKEY$:IFA$=""THEN520
+530 IFA$="Y"ORA$="y"THENEND
+540 IFA$="N"ORA$="n"THENCLS:PRINT:GOTO30
+550 GOTO520
+600 PRINT"Cannot load over MAXRAM":END
+700 PRINT"Inadequate free RAM to save RENAME.CO":PRINT"Kill some files":END
+1000 DATA205,49,66,33,214,223,205,88,90,62,2,50,163,223,58,115,227,205,140,223
+1010 DATA42,92,224,235,33,107,224,205,161,223,218,109,223,33,252,223,205,88,90,33
+1020 DATA108,224,205,88,90,205,34,66,33,108,224,17,97,224,6,9,205,66,37,33
+1030 DATA12,224,205,88,90,205,68,70,216,35,223,202,151,87,175,50,142,246,33,24
+1040 DATA224,205,88,90,33,132,246,14,10,35,13,202,102,222,126,254,0,202,91,222
+1050 DATA205,205,223,119,195,73,222,62,32,119,35,13,202,102,222,195,91,222,58,115
+1060 DATA227,254,0,202,39,223,58,114,227,205,140,223,42,92,224,235,33,107,224,205
+1070 DATA161,223,218,109,223,42,92,224,35,35,235,33,107,225,205,161,223,218,109,223
+1080 DATA33,125,224,62,0,34,95,224,60,50,94,224,126,254,240,202,197,222,1,18
+1090 DATA0,9,58,94,224,254,12,202,191,222,254,24,194,149,222,33,38,224,205,88
+1100 DATA90,205,34,66,195,125,223,33,125,225,195,149,222,17,96,224,14,10,13,202
+1110 DATA219,222,19,35,26,190,202,202,222,42,95,224,195,162,222,42,95,224,35,235
+1120 DATA33,133,246,6,9,205,66,37,62,4,50,163,223,42,92,224,235,33,107,224
+1130 DATA205,161,223,218,109,223,42,92,224,35,235,33,107,224,205,161,223,218,109,223
+1140 DATA42,92,224,35,35,235,33,107,225,205,161,223,218,109,223,42,92,224,35,35
+1150 DATA35,235,33,107,225,205,161,223,218,109,223,62,2,50,163,223,58,115,227,205
+1160 DATA140,223,42,92,224,235,33,107,224,205,161,223,218,109,223,33,133,246,17,108
+1170 DATA224,6,9,205,66,37,62,4,50,163,223,42,92,224,235,33,107,224,205,161
+1180 DATA223,218,109,223,42,92,224,35,235,33,107,224,205,161,223,218,109,223,195,151
+1190 DATA87,33,69,224,205,88,90,33,0,0,107,205,212,57,205,34,66,205,41,66
+1200 DATA33,82,224,205,88,90,205,203,18,195,151,87,22,3,95,205,165,223,123,50
+1210 DATA93,224,22,6,205,185,223,44,125,50,92,224,201,255,66,0,201,1,0,9
+1220 DATA123,23,95,5,200,121,23,146,210,180,223,130,79,63,195,168,223,62,8,6
+1230 DATA0,33,0,0,235,41,235,210,199,223,9,61,200,41,195,192,223,254,65,216
+1240 DATA254,91,208,246,32,201,10,13,32,82,69,78,65,77,69,46,67,79,32,32
+1250 DATA32,40,67,41,32,49,57,56,53,32,84,105,109,32,69,107,100,111,109,10
+1260 DATA13,10,13,0,32,67,117,114,114,101,110,116,32,110,97,109,101,58,32,0
+1270 DATA32,78,101,119,32,110,97,109,101,63,32,0,32,87,111,114,107,105,110,103
+1280 DATA46,46,46,10,13,0,32,78,111,116,32,102,111,117,110,100,32,105,110,32
+1290 DATA112,97,114,101,110,116,32,100,105,114,101,99,116,111,114,121,0,32,68,105
+1300 DATA115,107,32,101,114,114,111,114,32,0,32,65,98,111,114,116,101,100,32,0,0
+32767 ' 9/30/85 #1

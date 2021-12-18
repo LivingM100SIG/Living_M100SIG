@@ -1,0 +1,79 @@
+                         RF-NOD.200x  (c)1990  R.W.Hess
+                         ------------------------------
+
+RF-NOD is a 615 byte .BA program which automatically operates Node DATAPAC
+files.  .BA or .CO programs will be loaded into RAM and run and .DO files
+will be loaded into RAM and entered.  If a .CO program runs in HIMEM, RF-NOD
+will automatically clear the necessary RAM before running the program.
+
+It uses Paul Globman's RAMDSK.CO to access NODE DATAPAC files and Paul's
+XOS-C cross-bank operating system to run RAMDSK.CO from Bank 3.
+
+Download this file, remove any download "garbage" and checksum this file.  
+Then use TEXT F7 and F5 to "copy" and "paste" the program code below into
+BASIC: save the program as desired. Before running RF-NODE, be sure that XOS-C
+is correctly installed in all 3 banks and that RAMDSK.CO is stored in Bank 3.
+
+Operation is very simple: run the program and enter the name of a file
+including the extension using either UPPER or lower case letters.  The
+file will be loaded into RAM and run: .CO files will first clear the correct
+RAM, .BA files will run and .DO files will be entered as if cursor selected.
+<ENTER> alone at the prompt sets HIMEM=61104 and returns to the Main Menu.
+
+Any of the following conditions will abort the Load/Run process with a "BEEP",
+print "file can't" and END:
+  - if the filename you entered is not in the DATAPAC (double-BEEP)
+  - if the file extension is not .CO .BA or .DO
+  - if Free RAM is less than twice a .CO program's length  (The .CO program
+    may have been transferred into RAM but couldn't load.)
+  - if the EXEcute address of a .CO program is lower then its TOP address
+    (HIMEM programs will have been transferred into RAM but not loaded.)
+  - if MAXRAM does not equal 61104 (no filename displays: just "can't")
+  - if RAMDSK.CO cannot load from Bank 3
+  - if there is not enough room in RAM for the target file then RF-NOD will
+    BEEP and return to the Main Menu.
+
+
+Op. notes:
+
+RF-NOD.BA clears needed HIMEM for .CO files and RUNs your file. If you only
+need to LOAD the file into RAM, use RAMDSK.CO normally.
+
+RF-NOD sets HIMEM=61104 before running any Alt/LCD program.
+
+RF-NOD can be run cross-bank but will NOT remove itself from RAM so that
+"return-where-called" .CO programs can be returned to the Main Menu.
+
+When you've finished with a file, .BA and .DO files will remain in RAM as
+visible Main Menu files and .CO files will be left loaded but NOT on the menu.
+
+The last .DO or .BA file accessed by RF-NOD will remain as the bank's "IPL"
+file until changed by you or the selected file.  You can set IPL"" (null) by
+simply re-running RF-NOD: press <ENTER> at the prompt.
+
+
+                                 ----CREDITS----
+Paul Globman wrote RAMDSK.CO and XOS-C and beta-tested RF-NOD.  Ed Geise
+originally wrote the self-clearing, "RUNM" code for .CO files.
+
+
+
+Randy Hess
+73267,552
+Omaha, Ne
+8/26/90
+
+---------------
+0 'RF-NOD.200(C)1990,R.W.Hess
+1 IFMAXRAM-61104THEN8ELSECLEAR100,59838:KEYON:IPL"":DEFSTRA-G:K=61177:L=63574:CALL41179:F="3:RAMDSK.CO":CALL63600,8,VARPTR(F):IFPEEK(61302)THEN8
+2 LINEINPUT"DATAPAC file.ext: ";F:IFF=""THENCLEAR0,MAXRAM:MENUELSEJ=INSTR(".CO.co.BA.ba.DO.do",RIGHT$(F,3)):IFJ=0THEN8
+3 D=F+CHR$(13)+CHR$(13)+"Y"+CHR$(0):POKEK,PEEK(VARPTR(D)+1):POKEK+1,PEEK(VARPTR(D)+2):IFJ>6THEN11
+4 CALL60444:POKEK+1,0:CLS:ONERRORGOTO5:LOADMF:KILLF:GOSUB9:CLEAR0,T:GOTO7
+5 GOSUB9:IFERR=7ANDPEEK(R+2)+256*PEEK(R+3)<FRE(0)+1000THENRESUME6ELSERESUME8
+6 CLEAR10,T:N$="N":V=VARPTR(N$):POKEV,8:POKEV+1,70:POKEV+2,247:LOADMN$:KILLN$
+7 GOSUB9:CALLX:MENU
+8 BEEP:PRINTF$" can't":CLEAR0,MAXRAM:END
+9 R=62715:T=PEEK(R)+256*PEEK(R+1):X=PEEK(R+4)+256*PEEK(R+5):IFX<TTHEN8
+10 IFT>MAXRAMTHENT=MAXRAM:RETURNELSERETURN
+11 FORP=LTOL+5:READM:POKEP,M:NEXT:IPLF:CALLL
+12 DATA205,28,236,205,0,0

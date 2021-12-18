@@ -1,0 +1,180 @@
+Documentation for CopyFL.PDS & CopyFL.TD2/v1.2
+==============================================
+joel dinda [75725,1134]
+CHECKSUMS:
+      CopyFL.PDS: 259,364
+      CopyFL.TD2: 304,258
+
+
+CopyFL is a program for copying selected TDD files from one disk to another. 
+There are two versions of the program:
+      CopyFL.PDS is for users with a Model 100 or Tandy 102 and the original
+      Tandy Portable Disk Drive.  This version requires that you have Acroatix'
+      Powr-DOS operating system (available in this Library) installed in your
+      computer.
+      
+      CopyFL.TD2 works with M100/T102/T200 and the newer, 200K TDD2 drive. 
+      FLOPPY must be installed.
+      
+      Sorry:  I'm unable to provide a version which works for the T200/TDD1
+      combination.
+      
+Important differences between this program and the COPY.BA and BACKUP.BA
+utilities supplied with P-DOS and TDD2 are that CopyFL does not require that
+you copy the entire disk, and that it does not require that the destination
+disk be empty.  This program restores HIMEM to its original value, and should
+not damage any well- behaved programs stored above that address.
+
+
+
+A Caution
+=========
+File transfers involving multiple disks in one drive have inherent risks.  The
+following precautions seem to be reasonable and appropriate:
+
+** This program assumes you are transferring files from one disk to another. 
+It calls one disk "SOURCE", and the other "DESTINATION".  For your protection,
+it would be wise to get into the habit of opening the write- protect tab on the
+SOURCE diskette before running the program.
+
+** Keep all disks except the current pair out of reach.  Accidentally inserting
+the wrong disk could cause great damage.
+
+** I trust this program.  Until YOU trust this program, don't write to any disk
+which contains files you cannot afford to destroy.
+
+
+Operations
+==========
+This program requires at least 8000 bytes FREE to operate, and works best if
+you've removed every file from your computer's memory.  CopyFL uses all
+available memory for buffers, and will operate much more quickly if more
+buffers are available.
+
+CopyFL has three modes -- setup, file selection, and actual file copying.
+
+During SETUP, CopyFL prompts you to insert both the destination and source
+diskettes; it reads both directories and saves that information for further
+reference.  If you're using the TDD2 version of the program, you'll be prompted
+to specify a storage "bank" for both diskettes.
+
+The selection mode prompts you with menues which list options.  The program
+asks which files you want to copy.  It does this sequentially, as it finds the
+files in the disk directory.  Each file brings the following menu:
+
+   File: FFFFFF.EE
+      	<M>ark for Copying
+      	<R>ename & Copy
+      	<S>kip -- Don't Copy
+      	<F>inished -- Make Copies
+      	<ESC>ape to Menu
+
+These options do what they say; I see no need for lengthy & boring
+explanations.
+
+<R>ename, of course, runs you through an appropriate set of prompts.  This
+option converts lower case typing to upper case.  It will NOT permit you to
+change a file's extension.  Please note:  After you've renamed the file, CopyFL
+starts calling the file by that name.  It does NOT, however, change the file's
+name on the source disk.
+
+If the file's name exists in the directory of the destination disk, you go to a
+short menu which asks if you wish to <R>ename the file, <S>kip to the next
+file, or <ESC>ape to the main menu and figure out what's happening.
+
+If you attempt to add a file which will not fit on the destination disk, CopyFL
+tells you the destination disk is full and lets you either <C>opy the files
+you've already marked or <ESC>ape to the main menu.
+
+After files have been marked, CopyFL goes to its copy mode.  It prompts you to
+swap disks, as appropriate (again:  see the cautions, above), and keeps you
+well informed of progress.  I originally wrote all that information into the
+display for error-checking purposes; I left it because it's interesting and
+informative.  As is usual with my software, clicks and beeps and whistles keep
+you informed of the program's progress.
+
+TDD1/P-DOS users will notice that this program writes MUCH more quickly to a
+sector formatted by Acroatix' FORMAT utility than to one which has been
+formatted (or just WRITTEN to) by the TDD's internal software.
+
+Two things which may not be obvious:  The TD2 version of this program can be
+easily used to copy a file from Bank 0 to Bank 1 on the disk.  And either
+version can be used to make a duplicate copy of a file, with another name, on
+the same directory.
+
+This should be a simple program to use; your main worry is to keep the disks
+straight.
+
+
+Error Trapping
+==============
+This program uses my usual Powr-DOS/Disk error traps; details are in MENU.DOC
+[DL9].  It also checks for limited memory and will not run without about 8K
+clear.
+
+BE AWARE:  The P-DOS version of this program starts with the Powr-DOS command
+LFILESV.  This command may cold start your computer if you've got Powr-*DISK*
+installed.
+
+CopyFL POKEs the keyboard buffer empty in several places.  In an effort to
+appease Sysop Tony, CopyFL.TD2 checks to see if it's loaded into a Tandy 200
+and behaves appropriately.  Since the T200 version of Powr-DOS apparently never
+got released, CopyFL.PDS does *not* make this check and saves a few bytes.
+
+
+Programmer's Notes
+==================
+CopyFL.TD2 is a straight conversion of CopyFL.PDS; except where they *must* be
+different, the programs are identical.  V1.2 is not much different from v1.1;
+I've swatted a couple unimportant bugs and greatly speeded up one routine.
+
+This program does all the things you need to solve to write random access
+programs for TDD1 with Powr-DOS or TDD2 with FLOPPY.
+
+Took me fully a week to get the counters to work right.  They're intricate, and
+to a certain extent they interact, but on the whole they're boring.  My only
+complaint is that I thought I could solve them in a couple days.  (Ah, the joys
+of writing programs.)
+
+The INTERESTING code in this program is in the directory read and write
+routines.  (Think of the directory as a small database.)  Notice especially how
+I use variable F.  Anyone REALLY interested should be able to figure out both
+how these things work and why I did things this way.  This is tricky stuff,
+but it moves strings around quickly.
+
+Elsewhere, there are things I could have done more efficiently.  There are also
+things I THOUGHT I could do more efficiently which, in fact, I couldn't. 
+Variable SA, in particular, gave truly peculiar results in early versions of
+this program.  This program's solution amounts to brute force; it isn't
+pretty, but does work.
+
+The sort routine is (closely!) based on Max Seim's SHELL.  I wouldn't mention
+this except that I HATE writing sorts, and the relationship is pretty obvious. 
+My modifications were significant but pretty minor; one or two can be called
+improvements.
+
+There WILL be a V2.0 of this program; this version lacks important features I
+think it needs and can otherwise be improved.  I first made this promise 19
+months ago; I'm now beginning to work on the necessary routines.
+
+Feel free to make suggestions.  And PLEASE report bugs.
+
+
+Thank You
+=========
+Acroatix & Ed Giese deserve great thanks for making it possible to write this
+program.
+
+And overdue thanks for some programmers' tools:  I use PRETTY.WM7 & VARCRF.WM4
+mercilessly when I'm debugging software; thanks, Woods.  End User's TOOLKT also
+gets heavy use; thanks, Peter.  Without these tools, keeping track of what's
+going on would be virtually impossible.
+
+I also use a commercial RENUMber program:  Guerri Stevens' from General
+Business Systems and Custom Software (it may now be available from HSI).  I
+couldn't live very happily without it, though End User's Reline makes
+reordering lines possible.  Thanks, Guerri (& Greg).
+
+joel dinda
+10nov86
+30jun88

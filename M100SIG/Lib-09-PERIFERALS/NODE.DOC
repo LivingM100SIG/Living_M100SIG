@@ -1,0 +1,164 @@
+NODE.DOC:  Documentation for NODE.BA which is installed by NODE.BAS (checksum
+344,630 with real tabs).
+Requirements:
+       Tandy 100/102/200 notebook computer
+       Node DataPac (125k/256k) with the OPTION ROM
+       Power DOS in DataPac (optional)
+       TS-DOS disk version in DataPac (optional)
+
+     NODE.BA combines lightning speed and alphabetized directories with your
+Node DataPac.  After you try this 3.3k program, you will have little reason to
+leave the NODE.BA environment.  You can jump around from file to file in your
+DataPac using your paste buffer as you go.  In most cases you do not have to
+retype file names.  Your paste buffer will remain intact as long as you do not
+do anything to clear it.  (Loading DOS and other .CO programs and running some
+BASIC programs clears memory and thus your paste buffer).
+
+     This program provides handy access to your favorite disk operating
+systems directly from NODE.BA.  I use NODE.BA to shuffle instantly between
+TS-DOS and Power-Disk (Power-DOS for the 100/102).  Of course you must have
+the DOSs located in your DataPac.
+
+    NODE.BA options require only one key stroke and are listed in four groups
+as seen in the options prompt line below.  <Q>uit is all there is in the first
+group.  The second group is related to both main RAM and your DataPac.  The
+Third group is related to your DataPac only, and the fourth group is related
+to main RAM only.  ".DO" is automatically added to file names if you type no
+extension.  The following option explanations appear on the title screen and
+reappear when you press space bar at the options prompt line (below).
+---------------------------------------
+  NODE.BA (C) Louis Self       18:41:23
+        Quit or                06/02/94
+Both -> Memory Find Catalog
+DaPac-> Edit Run Save Load
+        Del-DataPac Inv Vis Node
+RAM  -> Kill-RAM PwrD 3dsk TS-DOS MemC]
+
+ Q   M F   C E R S L D I V N   K P 3 T]
+---------------------------------------
+     [F8] or typing MENU exits you to your main RAM menu
+     <Q>uit turns off your computer or runs another program from RAM
+     <M>emory tells you the free memory in both RAM and your DataPac
+     <F>ind gives you the length of a file in RAM and DataPac
+     <C>atalog gives you the RAM files and then five choices to view:
+        <A> All files in DataPac
+        <B> .BAsic files in DataPac
+        <C> .COmmand files in DataPac
+        <D> .DOcument files in DataPac
+        <L> Lfiles disk directory (Power-DOS must be installed).
+        You now choose where you want the catalog sent:
+           <F>ile (The name FILE.DO will be used if you just press <ENTER>)
+           <P>rinter
+           <S>creen
+           Note:  All but the RAM menu are are in ALPHABETICAL ORDER!
+     <E>dit is used to start a new DOcument in DataPac
+     <R>un a .BA program or edit an existing DOcument in DataPac
+     <S>ave a file from main RAM to DataPac
+     <L>oad a file from DataPac to main RAM
+     <D>elete a file from DataPac
+     <I>nvisible and <V>isible are not programed in this version
+     <N>ode installs the option ROM hooks with the 200
+     <K>ill a file in RAM
+     <P>ower-DOS is activated from DataPac (proper memory is cleared)
+     <3>.5 disk gives you four options for Power Disk access (bank #0, TDD2):
+           <S>ave a file from RAM to disk (must not already exist on disk)
+           <L>oad a file from disk into RAM
+           <K>ill a file on the disk
+           <F>ormat disk (must be preceded by another DOS operation)
+
+     <T>S-DOS is activated from DataPac  (proper memory is cleared)
+     <]> Clears the past buffer and memory of DOS or other machine language
+   program.
+
+      You can use your paste buffer to control NODE.BA.  If you have files,
+SCIA.DO, SCIB.DO and SCIC.DO that you frequently need to backup to disk, put
+the the following in your paste buffer (each line ends in a carriage
+return).  Make sure the disk is ready and press PASTE while at the NODE.BA
+option prompt line.  Like magic, all the files will be saved to disk and your
+computer will shut itself off when finished.
+
+     3KSCIA
+     LSCIA
+     3SSCIA
+     KSCIA
+     3KSCIB
+     LSCIB
+     3SSCIB
+     KSCIB
+     3KSCIC
+     LSCIC
+     3SSCIC
+     KSCIC
+     F""
+     Q (Q should be the last character in your paste buffer -no carriage
+return)
+
+     To restore the files to your DataPac from disk PASTE in the following:
+
+     3LSCIA
+     RUN
+     SSCIA
+     KSCIA
+     3LSCIB
+     RUN
+     SSCIB
+     KSCIB
+     3LSCIC
+     RUN
+     SSCIC
+     KSCIC
+     F""
+     MENU
+     <ENTER>
+     BEEP
+     POWEROFF
+
+
+     Try typing the above keystrokes in manually and you will understand how
+it works.  The same technique can be used for many other purposes.
+
+     NODE.BA does not contain a CLEAR statement.  This is what allows your
+paste buffer to remain intact.  If you get an OS error while using NODE.BA,
+type CLEAR 120:RUN <ENTER>
+
+     Most other errors are trapped.  Due to the way Power Disk interfaces with
+BASIC, the screen is immediately cleared after errors when loading a file from
+disk.
+
+     Use NODE.BA in main RAM but keep a copy in your DataPac for easy
+reloading after a cold start.
+
+     INSTALLATION (takes 1-2 minutes):
+       (1) Check that you have about 10k of RAM free
+       (2) Put NODE.BAS in your paste buffer
+       (3) Enter BASIC from your computer's main menu
+       (4) Type NEW<ENTER>
+       (5) Press the PASTE key and ignore the error messages.  That's it!
+
+                VARIABLES
+      A$(0)=USING      A$(I)=FUNCTION
+      F$=FILE NAME     C=CALL (NODE)
+      CC=Call (CLEAR)  D=PEEK length
+      F=#FILES         I$=INPUT $
+      I=INPUT# & ERR   L=length
+      N=Node Code      P=Poke to run
+      S$=DIR string    T=String pos #
+
+TECHNICAL NOTES:
+       Line  5 pokes RUN<ENTER> into the keyboard buffer to recover when disk
+                operations stop program execution
+       Line   6 calculates the length of a file
+       Line   7 accepts file input from the keyboard and traps the NU of MENU
+                 when [F8] is pressed
+       Line   8 adds .DO to the file name if necessary
+       Line   9 sets up PEEKs, POKEs & CALLs for the 200/100/102
+       Line  10 contains the menu option strings as DATA elements
+       Line  45 sets the auto-shut-off delay to 1 minute (change as you like)
+       Line 100 responds to the <Q> option and can be changed to 100 RUN"ALT"
+                 to run another program (in this case ALT.BA)
+       Line 455 picks the next file
+
+     NODE.BA includes the features that I use most often.  There are many
+additional features that you might find handy, but they will eat up more
+memory.  Please give me feedback snout your use of the program.  Happy
+NODE-ing to you with your laptop!

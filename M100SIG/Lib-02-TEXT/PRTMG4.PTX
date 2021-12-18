@@ -1,0 +1,64 @@
+.PA
+PRTMG4 03/04/86
+.csCUSTOMIZE PRTEXT FOR YOUR PRINTER
+.pp
+Modification of PRTEXT for compatibility with any printer is simple.  A configuration program, PRTFIX, is included which produces a custom printer module from the answers to an on-line questionaire.  With PRTEXT.BA in RAM memory, load and run PRTFIX.  Enter the codes required to produce each action for your specific printer in response to the questions.  Codes may be entered as numeric decimal ASCII values (027 = Ctrl [ or escape) or as ASCII characters.  Enclose numeric characters in double quotes to prevent confusion with ASCII values.  Multiple codes must be separated by spaces (027 B "2").  A line feed can be sent or omitted after each line as required by the specific printer.  A "set-up" string can be specified to initialize the printer to desired pitch, form length and other preferences.  Margins should be set to maximum as they will be controlled by PRTEXT as required.
+.pp
+At the conclusion of PRTFIX, a customized LINE 99 will be written to RAM memory and you will be instructed to MERGE it into PRTEXT using the name indicated.  If you have more than one printer, the LINE 99 files can be saved and MERGEd into PRTEXT as required.
+.pp
+A sample PRTFIX dialogue is shown on the next page.  Before starting, determine the proper control codes required by your printer for the specific action shown and convert them to ASCII values.  The table in the back of the M100/M200 manuals can be used.  Enter the codes in response to each question and depress ENTER.  If your printer cannot perform the action, simply depress ENTER to skip that question.  (The graphic symbols to produce each of the actions will be shown on the computer screen.)
+.pa
+.nf
+.csPRTFIX DIALOG ILLUSTRATION
+
+ PRTFIX for PRTEXT (c) Woods Martin
+-separate printer codes by spaces
+-numerals are ASCII unless in quotes
+ Esc B 2 = 027 066 050  or  027 B "2"
+
+FUNCTION		PRINTER CODES		(optional entry)
+ underline start	? 027 045 001		027 - 001
+ underline end		? 027 045 002		027 - 002
+ italics/red start	? 027 052		027 "4"
+ italics/red end	? 027 053		027 "5"
+ bold face start	? 027 069		027 E
+ bold face end		? 027 070		027 F
+ superscript start	? 027 083 000		027 S 000
+ superscript end	? 027 083 001		027 S 001
+ subscript start	? 027 083 001		027 S 001
+ subscript end		? 027 083 000		027 S 000
+ form feed code		? 012  (if printer recognizes it)
+ extra line feed code	? 010  (to send line feed after return)
+ printer set up		? 027 064 027 066 002	027 @ 027 B 002
+ printer name		? GEMINI
+
+99 S0=SE+"-"+CHR$(001):S1=SE+"-"+CHR$(002):S2=SE+"4":S3=SE+"5"
+  :S4=SE+"E":S5=SE+"F":S6=SE+"S"+CHR$(000):S7=SE+"S"+CHR$(001)
+  :S8=SE+"S"+CHR$(001)S9=SE+"S"+CHR$(000):SF=CHR$(012):SB=CHR$(010)
+  :SU=SE+"@"+SE+"B"+CHR$(002):SP="GEMINI":RETURN
+
+File PRTGEM.DO -  Accept Yes or No   Yes
+Loading PRTEXT
+ENTER  MERGE "PRTGEM.DO"   (type MERGE "PRTGEM.DO" and depress ENTER)
+
+.RF
+.PP
+When finished, the file PRTGEM.DO may be erased or saved along with custom printer modules for other printers.  Merging any custom line 99 file with PRTEXT will change its configuration to the new printer.
+.pa
+.csRUNNING PRTEXT
+.pp
+First, be sure your DOCUMENT file and any MERGE or MAIL LIST files you will use are stored on the proper devices.  If only a DOCUMENT file is used, it can be stored anywhere.  MERGE and MAIL LIST files will usually be on disk although cassette can be used in some cases.
+.pp
+Run PRTEXT.  First enter the output device or file when requested (pressing <ENTER> alone will return to the MENU).  If output is to the line printer, a single P is sufficient.  The name of the printer will be displayed (if a custom PRTFIX module has been installed) and a choice of continuous or single sheet paper requested.
+.pp
+If output is to another device, enter that device name (and file name if needed) as CRT:, LCD:, 0:OUTFIL.DO, COM:88N1D, etc.
+.pp
+A directory of files in RAM memory is displayed and the name of the DOCUMENT file requested.  Enter the DOCUMENT file name (with a device if needed) as DOCONE or 0:DOCONE.DO or CAS:DOCONE, etc.
+.pp
+If output is to the line printer, the number of copies to be printed is then requested.  Pressing ENTER will print one copy.  The message "PAUSE:  Insert/Adjust paper <ENTER> ?" will then display.  Depress ENTER when ready to begin.  If single sheets were requested, this message will be displayed at the end of each page.
+.pp
+If output is to another device, the text will also display on the screen so that you may keep up with the program's progress.
+
+.csERRORS
+.pp
+Most errors will produce an appropriate message.  If recovery is possible, you will be advised; otherwise the program will return to the initial display.  Press ENTER to return to the MENU and then edit the DOCUMENT, MERGE or MAIL LIST files to correct the problem.

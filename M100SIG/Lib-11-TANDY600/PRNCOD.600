@@ -1,0 +1,45 @@
+0 'PRNCODES.BAS, COPYRIGHT 1986 by James A. McGreevy CompuServe 70206,1115
+1 '  This example is set up for the Radio Shack DMP-2100P
+2 '  which has 8 built-in fonts: Standard-10; Elite-10; Elite-Proportional(PS);
+3 '  Standard-12; Courier-10; Courier-PS; Condensed-16.7; and Elite-12.  The
+4 '  latter two fonts do not work using the codes supplied in the manual.
+5 '  It also supports Elongated print, Bold, Underline etc.
+6 '
+7 '  The method is simple: for each function you wish to include,
+8 '  write one BASIC line PRINTing the information as follows.
+9 '     1) PRINT#1, the CHR$ codes as given in your Printer manual.
+10 '    2) immediatelely after the last CHR$(), type the "<--DESCRIPTION
+11 ' That's it - there's no need to add an end quote to finish the line.
+12 ' Repeat for each code you want to use when printing.  Before using
+13 ' the print codes in documents, print some test documents.  You may
+14 ' find that some codes have strange side effects - for instance,
+15 ' using the SUPERRSCRIPT or SUBSCRIPT codes may have the desired
+16 ' effect, but the printer might be switched permanently into a
+17 ' 12 line-per-inch mode or the form-feed might be altered.
+18 '
+19 ' Create a WORD document, naming it STYLE or for your printer (DMP2100P,
+20 ' for example.)  Then MERGE (<ESC> M), type PRINTER and <ENTER>.
+21 ' The codes will appear followed by their descriptions.  You should find
+22 ' it practical to reformat the resulting document, as I did with
+23 ' the DMP21P.600 in this Data Library.
+24 '
+25 ' To use the printer codes, jump from your document, using CTRL-F10 or
+26 ' CTRL-F9, to the STYLE.WRD (or DMP2100P.WRD etc.) file. There you 
+27 ' merely find the printer code you want, COPY (<ESC> C) it, use CTRL-F9
+28 ' to get back to your document, and INSERT (F2) it where you wish.
+29 '
+30 OPEN"printer"FOR OUTPUT AS 1
+31 '--------- printer codes ---------
+32 PRINT#1,CHR$(27)CHR$(19)"<--Standard-10
+33 PRINT#1,CHR$(27)CHR$(23)"<--Standard-12
+34 PRINT#1,CHR$(27)CHR$(61)CHR$(49)CHR$(27)CHR$(17)"<--Elite-PS
+35 PRINT#1,CHR$(27)CHR$(61)CHR$(49)CHR$(27)CHR$(18)"<--Elite-10
+36 PRINT#1,CHR$(27)CHR$(61)CHR$(50)CHR$(27)CHR$(17)"<--Courier-PS
+37 PRINT#1,CHR$(27)CHR$(61)CHR$(50)CHR$(27)CHR$(18)"<--Courier-10
+38 PRINT#1,CHR$(27)CHR$(14)"<--START Elongated
+39 PRINT#1,CHR$(27)CHR$(15)"<--END Elongated
+40 PRINT#1,CHR$(27)CHR$(31)"<--START Bold
+41 PRINT#1,CHR$(27)CHR$(32)"<--END Bold
+42 PRINT#1,CHR$(15)"<--START Underline
+43 PRINT#1,CHR$(14)"<--END Underline
+99 CLOSE

@@ -1,0 +1,116 @@
+MINSEC.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+MINSEC.BAS adds minutes and seconds, providing a running total.  One use
+is adding up total running times of various musical selections to see if a
+certain group of songs will fit on one side of a cassette.  These messages
+deal with changing the program to elimate what was a "minor irritant" to
+one user.
+
+Message range: 173922 to 173944
+Dates: 9/6/88 to 9/7/88
+
+
+Sb: #MINSEC/MINSUB
+Fm: GEORGE SHERMAN 72300,3203
+To: TONY ANDERSON 76703,4062
+
+   I have run into a minor irritant in MINSEC. As you might recall, when you
+intially wrote MINSEC I told you I was the producer of a radio program which
+airs on a local station here once a week. Being able to add, and then to
+subtract time segments comes in very handy. I time the sections with a stop
+watch which registers in minutes, seconds, and hundreths of a second. I have
+been entering the time segments in such as 3,43.62//,15.23//6,45.98//etc. In
+MINSUB I did have to change the location of "Remaining:" in line 60 to fit in
+all the number. Line 60 now reads "60 PRINT@L*40+18,"REMAINING:"T$.
+   Back to MINSEC, the numbers add correctly until there is a carry over into
+the minutes, i.e., the sum of the seconds exceeds 60. Then the program drops
+the hundreths. If I manually restore them, they will continue adding again
+until the seconds exceed 60 and then the hundreths are dropped once more. I
+don't have this problem with MINSUB.
+ Try adding these figures and see if you can come up with an answer for me.
+   (,27.31//1,19.93//3,32.15//,04.02//6,45.23//1,49.36)
+  Then try doing the reverse. Start with 0 hours, 14 minutes, 0 seconds, and
+start subtracting them. If it does what I think it will do, subtracting will
+work fine with no loss of info, but adding will not.
+   (BTW, thanks for the plug in your letter to Davey #173896 re-CRDFUN.)
+
+
+Fm: Tony Anderson 76703,4062
+To: GEORGE SHERMAN 72300,3203
+
+Gee... timing radio production in hundredths of a second seems like an exercise
+in overkill. ... Who listens to radio that closely?   Mine not to wonder why,
+but I thought that only TV and film required such accuracy, actually dealing
+with number of frames per second, etc.  I had never considered dealing with
+hundredths in MINSEC.
+
+I believe the problem is in the rollover calculation, line 32 in MINSEC.BAS. It
+says TS=TSMOD60.  If you try that calculation in BASIC, by typing in a direct
+statement, like: PRINT 75.25MOD60, you get an answer of 15.  So the MOD
+statement is the culprit here, it's dropping the decimal part of the remainder.
+
+I don't see a similar problem in MINSEC.SUB; because there aren't any MOD
+statements.  It's all borrowing and subtracting.
+
+Seems like the easiest way to fix that in MINSEC.BAS is to change the
+TS=TSMOD60 statement to TS=TS-60  That might lead to an error only if you tried
+to add some second value over 60, to something that was close to 60...like 50
+or more. Say your running total ended in :58, and you tried to add :73 to it.
+That would total 131, and subtracting 60 would leave you with 71, obviously an
+overrange value.  But then you would never add more than 60 seconds, would you?
+Did I put in an error trap for that?  No.
+
+You could add that as a line 31 if you feel it would ever be needed...
+
+31 IF M>60 OR S>60 THEN BEEP: GOTO 30
+
+Let me know if this fixes the problem.
+
+
+Fm: GEORGE SHERMAN 72300,3203
+To: Tony Anderson 76703,4062
+
+   It probably -is- overkill, but then I am such a stickler for detail (grin).
+Also, I am paying for 14 minutes of air time and I must stay within that.
+   I tried your suggestions and the program now does add keeping the hundreths.
+However, in the original format, hitting <Enter> instead of inputting numbers,
+returned the user to the MENU. Now it just keeps repeating the last entry and
+the "?" prompt. You have to hit ^C to stop the program.
+
+
+Fm: GEORGE SHERMAN 72300,3203
+To: Tony Anderson 76703,4062
+
+   I was reading my last message while it was uploading and realized what I
+said might sound a little confusing.
+   What actually keeps repeating is not the last entry, but the last total.
+
+
+Fm: Tony Anderson 76703,4062
+To: GEORGE SHERMAN 72300,3203
+
+Understand.  Is that a problem?
+
+That would indicate that you had previously added the line 31 modification
+suggested in the MINSEC.MOD file, where
+
+31 IF M=0 AND S=0 THEN MENU
+
+When you added the error trap I suggested,
+
+31 IF M>60 OR S>60 THEN BEEP: GOTO 30
+
+You deleted the return to menu on zero input.  You can either choose one and
+live with it, or renumber line 32 making it 33, and make the first line 31
+above into line 32.  That should give you the error trap AND return to menu on
+zero input.
+
+
+Fm: GEORGE SHERMAN 72300,3203
+To: Tony Anderson 76703,4062
+
+So THAT'S what happened. OK, I'll make that change. Let you know if I have any
+further trouble.

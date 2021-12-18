@@ -1,0 +1,32 @@
+Sb: #FREE 450bps modem!
+    12-Dec-89  02:42:54
+Fm: bob scott 73125,1437
+
+
+Hackers:
+A recent message on the SIG about speeding up the internal modem prompted me to
+hack up the following program. It allows TELCOM to run at 450 baud (a 50% speed
+up!) on some CompuServe numbers.  TYMNET/TELENET don't support this higher
+rate. Let me make my apologies up front;  before running it you MUST CLEAR
+256,MAXRAM.  It also destroys the F6 function key assignment in TELCOM if
+you've got one.  If you can deal with that, this little feller does work.
+
+There are more elegant ways to accomplish it, but.....just RUN this program,
+then enter TELCOM and dial the CIS number WITHOUT a logon macro (i.e. with "<>"
+after the number). After you get the connect (label line changes) and BEFORE
+typing anything, press F6.  You then are in 450 baud mode....enjoy!
+
+For a version which works with a Tandy 200, see the file FASTMD.200 in Library
+10.
+
+Bob Scott 73125,1437
+
+5  CLEAR 256,MAXRAM-20
+10 POKE 64268,221:POKE 64269,245
+20 FOR I=62941 TO 62957
+30 READ X%:POKE I,X%
+50 NEXT I
+60 STOP
+70 DATA 243,245,62,85,211,188,62,65,211
+80 DATA 189,62,195,211,184,241,251,201
+

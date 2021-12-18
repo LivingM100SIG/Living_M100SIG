@@ -1,0 +1,32 @@
+Model 100 - Time Displays Made Faster and Neater
+by Terry Kepner
+    Rather than typing PRINT DATE$;" ";DAY$;" ";TIME$ 
+to get your program to display the current date and time, here is 
+a shorter and faster method of getting the same result: CALL 
+10161,,64904 (the double commas are required, leave one out 
+and you will get TWO error messages of "OV Error"). This is really 
+only two bytes shorter in memory than the previous method, but it 
+is quicker to type in and gives a better result. 
+    Unlike the DATE$ command, which displays the current date 
+in MM/DD/YRformat, the CALL displays the date the same 
+way it is displayed on the menu. That is, if the current date is 
+August 2nd, 1985, the DATE$ command displays it as 
+08/02/85 while the CALL displays it as Aug 
+02,1985. Plus, the CALL tacks on the day of the week and 
+current time.
+    If you only want the day of the week and time displayed, 
+use CALL 10161,,64916. And for just the time, 
+CALL 10161,,64920. If you want a space in front of 
+either of these, decrease the call address by one (i.e., 
+CALL 10161,,64915 or CALL 10161,,64919. In 
+any case, typing PRINT DAY$;" ";TIME$ or PRINT 
+TIME$ takes less room in RAM (but takes longer to execute).
+     One thing to consider when using this poke is that it leaves the 
+cursor at the end of the line instead of bumping it to the next 
+line. So, anything else you want to print will immediately 
+follow the date/time message.
+
+Reprinted from Pico Magazine with their permission
+Copyright (c) 1985, still held by Pico Magzine
+-Terry Kepner, Technical Editor, Pico Magazine
+

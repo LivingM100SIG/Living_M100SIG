@@ -1,0 +1,70 @@
+TCOMP.DO2: The New Features of TCOMP.11x   (A supplement to TCOMP.DOC)
+ 
+NEW FEATURES:
+        VARIABLE NAMES: TCOMP no longer restricts your variable names to A-Z.  
+You may use any variable name that M100 BASIC will accept.
+        ARRAYS: You can now define single dimension arrays.  They also may be 
+any name you want.  An array can be used anywhere TCOMP syntax will allow you 
+to use a variable.  All arrays must be explicitly DIMed and the DIM must appear
+before any references to that array are compiled.
+        VARIABLE CLEARING: All variables & arrays are initialized to zero by th
+
+e compiler.
+        READ/DATA/RESTORE: These statements are now supported, but there are a 
+few rules that you must follow.  All DATA lines must be at the end of your 
+program (after all the executable statments).  RESTORE must have a line number 
+pointing to a DATA line and you must RESTORE before you try to read any DATA.  
+Also, be sure that program control can not "fall" into the DATA statements or 
+you'll be begging for a cold start.
+        NUMERIC COMPARISON: TCOMP now understands that negative numbers are 
+less than positive numbers.
+        PRINT WITHOUT ";": The semicolon at the end of a PRINT statement is 
+optional.  If left off, you'll get the familiar CR/LF.
+        NUMERIC CONSTANTS: Constants may be declared in the range of -32768 to 
+65535.
+        RANDOM VALUES: While RND is not yet supported by TCOMP, PEEK(63791) 
+will return a fairly random value between 0 and 125.
+        STRANGE POINTER PROBLEM: I've heard tell of a problem compiling .BA 
+files that have been loaded from disk.  It seems that the internal line 
+pointers that TCOMP uses are not updated after such a load.  To take care of 
+this, go into BASIC and load the .BA file into memory.  That should update the 
+pointers and TCOMP should work just fine.
+        IMPROVED MEMORY ALLOCATION: TCOMP.11x will now allocate space for only 
+the variables and Support Routines that your program actually uses.  This can 
+result in a considerable space saving, since the library of SR's is constantly 
+growing.  In order to implement these features, the memory map for TCOMP had to
+be changed to something like this:
+        Starting Address
+                Compiled BASIC Program
+                DATA Statement tables (if any)
+                Support Routines
+                  .
+                  .
+                Variables & Arrays
+        Ending Address
+As you can see, the program area starts at the Starting Address and climbs 
+upward, while the Variable Table starts at the Ending Address and creeps down. 
+Since that leaves the possibility of wasted space in between the two areas, 
+TCOMP will report the number of free bytes caught in the middle so you can 
+adjust the memory addresses and keep the wasted space to a minimum. Because of 
+these changes to the memory map, the definition of an OM error has been 
+modified (see below).
+ 
+MORE VALID STATEMENTS FOR TCOMP:
+[LET] v=e OR e                          RESTORE n
+[LET] v=e AND e                         READ v
+[LET] v=e XOR e                         DATA n[,n,n,...,n]
+[LET] v=e ^ e                           DIM v(n)[,v(n),...,v(n)]
+SOUND e,e
+ 
+NEW ERROR CODES:
+   OM - Program & Variable areas have overlapped
+   BC - Bad CALL; Addresses below 15 are reserved for TCOMP use.
+   ND - Array has not been DIMed.
+   DD - Attempt to DIM array again.
+   DT - Attempt to put executable statements after DATA.
+ 
+Many thanks to Peter Fox, Mark Lutton, Rick Perry and all the others who've 
+been filling my Emailbox.  Keep that feedback coming!
+                - Mike Weiblen 72506,2072  4/23/85
+

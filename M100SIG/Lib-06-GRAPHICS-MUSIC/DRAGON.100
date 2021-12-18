@@ -1,0 +1,69 @@
+0 'Dragon Curve generating program, as described in BYTE magazine December, 1983
+1 'Reprogrammed (partially) by Don Corbitt, Revised Edition Software
+2 'Has several changes from original program, including wrap around of dragon curve, to show complete cycle.
+3 'Beeps can be removed if they are distracting.  Centering changed to putting top of pattern flush with
+4 'top of LCD screen.  It should be possible to merge a screen print program with this program to get a print out.
+5 'This has been partially attempted.  Put the screen dump subroutine at line 1000, and insert the command KEY ON
+6 'at about line 700.  A totally unsupported piece of software....
+7 'Don't use this program as an example to learn from.  Also, Byte Fyghter could probably get 30%+ cut out...
+10 DEFINTA-Z:MX=240:MY=64:NX=-1:NY=-1
+20 KEY ON:KEY STOP:ON KEY GOSUB ,,,,,,,1000
+50 CLS:PRINT:INPUT"Size (Order) of dragon curve";N
+60 PRINT"Input a direction reversal sequence     (string of Ls and Rs ... Example: llrlr)";
+70 PRINT"enter 'G' to generate a random sequence default='l' (the classical dragon curve)";
+100 LR$="L":INPUTLR$:IFLR$<>"g"THEN140
+110 LR$="":FORJ=1TON
+120	IFRND(5)>.5THENLR$=LR$+"l"ELSELR$=LR$+"r"
+130 NEXT:PRINT"direction reversal sequence: ";LR$
+140 L=LEN(LR$):LAST=2^N-1:DIMD(LAST+3)
+150 SC=2:INPUT"scale (1 -> ???, default=2)";SC:IFSC<1THEN150
+160 PRINT:PRINT"Automatically center dragon curve (y/n)?";:QA$=INPUT$(1)
+170 CLS:PRINT:PRINT"** generating the dragon sequence **"
+180 SP=1:IP=1:IFLEFT$(LR$,1)="l"THEND(1)=1ELSED(1)=-1
+190 FORJ=2TON
+200	IP=IP+1:IFIP>LTHENIP=1
+210	IFMID$(LR$,IP,1)="l"THENIN=1ELSEIN=-1
+220	D(SP+1)=IN
+230	FORK=1TOSP
+240	  D(2*SP+2-K)=-D(K)
+250	NEXT
+260	SP=SP*2+1
+270 NEXT
+280 DX(2)=1:DX(4)=-1:DY(1)=-1:DY(3)=1
+290 IFQA$<>"n"THEN320
+300 SX=119:SY=32:D=1:INPUT"starting point (x,y)";SX,SY:PRINT"starting direction:"
+301 INPUT"(1)=North, (2)=West, (3)=South, (4)=East";SD
+320 SX=0:SY=0:D=1:SD=1:XH=-1:XL=1:YH=-1:YL=1
+330 PRINT:PRINT"** centering **"
+340 FORJ=1TOLAST
+350	SX=SX+DX(D):SY=SY+DY(D)
+360	IFSX<XLTHENXL=SXELSEIFSX>XHTHENXH=SX
+370	IFSY<YLTHENYL=SYELSEIFSY>YHTHENYH=SY
+380	D=D-D(J):IFD<1THEND=4ELSEIFD>4THEND=1
+390 NEXT
+395 IFSX ORSYTHENBEEP:GOTO340
+400 S4=4+SC:XH=XH*S4:XL=XL*S4:YL=YL*S4:YH=YH*S4
+410 XD=XH-XL:YD=YH-YL
+420 IFXD<YDTHENT=YD:YD=XD:XD=T:SD=2
+430 SX=(239-XD)/2-XL:SY=(63-YD)/2-YL
+435 SY=-YL
+460 X=SX:Y=SY:D=SD:CLS
+470 FORJ=1TOLAST
+480	FORK=1TOSC
+490	    X=X+DX(D):Y=Y+DY(D):GOSUB1500
+500	NEXT
+510	D1=D
+520	D=D-D(J):IFD<1THEND=4ELSEIFD>4THEND=1
+530	FORK=1TO2
+540	    X=X+DX(D1)+DX(D):Y=Y+DY(D1)+DY(D)
+550	    GOSUB1500
+560	NEXT
+580 NEXT
+599 BEEP
+600 IFX<>SX OR Y<>SYTHEN470
+650 I$=INPUT$(1)
+900 END
+1000 'print screen here
+1500 IFX<MXANDY<MYANDX>NXANDY>NYTHENPSET(X,Y):RETURN
+1505 RETURN
+

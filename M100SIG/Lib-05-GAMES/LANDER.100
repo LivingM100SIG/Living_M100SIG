@@ -1,0 +1,39 @@
+1 'LANDER - 8/12/83 - Randy Cassingham
+2 'comments invited: 72246,172
+3 'lines 1-3 and comments may be deleted to save RAM
+10 GOTO 200'draw screen
+20 X=C:ALT=48:VEL=10:FUEL=200
+30 T$=INKEY$:IF T$=""THEN50 ELSE A=ASC(T$)
+40 IF A<48 OR A>57 THEN50 ELSE TH=ABS(48-A)
+50 PRINT@9,FUEL:PRINT@90,VEL:PRINT@171,TH:PRINT@250,ALT:SOUND 15800,1
+60 IF ALT=0 THEN 900
+70 IF FUEL<TH THEN TH=FUEL
+90 VEL=VEL-INT(TH-5.5-(5/ALT))
+100 ALT=ALT-INT(VEL/10):Y=Y+INT(VEL/10)
+110 IF ALT<1 THEN ALT=0:Y=52
+120 GOSUB 500
+150 FUEL=FUEL-TH:FOR A=1TO250:NEXT A:GOTO30
+200 PRINT"Hit a key to begin"'actual program start
+204 L=RND(1):A$=INKEY$:IF A$=""THEN 204
+205 CLS:LINE (90,0)-(90,63)
+210 X=INT(239*RND(1)):Y=55:IF X>220 OR X<100 THEN 210 ELSE C=X
+220 FOR BASE=X TO X+7:PSET(BASE,Y):NEXT BASE
+230 FOR L=X-1 TO 90 STEP-1:GOSUB 400:NEXT L
+260 Y=55:FOR L=X+8 TO 239:GOSUB 400:NEXT L
+270 PRINT@1,"Fuel :":PRINT@81,"Speed :":PRINT@161,"Thrust: ":PRINT@241,"Altitude: ":Y=1:GOTO20
+400 B=INT(10*RND(1)):IF B/2=INT(B/2) THEN Y=Y+1 ELSE Y=Y-1'randomly draws surface
+410 IF Y>63 OR Y<40 THEN 400
+420 PSET(L,Y):RETURN
+500 LINE (X,0)-(X+7,54),0,BF'draw ship
+507 IF Y<1 THEN 900
+510 PSET(X+3,Y):PSET(X+4,Y):LINE (X+2,Y+1)-(X+5,Y+1):LINE(X+1,Y+2)-(X+6,Y+2):PSET(X+1,Y+3):PSET(X+6,Y+3)
+550 RETURN
+900 FOR A=1TO1000:NEXTA'end of play
+910 IF Y<1 THEN CLS:PRINT"You just broke moon gravity...":PRINT"Your ship/casket will be found in the":PRINT"year 3912, and they will all l
+920 IF VEL>15 AND VEL<31 THEN CLS:PRINT"You made it!  But the landing was a bit":PRINT"rough... the hatch is jammed so you":PRINT"can't get
+930 IF VEL>30ANDVEL<44 THEN CLS:PRINT"You will go down in history!!!":PRINT"(as the first to die on the moon...)"
+940 IF VEL<16 THEN CLS:PRINT"Neil Armstrong couldn't have landed":PRINT"more smoothly!  Fine job."
+945 IF VEL>43 THEN CLS:PRINT"Now we know what `Man in the Moon'":PRINT"really means.  Maybe they'll name the":PRINT"new crater after you...
+950 PRINT:PRINT"Want to go again?";:A$=INPUT$(1)
+960 IF A$="Y"ORA$="y"OR A$="1" THEN TH=0:GOTO 205
+999 END

@@ -1,0 +1,75 @@
+This Documentation is written for an experienced programmer.
+Sometimes it is nice to fill the PASTE-Buffer from a program to give the user a 
+better Function-Key. Or to delete/insert bytes in Ram-Files.
+As an example I wrote a General-Update-Program for formatted files. If the user 
+deletes a whole entry, the contents is transferred to the Paste Buffer. So the 
+delete command is at the same time a copy command. Pressing PASTE brings all the
+bytes back through the normal Basic Input.
+Making use of the Paste is simple. But you should be aware of:
+
+The use of the CLEAR clears the Paste- Buffer too.
+
+The following little program renames the Hayashi-File as PASTE.DO:
+
+FORL=1TO9:POKE-1626+L,ASC(MID$("PASTE DO+chr$(0)",L)):NEXT
+
+If you execute it once the Paste Buffer can be accessed as the file "PASTE". But
+you should only open this file for input or append.
+If you open it for output then the Paste-Buffer is killed and reopened using 
+another directory entry. If this  happens mostly a cold start is the result of 
+pressing PASTE.
+
+But there is a way to empty a file without deleting it. Here is a little set of 
+ML subroutines which can be used for searching for the beginning of a file, for 
+deleting and inserting a certain amount of bytes, for searching single bytes...
+
+Search for start of File F$  GOSUB 1
+Find   A or EOF from Y       GOSUB 2
+Delete L Bytes  from X       GOSUB 3
+Insert L Bytes  at   X       GOSUB 5
+
+
+X or Y are adresses in memory
+A is an ASCII Value
+
+
+0 GOTO29
+1 FORI=1TOLEN(F$):POKE-878+I,ASC(MID$(F$,I)):NEXT:CALLVARPTR(M(0)),0,VARPTR(X)
+:RETURN:REM X=ENTRY from File F$
+2 M(39)=VARPTR(M(32)):CALLVARPTR(M(29)),A,VARPTR(Y):RETURN:REM Find A or Filend
+3 IFL=0THENRETURNELSEIFL>255THENL1=255:L=L-255:GOSUB4:GOTO3ELSEL1=L+1
+4 CALLVARPTR(M(13)),L1,X:RETURN:REM Delete L Bytes beginning with position x
+5 IFL=0THENRETURNELSEIFL>255THENL1=255:L=L-255:GOSUB6:GOTO5ELSEL1=L
+6 CALLVARPTR(M(10)),L1,X:RETURN:REM Insert L Bytes beginning with position x
+29 DEFINTA-Z:DIMX,Y,U,M(39):FORI=0TO38:READP:M(I)=P:NEXT:F$="PASTE.DO"+CHR$(0)
+30 FORL=1TO9:POKE-1626+L,ASC(MID$("PASTE DO+chr$(0)",L)):NEXT
+31 GOSUB1:REM Find RAM Position of F4
+32 Y=X:REM Prepare Y
+33 A=26:GOSUB2:REM Find EOF
+34 L=Y-X:GOSUB3:REM Empty File F$
+37 STOP
+70 DATA-27887,-6660,-21555,-11942,-14123,-7219,-11942,29675,29219,201,1615,-
+15616,27501,1615,-15616,27551
+91 DATA9054,-5290,-14146,-5341,11122,115,9054,-5290,2622,-16194,-5341,11122,-
+13965
+92 DATA3655,24090,22051,32491,-14152,-14151,29419,29483,8979,-15616
+
+
+Explanation of the ML-Subroutines:
+
+M(0)  Find Entry of a File
+M(10) Insert (File schould not be empty)
+M(13) Delete
+M(16) IF PEEK(Y)=EOF THEN RETURN
+         ELSE Y=Y+1  RETURN
+M(22) IF PEEK(Y)=LF  THEN Y=Y+1
+         RETURN
+M(29) IF PEEK(Y)=EOF THEN RETURN
+      IF PEEK(Y)=A   THEN RETURN
+      Y=Y+1 : GOTO M(29)
+
+We are selling M100 in Germany with CCITT Modem (Dubbed TELSTAR) and most of the
+people get some Software with the Hardware. Last two month they got software 
+based on the shown ML-Subroutines. There was no cold start reported, so I think 
+they are save.
+

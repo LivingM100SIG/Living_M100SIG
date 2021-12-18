@@ -1,0 +1,187 @@
+                PWRMNU.100  v4.0
+                (Pgm CKSUM = 150,664)
+         by Wilson Van Alst 76576,2735
+                    (c) 1988
+
+   PWRMNU.100 is a file management utility for use with the public domain 
+version of POWR-DOS, currently available in this forum library.  The program is
+posted here for the personal use of forum members, who should feel free to pass
+it along to friends, again for personal use.*
+
+        What It Does
+   PWRMNU is, in some ways, more powerful than commercial menu programs for the
+TDD.  For example it is much faster than DMENU, which was sold along with POWR-
+DOS, and it has multiple command features that the TS-DOS menu utility doesn't 
+support.
+   As you'd expect, PWRMNU creates a formatted display of files, file sizes, 
+and free memory -- and it allows you to switch the display back and forth 
+between RAM and Disk.
+   A widebar cursor moves across the display to select files.  You can use a 
+function key to transfer the selected file from Disk to RAM or vice versa.  
+Other function keys let you print, kill, re-name, or read the selected file.  (
+For people with P.G. Design RAM banks and the 0MENU utility, the function keys 
+will be in familiar places.)
+   The program also includes a "tagging" feature -- allowing *multiple* 
+operations on *multiple* files.  That is, you can select a group of files with 
+tagging; then you can select any combination of three commands -- transfer, 
+print, and/or kill.  All the operations are performed on all the tagged files.
+
+        Setting Up
+   PWRMNU.100 is written in BASIC.  In order to run it, you need two machine 
+language files in your M100.  The first is the public domain version of POWR-
+DOS, which sits as an invisible program at the very bottom of user memory.  The
+second is PWRHI.CO, by this author.  It takes up about 290 bytes of RAM; but 
+because it runs in an area of memory set aside for TELCOM use, it does not 
+require any change in HIMEM, and it should not conflict with other machine 
+language programs installed in your computer.
+   You create PWRHI.CO by downloading PWRHI.LDR from this data library and 
+running it once as a BASIC program.  After the run, you will see PWRHI.CO on 
+your menu.  You can then kill the loader -- though you may want to save it to 
+disk or tape first.
+   Remember, the menu program, PWRMNU.BA, will not run unless you have both 
+POWR-DOS and PWRHI.CO in your computer.
+
+	Running PWRMNU.BA
+      The Display:
+   When you select the program from the M100's main menu, you'll see a new 
+display.
+   The listing of file names is different.  In particular, the file name 
+extensions -- ".BA", ".DO", or ."CO" -- have been replaced by a single, lower-
+case letter: "b", "d", or "c".
+   A file like FILNAM.BA is shown as FILNAMb (easy enough to get used to; and 
+it was the only practical way to put a _lot_ of files on a little screen).
+
+        The Cursor:
+   As on the M100 main menu, a widebar cursor moves across the screen to 
+"select" files on the display.
+   You'll find that the cursor cycles forward when you press any "standard" key
+on the keyboard.  But you can also move it backward, or up and down, with the 
+arrow keys.
+   As you move the cursor from spot to spot, the size of the selected file is 
+displayed near the lower-right corner of the screen.
+
+        Function Keys: <F1> to <F8>
+   Here is a list of the function keys and what they do.  (Unless otherwise 
+indicated, the keys perform the same way on both RAM and TDD files.)
+
+        <F1> "<ALT>":  Switches menu display between RAM and Disk.
+        <F2> "<VIEW>":  Prints the selected file on the LCD.  For .DO files 
+only.  The <ESC> key lets you interrupt the viewing at any time and return to 
+the PWRMNU main display.  At the end of the file, you're prompted to hit the 
+spacebar for a return to PWRMNU.  If you want to stop the file while it's 
+scrolling, use the <PAUSE> key.
+        <F3> "<LPT>":  Sends the selected file to a printer.  As with the View 
+feature, the <ESC> key will abort the print at any time.  For .DO files only.  
+Printer must be connected.
+        <F4> "<XFER>":  Transfers the selected file to the "ALT" device -- to 
+Disk if you're displaying RAM files, or to RAM if you're looking at Disk files.
+  Any file type.
+        <F5> "<KILL>":  Kills the file under the widebar cursor.  Does *not* 
+ask for user verification; it just kills.  So be careful!
+        <F6> "<NAME>":  Re-names the file under the cursor.  At the "Name as:" 
+prompt, you can enter a new name with or without an extension; the correct one 
+will be added if you leave it out.  If you change your mind, pressing <ENTER> 
+without assigning a new file name will return you to the menu with no change.  
+This is for RAM files only.  It will beep and do nothing if you try to re-name 
+a disk file.
+        <F7> "<MORE>":  Disk only.  The PWRMNU display can show only 30 files 
+at a time.  If you have more than that on your disk, you'll see the word "More"
+appear in reverse video above <F7>.  To view files #31-40, press the <F7> key. 
+All other functions continue to work as they did before.  (If the "More" 
+indicator is not on, you'll also find that this key -- although unlabeled -- 
+allows you to view the menu for a newly loaded disk, without returning to the 
+RAM display.  Convenient if you're switching disks in search of a particular 
+file.)
+        <F8> "<MENU>":  Returns to the M100's operating system menu.
+
+        Tagging: <CTRL><T>
+   "Tagging" is your way of telling the program you want to execute several 
+commands on a single file, one command on several files, or several commands on
+several files.
+   You tag a file by selecting it with the widebar cursor, then pressing the <
+CTRL> and <T> keys simultaneously.  You'll see a pointer, ">", appear next to 
+that file.  The tag is left behind as the cursor moves forward, and the file 
+will then be grouped with any other tagged files for the command(s) you want to
+execute.
+   If you tag a file by mistake, it can be un-tagged by putting the cursor over
+it and again pressing <CTRL><T>.  The pointer will disappear.
+   If you've tagged a bunch of files but then change your mind about what you 
+want to do, pressing <CTRL><U> will un-tag *all* the currently tagged files.  <
+CTRL><U> also provides a convenient way to "home" the widebar cursor when no 
+files are tagged.
+
+        Selecting Multiple Commands: <F3> to <F5>
+   As described above, the function keys perform their operations as soon as 
+you press them.  They are working in
+the "immediate" mode.
+   There's an exception.   If any of the files are _tagged_, the <LPT>, <XFER>,
+and <KILL> commands will have no immediate effect.  Tagging one or more files 
+puts you in the "command" mode.
+   When you press a function key in this mode, you see the command highlighted 
+in reverse video.  Press the same key again, and the highlight disappears.
+   This is how you select a *combination* of commands to be performed 
+automatically on each of the files you've tagged.
+   As soon as _one_ file is tagged, you can turn commands on and off, or 
+continue with your tagging operation.  Nothing will happen -- until you give 
+the "Execute" command by pressing <CTRL><E>.
+
+        Execute: <CTRL><E>
+   This is what it's all about: multiple commands, executed automatically, on 
+multiple files.  Take a shower, eat lunch, have a swim (not in that order, 
+please) while your computer takes all those RAM files, prints them, transfers 
+them to disk, and kills them from RAM -- or any other command combination you 
+specified.  It all happens when you press the <CTRL> and <E> (for "<E>xecute") 
+keys simultaneously.
+   All you had to do was tag the files, select your combination of
+commands, and push <CTRL><E>.
+   There are two important things to keep in mind:
+        o  It doesn' matter where the widebar cursor is when you begin 
+execution.  Files are selected only by the tags; and if the file under the 
+cursor isn't tagged, it won't be included.
+        o  The *same* command or
+comand-combination is performed on *all* the tagged files.  For example, you 
+can automatically <XFER> and <KILL> files "A" and "B."  But there is no way for
+a single <CTRL><E> execution to perform *different* commands on the two files -
+- eg., only <XFER> file "A" and only <KILL> file "B".  (To do this, you should 
+operate in the un-tagged "immediate" mode: put the cursor over file "A" and 
+press <XFER>, then put the cursor over file "B" and press <KILL>.)
+   If the sense of this doesn't come through immediately (sorry, I'm not a tech
+writer by trade), I suggest some experiments with "TEST" files.  Again, it's 
+easier to do than to describe.
+
+
+        Thoughts:
+   The directory display does not show RAM files that you've made invisible; so
+there is no possibility of inadvertently moving them out of the machine or 
+killing them.  For this reason, it might be wise to make PWRHI.CO invisible -- 
+using one of the many utilites in Lib 7 that accomplish this -- so you don't 
+have to worry about erasing it accidentally.
+I am still refining the 9/7/88 version (v4.0) of this program.  It is highly 
+functional as it sits, but it could use some further bytefighting, a little 
+more error trapping, and maybe an added feature or two.
+   Chief among those, perhaps, is an "Are you sure??" prompt for the KILL 
+function.  I will gladly tell anyone how to add this safeguard if they want it 
+right away.
+   Other possibilities: a "Printer not connected!" warning ... the ability to 
+run a program or enter a .DO file directly from PWRMNU ... a "global tagging" 
+feature -- like <CTRL><U> in reverse -- to put tags on all the displayed files;
+a date and/or time display; and ...??
+   I am very much hoping users will comment on the current version -- whether 
+they like it or not -- so that we can, mutually, make it *the* definitive menu 
+program for POWR-DOS.
+   Lastly, my thanks to Beta tester Randy Hess, who convinced
+me that plucking data off the LCD is a worthwhile pursuit (a core element of 
+PWRMNU) and who kept prodding for improvements every time I thought this 
+program was ready to fly.  Thanks to Paul Globman, who helped sort out the  
+mysteries of pulling information from the TDD directory.  And thanks, of 
+course, to Acroatix, the people who wrote, marketed, and then "went public" 
+with POWR-DOS.
+   Best to all,
+        Wilson Van Alst  76576,2735
+
+*In no case is this program to be published or distributed on a mass basis 
+outside the Compuserve Model 100 Forum, whether a fee is charged or not, 
+without the written consent of the author, who reserves all rights to the
+program and its contents.
+
+

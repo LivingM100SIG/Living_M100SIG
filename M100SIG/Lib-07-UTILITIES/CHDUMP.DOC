@@ -1,0 +1,113 @@
+Documentation for CHDUMP.BA
+(Excerpted from Portable 100 magazine, May 1990)
+Copyright 1990 Tri-Mike Network East -- All rights reserved.
+
+IMPORTANT FIRST STEP!
+	Line 10 should be all one line, with just a single CRLF at the end.
+In downloading, it may be broken up. Be sure to remove all extraneous CRLF's
+except for the one at the end of line 10. All other lines should be okay as
+delivered.
+
+ABOUT THE PROGRAM
+        CHDUMP.BA is derived from George Flanders' screen dump program,
+DMP100.102 elsewhere the data libraries (and published in the May 1990 issue of
+Portable 100, as was this program). It simply prints a copy of the Model
+100/102 screen to an IBM-compatible printer.
+        This program works much like George's original, using the same
+keystrokes to start and to disable the screen dump. The major difference is
+that, while his program is a .CO file that operates high RAM, mine is machine
+language packed inside a .BA file, which resides in low RAM, thus minimizing
+conflicts with other .CO files, like print formatters, disk operating systems
+(e.g., FLOPPY), screen enhancement software (e.g., Ultrascreen, View-80), and
+what-have-you.
+        To use CHDUMP.BA, type it in and save it as CHDUMP.BA (it expects that
+name). To save memory, you may leave out unnecessary spaces and delete remarks,
+but you must use all existing line numbers, and remark lines must contain at
+least the line number and the apostrophe. If in doubt, just type it in exactly
+as shown. This creates the BASIC installer program. Save it to tape or disk, so
+you'll never have to type it in again.
+        Before running the installer, first kill any .BA files that you may
+later want to remove. Some BASIC programs don't show a .BA extension (for
+example, UR-2, RANDOM, T-WORD+). When in doubt about a file, kill it. You can
+reload it later.
+        CAUTION: Mistakes made in typing CHDUMP.BA can have potentially
+disastrous results. The first time you run it, back up any important files
+first!
+        Now you can run CHDUMP.BA. When run, it installs the machine code into
+line 10, and then deletes any unneeded lines, shrinking itself from 3K to 277
+bytes. CHDUMP.BA is now ready to use. (If you get a Load Error message, see the
+LOAD ERROR section below.)
+        To arm the program (i.e., to make it ready to do a screen dump) just
+run it from the main menu like any other .BA program. The Model 100/102 main
+menu quickly returns, and CHDUMP.BA is missing. It's been made invisible so
+that it can't be killed. Killing it while it's armed can cause a cold start. To
+indicate that it's armed, BASIC on the main menu is now named BASIC+, and any
+time you press the ESC/GRPH key combination, it will initiate a screen dump to
+your printer. If the printer is not connected and ready, the computer will beep
+to inform you.
+        To disable CHDUMP, press ESC/CODE. When you return to the main menu,
+BASIC has lost the + symbol, and CHDUMP.BA is back on the menu. It is now
+disarmed and can be safely killed. However, being so small, it is usually
+easier to leave it on the menu, making it convenient and handy whenever needed.
+
+CAUTIONS AND CLARIFICATIONS
+        First, never edit the installed CHDUMP. The embedded machine code in
+line 10 may run afoul of the computer's editor, and it may refuse to restore
+itself to .BA form, forcing you to kill it and start over.
+        Second, if you disable it from the main menu, CHDUMP.BA won't reappear
+(and BASIC+ won't lose the +) until you've left the main menu and returned. A
+bit of a quirk, perhaps, but what do you want from a 277-byte program?
+        Third--and this applies to George Flanders' original version as well--
+when pressing ESC/GRPH or ESC/CODE, you must first hold down GRPH or CODE, and
+then press ESC. If you press ESC first, nothing happens. It has to do with the
+way the M100/102 scans for keys; nothing we can do about it.
+        And finally, don't bother saving the installed (277-byte) CHDUMP.BA to
+tape or disk, intending to reload it later to avoid hassling with the normal
+installation procedure. Upon reloading, it won't be able to find itself in the
+directory, so it won't work properly. In other words, if you ever remove
+CHDUMP.BA, always reinstall it using the uninstalled (3K) version, as described
+above.
+
+LOAD ERROR
+        Packing machine language into a .BA program (as CHDUMP does) can be a
+complex affair, because you can't predict where the program will reside in
+memory. Since the values of certain bytes depend on the program's location,
+sometimes a byte contains a value BASIC misinterprets. The Load Error message
+warns you of such a byte. You must move the code higher in memory, a byte at a
+time, until all bytes are acceptable to BASIC. Here's how:
+
+1. Type NEW and press ENTER. Type KILL "CHDUMP.BA" and press ENTER.
+2. Load a fresh copy of CHDUMP.BA from disk or tape, and save it to RAM as
+CHDUMP.BA.
+3. Edit line 10 (type EDIT 10 and press ENTER). Insert an X right after the
+REM, making it REMX. Then press F8.
+4. Edit line 100 (type EDIT 100 and press ENTER). Change X=0 to X=1. Then press
+F8.
+5. Edit line 870 (type EDIT 870 and press ENTER). Change the +5 to +6. Then
+press F8.
+
+        You've just moved the program code up one byte in memory. Try running
+the program again. If it still fails, repeat steps 1-5, inserting another X in
+line 10 (e.g., REMXX) adding 1 more to the numbers in lines 100 and 870, and
+then run it again. One or two X's should do the trick. If you've added 5 or 6
+of them without success, carefully check your program listing for errors.
+
+COMPATIBILITY
+        As described in George Flanders' documentation, the program uses the
+CHGET hook in the Model 100/102 keyboard ROM routine. Some other programs may
+alter that hook without first checking to see if it's in use, and/or without
+restoring its contents afterward. See George's docs for further details. Until
+you've experimented a bit and are sure of its compatibility with your other
+programs, make frequent backups. (Good advice when using any new software.)
+
+HAPPY TRAILS
+        Well, that's it. Use and enjoy. Catch ya! -- Nuge --
+
+
+Afterthoughts: I've learned that the Gemini X10 printer uses different codes
+to set up the left margin and linefeed spacing. Change last three DATA values
+in line 810 from 27,108,10 (ESC"l"10) to 27,77,10 (ESC"M"10) for left margin.
+Also change the first three DATA values in line 820 from 27,51,24 (ESC"3"24)
+to 27,51,16 (ESC"3"16) which sets the linefeed spacing to more closely suit
+the Gemini. Experiment with different values near 16 until you find one that's
+pleasing to your printer.

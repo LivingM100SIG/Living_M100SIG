@@ -1,0 +1,130 @@
+
+
+
+
+
+
+                         The CHIPMUNK DISK PEEKER/POKER
+
+                                  By Tim Ekdom
+
+
+            DISKPP.BA is a disk  utility  program  that  enables  us  to
+        discover how CDOS and the Chipmunk store our files on disk.   It
+        also enables us to attempt recovery of files that have been lost
+        due to corruption of data on  the  disk  or  due  to  unintended
+        deletion.
+
+
+        CDOS DISK FORMAT
+
+            CDOS organizes the disk into 80 tracks, numbered  0  through
+        79.  Each track has 18 sectors, numbered  1  through  18.   Each
+        sector contains 256 bytes of data.  Each track is also organized
+        into three clusters, each containing six  sectors.   Thus  there
+        are 240 clusters per disk, numbered from 0 through 239.
+
+            CDOS  organizes  the  files  stored   on   the   disk   into
+        directories.  Each directory has room for up to 24 entries.  The
+        type of file organization used is often called a "tree"  because
+        the main directory is like the trunk of a  tree  which  branches
+        into sub-directories like the  branches  of  a  tree.   The  top
+        directory, or "trunk" will be referred to as the main directory.
+        The  "branches"  will  be  referred  to  as  sub-directories  or
+        "folders"  (which  is  the  term  that  CDOS  uses  for  a  sub-
+        directory).  Each directory has a name: the main  directory  has
+        the disk name and sub-directories  have  a  folder  name.   Each
+        folder may contain both files and folders.   Files  and  folders
+        are visible on the menu only when you  are  located  within  the
+        directory in which they are contained.
+
+            CDOS keeps track of where each  file  is  stored  through  a
+        directory entry for each folder in combination  with  a  cluster
+        allocation table.  The main directory and allocation  table  are
+        stored in cluster 0, which is on track 0.  Each sub-directory is
+        stored in its own cluster.
+
+            A directory has space for  26  "slots",  each  18  bytes  in
+        length.   The  directory  name  (or  disk  name  for  the   main
+        directory) and the first twelve entries are in the first  sector
+        of the directory cluster, and the name (again)  and  the  second
+        twelve entries are in the third sector.  A copy of the same data
+        is kept in the same format on second and fourth sectors  in  the
+        cluster.  The directory name uses only 10 bytes of the first  18
+        byte slot.  The rest have the following format:
+
+
+
+
+
+                                     - 1 -
+
+
+
+
+
+
+
+
+
+                Bytes    Usage
+                    1    entry type
+                 2-10    entry name (folder in lower case,
+                         file in upper case)
+                   11    number of bytes in last sector
+                         of last unfilled cluster
+                   12    number of cluster where entry starts
+                13-14    date created
+                15-16    date modified
+                17-18    unused at present
+
+            The entry types are as follows:
+
+                Value    Type
+                240      this entry is a folder
+                128      BA file
+                160      CO file
+                192      DO file
+                  0      this entry slot is available
+
+            If the entry is a folder, the byte  containing  the  cluster
+        number designates the cluster where the  sub-directory  will  be
+        found.
+
+            The allocation table is in sectors five and six  of  cluster
+        0, one copy in each sector.  It uses 240  bytes,  one  byte  for
+        each cluster, numbered 0 - 239.  If the value of the  associated
+        byte is zero, then that cluster is available for use.  If it  is
+        1 - 239, then that cluster is in use, is full, and the  file  it
+        contains is continued in another cluster. The value of the  byte
+        is the number of the cluster where the file is continued. If the
+        end of the file is within that  cluster,  it  will  contain  the
+        value 240-246, where the number of sectors the file occupies  in
+        that sector can be found by subtracting 240.  For example:
+
+                Byte     Contents
+                   5            6
+                   6            7
+                   7          242
+
+            The file  starting in cluster 5 is continued  in  cluster  6
+        and on into cluster 7, where it ends.  It occupies  two  sectors
+        of cluster 7. The directory entry for  that  file  contains  the
+        number of bytes found in the second sector of cluster 7.  If the
+        byte's value is 254, that cluster has been  marked  by  CDOS  as
+        unavailable for use.
+
+
+
+
+
+
+
+
+
+
+                                     - 2 -
+
+
+
+

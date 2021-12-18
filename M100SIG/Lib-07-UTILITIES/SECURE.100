@@ -1,0 +1,13 @@
+0 'This program will "lock" your M100, preventing power on until the 
+1 'modem switches are set to "DIR" and "ORG".  Until then, the machine appears
+2 ' "dead".  There is a away around this program, so if you're really paranoid
+3 ' you may wish to replace the "power off,resume" in line 20 with a "call
+4 ' 32231" which will cold start the machine.  The totally paranoid may 
+5 ' which to load the keyboard buffer with a BASIC EDIT command to null out
+6 ' memory.  Better remember you did this mod however, as the destruction
+7 ' is fast and nonforgiving.  LOAD this pgm, delete comments, and save as a .ba
+8 ' file.  Execute form main menu for best appearance.  Bob Scott 73125,1437
+9 POKE63056,128:POWEROFF,RESUME
+10 K%=INP(187)AND48
+20 IF K%<>0THENPOWEROFF,RESUMEELSEPOKE63056,0:MENU
+30 GOTO10

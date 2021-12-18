@@ -1,0 +1,135 @@
+ 
+              Programming Notes for the WP-2
+ 
+   This file and the others in this series outline the problems
+and solutions encountered while writing assembly language
+programs for the WP-2, and attempt to clear up some of the
+inconsistencies, oversights, omissions, and outright errors in
+the WP-2 Service Manual.  This file will cover programming in
+general: program file format, return procedure, and the like. 
+Other files will cover specific topics such as graphic
+programming and some notes on the ROM routines.
+   To start out, I suggest you get a copy of the Service Manual 
+if you do not already own one.  Much as I hate to recommend it,
+it contains several essential charts and tables.  The casual
+programmer might get away with just a listing of ROM routines,
+but although I will try to explain as many of the routines as I
+can as well as I can, I am not going to list full information on
+them, as such action would tread on the copyright of the book. 
+Anyway, there is no such thing as a casual programmer in
+assembly language....
+   The next thing you will need is a Z-80 assembler.  For those
+of you who are unfamiliar with assembly language, an assembler
+takes programs written in assembly language (the source code)
+and converts them to machine language (the object code).  Assembly
+language is composed of low-level instructions, mostly binary 
+arithmetic and logic, but is still semi-readable as long as you
+are familiar with it.  Machine language is nothing but numbers,
+which the microprocessor (in this case a "Z-80 type") can read
+and each of which stand for one of the above mentioned
+instructions.  So an assembler takes the instructions and
+converts them to their corresponding numbers (btw, the numbers
+are properly called op-codes).
+   As an assembler is not yet available for the WP-2, you will
+have to devise some other setup.  Right now, I'm using a TRS-80
+model 3 with a fairly cheap editor-assembler and running the
+object code through a conversion program to get it to WP-2
+format.  Debugging the program is another problem, especially
+when the program must be downloaded every time a change is made.
+Hopefully a debugger and assembler will be available in the near
+future for the WP-2.
+   Once you have your program all assembled, you must put it in
+"WP-2 format", so the WP-2 will recognize it as a program.  This
+is accomplished by adding the appropriate header to the
+beginning of the file.  The header for a program file in RAM is
+eight bytes long.  The first two bytes are 'PR' in ASCII.  The
+other six bytes are program size, entry address, and load
+address, in that order.  Each is a 16-bit word, stored least
+significant byte, most significant byte as is normal for a
+16-bit value in assembler.  Specify a load address of 0000 for
+normal load at AC00 (all memory address references here are in
+hex).  This header is all that is needed for a program file to
+run (but be sure to strip off any formatting your assembler may
+put in).  The header for an IC-card ROM file is a bit different,
+and I won't detail it since I've no way of testing it.
+   According to the memory map in the Service Manual, available
+memory runs from AC00 to FFFF.  This includes files stored in
+main memory, but they are automatically moved out of the way if
+they occupy the memory that your program resides in, provided
+you have specified program size correctly.  I experienced some
+very harsh results from bad size specs, so if your program keeps
+bombing for no apparent reason, try increasing the size.
+   Once you have your program written, downloaded, converted,
+and whatnot, it is time to RUN it.  This is accomplished by
+going to the Files menu, highlighting the appropriate file and
+pressing RUN (F2-7).  If all goes well, your program will be
+copied from wherever you have it stored into memory at the
+appropriate location (I haven't tried any load address other
+than 0000, for AC00, though).
+   If the WP-2 beeps at you and gives you a highlighted message
+'Not program file', you have a bad header on the program. 
+Correct the header and try again.  If it beeps and says 'No
+memory', there is not enough free space in main memory to load
+the program.  Delete some files or move them out of main memory.
+ If it beeps and says 'Delete (y/n)', there is already a program
+resident in memory, and the WP-2 can only handle one at a time. 
+Press 'n' if you decide to keep the previous program in memory
+and return to the files menu, or 'y' if you decide to delete the
+old program and run the new one.  Note that deleting the program
+from memory will not affect your original run-file.  Keeping
+program files resident in memory is discussed later.
+   You can RUN files from main memory or the ram disk, and I am
+told you can run them from a RAM IC-card or disk drive also. 
+There seems to be a problem with the copy command or the file
+handler for main memory, though, that makes it screw up when
+copying a program file with an EOF character (1A hex) in it into
+main memory, so be careful with that.  You can name your program
+file anything, with any extension you happen to be in the mood
+for.  I've been using .CMD, since .CO looks too much like .DO
+for my taste.
+   As for writing the program itself, there are a few things to
+keep in mind.  Make sure the program is bomb-proof before
+releasing it for general consumption.  It's a scary feeling when
+you realize the OFF button doesn't work.  Never have the program
+write to a buffer that is not allocated as program space.  For
+example, to reduce program file size, I usually don't include
+blank buffers in the program file itself.  Instead I just
+address them at the end of the program.  If you do this, make
+sure you include the buffers while calculating size.  I haven't
+tried this with a WP-2 program, so I don't know what it will do
+when it finds the file is not as big as the the header says the
+program is, but it should work.
+   There are some things to keep in mind with program exit also.
+First of all, make sure the stack pointer is at the same point
+as it was on program entry.  This goes for all assembly language
+programming, not just the WP-2, but some machines have a
+facility for error recovery or a back-to-DOS feature where it
+doesn't matter what the stack pointer is.  The WP-2 does not. 
+If you ever want to see that Files menu again, you'll have to
+POP every PUSH and RET every CALL before exiting the program. 
+This complicates error handling greatly, especially when you
+pick up an error in a sub-sub-sub-routine, but it can be worked
+around.
+   When you do get around to exiting the program, you must set
+the accumulator (the A register) as a flag to tell the operating
+system if the program memory can be returned to free space, or
+if the program must remain resident.  If the program is a driver
+that will be called every time the Ctrl-F1-Tab keys are pressed
+(for instance), you will want it to remain resident in RAM. 
+Otherwise, you might as well return the program area to free
+space.  Note that if you have a program resident in memory, and
+try to RUN another program, the WP-2 will beep at you and give
+you a 'Delete (y/n)' message (see above).  To request the
+program to remain resident, exit the program (with a RET
+instruction) with A set to FF hex.  The Service Manual states
+that A "must" be FF, but I've found that anything but 0 will
+cause a 'Delete (y/n)' message the next time a program is RUN. 
+To return the program area as free space, exit with A set to 0. 
+The sample program in the Manual uses XOR A (which is faster and 
+uses one less byte than LD A,0).
+   That's about it.  I wish you well on your own Adventures in
+WP-2 Land.
+ 
+ 
+   Michael F. Klar - 4 Fleetwood Dr. - Somerville, NJ 08876
+ 

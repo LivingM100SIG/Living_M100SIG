@@ -1,0 +1,279 @@
+NAV2.BA Version 2.0
+DOCUMENTATION
+(c) 1991 Gary L. Van Balen
+All Rights Reserved
+Distribution By Permission Only
+Contact Author on CIS [71500,611]
+
+BACKGROUND:
+
+The program NAV2.BA (a.k.a. NAV2.BAS) can be used to help keep track of your
+progress while driving on interstate highways.  It was inspired by a program
+called NAV5 by William F. Green that was featured in the December 1990 issue
+of Portable 100 magazine.  After trying NAV5, I found that it didn't quite
+meet my needs so I wrote NAV2.BA, which I think is an improvement on the
+concept.
+
+NAV2.BA is a navigation tool that draws a simple highway map on the LCD
+display and provides other interesting information about your status.  The
+display includes important milestones along the map, your position on the map
+relative to the milestones, ETAs to the milestones, and remaining fuel in your
+tank.  NAV2.BA's calculations are based on a map data file you create using
+the TEXT application, elapsed time, and average driving speed and fuel
+consumption numbers you provide the program.  The map is drawn to scale and is
+displayed in 54 mile segments on the M100/102 and 118 mile segments on the
+M200.  You can "scroll" the map up and down to view the rest of it as
+necessary.  The size of the map and distance covered is limited only by the
+amount of RAM available for its storage.
+
+PROGRAM REQUIREMENTS:
+
+The program was written on a M102, but it should work on M100's  and M200's
+with  no modification.  Version 2.0 corrects for the M200's different display.
+ I have not tested NAV2.BA on anything other than a M102.
+
+The checksum for NAV2.BA Version 2.0 is 384255 (as of 2/23/91).
+
+You make map files with the built-in TEXT application or any wordprocessor
+that produces an ASCII file.  You can get the information for the map file
+from a regular road map.  A map file is a "sequential" data file consisting of
+a record for each milestone you want to show on the map.  Each record has two
+fields.  The first field is the distance to the milestone and the second field
+is a short milestone description (only the 1st 15 characters of the
+description will be displayed on the map).  The fields of each record must be
+separated with a comma and the record must be terminated with a return.  The
+last record in the map file must contain "9999,END" or problems will result. 
+The following is a sample map file.
+
+0,Pittsburgh PA
+12,Rt 50 Ext & Oh Rvr
+20,Evergreen Rd Exit
+39,Rest Stop
+60,Rt 422 Exit
+69,Moraine St Prk
+150,Erie PA
+9999,END
+
+Note that distance in the map file is total distance to the corresponding
+milestone, not the distance between milestones.  Save the map file after
+entering the data using a name like MAP.DO or something similar.
+
+PROGRAM OPERATION AND DESCRIPTION:
+
+When you select NAV2.BA from the main menu of the M100/102 or M200 you'll see
+a title screen followed by a warning about operating motor vehicles while
+under the influence of a portable computer (I strongly recommend that someone
+other than the driver operate the computer for obvious safety reasons).  Each
+of the screens will go away in a few seconds or you can press (almost) any key
+to make them go away.
+
+Next the program displays the top level of files in RAM and you're asked for
+the name of the map file to use.  You might have several map files in RAM -
+one for different trips.  Enter the name of the file you want to use without
+the ".DO" extension then press ENTER.
+
+You will then be asked to enter initial values for your estimated average
+driving speed (SPD), current position or distance along the map (DST), fuel
+load (FUL) and estimated fuel consumption (MPG).  You can press ENTER if you
+want to accept the default values provided by the program or the NAVDAT.DO
+file mentioned later in this document.  Change the line after the line that
+says 'SET DFULT VLUS (near the top of program) if you want different default
+values.  (NOTE: Program line numbers are omitted to make maintaining this
+documentation easier - line numbers change with every version.)  The program
+also beeps a warning when your remaining fuel reaches a default 5 gals. 
+Change the line after the line that says 'LO FUL FLG (also near the top of the
+program) if you want some other value.
+
+Next you see the main display.  The main display includes the following:
+
+A vertical line (map) on the left of the display that represents the road.  On
+the left side of the line are "tick" marks marking off each 5 miles.  You'll
+note that each pixel on the display is equal to one mile and the line is 54
+miles long at this scale on the M100/102 and 118 miles on the M200.
+
+On the right side of the vertical line are "tick" marks at the location of
+each milestone in the map file.  These are also drawn in the proper place
+according to the map's scale.
+
+Also on the right side of the vertical line is a "current position" indicator
+that increases in length as time passes.  This line starts at the bottom of
+the "map" and moves toward the top - giving you an idea of where you are
+relative to the milestones you've entered.
+
+To the right of each milestone tick mark is a distance for the milestone. 
+These are the distances you entered in the map file.
+
+To the right of each milestone distance is the corresponding milestone
+description (1st 15 characters only) you entered in the map file.
+
+NOTE: If any two of your milestones are closer than 10 miles to each other,
+the one that's farther away will over write the other on the display, but both
+tick marks will be shown on the map.  Sorry, this can't be avoided.
+
+To the right of each milestone description is a calculated estimated time of
+arrival (ETA) based on your current position and average driving speed.  ETAs
+for milestones behind your current position may need to be updated manually -
+see description for F2 (ETAs) below.
+
+On the right side of the main screen is a "Data Window."  This "window" shows
+the current speed (SPD), distance along the map (DST), fuel remaining in your
+tank (FUL), fuel consumption (MPG), and time of day.  This is the data that
+the calculations are based on.  You can modify this data on the fly using the
+"F-KEYS" as mentioned below.
+
+The bottom line of the display shows the labels for the F-KEYS.  F1 through F8
+and the "Arrow Keys" are used for the following functions:
+
+F1 (GO/STOP) is used to start and stop the elapsed time clock.  Elapsed time
+is used in all the calculations the program does.  Press GO (F1) when you
+start driving.  The label for F1 changes to "STOP."  Press STOP (F1) when you
+stop driving - for gas, food, etc.
+
+F2 (ETAs) is used to update the ETAs shown for each milestone.  The only time
+it's necessary to do this is if the current map section has been up for a
+while and you want to know how long it will take to turn around and drive back
+to a milestone you've passed.  The ETAs shown for the milestones ahead of you
+are correct, but the ones behind you need to be updated because the ETAs
+change as you drive away from them.  NAV2.BA doesn't update these
+automatically because the update process would slow things down too much.
+
+F3 (SPD+) is used to increase the average driving speed used in calculations
+by 0.5 mph.  The new SPD is shown in the data window and is used in all
+subsequent calculations.  Increase SPD if you find you are driving faster than
+you estimated - or drive slower.
+
+F4 (SPD-) is used to decrease the average driving speed used in calculations
+by 0.5 mph.  The new SPD is shown in the data window and is used in all
+subsequent calculations.  Decrease SPD if you find you are driving slower than
+you estimated - or drive faster.
+
+F5 (DST+) is used to increase the distance calculated to match that actually
+covered.  The new DST is shown in the data window and is used in all
+subsequent calculations.  Use this key to update the computer if you find it's
+behind when you pass a milestone.  You might want to increase SPD or drive
+slower too.
+
+F6 (DST-) is used to decrease the distance calculated to match that actually
+covered.  The new DST is shown in the data window and is used in all
+subsequent calculations.  Use this key to update the computer if you find it's
+ahead when you pass a milestone.  You might want to decrease SPD too.
+
+F7 (FUL+) is used to increase the calculated amount of fuel remaining to match
+that shown on your car's fuel gauge.  You may want to increase MPG too.
+
+F8 (FUL-) is used to decrease the calculated amount of fuel remaining to match
+that shown on your car's fuel gauge.  You may want to decrease MPG too.
+
+LT Arrow is used to decrease MPG.  The new MPG is shown in the data window and
+is used in all subsequent calculations.
+
+RT Arrow is used to increase MPG.  The new MPG is shown in the data window and
+is used in all subsequent calculations.
+
+UP Arrow is used to scroll the map ahead in 54 or 118 mile increments. 
+Distances, milestones and ETAs are shown for the part of the map you're
+viewing.  A current position indicator will not appear if you are displaying a
+part of the map you haven't gotten to yet.
+
+DN Arrow is used to scroll the map back in 54 or 118 mile increments. 
+Distances, milestones and ETAs are shown for the part of the map you're
+viewing.  The current position indicator will appear from the bottom all the
+way to the top of the map if you are displaying a part of the map you have
+past.
+
+SPACE BAR is used to quickly scroll back to the "current" section of the map. 
+Press the SPACE BAR instead of repeatedly pressing the scroll keys to get back
+to the current section of the map.  This way you can get back without looking
+at the display.  Pressing the SPACE BAR also redraws the entire display so you
+can use it to "repair" the display if it gets messed up somehow.
+
+T or t is used to temporarily exit NAV2.BA so you can edit your map file using
+the TEXT application (only on the M100/102).  You can press T or t at any time
+while running NAV2.BA.  TEXT works as usual, except when you press F8 to quit
+TEXT you'll be returned to NAV2.BA right where you left.  NAV2.BA will display
+the revised map file and recalculate where you are relative to the milestones.
+ This feature is handy for adding or revising milestones in your map file on
+the fly.  By the way, the code in NAV2.BA that allows TEXT to be called from
+within a BASIC program is from a copyrighted program called TXTCAL.100 by Mo
+Budlong (CIS: 76167,3310).  NOTE - This feature is turned off if you are using
+a M200 because TXTCAL.100 doesn't work with the M200 ROMs.  TXTCAL.100 also
+doesn't work with "FLOPPY" or Node ROMs.  Unfortunately the program can't
+detect if you'er using these so if you are, you'll have to manually make a
+simple modification to a line of the program - see below for details.  
+
+Q is used to quit the program and get back to the main menu.  That's a "Q" not
+"q" (to reduce the chance of quitting by accident).  When you stop for gas,
+press F1 to stop the elapsed time clock then press "Q" to exit the program. 
+After getting fuel, rerun NAV2.BA and enter the new fuel load when entering
+initial values.  Using "Q" to exit the program saves the last values for SPD,
+DST, FUL and MPG in a text file called NAVDAT.DO.  When you rerun NAV2.BA, the
+values in NAVDAT.DO are used as the defaults instead of those in the code of
+the program (in the line after the one that says 'SET DFULT VLUS).  This
+provides a handy way of picking up where you left off on a trip.  If you don't
+use "Q" to quit, you'll have to remember SPD, DST, FUL and MPG and reenter
+them all when you rerun the program.
+
+The rest of the keyboard is dead except for the PAUSE/BREAK, PASTE, LABEL and
+PRINT keys.  Don't press them - they cause problems for NAV2.BA.  If you do
+press PAUSE/BREAK, PASTE, LABEL or PRINT, you'll probably have to press the
+RESET button on the back of the computer then rerun NAV2.BA.
+
+FINAL THOUGHTS:
+
+When using NAV2.BA you can leave the computer on as you drive so you can check
+your progress at a glance - the display will stay on as long as the batteries
+hold up.  If you're concerned about conserving power, you can get an adaptor
+to run the computer from the car's electrical system, or, you can turn off the
+power switch WITHOUT QUITTING THE PROGRAM.  When you power back up, the
+program will update its elapsed time clock & calculate correct numbers for DST
+and FUL, but you'll have to press the space bar to redraw the display.
+
+Carmen Paone [72677,42] has brought to my attention that TXTCAL doesn't work
+with FLOPPY or NODE ROM.  He said: "It won't work with FLOPPY since FLOPPY
+hogs the area to HIMEM and won't share it with other programs.  It won't work
+with the NODE ROM chip; in fact, it causes garbled files on the DATAPAK
+directory".  Because of this I've added a remark in the first few lines of the
+program that should be modified by those using NAV2.BA on M100/102 systems
+with FLOPPY or the NODE ROM.  The line that needs to be changed is normally a
+remark that reads:
+
+'NA=54:LL=280:MDL=0:GOTO 16 'IF FLOPPY OR NODE ROM IN M100/102
+
+This line is normally ignored during program execution since it's a remark. 
+To modify it, and make NAV2.BA work on systems with FLOPPY or the NODE ROM,
+just remove the single quotation mark and turn it into an executable
+statement.  It should look like this if you have to make this modification:
+
+NA=54:LL=280:MDL=0:GOTO 16 'IF FLOPPY OR NODE ROM IN M100/102
+
+When you run the program with this modification, all the TXTCAL related code
+that would cause you problems will be skipped.  It follows that you wont be
+able use the "T" feature mentioned above.
+
+Carmen has also mentioned that Will Linden's TXTJMP.200 will do the same thing
+in the M200 as Mo's TXTCAL does in the M100.  Will's program resides in the
+ALTLCD buffer and doesn't cause conflict with Floppy or the Node rom. 
+However, it does give users of the Cleauseau/ROM2 rom fits and causes screen
+lockups.  One may want to consider adding TXTJMP to NAV2.BA to get the same
+map file editing capability as the M100 version.
+
+That's all except I'd like to thank Carmen Paone, Mo Budlong for the use of
+his TXTCAL.100 code and Tony Anderson for his help.  Also, I'd like to know
+what you think of NAV2.BA.  Please send any comments, suggestions and bug
+reports via E-Mail on CIS.  I don't want to hear about anyone using NAV2.BA
+while doing 70 mph at night in a blizzard (the road conditions the 1st time I
+used it).  Finally, I don't intend to make a career out of NAV2.BA, but if I'm
+in a goooood mood, I may kill some bugs.  Have fun - and keep your eyes on the
+road!
+
+Gary L. Van Balen
+[71500,611]
+
+REVISION HISTORY:
+
+02/21/91
+Added code to identify which computer program is running on (M100/102 or M200)
+so TXTCAL.100 code could be skipped if running on M200.  Added code to correct
+for M200 screen size.  Added comment that can be changed to a statement by
+removing single quotation mark if user is running program on M100/102 system
+with NODE ROM or FLOPPY.  Revised Documentation to reflect changes.

@@ -1,0 +1,329 @@
+
+
+
+
+        SORTING RANDOM FILES ON DISK
+
+            We can easily sort files too large to fit into memory by
+        sorting them on disk.  Here's the coding for our Shell-Metzner
+        sort, all done on disk:
+
+            1000 ' Shell-Metzner sort subroutine:
+            1010 OPEN "0:DATA.DO" FOR RANDOM AS #1
+            1020 FIELD #1,AA$:8,BB%:2,CC$:4
+            1030 NR=LOF(1)
+            1040 GP=NR
+            1050 IF GP<=1 THEN CLOSE#1:RETURN
+            1060 GP=INT(GP/2)
+            1070 TP=NR-GP
+            1080 EX=0
+            1090 FOR N=1 TO TP
+            1100   GET #1,N:A1$=AA$:B1%=BB%:C1$=CC$  ' get all
+                   fields, assign to other variables
+            1110   GET #1,(N+GP):A2$=AA$:B2%=BB%:C2$=CC$
+            1120   IF A1$<=A2$ THEN 1190  ' compare key fields
+            1130   AT$=A1$:BT%=B1%:CT$=C1$  ' exchange all fields
+            1140   A1$=A2$:B1%=B2%:C1$=C2$
+            1150   A2$=AT$:B2%=BT%:C2$=CT$
+            1160   AA$=A1$:BB%=B1%:CC$=C1$:PUT #1,N  ' put them back
+            1170   AA$=A2$:BB%=B2%:CC$=C2$:PUT #1,(N+GP)
+            1180   EX=1
+            1190 NEXT N
+            1200 IF EX=0 THEN 1050
+            1210 GOTO 1080
+
+            It's best to sort in RAM if possible.  Sorting in RAM is
+        fast and saves wear and tear on the disk drive.  But some
+        programs and files hog so much memory it's nice to have the
+        option of sorting on disk.
+
+            Another sort that works good on disk or in RAM is called
+        the "Heapsort."  It's supposed to be good for large lists in a
+        high state of disorder.  (Unfortunately, it doesn't work on
+        that BASIC spaghetti code that gets stuck in an infinite
+        loop).  The Heapsort uses the concept of a "heap."  A heap
+        exists when any element "i" in a list a(1) - a(n), referred to
+        as a "parent" has "children" at elements "2i" and "2i+1" such
+        that the parent >= both children.  In phase one, the list is
+        turned into heaps.  Each parent is checked to make sure that
+        the children's values are less, and if not, exchanges are
+        made.  If the children are parents of other children, they are
+        also checked when exchanges occur.  The largest value in the
+        list ends up in the "root" parent: a(1).  At this point, the
+        list isn't sorted, but each element is a heap.  In phase two,
+        the value at a(1) is placed at the end of the list, a(n), and
+        all elements below a(n) are again made into heaps.  The
+
+
+
+                                    - 44 -
+
+
+
+
+
+
+
+
+
+
+
+        process repeats, decrementing the end of the list each loop.
+        Upon reaching the front of the list, all elements are in
+        ascending order.  Here's the code:
+
+            1000 ' Heapsort subroutine
+            1010 OPEN "0:DATA.DO" FOR RANDOM AS 1
+            1020 FIELD #1,KY$:8
+            1030 NR=LOF(1)  '  number of records
+            1040 ' Phase 1:
+            1050 L2=NR  ' set phase 2 loop counter
+            1060 FOR L1=INT(NR/2) TO 1 STEP -1  ' start in middle,
+                 work down
+            1070   GET #1,L1:KT$=KY$  ' store father temporarily
+            1080   GOSUB 1500  ' make heaps (each king of the hill)
+            1090 NEXT L1
+            1100 ' Phase 2:
+            1110 L1=1  ' start at root father (king of the mountain)
+            1120 FOR L2=NR-1 TO 1 STEP -1  ' start at one less than
+                 end of list
+            1130   GET #1,(L2+1):KT$=KY$  ' store this one
+                   temporarily
+            1140   GET#1,1:PUT#1,(L2+1)  ' move #1 to the end of the
+                   list
+            1150   GOSUB 1500  ' make heaps of what's left
+            1160 NEXT L2
+            1170 CLOSE#1:RETURN
+            1500 ' ToHeap subroutine:
+            1510 I=L1  ' look at this father
+            1520 J=2*I  ' this is son #1
+            1530 IF J>L2 THEN 1610  ' no sons, it's automatically a
+                 heap
+            1540 IF J=L2 THEN 1570  ' only one son to check
+            1550 GET#1,J:K1$=KY$:GET#1,(J+1):K2$=KY$  ' which son is
+                 larger?
+            1560 IF K2$>K1$ THEN J=J+1  ' son #2 is larger
+            1570 GET#1,J:IF KT$>=KY$ THEN 1610  ' compare the father
+                 and son
+            1580 PUT#1,I  ' son was bigger, exchange their values
+            1590 I=J  ' now check the son who traded to see if he's
+                 still king of his hill
+            1600 GOTO 1520
+            1610 KY$=KT$:PUT#1,I  ' put orginal father's value back
+                 in father or son as the case may be
+            1620 RETURN
+
+
+        PACKING A FILE
+
+            What can be done when deleted records fill up a random
+        file?  There's nothing that needs to be done - or can be done
+        - with a hashed file.  Eventually a new hash generates a
+
+
+
+                                    - 45 -
+
+
+
+
+
+
+
+
+
+
+
+        record number to fill the place of a deleted record.  The size
+        of the main file remains constant and the overflow grows
+        slowly.  Packing a file is exactly the opposite of packing a
+        suitcase, since unnecessary items are removed from the file.
+        One method of removing deleted records from an indexed random
+        file uses the same technique as removing records from a
+        sequential file.  In addition, since some records get a new
+        record number, their entry in the index file must be updated.
+        Here's the general procedure:
+
+             1. Maxfiles = 2.
+             2. Open index file for input.
+             3. Read index file into RAM.
+             4. Close index file.
+             5. Open original data file for random as #1.
+             6. Open temporary data file for random as #2.
+             7. I = LOF(1): J = 1.
+             8. For N = 1 to I:
+             9.   GET #1, I.
+            10.   Search for record I in index.
+            11.   Found in index?
+            12.     If no, then goto step 15.
+            13.     If yes, mark this spot.
+                      Then PUT #2, J: J = J + 1.
+            14.     Put new record number J in index
+                      where I was found.
+            15. Next I.
+            16. Close files.
+            17. Kill original file. Rename temporary file.
+            18. Sort index file.
+            19. Print index file to disk.
+            20. End.
+
+            This assumes that records were deleted by removing them
+        from the index.  If indices were marked instead of removed,
+        then add a section to remove all marked indices as well.
+
+
+        AUTHOR'S APOLOGY
+
+            The author makes an advance apology to data processing
+        purists for any misuse of terminology.  Some terms used in the
+        random file sections were simplified or rather loosely
+        applied.  This was done intentionally to give programmers new
+        to random file access some simple techniques to use, while
+        still giving them names to associate with these techniques.
+
+
+
+
+
+
+
+
+                                    - 46 -
+
+
+
+
+
+
+
+
+
+
+
+        SYNOPSIS OF STATEMENT SYNTAX FOR RANDOM FILES
+
+        OPEN "drivenumber:filename.ext" FOR RANDOM AS # filenumber --
+        allocates file buffer filenumber for random access input and
+        output using disk file filename.ext on disk drive drivenumber.
+        If the named disk file does not reside on the folder currently
+        open, a new file is created.  The # is optional.
+
+        FIELD #filenumber, var1:fieldwidth1, var2:fieldwidth2, ... --
+        specifies the fields in each record in the random disk file
+        opened under filenumber, the width of each field, and the
+        variable name associated with that field.  During a GET, the
+        contents of those fields are assigned to their respective
+        variables.  During a PUT, the contents of the variables are
+        printed to their respective fields.  The number of fields and
+        variables is limited only by the length of a line of BASIC
+        code.  Integer variables require a width of 2; single
+        precision variables require a width of 4; double precision
+        variables require a width of 8.  Strings are left justified or
+        truncated.  Numeric data are type-converted to the type of the
+        associated variable in the FIELD.
+
+        GET # filenumber, recordnumber -- reads a record as specified
+        in the associated FIELD statement from the random disk file
+        opened under filenumber at record location recordnumber, and
+        assigns the contents of that record to the variables as
+        described above.  If the record number is not supplied, the
+        next sequential record is read.
+
+        PUT # filenumber, recordnumber -- prints a record as specified
+        in the associate FIELD statement to the random disk file
+        opened under filenumber at record location recordnumber.
+        Contents of the variables specified in the FIELD statement are
+        printed to their respective fields.  If the record number is
+        not supplied, the record is printed to the next sequential
+        location.
+
+        LOF (filenumber) -- returns the number of records in the
+        random disk file opened under filenumber.
+
+        LOC (filenumber) -- returns then record number of the last PUT
+        or GET with the random disk file opened under filenumber.
+
+        EOF (filenumber) -- returns true (-1) if the last GET used a
+        record number past the end of the file or if LOC = LOF.
+        Otherwise returns false (0).
+
+
+
+
+
+
+
+
+                                    - 47 -
+
+
+
+
+
+
+
+
+
+
+
+        READING AND WRITING SECTORS
+
+            CDOS provides the capability to access individual disk
+        sectors.  These statements write data to and read data from
+        the disk at the track and sector specified without regard to
+        files that may be present on the disk or file buffers that may
+        be open.  The data is passed as a 128-character string.  The
+        CDOS disk format uses 80 tracks numbered 0 - 79 and 18 sectors
+        per track numbered 1 - 18.  Use these statements with extreme
+        caution.  They have no purpose in file-based applications, and
+        if misused can alter data in disk files.  They are provided
+        solely for compatibility with Tandy Disk Video Interface
+        applications, and for applications that use sector-based data
+        instead of file-based data.  They are:
+
+        stringvar$ = DSKI$(drivenumber, tracknumber, sectornumber,
+        sectorhalf) -- assigns a 128-character string to stringvar$
+        using the data read from track number tracknumber (0-79) and
+        sector number sectornumber (1-18) on the disk in drivenumber.
+        Sectorhalf = 0 reads the first half of the 256-byte sector and
+        sectorhalf = 1 reads the second half of the sector.
+
+        DSKO$ drivenumber, tracknumber, sectornumber, sectorhalf,
+        stringvar$ -- prints the data contained in stringvar$ to the
+        specified track, sector, and sector half.  The string cannot
+        exceed 128 characters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	PCSG wishes to thank Mr. Tim Ekdom for the preparation of this work.
+
+
+
+
+
+
+
+
+
+
+
+
+                                    - 48 -
+
+
+
+
+
+
+

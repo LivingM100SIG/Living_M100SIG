@@ -1,0 +1,44 @@
+0 REM ClickR - a keyclick routine
+1 REM for the Model 100 by
+2 REM Mike Betz [70466,1553]
+3 REM this program and the routines
+4 REM herein may be used for
+5 REM non-commercial purposes as long
+6 REM as I get credit for it/them
+7 REM
+10 REM you should put your own clear
+11 REM statement at line 19
+12 REM the ML routine takes up 9+6*N
+13 REM bytes where N is the number of
+14 REM clicks per keystroke.
+15 REM
+16 REM first clear out the clicker
+20 POKE 64222,243:POKE 64223,127
+21 REM ad = beginning ML address
+22 INPUT"Where do you want the Keyclicker:";AD
+35 IF AD<HIMEM THEN 160
+40 INPUT"How many clicks:";N
+45 IFN<=0THENMENU
+46 IF 9+6*N+AD>MAXRAM THEN 160
+50 REM start pokeing routine in
+60 FOR P=AD+0 TO AD+7
+70 READ C:POKE P,C:NEXT
+75 READ X:READ Y:READ Z
+85 P=AD+8:FOR I=1 TO N
+90 POKE P,X:POKE P+1,Y:POKE P+2,Z
+91 POKE P+3,X:POKE P+4,Y:POKE P+5,Z
+100 P=P+6:NEXT I
+110 P=AD+8+6*N:READ A:POKE P,A
+116 REM now to poke the vector in
+120 H=INT(AD/256):L=AD-256*H
+125 POKE 64222,L:POKE 64223,H:MENU
+160 BEEP:PRINT"Error - routine didnt"
+165 PRINT" fit inside of BASIC cleared"
+166 PRINT" area":PRINT"Himem:";HIMEM
+167 PRINT"Start:";AD"
+168 PRINT"End:";AD+14+6*N-1
+169 PRINT"Maxram:";MAXRAM:STOP
+1000 DATA 229,213,197,245,33,237,20,229
+1001 DATA 205,118,118
+1002 DATA 201
+

@@ -1,0 +1,39 @@
+Software Control of MENU/0MENU
+------------------------------
+
+It is sometimes handy to be able to turn the PG Designs MENU/0MENU
+utility on and off via software control.  At the simplest level, a
+Basic function key can be set-up to turn the MENU utility on.
+With a bit more work, it is possible to make programs turn off
+0MENU at entry and toggle it back on again at exit; the file
+DSKMGR.PGD installs just this type of patch on DSKMGR to make it
+function smoothly with 0MENU.
+
+The calls into 0MENU (make sure vers. 2.0+ is installed!) have
+been provided by Peter Van Heusden.  They are:
+
+     0MENU Off: CALL 34080
+
+     0MENU On : CALL 32825
+
+For some uses, this information suffices -- but not for all.  Both
+of these CALL's take you back to the M100 main menu after they do
+their thing.  When starting a program which needs 0MENU off, you
+would rather just continue into the program!
+
+Continuing into a program after disabling 0MENU requires a
+different approach.  In creating DSKMGR.PGD, I simply replicated
+the 25 bytes of code starting at 8520 hex (34080 dec) and leading
+to the exit call.  The exit call was replaced by entry to the M/L
+program.  The absolute location of the code in memory will depend
+upon the program in question and its type (Basic or M/L).  And
+there are two relative jumps to be included.
+
+Fortunately, 0MENU is transparent to most applications, and seldom
+will require software control.  In fact, DSKMGR is the only
+program I've run across needing the turn-off treatment -- and now
+it has been treated.  Now to find a way to make Ultimate ROM II
+turn 0MENU on at exit!  Hmmmmm.
+
+Phil Wheeler [71266,125]
+Torrance, CA -- 11/2/86

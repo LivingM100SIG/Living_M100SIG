@@ -1,0 +1,109 @@
+The following procedure can be used to change to load address of Jim Irwin's
+print formatter program PRN100 (see PRN100.DOC in DL0) so that it can be 
+loaded and run directly from the Tandy Disk Video Interface:
+
+Step 0:  Save the basic program TCOMP.121 from DL4 in RAM and ensure that 
+PRN100.CO program (created by PRN100.LDR) is stored on tape with a top address
+of 59850 or higher (the default is 59900 but this may have been modified as
+described in PRN100.DOC if you have alot of special printer control codes).
+
+Step 1:  Copy the following BASIC program into a file called PRN.DO 
+(Hint:  Use the PASTE key):
+
+4000 POKE63032,0 'select LCD display
+4100 C=54445:D=64218:FORI=0TO95:A=PEEK(D):POKEC,A:C=C+1:D=D+1:NEXTI'save hooks
+4110 CALL 32454 'kill DOS hooks
+4120 GOSUB4200:CALL60503:GOSUB4200 'load,call,unload PRN100
+4130 C=96:D=54445:H=64218:GOSUB4300:END 'restore DVI hooks
+4200 C=3110:D=55001:H=59850:GOSUB4300:RETURN 'interchange DOS and PRN100
+4300 FORI=1TOC:A=PEEK(H):B=PEEK(D):POKED,A:POKEH,B:H=H+1:D=D+1:NEXTI:RETURN
+4301          'interchange C bytes at locations D and H
+
+
+Step 2:  Enter BASIC and type 
+
+CLEAR256,54445           'clear space in himem for relocated PRN100.CO
+LOAD"PRN.DO"             
+SAVE"PRN.BA"             'load and save the BASIC program from Step 2
+KILL"PRN.DO"             'kill the .DO version 
+SCREEN0                  'If you don't do this a cold start may result!
+CALL 32454               'kill the hooks to disable the DVI OS
+CLOADM"PRN100"           'load Jim Irwin's PRN100.CO from tape
+GOSUB 4200               'move PRN100.CO to RAM addresses 55001-58110
+
+After GOSUB4200 is typed, take a break and perhaps have a cup of coffee.  The
+computer will take about ten minutes while it copies 3110 bytes of machine 
+code at 58950-62959 to 55001-58110.  Don't worry, this is the only time you
+will ever have to do this.  BE PATIENT AND RESIST THE TEMPTATION TO HIT THE
+<SHIFT-BREAK> KEY.
+
+Step 3:  When the "Ok" prompt appears, run TCOMP.121 from DL4 and compile the 
+BASIC program PRN.BA with a start address of 54541 and an end address of 
+55000.  (It doesn't matter what name you choose for the compiled .CO program.)
+
+Step 4:  Kill all the RAM files as you will no longer need them and type
+
+SAVEM"TEMP",54541,58110 
+
+Step 5:  Turn on the DVI disk drive and re-boot the DVI operating system 
+by typing
+
+CALL27862
+
+Note that it will be necessary to reset the DAY$, TIME$, and DATE$ after 
+re-booting the DVI OS.  But don't worry, this is to only time you will have 
+to do this.
+
+Step 6:  Save your relocated machine code program PRN100.CO to disk by 
+typing
+
+CLEAR256,54445
+LOADM"TEMP"
+SAVEM"0:PRN100CO",54445,58110,54541
+
+Anytime you wish to load and run PRN100 from disk you simply run the 
+following BASIC program:
+
+CLEAR256,54445:RUNM"0:PRN100CO"
+
+In a flash the PRN100.CO program is loaded and running at its proper address
+59850-62959 while the DVI OS and hooks are temporarily saved .  When you 
+exit PRN100 by hitting F8, all will be restored to normal.  
+
+If you like, you may put PRN100.CO on the main menu by typing
+
+SAVEM"PRN100",54541,54541,54541
+
+                          (end of procedure)
+
+
+
+
+Programmer's notes:  
+
+The compiled BASIC program "PRN.DO" disables the DVI operating system 
+temporarily by killing the "hooks" (see HOOKS.100 in DL4).  It uses the ROM 
+call CALL 32454 to kill the hooks.  However before the DVI hooks are killed,
+their values are saved at 54445-54540.  Next, the program interchanges the 
+DVI operating system code and Jim Irwin's PRN100 code, moving Jim Irwin's 
+code from 55001-58110 to its proper location in RAM (namely 59850-62959) 
+while temporarily saving the displaced portion of the DVI operating system 
+code at 55001-58110.  Finally, upon exiting it restores everything as it 
+was, reinstalling the displaced portions of the DVI operating system and 
+the hooks and returning the PRN100 code to 55001-58110.
+
+The RAM addresses 58110-58262 are left free for any other short machine code 
+programs you may wish to keep there permanently.  I use these addresses for the
+TELCOM customizing code created by DIRACC.100 in DL1.
+
+An earlier version of this file had a minor bug in the instructions, namely,
+that it failed to mention that is necessary to do a CLEAR 256,54445.  This
+ensures that the 96 byte area in RAM 54445-54540 where the DVI OS hooks are
+temporarily stored by PRN100.CO is not disturbed by the M100's ROM interrupt
+routines while PRN100.CO is running .  If the hooks values are disturbed it
+could lead to a system crash and a cold start.  The present PRN100.DVI
+eliminates this problem by saving these 96 bytes as part of the relocated 
+PRN100.CO program; thus the program will not load until the CLEAR256,54445 
+is executed.  It is now as reliable as Jim Irwin's original PRN100.CO and 
+is a joy to use.
+

@@ -1,0 +1,18 @@
+10 '* Program to guard against running
+11 '* PROAID and other ML programs    
+12 '* at same time. Now set for TP100.
+13 '* (Can be changed in line 35.)    
+14 '* NB: Requires Micro Demon's      
+15 '* RELOC.BA and ONOFF.BA. See also:
+16 '* PROTEC.DOC.                     
+17 '* By Douglas MacKay [72326,1725]  
+18 '* Jan. 17/85
+19 '*
+30 CLS:X=PEEK(62975):IFX=201THEN35ELSE38
+35 CLS:RUNM"tp100.co":MENU
+38 BEEP
+40 PRINT@94,"*** ACK! ***":PRINT@132,"PROAID.CO is on.":PRINT@173,"Fix? (y/n) < >":PRINT@185,"";
+60 A$=INKEY$:PRINT@185,A$;
+70 IFA$="n"ORA$="N"THENMENU
+80 IFA$="y"ORA$="Y"THENCLS:RUN"onoff.ba"ELSE40
+90 MENU

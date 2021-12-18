@@ -1,0 +1,220 @@
+
+
+
+Backing Up an M100 Chipmunk System
+Part II...Backing up the Files
+
+Copyright [12/7/90] Lincoln Baxter,2nd
+
+FLOPPY, the DOS that is supplied with the TDD2, has been described in Part I of
+this series. [ see CHPSYS.BKU]  Though DSKMGR described here is in many ways a 
+much more useful and efficient DOS than FLOPPY, you will probably need to use 
+FLOPPY if you do not have DSKMGR or for a few things like duplicating TDD2 
+disks; so I shall deal it with further (see CHPSYS.EX2) after I discuss DSKMGR.
+
+
+DSKMGR.REL in library 9 is a relocating loader in BASIC, developed by J.K. 
+Heilman and Phil Wheeler, that creates a much friendlier DOS for the TDD2. (See
+DSKMGR.REL, DSKMGR.DOC, and DSKMGR.DOR in library 9 on CompuServe)
+
+To use DSKMGR.REL save it in RAM as DSKMGR.BA and save it to Chipmunk disk and 
+to cassette, for backup and future use.  Because the relocatable loader, 
+DSKMGR.BA IS 6899 bytes long and takes a fair amount of time to run, you will 
+be wanting to use it to create several copies of DSKMGR.CO relocated at 
+different origins to be compatible with various machine language programs that 
+you will be using, but you will not want to use it if you already have a copy 
+of DSKMGR.CO for the right load address or to keep it in RAM unecessarily.  
+DSKMGR.CO is 2266 bytes long; so you will also not want to keep more than one 
+copy on the menu.  When it is in action, it exists immediately above HIMEM, and
+if you need more memory or if you are using Sval it is best to kill it from the
+menu space.
+
+It will be useful to give each copy of DSKMGR.CO a name that relates to the 
+machine language program that it is to be used with.  For instance, PRIDSK.CO, 
+with PRINT.CO. Note that I am suggesting that the first three letters of the 
+name of the DOS version be the same as the those of the program with which it 
+should be compatible.  If you follow such a convention, you will find that when
+it is stored on the TDD2, it will be listed close to the file with which it is 
+to be used.  CHPDSK.CO could be the version of DSKMGR.CO that loads below CDOS 
+when an M100 is simultaneously connected to a Chipmunk drive through the main 
+bus and to a TDD2 through the serial port.  Since DSKMGR.BA stores a file copy 
+of the DOS it creates as DSKMGR.CO, you will need to change the name when 
+saving it to a disk that has copies stored for different addresses.
+
+Immediately after running the loader, the m/l DOS will be loaded with its 
+execution address at HIMEM which will have been moved down to accomodate it.  
+and a copy of DSKMGR.CO will also be in file storage space; so CALL HIMEM will 
+bring you to the first menu, where files can be selected by using the cursor 
+arrow keys.  The TDD2 should have been connected and powered.  The function 
+keys at this menu are labeled as follows:
+
+List Load Save Sval Eras Kill frmt Menu
+
+Selecting a file and pressing the "Save" function key will prompt you for a 
+name to give to the file on the disk.  If it is to be different from the name 
+it has in RAM you type it in with the extension and press <ENTER>(You are 
+warned with (Proceed Y or N) before the action actually takes place) and the 
+file is saved.  If the name in the disk is to be the same as in RAM you just 
+press <ENTER>.
+
+If you are at the DSKMGR menu and you want to kill a file in RAM, you select it
+and press the Kill key.  You get the same warning before the action.
+
+The Eras key is used to delete a file from the disk: you type the name and 
+press enter, and proceed after the warning.
+
+The Sval key scans the RAM files automatically stops at each file and gives the
+same prompts and actions as the save key before going to the next one.  This 
+can be useful for quickly saving all the files on the menu provided that none 
+are the same as files already on the disk.  Tony Anderson has pointed out that 
+the files can be saved non-stop by using the paste buffer to supply the <ENTER>
+at each file.  To do this create a temporary .DO file with nothing but a 
+sequence of 8 or 10 carriage returns.  Copy it into the paste buffer with the 
+copy key.  Then Kill the temporary file, so that it will not be saved to the 
+disk in the following process.  In the DSKMGR menu after pressing the Sval key 
+press the paste key and the next 8 or 10 files will be saved non-stop.  When 
+using Sval in this way you should not have any files on the M100 menu that you 
+do not want to save to disk on this pass.  Any that have already been saved 
+will interupt the bulk save.
+
+The load key asks you to type in the name of a file on the disk, and, if it 
+finds it, asks you for the name it is to have in RAM.  Just pressing <ENTER> 
+loads it as a file on the menu with the same name it had in disk.  Otherwise it
+loads with the name you type.
+
+Pressing the list key gives you alphabetically listed files from the disk.  If 
+you want to load one to RAM, you type its name and press <ENTER>.  You are 
+prompted for a name in RAM.  For a different name in RAM you type it in.  
+Otherwise you just press <ENTER>.  If you don't want to load any of the files 
+you see, just pressing <ENTER> gets you the next screenfull of files from the 
+disk list or returns you to the entrance menu from the last list.
+
+The key, frmt, warns you, and if you don't type N, formats the disk erasing any
+files that were on it.
+
+The Menu key returns you to the M100 menu, or, if CDOS is loaded, to the 
+Chipmunk menu.
+
+An example of the use of DSKMGR.BA to create a DOS compatible with an m/l 
+program follows:
+
+If you have a machine language program called PRINT.CO, which loads in cleared 
+memory with "Top:59850";"End:62959";"Exe:60503", then make sure that CDOS is 
+not loaded, and use the following commands in BASIC:
+        CLEAR 256,59850
+        LOADM"PRINT"
+The computer responds:
+        Top:59850
+        End:62959
+        Exe:60503
+        OK
+You Type:
+        LOAD"DSKMGR.BA"
+The computer responds:
+        OK
+You Type:
+        RUN
+The computer responds:
+        Enter end address
+        <ENTER> for just below current HIMEM
+?
+You press <ENTER>
+        The screen clears and shows:
+
+        Line                 100
+
+        Address            57590
+
+The numbers change as the loader pokes the m/l program into RAM
+
+When all lines have been poked in,
+The computer beeps, the screen clears,
+and the following prompt is shown:
+
+        Sound? (Y or N)
+Your response is: N
+The computer prompts:
+        High-Speed (19200 baud)? (Y or N)
+Your response is: Y
+The computer prompts:
+        <ENTER> Key for exit? (Y or N)
+Your response is: Y
+The computer prompts:
+        PG RAM 0MENU Installed? (Y or N)Your response is: N
+The computer responds:
+        OK
+You type:
+        CALL HIMEM <ENTER>
+You will see the DSKMGR V 3.02 menu
+and the label row:
+List Load Save Sval Eras Kill frmt Menu
+
+Next you free up RAM by saving then killing or simply killing any files on the 
+menu that you won't be needing there, and as long as you don't disturb the RAM 
+between HIMEM and MAXRAM, you can access the TDD2 with CALL HIMEM to get .DO 
+files etc. to print or work with.  You can even kill the menu copy of DSKMGR.CO
+because the loaded copy is still at HIMEM.
+
+There are a few points on handling machine language programs that you should be
+aware of: BASIC programs are normally RUN and TEXT files entered at the menu by
+moving the cursor over them and pressing <ENTER>.  This is frequently not the 
+best way of handling machine language programs, because to avoid cold starts 
+and other problems you should always be aware of what you are doing when you 
+load and run them, and because, if you use this technique, you will probably be
+using nearly twice as much memory as necessary.  The terminology of the DOS 
+function keys is slightly confusing.  When you "load" a file from the disk to 
+RAM you are really "saving" it in RAM where it appears on the menu.  A machine 
+language file is <really loaded> only when it occupies the reserved space where
+it runs.  Selecting it from the menu is equivalent to a BASIC "RUNM" command, 
+which copies it to loaded addresses and starts at the execution address without
+telling you what these are, or whether it will corrupt another machine language
+program.  Also the file copy remains saved in RAM doing nothing where it can 
+sometimes be corrupted by the stack if there is not enough free memory.  Some 
+errors are trapped by the system, but, with machine language programs, it is 
+not a good idea to rely on this.  Sometimes when CDOS is loaded and you attempt
+to simultaneously load and run another machine language program it will be 
+trapped and you will be asked to remove CDOS and be prevented from running the 
+program if you answer N, even though the program can be run safely without 
+removing CDOS if it has been properly loaded and you enter it with a BASIC call
+to its execution address or by means of a trigger file on the menu.  A trigger 
+file can be a short BASIC program that calls the execution address, or a 7 byte
+.CO file that does the same thing.  This technique has been discussed by Jim 
+Irwin "Conserving Precious Memory" in the November 1985 issue of Portable 100.
+
+The following gives another reason why it is best to conserve free memory by 
+killing the menu copy of any long machine language program while running it:  
+BASIC programs are saved at the lowest addresses in RAM, followed by TEXT 
+files, and machine language .CO files.  The stack grows down from HIMEM.  When 
+you run BASIC programs, The operating system will give an error message and 
+abort the running program before the stack can corrupt the saved m/l programs, 
+but it is not always possible to implement this in a running m/l program.  If 
+the protection fails, it will be a saved copy not the running one that will be 
+corrupted and the next time you load and run from the saved copy will be cold 
+start time.  Thus it is always safer once you have loaded any long m/l program 
+to conserve free memory by replacing the menu copy with a trigger file, and 
+before loading another m/l program or removing CDOS to use SAVEM to save it 
+back or get it back from the disk.  If as in using Sval described above, you 
+don't want even a trigger file on the menu you can run a machine language 
+program by an immediate BASIC command as recommended here.
+
+To get a copy of DSKMGR.CO that can be loaded at the same time as CDOS be sure 
+to press reset first to load CDOS and don't remove CDOS and then try to access 
+the TDD2 without making sure that the running copy of DSKMGR has been 
+reinstalled, because removing CDOS resets MAXRAM and HIMEM which would corrupt 
+DSKMGR.  Booting CDOS will also set HIMEM and MAXRAM to different values; so if
+you have a copy called CHPDSK.CO saved as an m/l file in RAM for the right 
+address, you must press reset to boot CDOS before reinstalling CHPDSK.CO.  Then
+you can reinstall CHPDSK.CO with a CLEAR and a LOADM just as you would any 
+other normal .CO file, and go to it with a CALL HIMEM.  if in the DSKMGR menu 
+use the menu key to get to the RAM menu of CDOS.  If in CDOS, enter BASIC and 
+CALL HIMEM to the DSKMGR menu.  By loading in one menu and saving in the other,
+files in one disk format can be backed up in the other.
+
+Files saved using DSKMGR can also be accessed using FLOPPY, but the disk bank 
+feature of FLOPPY does not work in DSKMGR.  Files saved using FLOPPY, but only 
+those in bank 0 can be accessed using DSKMGR.  At present BACKUP.BA for 
+duplicating disks is only available with FLOPPY, but it is likely that an 
+equivalent program could be written for DSKMGR.  DSKMGR is much more convenient
+to use.  However, a discussion of techniques using FLOPPY and the T102 will 
+follow in Part III. (See CHPSYS.EX2)
+

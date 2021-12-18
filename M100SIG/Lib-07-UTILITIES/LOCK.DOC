@@ -1,0 +1,56 @@
+
+LOCK.100 Documentation
+======================
+
+c1987 Jon Diercks [73327,2353]
+
+I know, I know, yet another password protection program.
+
+Well, none of the other ones on the SIG did everything I wanted them to.  So,
+here's the one I use.  Maybe you'll want to use it too.  It is pretty good, if
+I do say so myself.
+
+It's all M/L, so it's fast and uncrackable.  The only way to get past
+LOCK is with the password, or >The Big Chill<.
+
+The password doesn't echo to the screen, and LOCK keeps track of how many bad
+tries are made to enter the system, and when the correct password is entered,
+the number of bad tries and the last password tried are reported.
+
+Changing the password is made easy with LOCK's companion program, LOCKC.
+
+Both LOCK and LOCKC are loaded by LOCK.LDR, a basic loader created with
+BASBLD.PW3.  <SAVE ALL IMPORTANT FILES FIRST! - just in case.>  LOCK.LDR may
+be erased after the first run, and LOCK.CO and LOCKC.CO should be saved to
+disk or tape.  The programs both run in the ALT LCD buffer at $fcc0, so they
+can be executed from the main menu without clearing memory first.  LOCKC
+is only needed to change the password, and needs not be in memory otherwise.
+
+After running LOCK.LDR, the password is "password".  Original, huh?  LOCK.LDR
+runs LOCKC immediately so you can change it to YOUR password, maximum 15
+chars.  LOCKC first shows the old password, has you type the new one
+<enter or ^C or shift-break aborts the program, leaving the original password
+intact.>, then type it again to verify it.  Then you're returned to the menu.
+
+From then on, whenever you want to turn off the computer, run LOCK.CO from the
+menu.  This turns off the computer.  When you turn it back on, you get the
+"keyword>" prompt.  Type the password, then enter.  If it's wrong, the prompt
+goes inverse and you get one more chance before the computer turns off again.
+If it's right, you are told if anybody else has been tinkering with the
+computer, and then returned to the menu.
+
+If, by chance, you forget your password, the only way back in is to hold down
+CTRL-BREAK and press RESET, after which you will be zapped back to the turn of
+the century and all files will be lost.
+
+M/L buffs will want to see LOCK.SRC, which contains the Custom Software ASM
+source for both LOCK and LOCKC.  Some of the code was borrowed from another
+password program that appeared in an old issue of Creative Computing.  If you
+have Custom Software's assembler, you can modify the source code of LOCK and
+reassemble <if you want a different prompt or something>.  Just make sure
+you leave 'pwlen' and 'pw' at the top, or LOCKC won't work.
+
+As always, EasyPlex any questions, comments etc. to:
+Jon Diercks [73327,2353].
+
+Enjoy LOCK.100.  Don't turn your M100 off without it!

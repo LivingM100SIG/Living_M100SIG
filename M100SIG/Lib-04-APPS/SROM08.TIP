@@ -1,0 +1,80 @@
+
+	Here are some interesting features of LUCID DATA (V 1.8 anyway). 
+It concerns control of recalculation of the spreadsheet while entering data 
+from a VIEW file.
+ 
+ 
+EXAMPLE
+This is the VIEW file:
+ 
+ 
+               RECORD [# ]
+ 
+A=[A#    ] A/2=[B#     ] A/2=[C1     ]
+ 
+ 
+This is the LUCID spreadsheet:
+----------------------------------
+        A         B        C
+----------------------------------
+001    +45      +A1/2    +A#/2    
+002    +56      +A2/2             
+003    +10      +A3/2
+----------------------------------
+ 
+	The C1 formula will automatically update the current RECORD
+(row) after each entry from a VIEW file (as soon as you press the ENTER button)
+no matter which RECORD you are currently looking at. The B1,B2...etc. 
+formulas will not update until you go back into LUCID and press F2 (calc). 
+Using the C1 formula also has the advantage of using less memory.
+	General Rule is: Regular fields don't update; Virtual fields do.
+---------------------------------------
+
+Another feature:
+	The cell "+SUM(A#:A249)" will always display the sum of the cells 
+starting at the current record up to the upper limit, in this case 10.
+ 
+	+SUM(A1:A249)-SUM(A#:A249)
+ 
+would show the sum of column A for all records up to the ONE PRECEEDING the 
+current record that is displayed in the VIEW file. (to include the current 
+record just tack on +A# )
+	TBL also likes Virtual celrefs:
+
+ 
+	+TBL(A#,B#,AA1:AC25)
+ 
+is perfectly legal for display in a VIEW file (but will give an ERR message
+in LUCID spreadsheet)
+---------------------------------------
+
+	All of these cells will evaluate to 0 or ERR after pressing F2 
+from the LUCID spreadsheet itself (not looking at it from a VIEW file),
+I think this is a bug as it should read " *DATA*" or somehow clue you.
+
+	I have also found that you can only use the # symbol (by itself, 
+meaning record number) once in a VIEW file, it always displays with the last 
+occurence.
+ 
+              Record [#  ]
+A=[A#    ]  B=[B#     ]  C=[C#     ]
+          A/[#  ]records=[D#    ]
+
+would only display the record number (#)in the slot on the third line
+(A/number of records) and not the first. 
+The other cellrefs (A#,B#,etc.) can be used multiple times.
+ 
+---------------------------------------
+
+Another LUCID DATA feature to note:
+
+	In order to enter numbers without having to preceed them with a "+";
+format the column by putting any number in the proper column (field) at 
+row (record) 250. Unlike LUCID, LUCID DATA assumes everything is alpha and 
+not numeric.
+---------------------------------------
+
+	Interested in hearing from other SUPER-ROM users who can answer 
+the question: Does Disk Power support .CA .CT and .WT files ??
+   
+	Bob Krohn [73167,630]

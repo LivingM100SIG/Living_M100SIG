@@ -1,0 +1,37 @@
+10 REM Invisi.100 by larry gensch, ESQ
+12 REM Copyright (c) 1983
+14 REM All rights reserved
+16 REM --------------------------------
+18 REM Program will display all entries
+20 REM n the M100 directory one at a
+22 REM time along with the status,
+24 REM (V)-Visible or (I)-Invisible
+26 REM --------------------------------
+28 REM Valid functions:
+30 REM "V"   - Make entry visible
+32 REM "I"   - Make entry invisible
+34 REM ENTER - Skip to next entry
+36 REM SPACE - Skip to next entry
+38 REM --------------------------------
+40 REM I do not recommend making BASIC
+42 REM invisible, nor do I recommend
+44 REM making either SUZUKI or HAYASHI
+46 REM visible.
+48 REM --------------------------------
+50 REM Send comments and/or suggestions
+52 REM to larry gensch [75665,1405]
+54 REM --------------------------------
+56 REM To conserve space, you may
+58 REM delete all lines less than 100.
+60 REM --------------------------------
+100 REM Invisi.100 by larry gensch, ESQ
+110 AD=-1705:FL$="":CM$="VvIi "+CHR$(13):FORX=0TO26:AD=AD+11:IFPEEK(AD)=0THEN200
+120 V=VARPTR(FL$):POKEV,11:POKEV+1,ADMOD256+256:POKEV+2,(AD+65536)/256
+130 S=ASC(FL$)AND8:IFS=0THENV$="(V)"ELSEV$="(I)"
+140 PRINTUSING"\    \.\\ \ \: ";MID$(FL$,4,6),RIGHT$(FL$,2),V$;
+150 A$=INPUT$(1):ONINSTR(CM$,A$)+1GOTO160,170,170,180,180,190,190
+160 BEEP:GOTO150
+170 IFS=0THEN160ELSEPRINT"V":MID$(FL$,1,1)=CHR$(ASC(FL$)AND247):GOTO130
+180 IFS<>0THEN160ELSEPRINT"I":MID$(FL$,1,1)=CHR$(ASC(FL$)OR8):GOTO130
+190 PRINT
+200 NEXTX:MENU

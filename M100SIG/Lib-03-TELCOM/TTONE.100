@@ -1,0 +1,101 @@
+Fm: Asysop Tony Anderson 70506,1261
+
+Well, the controvery is settled.  Tone dialing on the Model 200 is no faster
+than pulse dialing with the Model 100 at 20 pps...
+
+I timed them both with a stopwatch today.  The 200 has about a five second
+delay before it get's going, while the 100 has only a 2 second delay.  End
+result:  It takes both computers 12 seconds to actually access the phone
+exchange from the time you press the ENTER key.
+
+Not, in getting through to the modem tone, but just 'til the first "ring"
+that's echoed to your receiver.
+
+So, tone dialing would not be worth the added cost, whether by modification, or
+external accessory.
+
+
+Fm: C. Davey Utter 70055,522
+
+The ability to use the M100 with Sprint or MCI would still be worth it to me! 
+THAT is the important aspect of the problem, not speed.  I am also finding that
+the 20pps speed is riddled with errors as was my first impression.
+  I still crave tone dialing and you will be hard pressed to convince me I
+don't...Dave
+
+
+Fm: Asysop Tony Anderson 70506,1261
+
+This message will be out of sequence, but grabbed your PPN from an RS;S;TONE
+command....
+
+This message is being sent in via Reno, Nevada, through MCI service. You're
+right, it does work, But, you have to put a lot of = signs in the phone number
+for it to work.  You need a delay between your local access # and your personal
+code number, then again between the personal code and the area code of the
+number you're dialing.  Total of 6 in the first c case, 3 in the latter; for
+me, anyway. Phone number looks like this:
+
+7952333======00000===7027865308.
+
+Dialing time: 31 seconds from press of ENTER key to ringing of CIS node in
+Reno.  But, you're right, it DOES work.
+
+
+Don't recall you SAYING it worked, but something about that's why you wanted
+it.  So my test verified that it works, and your reason for wanting tone
+dialing for the M100 was valid.  It WILL work.
+
+
+Fm: C. Davey Utter 70055,522
+
+In my particular situation I have a Demon Dialer that dials the local Sprint
+access number and my ID number.  I'd like to be able to then have the M100 dial
+the number I am trying to call.  Can you figure out a way to do that?...Dave
+
+
+Fm: Asysop Tony Anderson 70506,1261
+
+Yes, I think so... since you are locked into a M100 without tone capability,
+and since your Sprint service requires tones for input, how about getting one
+of those handy-dandy pocket dialers that R/S sells, and mount it on a box with
+phone input and output plugs.  Wire it so the dialer is across the tip and ring
+phone lines, And put the required number sequence in the dialers memory.  Maybe
+delete the phone number from ADRS file, and substitute = signs, then the logon
+sequence.
+
+Find CIS (or whatever you find), and press "Call", then hit the auto-dial on
+the dialer for Sprint, Access #, and CIS #.  By the time you connect, TELCOM
+should be ready to send the auto logon sequence.  (May need to be restructured
+to wait before sending ^C.
+
+
+Fm: C. Davey Utter 70055,522
+
+You are overcomplicating my problem.  What I need to do is hit the dialer for
+the Sprint Log-on sequence the have the M100 dial in the number.  Rather Before
+I add anothe component I'll use my finger, at least that's always with me.  I
+just want the M100 to tone dial that's all <WIMPEwimper>...Dave
+
+
+Fm: Asysop Tony Anderson 70506,1261
+
+Yes, Dave, it works.  You can eliminate the number to be dialed in the auto
+logon sequence in the ADRS file, and tone dial it yourself, either with the
+phone, or a dialer.  Use 5 or 6 = signs instead of the phone number.  Use this
+format:
+
+TEST:======<^C?D70506,1261^M... etc.
+
+Go into TELCOM, find TEST, and press F2 for Call (or the ENTER key), then
+immediately dial your numbers via touchtone.  You may have to experiment how
+many = signs to put in so that you get the modem connect tone by the time the
+M100 sends the CTRL-C.
+
+
+Fm: C. Davey Utter 70055,522
+
+I ONLY need this capability for voice lines all auto log-ons work just fine. 
+The Demon Dialer does everything the little dialer you are talking about does
+and maybe more, don't know for sure haven't looked at one...Dave
+

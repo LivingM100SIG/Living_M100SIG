@@ -1,0 +1,62 @@
+Model 100 TELCOM Alterations
+by Terry Kepner
+    I've found a way to combine several special TELCOM
+features into only two function keys: F6 and F7. 
+Previously you had to choose two of these three possiblities:
+a clear screen, a files display, or a free ram count---and 
+without removing any RAM (Random Access read/write Memory) from 
+normal program use.
+    This little two-line Basic program assigns the ""clear 
+screen'' command to the TELCOM F6 function key, and combines the 
+files display and free RAM count into one TELCOM function key: 
+F7.
+    As a plus---instead of leaving the cursor at the end of the 
+free RAM count, as the previous POKEs did---this program's pokes 
+fix TELCOM so the cursor remains on the line below the free RAM
+count. This makes for a cleaner and more legible display as you 
+continue telecommunicating.
+    The program works by taking advantage of the fact that each 
+of Basic's function keys is allocated 16 bytes of RAM, no matter 
+how much you actually use. Well, Basic function key F8 is 
+assigned the command MENU. Pressing this while in Basic will 
+return you to the Model 100 main menu. This command uses only 
+five bytes of the sixteen allocated (the fifth byte is a 
+carriage-return that terminates the Menu command), leaving eleven 
+bytes. Which just so happens to be one byte longer than I need 
+for my TELCOM modification. My program defines 
+the Basic F8 key as the command MENU followed by a character 
+string that includes the machine-code for calling the Files 
+function, determining the free RAM and then sending a carriage-
+return/linefeed to the display. This is followed by the POKE 
+commands that tell TELCOM where to find this code in memory.
+    The second line of the program sets the TELCOM F6 key to 
+perform a clear screen.
+    For you techy types, 205 is the machine-code equivalent 
+of a call, and 201 is a machine code return. The other numbers 
+in line 10 are the addresses called (in standard low-byte high-
+byte order). You'll note that there are three calls. The 
+return, 201, sends control back to TELCOM. Otherwise the program 
+would cause your computer to crash, and possibly force you to 
+cold-start it and lose all your programs.
+    Naturally, if you cold-start your computer, or use a 
+program that changes the assignments of the BASIC function keys, 
+you will lose the F8 key code my program put there. If you try 
+to use the TELCOM F7 key after this has happened, you might crash 
+your computer as it tries to execute the non-existant code in 
+BASIC key F8.
+    I suggest that you type in the program, run it, then save 
+it to cassette so you can easily reload it in the event the Basic 
+F8 key is reassigned.
+
+Program Listing
+10 KEY8,"Menu"+ CHR$(13)+ CHR$(205)+ CHR$(58)+ CHR$(31)+ 
+CHR$(205)+ CHR$(172)+ CHR$(126)+ CHR$(205)+ CHR$(34)+ CHR$(66)+ 
+CHR$(201): POKE 64270,127: POKE 64271,248 :Rem set TELCOM F7 key 
+to display files, display free ram, and perform a CR/LF
+30 POKE 64268,49: POKE 64269,66 :rem set the TELCOM F6 key to 
+perform a clear-screen command.
+
+This article is reprinted from Pico Magazine with their permission.
+Copyright (c) 1985 is still held by them.
+-Terry Kepner, Technical Editor, Pico Magazine
+

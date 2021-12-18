@@ -1,0 +1,87 @@
+
+
+
+			 PCHXMD.CO
+	 	ENHANCED VERSION OF XMD100.CO.
+		Wilson Van Alst [76576,2735]
+			8/23/87
+
+
+Credit to J R Chenoweth for the original machine language XMODEM program, 
+XMD100.CO -- the only one in the DL's allowing error-checked transfers that 
+take advantage of superspeed modems.
+
+XMODEM programs written in BASIC may be fine at 300 bps, but they can't keep up
+at 2400 baud.  Compare:
+
+
+		  6985 byte XMODEM download
+		    CIS connect at 2400 baud
+
+		  XMDM26.BA	 3:04
+		  XMD100.CO  	  :58
+
+
+But XMD100 has a couple of drawbacks: a reputation for being "buggy," and a 
+failure to allow high-speed normal (non-XMODEM or "capture") transfers.  They 
+are limited to about 600 baud because the M100 interrupts data flow while it 
+sloooowly scrolls its screen.
+
+PCHXMD fixes the latter problem by setting F6 as a toggle, to turn scrolling on
+and off, in the TERM mode.
+
+I'm not familiar with all the bug reports, but personal experience has shown 
+the program to work well -- once you manage to install it.  I had persistent 
+difficulties using LOAD.BA to convert XMD100.HEX.  I downloaded the hex file 
+twice; and despite proper checksums, it would not produce a bug-free version of
+the .CO program.  I finally went to XMD26, downloaded the hex file with XMODEM 
+protocol, and got it to work.
+
+To help avoid those problems, PCHXMD.HEX is designed for conversion with 
+CHANGE.BA -- which includes internal checksumming of the code it installs.
+
+Note that you must run PCHXMD.CO with a basic "driver" program -- listed as 
+PCHXMD.DRV in the same DL.  With comments removed, it is about 50 bytes.  If 
+you re-locate the main program, you'll have to change the poke values in the 
+driver (see "Nasty stuff," below).
+
+You should consult the original author's XMD100.DOC for instructions on the 
+main body of the program.  I don't know if the author is still present on the 
+SIG, but I'll try to lend whatever support I can.
+
+Step-by-step instructios to run:
+  1.  Download PCHXMD.HEX, PCHXMD.DRV, bnd XMD100.DOC files from DL3.  You'll 
+also need CHANGE.BA and its documentation from DL_, if you don't already have 
+them.
+  2.  Use CHANGE.BA to convert PCHXMD.HEX4to PCHXMD.CO (the file name expected 
+by the driver program).
+  3.  Strip PCHXMD.DRV to the bare essentials and install it as PCHXMD.BA, or 
+whatever you choose to call it.
+  4.  Use the .BA file to run the .CO program, per instructions from XMD100.DOC
+-- with the new feature of an F6 key that toggles screen scrolling off and on.
+
+Nasty stuff: This program looks like it uses RAM from 59381 to 62285.  In fact,
+it uses memory all the way to MAXRAM for variables and buffering.  I don't know
+if this "extra" space is absolute (keeps the same location, wherever you put 
+the main program) or relative (changes address if you relocate the main file). 
+So be prepared for the worst if you try installing this BELOW other m/l 
+programs.
+
+Nice stuff:  Most of all, you'll save money.  I used to spend about 30 minutes 
+a day on CIS (mostly on this SIG), reading messages at 300 baud, then 
+selectively re-reading them for download if I wanted the contents.  Now I do a 
+2400 baud no-scroll download of an entire day's messages in less than 3 
+minutes.  In the DL's, I used to "capture" stuff and hope for no transmission 
+glitches.  Now, I let XMODEM do the driving and know I'm getting what's really 
+there.
+  In addition, with an external modem, this program will let you go back into 
+the M100's main menu and use BASIC and  TEXT without breaking the connection to
+a host.  Simply run the driver program again (or CALL HIMEM+20 from BASIC) and 
+hit the TERM key to get back on-line.  I've even pulled the modem's RS232 cable
+out of the M100, attached the TDD cable, moved a file to disc (using TS-DOS on 
+ROM), and swapped cables again without a disconnect.
+
+What's missing:  Auto-dial and auto-logon.  I hope to add those, when time 
+permits, either as a supplement to the driver program or as a "patch to the 
+patch" in assembly.
+

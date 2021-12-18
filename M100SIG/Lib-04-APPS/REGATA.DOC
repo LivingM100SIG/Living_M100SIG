@@ -1,0 +1,103 @@
+          REGATA.BA
+Gerald T. Bennett
+3124 N.W. 36th Street
+Gainesville, Florida 32605
+(904)378-0633
+
+This program is designed to score yacht races, to compute
+standings, and to present the results in order. It has not
+ yet been developed to print to a printer, only to the 
+screen, so the user will have to use pencil and paper to 
+record the results on hard copy. 
+     The program will score either PHRF or Portsmouth, and 
+is DIMENSIONED to compute up to six races (including 
+throw-out races) with up to 30 racers in each race. It is 
+limited by the DIMension statement and, of course, by 
+available memory. It gives 3/4 point to the winner, and 
+points equal to the finish position of all other racers. It 
+handles ties by dividing the total points of both finishing 
+positions between the tying racers.
+   DNS = number of racers plus one.
+   DNF and DSQ = number of finishers 
+      plus one.
+The program has not been collapsed to remove remark 
+statements and spaces at this point, for ease of 
+understanding and ease of modification. 
+   Copyright: enjoy. I developed this program when I was 
+race committee chairman of our local sailing club, and used 
+it on my model III for some years. I modified it for the 
+model 100 and invite any sail racing buff to do with it what
+he/she wants. I make no warranty as to its performance or 
+value, and say only that I have enjoyed writing and using 
+it.
+
+   Most of the program is menu driven. The screen will first
+ ask if you wish to score PHRF or Portsmouth. You will, once
+ that information is in the system, be given the choice to 
+input race data, finish data, or to score races.
+
+RACE DATA INPUT:
+Note that all time is military time. The original program 
+had a conversion subroutine, but that limited the program 
+too much. In this way, even races taking more than 24 hours 
+can be computed, simply by ensuring that the number of 
+elapsed hours is correct. e.g. a race which begins at 1:00 
+p.m. on Monday, with the first finisher coming in at 2:12:23
+p.m. on Tuesday would be scored:
+   Time of Start: 13:00:00--
+   Time of Finish: 38:12:23
+Currently, the longest race which can be scored is that of 
+48 hours. However, if you wish to score longer races, you 
+can easily restructure the program. The code is in line 
+1720, the number 2880 representing the maximum minutes in 
+the system. (2880/60 = 48) If you wish to set the limit at 
+36 hours, you change that number to 2160, if you wish a 60 
+hour time maximum, set the code at 3660. 
+    For PHRF, you will need the distance in nautical miles, 
+since that handicap system is designed for a time on 
+distance computation. For Portsmouth, since it is a time on 
+time computation, the distance is not necessary.
+
+FINISH DATA INPUT
+Unfortunately, there is a good bit of repetition here. For 
+each racer, you will be asked the Name, the Racer Number, 
+the handicap number, the number of the race being entered 
+and the time of finish. THE RACER NUMBER IS EXTREMELY 
+IMPORTANT! This is the counter on which everything else 
+depends. Therefore, it must the number, in order, of the 
+racer you are scoring. For example, if you have seven 
+racers, you assign a number between one and seven to each 
+racer. While the computation program is executing, it will 
+count by racer number. If you designate a contestant as 
+racer number three, then everything entered with that number
+will be assigned to that racer-- even a different name!
+   Once the finish information has been completed, you have 
+one last chance to double check the information--the program
+will ask if the information is correct.
+   If, later on, you feel you have made a mistake, simply 
+re-enter the information for that particular finish over 
+again; any existing information will be replaced by the new 
+information entered.
+     After all the information is entered, enter NONE and 
+you will go back to the menu. The information is stored in 
+the RAM file "Racer.do", so additional information can be 
+later added. Race information (e.g. race number, time of 
+start, and distance for PHRF) is not stored and must be 
+re-entered every time the program is re-booted. 
+    You have the option to score a single race, a number of 
+races, or total the entire regatta. You cannot use the last 
+option until you have scored all the races. If you are 
+scoring a regatta, you must first use option number 4, then,
+when all races have been scored, you may go to option five 
+and score the entire regatta. This is because the points are
+assigned only through options 3 and 4, and for all the races
+only by option 4.
+     There is, I confess, one "minor" problem on printout of
+results, both of races and of the entire regatta. Because of
+the counter mechanism, if there is a tie, you may lose the 
+top line off the screen. I'm still working on the solution 
+to that one. If you find it a problem and are interested in 
+trying to solve it, the program segments are:
+   1. 1600-1630 and 1740-1785 for the individual races, and 
+   2. 2710-2765 for the entire regatta.
+                      

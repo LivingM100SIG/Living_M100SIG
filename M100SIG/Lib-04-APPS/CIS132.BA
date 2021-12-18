@@ -1,0 +1,36 @@
+
+CIS132.BA was thrown together after I had trouble uploading some textual 
+material to CIS.
+
+It seems I was violating the CIS buffer limit of 132 characters.
+
+Now, I can upload files to CIS with confidence that lines will be in the 
+bounds of the buffer limit.
+
+CIS132.BA also will allow the user to put space between the lines of the file.
+
+
+This can be done by simply pressing ENTER between entries of text.
+
+If you see "0 characters" at the top of the screen, you'll know that space has
+been entered in CIS132.DO
+
+
+
+Cut and paste the program below the dotted line and place it a .DO file.
+
+Run the .DO file through BASIC and save it as CIS132.BA
+
+
+......................................
+
+
+0 REM CIS132.BA BY CARMEN PAONE [72677,42]
+1 CLS:MAXFILES=1:F$="CIS132.DO":OPENF$FORAPPENDAS1:RV$=CHR$(27)+"p":NV$=CHR$(27)+"q"
+2 PRINT@90,RV$"  ENTER DATA  "NV$:PRINT:LINEINPUTA$:L=LEN(A$)
+3 PRINT@90,RV$L" CHARACTERS"NV$:IFLEN(A$)>130THENSOUND10000,100:GOTO5
+4 PRINT#1,A$:FORT=1TO999:NEXT:GOTO6
+5 CLS:PRINT@285,RV$" LINE TOO LONG. TRY AGAIN "NV$:FORT=1TO999:NEXT:GOTO0
+6 CLS:INPUT" ANOTHER ENTRY [Y/N]";M$:IFM$="Y"ORM$="y"GOTO0
+7 IFM$="N"ORM$="n"THENMENU
+

@@ -1,0 +1,63 @@
+1 ON ERROR GOTO10
+2 K$="#####"
+5 OPEN"RAM:GRID1"FORINPUTAS1:INPUT#1,E1,N1:CLOSE1
+7 OPEN"RAM:GRID2"FORINPUTAS1:INPUT#1,E2,N2:CLOSE1
+9 OPEN"RAM:RANGE"FORINPUTAS1:INPUT#1,R:CLOSE1
+10 CLS
+20 PRINT:PRINT@15,"Distances"
+30 PRINT@50,"1)Point1  ";E1;N1
+40 PRINT@90,"2)Point2  ";E2;N2
+50 PRINT@130,"3)Calculate distance ";USINGK$;R
+53 PRINT@170,"4)END"
+55 PRINT@250,"Enter choice?"
+60 A$=INKEY$:IF A$=""GOTO60
+70 ONVAL(A$)GOTO100,200,300,1030
+100 R=0:CLS:INPUT"Easting of 1st point ";E1
+110 CLS:INPUT"Northing of 1st point";N1
+120 OPEN"RAM:GRID1"FOROUTPUTAS1
+130 PRINT#1,E1;",";N1:CLOSE1
+140 GOTO10
+200 R=0:CLS:INPUT"Easting of 2nd point ";E2
+210 CLS:INPUT"Northing of 2nd point";N2
+220 OPEN"RAM:GRID2"FOROUTPUTAS1
+230 PRINT#1,E2;",";N2:CLOSE1
+240 GOTO10
+300 R=INT(SQR((E1-E2)^2+(N1-N2)^2))
+310 OPEN"RAM:RANGE"FOROUTPUTAS1:PRINT#1,R:CLOSE1
+400 CLS:PRINT"Distance from":PRINT@15,E1;N1:PRINT"TO";
+410 PRINT@55,E2;N2:PRINT"is":PRINT@95,R;"meters!"
+420 GOTO1000
+1000 PRINT:PRINT"Another ?";
+1010 A$=INKEY$:IF A$=""GOTO1010
+1020 IF A$="y" OR A$="Y" THEN GOTO 10
+1030 POWER OFF
+2000 'This is a program to calculate
+2010 'the distance in meters from one
+2020 'point to another. 
+2025 '
+2030 'The grid points are based on the
+2040 'Universal Transverse Mercator
+2050 'system of position notation. We
+2060 'in the Army call it the Military
+2070 'Grid Reference System.
+2080 '
+2090 'All points are broken down to the
+2100 'the nearest meter.The grid system
+2110 'divides the earth into 1000 meter
+2120 'squares in 100,000 meter squares.
+2130 'Which are in Grid zones. The grid
+2140 'Zone is the largest division.
+2145 '
+2150 'The grid 10S 698000 3964000
+2160 'says that the point referenced
+2170 'is in the Grid Zone designated
+2180 '10S in the 100,000 meter grid
+2190 'square which is the 6th from
+2200 'a longitudinal start point and
+2210 '39th from the equator. It just
+2220 'happens to be referencing a 1000
+2230 'meter grid intersection.
+2240 'If you are in the military or
+2250 'have access to Military
+2260 'publications, FM 21-26 gives you
+2270 'more of the details.

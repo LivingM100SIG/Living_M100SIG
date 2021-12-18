@@ -1,0 +1,258 @@
+1 'The program Vdata.Co is created by
+2 'lines 1000-1127. After RUN 1000
+3 'delete these lines. they are not to
+4 'be compiled with Tcomp.
+5 'After compile Loadm View & Vdata, Savem "View",61408,62949,61408
+6 'Edit line 7071 of Tcomp :VT=VT+2: as
+7 'there are no FOR-NEXT loops. Save
+8 'memory by using IF-THEN's instead.
+9 'Start 61408 - End 62661
+10 'Start of Ram Directory Search
+19 'U=Beginning of Ram Directory
+20 U=63842
+27 'X+1=File name in Dir
+28 'N+1=File name looking for in Ram
+29 'if U = 192 then .DO file
+30 X=U+2:N=62950:IFPEEK(U)<192THEN70
+39 'Add 1 to X and N
+40 GOSUB400:GOSUB460
+46 'If the Names are the same then
+47 'T = Start Address of Ram File
+48 'U = Ram Dir address
+49 'Go To Start of View
+50 IFX=U+10THEN T=PEEK(U+2)*256+PEEK(U+1):GOTO90
+59 'Compare characters if same check next characters
+60 IFPEEK(X)=PEEK(N)THEN40
+68 'If not Then next Ram Dir entry
+69 '64139 = End of Ram Dir - Not found then Menu
+70 U=U+11:IFU=64139THEN330
+80 GOTO30
+86 'Start of View
+87 'N = Location in Ram File
+88 'P = Lines Printed
+89 'M = Page number  ASC(49)="1"
+90 N=T:P=1:M=49
+98 'Clear Screen : X=0
+99 'W = Current line : Clear Key Press
+100 CALL16945:GOSUB420:W=2:POKE65446,0
+109 'A = character : If Space Then move X : Add to N : Check for Word Wrap
+110 A=PEEK(N):IFA=32THENX=X+4:GOSUB460:B=N:GOTO240
+117 'B = Flag - set for first print
+118 'Data for CR stored as Asc(32)
+119 'goto CR Check
+120 B=0:IFA=13THENA=32:GOTO470
+129 'If X > Word Wrap then Do Line Feed
+130 IFX>PEEK(62959)THENGOSUB410
+139 'If Cur Line > 10 lines Goto Input
+140 IFW>61THEN 270
+149 'If TAB then next column
+150 IFA=9THENX=(X\28)*28+28
+159 'Character 126 shown as undefined
+160 IFA>126THENA=126
+169 'If End of File then show arrow, Goto Input
+170 IFA=26THENA=127:GOSUB340:GOTO270
+179 'Add 1 to N : No character printed if less than space
+180 GOSUB460:IFA<33THEN110
+189 'Goto Print routine
+190 GOSUB340
+199 'Check for Word Wrap
+200 B=N
+209 'If Hyphen Find next Break
+210 IFA=45 THEN 240
+216 'Word Wrap formula
+217 'if not start of line
+218 'B-N = No. characters to next break
+219 'each character takes 4 pixels
+220 IF(B-N)*4+X-1>PEEK(62959)THEN IF X THENGOSUB410
+229 'Start Over
+230 GOTO110
+238 'Find Next Break
+239 'Space or less
+240 IF PEEK(B)<33 THEN220
+249 'Hyphen
+250 IF PEEK(B)=45 THEN220
+259 'Keep looking
+260 B=B+1:GOTO240
+268 'User Input
+269 'Last key pressed
+270 B=PEEK(65446):IF B THEN290
+279 'If no Key has been pressed since Line 100 then wait here
+280 GOTO270
+289 'If Up arrow then Top of file
+290 IFB=46THEN90
+299 'If F8 then Menu
+300 IFB=63THEN330
+309 'If F4 goto Text U = Ram Dir Address
+310 IFB=59THENCALL22848,192,U
+319 'If Not EOF then next page D = Start of current last line
+320 IFA<127THEN N=D:GOTO100
+329 'Clear Keyboard Buffer : Menu
+330 POKE65450,0:CALL22423
+338 'Print Routine
+339 'R = Start of character data
+340 R=62662
+349 'Find Location of data
+350 B=PEEK(R+(A-32)*3):R=R+1
+358 'characters printed in three parts
+359 'C = Bit Test : Reset Y to current Line
+360 C=1:Y=W
+369 'if Bit = 0 then pset
+370 IFC ANDB THENPSET(X,Y)
+379 'next pixel : If not done then next test next bit
+380 Y=Y+1:IFC<B THENC=C+C:GOTO370
+389 'Reset B : Add to X : If not done three times do again
+390 B=0:GOSUB400:IFR<62665THEN350
+399 'Add a pixel space
+400 X=X+1:RETURN
+408 'Line Feed Routine
+409 'Each line six pixels wide
+410 W=W+6
+419 'Set X to start of line
+420 X=0
+427 'If Line 10 or less then
+428 'If No. lines is greater than User
+429 'input goto Page Break
+430 IFW<61THEN IFP>PEEK(62950)THENGOTO490
+439 'as long as not line Ten then Add 1 to Line No. and set D at start of line
+440 IFW<57THENP=P+1:D=N
+450 RETURN
+459 'Add 1 to N Four times : Saves Ram
+460 N=N+1:RETURN
+468 'Carrage Return Check
+469 'If 61st character Backup one
+470 IFX>238THENX=239
+478 'Draw dot : Add 1 to N
+479 'Do Line Feed : Start over
+480 GOSUB340:GOSUB460:GOSUB410:GOTO110
+488 'Page Break Display
+489 'J = Temp hold for A : A = Dash
+490 J=A:A=45
+499 'Draw dash until almost Word Wrap
+500 GOSUB340:IFX+4<PEEK(62959) THEN 500
+508 'If Page No. > Ten (shown as zero)
+509 'then start over with 1
+510 IF M=58 THEN M=48
+519 'Draw page No. : Restor A
+520 A=M:GOSUB340:A=J
+528 'If not Line 10 then reset line No.
+529 'Add one to Page No.
+530 IFW<56THENP=1:M=M+1
+539 'Do Line Feed and return
+540 GOTO410
+555 '80 Columns ? Add - 395 Return
+556 'and look at a text file - not to
+557 'bad. Should be easy to add. I have
+558 'no use for it.
+559 'HOW TO GET VIEW.SRC TO RUN
+560 'RUN VDATA - so data will be in mem
+561 'RUN VIEW.BA (with out View.co)
+562 'You shoul get 'FF ERROR IN 120'
+563 'RETURN TO MENU and run View.src
+564 'It's slow as a .BA, but will work.
+565 'This only has to be done once
+566 'or until you do something to Himem
+599 'End of View.Ba
+998 'Start of Vdata.ba
+999 'Will create Vdata.Co,62662,62949
+1000 CLEAR256,62662
+1005 FORX=62662 TO 62949
+1010 READ D:POKEX,D
+1015 NEXT
+1020 SAVEM"Vdata",62662,62949
+1032 DATA 4,0,0
+1033 DATA 0,23,0
+1034 DATA 3,0,3
+1035 DATA 10,27,10
+1036 DATA 16,55,26
+1037 DATA 25,4,19
+1038 DATA 10,21,26
+1039 DATA 2,1,0
+1040 DATA 14,17,0
+1041 DATA 0,17,14
+1042 DATA 21,14,21
+1043 DATA 4,14,4
+1044 DATA 16,12,0
+1045 DATA 4,4,4
+1046 DATA 0,16,0
+1047 DATA 24,4,3
+1048 DATA 14,17,14
+1049 DATA 18,31,16
+1050 DATA 25,21,18
+1051 DATA 17,21,10
+1052 DATA 6,4,31
+1053 DATA 23,21,9
+1054 DATA 14,21,8
+1055 DATA 1,29,3
+1056 DATA 31,21,31
+1057 DATA 2,21,14
+1058 DATA 0,10,0
+1059 DATA 16,10,0
+1060 DATA 4,10,17
+1061 DATA 10,10,10
+1062 DATA 17,10,4
+1063 DATA 1,21,2
+1064 DATA 8,21,30
+1065 DATA 30,5,30
+1066 DATA 31,21,10
+1067 DATA 14,17,10
+1068 DATA 31,17,14
+1069 DATA 31,21,17
+1070 DATA 31,5,1
+1071 DATA 14,17,25
+1072 DATA 31,4,31
+1073 DATA 17,31,17
+1074 DATA 8,16,15
+1075 DATA 31,4,27
+1076 DATA 31,16,16
+1077 DATA 31,6,31
+1078 DATA 31,1,31
+1079 DATA 31,17,31
+1080 DATA 31,9,6
+1081 DATA 14,17,30
+1082 DATA 31,9,22
+1083 DATA 18,21,9
+1084 DATA 1,31,1
+1085 DATA 31,16,31
+1086 DATA 15,16,15
+1087 DATA 31,12,31
+1088 DATA 27,4,27
+1089 DATA 3,28,3
+1090 DATA 25,21,19
+1091 DATA 31,17,0
+1092 DATA 3,4,24
+1093 DATA 0,17,31
+1094 DATA 2,1,2
+1095 DATA 16,16,16
+1096 DATA 1,2,0
+1097 DATA 12,18,30
+1098 DATA 31,18,12
+1099 DATA 12,18,18
+1100 DATA 12,18,31
+1101 DATA 12,26,20
+1102 DATA 30,9,2
+1103 DATA 36,42,28
+1104 DATA 31,2,28
+1105 DATA 0,29,0
+1106 DATA 32,29,0
+1107 DATA 31,8,20
+1108 DATA 0,31,0
+1109 DATA 30,4,30
+1110 DATA 30,2,28
+1111 DATA 12,18,12
+1112 DATA 62,18,12
+1113 DATA 12,18,60
+1114 DATA 30,2,4
+1115 DATA 16,22,26
+1116 DATA 2,31,2
+1117 DATA 30,16,30
+1118 DATA 14,16,14
+1119 DATA 30,8,30
+1120 DATA 18,12,18
+1121 DATA 38,40,30
+1122 DATA 26,22,18
+1123 DATA 4,27,17
+1124 DATA 0,27,0
+1125 DATA 17,27,4
+1126 DATA 21,10,21
+1127 DATA 4,14,21
+

@@ -1,0 +1,19 @@
+1 ' DUMPER.100 by Rick Perry
+2 ' Helps recover text files after cold-start by dumping all user RAM
+3 ' into cassette files: DUMP1.DO, DUMP2.DO, etc..., 5050 bytes each.
+4 ' Use TEXT to load the files back from cassette and edit out any garbage.
+5 ' On a 32K machine DUMPER will create six tape files and
+6 ' require about 12 minutes of tape.
+7 ' For successful file recovery, run DUMPER immediately after
+8 ' having a cold-start problem, before using any other commands.
+9 ' DO NOT USE THE  CLEAR  COMMAND before using DUMPER!
+10 A=PEEK(64192)+256*PEEK(64193):A$="1"
+15 BEEP:INPUT"Cassette ready ";C$
+20 K=0:F$="CAS:DUMP"+A$+".DO":OPENF$FOROUTPUTAS1
+25 PRINT"Writing "F$" ..."
+30 C=PEEK(A):A=A+1:IFC=26THEN30'skip CTRL/Z
+40 PRINT#1,CHR$(C);:K=K+1
+50 IFA>MAXRAMTHENBEEP:CLOSE:PRINT"All done.":END
+60 IFK>5050THENCLOSE:A$=CHR$(ASC(A$)+1):GOTO15
+70 GOTO30
+80 '*** last line

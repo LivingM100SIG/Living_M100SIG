@@ -1,0 +1,539 @@
+
+	SPRDOC.NEC - Documentation for SPRED2.NEC  06/19/84
+			by Woods Martin
+         (Edited for NEC PC-8201A by Bill Grenke, 11/25/85)
+
+
+			  DESCRIPTION
+
+	SPREAD is a BASIC program from the Model 100 Special
+Interest Group (SIG) database on CompuServe.  It is derived from
+the MiniVC project which has been one of the most popular
+programs on the SIG.  The original concept was by Terry Dettman
+with enhancements by Don Hergert, Gary Bender, Chris Young and
+Joel Hassel.  Woods Martin got involved and as ad hoc coordinator
+rewrote the program, making the command syntax more VisiCalc-like
+and adding insert, delete, replicate and data transfer.  SPREAD
+goes beyond MiniVC by adding @COUNT and @TYP functions used in
+statistical analysis, a header line entry command, better
+error reporting, and an improved display.
+
+	George Graff revised and translated the program for the
+NEC PC-8201A.  It resides in the NEC DL7 Library in the M100SIG
+as SPRED2.NEC.  An added bonus is that SPRED2.NEC supports the
+NEC PC-8241A CRT Adapter in a totally transparent manner.  If the
+CRT is available, SPREAD will use it.  If not, SPREAD will use
+the LCD display.  No program changes are required.  However, the
+NEC CRT Adapter does not use reverse video.  To determine the
+cursor location, reference must be made to the row and column
+coordinates in the upper left-hand corner of the display.
+
+	SPREAD runs somewhat faster than MiniVC and takes less
+memory; even so, a 24K or 32K RAM with 16185 bytes of memory
+for code, arrays and string space is needed using single
+precision.  Double precision requires 17925 bytes.  This allows
+models of 4 columns by 101 rows or 26 columns by 16 rows for a
+total of over 400 Elements.  If memory is available, the number
+of rows can be increased.  If possible, additional free memory
+should be available for RAM storage of model files, but this is
+not essential since input or output from or to cassette, disk or
+the RS232 port is supported.
+
+	A series of articles in Portable 100/200 (Dec 84, Feb 85,
+and Mar 85) describes the Model 100 version of SPREAD.WM3 and
+gives some sample applications.
+
+
+	 		  DOWNLOADING
+
+	First, be sure you have 12000 bytes of memory available.
+When you are logged into CompuServe, type GO M100SIG.  Read the
+MI file for tips and then go to the DL7 database and type BRO
+SPRED2.  Download per TELCOM instructions.  On a 24K machine,
+you will have to save the DO file to cassette, disk or RS232,
+kill it from RAM, and then LOAD it back under BASIC.  Then press
+F2 and enter SPREAD to save the tokenized program to RAM memory.
+(Since SPRED2 is a long program, you may want to use the XMODEM
+program in DL7 for error-free downloading.)
+
+
+		      STARTING UP SPREAD
+
+	Normally, the caps lock key should be released to
+allow lower case entry of Labels.  Conversion to upper case
+is automatic when required.  While in the Menu mode, move the
+cursor to SPREAD and press ENTER.  The default settings will
+display on the first line of the screen called the Command Line.
+
+	spr cm=T rm= 20 p=S <=ENTER or new cm?_
+
+	Press ENTER to accept these defaults.  Later on, a
+new "cm" column max can be entered if needed for skinny or fat
+models.  "rm" will be recalculated and a choice of single or
+double precision requested.  The new parameters are displayed
+for acceptance or additional changes.
+
+	The program notes the highest column and row accessed
+and stores this data with each model file.  If the cm or rm
+values are reduced below model size, that fact will be reported
+on the next attempt to load the model and a restart will be
+requested.
+
+	The blank model will appear with the Memory message on
+the Command Line:
+
+		spr cm=T rm= 20 p=S f=0 o=C ####m 3000s
+		WM3.   A   ..   B   ..   C   ..   D   .
+		  0
+		  1
+		  2
+		  3
+		  4
+		  5
+
+		(If the NEC CRT Adapter, PC-8241A, is enabled,
+	 	 rows 6 through 20 will also display.)
+
+	The Memory message will appear briefly but can be
+reviewed at any time by the /M command.  In addition to cm,
+rm and precision, f=0 indicates default integer format 
+(0 decimal places), o=C that recalculation order will be by
+columns, ####m shows unused memory, and 3000s is the available
+string space.
+
+
+---------- Appendix I - LINE AND VARIABLE CROSS REFERENCES ----------
+
+	(Line and variable cross references for SPREAD are
+found in CompuServe M100SIG Data Library 2 (DL2) files SPRLIN.WM3
+and SPRVAR.WM3.  These files are not normally needed by users.)
+
+
+------------------------ Appendix II - GLOSSARY ---------------------
+
+SHEET
+
+	Workspace consisting of Elements organized into columns and
+	rows.
+
+ELEMENT
+
+	The intersection of a Column and a Row such as A0, D35, or P6.
+	An Element can be empty or contain the Definition of a Label,
+	Value or Formula.
+
+DEFINITION
+
+	Information (up to 255 characters) entered into an Element and
+	shown on the Command Line when the Element is accessed.
+
+COLUMN
+
+	Horizontal Element locations lettered from A to Z.
+
+ROW
+
+	Vertical Element locations numbered from 0 to 100.
+
+SHEET SIZE
+
+	The maximum column (cm) and row (rm) intersection permitted by
+	the program -- shown by the /M command.
+
+MODEL
+
+	Text and numeric data entered into the sheet.
+
+MODEL FILE
+
+	A NEC ".DO" file stored in RAM memory or on another device
+	by the /SS command containing Definitions, location and format
+	for each Element of the model.  Calculation order and global
+	format are also stored.
+
+DATA FILE
+
+	A NEC ".DO" file stored in RAM memory or on another device
+	by the /S#S command containing Label and Value Definitions for
+	the Elements of a chosen section of the model.  Formula
+	Definitions are converted to values before storage.  Relative
+	Element locations are stored so that a data file saved from
+	one Model can be loaded into a different location in another.
+	Similar to DIF files used by VisiCalc but not compatible with
+	them.  (SPREAD can be modified to use standard DIF files but
+	they occupy over twice the memory and do not retain Element
+	format.)
+
+MODEL SIZE
+
+	The largest column and row used by the model -- must not be
+	greater than Sheet Size.
+
+DISPLAY
+
+	Text or Value displayed in the Element location (limited to 9
+	characters).  The current Element is displayed in reverse.
+
+COMMAND LINE
+
+	The top line of the screen.
+
+ULC
+
+	Upper left corner of screen.  Used to indicate mode 
+	(In>, Ed>, !) or Element Definition (L>, V>, F>).
+
+ER
+
+	Element Register.  Immediately below ULC.  Displays the 
+	coordinates of the current Element.
+
+LABEL 
+
+	L>Definition.  The Definition is text which is Displayed
+	as entered.
+
+VALUE
+
+	V>Definition.  The Definition is a constant numeric value
+	which is Displayed according to Element format.
+
+FORMULA
+
+	F>Definition.  The Definition is an expression containing
+	arithmetic operators, functions, and/or references to other
+	Elements.  The value of the expression is Displayed
+	according to Element format.
+
+FORMAT
+
+	Value and Formula Elements can be displayed as integers, with
+	1 to 7 decimal places or in scientific notation.  If the
+	selected format cannot be displayed in 9 characters,
+	scientific notation will be used automatically.
+
+
+----------- Appendix III - ELEMENT DEFINITION ENTRY MODE ------------
+
+	When ready for data entry, the Command Line at the top
+of the screen contains the Definition of the current Element
+(the Element displayed in reverse video) with Element
+coordinates in the box on the second line.  (Note - If the
+NEC CRT Adapter is used, there is no reverse video.  Use
+coordinates to identify current Element.)  The cursor is
+positioned over the first character in the Definition above the
+first position in the left most column header displayed.  To the
+left of the cursor in the upper left corner is the Element type
+designator:  L> for Label, V> for Value, F> for Formula and
+blank for an empty Element.
+
+	The first key pressed determines the action to be taken.
+Pressing an Immediate Command key (ENTER ARROWs > !  # /) causes
+the action described in IMMEDIATE COMMANDS.  Any other key
+causes In> to appear in the upper left corner and starts Element
+Definition entry which is terminated with ENTER or one of the
+ARROW keys.  BKSP or ESC will restore original Element contents
+prior to termination.
+
+	Before starting on a new model, you can set a Global
+Value format using the /GF command.  If all entries are dollars
+and cents, for example, you will not have to define Element
+formats after each entry.  Just type /GF2 and all subsequent
+entries will format to two decimal places although individual
+Elements can still be formatted with the /F command.
+
+
+DEFINITION ENTRY 
+
+In> Input 
+
+	When In> appears in upper left corner, an entry for the
+	current Element may be made in the Definition area.
+	The first character entered defines the entry mode,
+	as described below.
+
+V> Value
+
+	If the first character is a numeral or .  + or - and
+	there are no other operators or Element references, the
+	Element will be marked as a Value.
+
+F> Formula
+
+	If the first character is @ or ( or if it is a numeral
+	and there are multiple operators or Element references
+	in the Definition, it will be marked as a Formula.
+
+L> Label
+
+	Any other first character (which includes space) will
+	mark the Element as a Label.  Spaces and all displayable
+	characters are valid in Labels but be careful with
+	graphics because your printer may not handle them
+	properly. (An Element can be forced to be Label
+	regardless of first character by preceding the entry
+	with a double quote ["].)
+
+Corrections
+
+	Before terminating, the ESC key will delete the entire
+	entry and the BKSP key will delete the last character
+	typed.  After terminating, the cursor will blink over the
+	first character in the Element on the Command Line.
+	ARROWs, ENTER or other Immediate Commands will leave the 
+	Element intact.  Any other key will start a new entry.
+
+Terminating Entry
+
+	ENTER terminates and leaves the current Element displayed
+	in reverse.  Any ARROW key terminates and then moves
+	the current Element as desired.
+
+
+---------- Appendix IV - ARITHMETIC OPERATORS AND FUNCTIONS ----------
+
+
+OPERATORS
+
+	[ + - * / ^ ] addition, subtraction, multiplication,
+division and exponention.  Parentheses may be used.
+
+
+FUNCTIONS
+
+	arg1 arg2 are constants, expressions or Elements;
+ cr CR are Elements only.
+
+			Arithmetic
+
+	@ABS(arg1)		absolute value
+	@INT(arg1)		integer value
+	@FIX(arg1)		truncate decimal part
+	@SQRT(arg1)		square root
+	@SIN(arg1 radians)	sine
+	@COS(arg1 radians)	cosine
+	@TAN(arg1 radians)	tangent
+	   Note - degrees * .0174533 = radians
+	@ATAN(arg1)		arctangent
+	   Note - result in radians * 57.29578 = degrees
+	@LN(arg1)		natural logarithm
+	@EXP(arg1)		exponential (antilog)
+
+			Special
+
+	arg1*@ROUND(n)		rounds arg1 according to value of n
+				  n>0 rounds n places right of decimal
+				  n<0 rounds n places left of decimal
+	@MIN(arg1,arg2)		returns smallest value of arg1 or arg2
+	@MAX(arg1,arg2)		returns greatest value of arg1 or arg2
+	@MOD(arg1,arg2)		returns remainder of arg1 / arg2
+	@PI()			pi - 3.1415926536  () must be used
+	@TYP(cr)		returns 1 if Element cr is Value or
+				  Formula, otherwise 0
+
+			Relational
+
+	@<(arg1,arg2)		returns 1 if arg1<arg2,  otherwise 0
+	@<=(arg1,arg2)		returns 1 if arg1<=arg2, otherwise 0
+	@=(arg1,arg2)		returns 1 if arg1=arg2,  otherwise 0
+	@>=(arg1,arg2)		returns 1 if arg1>=arg2, otherwise 0
+	@>(arg1,arg2)		returns 1 if arg1>arg2,  otherwise 0
+	@<>(arg1,arg2)		returns 1 if arg1<>arg2, otherwise 0
+
+			Summation
+
+	The following functions work over a range of Elements such
+as @SUM(A0,A10), @AVG(C4,G4) or @COUNT(D0,D25).  These functions
+cannot be nested and the range must be from low to high.
+Diagonal coordinates are illegal.  Label or empty Elements are
+ignored in calculations.
+
+	@COUNT(cr,CR)		returns number  of Value or Formula
+					  Elements in range
+	@SUM(cr,CR)		returns sum of Value or Formula
+					  Elements in range
+	@AVG(cr,CR)		returns average of Value or Formula
+					  Elements in range
+
+
+------------------ Appendix V - IMMEDIATE COMMANDS -------------------
+
+	The following are Immediate commands:
+
+		 ARROWs  ENTER  >  !  #  /
+
+ARROWs
+
+	Move the cursor to the next Element in the selected
+	direction.  If sheet limits are reached, the tone will
+	sound.  The cursor is moved as follows:
+
+	<shift left ARROW> -- Moves cursor to leftmost column on
+		the screen.  If already there, it moves the cursor
+		one screen to the left.
+
+	<control L> -- Moves cursor to column "A".
+		Note that <control left arrow> is not used on
+		the NEC because it is interpreted as <control Q>.
+
+	<shift right ARROW> -- Moves cursor to rightmost column on
+		the screen.  If already there, it moves the cursor
+		one screen to the right.
+
+	<control right ARROW> -- Moves cursor to rightmost column
+		of current model.
+
+	<shift up ARROW> -- Moves cursor to the top of the screen.
+		If already there, it moves the cursor up one screen.
+
+	<control up ARROW> -- Moves cursor to row 0.
+
+	<shift down ARROW> -- Moves cursor to the bottom of the
+		screen.  If already there, it moves the cursor down
+		one screen.
+
+	<control down ARROW> -- Moves cursor to bottom row of
+		current model.
+
+
+ENTER
+
+	If current Element is a Formula, it will be recalculated.
+
+
+>  GOTO:_
+
+	Type coordinates of desired column and row, ENTER. 
+
+
+!  Recalculate 
+
+	-- will take place by rows or columns (see /GO ) with
+	progress displayed.  The equation evaluator is skipped for
+	Label and Value entries and only the portion of the
+	sheet which has been accessed is scanned.
+
+
+#  Convert
+
+	Convert Formula Definition in current Element to its Value.
+
+
+-------------------- Appendix VI - SLASH COMMANDS --------------------
+
+	Pressing [ / ] produces this Command Line display:
+
+		cmd: Hd Ed In De Re Bl Fm Gl Pr St Me
+
+	Pressing the corresponding first letter selects the 
+desired command.  Any other key will abort.
+
+/H  Header entry (In> appears in the upper left corner.)
+
+	Permits typing Labels across several columns without 
+	being concerned with breaking the text up into 9 
+	character segments.
+
+/E  Editing Definitions   ( Ed> in the upper left corner.)
+
+	The Definition displayed on the Command Line can be
+	edited as in the TEXT mode with ARROW, BKSP, CTRL,
+	SHIFT, and DEL keys.  ESC aborts and ENTER accepts the
+	changes.
+
+/I  Insert: Col Row _
+
+	C or R inserts column or row at current Element.
+
+
+/D  Delete: Col Row _
+
+	C or R deletes column or row at current Element.
+	INSERT-DELETE limitations:  Only column references to
+	the right of or row references below the current Element
+	are adjusted by commands.
+
+
+/R  Replicate (Source: CR _  )
+
+	Type Source begin Element <ENTER>
+	Type Source  end  Element <ENTER>
+	Type Target begin Element <ENTER>
+	Type Target  end  Element <ENTER>
+
+	End Elements must not be less than beginning.  Diagonal
+	replication is illegal.  Source begin defaults to
+	current Element; end defaults to begin.  Any references
+	in a Formula Definition being replicated to another
+	Element (such -as +C5) will result in this display:
+
+       		+C5<rep R N _
+
+	Entering N will replicate the reference "as is"
+	in the new Element.  Entering R will cause a
+	relative offset to be added to the row or column
+	reference.  Where an Element is being replicated
+	into several other Elements, the R N query will
+	appear only once.
+
+
+ /B  Blank
+
+	ENTER or ARROWs will blank and zero Element.  Pressing
+	any other key leaves Element unchanged.
+
+
+/F  Format: L R Decimal 0-7 or S _
+
+        Sets text justification to either left(L) or right(R).
+	Sets Value format of current Element to integer or up to
+	7 decimal places or scientific notation.  Any value
+	which will not fit in current format will automatically
+	shift to scientific notation.  (See Global format.)
+
+
+/G  Global: C O F _
+
+        C Column Width: Column Width (5-18) _ Sets column width
+		(default=9).
+	O Recalc Order: R C _ Selects recalculation order by Rows or
+		by Columns (default).
+	F Format: L R Decimal 0-7 or S _ Sets default format for all
+		Text or Value elements - override with [ /F ].
+	Global commands are stored with the model for later use.
+
+
+/P  Print: Printer, Device _ 
+
+	First use [ > ] to position cursor
+	at upper left of section to be printed.
+	If [ P ] is pressed the parallel port LPT: will be used.
+	If [ D ] is pressed then Spec: _ will appear.
+		Type standard COM:, or CAS:
+	Then Lower right _ will appear.
+		Type the desired column(letter) and row(number)
+		for printing to end.
+
+
+/S   Store: # L S Q C _
+
+	# Data: L S _ A Data Transfer file will be loaded or saved.
+		First position current Element at upper left of model
+		section to be loaded or saved.  Enter lower right of
+		section when requested.
+	L Load File:_ The menu of RAM files is displayed. Type the
+		model name desired (Files from other devices are OK).
+		The model is loaded and then calculated.
+	S Save File:_ Type filespec (default is RAM but other devices
+		can be used).
+	Q Quit:  Confirm=Y Abort= <ENT>_ Y will cause return to Menu.
+		Any other key will abort.
+	C Clear:  Confirm=Y Abort= <ENT>_ Y clears memory and starts a
+		new model.  Any other key aborts.  Quit and Clear are
+		accessed through the /S store command as a reminder to
+		Save files first.
+
+/M Memory
+
+	Refreshes screen and causes Memory line to print showing
+	free memory and parameter values - see STARTING UP SPREAD.

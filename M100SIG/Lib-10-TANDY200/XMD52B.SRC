@@ -1,0 +1,1252 @@
+;***
+TERM	LXI	H,COMLF	;entry poiint from XMDHAZ
+	RST	2
+	CNC	L3457
+	PUSH	A
+	CALL	SETSER
+	POP	A
+	CMC	
+	CC	CONECT
+	JC	GOBYE
+	CALL	SAVSER
+TRMCN0	MVI	A,$40
+	STA	LF650
+	STA	LF67B
+	XRA	A
+	sta	jy224	;split screen mod
+	STA	CAPTUR
+	STA	LFAC3
+	sta	64749
+	sta	64751
+	CALL	L45D3
+	MVI	A,$FF
+	STA	BFR+12
+	CALL	CRCGEN
+TRMCN1	CALL	FSETN
+	CALL	DUPDSP
+	CALL	ECHDSP
+	CALL	WATDSP
+TRMCN2	CALL	DSPFNK
+	CALL	CURSON
+TRMMON	CALL	STKSET
+	LXI	H,TRMMN6
+	SHLD	RTNADR
+	LDA	XONOFF
+	call	$866c
+	cc	$66fb
+	ANA	A
+	JZ	TRMMN2
+	LDA	ENDLCD
+	LXI	H,LF7D9
+	XRA	M
+	RRC	
+	CC	WATDSP
+TRMMN2	CALL	CHSNS
+	CALL	$6745
+	JNZ	LBLAA
+	CALL	$1404
+	JZ	TRMMN3
+	CALL	CHGET
+	JC	CTLKEY
+LBLAA	MOV	B,A
+	JC	CTLKEY
+	cpi	128	;macro cut-out
+	cnc	macro
+	push	a	;split screen mod
+	call	jy200
+	pop	a
+	ANA	A
+	CNZ	$6722
+	JC	TRMMN4
+	LDA	DUPFLG
+	ANA	A
+	MOV	A,B
+	CZ	PRTCHR
+TRMMN3	CALL	RCVX
+	JZ	TRMMON
+	CALL	RV232C
+	MOV	B,A
+	JC	TRMMON
+	CPI	$7F
+	JNZ	LBLAB
+	LDA	SERPRM
+	CPI	$3A
+	JNC	TRMMON
+	MOV	A,B
+LBLAB	RST	4
+	LXI	H,$FCED
+	MOV	A,M
+	MOV	M,B
+	CPI	$1B
+	MOV	A,B
+	JNZ	LBLAC
+	CPI	$49
+	JNZ	LBLAC
+	LDA	CAPTUR
+	ANA	A
+	JNZ	LBLAC
+	MVI	B,8
+LBLAD	MOV	A,M
+	CALL	SD232C
+	INX	H
+	DCR	B
+	JNZ	LBLAD
+	MVI	A,$49
+LBLAC	CALL	$6452
+	CALL	L56C5
+	JMP	TRMMON
+;***
+TRMMN4	XRA	A
+	STA	ENDLCD
+TRMMN5	CALL	CHKBK2
+	JC	TRMMN5
+	JMP	TRMMON
+;***
+TRMMN6	CALL	BEEP
+	XRA	A
+	STA	LF659
+	CALL	ECHDSP
+	JMP	TRMMON
+;***
+CTLKEY	MOV	E,A
+	MVI	D,$FF
+	LHLD	BFR+16
+	DAD	D
+	DAD	D
+	MOV	A,M
+	INX	H
+	MOV	H,M
+	MOV	L,A
+	LXI	D,TRMMON
+	PUSH	D
+	PCHL	
+;
+KEYWD	DW	jy129
+	DW	DOWNLD
+	DW	UPLOAD
+	DW	DUPLEX
+	DW	ECHOTG
+	DW	SCROLL
+	DW	XMDM
+	DW	BYEBYE
+;
+FTABN	DM	Pre
+	DB	$F6
+	DM	Dow
+	DB	$EE
+	DB	' U'
+	DB	$F0
+	DB	$80
+	DB	$80
+	DB	$80
+	DM	Xmo
+	DB	$E4
+	DB	' By'
+	DB	$E5
+;
+BYEBYE	LXI	H,DISMSG
+	CALL	GETANS
+	CPI	$59
+	JZ	GOBYE
+	LXI	H,ABTMSG
+	CALL	PRTMSG
+	JMP	TRMMON
+;***
+jy129	lda	61194	;new PREV  !!!
+	ora	a
+	jz	PREV	;label on?
+	lda	64781
+	rar
+	jnc	PREV	;shift?
+	lxi	h,jy224
+	inr	m
+	mov	a,m
+	rar
+	jnc	20423
+	cmc
+	jmp	jy215
+;***
+GOBYE	XRA	A
+	STA	LF650
+	MOV	L,A
+	MOV	H,A
+	SHLD	CAPTUR
+	CALL	CLSCOM
+	CALL	CUROFF
+	CALL	DISCON
+	CALL	L6370
+	JMP	START
+;***
+XMDM	call	f7chk	;check for SHIFT -> DIRACC to BASIC if pressed
+	LDA	CAPTUR
+	ORA	A
+	CNZ	DWNEND
+	LXI	H,FRE
+	SHLD	BFR+16
+	LXI	H,FTABX
+	CALL	SETFNK
+	LDA	BFR+12
+	CALL	CRCDSP
+	JMP	TRMCN2
+;***
+FTABX	DM	Pre
+	DB	$F6
+	DM	Xsn
+	DB	$E4
+	DM	Xrc
+	DB	$F6
+	DM	Fil
+	DB	$E5
+	DM	Fre
+	DB	$E5
+	DB	$80
+	DB	$80
+	DM	Nor
+	DB	$ED
+;
+	DW	jy129
+	DW	XMDSND
+	DW	XMDRCV
+	DW	DIR
+	DW	FRE
+	DW	SCROLL
+	DW	CRCTOG
+	DW	TRMCN1
+;
+FRE	CALL	CRLF
+	CALL	FRERAM
+	JMP	CRLF
+;***
+DIR	CALL	CRLF
+	JMP	FILES
+;***
+CRCTOG	call	f7chk	;check for SHIFT -> DIRACC if pressed
+	LDA	BFR+12
+	XRI	$FF
+CRCSET	STA	BFR+12
+CRCDSP	LXI	D,KEYDSP+$60	;F0D4 (61652) --- F7, TBL 1
+	LXI	H,TOGMSG
+	JMP	CHGDSP
+;***
+;Xmodem Send Routines
+
+;***
+XMDSND	LXI	H,XSNABT
+	SHLD	RTNADR
+	PUSH	H
+	LXI	H,XSNMSG
+	CALL	GETANS
+	ANA	A
+	RZ	
+	STA	LFAC6
+	CALL	FILENG
+	CALL	FNAME
+	RNZ	
+	CALL	L208F
+	SHLD	BFR+2
+	XCHG	
+	SHLD	BFR+4
+	SHLD	BFR+6
+	LXI	H,FNTFND
+	JZ	PRTMSG
+	CALL	SETXMD
+	LXI	H,FNDMSG
+	CALL	PRTMSG
+	XRA	A
+	STA	BFR+10
+	STA	BFR+9
+	LXI	H,$0001
+	SHLD	BFR
+	JMP	XMSND2
+;***
+SNONAK	LDA	BFR+9
+	INR	A
+	STA	BFR+9
+	CPI	$0B
+	RNC	
+	LXI	H,NAKMSG
+	CALL	PRTMSG
+	CALL	RTYDSP
+	CALL	BRKCHR
+	JZ	CANABT
+XMSND2	LXI	H,$FFFD
+NAKCHK	DCX	H
+	MOV	A,L
+	ORA	H
+	JZ	SNONAK
+	LXI	B,$000C
+	CALL	DELAY
+	CALL	RCVX
+	JZ	NAKCHK
+	PUSH	H
+	CALL	RV232C
+	POP	H
+	JNZ	NAKCHK
+	JC	CANABT
+	CPI	$15
+	JNZ	CRCGOT
+	XRA	A
+	JMP	NAKCH3
+;***
+CRCGOT	CPI	$43
+	JNZ	NAKCHK
+	MVI	A,$FF
+NAKCH3	CALL	CRCSET
+SNDBLK	XRA	A
+	STA	BFR+9
+SNDRTY	LDA	BFR+9
+	INR	A
+	STA	BFR+9
+	CPI	$0B
+	RNC	
+	CALL	BRKCHR
+	JZ	CANABT
+	CALL	SNDDSP
+	MVI	C,$01
+	CALL	SNDLOC
+	LDA	BFR
+	MOV	C,A
+	CMA	
+	PUSH	A
+	CALL	SNDLOC
+	POP	A
+	CALL	SENDER
+	XRA	A
+	STA	BFR+8
+	LXI	H,$0000
+	SHLD	BFR+13
+	LHLD	BFR+6
+	XCHG	
+	MVI	C,$80
+BLKLUP	LDAX	D
+	CPI	$1A
+	JNZ	SNDBL2	;new
+	STA	BFR+10
+SNDBL2	MOV	B,A
+	LDA	BFR+10
+	ORA	A
+	JZ	NOEOF
+	MVI	B,$1A
+NOEOF	MOV	A,B	;end of new
+	CALL	ADDCKS
+	CALL	SENDER
+	INX	D
+	DCR	C
+	JNZ	BLKLUP
+	LDA	BFR+12
+	ORA	A
+	JNZ	SNDCRC
+	LDA	BFR+8
+	CALL	SENDER
+	JMP	SNDCKS
+;***
+SNDCRC	LHLD	BFR+13
+	MOV	A,H
+	CALL	SENDER
+	MOV	A,L
+	CALL	SENDER
+SNDCKS	LXI	B,$FFFD
+SNDBL3	CALL	RCVX
+	JZ	SNDBL4
+	PUSH	B
+	CALL	RV232C
+	POP	B
+	CPI	$06
+	JZ	SBLKOK
+	CPI	$15
+	JNZ	SNDBL4
+	LXI	H,NAKMS2
+	CALL	PRTMSG
+	CALL	RTYDSP
+	JMP	SNDRTY
+;***
+SNDBL4	DCX	B
+	MOV	A,C
+	ORA	B
+	JNZ	SNDBL3
+	LXI	H,ACKMSG
+	CALL	PRTMSG
+	CALL	RTYDSP
+	JMP	SNDRTY
+;***
+SBLKOK	LDA	BFR+10
+	ORA	A
+	JNZ	SNDEOT
+	LHLD	BFR+6
+	LXI	D,$0080
+	DAD	D
+	SHLD	BFR+6
+	LHLD	BFR
+	INX	H
+	SHLD	BFR
+	JMP	SNDBLK
+;***
+SNDEOT	XRA	A
+	STA	BFR+9
+SNEOT1	LDA	BFR+9
+	INR	A
+	STA	BFR+9
+	CPI	$0B
+	RZ	
+	CALL	BRKCHR
+	JZ	CANABT
+	MVI	C,$04
+	CALL	SNDLOC
+	LXI	B,$FFFD
+SNEOT2	CALL	RCVX
+	JZ	SNEOT3
+	PUSH	B
+	CALL	RV232C
+	POP	B
+	CPI	$06
+	JZ	XSNDOK
+SNEOT3	PUSH	B
+	LXI	B,$0064
+	CALL	DELAY
+	POP	B
+	DCX	B
+	MOV	A,C
+	ORA	B
+	JNZ	SNEOT2
+	LXI	H,ACKMS2
+	CALL	PRTMSG
+	CALL	RTYDSP
+	JMP	SNEOT1
+;***
+XSNDOK	POP	H
+	LXI	H,SOKMSG
+	CALL	PRTMSG
+	JMP	XDONE
+;***
+
+;Xmodem Receive Routines
+
+;***
+XMDRCV	LXI	H,XRCABT
+	SHLD	RTNADR
+	PUSH	H
+	LXI	H,XRCMSG
+	CALL	GETANS
+	ANA	A
+	RZ	
+	STA	LFAC6
+	CALL	FILENG
+	CALL	FNAME
+	RNZ	
+XMDRC2	CALL	MAKTXT
+XMDRC3	SHLD	BFR+4
+	SHLD	BFR+6
+	XCHG	
+	SHLD	BFR+2
+	JNC	RCVRDY
+	LXI	H,FEMSG
+	CALL	GETANS
+	CPI	$59
+	RNZ	
+	LXI	H,XMDRC2
+	PUSH	H
+	LHLD	BFR+4
+	XCHG	
+	LHLD	BFR+2
+	CALL	KILASC
+RCVRDY	LXI	H,$0001
+	SHLD	BFR
+	XRA	A
+	STA	BFR+10
+	DCR	A
+	STA	BFR+15
+	CALL	SETXMD
+	LXI	H,OPNMSG
+	CALL	PRTMSG
+	LXI	H,CKSMSG
+	MVI	C,$15
+	LDA	BFR+12
+	ORA	A
+	JZ	XMDRC4
+	LXI	H,CRCMSG
+	MVI	C,$43
+XMDRC4	PUSH	B
+	CALL	PRTMSG
+	POP	B
+	CALL	SNDLOC
+RCVBLK	XRA	A
+	STA	BFR+9
+LED5D	LDA	BFR+11
+	ORA	A
+	JNZ	RCVRT1
+	XRA	A
+	STA	BFR+10
+RCVRT1	LDA	BFR+9
+	INR	A
+	STA	BFR+9
+	CPI	$0B
+	RNC	
+	CPI	$07
+	JC	RCVRT2
+	LDA	BFR+15
+	MOV	B,A
+	LDA	BFR+12
+	ANA	B
+	JZ	RCVRT2
+	XRA	A
+	STA	BFR+12
+	LXI	H,SWMSG
+	CALL	PRTMSG
+	JMP	RCVRDY
+;***
+RCVRT2	CALL	BRKCHR
+	JZ	CANABT
+	XRA	A
+	STA	BFR+8
+	LXI	H,$0000
+	SHLD	BFR+13
+	CALL	RXCHR
+	JNZ	TIMOUT
+	CPI	$04
+	JZ	RCVEOT
+	CPI	$01
+	JNZ	HDRBAD
+	XRA	A
+	STA	BFR+15
+	CALL	RXCHR
+	JNZ	TIMOUT
+	MOV	E,A
+	LDA	BFR
+	CMP	E
+	JNZ	HDRBAD
+	CALL	RXCHR
+	JNZ	TIMOUT
+	CMA	
+	CMP	E
+	JNZ	HDRBAD
+	MVI	D,$00
+	MVI	E,$80
+	LXI	H,BFR+546	;542 in M100
+RBKLP	CALL	RXCHR
+	JNZ	TIMOUT
+	MOV	M,A
+	CALL	ADDCKS
+	CPI	$1A
+	JNZ	RBKLP2
+	STA	BFR+10
+RBKLP2	LDA	BFR+10
+	ORA	A
+	JNZ	RBKLP3
+	INR	D
+RBKLP3	INX	H
+	DCR	E
+	JNZ	RBKLP
+	LDA	BFR+12
+	ORA	A
+	JZ	RCKSLP
+	MVI	C,$02
+RCRCLP	PUSH	B
+	CALL	RXCHR
+	POP	B
+	JNZ	TIMOUT
+	CALL	ADDCKS
+	DCR	C
+	JNZ	RCRCLP
+	CALL	CRCCHK
+	JNZ	RCRCBD
+	JMP	RBKOK
+;***
+RCKSLP	CALL	RXCHR
+	JNZ	TIMOUT
+	MOV	B,A
+	LDA	BFR+8
+	CMP	B
+	JNZ	RCKSBD
+RBKOK	MOV	A,D
+	ORA	A
+	JZ	RBKOK2
+	MOV	C,A
+	MVI	B,$00
+	LHLD	BFR+6
+	PUSH	B
+	PUSH	H
+	CALL	MAKHOL
+	POP	H
+	POP	B
+	JC	OMERR
+	LXI	D,BFR+546	;542 in M100
+	CALL	MOVBLK
+	SHLD	BFR+6
+RBKOK2	CALL	RXREC
+	CALL	SNDACK
+	LHLD	BFR
+	INX	H
+	SHLD	BFR
+	LDA	BFR+10
+	STA	BFR+11
+	JMP	RCVBLK
+;***
+RCKSBD	LXI	H,CKSER
+	JMP	COMERR
+;***
+RCRCBD	LXI	H,CRCER
+	JMP	COMERR
+;***
+HDRBAD	LXI	H,HDRMSG
+	JMP	COMERR
+;***
+TIMOUT	LXI	H,RXTOMS
+COMERR	CALL	PRTMSG
+	CALL	RTYDSP
+	CALL	WAITQT
+	MVI	C,$15
+	LDA	BFR+15
+	MOV	B,A
+	LDA	BFR+12
+	ANA	B
+	JZ	COMER2
+	MVI	C,$43
+COMER2	CALL	SNDLOC
+	JMP	LED5D
+;***
+OMERR	LXI	H,OMMSG
+	CALL	PRTMSG
+	LHLD	BFR+4
+	XCHG	
+	LHLD	BFR+2
+	CALL	KILASC
+RCVEOT	POP	H
+	CALL	SNDACK
+	LXI	H,ROKMSG
+	CALL	PRTMSG
+	jmp	XDONE
+;***
+
+;Subroutines
+
+;***
+CANABT	LXI	H,LF2E5
+	JMP	PRTABT
+;***
+ADDCKS	PUSH	A
+	PUSH	H
+	LXI	H,BFR+8
+	ADD	M
+	MOV	M,A
+	POP	H
+	POP	A
+	JMP	CRCUPD
+;***
+SENDER	PUSH	A
+	PUSH	B
+	PUSH	D
+	PUSH	H
+	MOV	C,A
+	CALL	SNDLOC
+	POP	H
+	POP	D
+	POP	B
+	POP	A
+	RET	
+;***
+SNDLOC	PUSH	B
+	push	b	;added stack balance
+	JMP	SNDCOM
+;***
+DELAY	PUSH	A
+DELAY2	DCX	B
+	MOV	A,C
+	ORA	B
+	JNZ	DELAY2
+	POP	A
+	RET	
+;***
+DSPDEC	PUSH	H
+	MOV	L,A
+	MVI	H,$00
+	CALL	HX2DEC
+	POP	H
+	RET	
+;***
+HX2DEC	PUSH	A
+	PUSH	B
+	PUSH	D
+	CALL	CONVD
+	POP	D
+	POP	B
+	POP	A
+	RET	
+;***
+RTYDSP	PUSH	A
+	LDA	BFR+9
+	CALL	DSPDEC
+	CALL	CRLF
+	POP	A
+	RET	
+;***
+SNDDSP	LXI	H,SNDMSG
+	JMP	MSGDSP
+;***
+SNDMSG	DB	13
+	DB	27
+	DM	M   Sending block # 
+	DB	0
+;
+RECMSG	DB	13
+	DB	27
+	DM	M  Received block # 
+	DB	0
+;
+RXREC	LXI	H,RECMSG
+MSGDSP	CALL	PRTMSG
+	LHLD	BFR
+	CALL	HX2DEC
+	MVI	A,$0D
+	RST	4
+	RET	
+;***
+SNDACK	MVI	C,$06
+	JMP	SNDLOC
+;***
+RXCHR	LXI	B,$000F
+RXTIMR	PUSH	D
+	PUSH	H
+RXTIM1	PUSH	B
+	LXI	B,$0D05
+RXTIM2	PUSH	B
+	CALL	RCVX
+	JZ	RXTIM4
+	CALL	RV232C
+	JNZ	RXTIM4
+	POP	B
+	POP	B
+	POP	H
+	POP	D
+	RET	
+;***
+RXTIM4	LXI	B,$000A
+	CALL	DELAY
+	POP	B
+	DCX	B
+	MOV	A,C
+	ORA	B
+	JNZ	RXTIM2
+	POP	B
+	DCX	B
+	MOV	A,C
+	ORA	B
+	JNZ	RXTIM1
+	DCR	C
+	POP	H
+	POP	D
+	RET	
+;***
+BRKCHR	CALL	KEYX
+	JZ	BRKCH2
+	CALL	CHGET
+	CPI	$03
+	RZ	
+	CPI	$18
+	RZ	
+BRKCH2	XRA	A
+	DCR	A
+	RET	
+;***
+WAITQT	LXI	B,$0001
+	CALL	RXTIMR
+	RNZ	
+	CALL	BRKCHR
+	RZ	
+	JMP	WAITQT
+;***
+SETXMD	LXI	H,BFR+26	;24 in M100
+	JMP	SETLOC
+;***
+RSTSER	LXI	H,BFR+18
+SETLOC	MOV	A,M
+	CPI	$4D
+	JNZ	SETSER
+	INX	H
+	JMP	SETSER
+;***
+SAVSER	LXI	H,BFR+18
+	LXI	D,SERPRM
+	LDAX	D
+	STA	BFR+26	;24 in M100
+	LXI	B,$0007	;$0005 in M100
+	JMP	MOVBLK
+;***
+XMDPRM	DM	8N1DNN
+SETXPM	XRA	A	
+	STA	BFR+25	;23 in M100
+	STA	BFR+33	;29 in M100
+	LXI	H,BFR+27	;25 in M100
+	LXI	D,XMDPRM
+	LXI	B,$0006	;$0004 in M100
+MOVBLK	MOV	A,C
+	ORA	B
+	RZ	
+	LDAX	D
+	MOV	M,A
+	INX	D
+	INX	H
+	DCX	B
+	JMP	MOVBLK
+;***
+GETANS	CALL	PRTMSG
+	CALL	INPRMP
+	RST	2
+	JMP	UPCASE
+;***
+DOWNLD	CALL	DIRRST
+	LDA	CAPTUR
+	XRI	$FF
+	STA	CAPTUR
+	JZ	DWNEND
+	LXI	H,DWNABT
+	JMP	DWNLDR
+;***
+DWNEND	CALL	FNKSB
+	JMP	L6383
+;***
+UPLOAD	LXI	H,UPABT
+	JMP	UPLDR
+;***
+DWNABT	XRA	A
+	STA	CAPTUR
+	CALL	FNKSB
+	LXI	H,DWNMSG
+	JMP	PRTABT
+;***
+UPABT	LXI	H,UPLMSG
+	JMP	PRTABT
+;***
+XRCABT	LXI	H,XRCMS2
+	JMP	PRTABT
+;***
+XSNABT	LXI	H,XSMS2
+PRTABT	CALL	PRTMSG
+	LXI	H,ABTMSG
+	CALL	PRTNUL
+	JMP	XDONE
+;***
+FSETN	LXI	H,FTABN
+	SHLD	BFR+16
+	LXI	H,FTABN
+	JMP	SETFNK
+;***
+XDONE	call	RSTSER
+	call	DIRRST
+	jmp	TRMMON
+;***
+CRCCHK	PUSH	H
+	LHLD	BFR+13
+	MOV	A,H
+	ORA	L
+	POP	H
+	RZ	
+	MVI	A,$FF
+	RET	
+;***
+CRCGEN	LXI	H,BFR+34	;30 in M100
+	MVI	C,$00
+CRCGN1	XCHG	
+	LXI	H,$0000
+	MOV	A,C
+	PUSH	B
+	MVI	B,$08
+	XRA	H
+	MOV	H,A
+CRCGN2	DAD	H
+	JNC	CRCGN3
+	MVI	A,$10
+	XRA	H
+	MOV	H,A
+	MVI	A,$21
+	XRA	L
+	MOV	L,A
+CRCGN3	DCR	B
+	JNZ	CRCGN2
+	POP	B
+	XCHG	
+	MOV	M,D
+	INR	H
+	MOV	M,E
+	DCR	H
+	INX	H
+	INR	C
+	JNZ	CRCGN1
+	RET	
+;***
+CRCUPD	PUSH	A
+	PUSH	B
+	PUSH	D
+	PUSH	H
+	LHLD	BFR+13
+	XCHG	
+	MVI	B,$00
+	XRA	D
+	MOV	C,A
+	LXI	H,BFR+34	;30 in M100 version
+	DAD	B
+	MOV	A,M
+	XRA	E
+	MOV	D,A
+	INR	H
+	MOV	E,M
+	XCHG	
+	SHLD	BFR+13
+	POP	H
+	POP	D
+	POP	B
+	POP	A
+	RET	
+;***
+;
+;Start of macro code
+
+macro	push	a	;store macro name
+	call	dirrst
+	lxi	de,mfile	;macro filename
+	mvi	a,10	;fnam length
+	call	CHKF	;find file
+	jz	merr1	;not found
+	call	FADDR	;get top
+	pop	a	;get macro name back
+	mov	c,a	;put it in c
+mseek	mov	a,m	;get char from file
+	cpi	26	;eof?
+	jz	merr	;macro not found
+	cmp	c	;is it the name of the macro?
+	inx	hl	;move fwd in file
+	jnz	mseek	;not it, keep looking
+;
+msend	mov	a,m	;get a char from macro file
+	cpi	26	;eof?
+	jz	mdone	;yes, exit
+	cpi	128	;end of macro?
+	jnc	mdone	;yes, exit
+	call	SD232C	;send character
+	inx	h
+	jmp	msend	;loop
+;
+merr1	pop	a	;balance it
+merr	call	BEEP
+mdone	xra	a	;clear a
+	ret
+;
+mfile	dm	XMDMAC.DO
+	db	0
+
+;***
+;Start of DIRACC code
+;Base  code Copyright 1986 by Hugo Ferreya
+;
+f6chk	lda	64781	;routine to see if SHIFT is pressed
+	rar		;
+	rnc		;if not shift return
+	jmp	f6lbl
+;***
+f7chk	lda	64781
+	rar
+	rnc
+	jmp	f7lbl
+;***
+F6LBL	CALL	IDLBL	;F6 entry to Basic from TELCOM
+	CALL	$83bf
+	LXI	H,0000
+	SHLD	RTNADR
+	JMP	$8395	
+F7LBL	CALL	IDLBL	;F7 entry to Text from TELCOM
+	CALL	CRLF	
+	LXI	HL,FNLBL
+	SHLD	RTNADR	
+	LXI	H,$71d4	
+	CALL	SETFNK
+	XRA	A
+	STA	LF650
+FNLBL	CNZ	BEEP	
+	CALL	STKINI	
+	LXI	H,$71c4
+	CALL	PRTNUL
+	CALL	INPRMP	
+	RST	2
+	JZ	HILBL
+	CALL	$2d73	
+	PUSH	HL
+	LXI	HL,0000
+	SHLD	$efd2	
+	MVI	A,01
+	LXI	HL,HILBL
+	JMP	$7327	
+IDLBL	call	dirrst
+	CALL	$4f4d	
+	LXI	HL,CPLBL
+	CALL	PRTNUL	
+	MVI	L,0
+	MVI	C,$C0
+	CALL	FILES	
+	CALL	CRLF	
+	CALL	FRERAM	
+	RET
+CPLBL	DB	$1b
+	DB	$70
+	DM	DIRACC 100  Copyright 1985 Hugo Ferreyra
+	DB	$1b
+	DB	$71
+	DB	0
+;***
+jy200	mov	b,a	;!!!  Split screen routine
+	lda	61194
+	ora	a
+	rz		;label on?
+	lhld	jy224
+	mov	a,l
+	rar
+	rnc		;on?
+	mov	e,h
+	mov	a,b
+	mvi	d,0
+	cpi	13
+	jz	jy215
+	cpi	21
+	jnz	jy211
+jy215	lxi	h,jy222
+	mvi	b,39
+	push	h
+jy219	mvi	m,32
+	inx	h
+	dcr	b
+	jnz	jy219
+	pop	h
+	mov	a,b
+jy217	sta	jy225
+	jmp	jy212
+;***
+jy211	lxi	h,jy222
+	dad	d
+	cpi	8
+	jnz	jy213
+	dcr	e
+	rm
+	mvi	m,32
+	dcx	h
+	mov	a,e
+	jmp	jy217
+;***
+jy213	cpi	9
+	jnz	jy214
+	mvi	c,8
+jy201a	mvi	a,32
+	call	jy210
+	dcr	c
+	jnz	jy201a
+	jmp	jy212
+;***
+jy210	mov	m,a
+	inx	h
+	mov	a,e
+	inr	a
+	cpi	39
+	jnc	jy220
+	mov	e,a
+	sta	jy225
+	ret
+;***
+jy220	lxi	h,jy222
+	mov	d,h
+	mov	e,l
+	inx	h
+	mvi	b,38
+jy201b	mov	a,m
+	stax	d
+	inx	h
+	inx	d
+	dcr	b
+	jnz	jy201b
+	dcx	h
+	mvi	e,38
+	ret
+;***
+jy214	cpi	32
+	rc
+	call	jy210
+jy212	mvi	m,233
+	lhld	61190
+	push	h
+	lxi	h,272
+	shld	61190
+	call	20333
+	xra	a
+	sta	jy223
+	lxi	h,jy222
+	call	4556
+	pop	h
+	shld	61190
+	jmp	20328
+;***
+jy222	ds	39
+jy223	db	0
+jy224	db	0
+jy225	db	0
+;***
+
+;Comm Messages
+
+;***
+XSNMSG	DM	File to send 
+	DB	0
+;
+XSMS2	DM	Send
+	DB	0
+;
+XRCMSG	DM	File to receive 
+	DB	0
+;
+XRCMS2	DM	Receive
+	DB	0
+;
+FNDMSG	DB	13
+	DB	10
+	DM	File found - Ready to send
+	DB	13
+	DB	10
+	DM	waiting...
+	DB	0
+;
+NAKMSG	DB	27
+	DM	M
+	DB	13
+	DB	7
+	DB	9
+	DM	Initial NAK timeout # 
+	DB	0
+;
+ACKMSG	DB	27
+	DM	M
+	DB	13
+	DB	7
+	DB	9
+	DM	Block ACK/NAK timeout # 
+	DB	0
+;
+NAKMS2	DB	27
+	DM	M
+	DB	13
+	DB	7
+	DB	9
+	DM	Block NAKked - resend # 
+	DB	0
+;
+ACKMS2	DB	27
+	DM	M
+	DB	13
+	DB	7
+	DB	9
+	DM	Final ACK timeout # 
+	DB	0
+;
+SOKMSG	DB	13
+	DB	10
+	DB	10
+	DB	7
+	DB	' Send OK (now in Term mode)'
+	DB	13
+	DB	10
+	DB	0
+;
+FEMSG	DM	File exists - Erase (Y/N) 
+	DB	0
+;
+OPNMSG	DB	13
+	DB	10
+	DM	File open - ready to receive
+	DB	13
+	DB	10
+	DB	0
+;
+CKSMSG	DM	Checksum in effect
+	DB	13
+	DB	10
+	DB	0
+;
+CRCMSG	DB	'     CRC in effect'
+	DB	13
+	DB	10
+	DB	0
+;
+SWMSG	DB	27
+	DM	M
+	DB	13
+	DB	9
+	DM	Switching to checksum mode
+	DB	13
+	DB	10
+	DB	0
+;
+TOGMSG	DM	CRC CkSm
+RXTOMS	DB	27
+	DM	M
+	DB	13
+	DB	7
+	DB	9
+	DM	Receive timeout # 
+	DB	0
+;
+HDRMSG	DB	27
+	DM	M
+	DB	13
+	DB	7
+	DM	Bad header received - retry # 
+	DB	0
+;
+OMMSG	DB	13
+	DB	10
+	DB	7
+	DM	Out of memory - file deleted
+	DB	13
+	DB	10
+	DB	0
+;
+CKSER	DB	27
+	DM	M
+	DB	13
+	DB	7
+	DB	9
+	DM	Checksum error # 
+	DB	0
+;
+CRCER	DB	27
+	DM	M
+	DB	13
+	DB	7
+	DB	9
+	DB	'     CRC error # '
+	DB	0
+;
+ROKMSG	DB	13
+	DB	10
+	DB	10
+	DB	7
+	DB	' Receive OK (now in Term mode)'
+	DB	13
+	DB	10
+	DB	0
+;
+LF2E5	DB	27
+	DM	M
+	DB	13
+	DB	7
+	DM	BREAK key -
+	DB	0
+;
+INIMSG	DB	13
+	DM	XMDPW5.200 - Xmodem Program [10/13/88]
+	DB	13
+	DB	10
+	DB	'  with DIRACC, SplitScreen & Macros'
+	DB	13
+	DB	10
+	DB	'              ---------'
+	DB	13
+	DB	10
+	DB	0
+;
+BFR	DS	676	;672 in M100
+;
+	END

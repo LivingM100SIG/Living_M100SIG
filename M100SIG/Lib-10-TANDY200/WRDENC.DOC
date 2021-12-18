@@ -1,0 +1,78 @@
+=============================================================
+
+      WRDENC - DATA ENCRYPTION FOR THE MODEL 200
+
+=============================================================
+
+    This program encrypts a .DO file on the model 200 to keep it from 
+prying eyes. The program is 100% machine language, uses a 30 character
+password or key, and has a speed of about 1.5K/sec.
+
+    This program is model 200 specific.
+
+=============================================================
+
+PROGRAM INSTALLATION:
+
+    The program is installed by downloading the basic program 
+WRDENC.200, and then running it. This program will build the .CO file 
+in memory, and then save it with the name WRDENC.CO.
+
+    A data checksum is kept when creating the ML program, but as with 
+all ML programs, save everything until you are sure it works, a bad ML
+program can clobber your machine.
+
+PROGRAM USAGE:
+
+    The program is real simple, just run it and type in the name of 
+the file to encode/decode. (Hitting <ENTER> will take you back to the 
+MENU). The program will then say either encoding or decoding, and 
+prompt you for a password. After entering the password, the full 
+password will be listed in inverse video, and you will be asked to 
+continue Y/N. Anything but Y or y will take you back to the FILE: 
+prompt, and leave your file untouched. Make sure the password is 
+correct. This program works on the file in place, and short of 
+deadstarting the machine, this program is one of the fastest ways to 
+lose data if you type in a wrong password. The algorithim used is also
+one way, once you use a wrong password when trying to decode a file, 
+information is lost, and can not be recovered. So, be verrrry careful 
+when typing in a password to decode. (Having a copy of the encrypted 
+file is suggested).
+
+   The method used to encode the file is position dependant, if a byte
+in the file is deleted, everything from that byte on will be trash. 
+After the file is encoded, do not touch it.
+
+=============================================================
+
+METHOD USED
+
+    The algorithim used is rather simple, but has the advantage of 
+being fast. This is not intended to be an "unbreakable" code. It is 
+however hard enough to break to discourage any but a determined 
+cryptographer. The password entered is reduced to 3 15 bit seeds for a
+  random number generator. The 3 random values from the generator are 
+then used as exclusive or and shift masks to the data byte. The high 
+bit is then set. Decoding is the same in reverse. The random number 
+generator is table based, and machine specific.
+
+=============================================================
+
+Note:
+
+     This is a new program, and  while the program is straight forward
+and has worked for everything I have tried, care should be used due to
+the nature of the program. The user is solely responsible for the loss
+of data, and/or any associated losses they may incur as a result of 
+use of this program.
+
+=============================================================
+
+    Any comments/ideas, etc. would be appreciated
+
+    Richard Haw
+    [71706,334]
+
+=============================================================
+
+

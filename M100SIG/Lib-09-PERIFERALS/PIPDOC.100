@@ -1,0 +1,396 @@
+                PIP V1.4 12/28/85  [c]  Woods Martin         Page   1  
+
+        PIP is a peripheral interchange utility program to facilitate the 
+        management of programs and files on the Model 100 computer and its 
+        peripheral devices.  PIP does not currently support other computers, 
+        the Tandy Portable Disk Drive or non-Tandy disk or wafer tape storage 
+        devices. 
+
+        PIP is provided freely to all users on the Honor System.  Try PIP as 
+        long as you like and share it with your friends.  If you wish to keep 
+        and use it, please send $10 to Woods Martin, 5517 Sturbridge, Houston, 
+        TX 77056.  This helps to pay for my time on the SIGS used in uploading 
+        new programs and assisting users with applications and problems.  
+        Assistance with PIP problems (as far as I am able) comes with your 
+        contribution. 
+
+        PIP uses keyboard entry or command files to provide: 
+
+                  COPY     programs/files between devices 
+                  KILL     files in Model 100 memory or disk 
+                  RENAME   files in Model 100 memory or disk 
+                  RUN      another program from PIP 
+                  DISPLAY  Model 100 or disk directories 
+                  DATE, DAY and TIME entry 
+                  DVI and SCREEN control (if Disk Video Interface used)  
+
+        ASCII files such as ADRS.DO and programs in Basic tokenized form as 
+        well as in machine language can be easily transferred between all 
+        Tandy devices.  PIP is compatible with the Tandy Disk Video Interface, 
+        switching Disk Basic in and out on command or when necessary to load a 
+        high memory ML program. 
+
+        PIP can copy, rename or kill individual files or groups of files using 
+        "wildcard" commands in which the symbol "*" can indicate any filename 
+        or extension and the symbol "?" can indicate any character within a 
+        filename or extension.  When copying groups of files to disk or 
+        cassette from another device, PIP puts a command/directory file on the 
+        destination device for later use by PIP to exactly reverse the 
+        transfer process, restoring the source device (usually RAM memory) to 
+        its original condition prior to the transfer.  In addition, when the 
+        transfer is to cassette, PIP puts a copy of itself on the cassette, 
+        creating a self loading tape which can restore the memory of a new or 
+        cold-started machine.  A series of tapes can be produced, each of 
+        which will configure the Model 100 differently. 
+
+        PIP will also accept commands from a script or command file prepared 
+        by the Model 100 TEXT program.  Usually the file name is entered at 
+        the pip> prompt but the name can be assigned in the program at Line 25 
+        (25 FI="CAS:C") for completely automatic operation. 
+
+        PIP will be retained in Model 100 RAM memory under the name PIP.BA 
+        when it has completed the script of commands but can be deleted if 
+        preferred by using the KILL PIP.BA command.  A copy exists at the 
+        beginning of each PIP tape and can easily be reloaded with CLOAD if 
+        needed. 
+
+
+
+
+
+
+
+
+
+
+
+                PIP V1.4 12/28/85  [c]  Woods Martin         Page   2  
+
+                                      RUNNING PIP 
+
+        If PIP is not in RAM memory, it may be loaded from Cassette, Disk or 
+        through the COM: or MDM: ports.  Once loaded, press F4 to RUN.  PIP 
+        will save itself to RAM if not already there.  After the initial 
+        message, the command prompt  pip>  will display in reverse video to 
+        indicate that a command may be entered. 
+
+                                      EXITING PIP 
+
+        Pressing F8 or ENTER or typing MENU ENTER will return control to the 
+        Model 100 MENU program and reset the display to the LCD: with a width 
+        of 40 in case the DVI screen has been in use. 
+
+                                     PIP COMMANDS 
+
+        SLASH COMMANDS WITHOUT FILE ARGUMENTS: 
+
+                  /L   -  switch to LCD: display 
+                  /C   -  switch to CRT: 40 character display (if available) 
+                  /CW  -  switch to CRT: 80 character display (if available) 
+                  /F   -  display RAM   file directory 
+                  /F#  -  display DISK# file directory 
+                  /D   -  enter or correct Date, Day and Time 
+                  /I   -  install disk basic (if available)    (Date and Time 
+                  /R   -  remove  disk basic                   (are preserved. 
+
+        COMMANDS WITH FILE ARGUMENTS 
+
+        A complete command consists of: 
+
+                  COMMAND SOURCE FILE SEMI-COLON DESTINATION FILE 
+
+        A complete file specification consists of device, filename and 
+                   extension: 
+
+                       Source              Destination 
+                   DVS:  =device       DVD:  =device 
+                   SORFIL=filename*    DESFIL=filename* 
+                   .EXS  =extension*   .EXD  =extension* 
+
+                     *Wildcard symbols (* ??) permitted 
+
+        Valid SOURCE devices (DVS:) are RAM:, CAS:, 0: (disk 0), 1: (disk 1), 
+        COM: and MDM:.  All of these can also be DESTINATION devices (DVD:) 
+        and in addition, output can be directed to LPT: (printer), LCD: (Model 
+        100 display) and CRT: (Disk Video Interface video display). 
+
+        SORFIL is always required (with .EXS extension for RAM: and disk 
+        files) while the DESFIL is either optional or not used depending on 
+        the command. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+                PIP V1.4 12/28/85  [c]  Woods Martin         Page   3  
+
+                                     COPY COMMAND 
+
+        COPY [the command is optional] is the general transfer command which 
+        will request BA, DO or CO file type if needed. (C.BA, C.DO and C.CO 
+        are special COPY commands which will force the transfer type indicated 
+        and which must be used in script command files.)  Text below in 
+        brackets [] is optional; If omitted the default will be used. 
+
+                  [COPY] DVS:SORFIL.EXS[;DVD:DESFIL.EXD] 
+                              defaults: 
+                   COPY  RAM:______.___ ;RAM:SORFIL.EXS 
+
+                  IF .EXS or .EXD is not BA, DO or CO, the file type will be 
+                   requested. 
+
+        Examples: (Commands may be UPPER or lower case or mixed) 
+
+        Copy a file in Model 100 RAM memory named ADRS.DO to cassette.  Any of 
+                  the following commands could be used: 
+
+                  COPY RAM:ADRS.DO;CAS:ADRS 
+                  COPY ADRS.DO;CAS: 
+                  ADRS.DO;CAS:            (COPY implied) 
+
+                  For copies to or from cassette, 
+                          Cassette Ready YNQ_ 
+                  will be displayed.  Press Y to continue. 
+
+        Any of these will copy a Basic program on cassette named GAME to RAM: 
+
+                  COPY CAS:GAME;RAM:GAME.BA 
+                  CAS:GAME;.BA 
+                  CAS:GAME        (pip> will request file type = .BA) 
+
+        Copy disk 0 machine language program SORTER.ML to RAM: 
+
+                  COPY 0:SORTER.ML;RAM:SORTER.CO 
+                  0:SORTER.ML;.CO 
+                  0:SORTER.ML     (pip> will request file type = .CO) 
+                  0:SORTER.ML;DIRSRT.CO      (name change is Ok) 
+
+        Copy disk 0 ASCII file WORDS.TXT to cassette: 
+
+                  copy 0:words.txt;cas:words.do 
+                  0:words.txt;cas:.do 
+                  0:words.txt;cas: (pip> will request file type = .DO) 
+
+        Copy (display) disk 1 ASCII file WORDS.TXT to DVI screen: 
+
+                  Copy 1:words.txt;crt:words.do 
+                  1:words.txt;crt:.do 
+                  1:words.txt;crt: (pip will request file type = .DO) 
+
+
+
+
+
+
+
+
+
+
+
+
+                PIP V1.4 12/28/85  [c]  Woods Martin         Page   4  
+
+                                WILDCARDS (RAM or DISK) 
+
+        SOURCE FILES 
+                  DVS:SORFIL.EXS    one file only 
+                  DVS:     *.*      select all files 
+                  DVS:     *.BA     select all .BA files 
+                  DVS:IN????.*      all starting with IN 
+                  DVS:???DOC.DO     .DO files with DOC as last three 
+                                        characters in filename 
+
+        DESTINATION FILES 
+                  DVD:DESFIL.EXD    one file only 
+                  DVD:              destination same as source 
+                  DVD:     *.*      destination same as source 
+                  DVD:     *.TMP    all destination extensions = .TMP 
+                  DVD:NEW???.*      NEW substituted for first 
+                                    3 characters of SORFIL 
+                  DVD:.             same name, no extension 
+
+        Examples of COPY using wildcard commands: 
+
+        Copy all RAM files to cassette: 
+
+                  COPY *.*;CAS:* 
+                  *.*;CAS: 
+
+                  pip> will ask for confirmation (Yes No Quit) 
+                  for each file unless  /G  switch is used. 
+
+                  Cassette Ready YNQ_  --  will display when all files are 
+                  selected.  A copy of PIP itself along with a restore command 
+                  file will also be placed on the tape to make it self-loading 
+                  for later use in restoring this or other Model 100's to a 
+                  specific memory configuration.  To restore, make the 
+                  cassette ready and type CLOAD ENTER.  When  Found PIP  
+                  followed by  Ready  appears, press  F4  to run.  The rest is 
+                  automatic. 
+
+        Copy disk 0: files with DIR as first three characters to RAM. 
+
+                  COPY 0:DIR???.*;RAM:*.* 
+                  0:dir???.* 
+
+                  pip> will request confirmation for each file selected unless 
+                  the  /G  switch is used.  File type will be requested unless 
+                  the disk file extension is .BA, .CO or .DO. 
+
+        Copy all RAM Basic programs to disk: 
+
+                  *.BA;0: 
+                  Confirmation will be requested.  When all programs have been 
+                  selected, an option will be offered to write a restore 
+                  command file to disk. 
+
+        Copy all RAM .DO files to disk with extension of .TXT: 
+
+                  *.do;0:.txt 
+
+
+
+
+
+
+
+                PIP V1.4 12/28/85  [c]  Woods Martin         Page   5  
+
+                                  KILL (or K) COMMAND 
+
+        Kill will delete files from either RAM memory or Disk.  Individual 
+        files may be killed or groups of files using wildcard symbols. 
+
+                  KILL DVS:SORFIL.EXS  or  K DVS:SORFIL.EXS 
+
+                  The source device will default to RAM: but the source 
+                  filename and extension are required. 
+
+        Delete file WORDS.DO from RAM memory: 
+
+                  K[ILL] RAM:WORDS.DO 
+                  K[ILL] WORDS.DO 
+
+        Delete all .BA files from Disk #0: 
+
+                  K[ILL] 0:*.BA 
+
+                  Unless the /G switch is used (K[ILL] 0:*.BA/G), pip> will 
+                  request confirmation for each individual .BA file. 
+
+        A disk file might not have an extension: 
+
+                  K[ILL] 1:SORTER. 
+
+                  Even so, the period after the filename is required. 
+
+                                  NAME (or N) COMMAND 
+
+        The NAME command will rename files in RAM or on Disk, individually or 
+        using wildcard symbols: 
+
+                  NAME DVS:SORNAM.EXS;NEWNAM.NEX  or  N 
+                  DVS:SORNAM.EXS;NEWNAM.NEX 
+
+                  The source device DVS: will default to RAM: but the SORNAM 
+                  and .EXS are required.  (For disk files with no extension, 
+                  the period is needed.) 
+
+        Rename RAM file PIP.BA to PIPNEW.BA: 
+
+                  N[AME] RAM:PIP.BA;PIPNEW.BA 
+                  N[AME] PIP.BA;PIPNEW. 
+
+        Rename all disk files with .DO extension to .TXT extension: 
+
+                  N[AME] 0:*.DO;*.TXT 
+                  N[AME] 0:*.DO;.TXT 
+
+        Rename all RAM files so that last three characters of file name are 
+                  NEW: 
+
+                  N[AME] *.*;???NEW.* 
+
+
+
+
+
+
+
+
+
+
+                PIP V1.4 12/28/85  [c]  Woods Martin         Page   6  
+
+                  As with COPY and KILL, individual confirmation for each file 
+                  matched will be requested unless the  /G  switch is appended 
+                  to the end of the command. 
+
+
+                                     /G switch  GO 
+
+                  Use with wildcard commands only. 
+
+                  If "/G" is appended to a wildcard command: 
+
+                  *.*;CAS:/G 
+                  K[ILL] 0:*.DO/G 
+                  N[AME] 1:*.BA;.BAS/G 
+
+                  PIP will request confirmation only once and will then 
+                  proceed automatically. 
+
+                                      RUN COMMAND 
+         
+        Another program can be invoked from the  pip>  prompt by typing: 
+
+                  RUN DVS:SORFIL.EXS 
+
+                                SCRIPT (COMMAND) FILES: 
+
+        A .DO file on a device containing a script of commands to be 
+        automatically executed by PIP.  At the pip> prompt, enter the command 
+        file name preceded by an "@" character (ex:  @0:PIPCMD.2).  The script 
+        file must contain explicit COPY commands C.BA, C.DO or C.CO and 
+        wildcards are not permitted.  If the first character in a command line 
+        is a semi-colon (;), the line will be treated as a comment only and 
+        can be used to identify the file. 
+
+        Example of disk restore file 0:PIPCMD.2 as produced automatically as a 
+        result of the command 
+
+                  COPY DIR???.*;0: 
+
+        A similar command file could be entered with TEXT. 
+
+                  ;DIR???.???  02/03/85 
+                  C.CO 0:DIRSRT.CO,58061,58261,0;RAM:DIRSRT.CO 
+                  C.BA 0:DIR   .BA ;RAM:DIR   .BA 
+                  C.DO 0:DIRECT.DO ;RAM:DIRECT.DO 
+
+
+        (c)1985 Woods Martin - 5517 Sturbridge,  Houston, TX 77056 
+                  Phone -  713/621-3786 
+                  CIS   -  [70235,232] 
+                  DELPHI-  WOODS 
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+VIEW.DO3
+  This version of VIEW fixes two problems.
+  1) The TAB spacing problem has been fixed. Line 150 in View.SRC should be 
+changed to: 150 IFA=9THENX=(X\32)*32+32.(This change should also work on VIEW 
+for the 200.)
+  2) This version is relocatable and you will only need to use the basic loader
+once. As in the first versions of View.
+  Also the Basic loader has been changed to show only the .DO files in ram.
+  To use this file, load it at any convenient address in RAM using RLCLDR.DOC/
+BA in DL4. The highest address useable is 61408, the same as VIEW#2. For lower 
+addresses use 1551 as the offset, not 1541, (the first number on the first line
+of the file). This will allow for the storage of the name and varables. Change 
+the address in line 5 of the basic loader below to the start address you are 
+using. Cut and Paste the following into Basic:
+
+5 T=61408:'Start Address
+10 CLEAR56,T:T=HIMEM:CLS:PRINT:FORI=63842TO64128STEP11
+20 IFPEEK(I)=192THENFORZ=3TO8:PRINTCHR$(PEEK(I+Z));:NEXT:PRINT"  ";
+30 NEXT:PRINT:PRINT:INPUT"File Name";A$:IFLEN(A$)>6THEN30
+40 IFA$=""THEN70
+50 A$=A$+SPACE$(6-LEN(A$))+"DO":FORX=1TO8:F=ASC(MID$(A$,X,1)):IFF>96THENF=F-32
+60 POKET+1542+X,F:NEXT
+70 INPUT"Word Wrap";I:IFI<10ORI>60THENI=60
+80 POKET+1551,I*4-1
+90 INPUT"Page Break";J:IFJ=0THENJ=54
+100 POKET+1542,J:RUNM"View
+

@@ -1,0 +1,186 @@
+;ADDCLP.SRC
+;Append clips to paste buffer
+;Copyright (C)1989
+;by James Yi 73327,1653
+;T200 version
+
+	org	63574	;239 bytes
+	ent	63577
+
+filnum	equ	63560
+filtbl	equ	63433
+keygp8	equ	fd15h
+POPALL	EQU	1604H
+FILES	EQU	2A2AH
+UPTDIR	EQU	2C62H
+OPENDO	EQU	2D73H
+BEEP	EQU	4F45H
+INPUT	EQU	54F0H
+PRINTC	EQU	679EH
+MENU	EQU	67A4H
+rom7	EQU	6E20H
+rom8	EQU	714BH
+FTEMSG	EQU	71C5H
+rom6	EQU	71D4H
+rom9	EQU	7324H
+rom13	EQU	7396H
+rom5	EQU	73A9H
+rom12	EQU	73B0H
+EXITXT	EQU	7415H
+CHKMRK	EQU	76CFH
+SHRINK	EQU	7764H
+rom4	EQU	781BH
+rom2	EQU	782CH
+rom3	EQU	782FH
+GETMRK	EQU	7889H
+rom1	EQU	789AH
+rom11	EQU	79D4H
+ERRTRP	EQU	EF34H
+NOWKEY	EQU	EFCAH
+PRVKEY	EQU	EFCBH
+rom10	EQU	EFD2H
+CURLBL	EQU	F074H
+PASDIR	EQU	F29FH
+RST704	EQU	F50BH
+KEYGPC	EQU	FD16H
+
+
+entry:	jmp	jump	;file name is known, name string in HL,A contains word wrap flag
+
+;get file name
+	lda	keygp8
+	ani	4
+	jz	selfrun
+;F3 is down - XOS-3A called it.  Get file under the cursor
+	lda	filnum
+	mov	l,a
+	mvi	h,0
+	dad	h
+	lxi	d,filtbl
+	dad	d
+	xchg
+	lhlx
+	xchg
+	ldax	d
+	ani	$f0
+	cpi	$c0
+	inx	d
+	lhlx
+	mvi	a,0
+	jz	enttxt
+	call	beep
+;file is not a text file
+selfrun:
+	cz	files	;List files
+;setup error trap
+	LXI	H,reterr
+	SHLD	errtrp
+	lxi	h,rom6
+	CALL	rom7
+	xra	a
+reterr:	CNZ	beep
+	CALL	rom8
+;prompt for file name
+	LXI	H,ftemsg
+	CALL	printc
+	CALL	input
+	RST	2	;CR or CTRL-C?
+	JZ	menu	;then abort
+	lda	keygpc
+	ani	1	;word wrap flag
+;get file - file name is in HL
+jump:	push	psw
+	CALL	opendo
+	pop	psw
+enttxt	push	h
+;setup hook
+	lxi	d,rst704
+	lhlx
+	shld	prv704
+	lxi	h,hook04
+	shlx
+
+	lxi	h,0
+	shld	rom10
+	jmp	rom9	;enter text
+
+hook04:
+;determine if the APPEND patch should be called
+	push	h
+	lhld	prv704
+	xthl
+	push	h
+	push	d
+	push	b
+	push	psw
+	lxi	h,popall
+	push	h
+	desp	1CH
+	lhlx
+	lxi	b,rom5
+	dsub	b	;does this RET to ROM5?
+	lxi	h,curlbl+6
+	jnz	l3
+;If yes, change RET address to APPEND routin
+	mvi	m,$ff
+	lxi	h,append
+	shlx
+	ret
+l3	mov	a,m
+	inr	a
+	rz
+reset	lxi	h,0
+	shld	rst704
+	ret
+prv704	equ	reset+1
+
+;go to this routine, instead of ROM
+APPEND:	STA	nowkey
+	PUSH	PSW
+	CALL	rom11
+	POP	PSW
+;which keys are pressed?
+	push	psw
+	cpi	15
+	jz	ctrlo
+	cpi	21
+	jz	ctrlu
+	cpi	27
+	jnz	rom12
+	lda	prvkey
+	cpi	27
+	jnz	rom12
+	pop	psw
+	call	reset
+	jmp	exitxt	;exit text
+
+
+;Copy routine(F5)
+CTRLO:	pop	psw
+	CALL	CHKMRK	;chk if a block is selected
+	CALL	SHRINK	;eliminate work space
+	CALL	r1	;call patch
+	jmp	rom4	;go back to ROM
+
+;Cut routine(F6)
+CTRLU:	pop	psw
+	CALL	CHKMRK
+	CALL	SHRINK
+;see if you want to clear paste buffer
+	call	getmrk	;is the selected block size is 0?
+	jz	rom2	;then goto normal ROM routine, to clear paste buffer
+	CALL	r1	;else append
+	jmp	rom3	;return to ROM
+
+;Bypass the ROM routine that erases the old text before adding new text.
+r1:	call	uptdir
+	lxi	d,pasdir+1
+	lhlx
+	mvi	a,26
+l1	cmp	m
+	inx	h
+	jnz	l1
+	dcx	h
+	shlx
+	jmp	rom1
+

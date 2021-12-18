@@ -1,0 +1,55 @@
+The M100 CTS(5) and DSR(6) pins can be
+checked from BASIC for hardware
+handshaking during RS-232 (COM:) data
+output from the Model 100 to another
+device by testing the value returned
+by the IMP(187) function.
+	
+When CTS is low at the 100, A% in the
+expression  A%=INP(187) will be either
+242 dec or 243 dec; when CTS is high,
+it will be either 226 dec or 227 dec.
+For DSR the values are 242 or 243 low
+and 210 or 211 high.
+	
+A sample routine to print the string
+S$ (with COM:xxxxx open on channel 1)
+by testing CTS is:
+	
+	100 FOR I%=1 TO LEN(S$)
+	110 IF INP(187) AND 16 THEN 110
+	120 PRINT#1,MID$(S$,I%,1);
+	130 NEXT
+	140 PRINT#1," "
+	150 RETURN
+	
+Summary:
+        IF INP(187) AND 16 = false (=0)
+                then CTS is high
+        IF INP(187) AND 16 is true(=16)
+                then CTS is low
+	
+        DSR is similar (Test AND 32).
+	
+This routine works well for connecting
+the Model 100 to a Brother EP22 battery
+portable typewriter using 300 baud and
+sending lines no longer than 75
+characters to the Brother EP22.
+	
+The character-by-character transmission
+is for safety since INP(187) is only
+checked before each print statement.
+No doubt some devices will be able to
+accept multi-character strings without
+problems.
+	
+RS-232 connections for Brother EP22:
+	
+        M100 CTS(5) to DTR(20) Brother
+        M100  TD(2) to  RD(3)  Brother
+        M100  SG(7) to  SG(7)  Brother
+	
+Other devices should be similar.
+	
+	Woods Martin [70235,232]

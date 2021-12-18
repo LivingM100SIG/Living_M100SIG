@@ -1,0 +1,78 @@
+
+[73267,552]
+TELUTL.DOC
+
+
+      DOCUMENTATION FOR TELUTL.100
+
+      This SIG has helped me tremendously in learning about my Model 100
+so here's a small THANK YOU. This is a utility I created out of bits and
+pieces from a variety of programs downloaded from this SIG. I hope I
+have not missed any acknowledgements. It takes 1631 bytes as a BA file and
+was created to recall various routines from BASIC  WITHOUT going through the
+MENU and hanging up the modem while ON-LINE: one of its best features lets
+you interupt a data session while on-line, run Basic programs and return
+on-line without having lost the carrier.
+
+
+F1) Comm:  Puts you ON-LINE directly to the terminal mode.
+
+F2) Tlcm:  Calls the TELCOM program directly. (Use this when making data
+calls because of the Fkey setup routines explained later.)
+
+F3) Apnd:  Integrates APPEND.BA by Tony Anderson (DL7) into this menu.
+Great for combining files while on-line.
+
+F4) Byte:  From FILEN2.100 by ?? (Dl7); Use to figure out where all the
+Bytes went, on-line or off.
+
+F5) Link:  An adaptation of ENTEL.RK by Rudy Kokich. This was the source
+for many of the ideas in this program. Once you've paused incoming data with
+^S select this program to dump the "Down"ed file to cassette. Exits to
+Utility Menu.
+
+F6)  Bsic:  Simply takes you directly to BASIC without passing MENU and
+turns on the label line.
+
+F7)  Disk:  Calls the routine for accessing your disk system. I've used
+the address where DSKMGR v3.02 by J.K.Heilman lives in my M100. Edit
+line 330 to YOUR needs. (LOAD"XXXX",R  works fine for any RAM resident
+program.)
+
+F8) Menu:  BE CAREFUL with this one when "Off-Line" while on-line. It
+takes you to the M100 regular menu but unavoidably hangs up the modem!
+
+
+      Two of the routines from ENTEL.RK have been incorporated in this utility
+to reprogram the normally unused TELCOM keys F6 and F7 (really the
+heart of the whole idea!). While in TELCOM F6 will give you Free RAM (if
+used during "down"load though you'll only get 199 since TELCOM reserves
+everything else for use). TELCOM F7 will now take you from TELCOM directly
+to Basic WITHOUT hanging up the modem. Once there F8 will load the Utility
+Menu and away you go.
+      This program redefines Basic-F8 to reload this program if stored in
+RAM as T.BA. Try it, I think you'll like it.
+
+      It works like this:
+           --First time--
+      Download TELUTL.100 and weed out all the extra stuff; then edit
+whatever lines you need to, load and Save in RAM as T.BA. Then from main
+M100 menu select T.BA and enter.
+           --Subsequent uses--
+      Run T.BA from main menu by cursor selection or from Basic by F8. Make
+all calls by selecting Tlcm and running TELCOM as usual. To use
+subroutines while on line: 1) stop data flow either with a ^S or wait for
+a prompt; 2) press F7 and wait for Basic to display; 3) press F8 to load
+T.BA; 4) run whatever routines you need remembering NOT to call M100 Menu
+or make any Basic errors.(reset is then the only solution)
+
+One more addition you can make if you want to remove Addrss & Schedl from
+M100 menu: add to line 5.
+:POKE63875,184:POKE63886,184
+(call them from Menu by typing in their filenames instead)
+
+THANKS AGAIN TO ALL OF YOU! Please send me comments or suggestions or
+phone my office 402-397-0900.
+Randy Hess
+73267,552
+Omaha, Nebraska

@@ -1,0 +1,156 @@
+DM-PGD.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This is a running set of messages on patching DSKMGR (DL9) to work cleanly
+with 0MENU vers. 1.1 from PG Designs; the program DSKMGR.PGD in DL9 already
+does that job for 0MENU v. 2.0+.  Also discussed are some general issues re
+use of 0MENU, etc.  Note that a similar patch can be found in DL2 for
+TXTFMT.CO.  In principle, the same thing can be done for any RAM-based M/L
+program which conflicts with 0MENU  -- after a bit of disassembly
+
+Message range: 149735 to 149938
+Dates: 6/9/87 to 6/11/87
+
+
+Sb: #PGD "MENU" & M/L's
+Fm: RANDY HESS 73267,552
+To: PHIL WHEELER, 71266,125 
+
+Phil, Talked to Peter @ PG Design today about his "MENU" RAM-bank
+switch/transfer program and some problems I've run into calling some M/L
+programs (DSKMGR& TXTFMT) from PG's "MENU". He said the problem develops
+because of "clock hooks" he used when he wrote "MENU". (my description, not
+his: which was frankly, though pleasantly, over my head) As I "understand" the
+problem, it has something to do with the use of the clock routine in M/L
+programs.
+   Peter suggested I contact you because of your work with this problem before
+(?). Although I'vve only tried DSKMGR & TXTFMT, I'm reluctant to experiment
+with other M/L programs 'cause it's not much fun in the Arctic North!. Would
+appreciate your help. Other than this problem, which is easily sidestepped by
+F8 return to "factory" Menu to run M/L's, I feel it was a well spent $25.00!
+Thanks!  Regards, Randy Hess P.S. I forgot to ask Peter if I can copy "MENU" to
+disk, for those Arctic restarts, or simply keep my cassette handy? Trying to
+LPT: or LCD: "MENU" displays more graphics than I've ever seen before and I
+don't want to mess up a disk just for convenience.
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552
+
+There is a fix for 0menu and dskmgr, but it only works with vers. of 0MENU.  I
+might be able to cobble up a patch that works with vers. (whatever it is you
+have).  In fact, I think I already have -- so I will consult my files on it.
+As I remember, only a byte or so changes.
+
+Look in DL9 at DSKMGR.PGD to get an idea of what it is like.  Basically, it
+adds m/l code to DSKMGR's front end which turns 0menu off when you run dskmgr
+and on again at exit.  I did the patch for a 32K version for a friend of mine.
+
+Quesion is: What 0MENU do you have?  Is your RAM bank the first model that
+fills the ROM slot?  How big is the program when on the menu? Do you run
+INVISO.BA to make it invisible after installing?  Does the menu always show
+Exit over Key 8, Kill over Key 5, etc. -- even with the widebar cursor over
+Basic and other ROM programs?
+
+BTW -- you can save MENU.BA to disk (in all versions).  If you have the
+original (pre version 2) 0menu, you will ahve a different version for each bank
+(that's another way to test which one you have).
+
+
+Fm: RANDY HESS 73267,552
+To: Phil Wheeler 71266,125
+
+Phil, The instruction sheet that came with the program from PG says VER 1.00 at
+the bottom; yes there is a separate MENU1 for bank one and MENU2 for two. I
+make it invisible using INVISI.BA from the SIG and changed the name to BankSW
+which I "RUN" from a .BA utility I put together. I run DSKMGR (latest version)
+by CALL60700 from my utility program (always loaded of course; the program, the
+program!)and have decided to keep Paul Stork's TXTFMT permanently (grin,grin)
+in bank2 and have to call it from an intermediate BA program (10
+CALL62841:CHR$(13)) 'cause it won't CALL and run right from my bank2 utility
+even after exiting from "MENU". I think I mentioned I do NOT use INVISO from
+PG; should I? The bank is a 1984 version I bought from Paul Stork and works
+fine! Thanks for your help! Regards, Randy
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552
+
+The newer verson of 0MENU does not show Exit over F8 and Kill over F5 when the
+cursor is over BASIC on the menu.  If you have that version, then DSKMGR.PGD
+will work for you.  It is documented in the DES and in lines 1-9 of the program
+itself.  You can find it in DL9.
+
+********************** PATCHING DSKMGR FOR 0MENU V. 1.0 *******************
+If you have the older version of the program (which is all that will work
+with some of the older RAM modules, I believe), then get DSKMGR.PGD (DL9)
+anyway. But before running it, make the following changes to lines 24 and
+30: Replace 57 by 130 and replace 128 by 129.  Note that this program makes
+another change to DSKMGR re the action of the enter key, as documented in
+line 3 of the program and further in the file DSKMGR.MNU (DL9).
+***************************************************************************
+
+Naturally, you MUST save everything before trying this.  One little error in
+typing or big error (on my part!) and you will loose all.
+
+
+Fm: RANDY HESS 73267,552
+To: Phil Wheeler 71266,125
+
+Phil, Read and downloaded both you replys and I'll let you know if it doesn't
+work. Have not had cold starts with 0MENU and DSKMGR or TXTFMT, just the
+blended menus but was worried one might be imminent. I "run/ran" 0MENU from a
+.BA utility I use to access by function key presses various routines. From your
+message I assume there is an important internal diffeerence between RUN"xxx"
+from BASIC, xxxx.ba typed in at the TANDY Main Menu then <ENTER>ed and cursor
+selecttion with <ENTER>. Ahh... the innocence of ignorance. The more I recall
+Peter's comments from PG the more I recall his questioning whether the M/L's I
+was using displayed the clock during operation and that if they did then there
+might be these problems due to his use of that part of the "hook closet":
+TXTFMT does display a clock as you may already know. I like TXTFMT because I
+can store all the margin, header, type font etc. on each document and simply
+print them without having to think about what looked right 2 months ago. 0MENU
+and TXTFMT get along great as long as I run it from the TANDY Menu.
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552
+
+I can also patch TXTFMT if I get one little bit of info from Paul.  See my
+nearby message to him.  Let me know re DSKMGR patch.  That will give me the
+go-ahead on patching TXTFMT.
+
+
+Fm: RANDY HESS 73267,552
+To: phil wheeler 71266,125
+
+Your fix works perfectly.
+
+     Does this 0MENU problem occur with all M/L's or only those that
+use/display the clock? After countless cold starts to find _MY_ mistake, I'ld
+rather avoid this trial and error process with other M/L's. (think you
+mentioned PRINT100 is OK) Should I just plan on running them from TANDY Menu
+instead? Perhaps you friend with 0MENU can shed some light on this area?
+     Also, does the name given to MENU.BA (0MENU's "visibl equivalent) affect
+it's operation? If I change the name to BANK-1.BA for example, DM-PG.CO seems
+to work OK but am I spawning Gremlins someplace else? In other words,,does
+DM-PG.CO look for a program named 0MENU or MENU.BA or their "hookprints".
+    Thanks again for your support and patience. I'll try to do better with your
+ideas on TXTFMT.
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552
+
+Glad to hear it works, Randy!  Well, I honestly don't know if there is an issue
+re name changes.  Peter would be the best one to ask.  I suspect it may fox
+INVISO.BA -- but your not using that, anyway.
+
+Most M/L programs will be fine.  DSKMGR is the exception.  I *think* PRN100 is
+OK, but it has been a while!  Now that we have the DSKMGR thing working for
+you, I'll take a look at fixing TXTFMT by (somewhat) the same technique. Paul
+provided some info on this -- but the Exit will have to change due to some
+Stack stuff he seems to do.  I'll keep you posted on teh results, and (if
+successful) I will upload a file to DL2 (TXTFMT.PGD).

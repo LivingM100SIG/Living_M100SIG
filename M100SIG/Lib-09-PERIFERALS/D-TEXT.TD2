@@ -1,0 +1,94 @@
+D-TEXT.TD2 Fred Edelkamp [70506,223]
+
+  This file will modify POWR-DOS's D-TEXT.BA so that it will work with the
+TDD2 and FLOPPY.  So that you can edit files larger than RAm with the TDD2.
+  Requires POWR-DOS and D-TEXT.BA from Acroatix.
+  Please note that there are two different basic listing in this file,
+the first is a small basic program that makes one of the lines that will later
+be used to change D-TEXT into D-TEX2.  (This may be a little clearer if you
+LIST 24 in D-TEXT before you start.)  The second Basic listing are the lines
+that change most of D-TEXT.
+  What do you get when your done.  Basically D-TEX2 will work as normal
+the only difference will be less memory and F7 (BANK).  The memory loss comes
+from two areas 1) D-TEX2.BA will be about 1K larger than D-TEXT.BA. 2)
+FLOPPY must also be in memory with POWR-DOS. If only FLOPPY, POWR-DOS and
+D-TEX2 are loaded, you'll have about a 14K buffer to edit with.
+  When in D-TEX2's File menu <F7> will change Directories, (BANK#0 and
+BANK#1.)  This is done by using a version of FLIP.BA, Sectors 0 and 1 are
+switched, this does take a little
+getting use to but I have yet to find any bad side effects, except for
+clearing of the PASTE buffer.
+  If you have had a chance to read the threads on D-TEXT, you may be wondering
+about the problem reported with D-TEXT 'trashing' the sectors free count.  I
+found I had that problem also in the later stages of testing.  The problem
+was in Line 100 :POKEYR+1260,PEEK(YR+1260)+KW: (now in 127).  I changed this
+line to read :POKEYR+1260,PEEK(YR+1260)-KW: I know it works on the TDD2 but I
+don't know about the TDD1.  What is happening here is the original was
+freeing up sectors when it should have been subtracting them. Anyway the
+ problem should no longer exist in this version.
+
+  This patch uses TD2TIP.006 which makes FLOPPY load BA programs to the top of
+the list, so POWR-DOS and FLOPPY can live together.
+
+  Errors:  Please keep good backs-ups as there may be problems that have not
+yet been located.  The program does incorporate error trapping, but in a
+program of this scope it is impossible to check for all errors.  If you do
+have a problem please send E-Mail and I'll try to help.
+
+How To build D-TEX2.BA
+
+Load D-TEXT.BA from disk and edit lines 6 & 7 as follows:
+
+Change Line 6 :
+ :CLEAR512,61490: to :CLEAR512,58530:
+ :FORI=1TO20:     to :FORI=1TO21:
+Change Line 7 :
+ :YR=MAXRAM-1293: to :YR=58711:
+ :YC=61568:       to :YC=58608
+
+Then you'll need to build line 24: The following basic program Lines 0-9 will
+make LINE24.DO. Cut this small basic program out and PASTE it into BASIC and
+then RUN it. When done go into LINE24.DO, CUT out line 24 and PASTE it
+into D-TEXT.BA. (Last line 9)
+
+0 OPEN"Line24"FOROUTPUTAS1:PRINT#1,"24 Data";CHR$(34);
+1 FORX=1TO158:READA:PRINT#1,CHR$(A);:NEXT:PRINT#1,CHR$(34):NEW:MENU
+2 DATA50,235,228,229,78,71,35,94,35,86,35,235,126,254,255,202,225,228,254,255,202
+3 DATA225,228,35,255,255,202,210,228,254,32,194,174,228,255,236,228,121,50,235
+4 DATA228,120,50,234,228,195,174,228,58,235,228,183,202,225,228,79,58,234,228,71
+5 DATA42,236,228,235,113,35,115,35,114,225,112,201,255,255,76,236,80,254,50,33
+6 DATA249,255,147,252,235,255,255,205,105,52,42,122,246,229,42,194,250,229,42,157
+7 DATA251,229,33,255,255,255,231,246,57,255,157,251,205,255,255,229,33,172,229
+8 DATA195,116,95,205,49,66,205,93,93,225,255,157,251,225,255,194,250,225,255,122
+9 DATA246,205,156,108,175,50,80,246,60,50,173,250,33,120,108,255,138,248,201
+
+  The next step is the easiest;  CUT out the remaining basic lines and PASTE
+them into D-TEXT.
+
+4 GOSUB128:'Disk-based TEXT for TDD#2
+21 PRINT@280,E"pForm Load Kill Prnt Page Disk Bank Menu"E"q";:M=1
+25 DATA14,13,19,10,24,4,25,13,34,34,72,19,73,0,81,17,85,6,86,8,103,0,104,0,105,34,109,34,113,15,114,34,117,28,129,34,133
+26 DATA34,137,34,154,34,Off,"On ",Top,Set,End
+28 KEYOFF:ONKEYGOSUB117,34,35,104,37,14,124,42
+40 PRINTERR"in"ERL;
+41 PRINTA" Error; Press Key";:CALL26041:B=INPUT$(1):IFERR<59ORERR>62THENCLS:RUN
+42 CLEAR0,60000:MENU
+69 SS=0:GOSUB120:XD=YR-22
+83 IFX-YR>1279THENX=YR:IFJS<160THENSS=JS:GOSUB120:JC=JS:JS=PEEK(YR+1280):IFKWTHENKW=KW+1:SE(KW)=JC
+93 IFJB=0THENIFKE=1ORJS=255THENKB=-1:GOTO91ELSEPOKEYR+1280,255:SS=JC:GOSUB119:KILLCC+FL
+94 IFJS=255THENSS=0:GOSUB120:GOTO100
+96 XX=XX+1280:XL=XL-1280:SS=JS:GOSUB120:JL=JS:JS=PEEK(YR+1280):IFZF>XX+1280THEN96ELSEPOKEYR+1280,255:SS=JL:GOSUB119
+97 SS=0:GOSUB120:X=YR
+100 IFJB>0THENGOSUB127:POKEXD+16,YB/256:POKEXD+17,0:POKEXD+21,JB:JB=0:SS=0:GOSUB119:SS=1:GOSUB120:GOSUB127:GOSUB119:GOTO102
+101 SS=0:GOSUB119
+119 POKE58708,PEEK(59991):SD=4:GOTO121
+120 SD=3
+121 POKE58704,83:POKE58705,229:POKE58706,SS:POKE58707,0:CALL62297,SD,58704:ZE=PEEK(58704):IFZE<2THENPOKE59991,PEEK(58708):RETURN
+122 IFZE>4THENA=MID$("IOWPUENDHTUEUENR",ZE*2-9,2)ELSEA="UR
+123 BEEP:GOTO41
+124 GOSUB11:CLEAR0,57408:PRINT"Dir Flip":SS=0:GOSUB120:SS=1:GOSUB125:SS=1:GOSUB119:SS=0:GOSUB125:CLS:RUN
+125 POKE57408,68:POKE57409,224:POKE57410,SS:POKE57411,0:CALL62297,SD,57408:RETURN
+126 POKE62116,154:POKE62117,249:POKE62118,0:POKE60001,91:SD=5:GOSUB121:IFPEEK(58706)AND2THENA="WP":GOTO123ELSERETURN
+127 FORI=1TOKW:X=YR+1240+SE(I)\8:POKEX,PEEK(X)AND(255-2^(7-(SE(I)MOD8))):NEXT:POKEYR+1260,PEEK(YR+1260)-KW:RETURN
+128 IFPEEK(62297)=229ANDPEEK(62298)=94ANDPEEK(62536)=4ANDPEEK(62537)=195THEN126
+129 BEEP:PRINT@120,CHR$(27)"pNo System.":PRINT"Load FLOPPY and Try Again"CHR$(27)"q":END

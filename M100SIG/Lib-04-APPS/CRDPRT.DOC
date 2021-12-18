@@ -1,0 +1,101 @@
+ 
+    CRDPRT.DOC
+    ____________
+ 
+ 
+Copyright 1988 Tony B. Anderson
+All Rights Reserved
+ 
+ 
+This file will describe the card and label printing, paper listing, and report
+listing programs that utilize data retreived from a datafile created by the
+CRDFIL.BAS program on a Model 100/102 or Tandy 200.  The DOC file is being
+developed in modules, based on release of the separate programs.
+ 
+ 
+Program #1, CRDFIL.PR1 prints cards or labels of selected data fields in any of
+several user-designed formats. - Now available, 1/3/88
+ 
+Program #3, CRDFIL.PR3 prints lists of selected data from the files in selected
+order. - Now available, 1/10/88
+ 
+------------------------------------
+ 
+CRDFIL.PR1
+ 
+This program is designed mainly to print on cards or labels, from the datafile
+created by CRDFIL.BAS on a Model 100, 102 or Tandy 200.  It offers many user
+selectable options, making it quite flexible and virtually "customizable".  The
+program follows the same logical flow as the CRDFIL program uses, and offers
+help and instruction screens throughout to tell a user where he is in the
+program, what is coming up next, and what options he has.
+ 
+The program begins with a series of question screens designed to set up the
+user-selected output format that will eventually go on the cards.  The first
+creen asks for the name of the data file, and verifies it is available.
+ 
+The next option is to print all the cards, or only those cards with a selected
+matching `word'. The match can be in upper or lower-case letters, the program
+comparing for all forms.  Selection of the actual match word comes later in the
+program.
+ 
+The next screen asks if the output is to be in chronological order, the way
+the data was entered into the file, or in a pseudo-sorted form, with the cards
+in "character groups" (as opposed to a "real" sort).  If the sort option is
+selected, the cards will be grouped with all the numbered entries together,
+followed by all the alphabetic entries, grouped by character.  All the A's
+together, all the B's together, etc. Sort is on the first letter of a specified
+key entry.  Cards may be sorted on numbers only, upper or lower-case letters,
+or any combination of the three.
+ 
+You will be shown the original cardfile screen prompts, and be allowed to
+change any that are inappropriate, or need to be corrected before printing.
+You will also be allowed to `deselect' any data fields you do not want printed
+on the cards; thus extracting only sprecified fields from the datafile to go
+to the printer.
+ 
+You will be asked for the number of lines on the card or label stock, and the
+number of entries to be printed on the card will be calculated, giving you
+proper output for continuous card stock.  You can also specify top and left
+margins for the card.  Cards will not be printed in screen format, the way they
+show up on your screen, but will be in a one-line, one-entry form.  If seven
+entries are selected to be printed, they will be printed on seven consecutive
+lines.
+ 
+For the last option, your search word is asked for, and if in lower-case, it
+is adjusted to upper case.  You can specify the entry number where this search
+word is likely to be found.  As the program reads the entries from the file,
+each search field will be converted to upper case, and a comparison made to the
+specified search word.  Matches will be printed. - in sorted order if that
+option has been selected.
+ 
+Regardless of the options selected, once all the preliminary input has been
+completed, the program will print continuously until the job is complete.  The
+sorted output will take much longer than chronological output, since the data
+has to be read from the file many times, looking for a first letter match for
+the sorting routine in the sort key entry.  If you know that there will be no
+numbers in the sort key, or no lower-case letters, you can save time by setting
+your sort parameters to ignore numbers and lower-case letters.  If sorting by a
+date field, you can assume there will be no letters there, and can eliminate
+sorting by letters when asked.  Sorting by characters other than numbers or
+upper/lower-case alphabet characters is not enabled.
+ 
+By selecting different options, various output formats can be generated from
+the same datafile.  One of the most unique combinations is sorted output of
+cards with selected match words.  You can print a list of names and telephone
+numbers from those cards with `Texas' on the `State' line, in sorted order by
+`City'!"  It's possible!
+ 
+-------------------------------------------------------------------------------
+ 
+CRDFIL.PR2 - Never completed due to excessive complexity
+ 
+-------------------------------------------------------------------------------
+ 
+CRDFIL.PR3
+ 
+This module allows you to select which fields from your cards will be listed
+to the printer, and in what order.  The general purpose is to provide a summary
+list of data from the cards.  For example, you might like to have a list of
+names and phone numbers, extracted from and name and address file.  Or a list
+of names and addresses only.  --  Now available in the library

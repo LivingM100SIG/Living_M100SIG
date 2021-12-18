@@ -1,0 +1,26 @@
+There are three memory registers used in Floating Point routines.  They are:
+        (HL)    for use for "immediate" calculations;
+        FPAC1   at address 0FC18H
+        FPAC2   at address 0FC69H
+there is also a location for "current variable type" (2=INT, 3=STR, 4=SNG, 
+8=DBL), but I (blush) cannot seem to find it in my notes.
+
+The basic FP operations occur at the following ROM locations:
+
+ADMFAC  EQU     3194H           ;FAC1 <= FAC1 + (HL)
+SBMFAC  EQU     319AH           ;FAC1 <= FAC1 - (HL)
+FPMOV2  EQU     31B5H           ;FAC2 <= FAC1
+MOVM2   EQU     31C4H           ;FAC2 <= (HL)
+
+FPSUB   EQU     2B69H           ;FAC1 <= FAC1 - FAC2
+FPADD   EQU     2B78H           ;FAC1 <= FAC1 + FAC2
+
+EXP     EQU     30A4H           ;EXP Token address
+
+As mentioned before, the 12/83 issue of 80 Micro had a pretty good listing (I 
+think it gave decimal locations, though).  My suggestion is to use a good 
+disassembler on these routines to make sure of what you are doing.  DISASM.100 
+in XA4 is good if you like Z80 mnemonics; DISGKB.100 in XA4 if you are an 8080 
+masochist (grin).
+        Good luck,  larry gensch
+

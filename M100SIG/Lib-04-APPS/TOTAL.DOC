@@ -1,0 +1,97 @@
+TOTAL -- Column Totals
+
+Copyright 1983  Michael M Rubenstein
+
+
+Description.
+
+TOTAL computes totals and subtotals for
+selected columns in a table.  TPRINT
+prints a table in a pretty format.
+
+
+Data Format
+
+The input file for TOTAL and TPRINT
+consists of any number of lines.
+
+The first line contains column
+headings, separated by tabs (one tab
+between headings).
+
+The second line contains print format
+specificataions (in the form for PRINT
+USING) for each column, again separated
+by tabs.
+
+Following lines contain the data, with
+columns again separated by tabs.
+
+Interspersed with the data there may be
+lines begining with an asterisk ("*").
+Such lines are treated specially,
+depending on the second character of
+the line:
+
+	T or t  --  Totals are inserted
+	S or s  --  Subtotals are
+		    inserted
+	other   --  The line is copied
+		    to the output
+		    unchanged
+
+The second line, the format line, is
+used by TPRINT.  It is ignored by
+TOTAL.  Any format specification legal
+in a PRINT USING statement may be used,
+but the length of the specification
+must be the same as the desired length
+of the field.  Thus, you must use
+
+	#,###,###.##
+
+instead of
+
+	#######,.##
+
+
+Use of TOTAL
+
+When TOTAL is run, it will request the
+input and output file names.  Any
+filenames legal for input and output
+to BASIC programs may be used, but only
+RAM files (the default) are likely to
+be very useful.  The .DO extension need
+not be specified.  If you respond to
+the request for the output file with a
+return, the input file will be
+overwritten.
+
+TOTAL will then ask for fields.
+Specify each column to be totaled
+either by name (the heading for the
+column -- case is significant) or by
+number (preceded by "#").  After
+last column to be totaled, respond with
+return.
+
+
+Use of TPRINT
+
+TPRINT asks for the input file name,
+then the output file name.  If you
+respond return to the output file name,
+the output will be to the LCD display.
+
+
+Example.
+
+The file TOTAL.SMP is a sample input
+file for TOTAL.  The output from total
+for this file, totaling on column 3,
+Amount, is contained in TOTAL1.SMP.
+The output of TPRINT on TOTOUT.SMP is
+contained in TPROUT.SMP.
+
+End of Document

@@ -1,0 +1,87 @@
+Documentation for CAL.RCL
+ 
+Cal.RLC is an updated machine language appointment calendar for the Model 100. 
+It is now relocatable, twice as fast and a little smaller (3341 bytes). When 
+run Cal will show a three month calendar with the current month in the middle. 
+A flashing cursor will show the current date. If a NOTE.DO file is also in 
+memory, appointments will be hilighted.
+ 
+LOADING
+ 
+ To load CAL.CO download CAL.RLC. Cal takes up 7410 bytes as a DO file and can 
+be converted by RLCLDR.BA in DL4. The highest memory address you may use is 
+59618. Besure to read RLCLDR.DOC before converting to .CO. You should save the 
+HEX file, for relocation to a new address later. As always back-up all files in
+RAM before using Cal.
+ 
+SETUP OF NOTE.DO
+ 
+  Two types of entries can be made in the Note file.
+ 1) Appointment: This entry will start with a date in the form of MM/DD (Month/
+Day).
+ 2) ToDo: This entry will start with a Letter.
+ Any other entry will be unrecognized. Only the first 39 characters of a entry 
+will be shown (not counting date). The following is an example of a small Note 
+file:
+ 
+01/01 New Year's Day
+02/14 Valintine's Day
+04/17 Washington's B'day
+ This Entry will not show
+Make Plane Reservations for NY
+06/04 July 4th
+08/22 0900 Call Ray about orders for the trip to New York
+08/22 Another appointment for the 22
+11/19 Call Mr. Rich About Trip to NY
+Make Hotel Reservations for NY
+Reserve Rental car
+ 
+USING CAL.CO
+ 
+  Before using CAL make sure DATE$ is set to the current date and year. When 
+called, CAL will clear the screen and the calendar will appear. The current 
+date will be flashing and any appointments will be hilighted. If the current 
+date has an appointment it will be shown on the Label line and the cursor will 
+flash rapidly, otherwise you'll see the function keys labels:
+ 
+Prev Next ToDo Appt 1985 NOTE 1987 Menu
+ 
+  Note: [F5] and [F8] are in reference to the current year (1986).
+ 
+  Prev: [F1] will move back one month.
+  Next: [F2] will move forward one month.
+  ToDo: [F3] will cycle thru any ToDo's in the Note file on the label line.
+  Appt: [F4] with the cursor on a day with more than one appointment will cycle
+thru the other appointments for that day.
+  1985: [F5] will move back one year.
+  NOTE: [F6] will take you to the Note file for editing. If there is no Note 
+file you will be returned to the menu.
+  1987: [F7] will move forward one year.
+  Menu: [F8] will return to the Menu.
+ 
+  To move the cursor use the arrow keys. When the cursor is placed on a date 
+with an appointment the first appointment for that date will be shown. Use [F4]
+to see any other appointments for that day. [F3] will still function in this 
+mode.
+  To return to the function key definitions from a ToDo or Appointment, move 
+the cursor to a day without an appointment.
+ 
+Using a file other than NOTE.DO
+ 
+  The following program can be used to load a new file name into CAL.CO. This 
+.DO file name can only be four characters long. Before using this program set 
+HIMEM to the TOP address you used when you converted CAL.RLC. Run this program 
+and type in the new file name. Now CAL.CO will always use your new file name.
+ 
+1 LOADM"Cal"
+2 FILES:INPUT"File Name";F$:IFLEN(F$)<>4THEN2
+3 FORX=1TO4:F=ASC(MID$(F$,X,1)):IFF>96THENF=F-32
+4 POKE HIMEM+1179+X,F:NEXT
+5 SAVEM"Cal",HIMEM,HIMEM+3341,HIMEM
+ 
+  I have also uploaded the TCOMP source code (Basic), it is documented 
+internally.
+  If you have any problems or suggestions with CAL send E-Mail to me.  
+ Fred Edelkamp
+  [70506,223]
+

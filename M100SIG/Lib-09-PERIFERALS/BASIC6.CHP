@@ -1,0 +1,331 @@
+
+
+
+
+        GENERATING RECORD NUMBERS
+
+            If CDOS needs a record number to find a file, how is that
+        record number supplied?  There are a number of ways.  The
+        easiest is to let the user supply the record number of the
+        record he/she wants, like in the preceding programs.  But in
+        reality, how does the user know what the record number is when
+        he/she doesn't know where in the file the record is?
+        Clairvoyance?  CDOS is smart, but it's not quite the
+        Clairvoyant Disk Operating System!
+
+            How often is a number part of the data in the record?
+        Often!  With the direct address method just take that number
+        and use it or abuse it as necessary to come up with a record
+        number.  For example, we might have a parts inventory file.
+        Each part is marked with a department number and item code:
+        ddd-iii; where ddd is the department number and iii is the
+        item code.  The inventory file contains this department
+        number/item code, the part name, its cost, its retail price,
+        the vendor, and the number remaining in inventory.  A
+        warehouse technician wants to find out how many of a certain
+        part are still hidden in the warehouse.  He/she punches in the
+        department/item code: 659-345.  Our inventory program consists
+        of several random files: one file for each department.  The
+        program takes the first three digits and opens the appropriate
+        file: 0:DEP659.DO, and takes the last three digits as the
+        record number in that file: 345.  CDOS then finds record
+        number 345 and the program displays the data in that record.
+        Note that the records in this file are in numerical order, so
+        in a sense it's a sequential file that can be accessed at
+        random.  Purists take note that the term "direct addressing"
+        is used rather loosely here.  Although direct addressing as
+        used here has limited practical applications, it does produce
+        only one unique record number for each key entered.
+
+            If we need to search for a record based on the input of
+        alphabetic data, we can generate a record number from that
+        input.  This is called hashing, or key transformation, because
+        the search key entered by the user is transformed into a
+        record number.  Hashing is particularly suitable for files
+        that are not maintained in alphabetical or numerical order, or
+        for files where records are added and deleted often (which
+        makes repeated sorting impractical).
+
+            A third technique uses two files: an index file and a data
+        file.  The index file has only two fields: the search key and
+        the record number where that record is located in the main
+        data file.  You may use either a random file or a sequential
+        file for an index, but it must be sorted for fast lookup of
+        the record number.  A sorted file is called an ordered file.
+        Read a sequential index file into RAM first for fast lookup.
+
+
+
+                                    - 31 -
+
+
+
+
+
+
+
+
+
+
+
+        (Index files too large for available RAM can be searched on
+        disk.  Refer to the section on searching).
+
+            Other methods of random access file organization exist
+        which will work with CDOS Disk Basic.  Please consult advanced
+        programming and data management textbooks.
+
+
+        DELETING RECORDS
+
+            In the sequential file, a deleted record is physically
+        removed from the file.  It's gone forever.  It's possible to
+        do that, too, with random files, by putting blanks or
+        something in the fields and destroying the data therein.  But
+        smart programmers use a better way.  Instead of destroying the
+        data, just "mark" the record as deleted.  Then, unless the
+        record has since been overwritten by a new record, it can
+        still be undeleted.  The record remains, but the search
+        operation recognizes the mark and ignores it.  We could put a
+        one character field in the record that contains a certain
+        character to signify a valid record and another character to
+        signify a deleted record.  Or we could alter one character of
+        the key field.  Here's one method:
+
+            1000 ' Do a logical OR with 128 on the first character
+                   of the key field:
+            1010 X$ = CHR$(ASC(KY$) OR 128)
+            1020 ' Put that modified character back in the key:
+            1030 MID$(KY$,1,1) = X$
+
+            Run that little example with your own input and see what
+        happens to the first character.  For the "bit twiddlers," we
+        set the high bit of that character.  To recover the marked
+        record, find it and then flip the first character back to
+        normal:
+
+            2000 ' Do a logical AND with 127 on the first character
+                   of the key field:
+            2010 X$ = CHR$(ASC(KY$) AND 127)
+            2020 ' Put it back:
+            2030 MID$(KY$,1,1) = X$
+
+
+        RANDOM ACCESS BY KEY TRANSFORMATION
+
+            Alphabetic characters have an intrinsic numeric value:
+        their ASCII code.  For example, the ASCII code for "A" is 65
+        and the ASCII code for "a" is 97 (decimal).  Why not take the
+        ASCII values of several of the characters in the key entered
+        by the user, do some arithmetic on them, and generate a record
+        number?  If uppercase versus lowercase isn't crucial when
+
+
+
+                                    - 32 -
+
+
+
+
+
+
+
+
+
+
+
+        matching the key to the desired record, good technique calls
+        for converting the input to all of one or the other before
+        hashing, so Smith = smith = SMITH.
+
+            When planning a hash, consider only techniques that
+        generate reasonable record numbers.  We don't want record
+        numbers too small to provide for all our records, nor do we
+        want record numbers larger than the total number of records
+        expected.  For example, in a file expected to contain about
+        1000 records, don't use a hash that generates a record number
+        of 45,673.  We also want the record numbers spread out over
+        the size of the file, so that not all the records get
+        clustered in one area of an otherwise empty file.
+
+            Also consider how to handle hashes that produce identical
+        record numbers from different keys.  The matching record
+        number is a synonym, and the event is a collision.  It's
+        possible for synonyms to occur with most conceivable
+        techniques, but if it happens frequently, find a better hash.
+        Two of the easiest ways to handle synonyms are to increment
+        the record number until an empty record location is found, and
+        put it there; or to put the record in an overflow area above
+        the top of the main file, where synonyms are stored
+        sequentially.
+
+            Here's an example of one of many hashing techniques used
+        to add records: decide how many records are likely to be in
+        the file.  Take several of the ASCII values of the key entered
+        by the user and come up with a large number.  Then divide that
+        by a prime number close to the file size and take the
+        remainder.  This produces a number from 1 to the prime.  Use
+        this as the record number.  Thusly for a file size of 500:
+
+            1. Open the file
+            2. Define the fields
+
+            And the coding for the hash:
+
+            100 ' 3. User enters data:
+            101 PRINT "Enter record data:";
+            102 '    Input statements here.
+            103 '    Use one of the fields as a key.
+            110 ' 4. Separate the first three letters of the key:
+            111 K1$ = LEFT$(KY$,1): K2$ = MID$(KY$,2,1):
+                K3$ = MID$(KY$,3,1)
+            120 ' 5. Convert each into its ASCII value:
+            121 K1 = ASC(K1$): K2 = ASC(K2$): K3 = ASC(K3$)
+            130 ' 6. Convert the ASCII values into strings:
+            131 K1$ = STR$(K1): K2$ = STR$(K2): K3 = STR$(K3)
+            140 ' 7. Trim the leading space off the strings:
+            141 K1$ = RIGHT$(K1$,2): K2$ = RIGHT$(K2$,2):
+                K3$ = RIGHT$(K3$,2)  ' Uppercase input
+
+
+
+                                    - 33 -
+
+
+
+
+
+
+
+
+
+
+
+            150 ' 8. Concatenate the three strings:
+            151 KT$ = K1$ + K2$ + K3$
+            160 ' 9. Convert the string into a number:
+            161 KT = VAL(KT$)
+            170 ' 10. Divide by 499 to find the quotient:
+            171 QU = KT / 499
+            180 ' 11. Multiply the integer portion of the quotient
+                      by the divisor and subtract from the dividend
+                      to find the remainder:
+            181 RM = KT - INT(QU) * 499
+            190 ' 12. The remainder is the record number:
+            191 RN = RM
+
+                And the rest of the program:
+
+                13. Is this record number past the end of the file?
+                    (IF RN > LOF THEN...).
+                    Yes: PUT #1, RN: Go to step 3.
+                    No:  Proceed with step 14.
+                14. Is there a valid record here?
+                    Case 1)  RN < 500
+                             Yes: RN = 500: Go to step 13.
+                             No:  PUT #1, RN: Go to step 3.
+                    Case 2)  RN >= 500
+                             Yes: RN = RN + 1: Go to step 13.
+                             No:  PUT #1, RN: Go to step 3.
+
+            Synonyms go in an overflow area starting at record number
+        500.  There they are added sequentially.  This assumes
+        infrequent collisions.  The frequency of collisions depends on
+        the number ("density") of records in the file.  When most of
+        the record locations are filled with valid records ("dense
+        population") collisions are more likely to occur when new
+        records are added than if there are many empty locations
+        ("sparse population").  It's harder to find a parking place in
+        Manhattan than in Pecos, Texas.  Frequent collisions in our
+        example program can be handled by adding 500 to the record
+        number and starting sequentially from there.  This expands the
+        size of the overflow, because we start looking for an empty
+        slot at record number + 500 (which could be as high as 999)
+        instead of starting at 500.
+
+            Reading a record follows the same procedure.  In fact,
+        this program can be efficiently coded to read and write
+        records using the same routines.  Query the user as to whether
+        he/she wants to find a record or add a record, and set a flag
+        accordingly.  Then just do a GET instead of a PUT.  If the
+        record requested isn't found by the end of the overflow area,
+        then return a "Not found" message.
+
+
+
+
+
+                                    - 34 -
+
+
+
+
+
+
+
+
+
+
+
+            For faster access (and more complicated code), add a field
+        to the records in the main file storage area that points to
+        synonyms of that record located in the overflow area.  For
+        example, let's say a record to be added has a record number of
+        345, but there's already a valid record in record location
+        345.  Searching through the overflow area produces an empty
+        slot at 523.  Put the new record at 523.  Then put the number
+        523 in the pointer field of record 345.  This links record 523
+        to record 345.  When searching for record 523, the hash first
+        generates a record number of 345.  Retrieving record 345
+        reveals a valid record that does not match the search key
+        entered.  Look in the pointer field and find the number 523.
+        This points to the record located at 523.  Retrieve record 523
+        and check for a match.  Multiple synonyms can be handled be
+        storing them sequentially after the first synonym in the
+        overflow.
+
+            To change a record, just search for and find it.  Then put
+        the new data back where the old was found.  If there's a
+        pointer field, be sure to preserve it.
+
+            Be careful when deleting records.  Deleting a record in
+        the main file that points to a record in the overflow also
+        loses the record pointed to.  Even if pointers aren't used,
+        deleting a record in the main file results in losing its
+        synonym in the overflow.  Provide a way to find a record in
+        the overflow even if its synonym in the main file (the entry
+        point) is deleted.  If using pointers, delete a record with a
+        marker and preserve the pointer.  Then a search operation that
+        finds a deleted record can still check the pointer field to
+        see if a synonym is stored in the overflow.  If not using
+        pointers, a search operation that finds a deleted record in
+        the main file can start looking sequentially in the overflow
+        for a match.  When deleting an overflow record, make provision
+        for multiple synonyms.  If the search operation goes to the
+        overflow to look for a match and finds a deleted record, it's
+        not safe to assume there isn't a match.  The deleted record
+        may have been the synonym pointed to by the record in the main
+        file, with other synonyms stored sequentially behind it.  When
+        an overflow record is deleted and there are other synonyms,
+        the deleted record can be marked to signal the search
+        operation to keep looking.  Or an easier (but slower)
+        technique continues to look for a match until an empty record
+        location (or end of the overflow) is reached.
+
+            There are numerous twists on the theme of hashing record
+        numbers, handling synonyms, adding, changing, and deleting
+        records in this type of random access file.  Check out an
+        advanced data management text for more ideas.
+
+
+
+
+
+                                    - 35 -
+
+
+
+
+
+
+

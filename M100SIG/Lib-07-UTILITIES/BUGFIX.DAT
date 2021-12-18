@@ -1,0 +1,34 @@
+.   Questions about the 100's DATE$
+bug have continued for some time.  Yes,
+it IS a bug.  Fixable?  Depends on who
+you talk to.  Fixable in present ROM
+space... apparently not.  So, here's my
+personal cure.  In MOST applications 
+programs, there is a command 'MENU' to 
+exit the program.  I change it in all 
+of them to 'RUN"CLEAR"'.
+.
+.   My program 'CLEAR.BA' is listed 
+below.  Actually, I string it all 
+together into one line, but for 
+purposes of explanation, it's separated
+here.  Line 1 resets DATE$, needed or
+not.  Line 2 beeps to tell me when the 
+program is finished.  Helpful, not 
+necessary.  Line 3 clears file and 
+string space (I leave a few bytes of 
+string space available for operations 
+in the command mode),and THEN returns 
+you to the menu.
+.
+   You could also put line 1 (below), 
+into applications which use DATE$.
+Very little overhead involved, and 
+you can just about forget the problem.
+Once a year, increment the "84".
+.
+   Hope it helps		...ej
+.
+1 DATE$=LEFT$(DATE$,6)+"84"
+2 FORI=999TO8000STEP500:SOUNDI,3:NEXTI
+3 MAXFILES=0:CLEAR200:MENU

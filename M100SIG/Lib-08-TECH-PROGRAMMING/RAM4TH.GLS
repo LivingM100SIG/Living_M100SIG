@@ -1,0 +1,354 @@
+RAM4TH glossary
+
+Copyright 1988  Bill Boyd  CIS 75715,70
+
+
+This document lists the words in RAM4TH with their stack effects and descript-
+ions of what the words do.  For information about how to load and run RAM4TH,
+see the file RAM4TH.DOC.
+
+RAM4TH is based on FIG-Forth.  The following words in RAM4TH are either not
+part of standard FIG-Forth or have different meanings from their meanings in
+FIG-Forth.  Definitions and explanations are given below:
+
+
+  ( -- ) (null char)  Terminates line of input
+
+" ( -- adr n )  The characters following are put into a temporary string at PAD
+  until a second " is found on the same line.  The parameters returned are adr,
+  the address of the first char in the string, and n, the number of chars in
+  the string.
+
+(") ( -- adr n )  Move string from definition to PAD.  Used by compiler when
+    compiling the word " (quote).
+
+(NEXT) ( -- adr )  Returns the starting address of the interpreter loop (useful
+       for adding an assembler)
+
+.CPU ( -- )  Print CPU type
+
+?LOADING ( -- )  If not loading from a file, issue error #22
+
+?TERMINAL ( -- f ) If SHIFT-Break is down, then f=true, else f=false
+
+BLK ( -- adr )  User variable; true if loading from a file
+
+BPLOT ( adr n row col -- )  This sends plot bytes to the screen.  Some
+      explanation:  Think of the 64 vertical dots by 240 horizontal dots
+      of the screen as consisting of 8 horizontal stripes 8 bits high.  BPLOT
+      writes to a single stripe.  Each byte written controls a vertical
+      column of dots, with bit 0 controlling the uppermost bit.
+      Summary description:  BPLOT copies n (0 to 240) bytes starting at adr to
+      the LCD, starting at LCD row (stripe number, 0 to 7) and col (0..239)
+
+CALL ( psw1 bc1 de1 hl1 adr -- psw2 bc2 de2 hl2 )  Load the 8085 registers from
+     the stack, as indicated, CALL the routine at adr, and put the registers
+     onto the stack as shown on return.
+
+CALLX ( adr -- )  Call the machine-language routine at adr.  No register
+      values may be used as parameters.  Quicker and less flexible than CALL.
+
+CLOSEF ( -- )  Closes file opened by OPENF.  WARNING:  MAY CHANGE IN FUTURE
+       REVISION.
+
+DEPTH ( -- n )  Returns the number of items on the stack; i.e., the number
+      of bytes used by the stack divided by 2.
+
+EMIT ( c -- ) Send char c to display.  This uses RST 4 for best compatibility.
+
+EOF ( -- adr )  Variable which is set TRUE when at end of file.  WARNING:
+    MAY CHANGE IN FUTURE REVISION.
+
+ERROR ( n -- in blk ) or ( n -- )  If warning<0, abort; else, print error
+      message.  If loading from file, return interpret pointer and flag blk.
+
+F$CODE ( fmode numdig pad -- adr n )  Converts the floating point number at
+       0FC18H to a temporary string at PAD.  The format is controlled by mode
+       (0=fixed, 1=sci, 2=eng) and the number of digits (numdig).  The output
+       is rounded rather than truncated.
+
+FCHARS ( adr1 n1 -- adr2 n2 )  Puts characters into mantissa of floating
+       point number starting at adr1 (stops at first char not 0-9)
+
+FENTER ( -- )  "Lift" the floating-point stack.  Copies Z to T, Y to Z, and X
+       to Y.
+
+FFLAG ( -- adr )  Set TRUE if the number most recently submitted to NUMBER was
+      a floating-point number.
+
+FIRST ( -- adr )  Returns the first address of the loadfile buffer
+
+FLD ( -- adr )  Unused user variable
+
+FLIT ( -- )  Lift floading point stack, copy number in definition into X reg
+     (used by compiler; not intended for use by user)
+
+FLITERAL ( -- )  Handle floating point number (primarily for compiling)
+
+FMOVE ( from to -- )  Copies a floating point number from the "from" address
+      to the "to" address.
+
+FVARIABLE ( -- )  Creates a variable to hold a floating point number.  When the
+          variable name is executed, it returns the location of the variable.
+
+GETC ( -- c )  Returns next character from file opened by OPENF.  WARNING:
+     MAY CHANGE IN FUTURE REVISION.
+
+GETLINE ( -- )  Read line from file into buffer at FIRST until end-of-file or
+        end-of-line is reached.  WARNING:  MAY CHANGE IN FUTURE REVISION.
+
+INTERPRET ( -- )  Same as in FIG-Forth, with extensions to handle floating-
+          point numbers.
+
+KEY ( -- c ) Waits for keystroke in buffer, then returns first char.
+             Control-P toggles printer echo on and off.
+
+LEAD0 ( adr -- adr n )  Skip and count a series of leading zeroes
+
+LIMIT ( -- adr )  Returns the highest address used by Forth
+
+LOADF ( adr n -- )  Redirect input to the file named by the string at adr.
+      Currently may not be used in a file being accessed by LOADF.
+
+MENU ( anything -- ) Return to the Model 100 main menu.
+
+MESSAGE ( n -- ) Prints message number n from MSGARRAY (doesn't need disk)
+
+MSGARRAY ( -- adr ) Data structure containing error messages
+
+NUMBER ( adr -- d )  Convert counted string to double.  If number contains
+       comma, DPL contains number of chars to right.  If the number contains
+       a period, it is interpreted as a floating point number and put in X reg
+       and FFLAG is set.
+
+OFFSET ( -- adr )  Unused user variable
+
+OPENF ( adr n -- )  Opens the file whose name is specified by ( adr n ).
+      WARNING:  MAY CHANGE IN FUTURE REVISION.
+
+P! ( b n -- ) Write byte value to I/O port n (like MVI A,b  OUT n)
+
+P@ ( n -- b ) Get byte value from I/O port n (equivalent to doing IN n)
+
+PICK ( n1 -- n2 )  Retrieve value number n1 from the stack.  1 PICK is the same
+     as DUP and 2 PICK has the same effect as OVER.
+
+QUIT ( -- )  Same as FIG-Forth, plus it displays number of items on stack.
+
+R# ( -- adr )  Unused user variable
+
+SCR ( -- adr )  User variable; unused in RAM4TH
+
+SHL ( n1 n2 -- n3 ) n1 is shifted left n2 (0 to 15) bits
+
+SHR ( n1 n2 -- n3 ) n1 is shifted right n2 (0 to 15) bits
+
+T ( -- adr )  Returns address of the T register, on the bottom of the
+  floating-point stack.  The X register is the top of the floating-point stack.
+
+X ( -- adr )  Returns address of the X register, the top of the 4-register
+  floating-point stack.  In order, the registers are X, Y, Z, and T.
+
+XU ( -- adr )  Returns the address of floating-point variable XU, which is
+   used internally to realize calculator functions.
+
+Y ( -- adr )  Returns address of the Y register, one of the 4 floating-point
+  stack registers.
+
+Z ( -- adr )  Returns address of the Z register, one of the 4 floating-point
+  stack registers.
+
+
+The rest of the words in RAM4TH have the same definitions as in FIG-Forth.
+These words are listed below.  To get their definitions, contact Forth
+Interest Group, P.O. Box 8231, San Jose, CA  95155, phone (408)-277-0668
+and request the FIG-Forth Installation Manual.
+
+!
+!CSP
+#
+#>
+#S
+'
+(
+(+LOOP)
+(.")
+(;CODE)
+(ABORT)
+(DO)
+(FIND)
+(LOOP)
+(NUMBER)
+*
+*/
+*/MOD
++
++!
++-
++LOOP
++ORIGIN
+,
+-
+-DUP
+-FIND
+-TRAILING
+.
+."
+.R
+/
+/MOD
+0
+0<
+0=
+0BRANCH
+1
+1+
+2
+2!
+2+
+2@
+2DUP
+3
+:
+;
+;CODE
+;S
+<
+<#
+<BUILDS
+=
+>
+>R
+?
+?COMP
+?CSP
+?ERROR
+?EXEC
+?PAIRS
+?STACK
+@
+ABORT
+ABS
+AGAIN
+ALLOT
+AND
+BACK
+BASE
+BEGIN
+BL
+BLANKS
+BRANCH
+C!
+C,
+C/L
+C@
+CFA
+CMOVE
+COLD
+COMPILE
+CONSTANT
+CONTEXT
+COUNT
+CR
+CREATE
+CSP
+CURRENT
+D+
+D+-
+D.
+D.R
+DABS
+DECIMAL
+DEFINITIONS
+DIGIT
+DLITERAL
+DMINUS
+DO
+DOES>
+DP
+DPL
+DROP
+DUP
+ELSE
+ENCLOSE
+END
+ENDIF
+ERASE
+EXECUTE
+EXPECT
+FENCE
+FILL
+FORGET
+FORTH
+HERE
+HEX
+HLD
+HOLD
+I
+ID.
+IF
+IMMEDIATE
+IN
+LATEST
+LEAVE
+LFA
+LIT
+LITERAL
+LOOP
+M*
+M/
+M/MOD
+MAX
+MIN
+MINUS
+MOD
+NFA
+NOOP
+OR
+OUT
+OVER
+PAD
+PFA
+QUERY
+R
+R0
+R>
+REPEAT
+ROT
+RP!
+RP@
+S->D
+S0
+SIGN
+SMUDGE
+SP!
+SP@
+SPACE
+SPACES
+STATE
+SWAP
+TASK
+THEN
+TIB
+TOGGLE
+TRAVERSE
+TYPE
+U*
+U.
+U/
+U<
+UNTIL
+USER
+VARIABLE
+VLIST
+VOC-LINK
+VOCABULARY
+WARM
+WARNING
+WHILE
+WIDTH
+WORD
+XOR
+[
+[COMPILE]
+]

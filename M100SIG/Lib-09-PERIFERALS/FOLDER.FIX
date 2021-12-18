@@ -1,0 +1,13 @@
+	Don Corbitt's FOLDER is specific to CDOS 3.1 and will clobber CDOS 3.2
+since the folder-finder routine has been pushed down 5 locations.
+	To fix FOLDER for 3.2, change 58138 to 58143, and 58139 to 58144, in 
+lines 80 and 120.  In line 1015, the test for CDOS version will not distinguish between 3.1 and 3.2 as they didn't move the Allocation Table; for 
+CDOS3.2, change to read:
+	
+1015 IF PEEK(58147)<>231 THEN PRINT"ERROR.  Wrong version of CDOS":STOP ELSE RETURN
+
+To update for later versions of CDOS, use PEEKs in that vicinity and find a 
+location that changes when you change folders; that will probably be the 
+second of the two locations.
+	W. H. Calvin
+	14 June 1985

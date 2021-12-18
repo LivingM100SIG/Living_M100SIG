@@ -1,0 +1,138 @@
+THINK.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+THINK.IT (and it's enhanced version, THINK.IT3) are the only free outline
+processors for the Model 100/102 -- and THINK.IT3 has been translated to the
+Tandy 200 and the Kyo-85.  These messages relate to a problem one user was
+having, and to the "memory hungry" nature of the program (with some
+workaround hints).
+
+Message range: 156658 to 156766
+Dates: 9/14/87 to 9/16/87
+
+
+Sb: Think.It3
+Fm: bill henderson 72215,341
+To: Phil Wheeler 71266,125
+
+I recently got a hold of THINK.IT3, which is really super! I could never get
+ the orginal program to work properly. I have however one mechanical question:
+Sometimes after I do my outline I want to dress it up by putting spaces between
+ certain entries. I have not found a way to do this. If I press <ENTER> at the
+right place think.it adds a line at the bottom of my outline. Any suggestions
+on how I can get this done? Thanks for your help.
+
+
+Sb: #Printer & Think.it3
+Fm: Bill Henderson 72215,341
+To: Phil Wheeler 71266,125
+
+Phil, One more set of problems I should mention. I am having problems with the
+printing of files the way I want. First, I can't seem to figure out how to
+print directly to the printer without using a
+
+RAM file first. Second, I must not understand the Printing instructions because
+I end up with carriage returns in the wrong places and it looks like a deformed
+outline. How should I answer those questions? (the docs I have on Think.It
+don't say anything about how to answer the print questions to get what
+you want.
+
+
+Fm: Phil Wheeler 71266,125
+To: Bill Henderson 72215,341
+
+I am having a bit of trouble with you question.  Usually if you just print
+without changing any of the defaults (ENTER i response to all questions) you
+will get a pretty normnal result.  Default print is to LPT:, the printer.
+
+CR's in the wrong place is a bit too general: it should not do that, so there
+may be something weird in your setup.  Does that show up in RAM file when you
+print to RAM?
+
+One option is what level to add extra lines {Lowest level for separation}.
+
+Does your printer need extra line feeds?  If so, get one of the LF adders
+(e.g., LFUTL.PW1, DL7).
+
+What printer are you using (and is it parallel)?
+
+
+Fm: Bill Henderson 72215,341
+To: Phil Wheeler 71266,125
+
+Phil, I am using a Prowriter via the parallel cable. When I push <ENTER> for
+each question that is asked in the print routine I get a "redo ?" error. Also,
+while I'm thinking about it, I used your one patch to think.it3 that changed, I
+believe, line 91. Although I had 11K of memory available (and the original file
+was less than 3K) I got an error 7 in line 91 (out of memory). That also made
+no sense. I will try what you suggest and let you know what happens.
+
+
+Fm: Bill Henderson 72215,341
+To: Phil Wheeler 71266,125
+
+Phil, After following your advice to press <ENTER>, my outline worked fine to
+the printer. There continues to be only one problem which I can't seem to
+solve. On one outline, which is not more than 2 pages total when printed out, I
+consistently come to a spot where I get the "7 in line 91" error. As I
+mentioned I am using your patch of THINK.IT3 which you downloaded after the
+main program. The reason the error makes no sense is that I have more than 11K
+free before I start to write the file to a RAM file. Do you have any ideas on
+this problem?
+
+
+Fm: Phil Wheeler 71266,125
+To: Bill Henderson 72215,341
+
+Actually, it may make sense. THINK-IT will pull you outline file into a RAM
+buffer, and will then run the print file to another buffer. and there is
+running overhead due to the set-aside of string and array space at the
+beginning.  Best way to test is to free up more RAM and try it. You can change
+some of the intitialization stuff to tell the program that you will have
+shorter outlines.  Don't recall which params and I am not near a listing.
+
+
+Fm: Bill Henderson 72215,341
+To: Phil Wheeler 71266,125
+
+Phil, I would appreciate it, if you get a chance, to let me know which
+parameters to alter forthe smaller outlines. But really, 11K for a 4K document?
+Could it be I might have made an error in the editing of the outline?
+
+
+Fm: Phil Wheeler 71266,125
+To: Bill Henderson 72215,341
+
+The program will save space for a large outline, whether you have one or not.
+Line 1 is the key.  It immediately sets aside half of vailable RAM for string
+space: CLEAR FRE(0)/2.  Then it dimensions some arrays for 200 entries (not all
+that many!): DIM P(200), N(200), A(200).  All of this GOBBLES free RAM 'til
+there is little left for printing the output to.
+
+If you have a disk drive, try printing to 0:FILE.DO (with an OS that supports
+0:).  With a PC, use FLTIBM  and do print to COM:88N1E.  You can even try a
+cassette with CAS:FILE.
+
+In his "for sale" version, Larry Groebe does it a bit differently, replacing
+the DIM  stuff by B=FRE(0)/35:DIM P(B),N(B),A(B).  This tends to make the
+memory allocation a function of available RAM, and may help you.
+
+
+Fm: Bill Henderson 72215,341
+To: Phil Wheeler 71266,125
+
+Phil, Thanks for the help. I'll get to work on checking it out. One short
+footnote, however. I also have in RAM another outline which is approximately
+3/4 of a page long. When I print that to a RAM file I have no problems
+whatsoever. This is with the other outline file in RAM and approximately 11K of
+RAM free.
+ Why doesn't the program hang up for my shorter outline, based on what you said
+about line 1 in the program?
+
+
+Fm: Phil Wheeler 71266,125
+To: Bill Henderson 72215,341
+
+Haven't the foggiest, Bill.

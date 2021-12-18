@@ -1,0 +1,125 @@
+	ORG	50000
+;**************************************
+;*                                    *
+;*       Communication Program        *
+;*                                    *
+;*     Radio Shack M100 Specific      *
+;*                                    *
+;*          By Denny Thomas           *
+;*                                    *
+;*             73126,672              *
+;*                                    *
+;*              8/4/86                *
+;*                                    *
+;*         Assemble with ROM2         *
+;*                                    *
+;**************************************
+;
+;--------------------
+; System Equates
+;--------------------
+;
+SETSER	EQU	17E6H		;Set up parameters to initialize RS232.
+KYREAD	EQU	7242H		;Get character from keyboard.
+SNDCOM	EQU	6E32H		;Send to RS232 port.
+RCVX	EQU	6D6DH		;Check for characters in RS232 queue.
+RV232C	EQU	6D7EH		;Wait & Get char. from RS232 port.
+BRKCHK	EQU	7283H		;Check for break characters only.
+CLSCOM	EQU	6ECBH		;Deactivate RS232 port.
+MENU	EQU	5797H		;Go to Main Menu.
+CHGET	EQU	12CBH		;Wait and get char. from keyboard.
+PRINT	EQU	5A58H		;Print string until 0H reached.
+UPRCAS	EQU	0FE9H		;Convert to uppercase.
+CLS	EQU	4548H		;Clear Screen.
+CURON	EQU	4249H		;Turn on cursor.
+CUROFF	EQU	424EH		;Turn off cursor.
+;
+;--------------------
+; Start of program.
+;--------------------
+;
+START
+	LXI	H,STR2		;String containing status.
+	STC			;Specify RS232.
+	CALL	SETSER		;Activate RS232 port.
+	CALL	CURON		;Turn on cursor.
+	JMP	SETUP		;Return to CONIN after setup.
+CONIN
+	CALL	KYREAD		;Get character from keyboard.
+	JC	PORTIN		;Special function keys - ignore.
+	JZ	PORTIN		;No - jmp to port in.
+	CPI	01H		;Check for ^A.
+	JZ	SETUP		;If so, go setup.
+	CALL	SNDCOM		;Send to RS232 port.
+	CALL	CRLF		;Echo character and add CR/LF.
+PORTIN
+	CALL	RCVX		;Check if any chars in queue.
+	JZ	CONIN		;No - jmp to keyboard in.
+	CALL	RV232C		;Get character from RS232.
+	CALL	CRLF		;Echo character and add CR/LF
+	JMP	CONIN
+;
+;--------------------
+; Use ^A to activate
+; this subroutine.
+;--------------------
+;
+SETUP
+	CALL	CUROFF		;Turn off cursor.
+	CALL	CLS		;Clear Screen.
+	CALL	CURON		;Turn on cursor.
+	LXI	H,STR		;Prepare to print string.
+	CALL	PRINT
+	CALL	CHGET		;Wait and get char. from KB.
+	CALL	UPRCAS		;Convert to upper case.
+	RST	4
+	CPI	'M'
+	JZ	EXT		;Go to Main Menu.
+	CALL	CUROFF		;Turn off cursor.
+	CALL	CLS		;Clear Screen.
+	CALL	CURON		;Turn on cursor.
+	LXI	H,STR4		;Prepare to print string.
+	CALL	PRINT
+	JMP	CONIN
+;
+;--------------------
+; Routine to add
+; CR/LF if one or the
+; other is detected.
+;--------------------
+;
+CRLF
+	CPI	0AH		;Check for Linefeed.
+	JZ	CONT
+	CPI	0DH		;Check for Carriage Return.
+	JZ	CONT
+	RST	4		;Print normal character.
+	RET
+CONT
+	MVI	A,0AH		;Print CR/LF Combo.
+	RST	4
+	MVI	A,0DH
+	RST	4
+	RET
+;
+;--------------------
+; EXIT.
+;--------------------
+;
+EXT
+	STC			;Specify Modem
+	CMC
+	LXI	H,STR3		;Return stats to default settings.
+	MVI	D,02H
+	CALL	SETSER
+	CALL	CLSCOM		;Close RS232 port.
+	JMP	MENU		;EXIT
+;
+;--------------------
+; Constant Data
+;--------------------
+;
+STR	DB	'[M]enu or any key to continue:',0H
+STR2	DB	'88N1D',0H
+STR3	DB	'7I1E',0H
+STR4	DB	'In Terminal Mode Now...',0AH,0DH,0H

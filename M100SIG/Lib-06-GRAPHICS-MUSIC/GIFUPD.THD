@@ -1,0 +1,74 @@
+GIFUPD.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This very short thread is an update on the situation re making the GIF
+protocol for graphics available on the 100/102.  Not terribly promising!
+See also GIF.THD in the Library.
+
+Message range: 170420 to 171177
+Dates: 6/21/88 to 7/4/88
+
+
+Sb: #Any progress with GIF
+Fm: Michael Babcock 72076,567
+To: Neil Wick 71056,613
+
+Has there been any more progress with GIF graphics for the model 100 since the
+GIF.THD file in dl6?
+
+
+Fm: Neil Wick 71056,613
+To: Michael Babcock 72076,567
+
+Update on the GIF situation:
+
+   There are a number of obstacles still to be overcome before there could be
+any possibility of a GIF displayer program for the Model 100.
+
+1)  The first problem is downloading the actual GIF file.  Unlike RLE, GIF
+files are not restricted to ASCII codes between 32 and 126.  The file must
+accommodate any code between 0 and 255 inclusive; therefore, it could only be a
+CO type file.  There is presently no method for downloading such a file
+directly to the M100 (at least no program in the public domain).
+
+2)  Once you have the file, it must be decompressed as it is displayed.  The
+display program builds a decompression code table as it does this.  This table
+takes about 16,000 bytes.  Obviously, memory is going to be tight with the
+program and the actual GIF file in the RAM.  An external storage device would
+be helpful here.  The free availability of POWR-DOS would probably be helpful
+to a significant number of users in this application.
+
+3)  Even after the code is decompressed, there is the problem of displaying the
+resulting picture.  It's often necessary to simulate grey tones with some type
+of dot pattern (dithering or halftoning), so the program needs to do this kind
+of processing too.  For example, one favorite GIF picture I have shows a grey
+and orange lizard sitting on a brown cliff with an orange sunset in the
+background.  You can't just do some colours in black and other in white.  You
+wouldn't end up with anything.  I'm learning more about techniques to do this.
+
+4)  Many GIF files are "interlaced."  This means the picture gradually fills in
+and the last thing it does is fill every second horizontal strip of pixels.
+The only way this could be shown on the LCD or on a printer would be to store
+the entire image (uncompressed) in the RAM or somewhere while the GIF file was
+read.
+  Even for a relatively medium resolution picture of 320x200 pixels and 16
+colors would take 125K of space.  Pictures with double this resolution both
+horizontally and/or vertically and/or with double the number of colours are
+relatively common.  (640x400x16 or 640x400x32 would require 500K.)  I suppose a
+printer could be rigged up with a continuous loop of paper and multiple passes
+could be printed that way, but there are problems with that.
+
+    I have said I would do a GIF viewer for the Coleco Adam computer, so I'd
+like to work on that first, because I think it would be simpler, but I haven't
+really had much time there last few months to do any programming really.
+
+   I was beginning to think that some more M100 RLE programs would be a much
+more productive use of my time, but I'm quite disappointed in the number of
+downloads for my RLEQIK files.  I know they're kind of long (about 20K in
+total, but very worthwhile.
+
+   I was reading recently that: "Nothing is impossible, but some things are
+impractical."  I'm afraid M100 GIF is currently in the impractical category,
+but I still hold some hope for its future.

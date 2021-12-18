@@ -1,0 +1,136 @@
+Every now and then someone gets all excited that there might be software
+available that will allow him to convert his Model 100/102 or 200 screen
+so that it displays 80 characters on a line. Alas, that is not possible.
+This file is an archived message thread which describes why not.
+
+Copyright 1989 Golden Triangle Corp.
+
+Captured message threads are archived for the benefit of Model 100 forum
+members, and may not be reproduced elsewhere in any form.
+
+
+Fm: RANDY B. 71656,1444
+
+I HAVE TWO QUESTIONS ABOUT THE MODEL 100.
+
+FIRST, IS THERE A PROGRAM WHICH WILL PERMIT 60 OR 80 COLUMNS TO APPEAR ON THE
+SCREEN?
+
+SECONDLY, IS THERE A PROGRAM WHICH WILL COMMAND A PRINTER TO LINE
+FEED.
+
+I NOTICE THAT WHEN I HOOK UP THE MODEL 100 TO THE SAME PRINTER I USE
+FOR MY XT, THAT THE PRINTER WON'T LINE FEED UNLESS I PLAY WITH THE
+DIPSWITCHES.  IT SEEMS TO ME THIS WOULD BE EASIER IF I COULD SEND A COMMAND TO
+THE PRINTER FROM THE MODEL 100.  IF THESE PROGRAMS EXIST, HOW CAN I GET A
+COPY? THANKS FOR YOUR HELP.
+
+
+Fm: Phil Wheeler 71266,125
+
+Randy,
+
+Ansering the linefeed question is easy.  Go to Lib 7 and download LFUTL.PW1.
+In fact, do BRO LFUTL and get all the files you find (should be three).
+
+The "60 or 80 col" question is harder.  Basically, the answer is "yes, but..".
+There are at least two commercial products which will give you 60 columns, but
+none I know of which will go to 80 cols.  And there is one here in the data
+libraries, or maybe more than one now; go to Lib 2 and do BRO VIEW to find at
+least one of these.
+
+I've tried the best of the commercial "wide-screen" programs, and I have been
+disappointed by all.  So this is not an option that i, personally, would
+recommend.  However, other users seem to swear by (vs. at) them; so best bet
+is to try one of the free ones here and then look into a commercial version
+such as UltraScreen.
+
+Phil
+
+
+Fm: RANDY B. 71656,1444
+
+I WROTE YESTERDAY TO THE SYSOP ABOUT A PROGRAM WHICH WOULD ENABLE MY MODEL 100
+TO SHOW 60 OR 80 COLUMNS ON THE SCREEN.  I WENT INTO THE LIBRARIES, AND FOUND A
+PROGRAM CALLED "VIEW80."  I'VE DOWNLOADED IT, AND GONE AS FAR AS I CAN WITH
+THE INSTRUCTIONS.  PERHAPS YOU CAN ADVISE ME AS TO WHAT I AM DOING WRONG.
+AFTER DOWNLOADING THE FILE, I USED THE CUT AND PASTE COMMANDS TO GET TO THIS
+POINT:
+
+1. THE "HEX" FILE IS SAVED NOW UNDER THE NAME "VIEW80.DO"  IN THE INSTRUCTIONS,
+IT SAYS TO USE THE "CHANGE.BA" TO CONVERT THE HEX LISTING INTO VIEW80.CO, BUT I
+DON'T KNOW HOW TO DO THIS.
+
+2. THE FRONT END ROUTINE IS NOW SAVED UNDER "VIEW80.BA" 3. THE SOURCE CODE IS
+SAVED UNDER "B80SRC.BA" ANYWAY, WHEN I TRY TO LOAD AND RUN THE "VIEW80.BA"
+PROGRAM, IT ASKS ME FOR FILE NAME, AND I PRESS ENTER.  THEN IT ASKS FOR WIDTH,
+AND PAGE BREAKS, AND I PRESS ENTER.  AFTER ALL THIS, I GET "FF ERROR IN 120."
+PERHAPS THIS HAS SOMETHING TO DO WITH THE FACT THAT I HAVEN'T BEEN ABLE TO USE
+"CHANGE.BA," OR PERHAPS I'M MORE MESSED UP THAN I THOUGHT. IN ANY CASE, THIS
+SOUNDS LIKE AN EXCITING PROGRAM, IF IT CAN GIVE ME 80 COLUMNS ON THE SCREEN.
+PLEASE HELP IF YOU CAN. THANKS AS ALWAYS.
+
+
+Fm: Tony Anderson 76703,4062
+
+Randy...
+
+Well, in the first place, you cannot view 80 columns of data on your screen.
+Ever.  The screen will not support it.  If you look at your screen with a
+magnifying glass, you'll see it's made up of hundreds of tiny, square dots.
+There are 240 across a line, from one edge of your screen to the other; and if
+you are using a Model 100/102, 64 rows, from the top to the bottom.  A 200 has
+128 rows.  Each dot is called a "pixel".
+
+Each character on your screen is made up of several "turned on pixels".  The
+standard characters are in a "cell", 6 pixels wide, and 8 pixels high.  The
+letters can be up to 5 pixels wide, as one pixel is used as blank space
+between letters.  The magnifying glass will help you see this.  240 divided by
+6 = 40 characters on a line.
+
+There is no way to reduce the size of the pixels, or to squeeze them together
+to add more; the 240 x 64 (or 128) is a fixed comodity.  So in order to
+display more characters, you have to change the size and shape of the
+characters.  For example, if you reduce the character to only 4 pixels wide,
+plus one blank pixel for character separation, you have a cell that's 5 x 8.
+And 240 divided by 5 = 48 characters, not a significant improvement.
+
+If you reduce the cell size to 4 pixels wide, 3 for the character, and one for
+the separation, you can display 60 characters on a line.  240 divided by 4 =
+60.  Problem is that now you have only three pixels to define a character, and
+many characters become unintelligible.  It becomes very difficult to
+differentiate between characters than have a middle part, like M and W, m and
+w; H and X, etc.  You have to rely on "word recognition" in general context to
+read the screen.  It is most unreliable for reading data that must be
+absolutely accurate, like columns of numbers.
+
+In order to view 80 characters on the screen, each cell would have to be 3
+pixels wide, and allowing for 1 blank pixel between letters, your character
+would be only 2 pixels wide.  Clearly impossible.  Try to print meaningful
+letters using only two vertical lines. -- If you tried using all 3 pixels in
+the cell, there would be no blank between characters, so they'd all by mushed
+together and impossible to read.
+
+Consequently, no software can give you an 80 column screen.  What these 80
+column programs do is to map your document into an 80 column wide "page", then
+give you a little window that you can move around on the page, to view various
+parts of the document.  You can simulate the approach by taking a piece of
+paper, cutting a "window" in it, that's 40 characters wide and 8 (or 16) rows
+high, then moving it around on a typed letter or document to see what you get.
+For most people, it's not entirely satisfactory.  Some may find it useful, but
+in general, it's considered "trick" programming.
+
+However, considering that you may be one of those folks who can find it
+useful, apparently you need to convert the Hex file into a runnable program,
+using CHANGE.BA, which is another program from Library 7.  Read CHANGE.DOC to
+learn how to make it work.
+
+Your "FF Error in 120" indicates that the program is looking for some file,
+and has not found it.  Read the documentation carefully to see what file the
+program is looking for, or look in line 120 of the program to see what it is
+attempting to do there.  One problem that is readily apparent, is that
+pressing ENTER when asked for a file name is wrong.  The program asked for a
+name, not a blank line.  You have to provide a name, or the program can't look
+for the file.  The program may be set for defaults when you press ENTER for
+width and page breaks, I don't know.  But virtually never for a file name.
+

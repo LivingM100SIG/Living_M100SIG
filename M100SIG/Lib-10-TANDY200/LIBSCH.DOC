@@ -1,0 +1,92 @@
+        LIBSCH.200 (c) 1990, Randall W. Hess
+                 All Rights Reserved
+        ------------------------------------
+
+     LIBSCH.200 gives users of my LIBRIS.200 disk and cassette file catalog
+system the ability to search-for and list text strings contained in the
+file-name/remarks sections of the LIBFYL.DO data files.  It permits "and" or
+"or" searches of these records for single or multiple strings and writes the
+search results to a RAM file.  If you can't remember where you saved a
+particular file or subject then LIBSCH can find it!
+
+
+  - SET-UP -
+
+     Download this file (LIBSCH.DOC), the program file (LIBSCH.200) and
+Wilson Van Alst's ZIPFYI.200 (all DL10).  Remove any extraneous characters
+and checksum the files.  Run ZIPFYI.200 which will create ZIPFYI.CO.  Save a
+copy as back-up.  Load the LIBSCH.200 code into BASIC and "Save" to
+LIBSCH.BA: back-up this file also.
+     Leave as much free RAM as possible when running LIBSCH.  LIBSCH needs at
+least 2000 bytes of running room and, if you find a lot of "matches", your
+report file can be pretty big: 40 bytes per match.
+
+  - OPERATION -
+
+     LIBSCH expects you to have your "LIBFYL.DO disk" loaded, your DOS "on",
+and ZIPFYI.CO on the menu.  Single letter prompts accept UPPER or lower case
+letters.  <ENTER> at the first menu returns to the T200 main menu and at any
+other prompt starts over.
+     Cursor select LIBSCH and it begins by displaying a title screen while it
+loads LIBFYL.DO.  You will then be asked for the number ("#") of strings you
+want to find: enter from 1 to 9.  Search time for each data set is VERY quick
+so use as many as you need.
+     For each string number enter the text you're looking for.  The search
+routines are NOT case sensitive so you may enter "tape" and LIBSCH will find
+any record which contains the string "TAPE", "Tape" and "tape" either alone
+or as part of another word like "taperecorder".
+     After you've entered the chosen quantity of search strings, you'll be
+asked "Ok?".  If OK then press "Y" or "y": any other key will begin again.
+     If you selected more than one search string then you'll be asked "Search
+type: <A>nd  <O>r".  Press the highlighted single letter to choose.  (If you
+chose to search for only one string then "single $" will display instead.)
+
+         "<A>nd"
+           This will find ONLY records that contain ALL your string choices:
+           "tape" AND "recorder" for example.  The strings may appear in any
+           order in the record.
+
+         "<O>r"
+           This will find records that contain ANY of your string choices:
+           "Tape" OR "recorder"; records with more than one will be found too.
+
+     While LIBSCH is looking for your strings, the name of the LIBRIS data
+files containing your filenames and comments will display.  As ZIPFYI
+examines each of these files you may hear "clicks" from time to time.  This
+is normal and occurs when a "match" is found: no clicks means no matches in
+THAT data file.  After all the data files have been searched, LIBSCH displays
+"Working..." while it does the "and"/"or" sorting: clicks continue.  From
+start to finish, LIBSCH need about 30 seconds for every 100 commented file
+records.
+     When LIBSCH is done, it will take you directly to MATCH.DO via TEXT. 
+This ram file begins with a header line which shows your search type in
+square brackets and the strings included in the search.  The matches are
+listed in sets by source and are displayed as found in the data files:
+file/source/size/comment.  Use any of the normal TEXT functions for finding,
+listing or printing your search results: F8 returns you to the T200 Main
+Menu.  (If you want MATCH.DO sorted then do it from the Main Menu with some
+Sort utility: ZIPSRT.CO is the best.) 
+     LIBSCH and ZIPFYI append data to MATCH.DO so results of subsequent
+search requests will all be available in the same MATCH.DO.
+
+
+                - ERRORS -
+
+     LIBSCH only traps for a missing 0:LIBFYL.DO or ZIPFYI.CO: other errors
+simply print error/line number and end operations.
+
+
+                - Credits -
+
+     Wilson Van Alst wrote ZIPFYI.CO which makes LIBSCH practical and gave me
+permission to use it here.  He also contributed many hours of discussion
+about various types of "AND/OR" search routines which helped me understand
+the logic needed for LIBSCH to work.
+
+                -/-/-/-/-/-/
+
+     Please direct comments and suggestions to me at 73267,552.
+
+Randy Hess
+January, 1990
+Omaha, Ne.

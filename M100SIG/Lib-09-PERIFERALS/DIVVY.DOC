@@ -1,0 +1,241 @@
+Documentation for DIVVY.TDD
+===========================
+Joel Dinda [75725,1134]
+Program CHECKSUM:  135,025
+
+
+DIVVY.TDD is a demonstration program.  At this time (8 February 86) there are
+virtually no programs available which use the TDD/PD combination profitably,
+and none which properly demonstrate the sorts of programming techniques which
+are necessary to take advantage of Powr-Disk.  I've attempted to supply such a
+demonstration here.  I'll return to this theme in the Notes, below.  (A related
+matter:  You don't need an especially long file to test this program.  You need
+no file whatever to look at the code.)
+
+DIVVY is a utility program for the Tandy Portable Disk Drive and Acroatix'
+Powr-Disk (an extension of M100 & T200 BASIC.)  One of the attractions of
+TDD/PD is that it can be used extend the memory for your Tandy portable.  An
+unfortunate possible side effect is the creation of a disk file which won't fit
+in RAM.  DIVVY can be used to split that long file into several shorter
+files....
+
+DIVVY was written on a Model 100, but should work acceptably on a Tandy 200
+without changes.
+
+
+Using DIVVY
+-----------
+
+In normal operation, you'll see two prompts:
+
+"File to Split?" -- respond with the name of the disk file you want to split. 
+Do NOT use an extension, and don't use a prefix (DIVVY adds both).  The program
+next checks to see if the file's actually on the disk.  If it's not, you'll get
+a beep and a return to this prompt.  (Illegal filenames either get this
+treatment or "Error 5 in line 2" and the error trap routine.)  <ENTER> escapes
+to the menu.
+
+"Split Length?" is the other prompt.  You'll see this only if DIVVY locates
+the file you want to split.  The display will tell you the file's size, how
+much room is left on the disk, and the approximate size of the RAM buffer
+available for your use.  <ENTER> defaults to the RAM buffer's size.
+
+DIVVY reports what's happening at all times, with indications on the screen
+and a combination of beeps, clicks, and whistles to help you keep track of
+progress.  Generally speaking, clicks indicate normal progress; beeps indicate
+changes in program modes; and whistles are attempts to get your attention
+(variously:  errors, end- of- program, or "please swap disks").
+
+The "split" files are named by taking the first five characters of the long
+file's name and adding (in sequence) zero through nine.  A file named SEAMLS
+would create (perhaps) ten files named SEAML0 through SEAML9.  The program
+tries to prevent attempts to create splits which would require eleven (or more)
+sections.
+
+This program attempts to put the divided copy of the file on the disk with the
+original.  If it believes there's not enough room on the disk for the split
+
+
+
+
+
+
+
+
+
+
+
+02/08/86
+Page 2 
+
+
+copy, you will be prompted to swap the original disk and a second ("scratch")
+disk as needed.  (There are other possibilities, actually; the prompts should
+make things clear.)
+
+
+Error Trapping
+--------------
+
+I'd like to believe there are no bugs in the program.  If you locate one.
+PLEASE tell me all about it.  Thanks.
+
+The errors you're likely to encounter are trapped in the following manner:
+
+Errors 52 (File not Found) and 55 (Bad File Name) will normally beep and
+return you to "File to Split?"  Some "wrong" names will instead yield an "Error
+5 in line 2" (one way to get this error is to include an extension when you
+tell DIVVY what file to split).
+
+Errors 64 (Disk Full) and 67 (Already Exists) route the program through the
+disk swap routine.
+
+Errors 59 (Drive Not Ready), 60 (Drive Not Responding), 61 (Communications
+Error) 62 (Drive Done Early [actually a file error, but shouldn't occur]), and
+66 (Hard Trouble) bring you "Disk Error" and a prompt for <ANY KEY>; you return
+to "File to Split?"
+
+Errors 63 (Write Protected) and 65 (No Disk) yield "Disk Error" and <ANY KEY>,
+which also returns to "File to Split?"
+
+All other errors yield "Error xx in line xxx" and <ANY KEY>.
+
+
+Notes
+-----
+
+Design criteria:
+
+** Easy to use; operator intervention kept to a minimum.
+
+** Under 1500 bytes in BASIC.
+
+** Lots of audible cues and visual indications to explain program status.
+
+** File breaks close to specified targets (split lengths), but with
+preferences for breaks at (1) ends of lines and (2) between words.
+
+The main problem turned out to be counting....
+
+
+Utility programs are supposed to be simple to use and generally unobtrusive. 
+I believe this one to be so.  On the other hand, since I was trying to
+demonstrate how Powr-Disk works, I refrained from my usual RAM- saving tricks
+
+
+
+
+
+
+
+
+
+
+
+02/08/86
+Page 3 
+
+
+in an effort to create a program that can fairly easily be deciphered.  The
+clicks and beeps, although hardly vital to operations, are part of that
+demonstration.
+
+
+Since DIVVY uses your free RAM as a buffer, this program works best when your
+computer is basically empty.  A really small RAM buffer will result in an
+apparently endless loop returning forever to the "Split Length?" prompt. 
+Escape can be effected by entering a six digit integer, which will take you to
+the error trap routine.
+
+Please be aware that DIVVY creates a temporary file named CAT.DO.
+
+
+One File at a Time:
+
+All BASICs have quirks.  The most noteworthy quirk of the TDD/PD version is
+that the drive apparently only permits programmers to open one disk file at a
+time.  Important consequence:  NEVER open two disk files.  Instead use a RAM
+buffer to mimic a second disk file.
+
+Here's how DIVVY copes with these things:  After it asks for a file name,
+DIVVY uses LFILES TO "CAT.DO" to place a disk directory in reach.  It reads the
+file for the filename you're seeking to split, for the length of that file, and
+for sectors free.  If it fails to find the file it mimics a File Not Found
+error.  (See lines 1 & 2 -- and a bit of 3 -- for details.)  These things could
+doubtless be done with PEEKs & POKEs to Powr-Disk, but that would require
+different versions of this program for M100 and T200 -- and Acroatix explicitly
+doesn't promise to support such tricks.
+
+Most of DIVVY's work is a simple file transfer; the program reads from the
+disk file with LINE INPUT and writes it into the buffer file in RAM with
+PRINT.
+
+DIVVY counts bytes as it goes along.  When it approaches the limit imposed at
+the "Split Length?" prompt, it looks for a carriage return and breaks the file
+where one is located.  (I've assumed line lengths of less than 100 characters,
+if the file's lined.)  If it fails to find a CR, DIVVY splits the line at a
+break between words.  These things could be done more simply (just count to the
+limit, and break the file regardless), but I prefer this sort of split routine.
+
+These are lines 9 & (especially 10) and the related GOSUBS to 11 & 12.
+
+At this point we've got a file open on disk and a copy of part of that file in
+RAM.  We want to empty the RAM buffer so we can continue -- but first we have
+to put the buffer someplace so we don't lose it.  The logical place to put it
+is on the disk.  So we close the disk file (remember: ONE file open) and copy
+the RAM file to disk (there are some complications, here, but exploring them
+will just confuse things.)  This is what line 14 does.
+
+Now there's a full copy of the file on disk and one (or more) smaller pieces
+of it on disk.  The RAM buffer is empty.  We want to fill the buffer again. 
+HERE's where things get more complex:  We've got to locate the beginning of the
+
+
+
+
+
+
+
+
+
+
+
+
+02/08/86
+Page 4 
+
+
+next segment.  That's the other reason DIVVY counts; line 8 counts through the
+source file again until it locates the start of the next segment.  Then the
+transfer routine resumes.
+
+Those are the program's basics; the rest of the code mostly checks for errors
+or problems.  Feel free to borrow the code for your own programming, or to
+suggest better solutions to the problems I've mentioned than those I've found. 
+
+I'm still learning to cope with Powr-Disk; I expect that experience will
+continue to make a better programmer of me.
+
+
+Finally, a few thank yous:  To Phil Wheeler for insisting that I write this
+program next; to Woods Martin for sharing his concurrent explorations of
+Powr-Disk; to Dave Thomas (& the rest of the SIG) for cheerfully hosting our
+discussions and helping us to share information; and to Ed Giese of Acroatix
+for bringing all these problems into my life.
+
+
+And a BONUS for those who've read this far:  The following program can be used
+to append a RAM file to a TDD file via Powr-Disk.  I wrote it to help test
+DIVVY.
+
+0 'append.tdd/joel dinda/2feb86
+1 CLS:MAXFILES=2:CLEAR600:INPUT"RAM file";R$:INPUT"Disk file";D$:D$=":"+D$
+2 OPENR$FORINPUTAS1:OPEND$FORAPPENDAS2:CLS:PRINT"Appending RAM:"R$" to "D$
+3 IFEOF(1)THENCLOSE:MAXFILES=0:MENU
+4 LINEINPUT#1,T$:IFLEN(T$)=255THENPRINT#2,T$;:GOTO3ELSEPRINT#2,T$:GOTO3
+
+
+joel
+LSJ-Access/TBBS
+517-482-8144
+8 February 86

@@ -1,0 +1,30 @@
+  It was while byte-fighting BACKUP.BA for the TDD2 that I noticed the call: 
+CALL 62297,X,Y (CALL 58980 for the 200.)
+
+Where X:
+
+ X=1 Format Disk
+ X=2 Write to disk
+ X=3 Read from disk
+ X=5 Seems to check status of disk?
+
+Where Y points to a four byte location:
+
+First two bytes: Location in memory to load or save from.
+
+Third byte: Sector
+Forth Byte: Unknown
+
+After the call is executed:
+
+First Byte: Error Codes
+
+ > 1 Then Error
+ = 3 Then Drive Not Ready
+ = 5 Then I/O Error
+ = 6 Then Write protected
+ = 8 Then No Disk
+ = 9 Then Hard trouble
+
+  I used this call when I wrote SPELL2.CO and I'm sure there are other things 
+I'm missing.  FLOPY2 chould become 'THE' Dos for the TDD2

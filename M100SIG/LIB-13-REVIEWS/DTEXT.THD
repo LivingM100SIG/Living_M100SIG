@@ -1,0 +1,192 @@
+DTEXT.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+D-TEXT is a utility provided with POWR-DOS by Acroatix.  Its primary purpose
+is to allow editing of files which are on disk and too large to fit in RAM.
+The messages captured here discuss an observed conflict between D-TEXT
+SuperROM -- and conclude with an empirically derived approach to avoiding it.
+  <Update on 6/6/87 of file originally uploaded on 4/4/87>
+
+Message range: 142020 to 149248
+Dates: 2/28/87 to  6/1/87
+
+
+Fm: C. Davey Utter 70055,522
+To: Al Pound 75715,1077 
+
+What is D-Text?...Dave
+
+
+Fm: Al Pound 75715,1077
+To: C. Davey Utter 70055,522 
+
+Dave, D-TEXT is one of the programs which comes with Powr-DOS by Acroatix.
+It's name is derived from Disk-Based TEXT and it enables you to work with .DO
+files up to 64K in length (a TDD limit) that are on disk since loading the
+complete file into RAM isn't necessary.  It takes advantage of Powr-DOS's
+capability to to access information on the disks randomly by sector instead of
+by file.
+
+
+Fm: Al Pound 75715,1077
+To: All
+
+Is anyone successfully using D-TEXT?  I quit using it because it messed up my
+files.  It duplicated the last portion of the file and appended it to the file
+usually with what appeared to be bad EOF information.
+
+
+Fm: Don Zeikel 75775,1430
+To: Al Pound 75715,1077 
+
+     I have used it succesfully and unsuccesfully several times for long files.
+I also had the same problem you have described.
+Most recently, I turned off Supera before using it, plugged the disk drive
+into AC, and got flawless results.  It struck me that, since Supera has hooks
+into TEXT, there might be some conflict there.  I have not done enough
+experimenting to be ocnclusive about this, but my first result was positive.
+     One truly bizarre thing; when I have had trouble with the program, I have,
+on a few occasions, found a .DO file whose name consists of 6 CHR$(254)'s with
+a length of 0 on the disk.  I assume this is a dummy file used by D-TEXT, and
+it is un-killable.  However, when I tried killing it from BASIC, it starting
+FORMATTING THE DISK!  At least, it was running continuously, and even turning
+off the computer would not stop it, which is what it does when it formats.
+    The main thing I have learned is to make sure I have a backup of any long
+files I try with D-TEXT.
+
+
+Fm: Al Pound 75715,1077
+To: Don Zeikel 75775,1430 
+
+I don't have Supera or any other hook modifying program that I know of other
+than Powr-DOS & SuperROM. I used Powr-Disk previously and may have used other
+hook modifying programs since my last cold start.  Could any of these
+modifications be left over from some previous program?  At first, I thought the
+problem related to changing the end of the file so I added some text at the end
+of the file before storing it on disk and made sure that I did not use D-TEXT
+to change the end of the file.  I still got the same messed up results.
+
+
+Fm: Don Zeikel 75775,1430
+To: Al Pound 75715,1077 
+
+     I have Super Rom, too.  Could it be a hook problem from Write Rom?  After
+all, that program also jumps into and out of TEXT.
+    As I said before, I did not do extensive testing to narrow the cause of the
+problem.  I was assuming it was another program or running the disk drive
+continuously from batteries for the amount of time it takes to move all those
+sectors.
+     Or, it could be a Bug in the program.  I'll be interested to see if
+others, without Super Rom, have the problem.
+
+
+Fm: Denny Thomas 76576,3474
+To: Al Pound 75715,1077 
+
+  Er, doesn't SuperROM use text? Try D-TEXT without Super on the menu, that
+might help.
+
+
+Fm: Al Pound 75715,1077
+To: Don Zeikel 75775,1430 
+
+I was wondering about the WriteROM hooks into TEXT myself but since LFILESV
+resets the hooks for Powr-DOS, I discounted that possibility, especially since
+I use all 4 SuperROM programs and don't know when I could turn SuperROM off
+long enough to make a test.  Now that there are at least three of us with the
+same thought,  I'll try harder to find the time to make the test.
+
+By the way, I was operating both the TDD and M100 from the RS power supplies
+when I experienced the problems with D-TEXT.
+
+
+Fm: Don Zeikel 75775,1430
+To: Al Pound 75715,1077 
+
+     I did a mini test...turned off SuperRom (CALL 63012,0,1), then added one
+line about half-way through, pulling out only a couple of sectors (which, logic
+tells me, requires the most work for the program; more than a long segment). It
+worked just fine.  I then reversed the process, removing the line, and it
+worked OK also.
+     Since SuperRom disrupts Powr-Dos, maybe the opposite is also true.
+     I'll be interested to see other reports.
+
+
+Fm: Al Pound 75715,1077
+To: Don Zeikel 75775,1430 
+
+Inspired by your success and by you placing the correct CALL right in front of
+me, I turned off SuperROM (CALL 63012,0,1) and did some extensive testing.  I
+updated 10 or so files including larger than and smaller than available RAM and
+added and deleted from the beginning, middle and end.  DTEXT worked without a
+problem.  Thanks for your help and inspiration.  DTEXT will be a regular in my
+M100.  I've placed the CALL in my NOTE.CT file under SuperROM so I can copy it
+and paste it into BASIC.  When I need SuperROM, entering NOTE.CT brings it
+back.
+
+
+Fm: Don Zeikel 75775,1430
+To: Al Pound 75715,1077 
+
+     If, indeed, that is the whole story, I am glad we figgered it out
+together!  It might be an easy matter to add the call to turn off SuperRom to
+the top of D-Text and turn it on when exiting.  I haven't looked at the code,
+but that sounds simple enough.
+     I am also glad that Supera appears to not be the culprit, as I use it
+extensively when editing anything, including those sectors.
+     I am also gonna point this thread out to Ed Giese, for his future
+documentation.
+
+
+Fm: Al Pound 75715,1077
+To: Don Zeikel 75775,1430 
+
+I tried putting the Call at the beginning of the first line in D-TEXT which is
+line 5 and is a REM statement.  Entering D-TEXT did a nice job of turning
+SuperROM off which I could see right away since I ended up back at the main
+menu instead of in D-TEXT.  I don't know enough about programing to know why it
+went back to the main menu but I suspect the CALL does it rather than the
+location of the CALL statement.  I'm thinking about replacing MENU with CALL
+63012,0,1 in whatever line is branched to with F8 in DMENU.  This will turn
+SuperROM off every time I leave DMENU which might not be a bad idea. Then I'll
+try SpellChecker to see if I still get a cold start.  Oh well, the things I
+could accomplish if I didn't need to work and/or sleep.
+
+
+Fm: Don Zeikel 75775,1430
+To: Al Pound 75715,1077 
+
+Al,
+    It sure appears that that CALL is what sends it to the menu. When you have
+all those programs in there at the same time, I guess SOMETHING'S gotta give.
+
+
+Fm: Don Zeikel 75775,1430
+To: Acroatix 72457,3343
+
+     You might want to note the thread that begins with message 142020.  There
+is a possible conflict between SuperRom and D-Text, which appears to be
+corrected by getting SuperRom off the menu when running D-Text.
+
+
+Fm: Al Pound 75715,1077
+To: ALL POWR-DOS Users
+
+Formatting the Disks using FORMAT.BA instead of LFILES FORMAT or just letting
+COPY.BA "delete" the files seems to make D-TEXT operate quicker and without
+error even with SuperROM active.  The last time I backed up my files, I
+formated all the destination disks with FORMAT.BA before making the backups.  I
+just updated close to 100 files on these disks using D-TEXT printing out over
+twenty of them using SuperROM.  I haven't checked all the files but, so far, no
+duplicated segments or funny characters at the end.
+
+
+Fm: Don Zeikel 75775,1430
+To: Al Pound 75715,1077
+
+    Thanks!  I had the same funny character/funny named 0 size file problem the
+last time I used D-Text---glad you perservered and figured something out!
+
+

@@ -1,0 +1,22 @@
+MERGE BUG
+=========
+
+POWR-DOS 100.2.1 has a bug which prevents MERGE from working from the TDD, as 
+well as LOAD and RUN when the argument is an ASCII coded BASIC program on the 
+TDD.  We have a fix to this bug, and some time soon a newsletter will announce 
+an update.
+
+In the meantime, you can work around the problem with the following two POKES. 
+To execute them, get into BASIC and enter the following line:
+
+POKE 64245,193:POKE 64255,77 <ENTER>
+
+(<ENTER> is the ENTER key.)  After this, the problem will be gone!  However, 
+this really isn't a "fix" to POWR-DOS.  Instead, it is workaround.  After a 
+coldstart, or after any software runs that CALLs 32454 (you'll find out what 
+that is when it happens), the bug will again buzz you, and you'll have to enter
+the POKEs again.
+
+However, other than that, the fix is perfect.  There should be no side effects 
+or compatibility problems with any known software.
+

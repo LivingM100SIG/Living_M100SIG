@@ -1,0 +1,89 @@
+Index Compression Utility (ICU) Docs
+Copyright 1988 Tom Fitzpatrick [72237,2656]
+
+Intro:
+
+NDX100, the TDD2 disk indexing program in dl9, is wonderful.  Using it was 
+such a breeze I couldn't stop at just indexing my working disks.  As a result, 
+deeming it was the proper thing to do, I embarked upon indexing all my backup 
+disks as well.
+
+Before I knew it, all sixty-some odd backup and working disks were indexed.  I 
+used a desktop computer to sort what had become a 43K, 1807 line index file.  
+If I were to print it out, at 66 lines per page, that would work out to 28 
+pages!
+
+Ah, but I hate to waste paper.  And the file was rather repetitive, using a 
+seperate line for each disk oft-used and backed-up programs, like PRINT.CO, 
+were stored on.  Such was the beginning of ICU.
+
+ICU reformats repetitive INDEX files created by NDX100/NDX200 that look like 
+this:
+
+AELECT.DO  4231 0:Backup7
+AELECT.DO  4231 0:Backup8
+AENVIR.BA   895 0:Backup9
+AENVIR.BA   895 1:Backup3
+AENVIR.BA  1198 0:a4
+AENVIR.BA  1198 0:Backup5
+AFSPEL.BA   543 0:a8
+AFSPEL.BA   543 0:Backup9
+AFSPEL.BA   543 1:Backup1
+AGBASI.BA   223 0:a7
+AGBASI.BA   223 0:Backup3
+AGBASI.BA   223 1:a8
+AGH!  .BA   230 0:a4
+
+to files that looks like this:
+
+AELECT.DO  4231 0:Backup7, 0:Backup8
+AENVIR.BA   895 0:Backup9, 1:Backup3
+AENVIR.BA  1198 0:a4, 0:Backup5
+AFSPEL.BA   543 0:a8, 0:Backup9, 1:Backup1
+AGBASI.BA   223 0:a7, 0:Backup3, 1:a8
+
+
+The first list took up 326 bytes; the second, ICU-processed version uses 192.  
+My 43,682 byte index file was cut to 21,658 bytes.
+
+
+Use:
+
+To use ICU, first run NDX100/NDX200, create an INDEX file and sort it with 
+SORTHI as directed in the NDX documentation.
+
+Next, examine your free RAM.  Is there enough to hold a SECOND index file?  If 
+so, run ICU and answer both prompts with a CR (carriage return, or ENTER).  
+ICU will go about creating a compressed index file named LIST.
+
+If there is not enough RAM for a second index, you can either store INDEX on 
+an external device (0: [for POWR-DOS (dl9), TS-DOS or Disk Power users], A: or 
+R: [for option RAM users], CAS: or COM:), or store the processed file on an 
+external device (0:, A:, R:, CAS:, COM: or LPT:).  For example, I stored my 
+43K index on the TDD2 using the POWR-DOS operating system, answered the "Index 
+name" prompt with 0:INDEX and the "Output file" with LPT:.  The result:  
+INDEX.DO was read in from the disk, processed and printed.
+
+
+Etceteras:
+
+This is a short, simple program.  It's not much on sophistication or length, 
+but it works.
+
+License is granted by this-here copyright owner to anyone who wants to do so 
+to modify (perhaps remove the first three comment lines to save memory) or 
+improve upon ICU.  In other words, the copyright is only there 'cause the 
+contest rules require it!
+
+
+The Program:
+1 'Index Compressioh Utility (ICU)
+2 'Copyright 1988 Tom Fitzpatrick
+3 'For use with NDX100 or NDX200
+4 MAXFILES=2:CLEAR1024:CLS:DEFSTRA,B:A="RAM:INDEX
+5 ?"Index",," Compression",,"  Utility",,"Index name (CR="A")";:INPUTA
+6 OPENAFORINPUTAS1:A="RAM:LIST":?"Output file name (CR="A")";:INPUTA
+7 OPENAFOROUTPUTAS2:LINEINPUT#1,A
+8 IFEOF(1)THENBEEP:ENDELSELINEINPUT#1,B
+9 IFLEFT$(A,15)=LEFT$(B,15)THENA=A+", "+MID$(B,17):GOTO8
+10 PRINT#2,A:CLS:?@0,A:A=B:GOTO8

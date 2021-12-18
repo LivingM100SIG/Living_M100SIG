@@ -1,0 +1,89 @@
+ADDLTR.DOC
+6/29/85
+ 
+Documentation for "ADDLTR.PGM".
+ 
+This prgoram is a companion program for "ADDRP.PGM", also in DL2.  It takes 
+input from an address file built up using DBNEW.100 and a .do file in the 
+memory of the TRS-80 Model 100 and prints out the letter to selected names in 
+the list.  The selection criteria may be any unique string appearing anywhere 
+in the address file or a four digit selection code.
+ 
+It is recommended that the user download ADDRP.DOC for further information on 
+the address file and the address selection process, as both programs use the 
+same techniques.
+ 
+The address file sholuld be set up with the following fields using DBNEW.100 
+from DL2:
+ 
+	1	First Name
+	2	Last Name
+	3	Street Address
+	4	City
+	5	State
+	6	ZIP
+	7	Salutation
+	8	xxxx - a 4 digit selection code
+ 
+The letter can be multiple page if needed.  It does not print out page numbers.
+
+
+ADDLTR options allow you to:
+
+	-enter a "heading" line
+	-set the top, left and right margins
+	-specify the blank lines after the header and the date
+
+The date is automatically selected from the Model 100's internal calendar.  The
+year is presently set for 1985.  Line 120 can be changed to reflect another 
+year.
+ 
+This program is actually a combination of two other programs, ADDRP.PGM already
+mentioned which was used as the basis of the address selection processing, and 
+PGPRNT.100 written by Bill Walters (in DL0) which does the letter printing.
+ 
+In its present form it does not print out the full address on the letter, but 
+the salutation only.  It also does not print a letterhead or the senders 
+address.  It assumes you are using a letterhead.  These modifications could be 
+added.
+ 
+Running the program.
+ 
+After the initial screen, the program will ask for:
+	-the address list filename
+	-the letter filename
+	-the left margin
+	-the right margin
+	-a short heading
+	-heading tab position
+	-top margin
+	-number of lines after heading
+	-number lines after date
+	-selection criteria
+ 
+Most are self evident.  The heading can be any length technically.  But it 
+should generally be less than the width of the paper and should not use ",".  
+The heading tab position is the column number where you want it to start 
+printing the heading.  Generally this will be to the right of the center of the
+paper.  It does not take into account the left and right margins.
+ 
+Top margin is the line number where the heading will print.
+ 
+Selection criteria has two major options.  First, any character/letter string 
+that might occur in any field of any address, including the selection code 
+field.
+ 
+Second, type 'code'.  This limits you to the code field only and takes you to 
+another menu.  You can type in any combination of the 4 code digits that might 
+occur in one or more addresses.  You can also enter lower case 'x' in any of 
+the 4 digit positions that you do not care about.  For example, xfxx would 
+select all addresses that have an f in the second position in the selection 
+code regardless of what is in the other 3 positions.  This is a very useful 
+capability.
+ 
+From here on the program does it's thing.  And baring any unfound bugs, it will
+print the heading, date and letter for each address that meets the selection 
+criteria.
+ 
+Upon completion it returns to the model 100 menu.
+

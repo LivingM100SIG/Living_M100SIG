@@ -1,0 +1,69 @@
+    PSWDM.100 is a BASIC file which creates, when run, a machile language log-
+on program (PW.CO).  The resulting code occupies 250 bytes at the top of user 
+memory (62710d to 62959d) and provides full protection for your files when 
+properly used.  Using machine code instead of BASIC averts the possibility of 
+aborting the program by quick stabs at the break key before it's disabled, by 
+overflowing string storage with lengthy input, or by re-enabling the break key
+with a screen dump, which are problems with most BASIC programs.
+    To load the program, download PSWDM.100 to your Model 100, verify the 
+checksum (see DWNCHK.WM3 in this DL), load the file into BASIC, and RUN.  The 
+program will prompt you for an ID code (3-10 characters), then will load and 
+save PW.CO.  Any printable Model 100 characters can be used for your ID, not 
+just standard ASCII alphanumerics.
+******* !!! WRITE DOWN YOUR ID CODE AND PUT IT UNDER YOUR MATTRESS !!! *******
+
+So far as I'm aware, the only way to access the computer without it while 
+PW.CO is running is a COLD START (aka "the big chill").
+     It is recommended that you save PSWDM.100 to cassette or disk after the 
+machine code is loaded and erase it from RAM.  This will prevent the 
+possibility of anyone using it to change your id code while the machine is on 
+and unattended.  You can load the program back into RAM and run it whenever 
+you wish to change the code.
+    To use PW.CO, just run the program FROM THE MENU when you're finished 
+using your Model 100 (make sure HIMEM is set at or below 62710).  The program 
+will IPL itself and turn off power to the computer.  When the power is turned 
+back on, the program resumes and requests the ID code.  If an invalid code is 
+entered, the user is so informed and given a second chance.  If an incorrect 
+code is entered the second time, or if 60 seconds have elapsed since the 
+machine was turned on, the program recycles and turns the power back off to 
+prevent unauthorized access to your files.  When the correct ID is entered, 
+the program proceeds to the menu.
+===> Please be advised that experimenting with bypass strategies (e.g. pushing
+the reset switch twice if the program is IPLing after a warm restart) may lead
+to mangling of your RAM files and/or a cold start (i.e. loss of all data in 
+RAM).  Therefore it is STRONGLY urged that you back up all your files before 
+playing code-buster.
+    A listing of the 8085 assembly mnemonics for PW.CO (PSWDM.ASM), with 
+comments, is also available on DL4.  If you have an assembler, you can use it 
+to relocate or modify the program.  If you use Bob Jack's assembler on this 
+SIG, you will have to poke the ASCII strings into memory using the monitor or 
+BASIC after assembling the mnemonics, or substitute a lot of DBs for each DS 
+pseudo-op in the listing.  If you're normally hard-pressed for RAM space, the 
+program can be shortened substantially by removing the "frills" (i.e. the 
+initial greeting and the 2nd chance at the password).
+     If you are not a machine-code programmer and would like a personalized 
+version of this program, I can provide one for you which will display the 
+following screen:
+
+   This computer is the property of:
+              Your Name
+         Your Street Address
+        Your town & zip code
+          Your Phone Number
+        [An optional message]
+
+Enter Password > 
+
+(This screen will of course require more RAM than the standard version.)
+    Send me the above info via Easyplex and I will send you a downloadable 
+test version which will run if you set the system date to 01/01/00 (the date 
+of delivery depends on the demand).  If you are satisfied with the results, 
+send me a certified check or money order for $20.00 and I'll send you the  
+real thing.  Other modifications are negotiable.
+     Acknowledgements to Bob Jack, Karl Chase, and Don Corbitt for their 
+outstanding contributions to this DL, and to Russ Villanueva for suggesting 
+improvements in the original version of PW.CO.
+     Please let me know if you find a way to get around this program!
+     Keith Bergendorff
+     [72306,322]
+

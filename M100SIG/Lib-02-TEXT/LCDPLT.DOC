@@ -1,0 +1,52 @@
+.Screen dump to a dot matrix printer.  Configurable.
+.Copyright Polar Engineering and Consulting 1985,1986 [72136,1443]
+.
+.LCDPLT.101 checksum:  71,623 (screen dump to a dot matrix printer)
+.
+.LCDPLT.101 creates LCDPLT.CO.  This machine code program can be called to 
+produce a screen dump onto most dot matrix printers.  The example below shows 
+the setup for an OKIdata 92/93/192/193 printer.  This routine was originally 
+developed for the dumping histograms to a dot matrix printer.  See HISTO.DOC.
+.
+.10 LOADM"LCDPLT"
+.20 'SETUP FOR OKIDATA 92/93/192/193
+.30 PL!=PEEK(64704)+PEEK(64705)*256'lcdplt's low address
+.40 PL$(0)=CHR$(27)+"*`P:"+CHR$(27)+"%P"+CHR$(28)+CHR$(3)
+.                          'printer graphics begin
+.50 PL$(1)=CHR$(3)+CHR$(14)'move to next printer line (graphics mode)
+.60 PL$(2)=CHR$(3)+CHR$(2)'printer graphics end
+.70 PL$(3)=CHR$(3)+CHR$(3)+CHR$(3)'3 must be duplicated
+.80 PL$(4)=""'no other exceptions
+.90 PL%=1'quadruple pixels when printing (use 0 for single)
+.
+To dump the screen to the printer during a BASIC program use:
+.
+.CALLPL!,PL%,VARPTR(PL$(0))
+.
+.
+.The setup for other printers would be established as follows:
+.- PL$(0) contains the character sequence which places the printer in a 
+graphics mode ready to accept 8 bit vertical graphics elements.  If PL% is 1 
+then each screen pixel is a two by two square on the printer.  If PL% is 0 then
+each screen pixel is a single printer dot.
+.- PL$(1) contains the character sequence which sends the printer to the next 
+line.  The printer should move to the left margin and down eight printer dots.
+.- PL$(2) contains the character sequence which takes the printer out of 
+graphics mode and back into normal text mode.
+.- PL$(3) this is the first exception character's replacement string.  One or 
+more graphics characters (8 bit vertical elements) will have to be treated 
+specially.  The first character in this string is the exception character.  The
+remainder is the string is sent to printer instead of the exception character. 
+In the case of the OKIdata the char 3 decimal must be sent as two 3's to the 
+printer.  The pair of 3's tell the printer to print a single 3 and not exit 
+graphics mode.  (OKIdata's PL$(3) is CHR$(3)+CHR$(3)+CHR$(3).)
+.- PL$(4..) addition exceptions if needed.
+.- PL$(last) must contain a null string.  This string terminates the exception 
+list.
+.
+.Anyone wishing to share setup values for printers they use is welcome to 
+submit the information to me.  I will maintain a setup cross-reference here if 
+enough interest is generated.
+.
+.Tom Bennett, Polar Engineering and Consulting
+

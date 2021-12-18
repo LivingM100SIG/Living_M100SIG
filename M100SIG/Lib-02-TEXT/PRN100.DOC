@@ -1,0 +1,278 @@
+PRINT is a machine language text processing program for the 
+Model 100 computer.  The features in PRINT do not rival 
+commercially available text processing programs, but they 
+are adequate for most printing requirements.  The features 
+include margins, line width, page length, single/double 
+space, right justify, font selection, send/suppress line 
+feeds, start at any page, horizontal centering, and hanging 
+indentations.  You can also preview your print file on the 
+LCD, display page breaks, and "graph" a page of text on the 
+LCD screen.  THIS VERSION CAN BE CONFIGURED TO YOUR SPECIFIC
+PRINTER!  See PRN100.MOD for details.
+
+PRINT uses 59900-62959 in your Model 100 RAM.  Any machine 
+language programs presently in that area should be saved to 
+RAM or tape before loading PRINT.  I strongly encourage you 
+to save ALL your files to tape before loading PRINT or any 
+other machine language program.  A bad load could cause a 
+"Cold Start" which will destroy all your files.
+
+Now for the program itself.  It is going to be loaded as 
+PRINT.CO.  If you have a file by that name, then rename it 
+before loading this program.  Follow this procedure to 
+obtain PRINT:
+
+1.  Download PRN100.OBJ as PRN100.DO
+2.  Download PRN100.LDR as PRNLDR.DO
+3.  Using TEXT, inspect both files and
+    delete any garbage from the
+    beginning and end of the files.
+4.  Go to BASIC
+5.  Load "PRNLDR"
+6.  Kill "PRNLDR.DO"
+7.  Save "PRNLDR.BA"
+8.  Run
+
+After about 4 1/2 minutes, you will either get a "Load 
+Successful" or "Load Failed" message.  The error message 
+will indicate a bad load.  Inspect PRN100.DO for garbage, or
+download the file again.  After a successful load, you may 
+kill PRNLDR.BA and PRN100.DO.  Save a copy of PRINT to tape.
+  In BASIC, type:
+
+CSAVEM"PRINT",59900,62959,60503
+
+Push F8 and go to the main menu.
+
+NOTE:  If you reload from tape, follow this procedure:
+
+1.  Go to BASIC
+2.  CLEAR 256,59900
+3.  CLOADM"PRINT"
+4.  SAVEM"PRINT",60503,60503,60503
+5.  Go to MENU
+
+At this point you have successfully loaded PRINT.  Your menu
+should now contain PRINT.CO.  If you have a .DO file already
+created, then you may proceed.  Otherwise, create one.
+
+Back at the main menu, place the cursor over PRINT.CO and 
+press ENTER.  You should see a display of all your .DO files
+(without the .DO extension).  F8 is labeled as Menu.  The 
+lower left corner of the screen will say:
+
+Select: TEST.DO
+
+PRINT saves the last filename that you worked with.  If you 
+want to work with that file again, then just press ENTER.  
+Otherwise, enter the name of the program you want to use.  
+The .DO extension is optional.  The program won't accept a 
+bad file name.  It will give you the chance to enter another
+program name.  You can enter a bad name just to see what the
+error message looks like.
+
+Once you have entered a valid file name, the screen will 
+look like this:
+
+[L]eft Margin    10 [R]ight Margin   10
+[C]har Printed   60 [J]ustify Right   N
+[T]op Margin      6 [B]ottom Margin   8
+[P]age Length    66 [D]ouble Space    N
+[F]ont Code       1 [A]dd Line Feed   N
+[S]tart @ Page    1 [W]ait Btwn Pages Y
+Select:
+          File Grph PBrk Disp Prnt Menu
+
+Also, in the lower left corner, your selected file will be 
+displayed in reverse video.
+
+Select an option by pressing the letter in the brackets.  
+Just press the letter, the ENTER key is not needed.  The Y/N
+parameters will simply change their state when you press 
+their letter.
+
+The other options will ask you for an input.  Only numbers 
+are recognized, other characters are ignored.  Press ENTER 
+at the completion of your input.  The range for inputs is 0-
+255.  Going past 255 does no harm, though.  The program just
+"wraps around."  A 256 is a 0, a 257 is a 1, etc.  PRINT 
+does limit you to 3 characters of input.  If you try to 
+enter 1000, it just won't let you do it.  Change a few 
+parameters to get the feel of the program.  I think it's 
+pretty easy to use.
+
+Most of the options are self explanitory.  Those you might 
+not understand are:
+
+Justify Right:  Inserts spaces between words to square up 
+the right margin.
+
+Font:  Type style used by the printer.  Set this up by using
+PRN100.MOD.
+
+Add Line Feed:  Some printers require a line feed character 
+to index to the next print line.  The Model 100 suppresses 
+the line feeds.  If you need the line feeds, this command 
+will add them for you.
+
+Start @ Page:  Gives you the option to start printing 
+somewhere other than the beginning of the file.  If you try 
+to print Page 3 of a two-page file, you will get an error 
+message.
+
+Wait Between Pages:  This command is used if you want to 
+stop printing between each page.  I use it for feeding cut 
+sheets or for printing one or two pages of a long report.  
+After the required pages have been printed, just press ESC 
+to end the printing.
+
+NOTE:  [C]har Printed is the actual number of characters you
+want printed on each line.  [P]age Length is the total page 
+length.  The number of lines printed is Page Length minus 
+the Top and Bottom Margin.
+
+FUNCTION KEY DESCRIPTIONS:
+
+F3 - File - This key returns you to the file selection menu 
+of the PRINT program.
+
+F4 - Grph - This option uses pixel graphics to display a 
+page of text on the LCD screen.  The screen only has 64 
+lines.  A 66 line page can be displayed as long as the 
+bottom margin is at least 2.  The graph function is limited 
+to total page widths of 189 characters.  After that, there 
+is no room left on the LCD.  Lines or page lengths longer 
+than these values can be used by PRINT, it just won't graph 
+properly.
+
+F5 - PBrk - This function is used to display on the LCD the 
+first and last line of each page.  In double space mode, the
+last line is always a blank line.  Occasionally, a blank 
+line within your text file will end a page.  Don't be 
+surprised if you see that happen.  A line on the screen 
+separates each page.  The program waits for a keypress 
+before going to the next page.
+
+F6 - Disp - This sends your entire text file to the LCD.  It
+will be formatted as if being sent to the printer.  Pages 
+are separated by a line.  Like F5, press any key to go to 
+the next page.
+
+F7 - Prnt - This is what the program is all about!  Your 
+text file will be formatted to your specifications and sent 
+to the printer.  PRINT does check to see if your printer is 
+ready.  If not, the program will tell you.  If you enable 
+your printer, then the program will begin printing.  Use ESC
+if you want to abort the print option.
+
+F8 - Menu - Returns to the Model 100 main menu.
+
+NOTE:  During F4-F7, pressing any key (except the keys 
+listed in the CAUTION below) will Pause the function.  
+Pressing any key again will resume the function.  Pressing 
+ESC will abort the function and return to the Select options
+page.
+
+CAUTION:  During PRINT or any other machine language program
+refrain from pressing PASTE, LABEL, PRINT, or PAUSE/BREAK.  
+My program uses several Model 100 ROM subroutines.  If you 
+press one of those keys while PRINT is in one of those 
+subroutines, then I have no way of intercepting the 
+keypress.  Model 100's ROM will try to take control and you 
+may have difficulty getting back to PRINT.  In a case like 
+that, pressing BREAK and typing MENU will usually get you 
+back to the Model 100 menu.
+
+PRINT suppresses any blank lines at the beginning of a page.
+  If you need blank lines, just type a space before the 
+first carriage return.  The program does not consider the 
+space to be a blank line.
+
+Also, the program issues a Form Feed command after each 
+page.  This is the same as CHR$(12).  I think this command 
+is common to all printers.  If you need to disable the form 
+feed, then POKE zeros in 61781, 61782, and 61783.
+
+EMBEDDED CONTROL CODES
+
+Certain control characters can be embedded in your text file
+to enable and disable some printing options.  These are:
+
+^C - Horizontally center a line
+^P - Start a new page
+^W - Cancel Hanging Indentations
+^X - Hanging Indentation - Left Only
+^Y - Hanging Indentation - Left & Right
+
+None of these Control Codes depend on your printer.  It's 
+done using spaces.
+
+^C - Horizontal Centering - This centers a line by inserting
+the appropriate number of spaces at the start of the line.  
+If you want to center several lines, put a ^C in each one.  
+The ^C can be anywhere within the line to be centered.
+
+^P - New Page - When PRINT encounters a ^P within the text 
+file, it immediately forces the start of a new page.
+
+^X, ^Y, ^W - Hanging Indentations - This is a feature that I
+haven't seen in the commercial printing programs.  It's 
+actually the reason I wrote this program in the first place.
+  A Hanging Indentation indents all the lines in a paragraph
+EXCEPT the first one.  When I write a report, I frequently 
+have numbered items within that report.  I want the 1,2,3 
+etc against the left margin, but I don't want the text 
+there.  For example:
+
+1.  I want a Hanging Indentation
+    to line up the text and leave
+    the number against the left
+    margin.
+
+2.  PRINT allows me to do that
+    automatically.
+
+See what I mean?  I allowed two types of indentations.  One 
+indents the text only on the left side.  The other indents 
+the text on both the right and left side.  The left and 
+right indentation is useful to set off a couple of 
+paragraphs of text if you remember to put the right number 
+of spaces at the start of the first line.
+
+To use hanging indentations, insert a ^X (left only) or a ^Y
+(left and right) at the location where you want the indent 
+to be effective.  ^Y puts the same indent on the left and 
+the right side - there is no way to specify a different left
+and right indent.  The indent will be effective continuously
+until a ^W turns it off.  Typically, the ^W would occur as 
+the last character in the last paragraph to be indented.
+
+To embed a control character in a text file, do this:
+
+1.  Hold down the CTRL key.
+2.  Press P (the display will not change)
+3.  Continue holding the CTRL key down
+4.  Press the character to be embedded
+5.  Release the CTRL key
+
+PRINT allows you to embed your own control codes within text
+files.  PRN100.MOD describes how to set up PRINT to your 
+specifications.
+
+The program does not do page headers or page numbers.  When 
+I need these features, I simply run my paper through the 
+printer twice.  I leave a large enough top margin to add the
+information later.  Then I can write a text file or a BASIC 
+program to do the page headers or numbers.
+
+That's it!  I hope you have fun with the program.  For the 
+machine language buffs out there, feel free to disassemble 
+this program.  It is difficult to follow because I don't use
+an assembler.
+
+Send any comments to:
+
+Jim Irwin  72346,1020
+1329 Spruce Brook Road
+Kalamazoo, MI 49004
+

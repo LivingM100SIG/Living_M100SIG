@@ -1,0 +1,41 @@
+TELBNK.200 by Wilson Van Alst and Paul Globman
+
+TELBNK.200 consists of two (2) programs, TELBNK.BA and TEL.BA, and uses the 
+WordlPort 1200 modem.
+
+SETUP - The WP1200 must NOT rely upon DTR to stay active, so you must power 
+the WP1200 with an external power supply or open the WP1200 and set the DIP 
+switch 4 to the ON position (or both).
+
+TELBNK.BA may reside in bank #2 or #3 along with ADRS.DO and CHAIN.CO.  You 
+will see the familiar "Find" prompt, after which your first matched entry 
+will be displayed.  Press ENTER to call or DOWN-ARROW for the next matched 
+entry (ESC to exit).  TELBNK.BA will auto redial if BUSY or NO CARRIER, and 
+upon carrier detect (CONNECT) will beep for 2 seconds, auto-logon, and switch 
+to bank #1 and execute TEL.BA.
+
+TEL.BA will set the correct STAT and enter TELCOM for 1200 baud 
+communications.  Except for TEL.BA (48 bytes), bank #1 can be empty!
+
+
+Delete line 0 in both programs to save RAM.
+
+CREDITS - TELBNK.BA is a modification of an earlier T200/WP1200 driver program.
+The bank switching aspect was conceived and developed by Wilson Van Alst 
+(76576,2735) as part of the CHAIN.CO beta testing project.
+            Paul Globman (72227,1661)
+---------------------------------------
+0 REM TELBNK.BA by Wilson Van Alst and Paul Globman (c) 1988
+1 MAXFILES=2:CLEAR512:LOADM"CHAIN":DEFSTRA-F:DEFINTG-Z:DIMM(13):FORI=0TO12:READM(I):NEXT:F="COM:57I1ENN":CLS
+2 CLOSE:OPEN"ADRS.DO"FORINPUTAS1:LINEINPUT" Find: ";A:CALLVARPTR(M(0)),0,VARPTR(A)
+3 IFEOF(1)THEN2ELSELINEINPUT#1,D:I=INSTR(D,":"):B=LEFT$(D,I):CALLVARPTR(M(0)),0,VARPTR(B)
+4 IFINSTR(B,A)THENJ=INSTR(I,D,"<"):IFJTHEN5ELSE3ELSE3
+5 C=LEFT$(D,J-1):PRINTC;:E=INPUT$(1):IFE=CHR$(27)THENMAXFILES=1:MENUELSEPRINT:IFE=CHR$(31)THEN3
+6 A3=MID$(C,I+1):A2=MID$(D,J+1):MID$(A2,LEN(A2))=CHR$(0)
+7 CLOSE:OPENFFORINPUTAS1:OPENFFOROUTPUTAS2:PRINT#2,"ATZ":CALL25102:PRINT"Command String: ";:PRINT#2,"ATX4S7=15DT"A3
+8 LINEINPUT#1,A:PRINTA:IFINSTR(A,"BUSY")ORINSTR(A,"NO ")THEN7ELSEIFINSTR(A,"CONNECT")=0THEN8
+9 IPL"TEL.BA":FORI=1TO15:BEEP:NEXT:V=VARPTR(A2):CALL25301,0,PEEK(V+1)+256*PEEK(V+2):CALL34327:CALL63900,1
+10 DATA-18562,20424,32291,26147,4463,2,15821,6463,6865,5325,4624,3347,-5688
+---------------------------------------
+0 REM TEL.BA by Wilson Van Alst (c) 1988
+1 IPL"":OPEN"com:57i1enn"FOROUTPUTAS1:PRINT#1,CHR$(17):CALL25464

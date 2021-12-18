@@ -1,0 +1,24 @@
+4 CLS:FILES
+6 PRINT"Will you be using [N]ew or [O]ld file?"
+7 I$=INKEY$:IF I$=""THEN7
+8 IFI$="O"ORI$="o"THEN11ELSE10
+10 PRINT"* Any file named will be written over *":PRINT:PRINT
+11 LINEINPUT"Open which file? ";F$
+15 IFI$="O"ORI$="o"THEN GOTO 25
+20 OPENF$FOROUTPUTAS1:GOTO150
+25 OPENF$FORAPPENDAS1
+150 CLS:PRINT:LINEINPUT "Month/date  ";D$
+200 LINEINPUT "Time        ";T$
+300 PRINT "Brief"
+350 LINEINPUT "Description ";B$
+360 PRINT "Full"
+400 LINEINPUT "Description ";DE$
+500 LINEINPUT "Place       ";P$
+600 LINEINPUT "Project     ";PR$
+700 PRINT#1,D$;","T$;","B$;","DE$;","P$;","PR$
+750 CLS:GOSUB800
+760 GOTO150
+800 PRINT:PRINT
+805 LINEINPUT"If done, hit <99> or else <Enter>";Q$
+810 IF Q$="99"THEN CLOSE:MENU
+820 RETURN

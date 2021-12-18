@@ -1,0 +1,41 @@
+0 'FYLDOS.100  v1.3 (c) 9/19/88 by Wilson Van Alst [76576,2735]
+1 'Revisions to FYLDOS.100 by Ralph Walthall with Wilson's permission
+2 'FYLPRT.100 (c) 06/15/90 by Ralph D. Walthall [74016,1660]
+3 CLEAR800:CLS:MAXFILES=2:DEFSTRA-F:DEFINTG-Y:B="ZZ"+CHR$(0)+CHR$(26)+SPACE$(24)+"F":E=CHR$(27):F=SPACE$(10):S=-788:OPEN"COM:98N1D"FOROUTPUTAS1:OPEN"AA"FOROUTPUTAS2:FORI=-832TO-792:READR:POKEI,R:Q=Q+R:NEXT:IFQ-5322THENPRINT"Bad Data!":END
+4 PRINT@85,E"KDisk Name: ";:LINEINPUTD:IFD=""THENMAXFILES=1:MENUELSEPRINT#1,BCHR$(1)CHR$(158):IFVAL(D)THEND="#"+D:GOTO6ELSE6
+5 PRINT@175,E"p "F:PRINT#1,BCHR$(2)CHR$(157)
+6 V=VARPTR(F):CALL-832,,PEEK(V+1)+256*PEEK(V+2):IFASC(F)THENPRINT#2,F;USING"#####\      \";PEEK(S+1)+256*PEEK(S+2):GOTO5ELSEPRINT#2,USING"\  \#,#### Free";STRING$(2,"."),1280*PEEK(S):PRINT@170,E"q":PRINT#2,DATE$:GOTO10
+7 DATA 205,126,109,205,126,109,14,9,205,126,109,119,35,13,194,200,252,14,16,205,126,109,13,194,211,252,33,238,252,14,4,205,126,109,119,43,13,194,223,252,201
+10 CLOSE:DIMC(52)
+15 FI$="AA.DO"
+35 CLS:OPENFI$FORINPUTAS1:H=0
+40 H=H+1:LINEINPUT#1,C(H)
+45 IFEOF(1)THEN50ELSE40
+50 CLOSE
+55 Z=H/4:IFZ=INT(H/4)THEN65
+60 H=H+1:C(H)=" ":GOTO55
+65 OPEN"LPT:"FOROUTPUTAS2
+70 PRINT#2,SPACE$(10+((68-LEN(D))/2));D
+75 FORX=1TOZ:PRINT#2,SPACE$(10);
+80 FORY=0TO3:PRINT#2,C(X+Y*Z);
+85 IFY=3THEN PRINT#2,SPACE$(1)ELSEPRINT#2,SPACE$(2);
+90 NEXTY:NEXTX
+95 PRINT#2," "
+100 CLOSE
+105 BEEP:CLS:PRINT@7," Disk Catalog Print Completed "
+110 PRINT@90,"Press ENTER for MENU"
+115 PRINT@170,"INSERT New Disk and "
+120 PRINT@250,"PRESS [R] to continue"
+125 B=INKEY$:IFB=""THEN125ELSEIFB="R"ORB="r" THENGOTO3
+130 MENU
+135 'Only change is the format of the output file.
+140 'Produces a 4 column printout of your disk catalog 
+150 'using a modified version of FYLDOS.100 v1.3.
+160 'A minimum of 5 disk listings per page.
+165 'Should work on all printers.
+170 'No limit, within reason, on length of disk name.
+180 'Make sure your date is set correctly and the printer is online.
+190 'Run the program, insert disk, input disk name
+200 'and press <ENTER> and the program does the rest.
+210 'For more info on the use of FYLDOS see FYLDOS.DOC in Library 9.
+220 'Any problems, I can be reached by EMAIL or on the message board 

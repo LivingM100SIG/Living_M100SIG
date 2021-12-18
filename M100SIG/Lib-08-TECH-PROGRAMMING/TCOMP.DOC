@@ -1,0 +1,104 @@
+        TCOMP - Tiny Basic Compiler OR "Machine Language the Easy Way"
+                by Michael Weiblen (72506,2072)   4/1/85
+	 
+        TCOMP is a Tiny Basic compiler program written in Model 100 Basic.  It 
+converts a Basic program into machine language instructions which perform the 
+same functions as their Basic counterparts.  The idea is that you can develop 
+and debug a program using the forgiving environment of M100 BASIC and then 
+compile it so it will run like lightning!
+        Please note, though, that you can not take just any Basic program and 
+compile it. This compiler does not support all the features of M100 Basic, but 
+rather a subset usually refered to as Tiny Basic.  A list of the valid 
+statements for Tiny Basic appears below.  When writing programs to be compiled, 
+
+be sure to use only those statements that appear on the list and use the exact 
+syntax shown.
+ 	
+Variables & Constants:
+        All variables, constants and math operators use integer values.  There 
+are 26 numeric variables, A to Z.  Constants must be expressed as values from 0 
+
+to 65535, although those values over 32767 will be treated as negative numbers. 
+
+Values are stored and printed in the range -32768 to 32767.
+ 	
+Valid Statements for TCOMP:
+    Key: v = Variable name only (A to Z)
+         n = Numeric constant only (0 to 65535)
+         e = Either a variable name OR a numeric constant
+         Items enclosed in [ ] are optional.
+	 
+[LET] v=e                               GOTO n
+[LET] v=e+e                             GOSUB n
+[LET] v=e-e                             RETURN
+[LET] v=e*e                             END
+[LET] v=e\e (Prefered)                  STOP
+[LET] v=e/e (Allowed)                   CLS
+[LET] v=e MOD e                         PRINT [@e,] e;
+[LET] v=PEEK(e)                         PRINT [@e,] CHR$(e);
+[LET] v=INP(n)                          PRINT [@e,] "string";
+[LET] v$=INKEY$ (See note below)        POKE e,e
+IF e=e THEN n                           OUT n,e
+IF e<e THEN n                           PSET (e,e)
+IF e>e THEN n                           PRESET (e,e)
+BEEP                                    CALL n[,e[,e]]
+MENU
+The following statments cause the compiler to skip to the next line:
+        REM     '       DEFINT
+	 
+Special Considerations:
+        Since string values are not supported by this compiler, the statement 
+Q$=INKEY$ does not assign a character to the variable Q$, but rather assigns the
+
+ASCII value of the character to the variable Q.  When writing your Basic 
+programs, use the following statements:
+        500 Q=0:Q$=INKEY$:IFQ$<>""THENQ=ASC(Q$)
+This will ensure that TCOMP and M100 Basic will perform the same operation.  
+TCOMP will ignore the rest of the line after the INKEY$.
+        Be sure to put an END statement as the last line in your program.  The 
+compiled program will not end the same way the interpreter does when it runs out
+
+of program.
+	 
+Using TCOMP:
+        After your program is written and debugged, run TCOMP.  The first thing 
+
+you must enter is the address at which you want to put the compiled code.  The 
+compiler sets HIMEM to this value.  You may have to guess at this until you get 
+
+a feel for how much space your program requires.  Nothing keeps you from 
+compiling it again at another location.  Next, you are asked to enter the limit 
+
+above which you do not want code to go.  This protects any other machine 
+language programs you may have in high memory.  If you hit ENTER, it will use 
+MAXRAM as the upper limit.  Now you can enter the name of your Basic program.  
+It uses the actual .BA version, not a .DO copy.  You do not have to enter the 
+.BA.  Finally, you are asked for a name to save the compiled code under.  If you
+
+just press ENTER, it will not be saved in a .CO file, but will remain in high 
+memory.  At this point, the compiler takes over.  It begins by loading in five 
+support routines that are used by the compiled code.  Next, your Basic program 
+is compiled.  Each line number and it's respective memory location is displayed.
+
+  When the compilation is complete, a second pass is made to adjust the GOTO and
+
+GOSUB statements.  Finally, the starting, ending and execution addresses are 
+displayed.
+	 
+Error Messages:
+        If the compiler has any trouble understanding your program, you will get
+
+an error message that appears as:       Compiler Error: XX
+where XX is one of the following:
+   OM - The compiled program will exceed your upper memory limit.
+   UL - A non-existent line number has been referenced.
+   TM - A variable was used where only a constant was allowed or visa versa.
+   OV - A constant is outside the range of 0 to 65535.
+   SN - Invalid syntax was used.
+	 
+References:
+   "TinyComp" by David Bohlke (80 Micro 5/80)
+   "Hidden Powers of the TRS-80 Model 100" by Christopher Morgan
+   "TRS-80 Model 100 Technical Reference Manual"
+   ROMDMP.100 from DL4 in CIS Model 100 SIG
+

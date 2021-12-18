@@ -1,0 +1,55 @@
+10 'SPELLR by Forrest C. Hudspeth Copyright 1986
+20 'REWRITTEN 20 JAN 86
+30 'declare strings, integers, clear memory for strings
+200 CLS:CLEAR 5000:DEFSTR A-E:DEFINT M,R-T,X-Z:DIM A(149)
+210 'set tone frequency variables
+220 MC=4697:MD=4184:ME=3728:MF=3516:MA=2793:ML=5586:MH=2348:TS=4:TM=13:TL=40
+230 SOUND MC,TS:SOUND 0,TS:SOUND MD,TS:SOUND O,TS:SOUND ME,TS:SOUND 0,TS:SOUND MD,TM:SOUND 0,TS:SOUND ME,TS:SOUND 0,TS
+240 SOUND MC,TS:SOUND 0,(TM+TM):SOUND MH,TS
+250 'Initialize the random number generator using the last 2
+260 'digits of the clock
+270 'main menu
+280 CLS:S=VAL(RIGHT$(TIME$,2)):FOR X=1TOS:R=RND(1):NEXT X
+290 PRINT @ 52,"*** SPELLER ***"
+300 PRINT @ 133,"Pick a number"
+310 PRINT @ 171,"or press S to STOP"
+320 PRINT @ 211,"EASY <-----> HARD"
+330 PRINT @ 251,"1   2   3   4   5 "
+340 PRINT "Your number?"
+350 E=INKEY$:IF E="" GOTO 350
+360 IF E="S" THEN MENU
+370 IF VAL(E) <0 OR VAL(E)>5 GOTO 340
+380 'File open and load loop
+390 PRINT @ 252,"--> LOADING"
+400 'load file depending on number picked
+410 ON VAL(E) GOTO 420,430,440,450,460
+420 OPEN"ONE.DO" FOR INPUT AS 1:GOTO 470
+430 OPEN"TWO.DO" FOR INPUT AS 1:GOTO 470
+440 OPEN"THREE.DO" FOR INPUT AS 1:GOTO 470
+450 OPEN"FOUR.DO" FOR INPUT AS 1:GOTO 470
+460 OPEN"FIVE.DO" FOR INPUT AS 1:GOTO 470
+470 FOR X=0TO149
+480 IF EOF(1) GOTO 500
+490 INPUT #1,A(X):NEXT X
+500 CLOSE 1:Z=X
+510 CLS 'Spell loop, random select word possible number inputed
+520 X=INT(RND(1)*150):IF X>Z GOTO 520
+530 B=A(X)
+540 PRINT @ 44,"Say this word and then spell it "
+550 PRINT @ 120+((30-LEN(B))/2),"===> ";B" <==="
+560 'time delay for display of word, increase Y to show it longer
+570 'blank the word at the end of the time period
+580 FOR Y=0TO2000:NEXT Y:PRINT @ 120+((30-LEN(B))/2),"                      "
+590 PRINT:INPUT"Spell it";C
+600 IF C=B THEN GOSUB 700:PRINT @ 252,"That is correct!":GOTO 630 ELSE GOTO 620
+610 'unsuccessful spelling music
+620 SOUND MC,TL:SOUND 0,TS:SOUND ML,TL:PRINT @ 246-LEN(B)/2,"That is wrong, the word is ";B
+630 PRINT @ 283,"Press G to do some more, S to stop"
+640 D=INKEY$:IF D="" THEN 640
+650 IF D="G" THEN GOTO 510
+660 IF D<>"S" GOTO 640 ELSE E="":GOTO 280
+670 'this will return you straight to the menu
+680 MENU
+690 'successful spelling music
+700 SOUND MC,TS:SOUND 0,TS:SOUND MF,TS:SOUND 0,TS:SOUND MA,TS:SOUND 0,TS:SOUND MH,TM:SOUND 0,TS:SOUND MA,TS:SOUND 0,TS
+710 SOUND MH,(TM+TM):RETURN

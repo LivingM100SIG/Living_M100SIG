@@ -1,0 +1,98 @@
+                       80C85 ASSEMBLER DOCUMENTATION
+                       -----------------------------
+
+     This program is offered under the shareware concept.  Please feel free to
+try it out and pass it on to your friends.  If you like it, the author hopes
+that you will support it by paying a $10 registration fee.  Send the fee to:
+          Paul Papanek Stork
+          Don't Pa..Panic Software
+          E19431 Church Rd.
+          Aniwa, WI  54408
+
+THANK YOU IN ADVANCE FOR YOUR HONESTY!!
+
+     There are two main steps to be taken in using this Assembler for the TRS-
+80 Model 100/200.  The FIRST is the creation of a source file using assembly
+language and the built in TEXT program in the Model 100.  The SECOND is
+running the actual assembler program.  Be aware that this program runs like
+Molasses, but it is a lot better than Hand Assembly and a lot cheaper than a
+Commercial Assembler.  Now on to STEP #1.
+
+STEP #1
+-------
+     The first step is to use TEXT to write a source file to be assembled.
+The source file will use three fields or columns of entry.  Columns 0-7 will
+be the Label Field, Columns 8-15 will be the Mnemonic Field, and Columns 16-23
+will be the Operand or Address Field.
+
+LABEL FIELD
+     Any character except a space or TAB may be used in a 7 letter label.
+Examples of valid labels are: 'START', 'start', 'AD<LF>', and 'test#1a'.
+Examples of invalid labels are: 'test 1' & 'AD LF'.
+
+MNEMONIC FIELD
+     This assembler uses standard 8085 MNEMONICS and a few Psuedo-Ops.  The
+Psuedo-ops supported are:
+    1. "DB"(DEFINE BYTE)
+    2. "DW"(DEFINE 16 BIT WORD)
+    3. "DS"(DEFINE STORAGE)
+    4. "EQU"(SET LABEL EQUAL TO VALUE)
+    5. "ORG"(ORIGIN OF PROGRAM)
+    6. "END"(END ASSEMBLY)
+For more information on these Psuedo-Ops and 8085 MNEMONICS see "8080A-8085
+Assembly Language Programming" by Lance A. Leventhal.
+
+OPERAND or ADDRESS FIELD
+The Operand or Address Field may contain a number of different things.  It may
+contain a register identifier like: PSW, A, B, or H; or it may contain a
+LABEL; or it may contain data; or some combination of the above.  Data may be
+input in a number of forms:
+      1. Hexadecimal - 1AH,0FFH,etc.
+      2. Decimal     - 10D,12,etc.
+      3. Octal       - 08Q,07C,etc.
+      4. Binary      - 10110011B,etc.
+      5. String      - 'This is ASCII'
+      6. Offset      - $+2,$-1,etc.
+      7. Label       - START,AD<LF>,etc.
+     Any Column may be used to start a Comment by printing a ";" to start the
+Comment.
+
+     To move between fields simply hit the [TAB] key.  Once your source code
+is written move on to STEP #2 (HINT: If space is a problem you can assemble a
+.DO file from TAPE, but be sure to save it TWICE, once for each pass).
+
+
+STEP #2
+-------
+     Run the Basic Assembler.  On the Title Page you will be asked for the
+starting address of the Program to be assembled.  This is so that the program
+can set aside memory space for your program to be assembled into.  It will
+lower "HIMEM" to the address you specify.  Next the program will display the
+files in memory and ask for the name of the file to be assembled.  Enter the
+Name which you gave to the source code you wrote with TEXT. (Use of the ".DO"
+suffix is unnecessary.)  Or the name of a file to be read in from Cassette
+with the prefix "CAS:". (Caution:  File must be read in on each pass.)
+
+     Now sit back and wait while the Assembler works.  It takes two passes
+through your source code for the Assembly to be complete.  Meanwhile the
+display will show which pass you are on and the memory address which is
+currently being processed.  The current memory address for Pass#1 will be
+displayed in the upper left hand corner, while Pass#2's will be displayed in
+the upper right.
+
+     When the assembly is complete the computer will beep and display the
+pertinent information about the assembled program.  It will also save a ONE
+BYTE key file.  This key file is not a full copy of the assembled file.  It is
+simply a file which has the same entry point as your assembled file.  By
+moving the cursor over this file and pressing return you can run your
+assembled file, while not maintaining two complete copies of your machine
+program in memory.  To erase your program simply enter BASIC and type in
+"CLEAR 256, MAXRAM" and press "ENTER".  To save a full copy simply type in
+'SAVEM filename,start address ,end address ,execution address' and HIT
+[ENTER].
+
+If you have any problems please feel free to leave a message on the Wausau
+Online of Wisconsin Bulletin Board at (715) 842-4850, COMPUSERVE to ID#
+75515,1651 or Contact me direct at:
+      PAUL PAPANEK STORK
+      (715) 446-3050 voice only

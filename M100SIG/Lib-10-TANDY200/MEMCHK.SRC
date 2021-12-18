@@ -1,0 +1,65 @@
+;MEMCHK.CO by Paul Globman (c) 1988
+;
+;This is a non-destructive RAM test
+;that tests all of RAM, including the
+;locations where the program is loaded 
+;to run.  It tests all bits in all RAM
+;locations for reading and writing and
+;will beep 5 times upon finding a bad
+;RAM location.  If no problem RAM is 
+;found, then 1 beep is sent.
+;
+;
+RAMSTA:	equ A000H	;1st byte ram
+ALTLCD:	equ 63574	;alt lcd buffer
+BEEP:	equ 4F45H	;send beep
+;
+	org altlcd
+	entry
+;
+	jmp memchk
+MEMCH2:	lxi d,0		;end of RAM + 1
+next2:	mov a,m		;HL=adrs tested
+	mov b,a		;byte in B
+	cma
+	mov c,a		;complmnt in C
+	mov m,a		;chnge RAM bits
+	mov a,m		;look at byte
+	cmp c		;bits chnge ok?
+	mov m,b		;restore byte
+	jnz bad		;no? error
+	mov a,m		;look at byte
+	cmp b		;bits chnge ok?
+	jnz bad		;no? error
+	inx h		;next address
+	rst 3		;end of ram?
+	jnz next2
+	jmp done
+;======================================
+MEMCHK:	lxi d, memchk
+	lxi h,ramsta
+next:	mov a,m		;HL=adrs tested
+	mov b,a		;byte in B
+	cma
+	mov c,a		;complmnt in C
+	mov m,a		;chnge RAM bits
+	mov a,m		;look at byte
+	cmp c		;bits chnge ok?
+	mov m,b		;restore byte
+	jnz bad		;no? error
+	mov a,m		;look at byte
+	cmp b		;bits chnge ok?
+	jnz bad		;no? error
+	inx h		;next address
+	rst 3		;memchk yet?
+	jnz next
+	jmp memch2
+;======================================
+bad:	call beep	;5 beeps means
+	call beep	;bad ram...
+	call beep
+	call beep	;1 beep means
+done:	jmp beep	;all is well
+;
+	end
+

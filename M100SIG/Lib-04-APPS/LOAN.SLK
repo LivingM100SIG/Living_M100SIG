@@ -1,0 +1,87 @@
+LOAN.SLK
+
+Loan Evaluator:
+
+  This short spreadsheet was derived from APTEVL.SLK which was derived from
+a monthly payment 'Sheet like this one.
+
+Operation:
+   Loan Amt: The amount of the loan.
+   Int Rate: Interest rate for the loan. Fixed rate only.
+   # months: Length of loan.
+
+  (The followin items are for such things as car loans. If not applicable,
+   leave blank.)
+
+   Taxes   : Amount of taxes per year.
+   Insurnc : Amount of insurance paid per year.
+   Other   : Other costs per year.
+
+Results:
+   Pr & Int: The Principle and interest paid each month.
+   Payments: P & I  plus  (Taxes plus Insurance plus Other) / 12
+     Or your effective monthly payment or cost of owning your car.
+   Tot Pybk: The total you will pay out over the life of the loan.
+   Cost/yr : Cost per year. (Payments times 12)
+
+Note: This 'Sheet works best on a T-200. If using a M-100, you'll have to
+  scroll the screen so that "Loan Amt:" is on the top line, and use:
+   [SHIFT] [Down-Arrow]
+  to see the Cost/yr.
+
+
+                   +---------------+
+                   |  Robert Toft  |
+                   |  [74716,476]  |
+                   +---------------+
+ID;PMP
+F;DG2R9
+B;Y11;X4
+NN;NAmount;ER3C2
+NN;NInterest;ER4C2
+NN;NMonths;ER5C2
+NN;NTaxes;ER6C2
+NN;NInsurance;ER7C2
+NN;NPr_and_Int;ER5C4
+NN;NOther;ER8C2
+NN;NPayments;ER7C4
+C;Y1;X1;K"Monthly"
+C;X2;K"Payment"
+C;X3;K"Calcula"
+C;X4;K"tor"
+F;FG2L
+C;Y3;X1;K"Loan Amt:"
+F;X2;F$0R
+C;Y4;X1;K"Int Rate:"
+F;FG0R
+F;X2;FF3R
+C;Y5;X1;K"# months:"
+F;FG3R
+F;X2;FG3R
+C;X3;K"Pr & Int:"
+F;FG3R
+C;X4;EAmount*Interest/12*(1+Interest/12)^Months/((1+Interest/12)^Months-1);K#DIV/0!
+F;F$0R
+C;Y6;X1;K"Taxes   :"
+F;FG0R
+F;X2;F$0R
+F;X4;F$0R
+C;Y7;X1;K"Insurnc :"
+F;FG0R
+F;X2;F$0R
+C;X3;K"Payments:"
+F;FG0R
+C;X4;EPr_and_Int+(Taxes+Insurance+Other)/12;K#DIV/0!
+F;F$0R
+C;Y8;X1;K"Other   :"
+F;FG0R
+F;X2;F$0R
+C;Y9;X3;K"Tot Pybk:"
+F;FG0R
+C;X4;EPr_and_Int*Months;K#DIV/0!
+F;F$0R
+C;Y11;X3;K"Cost/yr :"
+F;FG0R
+C;X4;EPayments*12;K#DIV/0!
+F;F$0R
+E

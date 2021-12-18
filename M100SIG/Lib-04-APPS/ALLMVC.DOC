@@ -1,0 +1,125 @@
+
+( THIS FILE IS 6K+ BYTES LONG )
+
+ALLMVC.DOC [70375,1070]	OCTOBER 1983
+
+This is brief, but I hope, complete documentation of the use of MiniVC.
+Features up to the .JGB version are included.
+
+1.	What is MiniVC ?
+MiniVC is a small electronic spreadsheet program written in Basic.  The
+original was written by Terry Dettmann and published in Basic Computing
+magazine.  Terry uploaded a copy to the Model 100 SIG and several others have
+added to the program.
+
+2.	What can it do ?
+MiniVC can do relatively simple arithmetic on a matrix of rows and
+columns.  It has a limited ability to make decisions when computing a
+value.  It can be used for timesheets, cost proposals, or anything that you
+would do with a pencil, paper and calculator that could be laid out in
+rows and columns of numbers.  MiniVC will let you change values in the
+spreadsheet and quickly see the results, i.e. you can play "What If?"
+
+3.	The "MODEL"
+A MODEL is the definition of your spreadsheet.  It has ROWs and COLUMNs.
+The item at each row/column intersection is an ELEMENT.  Each element
+can be empty, or a LABEL, or a NUMBER (value).  Numeric elements can be
+pure numbers or computed from other numbers in the model. As downloaded,
+MiniVC defaults to 20 rows and 20 columns (set by MR=20:MC=20 in line
+8010.)  You can change MR & MC, limited by your available memory.
+
+4.	Defining Elements
+After MiniVC starts you will see a window showing the upper left corner of
+the model.  A "cursor" is shown in reverse video.  Move the cursor with
+the arrow keys.  Column identifiers (Alphabetic) and row IDs (numeric) are
+shown for reference.  An element is uniquely identified by columnrow, such
+as A1 or D14.  The current element is where the cursor is shown.  If there is
+a definition for the element, it will be shown on the top line.
+
+	A LABEL is defined by starting the definition with any non-numeric
+character.  For leading blanks, use a " for the first character (will not be
+part of the label.)  MiniVC.JGB will preserve lower case in labels.  Labels
+are used to identify what a row or column is.  You can also use "--------"
+type labels to show totals.  If a label is included in arithmetic, it is
+treated as a zero.
+
+	Rows are defined by using a number or math symbol as the first
+character.  "A1+B1" would be a label.   "+A1+B1" defines a value element that
+ equals the value of element A1 plus the value of element B1.  Constants
+are just typed in as numbers: 25  -or-  +A1+B2/2
+
+5.	Arithmetic
+Arithemtic can be performed using values from other elements.  The model is
+evaluated down columns from left to rigth (normally), so you should not use
+an element in a calculation that has not been evaluated yet. (If calculating
+twice gives different results, you have used a "forward" reference.)
+	MiniVC supports common arithmetic:	+ - * / ^
+It is similar to Basic, but the evaluation is strictly left to right.
+Parentheses can be used but they do not work quite the way you may expect.  Try
+any complex calculation to make sure it is doing what you want.
+
+6.	Functions
+MiniVC goes beyond simple arithmetic by using FUNCTIONS.  A function always has
+an "@" for its first character.  Arithmetic functions include:
+ @ABS @INT @SQRT @EXP @LN
+The argument is enclosed in (): @INT(A1) -or- @SQRT(A1+B1)
+
+	A frequent requirement is to add up a row or column.  @CSUM(r1,r2) and
+@RSUM(c1,c2) will do this with one instruction. "c1,c2" and "r1,r2" are
+the start and end col or row numbers to include in the sum.  "c1,c2" are
+expressed as numbers rather than letters: A=0, B=1, etc.
+	@RSUM(0,3) -and- +A1+B1+C1+D1
+do the same thing, if the cursor is located on an element in Row 1.
+
+7.	Decisions
+Several @functions are available for simple decisions:
+  @<<  @>>  @<=  @>=  @==  @<>
+These require two arguments and return 1 if true or 0 if false.  They behave as
+if the test was between the two arguments.  If A1 is 20 and B1 is 100,
+@<<(A1,B1) will return "1" to the calculation, @>>(A1,B1) would be 0.
+
+8.	@Miscellaneous
+Other @functions:  @MIN  @MAX  @MOD
+These take two arguments.  The @MOD returns the remainder of arg1/arg2,
+@MOD(10,7) equals 3.
+A useful, but abnormal, function is @ROUND.  You insert it in a calculation
+at the point where you want rounding to occur (usually the end.)  The value at
+that point will be rounded.  The function otherwise looks like a "1" in
+the calculation:
+  1.2*6.3*@ROUND(1) gives 7.6
+The number in () is the number of decimal places right of the decimal
+point to round.  1234*@ROUND(-2) would be 1200.
+
+9.	F-keys
+The F-key function keys finish out the capabilities of MiniVC.  Do not
+confuse this discussion with the @functions. These are the row of 8
+keys above your keyboard.  There are two sets of F-keys defined.  On the
+"front" side are:
+
+More	Flip to the "other" F-keys.
+GoTo	Go directly to a specified element, rather than using arrow keys.
+Scrn	regenerate the screen.
+Calc	Recalculate the entire model by columns.  (Each element is computed
+	when you enter it, but this does the whole model.)
+Blnk	Reinitialize the cursor element (Blank.)
+Repl	Replicate definition of one range to another range.  This is a
+	limited replicate, but useful.
+Prnt	Print the model.  You may "print" to any device.  The current
+	cursor marks u/l corner, it asks for the l/r corner element.
+Abrt	ABORT - this has caused some suspected problems - don't use it.
+
+("More" functions)
+F1	Flips you back to the normal set.
+Load	Loads a previously SAVEd model.
+Save	Save current model. Specify a file or CAS:file.  Can edited in TEXT.
+Calc	Recalc by ROWs.
+New	Reinitialize entire model.
+Room	Shows how much memory and string space is available.  You can adjust
+	the CLEAR in line 10, if you need to.
+Frmt	All fields default to 8 letters or integer digits.  You can use any
+	valid PRINT USING format, but 8 char is suggested, e.g. ##,###.#  or
+	$$###.##  Only the cursor element is affected.
+Quit	Normal way to leave MiniVC.
+
+Have fun.  Play with it to get used to its quirks.  Many are using it, so
+don't hesitate to ask questions.

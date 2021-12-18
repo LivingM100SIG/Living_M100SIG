@@ -1,0 +1,56 @@
+"Printable" Ctrl Chars
+----------------------
+^G	bel	bell
+^H	bs	backspace (w/o erasing)
+^I	tab	tab
+^J	lf	linefeed (w/o carriage return)
+^K	vt	home cursor (does not clear screen)
+^L	ff	clear screen & home cursor
+^M	cr	carriage return (w/o linefeed)
+^[	esc	escape (see escape sequence list below)
+^\	fs	cursor right (CRT only) (right-arrow key)
+^]	gs	cursor left  (CRT only) (left-arrow key)
+^^	rs	cursor up    (CRT only) (up-arrow key)
+^_	us	cursor down  (CRT only) (down-arrow key)
+DEL	del	basckspace & erase
+
+Escape Sequences ($=esc)
+----------------
+$A	cursor up (stops at edge of screen)
+$B	cursor down (stops at edge of screen)
+$C	cursor right (stops at edge of screen)
+$D	cursor left (stops at edge of screen)
+$E	clear screen/home cursor
+$H	home cursor (does not clear screen)
+$J	erase from cursor to end of screen
+$K	erase from cursor to end of line
+$L	inserts blank line at cursor (text scrolls down)
+$M	deletes line at cursor (text scrolls up to fill)
+$N	bs & erase (will wrap around at start of line)(CRT only)
+$P	cursor on
+$Q	cursor off
+$R	changes cursor from block to underline (CRT only)
+$T	protects bottom line of screen
+$U	unprotects bottom line of screen
+$V	lock mode (screen will not scroll)
+$W	unlock (screen will scroll normally)
+$X	clear keyboard buffer?
+$Ylc	positions cursor to line ASC(l)-32, column ASC(c)-32. If line or col
+	 greater than screen limits then uses maximum possible value.
+$b	clear from cursor to beginning of screen (CRT only)
+$c	executes WIDTH 40 (clears screen)(CRT only)
+$d	executes WIDTH 80 (clears screen)(CRT only)
+$e	starts flash mode (CRT only)
+$f	ends flash mode (CRT only)
+$i	stores current cursor position (CRT only)
+$j	same as $E
+$k	moves cursor to stored position (0,0 default) (CRT only)
+$l	clears line at cursor position
+$n	prints "ESCY" & lc code for current cursor position (CRT only)
+$p	start reverse mode
+$q	end reverse mode
+$z	DO NOT USE! Most of the time it does WIDTH 40 & clears the stored
+	 cursor position. However sometimes it can cause a two-character delay
+	 between when a character is sent to the screen & when it is actually
+	 displayed. (ie type 123 & the 1 will show up as you type 3...)
+	 (CRT only)

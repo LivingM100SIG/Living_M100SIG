@@ -1,0 +1,44 @@
+0 ' COVER.OKI rev. by Maddi Durholz for Okidata 92U;(c)1985 by Tony B. Anderson
+1 ' May be used by SIG members for personal use only. Not to be sold or
+2 ' distributed. All rights reserved. Change lines 85-100 to suit.   
+3 ' This program prints a nice booklet or report cover on an Okidata 92Uor
+4 ' , with expanded and emphasized characters for the title, and
+5 ' your name, or other data in the lower right corner of the page.  The page
+6 ' is optically centered, and designed to be placed, as a cover sheet, with a
+7 ' report (or other material) in a report binder with a clear plastic front
+8 ' cover. Such a binder is made by DUO-TANG (#53540), and should be available
+9 ' in most stationery stores. See ordering info at end of program.
+10 CLS:PRINT@44,"BOOKLET COVER PAGE PRINT PROGRAM"
+11 PRINT@83,"Copyright 1985 by Tony B. Anderson"
+15 IF(INP(187)AND6)=2THEN25ELSEPRINT@161 ,"Printer not ready - Press Return when   ready to continue:  ";
+20 A$=INPUT$(1):GOTO10
+25 L=34:A$=""
+30 LPRINTCHR$(27);"@";CHR$(27);"F";"65";CHR$(27);"T";CHR$(30);CHR$(31)
+35 FORA=1TO14:LPRINT:NEXT
+40 PRINT@160,CHR$(27);"J";
+45 PRINT@160,"Title line (31 char. max) (ENTER = Quit)"
+50 PRINT@242,STRING$(31,"_")
+55 PRINT@240,  "? ";
+60 LINEINPUTA$:IFA$=""THEN75
+65 LPRINTTAB(20-INT(LEN(A$)/2));A$
+70 LPRINT:L=L-2:GOTO50
+75 PRINT@120,CHR$(27);"J":FORA=1TOL:      LPRINT:NEXT
+80 LPRINTCHR$(30);CHR$(27);"I";CHR$(27);"1"
+85 LPRINTTAB(50);"Janet B. Doe"
+90 LPRINTTAB(50);"1793 Everyman's Place"
+95 LPRINTTAB(50);"Anywhere, MN  73612":      LPRINT
+100 LPRINTTAB(50);"(000) 123-4567"
+105 LPRINTCHR$(12);CHR$(27);"@";CHR$(27);"0"
+110 FORA=1TO2000:NEXT
+115 PRINT@160,"Job Finished":PRINT
+120 END
+500 ' If the specified folders are not available in your area, they may be
+501 ' ordered by mail, in boxes of 25, from Robert James Company, Inc.,
+502 ' P.O. Box 2726, Birmingham AL 35202 Phone (800) 633-8296
+503 ' Catalog # is 7A505X, and the covers are available in Black, Blue or
+504 ' Red.  Price per box of 25: $14.50 + Shipping.  Ask for current catalog.
+505 ' Tony has found their service both reasonable and fast, with the minor
+506 ' drawback that you may have to order more of a product than you really
+507 ' need at the time.  But the prices, as far as Tony has compared them, are
+508 ' lower than local prices.
+

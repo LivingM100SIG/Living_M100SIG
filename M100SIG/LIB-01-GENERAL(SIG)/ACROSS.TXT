@@ -1,0 +1,382 @@
+ 
+ABOUT ACROSS LIBRRARY SEARCHING
+CompuServe, October, 1991
+ 
+ 
+GENERAL DESCRIPTION
+===================
+ 
+  CompuServe has released a new version of the Forum Libraries software, which
+provides many additional features.  The main enhancement is the ability to find
+a file within a forum -- no matter what library you are in. Other features
+include:
+ 
+* a new directory display, providing more information in an 
+     easier-to-understand format
+* the ability to move backwards as well as forwards through a BROWSE
+* new valid characters for file names
+* easier-to-understand error messages
+* the ability to count files in the libraries more easily
+* and, improved context sensitive HELP, available with the HELP command.
+ 
+All features are outlined below. They are available in ASCII mode. Changes
+will be incorporated into the CompuServe Information Manager at a later date.
+ 
+ 
+CHANGES FOR MENU MODE USERS
+===========================
+ 
+A New Prompt
+ 
+  For "Menu Mode" users, almost everything will look and feel the same as
+the previous version of the Libraries.  You still enter the libraries by first
+selecting "LIBRARIES" from the main Forum Menu, and then by selecting the
+library you prefer from the next menu.
+ 
+However, selecting BROWSE from the main Library menu will shed light on the 
+first change in the new Libraries -- the addition of one prompt. Here's what
+it looks like:
+ 
+       IBM Communications Forum    Library 2
+ 
+       Comm Utilities
+ 
+        1 BROWSE Files
+        2 DIRECTORY of Files
+ 
+        3 UPLOAD a File (FREE)
+        4 DOWNLOAD a file to your Computer
+ 
+        5 LIBRARIES
+ 
+       Enter choice ! 1                          <==== Choose BROWSE
+ 
+       Enter libraries (e.g. 1,2,4 or ALL)       <==== * The New Prompt *
+       or <CR> for current library: 
+ 
+       Enter keywords (e.g. modem)               <==== Same as previous
+       or <CR> for all:                                      version
+ 
+       Oldest files in days                      <==== Same as previous
+       or <CR> for all:                                      version
+ 
+  Note the new "Libraries" prompt. You have two options here. You can simply
+  press a carriage return (<CR>) to select from files in the current library.
+  This works the same way as the BROWSE selection worked in the previous 
+  Library version.  Or, at this prompt, you may type in numbers corresponding
+  to the specific libraries that you wish to browse.
+ 
+  Each library number should be separated by a comma or a space, as in "1,3,5,"
+  to browse files in libraries 1, 3, and 5.  Only files in the libraries you
+  enter will be browsed.  For example, if you are in Library 2, and enter a "4"
+  at the new prompt, only files in library 4 will be displayed. 
+ 
+  At the prompt, you may also use the hyphen ("-") to specify ranges of
+  libraries, as in "1-6," to indicate that you want to browse files in
+  libraries 1 through 6. 
+ 
+  You can mix and match the approaches, as in "1,3,7-11," to browse libraries
+  1, 3, and 7 through 11. If you want to examine the files in all libraries 
+  at once, you can type the word "ALL."
+ 
+ 
+A New Format for File Displays
+ 
+  The second thing a Menu Mode user will notice is the new format for the
+  File displays. The displays have been re-arranged, and are easier to read 
+  and to understand.  In addition, the Library number is included in the 
+  display when you're searching for files in libraries other than your
+  "current" library.  See the examples at the end of this document for more
+  details about these changes.
+ 
+  "P" Means "Previous;" "B" Means "Back"
+ 
+  While BROWSING, a "Disposition" prompt displays after each file. Pressing 
+  <CR> at this prompt takes you to the next file. If you press <CR> too many
+  times, or want to move back to a previous file, you can now do so.
+ 
+  Enter a "P" and press <CR> to back up one file. You may also use "B" for
+  "Back," if you wish.  It works exactly the same as "P."
+ 
+ 
+CHANGES FOR COMMAND MODE USERS
+==============================
+ 
+The "LIB:" Command
+ 
+For "Command Mode" users, several new commands and options have been added.
+All commands in the previous version continue to work, and you still enter the libraries in the same way.
+ 
+The most important addition is the "LIB:" option.  This command can be used in
+conjunction with almost every existing command (DIR, BROWSE, DOWNLOAD, etc.)
+to designate a library or libraries.
+ 
+For example:
+ 
+       DIR LIB:4
+ 
+will display a directory of all files in library 4, newest first. You can be
+as specific as you want. More examples:
+ 
+     COMMANDS                      RESULT
+ 
+ DIR A*.* LIB:1-5       - Directory of all files starting with the letter "A"
+                        in libraries 1 through 5, in alphabetical order.
+ 
+ DIR KEY:GAME LIB:ALL   - Directory of all files with a keyword of "GAME" in
+                        all libraries the user has access to, newest first.
+ 
+ DIR *.TXT LIB:1,5,7-9  - Directory of all files with the "TXT" extension 
+                        in Libraries 1, 5, and 7 through 9, in alphabetical
+                        order.
+ 
+ DIR AGE:30 LIB:ALL      - Directory of all files uploaded in the last 30 days
+                         in all libraries, newest first.
+ 
+ 
+Two New Commands: LIST and COUNT
+ 
+ Two new commands, LIST and COUNT, have been added as well. Here are 
+ specifics:
+ 
+ 
+  LIST        - This command is simply a short cut for a "DIR SHORT".  It
+                will always give the one-line-per-file "short" listing,
+                regardless of your "Library Options" setting.  It has the
+                same syntax and options as the DIR command.
+ 
+  COUNT       - This command allows you to count the number of files in a
+                Library or Libraries.  It has the same syntax and options
+                as the DIR command.  However, this command does not display
+                the files, but only a summary count of files.  In this way,
+                you can count the number of files that will be listed by 
+                an equivalent DIR command (so you can "preview" a potentially
+                long listing).
+ 
+        Examples:
+ 
+        COUNT                    - Count of all files in the current Library.
+ 
+        COUNT LIB:ALL            - Count of all files in all Libraries.
+ 
+        COUNT KEY:GAME LIB:ALL   - Count of all files with the keyword GAME in
+                                   all libraries.
+ 
+ 
+  To accompany the "COUNT" command, the DIR and LIST commands have a new
+option, the "COUNT" option.  When this option is specified, a summary count of
+the files displayed is shown at the end of the listing.  Just add COUNT to
+the command line (COUNT can be abbreviated to the first three letters "COU",
+or to "CNT").
+ 
+  For example:
+ 
+  DIR *.* COUNT       - Lists all files in the current directory in 
+                      alphabetical order, and prints the total number listed at
+                      the end.
+ 
+ 
+Enhanced "AGE:" and "DAY:" Options
+ 
+  The "AGE:" and "DAY:" options have been enhanced to accept ranges of days.
+You can now specify that only files OLDER than a given number of days be
+listed, or that only files with ages that fall in a given range of days
+be listed.  The "AGE:" and "DAY:" options work identically.
+ 
+  Examples:
+ 
+  DIR AGE:30    - This command produces a directory of files uploaded between
+                  today, and 30 days ago.
+ 
+  DIR AGE:30-   - This command produces a directory of files uploaded MORE
+                  than 30 days ago.
+ 
+  LIST DAY:30-90  - This command produces a listing of files uploaded between
+                  30 and 90 days ago.
+ 
+ 
+File Name Characters and Keywords
+ 
+For all users, the valid characters that can be used for a File Name in
+the Libraries have been extended.  The following characters are now valid
+in file names and extensions for files uploaded to the CompuServe Libraries:
+ 
+  A-Z  0-9  @  #  $  %  -  _  &  +
+ 
+File names are still limited to only six characters.  If an invalid character
+is found in a file name, or if the name is too long, it will not be accepted.
+ 
+ 
+Keywords have changed just a bit too.  The maximum length of a keyword is
+now 17 characters, and may consist of _only_ the following characters:
+ 
+  A-Z  0-9  _  -  &  .
+ 
+There are also a maximum of 10 keywords per file, and any duplicate keywords
+are automatically removed.  There is a "Stop-List" of keywords that are
+removed as well:
+ 
+       A      ALL    AN     AND    ARE    BUT    BY     FOR
+       FROM   I      IN     IS     IT     ME     MY     NOT
+       OF     ON     SO     THAT   THE    THIS   TO     TOO
+       WITH   YOU
+ 
+  None of the keywords that are automatically removed count towards the
+10-keyword maximum per file.
+ 
+  You can search for multiple keywords at once by separating them with
+commas, as in:
+ 
+  DIR KEY:GAME,BOARD LIB:ALL
+ 
+  The above command will produce a directory of all files in all libraries
+that have the keyword GAME _and_ the keyword BOARD.
+ 
+ 
+ 
+EXAMPLES OF NEW DIRECTORY DISPLAYS
+==================================
+ 
+1) Example of the new DIRectory format:
+ 
+Lib 4! DIR
+ 
+[70000,1047]
+TEST.TXT/Asc    Bytes:   9295, Count:    0, 22-Jul-91
+ 
+[76702,1102]
+COMDL4.DES/Asc  Bytes:   1503, Count:   36, 01-Jan-91
+ 
+[72777,1312]
+DELFAC.ZIP/Bin  Bytes:  14152, Count:   18, 13-Nov-90
+ 
+[73407,3163]
+DVINTS.ZIP/Bin  Bytes:   9806, Count:   33, 21-Oct-90
+ 
+[70130,330]
+TTLSLC.ZIP/Bin  Bytes:   3443, Count:   50, 22-Aug-90
+TTLCTL.EXE/Bin  Bytes: 107373, Count:  251, 22-Aug-90
+TTLCTL.TXT/Asc  Bytes:   1942, Count:  448, 19-Aug-90
+ 
+[73530,2037]
+XFAX15.ZIP/Bin  Bytes:  39936, Count:   91, 21-Jun-90
+ 
+[remainder deleted for brevity]
+ 
+ 
+2) Example of the new DIRectory format with Library number:
+ 
+Lib 4! DIR LIB:4            <=== Use the LIB: option to "force" the
+                                 display of the library number.
+ 
+[70000,1047]    Lib: 4
+TEST.TXT/Asc    Bytes:   9295, Count:    0, 22-Jul-91
+ 
+[76702,1102]    Lib: 4
+COMDL4.DES/Asc  Bytes:   1503, Count:   36, 01-Jan-91
+ 
+[72777,1312]    Lib: 4
+DELFAC.ZIP/Bin  Bytes:  14152, Count:   18, 13-Nov-90
+ 
+[73407,3163]    Lib: 4
+DVINTS.ZIP/Bin  Bytes:   9806, Count:   33, 21-Oct-90
+ 
+[70130,330]     Lib: 4
+TTLSLC.ZIP/Bin  Bytes:   3443, Count:   50, 22-Aug-90
+TTLCTL.EXE/Bin  Bytes: 107373, Count:  251, 22-Aug-90
+TTLCTL.TXT/Asc  Bytes:   1942, Count:  448, 19-Aug-90
+ 
+[73530,2037]    Lib: 4
+XFAX15.ZIP/Bin  Bytes:  39936, Count:   91, 21-Jun-90
+ 
+[remainder deleted for brevity]
+ 
+ 
+3) Example of the new LIST (DIR SHORT) format:
+ 
+Lib 4! LIST                 <=== The library number is *always*
+                                 displayed in the LIST or DIR SHORT
+                                 displays.  The File Type has been
+                                 removed to make room for the Lib number.
+ 
+TEST.TXT    4   10K 07-22-91 test upload
+COMDL4.DES  4    2K 01-01-91 One-line descriptions of files in Library 4
+DELFAC.ZIP  4   14K 11-13-90 Delete Fax Files
+DVINTS.ZIP  4   10K 10-21-90 DESQVIEW PIF AND PROGRAMS FOR BITFAX
+TTLSLC.ZIP  4    4K 08-22-90 FHOST.SLC for prev dwnld of TTLCTL.EXE & TELIX us
+TTLCTL.EXE  4  105K 08-22-90 TotalCtl, the software phone switch see TTLCTL.TX
+TTLCTL.TXT  4    2K 08-19-90 Short text file describing TTLCTL.EXE more fully
+XFAX15.ZIP  4   40K 06-21-90 XFAX v1.5: allows one fax to service network
+ 
+[remainder deleted for brevity]
+ 
+ 
+4) Example of the new BROWSE format:
+ 
+Lib 4! BROWSE LIB:4
+ 
+[70000,1047]    Lib: 4
+TEST.TXT/Asc    Bytes:   9295, Count:    0, 22-Jul-91
+ 
+  Title   : test upload
+  Keywords: TEST UPLOAD
+ 
+  This is a test upload.
+ 
+Disposition !
+ 
+ 
+[76702,1102]    Lib: 4
+COMDL4.DES/Asc  Bytes:   1503, Count:   36, 01-Jan-91
+ 
+  Title   : One-line descriptions of files in Library 4
+  Keywords: LIBRARY4 DIRECTORY SUMMARY BRIEF DESCRIPTIONS
+ 
+  One-line descriptions of files in Lib 4 as of Jan 1, 1991. 
+  Updates (including separate change file) are prepared approximately monthly. 
+  The file showing changes since Dec 1 for all Libs is in Lib 0 as 
+  COMCHG.DEC. If you want all the summaries for Libs 1-7,9-11, COMSUM.ZIP is 
+  available in Lib0.  (This is an ASCII file which can be Read and captured to 
+  disk or downloaded with a protocol.)
+ 
+Disposition !
+ 
+ 
+[72777,1312]    Lib: 4
+DELFAC.ZIP/Bin  Bytes:  14152, Count:   18, 13-Nov-90
+ 
+  Title   : Delete Fax Files
+  Keywords: FAX COMPLETEFAX SHAREWARE DELETE UTILITY
+ 
+  This is a utility file to delete facsimile files created by the CompleteFax 
+  Board or similar boards using file names with numerical extensions.  Files 
+  are deleted based on age in the range of 1-30 days. Particularly useful to 
+  prevent filling up a hard disk while still preserving files for possible 
+  reuse.  Zip file includes executable file  and documentation.  Written in 
+  Pascal.
+ 
+Disposition !
+ 
+[remainder deleted for brevity]
+ 
+ 
+5) Example of LISTING across libraries:
+ 
+Lib 4! LIST LIB:ALL
+ 
+CISEXE.BIN 15    7K 08-02-91 Script for Dialogue 128 use of CIS forums rev. 30
+GAMES.ZIP   8  160K 07-31-91 Games file.  DO NOT DISTRIBUTE
+CISOP.TXT   1    5K 07-29-91 Information about CISOP (Automate CIS OPerations)
+USTBUG.LOG  5    7K 07-27-91 Bug, UST, Capture
+TEST.TXT    1    2K 07-27-91 Test
+SENDS.TXT   5    7K 07-27-91 CON Demonstrating Problems with the NOSEN Command
+RAM2WS.SX  15   18K 07-28-91 Test binary upload
+USTBUG.TXT  6    5K 07-22-91 Capture of a session dealing with UST bug.
+TEST.TXT    4   10K 07-22-91 test upload
+SENBUG.ARC  6    7K 07-22-91 capture of a problem with SENS
+NOUSER.BUG  3    9K 07-22-91 Capture of NOUSERS bug.
+ 
+ 
+ 
+ 
+!

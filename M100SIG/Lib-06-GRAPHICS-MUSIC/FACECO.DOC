@@ -1,0 +1,84 @@
+INSTRUCTIONS FOR "FACES.100"
+by Don Zeikel [CIS 75775,1430]
+
+CAUTION!  THIS PROGRAM WILL RUN ON A MODEL 100 OR 102 -ONLY-.
+
+If you make faces at your computer, now your computer has a chance to make 
+faces at YOU.  This machine-language program contains menus of silly face parts
+that can be combined to make 1,048,576 different faces.  You can even use it 
+for police artist composite sketches, as long as the suspect is REAL GOOFY 
+LOOKING.
+
+
+LOADING THE PROGRAM
+
+First, download FACECO.RLC.  You will also need RLCLDR.BA from DL7 to convert 
+the file to a .CO file.  Because FACECO.RLC is over 15000 bytes, and the final 
+.CO file is 7407 bytes, you will have to take a few extra steps to convert it. 
+However, once you have the .CO file, you will only need FACECO.RLC if you want 
+to create a copy at a different address, so you will only have to go through 
+this lengthy process ONCE.
+
+First, save FACECO.RLC, and any other valuable RAM files, to disk or cassette, 
+as dealing with machine language files creates the possibility of a cold start.
+
+TO CREATE FACES.CO COMPLETELY IN RAM
+
+Load FACECO.RLC and RLCLDR.BA into RAM.  FACECO.RLC should be named FACECO.DO. 
+If you are not going to be loading any other machine language programs at the 
+same time you run FACES.CO, clear memory by entering BASIC and typing
+
+CLEAR 256, 55552 [ENTER].
+
+Otherwise, change 55552 to a lower number and make a note of it.
+Then, run RLCLDR.BA.  At the first prompt, enter L or 1 for "load."  When it 
+asks for a file name, enter FACECO.DO.  When it asks for start address, enter 
+55552 or whatever number you jotted down.  It will start running.  The process 
+will take several minutes, so you can go practice making faces in the mirror to
+get in the mood.
+Eventually, the program should beep and say "Done" followed by ?OM Error.  The 
+latter is because of the lack of memory.
+Type
+KILL "FACECO.DO" [ENTER].
+
+***
+Type
+
+SAVEM "FACES",HIMEM,HIMEM+7407,HIMEM [ENTER]
+
+Go back to the MENU and you will see 	FACES.CO.  You can save the .CO file to
+disk or cassette.  To save it to cassette, type
+
+SAVEM"CAS:FACES",HIMEM,HIMEM+7407,HIMEM [ENTER]
+
+To load it back later type
+
+LOADM"CAS:FACES" [ENTER]
+
+You can now skip to "RUNNING THE PROGRAM" below.
+
+
+CREATING THE PROGRAM FROM DISK OR CASSETTE
+
+If you want to use a FACECO.DO from disk or cassette (which would only be 
+needed if you want to load it at a very low address), you MUST make one change 
+in RLCLDR.BA.  This is PARTICULARLY important if you are using a Tandy Disk 
+Drive with an operating system
+
+Edit line 9 of RLCLDR by deleting EVERYTHING IN THE LINE AFTER
+"DONE":
+and adding END
+
+Then, run RLCLDR.BA as in the instructions above.  When it beeps and says 
+"Done," go up to the *** above and follow the same instructions.
+
+
+RUNNING THE PROGRAM
+
+Use function keys 1 through 5 (in any order) to choose menus of face parts.  
+Move the cursor with the arrow keys, and press [ENTER] to select face parts.
+
+End the program by using function key 8 or the ESC key.
+
+Have fun!
+

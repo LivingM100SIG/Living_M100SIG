@@ -1,0 +1,121 @@
+TRead  TErase  TWrite  TDir
+---------------------------
+
+     TWRITE.BAS: A GWBASIC program by Don Sakers to write files to a Tandy Portable Disk Drive 1 connected to the COM1 port of an MS-DOS computer.
+     TREAD.BAS: A GWBASIC program by Don Sakers to read files from a Tandy Portable Disk Drive 1 connected to the COM1 port of an MS-DOS computer.
+     TERASE.BAS: A GWBASIC program by Don Sakers to erase files from a Tandy Portable Disk Drive 1 connected to the COM1 port of an MS-DOS computer.
+     TDIR.BAS: A GWBASIC program by Don Sakers to read the directory of a Tandy Portable Disk Drive 1 connected to the COM1 port of an MS-DOS computer.
+
+     Based on information supplied by J.K. Heilman in "Exploring the Tandy Portable Disk Drive" (PICO Magazine November 1986, pp. 28-29,38.)
+
+     Licensed for the use of CompuServe M100 SIG members and readers of Portable 100 magazine, September 1990 by Don Sakers. If you distribute these elsewhere, please try to be sure that the recipients and users are supporters of the M100 community.
+
+Improvements welcome.
+
+
+     REQUIRED:
+
+     Tandy Portable Disk Drive 1 (TDD).
+     Interface cable supplied with drive.
+     MS-DOS computer with GWBASIC and COM1 serial port.
+     Any adapters/gender changers necessary to plug drive into COM1 port. NOTE: Do NOT use a null-modem connector in this lash-up.
+
+
+     PREPARE THE DRIVE:
+
+     These programs work at 9600 bps, while the TDD usually runs at 19200 bps. Turn the TDD over and locate the DIP switches in a compartment on the bottom right corner as you are reading the FCC ID notice.
+
+     Set the TDD's DIP switches this way: 1=on, 2=off, 3=off, 4=off.
+
+     Plug the TDD cable into the COM1 port of your MS-DOS computer, and you're set to go.
+
+     PREPARE THE COMPUTER:
+
+     Load GWBASIC into your MS-DOS computer. (I don't have any other variety of BASIC for MS-DOS, so I don't know if the programs will work with a different dialect.)
+
+     Load the program of your choice by typing (for example) LOAD  "TDIR.BAS"<RETURN>. Then type RUN<RETURN>.
+
+     (OPTIONAL: You can quickly run a program from your MS-DOS prompt by typing (for example) GWBASIC TDIR.BAS <RETURN>.)
+
+     TDIR:
+
+     TDIR begins with a reminder to "Set TDD DIP switches: 1 = on | 2,3,4 = off"
+
+     You will also see a cheery message that says "If you get DEVICE TIMEOUT or an error message, try again." Sometimes the TDD  can be slow-starting, and GWBASIC may give up. In that case, it's best to simply run the program again.
+
+     Next you'll see "Directory of PDD:" followed by a listing of files on the TDD disk. File names are followed by their size in bytes. Sometimes, for no apparent reason, the first file is repeated twice.
+
+     After displaying the directory, TDIR is finished its work and you get the BASIC "Ok" prompt.
+
+
+     TREAD:
+
+     TREAD starts with a caution: "This program reads a file from the TDD and writes it to the current MS-DOS directory UNDER THE SAME NAME. It will overwrite existing MS-DOS files of that name."
+
+     Trapping this error, I confess, is beyond my poor programming skills. Just try to make sure that you don't have existing MS-DOS files of the same name.
+
+     After a reminder about the DIP switches, TREAD says:
+"enter file name to read (ALL CAPS) XXXXXX.XX
+                              ----->            "
+
+     File names should be in ALL CAPITAL LETTERS and in the form XXXXXX.XX; that is, a six-character name followed by a period and  a two-character extension.
+
+     If the file name is (say) BOOK.DO, you must enter it as BOOK(space)(space).DO.
+
+     Just follow the X's above the prompt and you shouldn't go wrong. Remember to use ALL CAPS, or you will get a "File not found" message.
+
+     TREAD will say "Reading BOOK  .DO" and produce a line of dots. Each dot represents 128 bytes of the file transferred.
+
+     If everything works okay, soon you'll see "Finished reading BOOK  .DO" followed by "Finished writing BOOK  .DO to current MS-DOS directory." Then comes the BASIC "Ok" prompt.
+
+
+     TWRITE:
+
+     TWRITE opens with a caution: "This program reads a file from the current MS-DOS directory and writes it to the TDD UNDER THE SAME NAME. It will destroy existing TDD files of that name."
+
+     This shouldn't be too much of a problem.
+
+     TWRITE also reminds you to set your DIP switches, then asks for a file name (again in ALL CAPITAL LETTERS).
+
+     Names of MS-DOS files should conform to the TDD pattern: six-character names followed by a period and a two-character extension.
+
+     You can enter file names of less than six characters (as long as they're followed by a period and a two-character extension) -- let's say you enter BOOK.DO. TWRITE will say "BOOK.DO will be named BOOK  .DO on the TDD. Is this okay?
+Y to continue, any other key to quit."
+
+     I can't quite imagine why that wouldn't be okay, but if it isn't, you have a chance to quit now. If not, touch "Y" and TWRITE will say "Writing BOOK  .DO to TDD" with another line of dots. As before, each dot represents 128 bytes transferred.
+
+     Yes, TWRITE does go more slowly than TREAD. That's because it's necessary to check each byte for End-Of-File. Just in case you wanted to know...
+
+     After the file is written to the TDD, TWRITE says, "Have written BOOK  .DO to TDD" and then turns you over to BASIC.
+
+
+     TERASE:
+
+     This is the most dangerous of all the programs. (No, actually, TFORMAT would be the most dangerous. But I know what a klutz I am, so I didn't write it.)
+
+     TERASE starts with the familiar reminder about the DIP switches, then prompts for 
+"enter file name to read (ALL CAPS) XXXXXX.XX
+                              ----->           "
+
+     Enter file name as before. If the name is too short (BOOK.DO  for example), you will be reminded to "Include trailing spaces."
+
+     Once you press <RETURN>, BOOK  .DO is doomed. It will go bye-byes in the car and sink slowly into the West, and you'll never see it again. All you will see, in fact, is the "Ok" prompt.
+
+
+     FINAL THOUGHTS:
+
+     I'm indebted to J.K. Heilman for his article "Exploring the Tandy Portable Disk Drive" (PICO Magazine November 1986, pp. 28-29,38.) It gives all the codes necessary to construct these programs, plus an example which formed the basis of TERASE.
+
+     I'd imagine that these would run faster and would be much less of a bother if they were compiled...but I don't have a compiler for GWBASIC. If some other kind soul has such a beast, hint, hint.... (I've got dibs on the first copy of the finished product.)
+
+     I've written these as standalone programs because that was about the limit of my programming skill and patience. If anyone else wants to integrate them into a larger program a la LAPDOS, please feel free.
+
+     I'd imagine that these programs can be translated to any non-MS-DOS computer that has a BASIC like GWBASIC, a COM port that can be set to 9600 baud, and some luck.
+
+     If you want to know more or have any difficulty, either consult Heilman's article or contact me. Fair warning, though...I was almost out of my depth with these small programs; I can't guarantee that I'll be able to give coherent answers to questions.
+
+     Don Sakers
+     CompuServe 72517,526
+     c/o 303 Jerlyn Avenue
+     Linthicum, MD  21090
+     USA

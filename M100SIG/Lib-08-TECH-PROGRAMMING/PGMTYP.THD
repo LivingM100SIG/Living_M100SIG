@@ -1,0 +1,177 @@
+
+	(c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+		- 0 -
+
+Fm: Cyndy Clayton
+To: Wilson Van Alst
+
+So far I've been able to figure out a few things when I've gotten stuck,
+but every other question will probably require another instruction book.
+For example, I'd like to learn how to write a program in hex.  I've only
+seen programs which change from hex to M/L -- if you know of one that
+changes from BASIC to hex, please let me know.
+
+                - 0 -
+
+Fm: Paul Globman
+To: Cyndy Clayton
+
+Cyndy - HEX is not a language and one does not write programs in HEX.  HEX
+files are not programs and cannot be run.
+
+HEX is simply a way of _representing_ Machine Language code in ASCII (TEXT) so
+the ML program can be examined with a TEXT editor or uploaded or downloaded
+(TELCOM in the M100 only sends and receives TEXT files).
+
+BASIC programs do not use HEX to represent them.  To convert a BASIC program
+to ASCII (TEXT), so it can be examined with a TEXT editor, or uploaded or
+downloaded, do the following...
+
+First LOAD the program and then SAVE "FILE",A.  The comma A after the SAVE
+command will convert the BASIC program into ASCII TEXT file... Paul
+
+                - 0 -
+
+Fm: Wilson Van Alst
+To: Cyndy Clayton
+
+   A short clarification, here, before I try to answer your main question.
+From a programmer's standpoint, there is no difference between a Hex file and
+a "machine language" (i.e., on the M100, a .CO) file. The Hex file contains
+alphanumeric characters, which represent numbers, which represent program
+instructions. The .CO file contains binary numbers, which represent those same
+program instructions. So "converting" from Hex to .CO is no great mystery.
+   Converting from a BASIC language program to a machine language program,
+though, is a different matter.  It's a chore that involves bridging the very
+large gap between "high order" and "low order" computer languages.
+   Machine language programs are considered "low order."   They consist of
+nothing but a stream of binary information (1's and 0's) that directs a
+certain make and model of microprocessor to perform very simple tasks -like
+adding two numbers in the range from 0 to 65535, or sending an on/off signal
+to some other piece of hardware.
+   BASIC, on the other hand, is a "high order" language.  It allows us to use
+reasonably understandable instructions like PRINT, INPUT, and GOTO without
+worrying about what the microprocessor and other computer hardware actually
+must do to accomplish the job.  A typical BASIC command will involve several
+hundred machine language ("low order") instructions -performed invisibly by
+software called the BASIC "interpreter."  In the M100/T200 laptops, this
+software is in the computer's ROM.
+   Problem is, the "interpreter" takes a lot of time to do its job.  It must
+scan the raw BASIC instructions and, based on the syntax it finds, dispatch
+each instruction to the proper machine language routine for execution.  To
+make the process even more cumbersome, the "interpreter" is constantly
+checking for errors -- and must try to exit gracefully, without crashing your
+computer, if it finds a programming mistake.
+       (more...)
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Cyndy Clayton
+
+       (...contd.)
+
+   What we'd like to do, assuming we had a finished and thoroughly de-bugged
+BASIC program, is eliminate the time-consuming chores of syntax interpreting,
+library dispatching, and error checking.  In other words, our BASIC
+instructions would be replaced with the "core" machine language routines that
+actually make those instructions work -- and, in the best instance, our entire
+BASIC program would be converted to machine language.
+   Programs that perform this conversion are called "compilers," and the
+people who write them are called geniuses.
+   In Library 8, there is a series of files reflecting efforts to produce a
+compiler for the M100.  You can take a look at their descriptions with the
+command SCA DES TCOMP*.* in that library.  In general, you'll find that what's
+been done is limited.  Some parts of the BASIC instruction set have been
+adapted to M100 machine language; but other commands have been more elusive.
+   So the answer to your original question -- whether you can compile an
+entire BASIC program -- depends on what instructions are in the program and
+whether a given compiler can handle each of them.
+
+		- 0 -
+
+Fm: Tony Anderson
+To: Wilson Van Alst
+
+Mo Budlong's RBASIC compiler _is_ a complete compiler; it's two major
+drawbacks are price ($299 as I write this), and the fact that it has to be
+used in a PC, then the program moved into the Model 100/102/200 environment.
+The "use in a PC" is a drawback for those who do not have a PC, or access to
+one, and the price is a drawback to many of the "portable crowd" who chose the
+computer on the basis of price, and who may not be able to deal with the cost
+of expensive software to go in it... or to support it.  (In some cases,
+exceeding the cost of the computer itself.)
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Tony Anderson
+
+   I have no experience with Mo's compiler.  Can you speak to its limitations,
+if any?  (I thought I heard something about nested for/next loops and gosubs,
+for example...)
+
+		- 0 -
+
+Fm: Tony Anderson
+To: Wilson Van Alst
+
+Well, I wouldn't use the word "limitations", more like a structured way of
+doing things... more like "the correct way" of doing things...  When writing
+BASIC programs for the portables, we often take advantage of little shortcuts;
+we do things which the interpreter will allow, but which are not good
+programming practice.  Things like failing to identify the variable with a
+NEXT, or like abbreviating a string of NEXT's, as in NEXTA,B,C, in stead of
+NEXTA:NEXTB:NEXTC.  Or the poor practice of jumping to a REMark statement,
+which is generally considered bad programming anyway. Or things like exiting
+out of a loop to do something else, without finishing the loop, or even
+reassigning a loop variable inside the loop.  Such things aren't allowed in
+the RBASIC compiler - you have to terminate each loop properly, identify each
+NEXT variable, things like that.  In other words, do things properly.  It
+makes the program more "structured", less free-form.  In addition to the
+syntax and constraints of programming in Model 100 MicroSoft BASIC, you have
+to also be aware of the structure requirements of the compiler.
+
+Nested loops are OK, including GOSUB's, as long as each loop is properly
+terminated, i.e., you come back and finish the loop somehow.
+
+There IS a depth limitation in nested IF statements... ten deep, I think.  But
+I've never seen more than three or four in normal programming.  That's a
+statement in the form:
+
+IF (whatever) THEN IF (whatever) THEN IF (whatever, ELSE (something) ELSE
+(something) ELSE (etc...)
+
+It's even difficult to follow that kind of programming in BASIC.  There are
+some other considerations in using RBASIC, such as handling interrupts, like
+ON ERROR and ON COM statements.  Overall, it's a useful utility, and the fact
+that it can develop ROM-based code is (or was) a primary consideration.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Tony Anderson
+
+   Thanks.  That helps clarify some of the things I'd heard about RBASIC.
+   You highlight a point that hasn't been directly talked about so far: some
+compilers are more capable than others -- in terms of the "high level" code
+they'll accept, and in terms of the speed and size of the machine code they
+produce.  With any compiler, there are going to be compromises among those
+three elements (and some others), and the end-user has to decide which
+compiler is "best" for a particular situation.
+   Unfortunately, Tandy laptop users don't have much to choose from: there's
+TCOMP, and there's RBASIC.  If one of those produces code that's more useful,
+in a given application, than the original BASIC program, then it makes sense
+to use it.
+
+		- 0 -
+
+Starting message #: 25394   Starting date: 26-May-90  16:42:14
+ Participants:
+Cyndy Clayton 73337,500
+Paul Globman 72227,1661
+Wilson Van Alst 76576,2735
+Tony Anderson 76703,4062

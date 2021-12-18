@@ -1,0 +1,38 @@
+15  'Program to format output for the TODOs list
+20  CLEAR 500:DIM D$(3),B$(3)
+30  MAXFILES=2:CLS
+35  'Get Task Filename
+40  LINEINPUT "Enter Task Filename: ";F$
+45  'Open Task file as input
+50  OPEN F$ FOR INPUT AS 1
+60  A$="lcd:"
+65  'Request type of output device
+70  PRINT "Output to Printer";:GOSUB500
+80  IF I THEN A$="lpt:"
+85  'Open device for output
+90  OPEN A$ FOR OUTPUT AS 2:CLS
+100 IF EOF(1) THEN 300
+105 'Check Task File format
+110 A$=INPUT$(4,1)
+120 IF A$<>"tMpC" THEN PRINT "Not in Task File format - Abort!":GOTO 300
+125 'Read & Print Date
+130 FORI=1TO3:J=ASC(INPUT$(1,1))-32:B$(I)=STR$(I)
+140 IF I=3 THEN J=J+80
+150 D$(I)=RIGHT$(STR$(J),2):NEXTI
+160 PRINT#2,"To-Dos As Of ";D$(2)+"/"+D$(1)+"/"+D$(3):PRINT#2," "
+165 'Set up Stress values
+170 D$(1)="c":D$(2)="b":D$(3)="a"
+175 'Get Header byte
+180 IF EOF(1) THEN 300
+190 J=ASC(INPUT$(1,1))-32
+200 IF J=0 THEN 300
+205 'Get level for To-dos
+210 I=(J AND 12)/4:K=J AND 3
+220 IF I=0 OR K=0 THEN F$="UN" ELSE F$=RIGHT$(B$(I),1)+D$(K)
+225 'Get length of To-do
+230 I=ASC(INPUT$(1,1))-32
+235 'Get To-do description
+240 A$=INPUT$(I,1)
+250 PRINT#2,"  ";F$;"   ";A$:GOTO 180
+300 CLOSE:END
+500 C$="n":INPUT " (Yes/No)";C$:I=((ASC(LEFT$(C$,1))AND223)=89):RETURN

@@ -1,0 +1,23 @@
+1 'WTIME.BA (C)1988 Barye Phillips
+2 'A world clock that compensates for
+3 'Daylight Savings Time.  Set SP in
+4 'line 7 for the difference between
+5 'local time and GMT/UTC.  Use ESC
+6 'to return to the M100 menu.
+7 CLS:V=40:DIMC$(10):DIMD(10):SP=5
+8 PRINT@V," Daylight Savings Time?"
+9 K$=INKEY$:IFK$<>"y"ANDK$<>"n"THEN8ELSEFORI=1TO10:CLS:READR$,R:C$(I)=R$:D(I)=R:NEXT:IFK$="y"THEND(3)=D(3)+1:D(4)=D(4)+1:SP=SP-1
+10 GOSUB22:GOTO12
+11 V$=RIGHT$(TIME$,2):GOSUB14:PRINT@44,G$:IFV$<>"00"THEN13
+12 FORI=1TO4:GOSUB17:PRINT@V*(I+2)+1,T$:NEXT:FORI=5TO10:GOSUB17:PRINT@V*(I-4)+20,T$:NEXT
+13 K$=INKEY$:IFK$<>CHR$(27)THEN11ELSEMENU
+14 GOSUB22:IFG>=24THENG=G-24
+15 Q$=STR$(G):IFG<10THENQ$=" 0"+RIGHT$(Q$,1)
+16 G$=CHR$(27)+"p"+Q$+RIGHT$(TIME$,5)+" UTC "+CHR$(27)+"q":RETURN
+17 M$=" AM":H=G+D(I):IFH<0THENH=H+24ELSEIFH>=24THENH=H-24
+18 IFH>=12THENM$=" PM":H=H-12
+19 IFH=0THENH=12
+20 L$=STR$(H):IFLEN(L$)<3THENL$=" "+L$
+21 T$=L$+MID$(TIME$,3,3)+M$+" "+C$(I):RETURN
+22 G=VAL(LEFT$(TIME$,2))+SP:RETURN
+23 DATA"London",0,"Caracas",-4,"New York",-5,"Seattle",-8,"Honolulu",-10,"Sydney",10,"Beijing",8,"Jakarta",7,"Karachi",5,"Athens",2

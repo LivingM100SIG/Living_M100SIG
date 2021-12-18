@@ -1,0 +1,107 @@
+        GAPS.200 by Paul Globman
+           Copyright (c) 1990
+        -------------------------
+GAPS is a solitaire game often played with a standard deck of cards.  All 52
+cards are laid out in 4 rows.  The Aces are removed to form GAPS.  You may fill
+in GAPS with other cards, provided it is the same suit as an adjacent card, and
+is ordered (higher or lower) to that adjacent card, depending upon whether
+you are placing it to the right or left of it.
+ 
+TWO's may be moved to the leftmost box, if it is open.  KINGS may be moved to
+the rightmost box, if it is open.  The objective is to get each suit in its
+own row, sequentially from TWO to KING (left to right), with the rightmost box
+of each row empty, upon completion.  Good luck!!
+ 
+Program Operation
+-----------------
+Use the ARROW keys to move the pointer.  Use the SPACEBAR to pick up and drop
+selected cards.  The selected card displays in reverse video until it is 
+placed in a GAP or unselected.  Illegal moves are not accepted.
+ 
+New Game
+--------
+You may abort the current game at any time and begin a new game, or you may
+abort the current game and replay it, trying a different strategy.  Use upper
+case for a (N)ew game or to (R)eplay current deck.  ESC will abort to Menu.
+
+Other Recreational Programs
+---------------------------
+Other "games" I've made available on the M100SIG are:
+
+    PUZZLE.200
+    PUZZL2.200
+    PUZZL4.200
+    PYRMID.200
+
+    Also see PUZZL3.PRD in DL13
+
+
+Enjoy the game... Paul Globman [72227,1661]
+
+------------------------------------------------------------------------------
+
+0 REM GAPS.200 (c) 1990 by Paul Globman
+1 DEFINTA-Z:DIMC(52),D(52):ES$=CHR$(27):RV$=ES$+"p":NV$=ES$+"q":C$="A23456789TJQK":BL$="  ":P$=STRING$(2,152)
+2 FORI=27TO32:B$=B$+CHR$(I):NEXT:B$=B$+"NR":X=VAL(RIGHT$(TIME$,2)):X=RND(-VAL(MID$(TIME$,4,2))*60+X)
+3 FORI=1TO52:C(I)=I:NEXT:CLS:Y=0:GOSUB56:FORI=0TO4STEP2:LINE(0+I,0+I)-(239-I,127-I),1,B:NEXT:PRINT@258,"GAPS
+4 PRINT@339,"by":PRINT@414,"Paul Globman":PRINT@491,"Copyright (c) 1990":FORI=1TO13:D(I)=0:NEXT
+5 I=RND(1)*13+1:IFD(I)<>0THEN5
+6 GOSUB55:PRINT@38+I*3,CD$;:Y=Y+1:D(I)=1:FORI=1TO200:NEXT:IFY<>13THEN5
+7 FORI=1TO52:X=52*RND(1)+1:Y=C(I):C(I)=C(X):C(X)=Y:NEXT:FORI=1TO52:D(I)=C(I):NEXT
+8 PRINTES$"V":CLS:FORJ=1TO4:GOSUB56:NEXT:FORI=1TO52:GOSUB53:GOSUB55:PRINT@PA,CD$:NEXT:P=40:I=P:GOSUB53
+9 PRINT@PA+80,P$:FORI=1TO52:IFC(I)MOD13=0THENGOSUB59
+10 NEXT:H=0
+11 S=0:FORI=13TO52STEP13:S=S+C(I):NEXT:IFS=0THENGOSUB60
+12 A$=INKEY$:IFA$=""THEN12
+13 A=INSTR(1,B$,A$):IFA=0THEN12
+14 ONAGOTO15,19,17,21,23,25,3,16
+15 MENU
+16 FORI=1TO52:C(I)=D(I):NEXT:GOTO8
+17 I=P:GOSUB53:PRINT@PA+80,BL$:P=P-1:IFP=0THENP=52
+18 I=P:GOSUB53:PRINT@PA+80,P$:GOTO11
+19 I=P:GOSUB53:PRINT@PA+80,BL$:P=P+1:IFP=53THENP=1
+20 I=P:GOSUB53:PRINT@PA+80,P$:GOTO11
+21 I=P:GOSUB53:PRINT@PA+80,BL$:P=P-13:IFP<1THENP=P+13
+22 I=P:GOSUB53:PRINT@PA+80,P$:GOTO11
+23 I=P:GOSUB53:PRINT@PA+80,BL$:P=P+13:IFP>52THENP=P-13
+24 I=P:GOSUB53:PRINT@PA+80,P$:GOTO11
+25 IFH<>0THEN28
+26 IFC(P)=0THEN11
+27 H=P:I=P:GOSUB53:GOSUB55:PRINT@PA,RV$CD$NV$:GOTO11
+28 IFH<>PTHEN30
+29 H=0:I=P:GOSUB53:GOSUB55:PRINT@PA,CD$:GOTO11
+30 IFC(P)<>0THENBEEP:GOTO11
+31 IF(C(H)MOD13=1)AND(PMOD13=1)THEN52
+32 IF(C(H)MOD13=12)ANDPMOD13=0THEN52
+33 IFPMOD13<>1THEN38
+34 IFC(P+1)=0THEN51
+35 IFC(H)MOD4<>C(P+1)MOD4THEN51
+36 IFC(H)MOD13<>(C(P+1)MOD13)-1THEN51
+37 GOTO52
+38 IFPMOD13<>0THEN43
+39 IFC(P-1)=0THEN51
+40 IFC(H)MOD4<>C(P-1)MOD4THEN51
+41 IFC(H)MOD13<>(C(P-1)MOD13)+1THEN51
+42 GOTO52
+43 IFC(P-1)=0THEN47
+44 IFC(H)MOD4<>C(P-1)MOD4THEN47
+45 IFC(H)MOD13<>(C(P-1)MOD13)+1THEN47
+46 GOTO52
+47 IFC(P+1)=0THEN51
+48 IFC(H)MOD4<>C(P+1)MOD4THEN51
+49 IFC(H)MOD13<>(C(P+1)MOD13)-1THEN51
+50 GOTO52
+51 BEEP:GOTO11
+52 C(P)=C(H):C(H)=0:I=H:GOSUB53:PRINT@PA,BL$:H=0:I=P:GOSUB53:GOSUB55:PRINT@PA,CD$:GOTO11
+53 J=IMOD13:IFJ=0THENJ=13
+54 PA=((I-1)\13)*160+38+3*J:RETURN
+55 X=C(I)MOD13:CD$=MID$(C$,X+1,1):CD$=CD$+CHR$(156+C(I)MOD4):RETURN
+56 PRINTCHR$(240)CHR$(241);:FORI=1TO12:PRINTCHR$(241)CHR$(243)CHR$(241);:NEXT:PRINTCHR$(241)CHR$(242);
+57 PRINTCHR$(245);:FORI=1TO13:PRINT"  "CHR$(245);:NEXT:PRINTCHR$(246)CHR$(241);:FORI=1TO12
+58 PRINTCHR$(241)CHR$(248)CHR$(241);:NEXT:PRINTCHR$(241)CHR$(247):RETURN
+59 GOSUB53:PRINT@PA,BL$:C(I)=0:RETURN
+60 FORI=1TO40STEP13:FORJ=0TO11:IFC(I+J)MOD13<>J+1THENRETURN
+61 IFJ=0THEN63
+62 IFC(I+J)MOD4<>C(I+J-1)MOD4THENRETURN
+63 NEXTJ:NEXTI:FORI=1TO15:PRINT@280,SPACE$(40):PRINT@292,"CONGRATULATIONS!":NEXT:FORI=1TO3:SOUND4000,4:SOUND1500,25
+64 NEXT:PRINT@600," Play again (y/n)";:A$=INPUT$(1):IFA$="N"ORA$="n"THENMENUELSERUN

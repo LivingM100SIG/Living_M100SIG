@@ -1,0 +1,88 @@
+The following are a sample of some of 
+the subroutines I've gleaned from the 
+NEC ROM.  Suggestions for improvement 
+of the format are welcome.  I'll try to 
+clear up any ambiguities that have 
+crept into my notes.
+
+It would certainly be interesting to 
+get all the NECy owners on this SIG to 
+contribute similar material.  Please 
+note that, to be useful, contributions 
+should use roughly the same format and 
+supply the same information.
+
+For the record, none of the information 
+published here was obtained from 
+"classified" NECHE sources.
+
+I don't get a chance to log on to CIS 
+much, so messages may scroll off before 
+I see them.  It's best to either leave 
+me E-mail or drop a note via MCI mail 
+(my MCI account number is 114-5685).
+
+               Cordially,
+               Alex Lane 75715,1370
+TITLE:  RST 5
+
+ENTRANCE: 1338H (4920)
+
+INCOMING REGISTERS: none
+
+REGISTERS AFFECTED: A
+
+REMARKS:
+     This subroutine is called when the 
+RST5 instruction is executed.
+
+     Contents of FA8BH (64139) are 
+loaded into A, the number 11 is 
+subtracted, and the routine returns.  
+Note that all condition flags except CY 
+may be affected.
+               Alex Lane 75715,1370
+TITLE:  Lower-to-upper case
+
+ENTRANCE: 12B6H (4790)
+
+INCOMING REGISTERS: HL
+
+REGISTERS AFFECTED: A
+
+REMARKS:
+     HL contains the ASCII value of the 
+letter to be tested.
+
+     Accumulator is loaded with HL 
+contents.  If the value in the 
+accumulator is outside the limits of 
+ASCII lower-case letters, the routine 
+returns; otherwise, the accumulator 
+contents are changed to upper-case, and 
+the routine returns.
+               Alex Lane 75715,1370
+TITLE:  RST 3
+
+ENTRANCE: 0018H (24)
+
+INCOMING REGISETRS: HL, DE
+
+REGISTERS AFFECTED: A
+
+REMARKS:
+     This subroutine is called when the 
+RST3 instruction is executed.
+
+     The HL and DE register pairs are 
+compared, and the zero and carry flags 
+are set as shown in the following 
+table:
+
+  |  HL = DE  |  HL > DE  |  HL < DE  |
+--+-----------+-----------+-----------+
+Z |     1     |     0     |     0     |
+--+-----------+-----------+-----------+
+C |     0     |     0     |     1     |
+--+-----------+-----------+-----------+
+               Alex Lane 75715,1370

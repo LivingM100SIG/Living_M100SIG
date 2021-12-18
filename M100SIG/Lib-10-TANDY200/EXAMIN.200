@@ -1,0 +1,99 @@
+           EXAMIN.200 (c)1989, R.W.Hess
+               All Rights Reserved
+               -------------------
+     
+             EXAMIN.200 is a simple, BASIC "front-end" written to
+     facilitate the use of Paul Globman's SEARCH.200 and DBG.200
+     programming utilities.  EXAMIN helps the user create data strings
+     necessary to put SEARCH to work and provides a "reminder" line of
+     DBG functions.
+             You'll need EXAMIN.BA, SEARCH.CO and DBG.CO (all from
+     DL10).  Checksum each file after removing all extra CIS characters
+     from the downloads. Use TEXT to copy and paste the program code
+     below into BASIC and save as EXAMIN.BA.  Follow the instructions in
+     SEARCH.200 and DBG.200 to create SEARCH.CO and DBG.CO.  Save
+     EXAMIN.BA, SEARCH.CO and DBG.CO somewhere for future use.
+     (EXAMIN.BA runs by itself: the other .BA programs are "loaders" and
+     can be killed after they create their respective .CO pgms.)
+             Thoroughly familiarize yourself with the way SEARCH.CO and
+     DBG.CO operate BEFORE continuing with EXAMIN.  Make sure SEARCH.CO
+     and DBG.CO are on the menu along with EXAMIN.BA.  Run EXAMIN.BA by
+     cursor selection at the main menu: four menu choices are possible:
+     
+             <S>tring: 
+               Searches all of memory from 0 to 65535 for locations that
+     contain a TEXT string.  Enter your search string exactly as you
+     want to find it: what you type is what you look for.
+     
+             <V>alues:
+               Use this when you're looking for specific code sequences:
+     e.g. 205  77  79.  You'll first be prompted for "How many?" values
+     in your search "set": then you'll be prompted for each value in
+     turn.
+     
+     
+             When the search sequence begins, your search criteria and a
+     brief memory allocation table will display. Matches display "in"
+     followed by the decimal address at which your matches begin.
+             When SEARCH is finished it will BEEP and wait for any key
+     press. (You can use the "print" function-key here to print these
+     addresses.)  EXAMIN's menu line will then re-display at the bottom.
+             You may select DBG at this point and the match addresses
+     will remain and simply scroll up as you use DBG: otherwise "T" or
+     "V" will clear the screen and begin the prompts.
+     
+     
+             <D>BG:
+                This simply prints a "reminder" line of DBG's nine
+     command letters and runs DBG.  See DBG's documentation for all that
+     it can do!  The reminder line will remain during all DBG
+     operations.
+     
+             <ENTER>/CR:
+                Press <ENTER> to return to the main menu.  EXAMIN loads
+     itself into the IPL buffer so that, upon leaving DBG, EXAMIN will
+     re-run.  Using <ENTER> at EXAMIN's menu clears the IPL buffer and
+     returns to the main menu.
+     
+     
+             You may use CTRL/C to break out of EXAMIN if you make a
+     mistake during data entry (e.g. 205 "values") but if either SEARCH
+     or DBG are running then it's best to wait until they're done before
+     breaking away.  For instance: inadvertently starting a search for a
+     space or a "32" could take 1-2 minutes to display all the
+     locations: just be patient and more careful next time.  (To exit
+     DBG type "b" at a DBG ">" prompt.)
+     
+     
+                                 --------Credits------
+             Paul Globman wrote SEARCH.CO and DBG.CO which do all the
+     work.  Paul also did Beta testing of EXAMIN and suggested many of
+     the routines.  Wilson Van Alst's ZAPTAB and ZIPFMT were used to
+     pre-format this file for upload.
+     
+                                 ---------------------
+             Please direct problems about EXAMIN to me via E-mail or on
+     the SIG.
+     
+     Randy Hess
+     73267,552
+     Omaha, Ne
+     Dec, 1989
+     
+     -- -- -- -- -- -- -- -- --
+0 'EXAMIN.200(c)1989,R.HESS
+1 CLS:CALL20360:PRINT@14," EXAMIN.200 ":M=1:GOSUB70
+5 CLEAR500:KEYON:IPL"examin.BA":DEFSTRA-H:DEFINTI-T:E=CHR$(27):CALL20318
+10 PRINT@600,E"p <T>ext   <V>alues   <D>BG    (CR ends) "E"q";:CALL20323
+15 H=INKEY$:IFH=""THEN15ELSEL=ASC(H)AND95:IFH=CHR$(13)THENIPL"":MENUELSEIFL=68THEN60
+20 IFL=84THENCLS:LINEINPUT"Text string: ";C:D=C:GOTO45ELSEIFL-86THEN15
+25 CLS:K=0:LINEINPUT"How many? ";A:IFA=""ORVAL(A)=0THENRUN
+30 P=VAL(A):DIMB(P):FORJ=1TOP:PRINT@2*J*40,USING" Value #";J;:INPUTB(J):IFB(J)=""THEN40ELSEK=K+1
+35 NEXT
+40 D="":C="":FORJ=1TOK:C=C+CHR$(VAL(B(J))):D=D+B(J)+" ":NEXT
+45 LOADM"SEARCH":CLS:PRINT"Searching for: "E"p"D;E"q":PRINT:PRINT"    0-40960 = System ROM"
+50 PRINT"40961-61103 = User RAM":PRINT"61104-65535 = System RAM":CALL63900,,VARPTR(C)
+55 PRINT:M=PEEK(61190)-1:GOSUB70:BEEP:CALL4855:GOTO5
+60 CALL20318:PRINT@600,E"p Add Bye Cmp Disp Entr Fnd Goto H>i I>h "E"q":CALL20308
+65 CALL20323:PRINT@40*(PEEK(63899)-1),E"J"E"p DBG.CO "E"q";:RUNM"DBG":END
+70 POKE63899,M:RETURN

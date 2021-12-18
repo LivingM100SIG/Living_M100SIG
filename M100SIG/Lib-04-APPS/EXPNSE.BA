@@ -1,0 +1,47 @@
+0 'EXPNSE.BA (c)1987, Bill Thomas         Compuserve 76576,3035
+1 'Gets input for Tax-Deductable          EXPENSES, and prints it to a .DO file   for storage.  Does not compute          expenses.
+2 'The program will keep track of         expenses for several persons.  The      file name is keyed to the first letter  of the name used.  It is held in Z$.
+3 'As listed the program handles          expenses for two persons, Bill and      Valerie. To personalize it, change the  names in LINE 100 & 105, and the Z$     keys in LINE 110.
+4 'The file name will be in the format    xXPSmm.do, where x=first letter of      the name used in LINE 100/105 for Z$,   and mm is the month for which the       expense is attributable.
+5 'Thus, you may enter expenses for       several months at the same sitting,     and the computer will sort them into    separate files by month and person.
+6 'The program defaults to the current    date, unless you input a different      date.  So if you get behind in your     milage, you may make late entries.
+7 'Deduction categories can be modified   to fit individual needs in lines 150    to 190.  LINE 195 makes certain that    you entered a deduction category you    have already defined.
+9 'Delete LINES 1-9 to save space.
+10 CLS:PRINT@9,"WORK-RELATED EXPENSES
+100 CLEAR:PRINT@90,"<V>alerie Entry
+105 PRINT@130,"<B>ill Entry, or <M>enu
+110 Z$=INKEY$:IFZ$=""GOTO110
+115 IFZ$="V"ORZ$="v"ORZ$="B"ORZ$="b"GOTO125
+120 MENU
+125 CLS:INPUT"Amount of Expense (xxxx.xx)";M
+130 PRINT"    Date:   ";DATE$;" <ENTER> if Today":PRINT@50,"";:INPUTD$
+135 IFD$=""THEND$=DATE$
+140 CLS:PRINT"Category:":PRINT" O>ffice Supplies   B>ooks/Periodicals":PRINT" D>ues/Fees         E>ntertainment":PRINT" S>ervices          A>dvertising":PRINT" P>hone             T>ravel":PRINT"        N>one of these"
+145 F$=INKEY$:IFF$=""GOTO145
+150 IFF$="O"ORF$="o"THENF$="Office Supplies":GOTO200
+155 IFF$="B"ORF$="b"THENF$="Professional Books/Periodicals":GOTO200
+160 IFF$="D"ORF$="d"THENF$="Professional Dues/Fees":GOTO200
+165 IFF$="E"ORF$="e"THENF$="Professional Entertainment":GOTO200
+170 IFF$="S"ORF$="s"THENF$="Professional Services":GOTO200
+175 IFF$="A"ORF$="a"THENF$="Advertising":GOTO200
+180 IFF$="P"ORF$="p"THENF$="Business Phone Charges":GOTO200
+185 IFF$="T"ORF$="t"THENF$="Professional Travel":GOTO200
+190 IFF$="N"ORF$="n"THENF$="Other Professional Expense":GOTO200
+195 BEEP:PRINT:PRINT"      ";CHR$(27);"p";"  >=-*No such Category*-=<  ";CHR$(27);"q":FORX=1TO300:NEXTX:GOTO140
+200 CLS:INPUT"    What: ";T$
+205 CLS:PRINT"Document: R>eceipt (cash/credit card)":PRINT"          N>o receipt":PRINT"          C>heck"
+210 C$=INKEY$:IFC$=""GOTO210
+215 IFC$="R"ORC$="r"THENC$="Cash or Credit Receipt":GOTO235
+220 IFC$="N"ORC$="n"THENC$="No receipt available":GOTO235
+225 IFC$="C"ORC$="c"THENGOSUB275:GOTO235
+230 PRINT:BEEP:PRINTCHR$(27);"p";"    >=-*NO SUCH CATEGORY*-=<    ";CHR$(27);"q":FORX=1TO300:NEXTX:GOTO205
+235 CLS:PRINT"IS THIS CORRECT?":PRINT:PRINTUSING"####.##";M;:PRINT"       ";D$:PRINT"Category: ";F$:PRINT"    What: ";T$:PRINT"Document: ";C$
+240 X$=INKEY$:IFX$=""THEN240
+245 IFX$="Y"ORX$="y"THEN250ELSE125
+250 ON ERRORGOTO270
+255 OPENZ$+"XPS"+LEFT$(D$,2)+".DO"FORAPPENDAS1
+260 PRINT#1,USING"####.##";M;:PRINT#1,"  "+D$+"  ";F$:PRINT#1,STRING$(9," ")+T$:PRINT#1,STRING$(9," ")+C$
+265 CLOSE:CLS:GOTO100
+270 CLOSE:CLS:PRINT"ERROR ";ERR;" IN LINE ";ERL:STOP
+275 CLS:PRINT"Check #   .... (use 4 numerals)":PRINT@7," ";:INPUTC1$
+280 C$="Check #"+C1$:RETURN

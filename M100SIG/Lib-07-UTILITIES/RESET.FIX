@@ -1,0 +1,4 @@
+	RESET.100 includes a feature to patch CDOS 3.1 to prevent Chipmunk disk main directory overwrites.  It is not needed with v3.2, and (WARNING!!!) will probably crash it (I see that my method of checking version number didn't work, now that I've examined v3.2).
+	When you get CDOS 3.2, delete line 17 in RESET.100.  Or just MERGE the following line now, and you'll have a RESET.100 that works with both versions.
+	17 IF PEEK(59491)=61 AND PEEK(59488)=196 THEN POKE59488,197: POKE59491,0:PRINT"Modify CDOS 3.1 to prevent overwrites"
+

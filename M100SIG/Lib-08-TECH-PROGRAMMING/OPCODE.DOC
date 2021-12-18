@@ -1,0 +1,70 @@
+   This file contains information on some undocumented features of Intel's 8085
+/80C85 microprocessor.
+   WARNING: user beware! Intel has never documented these, and has NO 
+obligation to support them. Always back up important files before experimenting
+with this (or any other) ML stuff.
+
+   Additions, corrections, amusing anecdotes, etc. most welcome!
+   Tim Peters  72227,2416
+
+
+Will It Work on My Machine?
+---------------------------
+   The "features" below have worked on ALL Model 100's tested to date, & I've 
+heard that they're also used in some commercial software.
+   Following is a short BASIC program (checksum 7682) that tests 3 of the "new"
+opcodes:
+
+1 A%(0)=1576:A%(1)=-9968:A%(2)=201
+2 V=VARPTR(A%(0)):CALL V,0,V
+3 IF A%(3)=V\2-(V AND 1) THEN PRINT"OK!" ELSE BEEP:PRINT">> Ouch!! <<"
+
+   A number of things MAY happen when you run this:
+ (1) it will probably print "OK!".
+ (2) may beep & print "Ouch!!".
+ (3) the power may go off (some 8085's may trigger the TRAP interrupt on the 
+"unused" opcodes; that interrupt points to power-off code in the M100).
+ (4) anything else, up to & including a coldstart!
+   #1 (prints "OK!") is the ONLY response I've heard of on the M100 - if your 
+machine does something else, PLEASE, let me know!
+
+
+New Flags
+---------
+   In the table below, bit 7 is the most-significant bit; "x" marks an 
+undocumented flag bit:
+
+ 0  Carry
+ 1x Overflow
+ 2  Parity even
+ 3  (unused)
+ 4  Half-carry
+ 5x "True" sign = Overflow XOR Sign
+ 6  Zero
+ 7  Sign
+
+   The "overflow" flag is ordinary: it's set when the carry into the sign bit 
+does not equal the carry out of the sign bit; if set, it means that the result 
+of an operation on two signed bytes was "too big" to fit in one signed byte.
+   Bit 5 gives the "true" sign, assuming that the operands are signed bytes; 
+it's what would be in bit 8 IF the CPU were doing 9-bit signed arithmetic.
+
+
+New Opcodes
+-----------
+   Details of the ten undocumented opcodes; the opcodes are given in hex:
+
+ 08 (1 byte) HL=HL-BC.
+ 10 (1 byte) Arithmetic right shift: shifts HL right one bit, preserving H's 
+bit 7 (ie, sign-extended shift).
+ 18 (1 byte) Rotates DE left thru carry: carry flag moves to E's bit 0, and D's
+bit 7 moves to the carry flag.
+ 28 (2 bytes) DE=HL+following (unsigned) byte
+ 38 (2 bytes) DE=SP+following (unsigned) byte
+ CB (1 byte) CALL 40H if overflow flag set. Useless for the M100 unless you're 
+writing ROM routines - awfully clumsy even then!
+ D9 (1 byte) (DE)=HL; stores HL at the address in DE.
+ ED (1 byte) HL=(DE); loads HL from the address in DE.
+ DD (3 bytes) Jump (to address in following two bytes) if flag bit 5 is clear.
+ FD (3 bytes) Jump (to address in following two bytes) if flag bit 5 is set.
+

@@ -1,0 +1,28 @@
+0 'MILES.BA (c)1988, Bill Thomas           CompuServe 76576,3035
+1 'Gets input for Tax-Deductable Milage,   and prints it to a .DO file" for        storage.  Does not compute milage.
+2 'The program will keep track of miles    for several persons.  The file name     is keyed to the first letter of the     name used.  It is held in Z$.
+3 'As listed the program handles miles     for two persons, Bill and Valerie.      To personalize it, change the names     in LINE 20, and the Z$ keys in          LINE 40.
+4 'The file name will be in the format     xMILmm.do, where x=first letter of      the name used in LINE 20 for Z$, and    mm is the month for which the milage    is attributable.
+5 'Thus, you may enter milage for          several months at the same sitting,     and the computer will sort them into    separate files by month and person.
+6 'The program defaults to the current     date, unless you input a different      date.  So if you get behind in your     milage, you may make late entries.
+9 'Delete LINES 1-9 to save space.
+10 CLS:PRINT@5,"WORK-RELATED DEDUCTABLE MILAGE
+20 CLEAR:PRINT@90,"<V>alerie Entry":PRINT@130,"<B>ill Entry, or <M>enu
+30 Z$=INKEY$:IFZ$=""GOTO30
+35 IFZ$="M"ORZ$="m"THENMENU
+40 IFZ$="V"ORZ$="v"ORZ$="B"ORZ$="b"GOTO100
+50 BEEP:CLS:PRINT@5,"TRY AGAIN...":GOTO20
+100 CLS:INPUT"Number of miles";M
+110 PRINT"    Date:   ";DATE$;" <ENTER> if Today":PRINT@50,"";:INPUTD$
+120 IFD$=""THEND$=DATE$
+130 INPUT"    From: ";F$
+140 INPUT"      To: ";T$
+150 INPUT"Comments: ";C$
+200 CLS:PRINT"IS THIS CORRECT?":PRINT:PRINTM;" miles  ";D$:PRINT"From: ";F$:PRINT"  To: ";T$:PRINT" For: ";C$
+210 X$=INKEY$:IFX$=""THEN210
+220 IFX$="Y"ORX$="y"THEN300ELSE100
+300 ON ERRORGOTO400
+310 OPENZ$+"MIL"+LEFT$(D$,2)+".DO"FORAPPENDAS1
+320 PRINT#1,USING"###";M;:PRINT#1,"  "+D$+"  ";F$:PRINT#1,STRING$(15," ")+T$:PRINT#1,STRING$(15," ")+C$
+330 CLOSE:CLS:GOTO20
+400 CLOSE:CLS:PRINT"ERROR ";ERR;" IN LINE ";ERL:STOP

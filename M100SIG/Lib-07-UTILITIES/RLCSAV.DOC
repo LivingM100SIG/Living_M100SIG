@@ -1,0 +1,61 @@
+ Documentation for RLCLDR (ReLoCating LoadDeR)
+ Part 2: Saving programs in RLC format
+ 
+   To produce an RLC file from your m/l program, RLCLDR requires two copies of 
+your program.  First assemble or compile the program just below MAXRAM, then do
+it again below the first copy.
+   NOTE:  The number of bytes between the starts of the two copies must not be 
+evenly divisible by 256 or RLCLDR will not work.
+ 
+   Run RLCLDR and press 2 or S for save, then type a filename for the RLC file 
+to be created or just press enter to re-start RLCLDR.  Next, the program needs 
+four numbers.  For the first m/l program (the one with higher addresses), you 
+need the Top (lowest address), End (highest address), and Exe (execution 
+address).  If you just press <ENTER> for Exe, the Top address will be used.  
+For the second copy of your program, only the Top address is needed.  If all 
+goes well, the computer will create the file, beep, and return to the main 
+menu.  An ".RLC" extension is suggested for filenames.
+ 
+   The computer compares the two copies of the program as it saves it.  If they
+don't compare properly, it beeps twice and prints "Data at xxx & xxx are not 
+the same program."  Check the start addresses and be sure you have entered them
+correctly.  Press <ENTER> to re-start RLCLDR; the .DO file being saved into is 
+automatically killed.  If the addresses are correct, try re-loading the m/l 
+copies before running RLCLDR again.
+ 
+NOTE:  It is possible to use a relocatable buffer in a program without saving 
+the blank buffer in the RLC file, BUT . . .  Such a buffer must be located 
+AFTER the program because RLCLDR is unable to decode relocatable addresses 
+before the file start.  If you do this, be sure to give users sufficient 
+warning that such a buffer space is required.  See SAVLCD.RLC in DL6 for an 
+example.
+ 
+ SPECIAL CONSIDERATIONS FOR TCOMP USE
+ 
+   To properly recognize two compiled programs as the same one, you need to 
+clear the memory to be used before compiling.  This can be done by adding the 
+following line to TCOMP.121 (NOT to RLCLDR):
+
+7065 FOREX=HIMEMTOZ:POKEEX,0:NEXT
+ 
+   There is also a problem with programs containing arrays.  The following can 
+be merged into RLCLDR to patch the compiled program as it saves it.  (Put line 
+14 in one piece and line 74 in one piece):
+ 
+0 'Merge File for RLCLDR with TCOMP arrays
+0 'RLCLDR with routine for TCOMP (PD)
+14 FORX=TTOE:B=PEEK(X):B2=PEEK(X-OF):GOSUB70:IFB=B2THENPRINT#1,CHR$(48+B\16)
+CHR$(48+(BMOD16));:L=L+2:C=C+B:GOTO18
+70 IFB<>6THENRETURN
+72 IFB2<>6ORPEEK(X+2)<>14ORPEEK(X-OF+2)<>14THENRETURN
+74 IFPEEK(X+1)*256+PEEK(X+3)=PEEK(X-OF+1)*256+PEEK(X-OF+3)+OFTHENPOKEX,0:POKEX-
+OF,0:POKEX+2,PEEK(X+3):POKEX-OF+2,PEEK(X-OF+3):POKEX+3,PEEK(X+1):POKEX-OF+
+3,PEEK(X-OF+1):POKEX+1,1:POKEX-OF+1,1:B=0:B2=0:RETURN
+76 GOTO17
+ 
+   This will slow down the operation of RLCLDR, so I would suggest that you 
+save this only for TCOMPed programs with arrays.
+ 
+   Leave me a message if you have any problems or comments.
+   Neil Wick [71056,613]
+

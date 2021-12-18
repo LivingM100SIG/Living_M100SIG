@@ -1,0 +1,162 @@
+ENDOC.RK / Rudy E. Kokich, MD / [73327,2461] / 19-Jul-86
+========================================================
+
+Instructions for ENTEL.RK
+=========================
+
+
+GENERAL DESCRIPTION
+-------------------
+
+     ENTEL.RK is a short (542 b) utility which enhances Telcom's Terminal mode,
+permitting entry to Basic, easy transfer of ASCII files between RAM and a 
+diskette, and quick return to TERM - without losing the phone line or your 
+place in the CIS file. You can download and upload text of ANY length, 
+regardless of the available RAM. Intended for the DVI, ENTEL.RK should work 
+with any drive or cassette recorder accessible from Basic.
+
+     The program essentially consists of two parts.
+
+1)   The first part, the POKE and KEY statements in line 1, redefines three 
+function keys, as follows:
+- Telcom/Term F6 key will give Free RAM
+- Telcom/Term F7 key will take you to BASIC
+- Basic F5 key will take you from Basic directly to TELCOM
+
+2)   The second part, in lines 2-5, is a very short general file transfer 
+subroutine, capable of transferring ASCII text between RAM and any peripheral 
+storage device, depending on the specified filename prefix (e.g. 0: 1: CAS: 
+MDM: COM: LPT:)
+
+     You need the program whenever you wish to download a file larger than your
+RAM, upload text larger than your RAM, upload text which just doesn't happen to
+be in RAM at the time, or when you need to run a Basic program without losing 
+the phone connection.
+
+
+
+USING THE PROGRAM
+-----------------
+
+     Load the program into BASIC. Unless you plan to run other Basic programs 
+while on-line, it is more convenient NOT to save ENTEL as a .BA file.
+
+1) INITIALIZATION:
+
+     Run the program once in order to set the new function key definitions 
+BEFORE entering TELCOM. This is also a good opportunity to attempt file 
+transfer. Load a short text into a RAM file called "PAGE-1.DO". Press the F4 
+key in Basic to run the program, and the prompt "Source File...... : " appears.
+Type in "PAGE-1" in capital or small letters and press <ENTER>. The second 
+prompt "Destination File : " now appears. Let's say you want to save this text 
+on a diskette in drive 0, in a file called "DUMP-1". Type in "0:DUMP-1", press 
+the <ENTER> key, and the update "Working..." appears. When file transfer is 
+completed, you will be notified by a beep and the following message:
+
+- You are still in Basic...
+- F5 for TELCOM, then F4 for TERMINAL
+- [Break] if disconnected
+
+     At this point your function keys are defined. From now on you may go 
+directly to TELCOM and make use of ENTEL without initializing. Repeat the 
+process only after a cold start or after programs which change these function 
+key definitions.
+
+     Incidentally, you do NOT have to enter filenames in response to prompts 
+while initializing. Instead just hit the <ENTER> key.
+
+2) USING THE PROGRAM IN THE TERMINAL MODE:
+
+     In the TERM mode, your F6 key will print on the screen the amount of free 
+RAM - the equivalent of FRE(0) in Basic. While downloading, all but 192 bytes 
+are reserved for string space. So, press the F6 key BEFORE starting to 
+download. Then, for each minute of downloading you will be losing about 2250 
+bytes of free RAM.
+
+     Now, let us assume you wish to download a 60K file with a 24K machine. 
+This will have to be done in 4 sections of 15K each. You will download into a 
+RAM file called "PAGE.DO" and save the text on a diskette in drive 0, in files 
+called "PAGE-1" through "PAGE-4". Start downloading the first section. After 
+about 7 minutes follow the protocol below.
+
+(a) Press ^S (CTRL S) to stop the sender from delivering data.
+(b) Press the F7 key to take you to BASIC.
+(c) If ENTEL is already loaded in BASIC go to step (d). If you have ENTEL 
+stored in RAM as a .BA file then LOAD "ENTEL" and press <ENTER>
+(d) Press the F4 key to RUN ENTEL. Free RAM is displayed in the right upper 
+corner.
+(e) In response to the prompt "Source File..... : ", type in PAGE and <ENTER>.
+(f) In response to the prompt "Destination File : ", type in 0:PAGE-1 and press
+the <ENTER> key. When the transfer is completed you will hear a beep and get 
+the following instructions:
+   - You are still in Basic...
+   - F5 for TELCOM, then F4 for TERMINAL
+   - [Break] if disconnected
+You may at this point run ENTEL again to save or load other files.
+(g) To return to TELCOM, press the F5 key. The usual TELCOM prompt should 
+appear on the screen.
+(h) Press the F4 key to return to the TERMINAL mode. Wait several seconds 
+observing the Label line. The change in the Label line is the only indication 
+you have successfully returned to TERM. Expect no new text on the screen. Your 
+sender is still on hold.
+(h) Press the F2 key to start downloading again into the SAME RAM file as 
+before (PAGE). Opening this file for input will clear all previous text from 
+memory.
+(i) Type in ^Q to instruct your sender to resume sending new data.
+
+     You may repeat the process as often as necessary.
+
+
+
+LIMITATIONS:
+------------
+
+     Once the F7 key (Terminal mode) takes you to Basic, you must remain in 
+Basic until return to the Terminal mode. You may run any Basic program you 
+wish, or do what you will, but entering the Main Menu disconnects your 
+telephone line (with NO other complications).
+
+
+
+>>> WARNINGS <<<
+----------------
+
+- USE COMPLETE FILENAMES:   To access files on peripheral storage devices, the 
+COMPLETE filename must be entered in response to prompts, using the usual 
+format:
+     device prefix:filename.extension
+     Example:   0:PAGE.DO
+For RAM files, you may omit the prefix (RAM:) and the extension (.DO)
+
+- DO NOT RUN OUT OF RAM:   to operate ENTEL requires about 1.4K for string 
+space and file buffers. Stop downloading, when about 3K of free RAM is left, 
+and check the memory with the F6 key. If you do not have at least 1.4K, you can
+not use ENTEL (see below) and must disconnect.
+
+- AVOID PROGRAM ERRORS:   Program errors result in computer lockup. An error 
+trapping subroutine does NOT help and is not included. So, here are a few 
+DON'Ts:
+     Don't try to save or load nonexistent files (remember the extensions).
+     Don't forget to connect the peripheral you need.
+     Don't leave the drive latch in the up position.
+     Don't run out of RAM.
+     Don't use a full diskette.
+     Don't run any programs in Basic which end in MENU.
+If you experience a lockup, try the [Break] key first. If that doesn't work - 
+it never worked for me - press the RESET key ONCE. That works just fine, but 
+you lose the phone connection and, on occasion, you get a cold start.
+
+
+
+MODIFYING THE PROGRAM
+-----------------------
+- Substitute the Basic F5 key definition of CALL 20806 (line 1) with CALL 21589
+to take you from Basic directly to the TERMINAL MODE
+- Substitute CLEAR 256:MAXFILES=0 (line 6) with CLOSE.
+
+
+
+     Your comments and suggestions for modification are very welcome on 
+EasyPlex.
+
+

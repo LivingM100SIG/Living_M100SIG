@@ -1,0 +1,37 @@
+  * PROTEC.DOC
+  * Instructions for PROTEC.BA
+  *
+ PROTEC.BA is intended for use by registered owners of PROAID for preventing 
+other machine language programs from conflicting. RELOC.BA (which is supplied 
+by Micro Demon with PROAID) does this as well, but I've found some programs 
+still give me a nasty cold start.
+ 
+ PROTEC.BA assumes:
+ 
+1) PROAID has been relocated down to accommodate the HIMEM that normally occurs
+when the other ML program is running. (For TP100, it is 60416.) This is done 
+using RELOC.BA.)
+ 
+2) ONOFF.BA (also supplied with PROAID) is present, with these changes:
+ 
+ a) In Line 1, change the value of HM
+    to the aforementioned HIMEM value
+    minus 1792. (For TP100, this
+    is 58624.)
+ b) In Line 300, change the clear
+    statement to reset HIMEM. (For
+    TP100: CLEAR 256,60416.)
+ 
+ For general tidiness, I use Larry Gensch's INVISI.BA to hide both PROAID.CO 
+and the other machine language program. PROTEC.BA gets renamed as a ".BA" 
+version of the ML program. (For example, TP100.BA).
+ 
+ So when the cursor is put on, say, TP100.BA <Enter>, you either get TP100 to 
+run or a warning that PROAID is active and can be turned off first. If you 
+reply "y", you branch to ONOFF.BA.
+ 
+ Suggestions welcome!
+ 
+        Doug MacKay
+        [72326,1725]
+

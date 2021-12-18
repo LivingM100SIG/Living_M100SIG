@@ -1,0 +1,140 @@
+.BASIC Program Line Number Histogram Generation and Viewing
+.Copyright Polar Engineering and Consulting 1985,1986 [72136,1443]
+.
+.HISTLD.101 checksum:  90,941 (timing bug fixed)
+.HISTPT.101 checksum: 209,183 (new improved version of HISTPT.100)
+.LCDPLT.101 checksum:  71,623 (screen dump to a dot matrix printer)
+.
+.HISTLD.101 is a revised version of the earlier HISTLD.100 program.  It 
+corrects a timing error caused by large line numbers.
+.HISTPT.101 is a revised version of the earlier HISTPT.100 program.  It 
+displays the line number histogram in a more readable fashion.
+.LCDPLT.101 is a new program which can be used with HISTPT for dumping 
+histogram plots to a dot matrix printer.  See LCDPLT.DOC for information.
+.
+.
+.Introduction:
+.HISTLD.101 and HISTPT.101 are used to time and analyze BASIC programs.  The 
+relative time spent in each program line is recorded.  This data can be viewed 
+after the user's program has finished.  HISTLD.101 generates the necessary 
+machine code to log and analyze the timing information.  HISTPT.101 displays 
+the timing information graphically or in a file "HIST%.DO".  This type of 
+histogram is used to determine where a program spends its time.  Concentrating 
+on speeding up slow sections of code should significantly speed up the entire 
+program.
+.
+.
+.Producing a histogram:
+.1) DOWNload HISTLD.101 and HISTPT.101.  Save both for future use.
+.2) RUN "HISTLD" to create HISTML.CO.  Save "HISTML.CO" for future use.  HISTLD
+will only be needed if HISTML must be relocated.
+.3) LOAD "prog", the program you want to analyze.  In the first line of the 
+program insert: RUNM"HISTML".  Be sure that the HISTML machine code does not 
+interfere with any machine code your program may be using.  HISTML uses 2306 
+bytes starting at its low address.
+.4) RUN "prog", to generate the timing information.
+.5) RUN "HISTPT", to view the timming informaion.
+.
+.
+.HISTPT help:
+.HISTPT displays the relative timing information graphically or in a file.
+.- Press "P" (or "p") for interactive plot viewing.
+.- Press "S" (or "s") to dump timing statistics into HIST%.DO.
+.
+.Interactive plot viewing allows you to view the histogram for all lines or a 
+range.  The scale of the histogram can also be adjusted.  After each plot a 
+blinking "?" character will appear in the lower left corner of the screen.
+.- Press F8 (or "M" or "m") to return to the menu.
+.- Press ENTER to change the viewing parameters.
+.- Press "P" (or "p") to print the lcd screen on a dot matrix printer.  HISTPT 
+comes configured to interface to an OKIdata 92/93/192/193 printer.  If you are 
+going to use a different printer, you will have to modify the PL$ array 
+assignments in HISTPT.  See LCDPLT.DOC for further details.
+.- Press "Z" (or "z") to zero timing information for a range of lines.  You 
+will be prompted for the desired range.  Zeroing times can be very useful when 
+you are only interested in analyzing a portion of your program.
+.- Pressing a character while the plot is being displayed will terminate the 
+plot and execute the corresponding command.
+.
+.A status line on the bottom line of the screen indicates:
+."Mx:num1 num2% Sc:num3 Vw:num4-num5 num6%"
+.1) num1, shows the largest line number which has a non-zero time.
+.2) num2, shows the largest percentage of time spent in any one line.
+.3) num3, shows the scale of the plot in program lines per major rule mark.
+.4) num4-num5, show the current range of lines being viewed.
+.5) num6, shows the current vertical scaling.
+.Note: line numbers may be printed with one or two final digits as x's.  This 
+indicates that those digits may be any value from zero to nine.  See histo gram
+resolution below.
+.
+.
+.Histogram resolution:
+.Timing information is logged for up to 1000 lines (or groups of lines).
+.- If the largest line number is less than 1000, each line will be timed 
+individually.
+.- If the largest line number is more than 999 and less than 10000, lines which
+are not multiples of ten will be timed together with other lines in the same 
+decade.  All line numbers will be printed with an x as the ones digit.
+.- If the largest line number is more than 9999, lines which are not multiples 
+of one hundred will be timed together with other lines in the same century.  
+For example, if the maximum line number is 60000 and your program is numbered 
+by 10 then groups of 10 lines will be counted together.  Since this is probably
+not desirable you should renumber your program by 10 first.  All line numbers 
+will be printed with an x as the tens digit and an x as the ones digit.
+.
+.
+.Special timing considerations:
+.- No time is logged while a program waits for keyboard input.  An interactive 
+program can be properly analyzed without considering input reaction time.
+.- Time spent in a line or a group of lines timed together can never exceed 
+approximately 262 seconds.  This means that lines which are executed for longer
+than that will only show 262 seconds, but will be displayed with an arrow head.
+
+.- Timing information is approximate.  Timing information is collected 250 
+times per second.  A program line which requires less than 4 milliseconds (1/
+250th of a second) may not be timed each time it is encountered.  The timing 
+will tend towards the right value if the program line is executed many times.  
+Since we are most interested in which lines take the majority of the time this 
+limitation should not be a factor.
+.
+.
+.General timing measurements:
+.This line number histogram package can also be used to understand general 
+timing characteristics.  The following program was designed to illustrate 
+various timing characteristics of FOR-NEXT loops.  The program took about 5 
+seconds to run.  After running it three separate times the average time per 
+line was established.
+.
+.                                     Run #1  Run #2  Run #3    Ave   Time
+.0 RUNM "HISTML"                      ------  ------  ------   -----  -----
+.10 DEFINT A-Z                          0.1%    0.0%    0.1%    0.1%   .01s
+.20 FOR I=1 TO 1000 : NEXT             16.6%   16.6%   16.5%   16.6%   .8s
+.30 FOR I=1 TO 1000 : NEXT I           25.3%   25.4%   25.2%   25.3%  1.3s
+.40 FOR I=1 TO 1000                     6.0%    6.0%    5.7%    5.9%   .3s
+.50 NEXT                               11.2%   11.1%   11.5%   11.3%   .6s
+.60 FOR I=1 TO 1000                     5.2%    6.1%    6.7%    6.0%   .3s
+.70 REM Comment within a for loop      24.2%   23.8%   23.1%   23.7%  1.2s
+.80 NEXT                               11.6%   11.0%   11.3%   11.3%   .6s
+.
+.These times lead to these generalizations:
+.1) 20 vs 30: using a NEXT variable uses more time.  Null for loops like these 
+indicate the overhead associated with executing the loop increments and end 
+condition tests.  Without the NEXT variable an integer for loop has about .8ms 
+of overhead per iteration of the loop.
+.2) 40-50 vs 60-80: the FOR and NEXT overhead times do not depend on the 
+operations within the body of the for loop.  The overhead of remains constant. 
+As a percentage to total time in a for loop it is usually quite small.  The one
+line REM statement requires more time than the for loop overhead.  A for loop 
+of several statements will dominate the overhead time.
+.3) 20 vs 40-50: multiple statements on a line is more efficient than multiple 
+lines.
+.4) 70: REM statements do take up time (this one takes about 1.2ms)
+.
+.
+.Conclusion:
+.The histogram package can be used to obtain specific timing information about 
+a specific program.  Or it can be used on a program designed to show common 
+program situations in order to establish general timing characteristics of 
+BASIC programs.
+
+/ex

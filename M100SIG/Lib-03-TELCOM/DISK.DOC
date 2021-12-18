@@ -1,0 +1,150 @@
+******Documentation for 'disk.100'******       copyright Dieter F. Barth
+  free usable for all m100sig members
+         not for commercial use
+
+
+What it does :
+
+Disk.100 transferes .do- and .ba- files from and to a desktop computer 
+via rs 232 using the utility program 'pip' in the cp/m dos.
+
+All keyboard input and all display including file directory of disk is
+done on m100.
+Disk.100 not only transferes datas it also lets you operate the desktop
+from m100.
+
+Disk.100 resides as .ba file on 2,777 bytes and uses an other 1145 
+bytes if it runs.
+
+How it works :
+
+Disk.100 is used since about six months together with a 'AMPRO little
+board computer' using 'pip' of cp/m dos without any problems.
+
+Disk.100 should also work with any other computer using cp/m dos.
+It should be possible to modify Disk.100 for use with ms dos after changing
+the specific comands in lines 35,39,53,62 and 69.
+
+Disk.100 transfers with the 19,200 baud if your desktop can't handle that
+change variable d in line 1.
+
+How to install :
+
+Load Disk.100 and save it as
+
+            DISK.BA
+
+DON'T USE AN OTHER NAME IT WILL NOT WORK!
+
+Each diskette you want to use with Disk.100 MUST contain the cp/m system
+and the cp/m utility 'pip'.
+
+If you have a coldstart program you can define one of the function keys
+with 
+"Disk"+chr$(24)+"run"+chr$(34)+"disk"+chr$(13)
+and you will have access to the
+program with ONE keystroke.
+You also should open a file with the name 'year' containing '86'.
+
+Functions :
+
+ - start up
+After start up Disk.100 shows the program title on the screen and tries
+to load 'pip' in the desktop.
+If not already done now is the time to turn on your desktop and feed it
+with a diskette.
+After loading 'pip' the screen clears and you will see '*' in the upper
+corner of your screen and there will be a new definition of the m100
+function keys.
+From now on your desktop will accept all 'pip' comands from m100. You
+can leave 'pip' just by pushing <cr> and the system will return with 'A>'
+on the m100 screen and cp/m of your desktop is waiting for cp/m comands.
+If you read a file and want to stop the display just push 'break'.
+Push 'break' again and the display will continue.
+IMPORTANT:
+Disk.100 can't be stopped with ctrlc or shift break.
+If something goes wrong the system jumps to an 'error trap' showing error
+and error line with a terrible sound.
+If the program should hang up then push the 'reset button' ONCE.
+You will be back in the main menu without coldstart.
+
+
+ - f1 = prev
+
+f1 acts like 'prev' in the TELCOM program and shows you the previous 8
+lines of the screen.
+
+ - f2 = down
+
+This routine loads a .txt file from disk as .do file to m100 and starts
+displaying all .txt files of the diskette on the m100 screen and
+finishes display with
+	'filename: ?'
+Input the filename WITHOUT extention '.txt' and the system answers with
+	'downloading...'
+The disk file display can be finished anytime by pushing any key. This
+might be useful if there are lots of files on disk but you already know
+the name of the file you want to download.
+During the downloading a counter in the lower right corner shows you
+something is happening.
+After downloading the .txt file as .do file in m100 the system returns
+again with
+	'filename :?'
+If there is no other file to load then just push <cr> that brings you
+back to disk.100 menu.
+
+ - f3 = up
+
+This routine transferes a .do file of m100 as .txt file to disk and
+starts with displaying all m100 .do files in a simular way as menu does.
+The file you want to upload is selected by using the arrow keys.
+Each selected file displays the name and file length.
+Push <cr> and the system will answer with 'uploading...' and the counter
+in the right lower corner tells you something is happening.
+After the operation is finished the system lets you select an other
+file to upload.
+Pushing 'esc' brings you back to the disk.100 menu.
+IMPORTANT !
+If you want to transfer one file to different disks you can do that but
+you have to send a ctrlc to the desktop after changing the disk.
+
+ -f4 = Cdsk
+
+This routine lets you upload cas: files directly to disk.
+You can prepare a file called 'casfil' with the name of the cas: file in
+each line.
+Disk.100 will read this file and upload all files mentioned in 'casfil'
+automaticly.
+If there is no 'casfil' disk.100 will answer with
+	'filename :?'
+and ask you for input.
+For leaving this routine just push <cr> without putting in a name.
+
+ -f5 = echo
+
+This function key acts like ECHO in TELCOM and everything on the m100
+screen will also be printed.
+
+ -f6 = load
+
+This routine loads a .bas file on disk as .ba file to m100 and starts
+with a display of all .bas files available on disk.
+'Load' acts like 'down' but you wan't see a running counter and the
+transfer seems to be slow because of the conversion from ASCII to basic.
+After downloading the system saves the file as .ba file and returns with
+the disk.100 menu.
+
+ -f7 = save
+
+This routine loads a .ba file from m100 to disk as .bas file and starts
+with a display of all .ba files in m100.
+Files are selected by using the arrow keys and the screen shows the
+length of the selected file.
+<cr> starts uploading the file and 'esc' lets you leave the routine without
+transfer. After transfer the system returns with the disk.100 menu.
+
+ -f8 = menu
+
+Pushing f8 brings you back to m100 main menu setting maxfiles=1 and
+stringspace=256. It also makes sure the year in date$ is correct.
+

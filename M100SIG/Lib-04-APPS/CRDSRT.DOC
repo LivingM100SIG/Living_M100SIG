@@ -1,0 +1,120 @@
+                        CRDSRT.BA v3.0
+                      ------------------
+
+     Version 3.0 is a complete re-write of CRDSRT.BA; at 2139 bytes it is 150 
+bytes smaller, faster and it supports Disk based data files! This program lets 
+you completely sort CRDFIL cards by any priority of Prompt fields. It is easy 
+to use and fully compatible with the 100/102 or the 200.
+    Please read ALL these instructions before using CRDSRT. They're not 
+complicated but they ARE necessary.
+    There are only two limitations to CRDSRT's use:
+ 
+     1> The total combined length of each "card's" data fields PLUS the number 
+of prompts cannot exceed 253. Example: 8 prompts/fields with 31 characters in 
+EACH field would be 256; (8+8x31=256) TOO BIG: but 7 fields with 31 char. each 
+and 1 with 28 would be OK; (8+7x31+1x28=253). (That's a full M100 screen but 
+half a T200's.)
+         CRDSRT has two routines to check card length: one to use before you 
+sort and the other monitors the assembly of the "sort" file and gently aborts 
+the program (with NO data loss) and displays 210 bytes of the offending card if
+your sort file contains one you didn't remember. Ifyou find a card that's too 
+big you'll have to edit your card info before you re-run CRDSRT against that 
+file.
+
+     2> You must have FREE RAM available for use of at least 3500 bytes with 
+CRDSRT in RAM, PLUS the size of your data file when using a Disk based file; 
+3500 PLUS TWICE the size of your data file if sorting a file in RAM.
+
+
+
+		- SET-UP -
+
+     With these limitations in mind, here's how to begin. Download CRDSRT.DOC (
+this file) & CRDSRT.BA.  M100/102 users also download SORTHI.100 this DL. T200 
+users will need SORTHI.RT2 from DL10. EDIT the garbage and checksum them as .DO
+files. SAVE a .BA copy of CRDSRT to RAM.
+     RUN SORTHI.100 or SORTHI.RT2 as appropriate. SORTHI.100 will create 
+SORTHI.CO for the 100 and SORTHI.RT2 will create SORTH1.CO for the 200. Each of
+these .CO files MUST be loaded in their respective machines whenever you run 
+CRDSRT.BA.
+     If you'll be sorting Disk based data files you must have your disk loaded,
+the drive on and a DOS installed that is "ON" and which recognizes "0:" 
+commands.
+
+
+
+		- OPERATION -
+
+     When you run CRDSRT.BA you will first be prompted <D>isk  <R>am. Here you 
+will choose the source of your data file. Pressing "D" will display your disk 
+files and insert a "0:" for you. If you press "R" RAM files will display. 
+     Enter the name of the file in either instance WITHOUT prefix with or 
+without extension. You will then be prompted to check the file's data length. 
+I'ld recommend that you always respond "Y" the first time you process any data 
+file if your cards contain a lot of data. As mentioned above, a card that's too
+long won't cause any data loss but can be frustrating.
+     (When this "check" routine runs, you will see the first card that CRDSRT 
+finds that exceeds 253 characters and the program ends. If all OK then re-run 
+CRDSRT; ,otherwise you'll have to edit your data file before re-running.)
+
+     Your current prompts will be then display with an "ID <n>" next to each. 
+You can sort your cards by any field priority you choose and YOU create this 
+sort priority by entering the ID <n>'s in the priority you wish the cards to be
+sorted.
+     For example: if your cards have 5 prompts the screen will display <1>
+prompt1 <2>prompt2 etc. through <5>. 
+     If you wanted to sort them by 4 3 2 1 5 priority that's how you would 
+enter their ID <n>'s. Type 4, press ENTER; type 3, press ENTER etc. As you 
+enter the field numbers they will display above the prompt line. If you should 
+make a mistake simply press ENTER and the original sequence will re-display; 
+start again. (Be sure to enter ALL the prompt ID <n>'s.)
+     If you only wanted to sort them by field 5 then your sequence might look 
+like this: 5 1 2 3 4. After you enter the last number you will see your prompts
+redisplayed in your new "sorting" priority. If it's OK press Y and CRDSRT will 
+go to work; if NOT OK then press any other key and the "original" prompts will 
+re-display and you can start again. (CRDSRT will BEEP and reject any 0; any 
+number that exceeds the number of prompts; or any combination of numbers that 
+would indicate the duplication or omission of a prompt ID <n>.)
+     CRDSRT will then show the card numbers as they are being prepared, print 
+out your "sorting" file to SRT***.DO, call SORTHI.CO/SORTH1.CO to do the 
+sorting, and return to CRDSRT to reprint your cards' data in their original 
+format BUT with the cards sorted in their new priority. Please be patient when 
+running large files. Sorting is M/L fast but re-writing a 5K file will take 1-2
+minutes.
+     Your cards will be sorted by their "ASCII line value". If you left spaces 
+at the beginning of a card's data field, that card might be placed ahead of 
+other cards relative to THAT field; The ASCII value of "1st" is less than 
+"First" and "FIRST" is less than "First" etc. Keep this in mind when creating 
+CRDFIL files. 
+    When finished sorting, CRDSRT will display the file directory of the file's
+source, Disk or RAM, and you will be asked to name the "new" file. Press ENTER 
+to use the previous name and your file will replace the previous file or enter 
+a new name. The file will then be saved to the same source as the original.
+    When CRDSRT finishes writing the new file it returns to the main menu. You 
+can then process your file with any of the other CRDFIL programs as usual.
+
+
+
+		- ERRORS -
+
+     The error trapping routines are only designed to catch problems in the 
+card file string lengths. If you enter a wrong file name, are short on RAM or 
+some other error the program will END and display the error code.
+     If you error out because of lack of RAM then go to the computer main menu,
+kill SRT***.DO and SRT###.DO, if found, and clear some more space. Re-run 
+CRDSRT.
+     Let me know if there is interest in a version of CRDSRT that would sort 
+card lengths over 253 characters. Tony has suggested a "key" sort system and I 
+will write one if there is interest. I don't have very big "cards" though so 
+CRDSRT works fine for me.
+
+
+-------------------------------------------------------------------------------
+
+
+     Please direct comments and suggestions to me at 73267,552. HAPPY SORTING!
+
+Randy Hess
+Omaha, Ne
+1/19/89
+

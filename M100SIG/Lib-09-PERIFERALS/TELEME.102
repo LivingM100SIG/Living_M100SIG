@@ -1,0 +1,34 @@
+TELEME.100 by Paul Globman
+           Copyright (c) 1993
+
+TELEME.100 requires RAM100.CO and enhances TELCOM so that
+the TERM F7 key will give the user access to the EME RAMPAC
+via RAM100.CO.
+
+When you run TELEME.BA you will go to TELCOM as if you had
+selected TELCOM from the Menu.  Dial and log on as usual and
+once on-line, use F7 when it is necessary to move files
+between RAM and RAMPAC.  Turn the TELCOM label line off
+before pressing F7.
+
+From the RAM100 menu, press F8(Term) to get back on-line. 
+To prevent the accidental use of F7 from TELCOM (when
+RAM100.CO is not installed) TELEME.BA removes TELCOM from
+the menu so your only access to TELCOM is via TELEME.BA.
+
+If you want to restore TELCOM to the menu for use without
+RAM100, go into BASIC and type...
+
+    LOAD"TELEME"<enter>
+    RUN5<enter>
+
+This will restore TELCOM to the menu and "unhook" the F7
+key.
+
+0 'TELEME.100 (c) 1993 by Paul Globman
+1 CLEAR0,61546:LOADM"RAM100"
+2 POKE63864,184:POKE64270,118:POKE64271,240:POKE61653,106 :POKE61654,240:POKE62759,84:POKE62761,114:POKE62762,109
+3 FORX=0TO11:READY:POKE61546+X,Y:NEXT:CLS:CALL20806
+4 DATA 205,68,66,205,49,66,205,85,84,205,58,66
+5 POKE63864,176:POKE64270,243:POKE64271,127:CLEAR0,MAXRAM :MENU
+

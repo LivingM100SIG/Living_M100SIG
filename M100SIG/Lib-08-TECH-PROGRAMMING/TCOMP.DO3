@@ -1,0 +1,55 @@
+TCOMP.DO3: The New Features of TCOMP.12x   (A supplement to TCOMP.DOC & .DO2)
+
+NEW FEATURES:
+	MATH EXPRESSIONS: You are no longer restricted to the rigid syntax of 
+the earlier Tcomp versions.  Tcomp.12x allows you to use ANY math expression 
+consisting of the following operators:
+	+ - * / \ ^ ( ) OR AND XOR NOT < = > PEEK SGN ABS INP(n)
+This means that everywhere an "e" term (meaning <e>ither variable or numeric) 
+was allowed, you may now use a math <e>xpression.  Example:
+		A=-(J+1)*PEEK(Q+(A=>5))
+
+	PRINT CHAINING:  The PRINT statement will now allow any number of items
+to be printed in a single statement by separating them with semicolons. 
+Example:
+		PRINT @A*5+1,"The CHR$ of";J;"is ";CHR$(J)
+
+OTHER IMPROVEMENTS:
+	A RESTORE is no longer mandatory before any READs.  It still requires a
+line number if you do use it, tho.
+	The strange pointer problem described in TCDOC.DO2 has been worked 
+around & should no longer appear.
+	All variables are now cleared to zero at the beginning of the compiled 
+program rather than by the compiler.
+
+NEW STATEMENTS:
+[LET] v=e  (general form)		IF e THEN n
+ON e GOTO n[,n,...,n]			IF e THEN more statements
+ON e GOSUB n[,n,...,n]			LINE (e,e)-(e,e)[,e]
+FOR v=e TO e [STEP e]			NEXT v[,v,...,v]
+[LET] v=RND(e)*e
+	Where v=variable, n=numeric constant, e=math expression
+	(Please note the specific syntax regarding the RND function.)
+
+Regarding FOR/NEXT:  Tcomp is currently setup to handle 5 levels of FOR/NEXT
+nesting.  You can expand/reduce this number by adjusting line 7071 where is says
+VT=VT-38.  Replace the "38" using the following formula: 8 * (# of levels) - 2
+
+Array table:  This version of Tcomp makes use of several rather large arrays.
+I have arbitrarily sized them to suit my needs.  If you should get a subscript
+out of range error or you just want to free up a bit of space, feel free to
+adjust these sizes.  The DIM statement is in line 7021 and the meanings of the
+arrays are as follows:
+	L & M: Line number/Memory address lookup table
+	S% & S: Support Routine address table (DO NOT ADJUST)
+	U% & U: Expression processor stack
+	V$ & V: Variable name & address lookup table
+	A% & A: Address adjustment table
+	X: Control variable internal to Tcomp (DO NOT ADJUST)
+
+A final thought:  As Tcomp grows, it needs more space.  Please keep this in 
+mind when you download programs from the database that were compiled by earlier
+versions.  Adjust the starting & ending memory locations accordingly.
+
+Thanks again to everyone for all the expert help.  PS: Strings are on the way!
+	Mike Weiblen  Delphi: EKIM  CIS: 72506,2072   7/23/85

@@ -1,0 +1,120 @@
+QIKDMP.DOC
+G.W.Flanders [73300,2772]
+February 4, 1988
+	This text file includes a BASIC loader (QIKDMP.BA), and instructions on
+how it can be incorporated into your own BASIC programs to provide a quick
+M-100 graphic screen dump. If you're interested in the annotated source
+code, download QIKDMP.SRC (checksum: 470,478).
+	First, a few notes on the ML itself. It occupies just 240 bytes;
+but makes use of just over 2K bytes, including buffers. So although it
+appears to run from D2F0h/54000d to D3DFh/54239d, it actually extends
+through DB64h/56164d. This may compromise available RAM somewhat if
+your M-100 is an 8K machine.
+	The ML routine performs two time-essential functions with impressive
+speed: (1) it writes to or reads from a 1920-byte graphics buffer (D3E5h/54245d
+-DB64h/56164d) as it stores or repaints the screen; and (2) it converts each
+value (x) in the buffer into xMOD16 and x\16, sending the resulting codes to a
+bit-addressable line printer in two passes per screen line. This same two-
+pass technique is often used in BASIC, but QIKDMP cuts printing time from
+typically three minutes down to about 40 seconds! Depending on the size of your
+ printer's buffer (assuming it's enabled), the time is shorter still. In my
+setup, I have a 64K Taxan printer buffer sitting between my M-100 and printer.
+Control returns from printing after only 13 seconds! Not bad, considering that
+the printer receives a total of 11,520 bytes in the process, plus setup,
+linefeed and mode commands.
+	It's worth explaining why a 1920-byte area is required to hold the
+screen information, since there are only 320 cursor positions on the LCD. Under
+each position are six bytes of information; the cursor is a rectangle
+six pixels wide and eight pixels deep. Hence, 320*6=1920. In its selection of
+ROM routines which read and record all that data, QIKDMP also eliminates the
+distraction of seeing the cursor flash across each screen position.
+	QIKDMP reproduces each of the 240 bytes in the screen row three
+times, for a total of 720 columns; and does so twice: once with the MOD16
+values for the top half of the row image and again with the \16 values, for the
+bottom half. Each screen row is handled in the same way. This technique results
+in a printout which is roughly 6" wide - 80% actual size - spread across normal
+text width on 8 1/2 x 11 stock. In order to place the printed image near
+center, QIKDMP sets the printhead to our desired left margin, in this case
+position 10.
+	We also define a linefeed value which will neither separate the two
+halves of each row, nor separate the bottom of one row from the top of the
+next. The high-res command is issued on each linefeed, according to printer
+protocol; but the linefeed command need only be given once, at the beginning.
+Exiting from the screen dump, we issue a command to the printer which returns
+it to its default settings.
+	Now for the BASIC loader. Machine code must be loaded in RAM from
+54000 to 54239. Be sure to start your BASIC program with these commands:
+	xxxx CLEAR 256,54000:FOR I=54000 TO 54239:READ A:POKE I,A:NEXT
+	This loads the ML code, and protects the area above 54000 from
+intrusion by BASIC by resetting HIMEM. Once you've done this, the rest of your
+program falls into place - the commands and/or responses which draw the graphic
+screen you want to save. When it's done, and before you ask the user anything
+on the screen (which would spoil the graphic), do the following:
+	xxxx CALL54000
+	This pokes the 1920 values on the graphic screen into the graphics
+buffer defined by the ML routine. Then, you can prompt the user to request the
+screen dump, or go directly to it with this command:
+	xxxx CALL54053
+	Now the screen dump takes place. The routine returns to the BASIC line
+or command immediately following the CALL.
+ 	If at any time you want to repaint the graphic, erasing prompts,
+etc., use this command:
+	xxxx CALL54004
+	This CALL refreshes the screen, filling it again with the stored image.
+	If your program goes on to create another graphic, and you want to
+print that one too, remember to always CALL54000 FIRST, then CALL54053.
+Otherwise, the buffer will still contain the previous screen. A good idea is to
+imbed each of the CALLS in a GOSUB.
+	DATA for the ML routine is found in lines 10000-10003 below. You can
+make them any line numbers you want, so long as the order doesn't change. Don't
+be concerned about the ",," notation where it appears, or with a "," at the
+end of a line. BASIC knows we mean ",0," or ",0". This notation simply saves
+bytes in your program.
+
+10000 DATA175,195,246,210,62,1,50,9,211,33,229,211,175,50,244,255,175,50,245,255,229,205,92,118,22,,205,50,116,225,1,6,,9,58,245
+10001 DATA255,60,254,40,194,1,211,58,244,255,254,7,200,60,195,253,210,62,1,50,117,246,33,208,211,205,88,90,33,229,211,62,8,50,224
+10002 DATA211,205,77,211,58,224,211,61,194,53,211,33,220,211,205,88,90,175,50,117,246,201,34,227,211,205,170,211,6,240,42,227
+10003 DATA211,235,26,213,197,95,22,,33,16,,205,223,55,205,162,211,193,5,202,114,211,209,19,195,89,211,209,62,13,231,205,170,211,42
+10004 DATA227,211,235,6,240,26,213,197,95,22,,33,16,,205,126,55,205,1,53,205,162,211,193,5,202,155,211,209,19,195,127,211,209,62
+10005 DATA13,231,19,235,201,125,205,177,211,231,231,231,201,33,215,211,205,88,90,201,254,,200,17,193,211,61,202,191,211,19,195,183
+10006 DATA211,26,201,192,48,240,12,204,60,252,3,195,51,243,15,207,63,255,27,77,10,27,65,8,,27,76,208,2,,27,64,13,
+
+	Before you exit your program, you should reclaim use of all user RAM.
+To do that, simply execute this command prior to exiting:
+	xxxx CLEAR256,MAXRAM
+	Finally, some information about printers. Take a look at these data,
+which occupy the last 16 bytes in line 10006:
+-----
+27,77,10,27,65,8,(0),
+27,76,208,2,(0),
+27,64,13,(0)
+-----
+These are commands specific to Star Micronics/Gemini printers, and may or
+may not be suitable for yours. Let's examine what they do.
+(A)	[27,77,10] means ESC"M"CHR$(10), which tells the printer to set its
+left margin to space 10. You could make the "10" something else to suit
+yourself; but don't make it larger than 20 or 21, or the printout won't fit.
+Naturally, a value less than 0 would bomb, also.
+(B)	[27,65,8] means ESC"A"CHR$(8), which sets linefeeds to 8/72" (1/9").
+The next [0] is an "end of string" delimiter required by the ROM routine
+CALLed by QIKDMP.
+(C)	[27,76,208,2] means ESC"L"CHR$(208)CHR$(2). That sets high resolution
+mode and tells the printer to expect 720 columns of data per line. The
+following [0] is another delimiter.
+(D)	[27,64,] means ESC"@" (reset to defaults) and [13] means send a
+carriage return. The final [0] is another delimiter.
+	If you find that your printer uses the same codes for those commands,
+you're o.k. Most non-Gemini users will have to substitute the proper decimal
+values in the data statements. BE SURE THE CODES YOU REPLACE OCCUPY THE SAME
+NUMBER OF BYTES IN THE SAME LOCATIONS AS THIS ORIGINAL, or the program will
+bomb. Should you find your codes contain fewer bytes, pad with zeros, because
+the ML routine will be pointing at a specific address to pick up the start
+of the string. If you have an Epson FX, or the like, the only change you'll
+need to make is in (A) above, where the code for left margin is a lower case
+"L", not an upper case "M" as with Gemini. Hence, for Epsons the "77" in
+data becomes "108". A brief session with your printer manual should clarify
+your requirements.
+	I chose a starting address of D2F0h/54000d because my disk operating
+system lowers MAXRAM to E26Fh/57967d and 54000 is a nice even number. If you
+want DATA for a higher load, download QIKDMP.SRC, reassemble it at an address
+of your choosing and do a BASIC PEEK loop to get the data. Enjoy!

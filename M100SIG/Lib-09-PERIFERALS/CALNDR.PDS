@@ -1,0 +1,92 @@
+     Date: Jan 28,1987, Wed                      Page 1
+
+
+
+     ======================
+     PowrDOS Modification
+     for Executive Calendar
+     ======================
+
+     I have been asked by a few people about a PowrDOS mod for some of the
+     older Tandy programs for the M100.  At the end of this file is a
+     program patch for the Executive Calendar program (CALNDR.BA).  All you
+     have to do is paste out the patch, check the checksum with DOWNCK.BA,
+     and merge the patch with the cassette version of CALNDR.BA.  Then just
+     save it to disk.
+
+     The program as patched is designed to be used with a disk data file
+     named CALNDR.DO.  If this file is not present the program will beep
+     and allow you to start a new CALNDR.DO file or load a NOTE.DO file
+     from tape.  You also have the options to write the respective data
+     file to disk or to cassette as you desire.  As in the original
+     CALNDR.BA you MUST WRITE THE FILE YOURSELF by choosing the appropriate
+     function key.  The program does not auto save to the disk on exit.
+     This is easy to change if you want.
+
+     I keep DMENU.BA in RAM almost all of the time and CALNDR is patched to
+     return to DMENU if it is in RAM.  I find it most convenient to run
+     this program from DMENU using the transient program area.  You can
+     then exit to DMENU and load another program right over it if you
+     wish.
+
+     I use the name CALNDR.DO instead of NOTE to keep from having a number
+     of 'NOTE' files using different program formats and containing
+     different data.  If you rather use NOTE.DO as a file name simply
+     change it in the patch before merging.
+
+     DO NOT LOAD CALNDR.DO TO RAM BEFORE RUNNING THE PROGRAM.
+
+     The program will not load the file either but instead will read the
+     data from the disk file.  The elimination of all of this loading,
+     saving, killing et al. is one of the primary advantages of PowrDOS.
+
+     There is nothing intricate or complicated about this patch and it
+     should be easy for you to modify to suit your purposes.
+
+     I have already modified a number of my old Tandy programs to take
+     advantage of PowrDOS's unique features.  I will be happy to UL these
+     also if enough folks on the SIG show an interest in these programs.
+     If you would like to know if I have a patch to a particular program
+     and want to place a request for it please leave me a message on the
+     SIG.  My PPN is 70337,3727.
+
+     -ronnie-
+
+
+
+
+
+
+     Ronald D. Riche, 1700 Aycock St., Arabi, LA  70032, [70337,3727]
+
+
+
+
+
+
+     Date: Jan 28,1987, Wed                      Page 2
+
+
+
+     Checksum of patch= 87,377
+     You should have lines 0,5,15,28,160,200,210,220,230,240,1100,
+     6950,6955,6960,6965
+
+     Here's the patch...
+
+
+0 CLS:LFILESV
+5 CLEAR4000,MAXRAM:J8=50:CLS:PRINT@0," Executive Calendar - PDD Version 1:00 ";:PRINT@95,"Calendars":PRINT@165,"Copyright 1983 by Tandy Corp.":PRINT@242,"Modified for POWR-DOS by Ron Riche":KEYOFF:FORX=1TO8:KEYX,CHR$(X+247):NEXT
+15 OPEN":CALNDR.DO"FORINPUTAS1
+28 CLOSE1:IFERR=52THENGOSUB200ELSERESUME30
+160 PRINT@280,"Prev Next Any  Week  Day WDSK WTpe Menu";:LINE(0,55)-(239,55):RETURN
+200 CLS:BEEP:BEEP:PRINT@40,"CALNDR.DO not found on disk";:PRINT@120,"'ESC' to create new CALNDR.DO file.":PRINT@200,"'ENTER' to load NOTE.DO from tape."
+210 K$=INKEY$:IFK$=""THEN210
+220 IFK$=CHR$(27)THENME=0:RESUME30
+230 IFK$=CHR$(13)THENCLOSE1:OPEN"CAS:NOTE.DO"FORINPUTAS1:RESUME26
+240 GOTO210
+1100 CALL 23164,0,23366:CALL 27795:CLS:IFDSKI$("DMENU.BA")>0THENRUN"DMENU.BA"ELSEMENU
+6950 BEEP:IFME=0THENPRINT@280,"    There is no data to save to DISK.  ";:FORX=1TO400:NEXT:GOTO6980
+6955 PRINT@280,"       Saving CALNDR.DO to DISK        ";:GOSUB6860:OPEN":CALNDR.DO"FOROUTPUTAS1:GOTO6970
+6960 BEEP:IFME=0THENPRINT@280,"  There is no data to save to cassette.";:FORX=1TO400:NEXT:GOTO6980
+6965 GOSUB 6860:PRINT@280,"Ready Data Cassette, then press 'ENTER'";:R$=INPUT$(1):IFR$=CHR$(13)THENPRINT@280,"         Writing data to tape.         ";:OPEN"CAS:NOTE.DO"FOROUTPUTAS1:GOTO6970

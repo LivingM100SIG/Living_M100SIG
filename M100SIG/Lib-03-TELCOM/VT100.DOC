@@ -1,0 +1,74 @@
+    VT100.100 is a program designed to emulate a 24x80 full screen terminal.  
+Two different brands of terminal protocols are supported:  Dec VT100 and 
+ADM models 2, 3, 31 and 32.
+
+    It does this by trapping the protocol control codes to modify a RAM 
+simulation of the terminal screen.  The LCD of the M100 is used as a window 
+into the larger screen stored in RAM.
+
+    The program remembers where the cursor is located even if the window 
+is positioned over a different portion of the RAM screen.  The window will 
+home in on the cursor when F5 is pressed or any other key is pressed to enter 
+data.  As data is entered, if the next data character is located outside the 
+limits of the LCD window the display will automatically home in on the new 
+cursor location.
+
+    Due to the size limitations of the LCD, the display will tend to become 
+very jumbled as the host transmitts a screen to the M100.  This is not a bug 
+in the program, but a design feature so that you can tell when the host has 
+completed its transmission.  Attempting to "view" the screen before the host 
+completes transmitting can result in losing characters.  Upon termination 
+of the host transmission the function keys can be used to de-jumble the LCD 
+display.
+
+    The following describes use of the function keys:
+
+
+KEY   Description
+---   -----------
+
+F1    Display lines  1-8  columns 1-40
+F2    Display lines  9-16 columns 1-40
+F3    Display lines 17-24 columns 1-40
+F4    Shift display 40 columns (left or right)
+
+F5    Home window on current cursor location
+F6    Print the RAM screen
+F7    Not used  (see programming notes)
+F8    Disconnect phone and return to MENU
+
+
+    After you customize the program for your own use the program is very 
+easy to use and quite capable of keeping up with the host at 300 baud.  It 
+should be noted, however, because the program is written in BASIC an external 
+modem at a higher baud rate would be wasted.
+
+
+PROGRAMMING NOTES:
+
+    The variables IX and IY contain the current cursor location.  KX and 
+KY are the location of the LCD window.  String EA is used to detect the use of 
+the cursors, TAB, BKSP, DEL and other special control codes.  EB translates 
+the detected character to the proper control code.
+
+    IE is a switch indicating that CHR$(27) has been detected.  EY is the 
+control character that indicates cursor positioning data follows.  EJ is the 
+control code for erase to end of screen from current cursor location.
+
+    PH$ is the string used to hold the host phone number for the autodial 
+ROM routine.
+
+    Lines 124-134 and 164-172 may be deleted as they are specific to my 
+host environment.  PH$ is initialized at line 118 to send a CR on carrier 
+detect to cause my host modem to shift down to 300 baud.  You may want to 
+change this to some other character sequence for you application.  NOTE: 
+do not send anything that would cause the host to transmit characters until 
+program initialization is complete at line 174.  The ROM routine lockup if 
+too many characters are recieved because there is no input buffer until the 
+dial operation is complete.
+
+    Line 140 should be modified with you host system phone number.  Lines 
+152-155 contain the MDM stat parms.
+
+    Line 102 was included so that you can define an operation for F7.  The 
+current instruction sequence is essentially a no-operation.

@@ -1,0 +1,199 @@
+[Note: this is heavily edited version of CONFER.043 of 1985 devoted to
+  discussion of the Chipmunk portable disk drive.
+  See CONFER.PCG (formerly CONFER.084) for discussion of other PCSG products.
+    Both CONFER.043 & 084 of 1985 have been deleted from the Data Library.]
+
+Edited transcript of Chipmunk conference.
+ Cast of CHR$: "L Holmes" = Larry Holmes, developer and manufacturer of the
+ Chipmunk Portable Disk Drive; "MICHAEL STANFORD" = Sam Redman and Michael
+ Stanford of Portable Computer Support Group, CDOS and software specialists
+ for the Model 100 and Chipmunk; "MIKE, PCSG" = Mike Anders, who will be the
+ principal representative of PCSG on the Model 100 SIG.
+
+10:56:19 AM EDT Sunday, April 28, 1985
+
+(WALT S.) Can a disk be in the drive at power up/down?  Which end of cable
+ should be disconnected, disk drive end or computer end, or doesn't matter?
+(L Holmes) Actually, the drive is powering up and down constantly; before and
+ after each disk access for example. It is NOT a good idea to have a good disk
+ in the drive when you turn the power switch on or off; you could lose a disk
+ that way!--Doesn't matter which end of cable you disconnect; whatever is
+ convenient.
+
+
+(MIKE, PCSG) I'm using my M200 today.   What's involved in changeover
+(L Holmes) Hardware: you need a new cable/plug/hostadapter assembly..
+ software needs to be changed also--PCSG is working on that but right now
+ we have agreed that the bundled software should be done first.
+
+(WALT S.) Which should be turned on first, computer or disk drive.....PCSG I
+ agree with Ed about software but I would like to be involed in Beta testing
+(L Holmes) Just a gentle but firm reminder: beta testing means that you get a
+ product almost guaranteed to have at least one bug, maybe more.  Make sure
+ you can handle that before you get involved.  As far as I know it doesn't
+ matter which you turn on first, drive or computer, but for the record,
+ I would turn on the drive first.
+
+(Maddi) Some time ago there was mention of developing the capability of adding
+ a 2nd Chipper drive. How is that coming?
+(L Holmes) The Chipmunk CDOS is already capable of handling two drives...all
+ that is required is a two-drive adapter, which has been designed and
+ de-bugged. we are just waiting for all the parts to come in, then we will be
+ ready to start producing.  My guess though is that it will take anaother
+ 3-4 weeks before it all comes together.
+
+(Ed R) PCSG, do I call Dallas to help you in beta testing?  Also, will you
+ comment on pricing of bundled software and possibility of pricing items
+ seperatly for us "pioneers".
+(MICHAEL STANFORD) Yes, call us in Dallas to get hold of pre release stuff.
+ It is unlikely that we will 'unbundle' the six programs simply because we
+ would have to price them so high seperately.  It really is a very good deal
+ for them all to be available at such a low cost, and we could not do that if
+ they were to be split up.
+
+(DaveW.) My question has to do with technical documentation. Are there any
+ plans to make available schematics for the drive and commented disassamblies
+ for the software? I would be willing to pay additional for such information.
+(L Holmes) I'll comment on schematics and pass disassemblies question to PCSG
+ in a min. We cannot make schematics available at this time.  To do so would
+ give our competitors the ability to cash in on the hundreds of thousands of
+ dollars of research we spent on the design of the hardware, and we can't do
+ that the design is a bit unique and must be protected.
+(MICHAEL STANFORD) Larry's comments apply equally to the software
+
+(TED R.) I left the power on a few times by mistake, will this hurt the
+ batteries or does the chipmunk disconnect from them at a low battery level?
+(L Holmes) The chipmunk does not acutally disconnect at low battey but it does
+ drop to low power consumption state.  It does not hurt the batteries to be
+ discharged fully, though they might begin to resent it after a hundred such
+ cycles or more!  In other words, try not to leave it on but if you do, just
+ re-charge them for 24 hours (you can use it in between-just make sure there
+ is a long charge time within a couple of days after the total discharge
+ occurs).  The batteries are not as fragile as we once thought
+ according to the people who supply them to us (General Electric).
+
+(Ed R) PCSG, any plans for an M/L single drive backup utility from you? 
+ How can other programmers write M/L programs if you don't provide some
+ limited knowledge or hooks into CDOS?
+(MICHAEL STANFORD) It is very easy to write ML for the chipmunk. The way to
+ implement it is to use the BASIC hooks left by Suzuki et al. For the disk
+ routines unimplemented in the Standard ROM.
+(L Holmes) There is some info in DL (4?) about how to write M/L routines with
+ the 'munk; the first person to work on the chipmunk CDOS, Don Corbitt, put it
+ there. it may not be 100% correct, but it is close enough for a reasonably
+ good m/l programmer to figure out what he wants to do.  It tells how to
+ write and read through CDSO, etc., using the hooks Micahel/PCSG mentions.
+(Sysop .^Dave^.) The file is CDOSML.INF in DL4.
+
+(HowardC) is the software package in Basic or machine language?
+(MICHAEL STANFORD) Most of it is in BASIC. Extended Disk BASIC, of course. 
+ You can look at the code and use it as examples for your own code for maore
+ rapid learning. But some stuff had to be in ML, notably the Telcom extensions
+
+(Ron J) did you discuss how to ECHO to Chipmunk from TELCOM COnference?
+(MICHAEL STANFORD) The way the telcom extension works is just like regular
+ Telcom, but when you press Up or Down you are able to put a disk specifier in
+ the filename. If you happen to have a disk file that is too big to fit in M100
+ memory, there is a very rapid utility to split it up into multiple disk files.
+(Ron J) I just did DOWN (F2):0:file and got "download aborted"!
+(MICHAEL STANFORD) You need the Telcom extension software from us
+
+(DaveW.) There is a way to download to munk while on line using software in
+ this Sig, the program to use is TERM.MR1 in DL4. this does a very good job
+ but disk access time can be speeded up by two methods; one which I am using is
+ a mod to the program to store incoming to a RAM file and transfer to the disk
+ when memory is full; the other would of course be a machine language approach
+ such as PCSG is employing.
+
+(DaveW.) I occationally get a low pitch squeek from my munk which used to be a
+ warning of possible CRC error coming. Is this a problem or meerly a nuisance?
+(L Holmes) The squeak is definitely not normal if I understand you correctly,
+ if it is a mechanical noise that is.  Now, the power supply in the 'munk is a
+ "switcher" running at 90,000 cycles per second.  When the batteries start to
+ "die off", they go VERY fast (fall 2-3 volts in 30 seconds!) and the power
+ supply may start to "whine" at an audible pitch when the batteries aresping
+ and wheezing.  I suspect this is the noise you are hearing and is perhaps an
+ unintended bonus for you!  At least you have a way of knowing that you'd
+ better stop and charge the batteries!  Did I understand your question
+ correctly Dave W?
+(DaveW.) The squeek I hear is very LOW pitch and appears to be when the head is
+ moving to a new possition. Maybe a grinding type noise but reverberates and
+ vibrates case.
+(L Holmes) OK, now I know what you mean, situation is still the same: your
+ batteries are very low and need to be re-charged.  At this point, though, your
+ low battery light oought to be glowing bright red.  Is it?
+(DaveW.) It does come on when accessing the disk then goes back of when access
+ is finished. I keep charger on all the time.
+(L Holmes) Maybe you should talk to our service dept. via phone, write, or
+ just send your 'munk back for service if you wish....could be a number of
+ problems.
+
+(WALT S.) What about compatibility with RAM extesions for exampe, it look slike
+ the PG DEsign 32K unit fits in the same place as the 'munk circuit board in
+ the bottom of the M100. And the same for the PCSG 64K
+(MICHAEL STANFORD) We are not familiar with the PG design 32k but believe it
+ does not provde provision for other devices to be attached to the bus at the
+ same time.  The Cryptronics/PCSG 64k RAM does have such a provision, and both
+ it and the Chipmunk can be connected simultaneously. It does, however require
+ a minor modificttion to the Chipmunk header board to work in banks 2 and 3,
+ though it works in bank 1 out of the box.  The modified header board is
+ available from us.
+
+(JIM K) for all of us non-techies out here, why should i invest in a munk
+ versus the  bubble product i read about somewhere in this sig?
+(L Holmes) The bubble memory product has ultimately the same limitation as
+ add-in RAM; once you fill it up (and you will fill it up quickly I can
+ promise!), you must start to delete files to make room for more.  With the
+ chipmunk, all you do is put in another $5 disk and you have another 36K of
+ storage.  Add to that....
+(MICHAEL STANFORD) 360k
+(L Holmes) oops..thanks Michael....
+ the high cost of the bubble and it becomes obvious that the chipmunk
+ is more cost effective.  In very harsh envoirnments the bubble may be
+ the choice, but in those envoirnments, I would not use a Model 100 anyway!
+(MICHAEL STANFORD) There is no question that disk drive storage is superior for
+ the vast majority of applications.  Bubble memory conventionally has
+ application, as larry says, only in harsh environment conditions, mainly
+ military applications
+
+(HowardC) Is there a way in the Telcom software to up or download:
+ (1) bypassing the LCD to go faster with faster modems, and
+ (2) to up/down load thru the 232 port to other computers --
+ hardwired, including binary (nontext) files?
+(MICHAEL STANFORD) In answer tio question 2.
+ The 232 port is accessable from TELCOM simply by chaging your stats (F3).
+ Binary files have certain characters stripped and can cause problems with such
+ as ascii 3 and 18. The best solution for transfer of binary files from one
+ PC to another is DISK+, our ROM program.
+
+(MIKE, PCSG) Just adding to Larry's comments: specs I've compared show the
+ bubble is also slower than the 'munk, at least in data transfer speed
+ 10K bytes per second compared to 8K. 
+
+(Maddi) Larry, XMODEM.312, as well as TERM, can also handle to disk;
+ PG64K also gets around the attachment problem; Have you tried SMART.CHP yet?
+(L Holmes) yes, I have used SMART.CHP and it worked just fine--until the sig
+ software changed...it is back to SMART compatible format now so should work
+ fine.  That, coupled with 1200 baud modem, makes the pocket-book happier
+ now!..you did good job.
+(Maddi) Never had trouble with SMART.DVI with temp. new & old software.
+
+(MIKE, PCSG) the 64K RAM now is fully compatible with the 'munk
+
+(Sysop Tony) Relating to the subject way back when. The PGDesign expansion uses
+ a different expansion plug, so the Chipmunk adapter is not directly
+ "Mate-able". Peter says he is working on adapter cables for the Chipmunk and
+ DVI which will allow use of those devices.
+
+(MERLE D) Is there any chance the pcsg will start supporting 8201 or 8401?
+(MICHAEL STANFORD) yes
+(L Holmes) Holmes is also considering supporting the NEC with new products.
+ the 'munk is not easily adapted to the NEC as it is not much like the M-100
+ in the way it interfaces to peripherals or in software. Should also mention
+ that the Chipmunl runs on the Olivetti M-10 U.S. version, requires a new CDOS
+ ROM and cable and does not use a 'host adapter". function is identical to
+ M-100 Chipmunk in every way....bundled software is NOT currently available
+ for it though.
+
+1:35:45 PM EDT Sunday, April 28, 1985
+

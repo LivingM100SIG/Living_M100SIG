@@ -1,0 +1,230 @@
+				       DP100.REV
+DP100.REV is a comprehensive review of Disk Power 100, a new DOS for the Tandy 
+
+Portable Disk Drive distributed by Ultrasoft Innovations of Quebec, Canada, 
+under license from Hugo Ferreyra, the developer of the software.  Since I have 
+
+had the software in place nearly two weeks and otherwise massaged it, punched 
+it and kicked it every which way I know how, I am now prepared to write this 
+review for the benefit of the SIG members who might be considering the purchase
+
+of a DOS for the TDD.  In addition, the plain old "just curious" folks among us
+
+might find this review interesting.
+The Package
+-----------
+The key elements of the DP100 package are fourfold -- a manual, a distribution 
+
+diskette, an autoloader cassette and a function key template.
+1.	The manual consists of 13 pages	of instructions, 3 pages of tips, a 
+letter from Hugo Ferreyra discussing his philosophy in developing the software,
+
+and ads for Text Power 100 and a joystick interface with a diskette full of 
+games.  While certainly not the most lucid or user-friendly manual I've 
+encountered, it is adequate in discussing use of the software.
+2.	The distribution diskette contains 3 files -- INSTAL.CO (1235 bytes), 
+LOADER.BA (2640 bytes) and SP-DOS.SY (2874 bytes).  Contrary to the findings of
+
+others (or the instructions in the manual), I found that DP100.SY will not load
+
+if other BASIC (BA.) programs are resident in RAM.  Once all .BA programs have 
+
+been removed, loading via the diskette is simple and fast (30 sec.) using 
+either FLOPPY.CO or DSKMGR.CO, and consists of the following steps:  Load 
+INSTAL.CO and LOADER.BA to RAM; clear 0,61730; RUNM"INSTAL".  Presto -- 30 
+seconds later DP100.SY is now in RAM.  Once resident in RAM, the program, when 
+
+"inactive", is located from 33024-35665 (8100H-8B51H), which accounts for 2642 
+
+bytes.  Since the advertised file length is 2897 bytes, I can only assume that 
+
+when DP100.SY is "active", it is located from 32769-35665 (8001H-8B51H).
+Residing in low RAM has a distinct advantage in that there is no conflict with 
+
+other machine language programs (I've tried many) and no need to CLEAR XXXXX 
+every time you want to access the program.  However, it does have one 
+disadvantage -- Disk Power 100 and MENU.BA (for the PG Design 64K RAM expansion
+
+) reside in the same area, and thus MENU.BA (at least in the banks where Disk 
+Power 100 resides) and Disk Power 100 are in conflict.  Accordingly, one must 
+switch banks using BANK.BA.  Sounds like a hassle, but it's not all that bad 
+once you see the "power" of Disk Power 100.  Hopefully, this conflict will be 
+resolved shortly since Richard Eckerlin of Ultrasoft and Peter Van Huesden of 
+PG Design are working on a solution to the problem.
+3.	The Autoloader cassette is intended to be used in conjunction with the 
+
+diskette to automatically load the program after a cold start, with the 
+stipulation that it works only if there are no files present in RAM.  Well, I 
+couldn't get it to work under any circumstances.  It is being replaced by a new
+
+one.
+4.	The function key template fits over the function keys (F1-F8) and lists
+
+the functions for use in RAM or on the disk.
+Program Execution
+-----------------
+The program consists of two basic areas -- the RAM area and the DISK area.  
+Upon entering DP100.SY via placing the cursor over the file on the M100 Main 
+Menu, you go directly to the RAM directory, which is chock full of interesting 
+
+and useful information.  First, all files resident in RAM are displayed (with 
+the notable exception of DP100.SY).  Each file is displayed with a single 
+letter extension (e.g., DOWLOGb, ADRSd and DRIVERc) denoting .BA, .DO and .CO 
+in the above example.  The cursor can be moved around over files and gives 
+useful information for each file including byte size, a "window" feature which 
+
+shows the first line of a .BA file, the first 80 characters of a .DO file, and 
+
+the top, end and exe address of a .CO file.  In addition, at the bottom of the 
+
+screen, the display shows the number of bytes consumed by an unsaved BASIC 
+program, number of bytes in the paste buffer, current setting of HIMEM and 
+number of free bytes available in RAM.  Placing the cursor over any file and 
+hitting ENTER "runs" the file (for a .BA or .CO file).  Real dynamite stuff 
+here -- works very well.  The function keys associated with the RAM directory 
+are as follows:
+	F1 - Clears the paste buffer.
+	F2 - Saves a file to disk with the option to use the default filename, 
+
+rename or overwrite.  You can "highlight" files by pressing the ESC key so that
+
+multiples of files can be saved at the same time.
+	F3 - "All" function key "highlights" all files starting with the one 
+the cursor sits on and continuing to the right to the last file (up to all 19 
+files).  Thus you can "save all" or "kill all" in two simple keystrokes.
+	F4 - Toggles from RAMDIR to DSKDIR.
+	F5 - "Kills" a file or files (see F2 and F3) with blinding speed.
+	F6 - "Lists" a .DO file to the LCD or the LCD and printer.  Very neat 
+feature.
+	F7 - clears paste buffer.
+	F8 - Go to M100 Main Menu.
+The Disk Directory shows all files on the disk (up to the maximum of 40).  As 
+in the RAMDIR, each file has a single letter file extension.  Locking the NUM 
+key over any file gives its byte size.  Locking the NUM key over any file and 
+simultaneously pressing the SHIFT key gives the remaining bytes left on the 
+disk.  Same "run" feature as in RAM, place the cursor over a file and press 
+ENTER.  Function keys in the DSKDIR are as follows:
+	F1 - While in the disk directory of one disk, if you change disks and 
+press F1, the directory of the new disk is displayed.
+	F2 - Load to RAM -- same multiple selection feature as in RAM.
+	F3 - "All" function key operates same as in RAM (up to 20 files from 
+the point of the cursor).
+	F4 - toggles to the RAMDIR.
+	F5 - "Kills" a file or files (multiple highlighted files or "All").
+	F6 - Lists a .DO file, without loading it, to LCD or LCD & printer.
+	F7 - Formats a disk.
+	F8 - Return to M100 Main Menu.
+Extension to Basic/Text
+-----------------------
+One can "Load", "Merge", "Run" or "Save" a .BA program (in ASCii) to or from 
+disk.  The DOS also supports input/output functions such as open, close, 
+append, EOF, Input #, Input $, Line Input #, Print # and Print # Using for .DO 
+
+files on disk.
+Text files can also be loaded from/saved to disk while in TEXT.
+Telcom Enhancement
+------------------
+While online in TELCOM one can go into BASIC and/or TEXT and perform a variety 
+
+of functions.  These are the same functions provided by DIRACC.CO in DL1.  See 
+
+DIRACC.DOC in DL1 for details.
+A really neat feature in TELCOM is that you can see files as they are being 
+uploaded by toggling F4 to "half duplex".
+Finally, although I haven't tried this feature, files can be loaded from/saved 
+
+to disk in TELCOM IF YOU USE AN ACOUSTIC COUPLER.  DPTIP.001 in DL5 describes 
+this feature.
+Special Considerations
+----------------------
+1.	You must have a 32K machine to use Disk Power 100.
+2.	Once loaded in RAM, DP100.SY shall remain forever more, or until a 
+"cold start", whichever comes first.  There is no way to remove or otherwise 
+"kill" DP100.SY.  All attempts to "kill" DP100.SY lead to either an "NM" (bad 
+filename) or "FF" (file not found) error.  Sorry, folks, once you got it, you 
+keep it.  If you'd really like to kill it, use CHANGE.BA to obtain the desired 
+
+cold start.
+3.	T'would be nice to be able to save DP100.SY to cassette or disk and be 
+
+able to bring it back after a cold start.  Again, no can do.  The rationale for
+
+this lack of "Save" is that it is easy enough to load from the distribution 
+diskette (it is), that the distribution diskette is warranted for one year and 
+
+replaceable thereafter for a nominal sum of $5.  Seems reasonable.
+4.	There is no back-up provision for disks.  Using Disk Power 100, the 
+only way to back up a disk is via a cumbersome mass load and save procedure.  
+Alternatively, FLOPPY.CO could be used to back up disks.
+5.	All PGD 64K owners should be aware that MENU.BA (PGD) and DP100.SY are 
+
+incompatible.  You can have one, but not both.  I have been assured by Richard 
+
+Eckerlin of Ultrasoft Innovations that a "fix" is in the making (the sooner the
+
+better).
+6.	Richard Eckerlin is the SIG representative of the vendor.  Richard has 
+
+been most helpful to me (and I can see from the message board to others as well
+
+) by his response to requests/questions ranging from a special shipping request
+
+(Richard actually called me at my office to arrange for priority overnight 
+delivery) to a thoughtful, measured, honest response to any/all questions, with
+
+the utmost rapidity.  I applaud him and could only wish that all vendor 
+representatives act in a like manner.
+Conclusion
+----------
+While I haven't used TS-DOS or POWR-D, from everything I know about them, it 
+seems that Disk Power 100 offers all the features of these alternatives plus 
+additional, useful features unique to the new DOS.  On the downside, the 
+incompatibility with MENU.BA (PGD), and presumably SUPERA as well, is a notable
+
+drawback.  To my knowledge, only Phil Wheeler and I have mentioned this 
+drawback here on the SIG.  If the MENU.BA (PGD) and SUPERA owners create some 
+"noise" here on the SIG, a solution to this conflict could be expedited.  
+Accordingly, if you have any of this incompatible software, you may wish to 
+defer purchase a while until the "fix" is in.  At such time, I would 
+unhesitatingly recommend Disk Power 100 as the DOS of choice for the TDD.
+If anybody has questions about this review, please don't hesitate to let me 
+know.  I'll do my best to answer them.
+Larry Tiber
+75675,302
+August 23, 1986
+
+Addendum
+
+--------
+
+Since my initial review approximately 5 weeks ago, there have been a number of 
+developments which directly affect my original recommendation:
+
+1. In my review of August23, I applauded Richard Eckerlin of Ultrasoft 
+Innovations regarding his representation on the Sig. To the best of my 
+knowledge, Richard has not had a presence here on the Sig since August 25. It's
+not that Richard has been unable to log in here, but rather that he is "too 
+busy on new products and don't have the time to check in on Compuserve." This 
+is not mere speculation on my part, but rather based on a conversation with him
+on his local BBS in Quebec.
+
+2. Richard has continuously misled me into believing that he was having an 
+ongoing dialogue with Peter(PGD) regarding the MENU.BA(PGD)/DP100.SY conflict. 
+As best I can gather, Richard called Peter ONCE and never followed up. 
+Judgmentally, this conflict will not be resolved and those of us who own a PG 
+expansion chip with the MENU.BA software and/or SUPERA ought to strongly 
+consider an alternate DOS. Without going into details, there have been other 
+acts of deception by Richard Eckerlin.
+
+3. With the imminent introduction of POWR-DOS and TS-RANDOM (both offering 
+random access along with other goodies), Disk Power 100 has fallen behind its 
+competition.
+
+Taking all these points into consideration, I can no longer "unhesitatingly 
+recommend Disk Power 100 as the DOS of choice for the TDD." Putting my money 
+where my mouth is, I am already using TS-DOS and am upgrading to TS-RANDOM when
+shipping commences next week.
+
+September 26,1986
+
+

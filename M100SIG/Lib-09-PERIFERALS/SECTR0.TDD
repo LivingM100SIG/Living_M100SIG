@@ -1,0 +1,307 @@
+A MAP OF SECTOR 0
+=================
+joel dinda
+[75725,1134]
+
+This is a map of the Directory Sector (0) on the TDD disk.  Near as I can
+tell it's complete, though I suppose I may have missed something.  It also
+includes some information on related matters, poses some questions for
+investigation, and offers a few opinions.
+
+A couple definitions are in order:  Counts are from 0.  I speak here of a
+disk sector (Sector 0) which is divided into 2 sections.  The first of these
+sections is further subdivided into records.  If you keep these things in
+mind, what follows may make sense:
+
+The directory in Sector 0 is 1292 bytes long (not all of these bytes are
+used). It is divided into two main sections:  One which tells about files, and
+one which keeps track of sector allocation.
+
+FILE INFORMATION SECTION
+*40 records of 31 bytes
+*Begins at Sector 0 Byte 0
+
+The files section is a 40 record database.  It begins with the first (0) byte
+and contains 1240 bytes; that's 40 records of 31 bytes to keep track of up to
+40 files.  Each record has the following format:
+
+	24 bytes reserved for filenames
+	**start at Record byte 0
+	 -Tandy filenames use only nine of these bytes (REQUIRED period at
+	  byte 7, spaces are used to pad the name as necessary)
+	 -the remaining bytes are filled with CHR$(32) (spaces) if there's a
+	  filename in the record
+
+	The next byte is CHR$(70) (letter F) if there's a file
+	**this is Record byte 24
+	 -seems to be a simple(?) flag
+	 -see further comments below
+
+	The next two bytes are the length of the file, stored MSB+LSB
+	**Record bytes 25 & 26
+	 -this format creates the 64K file length limit
+
+	Next two bytes blank (CHR$(0))
+	**Record bytes 27 & 28
+	 -likely reserved for system use; NOT used here
+
+	Next byte locates the sector holding the start of the file
+	**Record byte 29
+
+	Next (final) byte in each record tells the end-of-file sector
+	**Record byte 30
+	 -see further comments below
+
+There are forty such records.  Any record without a file is completely filled
+with CHR$(0) and can be reasonably called empty.
+
+
+
+
+
+
+
+
+
+
+
+SECTR0.TDD                                                            11/15/85
+Page 2 
+
+
+
+SECTOR ALLOCATION SECTION
+*Begins at Sector 0 Byte 1240
+
+The next 21 bytes store information about sector allocation.
+
+Twenty bytes starting with 1240 report the current allocation of the 80 disk
+sectors.  This status is stored as binary information on alternate bits, but
+can be read as decimal numbers (bytes) indicating allocation patterns.  Each
+byte stores information on 4 sectors; 1240 tells about sectors 0 thru 3, the
+next reports 4 thru 7, and so forth.
+
+The patterns:
+	BINARY	     DECIMAL	SECTORS IN USE
+	0000 0000	0	none
+	0000 0010       2	4th
+	0000 1000       8	3rd
+	0000 1010      10	3rd & 4th
+	0010 0000      32	2nd
+	0010 0010      34	2nd & 4th
+	0010 1000      40	2nd & 3rd
+	0010 1010      42	2nd, 3rd & 4th
+	1000 0000     128	1st
+	1000 0010     130	1st & 4th
+	1000 1000     136	1st & 3rd
+	1000 1010     138	1st, 3rd & 4th
+	1010 0000     160	1st & 2nd
+	1010 0010     162	1st, 2nd & 4th
+	1010 1000     168	1st, 2nd & 3rd
+	1010 1010     170	all
+
+Keep in mind that these are patterns within 4 sector blocks and that sectors
+are counted (by the TDD software) from 0.  (Sector 0 is, of course, the disk
+directory, and is always allocated.)  To use this information, you have to
+keep track of which four sectors you are examining.
+
+TDD uses the allocation table when it writes a new file to the disk; it
+checks it to see which sectors are in use and always writes to the
+lowest-numbered sector(s) available.  When a file is erased, TDD also rewrites
+the allocation table.  Note that erasures take more time than might be
+expected because the software must needs traipse 'round the disk to check the
+sectors being freed up.
+
+TDD's internal software assumes the allocation table is correct, and NEVER
+corrects it (it only modifies it as noted above).  If somehow the table's been
+changed, there's some risk that a file will be overwritten.  Note that this
+behavior can also be used to take a disk damaged sector out of circulation.
+
+One more byte: Byte number 1260 reports the number of sectors in use on the
+disk.  This count does NOT include the directory sector.
+
+TDD doesn't care if byte 1260 is correct.  It modifies whatever number it
+
+
+
+
+
+
+
+
+
+
+
+SECTR0.TDD                                                            11/15/85
+Page 3 
+
+
+finds here when you add or delete a file, but doesn't check to see if the
+number's accurate (or even reasonable).
+
+
+That's everything I can tease out of the zero sector.  I suspect there are
+things I've overlooked, but there's more information here than I expect we
+need to know to effectively use the drive.
+
+
+SECTORS 1 TO 79
+Only Sector 0 is heavily formatted.  The other 79 sectors are free-form
+through byte 1279; bytes 1280 through 1291 are apparently reserved for system
+use.  In reality, however, it seems that only byte 1280 actually gets used. 
+1280 stores the next sector number in the file's "chain", so TDD can find the
+next portion of the file.  If the sector's never been used, the number stored
+at 1280 is zero; if the sector is the last in the file, the number at 1280 is
+255.
+
+The remaining 11 bytes in the sector apparently never get used.
+
+What happens if the number at 1280 is wrong?  There seem to be three cases: 
+If the vector's to the wrong sector, TDD has no way to recognize the problem. 
+If the sector's the last in the file, TDD doesn't care and doesn't err (it
+just counts bytes until it locates however many the directory tells it to
+deliver to the computer).  If it's not the last sector in the file, and the
+vector is to a non-existent sector, Powr-DOS reports a drive error (number 59)
+and FLOPPY.CO hangs.  (This is the only condition I've discovered where FLOPPY
+doesn't gracefully handle problems, by the way).
+
+A possible complication is that these vectors are NOT erased when a file is
+KILLed -- the sector is removed from the allocation table, but the "next"
+sector might be reassigned when another file is added.  This should only be an
+issue with file recovery programs, though.
+
+TDD IS "INTELLIGENT"
+The TDD is what is commonly called an intelligent disk drive.  This means
+that TDD contains software (in ROM and RAM) which it uses for such things as
+file management, disk head positioning, and other mundane tasks.  This
+intelligence is important because it's the TDD, not your computer, which
+dictates the structure of the disk directory.
+
+The intelligent disk drive arrangement has advantages and disadvantages.  The
+main advantage is that the drive's ROM routines don't need to be duplicated in
+the computer itself; this makes writing disk driver software mainly a matter
+of collecting and organizing the commands the drive's internal software
+expects (there are complications, especially in this case, but there's no
+reason to go into detail here.)  This is advantageous both because it
+simplifies the composition task and because it saves precious memory.
+
+There are trade-offs, however.  The most important is that the computer is
+pretty much obliged to tolerate the ideosyncracies of the drive's design; for
+instance, while M100 and its kindred expect filenames to be 9 characters long
+
+
+
+
+
+
+
+
+
+
+
+SECTR0.TDD                                                            11/15/85
+Page 4 
+
+
+(including a period), TDD reserves 24 spaces for this purpose.  Near as I can
+tell, Tandy's FLOPPY.CO (by default the software standard, here) invariably
+used the SIMPLEST compromise.  While the third party DOSses COULD adopt other
+solutions, they'd do so at the cost of software compatibility.
+
+Such compatibility may or may not be important, by the way.  Powr-DOS sticks
+to the standard, but offers facilities (DSKO$) with which individual
+programmers might choose to ignore those standards.  This will be a gain only
+if software developers decide to utilize the added capabilities possible with
+such "non-standard" file formats.  (This comment doubtless also applies to
+TS-RANDOM.)
+
+ASSORTED NOTES
+There's a LOT of wasted space here.  Most of it is due to the provision the
+drive's software makes for file names longer than 9 characters.
+
+Not all the numbers in the directory are crucial.  I see no evidence, for
+instance, that any software checks to see if the directory's accurate about
+which sector contains the last piece of the file.  Nor does it particularly
+matter if the number reporting sectors-in-use is wrong.  And while I wouldn't
+recommend modifying the allocation table, the drive doesn't use it when you
+LOAD a file to the computer, or just read the directory.
+
+While the "F" at byte 24 in each file record appears to be a simple (and
+unnecessary) flag, modifying it results in some peculiar behavior.  Seems that
+the drive's software doesn't really care what's there, but it sorts any files
+with an "F" there to the beginning of the list for LFILES or for FLOPPY's LIST
+function.  Near as I can tell, this doesn't change any other behaviors.  Odd. 
+Inexplicable.
+
+Acroatix' documentation for Powr-DOS seems to claim that the computer
+(probably the file transfer software, actually) recognizes the type of file by
+the first character in the extension.  Must be true.  There's certainly no
+better information in the directory.
+
+There does not seem to be an explicit EOF marker for any file on the
+diskette.  This implies that TDD uses the file length information in the
+directory to locate the precise end of the file.  Tests suggest the same
+thing.
+
+My Tandy Utilities disk has CHR$(255) at byte 1280 in Sector 0.  (Note that
+this means EOF in any other sector.  Wonder if it means something similar
+here.)  No copy I've made of the disk has that.  But the Powr-DOS source disk
+has what appears to be a machine language routine beginning at the same
+location.  (Naturally: It doesn't copy either.)  No other disk in my
+collection has ANYTHING beyond 1260 in that sector.
+
+The directory is stored in alpha order and has no intermediate blank entries.
+Deleting or adding a file moves everything around.
+
+On Renames.  Using FLOPPY to rename a file rearranges the directory.  POKEs
+to the same purpose have interesting effects:  It appears that the TDD's
+
+
+
+
+
+
+
+
+
+
+
+SECTR0.TDD                                                            11/15/85
+Page 5 
+
+
+built-in software cares what order the directory's in, as it stops reading the
+directory when it finds an out-of-order filename.  Software which renames a
+file on the disk has to allow for this behavior.
+
+The TDD software also cares about the name of a file to 24 digits:  This
+means that "other" information (I have file creation/modification dates in
+mind) cannot be easily stored in all that empty space.  (Presumably FLOPPY,
+P-DOS, et al, tack spaces onto the end of the name to accomodate TDD.)
+
+It appears to me that a disk name (or other information) could be safely
+stored on the disk from 1261 to 1279 -- and quite likely beyond 1280.
+
+
+My program MAPTDD.100 (in DL5) reports all of these numbers.  If you're
+interested in more detailed explorations, see Phil Wheeler's TDDMON (a
+DANGEROUS program; use with CARE!) and DMPTDD, also in DL5.  Don Ziekel's
+SECDOS (same DL), though its printout is similar to MAPTDD, could be more
+easily adapted to more general explorations than the mapper.  See, too, Don's
+DOSTIP.004.
+
+Remember:  PEEKs are safe.  POKEs are risky, but can teach.
+
+Don and I are clearly tracing the same paths, and Phil's known to be
+interested.  Anyone else chasing this information down?  PLEASE share what you
+learn!  Thanks!
+
+My heartfelt thanks to Ed Giese for Powr-DOS, DSKO$, and for clues about some
+of these things.
+
+joel
+LSJ-Access TBBS
+517-482-8144
+9 October 86
+12 October 86
+15 November 86

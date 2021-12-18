@@ -1,0 +1,83 @@
+PYRAMID is a solitaire game played with a standard deck of 52 cards.  The first
+28 cards are laid out as shown and the remaining 24 are held in the "pack".
+
+The LEFT and RIGHT arrow keys allow you to move the "pointer" to the card you 
+wish to play.  The UP arrow "tags" the card above the pointer, the DOWN arrow
+moves a card from the pack to the "waste" pile.
+
+THE GOAL
+--------
+The idea is to remove all 52 cards by pairing up cards whose values sum up to
+13 or 14 (your choice upon entry into the program).
+Card values go from 1 to 13 for Ace to King.
+The cards available for pairing are the top card in the pack, the top card in
+the waste pile, and cards in the pyramid not "protected" by a lower row.
+Thus, at the beginning of the game, any card in the botton row can be played.
+
+TAGGING
+-------
+If you tag a card, it will display in reverse video.  If you tag a tagged card,
+it will become untagged.  When you tag the 2nd card both cards will be removed.
+If you choose 13 as the sum value, only the King needs to be tagged.
+
+THE GAME
+--------
+You can only go thru the pack 3 times.  Beware if you pair up the two top cards
+of the piles (pack and waste):  they may be needed later to clear the pyramid.
+Tip:  study carefully the pyramid before starting to play.
+
+0 'PYRMID.BA (c) 1990 by P.Globman. Modified by Mike Kelton to run on Model 100
+2 DEFINTA-Z:ES$=CHR$(27):RV$=ES$+"p":NV$=ES$+"q":DIMC(52),D(30),P(24),PY(57):C$="A23456789TJQK":P$="  "+STRING$(2,152)+"  "
+4 B$="NnRr":FORI=27TO31:B$=B$+CHR$(I):NEXT:PRINTES$"V"
+5 K=1:X=10:FORI=1TO7:FORJ=1TOI:D(K)=X+J*4:K=K+1:NEXT:X=X+38:NEXT:D(29)=272:D(30)=276
+6 PRINT@126,ES$"K";:INPUT"Total of pair (13 or 14) ";TT:IFTT<13ORTT>14THENBEEP:GOTO6ELSETT=TT-1
+8 CLS:FORI=0TO4STEP2:LINE(I,I)-(239-I,63-I),1,B:NEXT:PRINT@58,;:FORI=0TO3:PRINTCHR$(159-I);:NEXT
+9 PRINT@97,"PYRAMID":PRINT@139,"by":PRINT@174,"Paul Globman":PRINT@251,"Copyright (c) 1990"
+10 LINE(106,7)-(57,56):LINE(134,7)-(183,56):LINE(134,6)-(195,46):LINE(185,56)-(195,46)
+12 FORI=56TO184STEP2:PSET(I,57):NEXT:FORI=107TO133STEP2:PSET(I,6):NEXT
+14 FORI=1TO52:C(I)=I:NEXT:X#=RND(-VAL(MID$(TIME$,4,2))*60+VAL(RIGHT$(TIME$,2)))
+15 FORI=1TO52:X=52*RND(1)+1:Y=C(I):C(I)=C(X):C(X)=Y:NEXT
+16 Z=0:P0=0:K=1:FORI=0TO6:FORJ=1TOI+1:PY(7*I+J)=K:K=K+1:NEXT:NEXT
+18 FORI=1TO24:P(I)=C(28+I):NEXT
+20 CLS:FORI=1TO29:PRINT@D(I),MID$(C$,C(I)MOD13+1,1)CHR$(156+C(I)MOD4):NEXT
+22 PRINT@191,24:PRINT@195,0:PRINT@27,"Esc to Quit":PRINT@67,"R - Replay":PRINT@107,"N - New Game":Q(0)=24:Q(1)=0:PP=1
+24 PA=1:PRINT@41,"Pass 1":PRINT@121,RV$MID$(STR$(TT+1),2)NV$:P=17
+26 PRINT@276+P*2,P$
+28 A$=INKEY$:IFA$=""THEN28
+30 A=INSTR(B$,A$):IFA=0OR(ZANDA>5)THEN28
+32 ONAGOTO8,8,16,16,34,36,38,48,40
+34 MENU
+36 P=P-(P<19):GOTO26
+38 P=P+(P>2):GOTO26
+40 IFP0THEN28
+42 IFQ(0)=0ANDPA=3THENGOSUB84:GOTO28
+44 IFQ(0)THENPP=PP+1:Q(0)=Q(0)-1:Q(1)=Q(1)+1ELSEPP=1:Q(0)=Q(1):Q(1)=0:PA=PA+1:PRINT@45,PA
+46 GOSUB74:GOTO28
+48 IFP=P0THENP0=0:V=V0:X=X0:GOTO70
+50 IFP>14THEN62ELSEY=P/2+42-7*(PMOD2)
+52 IFPY(Y)=0THENY=Y-15:IFY>0THEN52ELSEBEEP:GOTO28
+54 IFPY(Y+7)ORPY(Y+8)THENBEEP:GOTO28
+56 V=C(PY(Y)):X=VMOD13:S=T-29:IFP0THEN92
+58 IFX=TTTHENGOSUB78:GOTO28
+60 Y0=Y:T=PY(Y):GOTO68
+62 IFP<17ORP=18OR(P=17)AND(Q(0)=0)OR(P=19)AND(Q(1)=0)THENBEEP:GOTO28
+64 S=(P-17)/2:V=P(PP-S):X=VMOD13:IFP0THEN92
+66 T=29+S:IFX=TTTHENGOSUB72:GOTO28
+68 P0=P:X0=X:V0=V:PRINTRV$
+70 PRINT@D(T),MID$(C$,X+1,1)CHR$(156+VMOD4)NV$:GOTO28
+72 PP=PP-S:FORI=PPTO23:P(I)=P(I+1):NEXT:P(I)=0:Q(S)=Q(S)-1
+74 FORJ=0TO1:PRINT@D(29+J),;:IFQ(J)THENX=P(PP-J):PRINTMID$(C$,XMOD13+1,1)CHR$(156+XMOD4)ELSEPRINT"  "
+76 NEXT:PRINT@191,ES$"K"Q(0):PRINT@195,Q(1):GOTO80
+78 PRINT@D(PY(Y)),"  ":PY(Y)=0
+80 IFP(1)ORPY(1)THENRETURN
+82 X$=" CONGRATULATIONS!!":PRINT@192,ES$"K":GOTO86
+84 X$=" PLEASE TRY AGAIN!":PRINT@80,;:FORI=1TO5:PRINTSPACE$(18+2*I):NEXT:PRINT@192," ":IFQ(1)=0THENPRINT@196," "
+86 PRINT@278+P*2,"  ":LINE(92,40)-(36,40):LINE(64,12)-(14,62):LINE(114,62)-(14,62):LINE(114,62)-(64,12):FORZ=0TO7
+88 LINE(64-Z,12-(Z-1)/3)-(37,39),0:LINE(63-Z,12-Z/3)-(37,39):LINE(91-(Z-1)/2,38-1.3*(Z-1))-(64-Z,12-(Z-1)/3),0
+89 LINE(91-Z/2,38-1.3*Z)-(63-Z,12-Z/3):LINE(91-(Z-1)/2,38-1.3*(Z-1))-(37,39),0:LINE(91-Z/2,38-1.3*Z)-(37,39):NEXT
+90 FORI=1TO18:PRINT@172,RIGHT$(X$,I):FORJ=1TO200:NEXT:NEXT:RETURN
+92 IFX0+X+1<>TTTHENBEEP:GOTO28
+94 IFP>14THENGOSUB72:S=1-SELSEGOSUB78
+96 IFP0>14THENGOSUB72ELSEY=Y0:GOSUB78
+98 P0=0:GOTO28
+

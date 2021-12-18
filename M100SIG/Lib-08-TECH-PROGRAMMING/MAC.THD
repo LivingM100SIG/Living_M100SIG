@@ -1,0 +1,341 @@
+
+MAC.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Tony Anderson recently "cut his teeth" on machine langurage programming.
+Rather than tackling a purely tutorial problem, he designed and developed a
+macro program for the M100/102/200.  MACPGM, as it is called, currently
+works in Telcom and Basic, but not in Text.  This THD (likely only the first
+on this topic) chronicles work to integrate MACPGM with two communications
+programs, X-TEL & DIRACC (completed) -- and to add keyboard scan capability to allow
+entry while in Text (still in progress).  See MACROS.DOC (DL3) for more
+info.
+
+Message range: 145957 to 146661
+Dates: 4/19/87 to 4/27/87
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Would it be possible (easily!) to have MACRO called up by something other
+than a function key?  This would allow something like GRPH-m to be used --
+and would eliminate the problems when using it with comm programs which grab
+F6 & F7. Any thoughts on this?
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+It's possible, but not easily.  That's the approach we're having to use in
+order to get it to work in TEXT.  Martin Zimmerman came up with the initial
+idea of routing the keyboard scan routine through a section of MACPGM each
+time, and using GRPH-CODE to signal the jump to Macro routine.  His first
+attempt at using it crashed.  More exploration is required... your question is
+close to the mark, but a bit premature until we can pull it all together.
+
+Once we get it working, all MACRO modes will work the same way.  But stay
+tuned.... news at 11...
+
+
+Fm: Denny Thomas 76703,444
+To: Phil Wheeler 71266,125
+
+  That would be nice, but since F6&F7 are the only user vectors in TELCOM,
+you'd have to take over the entire task much the same way T-Word does. Even
+X-Tel uses those vectors to initiate an action. It scans the keyboard, but the
+action is terminated with F6 or F7.
+  What we really need to do is sit down face-to-face with guys like Joe and Jim
+Irwin and pick their brains, mercilessly! You gonna pop for airline tickets?
+
+
+Fm: Phil Wheeler 71266,125
+To: Denny Thomas 76703,444
+
+Yes, thought about that.  You would have to make everything go through MAC,
+which would have to intercept all Kbd activity, looking for the magic
+keystroke; a bit much!
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+I'm just starting to try working MAC with 0menu and x-tel (thanks to some data
+from Denny).  In looking at 0menu, I find that there is alerady a line 65000 -
+- which is as follows:
+
+65000 PRINT"abcdefghijklmnopqrstuvwayzabcdefghijklmnopqr"
+
+or (in case of line noise) all lower case letters, then a repeat of them up to
+'r'.
+
+Since your prescription for use of MAC with 0menu includes merging in a new
+line 65000, I would like to understand this before proceeding.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+I don't know... Paul didn't tell me about that.  However, if there is already a
+line 65000, then use 65010... doesn't matter, since it's just a place to store
+the code.
+
+Glad you pointed it out, however... didn't know about it.  Paul's version was
+2.1, by the way.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Mine is same version; took some patience to get that line -- since much of the
+listing was gobblety-gook.  But the very last thing was line 65000.  Tks for
+the clarification.  BTW -- assume in counting the 255 byte line, you include
+the line number (5 chars, the space, and REM).  Looks that way in your original
+loader, at least.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Yes... every character counts.  Recall, BASIC will only take lines of 255
+characters, even though it may tokenize them to much less. (65010 = 2 bytes)
+
+After "65010 REM" you should have room for 245 bytes (dots, characters...
+whatever...), which is the exact size of the code.  246, and BASIC won't take
+the line.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Now working on getting MAC installed as an integral part of X-TEL.  And it
+works -- sort of!  First try gives half duplex effect while sending macros. Not
+too nifty, but we'll get there.
+
+
+Fm: Denny Thomas 76703,444
+To: Tony Anderson 76703,4062
+
+Well, we went ahead without you and fixed the source anyway. Seems Eplex
+expands tabs into spaces making the source useless. As a matter of fact, I'm
+going to test my first version in CO after I get done with this message.
+  So far, it sorta works (I tried it offline) but I had a mistake in the
+assembly. The main problem seems to be using an existing key to do the job. We
+are trying CTRL+F6 which is already used for capture to disk. When I talk to
+Joe to get the actual way of doing it, we'll be able to use CTRL+F7 which is
+unused in X-TEL. This will be hot when it's working. Since it's a mod to X-TEL,
+it'll work with any of the X series of modem programs. YOU might even start
+using X-TEL!
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+One thing I've noticed is that the speed of sending the macros out while on
+line looks to be about 300 baud or slower.  Since it is m/l, could be
+faster, I assume.  Is there a good reason for it to be slow, and if I wanted
+to speed it up, how would I go about it (what code to change)? I may have
+figured it out by the time you reply (have not looked at the code in depth
+yet) -- but then again, I may not have!
+
+I havn't checked it out yet, but it should be possible to devise a version
+which will work with DIRACC.  That may have more "user appeal" on the SIG since
+DIRACC has been downloaded quite a bit.  That will allow editing the macros
+while on line, and running Basic programs while on line (e.g., 'RUN"FILEN" or
+RUN"QIKCHK").  But the right "hooks" in DIRACC would need to be found and the
+whole package wiuld be relocatable -- probably using my removable version with
+the entry routine in DIRACC.TIP.  Maybe call it MACACC.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+What I have noticed is, the "jerky" display of characters, and apparent slow
+speed is caused by the forced wait for an incoming (enchoed) character, after
+sending it.  In both versions, the wait is in the SENDIT routine, in the form
+of:
+
+        CALL    GETEC
+        RST     4
+
+I'd guess that removing those four bytes, or NOPing them would speed up the
+routine considerably.  However, at the loss of screen display. ... Maybe.
+
+I've considered trying it myself, but just never got around to doing it.  I
+_think_ when you jump out of TELCOM to send a macro, when you return, whatever
+was incoming will then be dumped to the screen.  When the incoming buffer fills
+up, the computer should send an automatic ^S to stop incoming data flow, but
+not affect outgoing data.  If this is true, your macro "echo" would be seen
+when you return to TELCOM.  The background task should automatically send a ^Q
+as the RS-232 buffer empties.
+
+I've noticed that, when uploading macros to the message board "Expanding RAM is
+a common interest...", that after the first line prompt, there is always
+something in the buffer, and so there is no wait for an echo.  Sending is much
+faster from that point on.  Try leaving a message with MACPGM, and see what I
+mean.  First line is normal, slow, and jerky... send line, and the rest of the
+macro is real fast.
+
+This obviously points out an area of the program that needs work. (Who, Me?)
+
+I agree, connecting MACPGM with DIRACC may be of more interest than an X-tel
+version.  Hooking it up with one of the XMODEM programs might be of interest,
+too.
+
+
+Fm: Phil Wheeler 71266,125
+To:  76703,444
+
+I have a version which works with MAC just below X-TEL -- sort of.  It seems to
+work on its own, but when I run it with XHAYES it logs on to the point where it
+echoes the "G" in "GO M100SI" and bombs.  Same XHAYES works fine with the
+normal X-TEL and a similar one (different addresses) works with my successful
+XTMAC set-up.  And the XTMAC.CO program seems to work if I log on manually --
+but it is not fully tested.Let me know if you find anything.  Could be it is
+in one of your m/l routines. Of course, anything in XH which references
+HIMEM will be a disaster!!
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Are you saying that if your reloacte X-tel, and put MACPGM _above_ it, it works
+fine; but that if you leave X-tel alone, and locate MACPGM _below_ it, it won't
+work? That's really wierd!
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Well, not quite.  It seems to work both ways if I use it alone.  But when I use
+XHAYES to autodial, I get a cold start in the middle of log-on process - if I
+use the version with X-TEL not relocated and MAC just below it.  That is even
+stranger -- since M/L code seems to be the same (and work the same) either way.
+The thing is, XHAYES has M/L in it, and (not having the source) I have no way
+of telling if that could be the problem.  But it seems unlikely. Only Denny can
+tell!
+
+
+Fm: Phil Wheeler 71266,125
+To:  76703,4062
+
+I'm currently composing this on line using a MAC+DIRACC program, after
+assembling the whole thing as a single source and loading it at 62000.  CO file
+is less than 400 bytes for the whole thing.  Gives macros, access to Text and
+access to Basic while on line.
+
+Turning this into a Basic relative loader would be pretty easy from here.  A
+Basic loader to work MAC over DIRACC will be a bit more of a problem.
+
+In any case, the job can be done -- and I think this combination is one of the
+more useful free (but not public domain!) comm utilities for the M100.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+Gosh, see what the wizards can do in machine language... Great!
+
+Now I'm wondering if I'm truly impressed by DIRACC.  Will have to take a look
+at it, keeping in mind it's greatest usefulness is to folks without an external
+modem. (Are there many of those dodo's left?)
+
+Sounds like what you have, though, is a completely new program, incorporating
+the best of both.
+
+Question in my mind is, is it really that useful to be able to get to BASIC or
+TEXT while online?  For the average user, who goes off to do various things
+while still connected, the clock is ticking, and he may be surprised at the
+end of the month.  I firmly recommend against such online use.  Maybe in a
+few rare cases it's justified, but not many. (I think)  Give me some "for
+instances" to change my mind.
+
+
+Fm: Eiji Miura 76703,4311
+To: Tony Anderson 76703,4062
+
+They probably won't use neither BASIC nor TEXT while online with CIS, for the
+reason you mentioned, but it can be useful with free systems, like when calling
+local BBS' or accesssing a mainframe at work.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+There are plusses to being able to edit RAM files while on line, advantages
+which I have availed myself of for some time.  For example, to add to a
+message composed off line, before uploading to board -- or correcting a DES
+that's too long (or wrong) during an upload session without having to abort,
+and do the whole thing over again later.  Or to read a doc file for
+reference while on line (e.g., a list of ppn's).
+
+Must have some value.  As of several days ago Hugo's original pgm had been
+downloaded 554 times, and my "enhanced" versions a total of 380 times.
+
+
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+Tony, I have just completed a loader to add MACPGM to DIRACC.  Note that it
+does not save a program to the Menu (DIRACC does not work that way).  It
+loads as a resident. The LDR also has an unloading option. Short doc covers
+the essentials.
+
+Also sent a new version of DIRACC (DIRACC.PW3) to DL3. It has some minor
+MAC-oriented mods, but will work on its own. too.  It will replace all
+previous DIRACC.PW* when it has been "field-tested".
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Tony Anderson 76703,4062
+
+Hi, Tony!  Saw something in a .CO xscript re: MACPGM and pending investigation
+of the keyboard scan interrupt.  That code gets real sticky in a hurry.  DVORAK
+darn near gave me a bald spot because of that hook!
+
+Being unfamiliar with MACPGM, I'm guessing, but mayhaps you'd prefer the CHGET
+hook at FADEh (64222d), called via RST 7 when OS wants a key.  Your routine
+might, for example, call 12D6h (where OS was headed after the RST 7), thus
+bringing you the keystroke.  Then you can play with it as desired, either
+passing it back to OS unmodified, changed to something else, or just kidnap it
+entirely.  In any case, you may wanna POP the return address off the stack
+before doing a RET, or it heads right back to 12D6h when you're done.  (Unless,
+of course, that's what you want.)  Reckon I should leave it there 'til I know
+more about MACPGM's intentions. Let me know if I can help with any ideas.-
+- Nuge
+
+
+Fm: Denny Thomas 76703,444
+To: Mike Nugent (TMN East) 71426,1201
+
+Facinating info, Nuge. The light was just about dawning for me on this subject
+and it looks like I was heading in the right direction. Would it be wise to do
+a DI before and EI after the RST 7?  And what is the offset used or is that
+user defineable.
+
+The idea is just to be able to detect certain combos of keystrokes and act upon
+getting a hit. This is getting good!
+
+
+Fm: Tony Anderson 76703,4062
+To: Mike Nugent (TMN East) 71426,1201
+
+Hi Mike.  We just thought of your DVORAK approach Saturday, and were going to
+explore it next week, as time permits.  An early attempt at intercepting the
+keyboard scan routine crashed.
+
+Thanks for the information you provided, it will help us along the way.  We
+already have macro capability running in TELCOM (used regularly) and in BASIC.
+(in both direct input, and line input response in a running program)  Now
+trying to solve the TEXT problems.  But it looks like we'll be converting over
+to keystroke intercept for all modes, as it offers some advantages over the
+crude method we kludged up to get it running in BASIC.
+
+Thanks for the offer of help, may have some questions along the way.  I've just
+started learning assembly language, and the macros program was my first major
+project.  Want a copy?  Check the file MACROS.DOC in DL3, and let me know your
+machine configuration.
+
+

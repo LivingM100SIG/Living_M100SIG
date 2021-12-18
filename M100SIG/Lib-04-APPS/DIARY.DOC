@@ -1,0 +1,352 @@
+A brief history of DIARY.400
+----------------------------
+
+Although I consider DIARY to be a perpetual
+calendar/scheduling program, there are commercial programs
+on the market with similar abilities and advertised as "time
+management" programs.  I think this description is extremely
+misleading... DIARY does not manage your time... just helps
+you schedule it!
+
+DIARY was written in 1983 and has gone through many
+revisions.  I had written no less than three machine
+language versions of the program, but kept running into
+problems [I don't feel like distributing a program that
+complains about other programs in RAM, and could not find
+any easy way around it].
+
+Anyway, looking back at the code for DIARY.301, I found two
+problems:
+
+ - It required a small M/L ALPHA.CO file to be resident
+ - It required SUBLIB.CO to be resident
+
+The ALPHA.CO file was used for a quick "capitalization"
+routine (so searches would find text whether it was in lower
+or upper case).  The "problem" with this was
+  1) it required to be stored in a specific location in RAM
+  2) it may not be in RAM, making DIARY abort with a rather
+     obscure error message.
+These problems have been alleviated with a new file called
+"DIARY.CO", which is loaded if found in the directory, or is
+created if it is not found.  The creation routines relocate
+the DIARY.CO just under the current value of HIMEM, enabling
+it to work with just about any type of setup (CDOS, Bullet,
+Supera, PRO-AID, etc.)
+
+The SUBLIB.CO file was a very early submission into the
+Model 100's public domain, and when DIARY was first written,
+I assumed EVERYBODY would have SUBLIB on their machine,
+which has proven me wrong!  SUBLIB was only used for a SORT
+function, which has now been removed from the program.
+
+
+How to load DIARY
+-----------------
+
+If you downloaded this program via TELCOM as "DIARY.DO", you
+must first convert this program into a .BA file.  You can do
+this by entering BASIC and typing:
+  LOAD "DIARY.DO"
+
+
+You will see the word "Wait" flash underneath your command. 
+If you get the message "?OM Error", then you either do not
+have enough RAM for both the .DO and the .BA file, or you
+have a few other large programs in memory.  If you have a
+16K machine, you will find that DIARY.DO takes up over 10K
+and DIARY.BA almost 7K, which is more than 16K together.  If
+this is the case:
+  1. Enter the DIARY.DO file,
+  2. Save it to cassette using the F3 (Save) function,
+     and "Save to: DIARY"
+  3. Enter Basic and KILL "DIARY.DO"
+  4. Rewind the tape and then CLOAD "DIARY"
+
+If you have more than 16K but a lot of files, you may wish
+to save you other files to cassette (or disk, if you have
+one) and then try loading DIARY.DO again.
+
+
+How to run DIARY
+----------------
+
+Simply select DIARY.BA from the Menu and the program will
+run.  A copyright notice will appear briefly [although it's
+public domain, I still retain rights to the sale of the
+program... you can give it away, but if you sell it, that is
+illegal].
+
+If the DIARY.CO file is not found in RAM, Diary will create
+one.  If you are watching the screen and see the copyright
+message disappear and then come back, that is probably what
+happened.
+
+If the NOTE.DO file is not found, it will be created and a
+message will be displayed to attest to that fact.
+
+If you get a message "?SN Error in 193", just type "RUN"
+and press the ENTER key.  I do not know why it does that,
+but if I find out why, I'll upload a fix.  However, this is
+not an earth-shattering problem.
+
+DIARY is all ready for work once it displays the calendar
+for the current month (with the current date highlighted).
+This is known as the "Calendar" screen.
+
+If the calendar is not for the current month, you might want
+to exit the program and reset your DATE$ variable.  Note
+that DIARY has a perpetual calendar.  If you have DAY$ set
+incorrectly, it will not bother DIARY.  While you are
+setting the DATE$ variable, you may also want to set TIME$
+correctly since it is displayed constantly.
+
+To exit Diary, just press the F8 (Menu) key.
+
+
+All right, now what?
+--------------------
+
+Once you are at the Calendar screen, you are ready to use
+Diary.  First, be forewarned... Diary has a "chirping" alarm
+that beeps twice every hour on the hour when it is running. 
+I like the feature on my watch so much that I programmed it
+in.  It can be removed... see the section on customizing
+DIARY.
+
+At the Calendar screen, you have a few options.
+
+You will notice that the current date is highlighted.  This
+is reffered to as the "cursor" and can be moved around.
+
+By pressing an ARROW key, you will move the cursor in that
+direction.
+
+LEFT Arrow      Moves the cursor one day foreward
+RIGHT Arrow     Moves the cursor one day backward
+UP Arrow        Moves the cursor one week backward
+DOWN Arrow      Moves the cursor one week foreward
+
+Additionally, the F4 (Prev) and F5 (Next) key position you
+to the start of either the Previous or Next months,
+respectively.
+
+Well.... that looks like fun!  But useful???
+
+If this was all that was to DIARY, it would be a big
+disappointment.  However, there's more!
+
+VIEWing Entries
+---------------
+
+Diary is more than a perpetual calendar.  It also helps you
+schedule your time.
+
+Selecting the F1 (View) function will display any entries in
+the NOTE.DO file for the date that is selected.  Each entry
+will be displayed, one at a time.  If there is no reference
+to that date in the NOTE.DO file, a message will be
+displayed ("... not found in NOTE  .DO file").
+
+When an entry is displayed, you have the following options:
+
+F1 (Next)       Proceed to the next entry in the NOTE.DO
+                for the selected date.
+
+F1 (Cont)       If the entry is too long to fit on one
+                screen, the F1 key will be labelled "Cont". 
+                Pressing F1 at this time will display the
+                rest of the entry.
+
+F4 (Chg)        This selction allows you to modify the entry
+                currently being displayed.
+
+F5 (Add)        This selection will allow you to add an
+                entry into the NOTE.DO file.
+
+F6 (Del)        This selection allows you to delete the
+                entry currently being displayed.  This will
+                not occur, however, until it is confirmed.
+
+F8 (Exit)       Pressing F8 will return you to the Calendar
+                screen.
+
+When there are no more entries, the message "n entries
+found" (where "n" is the number of entries in the NOTE.DO
+file for the current date).  At this point, the F5 (Add) and
+F8 (Exit) functions are the only ones available.
+
+
+Editing Commands
+----------------
+
+When you are adding or changing an entry, you will see a
+flashing cursor which will show your current place in the
+entry.
+
+Pressing the LEFT or RIGHT arrow will move the cursor
+forward or backward through the characters in the entry. 
+Note that you can not go past the end of the entry or prior
+to the beginning.  The BACKSPACE key is identical to he LEFT
+arrow key.
+
+Pressing DEL (Shift-Backspace) will cause the character
+under the cursor to be deleted and all text to the right
+will be shifted to the left.
+
+Pressing ESC will insert a space at the cursor position and
+all the text to the right will be shifted to the right one
+space.
+
+Press ENTER when the addition or modification is complete.
+
+DIARY informs you that CAPS or NUM lock keys are on by
+displaying their status in reverse video on the bottom of
+the screen when they are on.
+
+The F7 (Eras) key will erase all text in the entry.
+
+The F8 (Abrt) key will cancel all edits made and return to
+the entry display.
+
+
+Other functions
+---------------
+
+From the Calendar screen, there are three additional
+functions:
+
+F3 (Srch)       Allows you to search the NOTE.DO file for
+                any particular text string.  Note that case
+                (upper/lower) is ignored.
+
+F6 (Adrs)       This function is similar to the F3 (Srch)
+                function, except the ADRS.DO file is
+                searched.
+
+F7 (Off)        Powers off your Model 100.  Note that just
+                switching off the machine does not perform
+                the same function, since the graphic "box"
+                around the Month/Year and Time will
+                disappear.  This function is more for
+                aesthetics than anything else.
+
+ENTER           The ENTER key acts the same as the F1 (View)
+                key.  Thus, DIARY offers the same commands
+                as the main Model 100 MENU.
+
+
+Compatibility
+-------------
+
+NEC 8201
+
+Sorry... this program uses the PRINT @ function extensively. 
+It would require a rewrite.  It is possible, but I do not
+think I am the one that will be doing it.
+
+
+Tandy 200
+
+The program will not run on a Tandy 200 without a major rewrite.  Too many
+peeks and pokes that will need to be changed.
+
+
+CDOS and M/L "Utilities"
+
+From initial reports, DIARY is "clean".  That is to say,
+DIARY does not bother other programs, and they do not bother
+DIARY.  So far, CDOS and Supera have been tested.  In fact,
+I would be interested in hearing about ANY program that
+gives DIARY a hard time (or vice versa).
+
+
+Customization
+-------------
+
+ADRS and NOTE files
+
+  The default Address and Note files may be modified by
+  loading the "DIARY" in Basic and typing EDIT 162.
+
+  Assign the value of your Note file to the variable "DF" and
+  your Address file to the variable "AF".
+
+  For example,
+
+  162 ...:DF="NOTE  .DO":AF="ADRS  .DO":... etc
+
+  Assigns NOTE.DO to DF and ADRS.DO to AF
+
+
+Getting rid of the "Chirper"
+
+  The "chirper" is the "BEEP BEEP" that occurs every hour on
+  the hour.  If you REALLY want to get rid of it, load
+  "DIARY" in Basic and EDIT 162:
+
+  Remove the GOSUB175: statement from the line so it reads:
+
+  162 AU="... etc
+
+
+Adding a SORT routine
+
+  I took out the Sort code in DIARY for a couple of reasons,
+  one being the relative obscurity of the SUBLIB m/l file. 
+  It is big, bulky, and not necessary for the practical
+  running of DIARY.
+
+  Since DIARY was released, a pretty good programmer named
+  Rick Perry has written a program called ALARMS that
+  provides a perpetual alarm (it will interrupt ANYTHING as
+  long as the Model 100 is on) and a pretty nice SORT
+  routine.  If you need a SORT routine, I would recommend
+  putting this program into you RAM and then adding the
+  following:
+
+  128 RUN"ALARMS"
+  167 L1="View Alrm Srch Prev Next Adrs Off  Menu"
+
+  This will set F2 (Alrm) to run the ALARMS program, which
+  will then be able to sort your NOTE.DO file.  Simple, eh?
+
+
+Any more enhancements?
+----------------------
+
+It's doubtful, but always possible.  For instance, DIARY.301
+was supposed to be the "last version of DIARY in BASIC".  I
+was wrong once...
+
+
+Anyway, there will be at least one more version, with all
+the line numbers resequenced.  The code is still pretty
+tight, even though I patched it for the .400 release, but
+could probably be reduced.  However, the code is so dense
+right now that I do not know if it is indeed a worthwhile
+modification.
+
+
+Acknowledgements
+----------------
+
+Thanks to all the people who have been using and commenting
+on the DIARY programs since Day 1.
+
+Jesse Bob Overholt, who was the author of SUBLIB.CO, without
+which the first version(s) of DIARY would not have been
+feasible and therefore possible.
+
+Sysop Dave (and Mortimer) for suggesting a new DIARY at the
+same time I was considering it (sheer providence, no?).
+
+All those whose time and efforts on the M/L versions of
+Diary (which may yet be released) were helpful.
+
+
+August 16, 1985
+
+larry gensch
+104 Lowell Rd
+Salem, NH  03079

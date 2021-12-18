@@ -1,0 +1,22 @@
+0 DEFSTRE-Z:E=CHR$(27):Q=CHR$(34):R=CHR$(13):S="Cls:files"+R:T=STRING$(3,127):B=64228:I=E+"p":N=E+"q":CLS:SCREEN,1:'FUNCKY.100 3/1/84 J. BAGNALL 75765,706
+1 F=" Off ":C=PEEK(B)+256*PEEK(B+1):IFC=63615THENF=" On  "
+2 PRINT@1,"Select F-Key Setup":PRINT"1-Record","2-Kill":PRINT"3-Name","4-Reset":PRINT"5-CR/LF is  "+CHR$(154),I;F;N,"6-Quit
+4 ONINSTR("123456",INPUT$(1))GOTO7,8,9,11,13,20:GOTO4
+5 GOSUB6:KEY1,"Keylist"+R:KEY8,"Menu"+R+CHR$(254)+R+CHR$(245)+">"+CHR$(10)+CHR$(204)+"?m"+CHR$(241)+CHR$(201):RETURN
+6 CALL23164,0,23366:CALL27795:RETURN
+7 GOSUB5:KEY2,S+"Load"+Q:KEY4,"SOUNDON"+R:KEY5,"Soundoff"+R:KEY6,"MOTORON"+R:KEY7,"Motoroff"+R:GOTO1
+8 GOSUB5:KEY4,S+"Kill"+Q:KEY5,"?fre(0)"+R+"run"+Q+"fl"+R:GOTO10
+9 GOSUB5:KEY4,S+"NAME"+Q:KEY5,"AS"+Q
+10 KEY6,".BA"+Q:KEY7,".DO"+Q:GOTO1
+11 GOSUB6:GOTO1
+13 IF F=" On  "THENPOKEB,243:POKEB+1,127ELSEPOKEB,127:POKEB+1,248
+14 GOTO1
+20 CLS:FILES:END
+30 ' FUNCKY.100 Function Key definition program. 3/1/84 J. Bagnall  75765,706
+35 'Program incorporates same function setting approach as previous FUNKY.101/102 but also includes Hugo Ferreyra's CRLF patch (FIXLF.HF1) in Func. Key 8.  Hugo's caveat still applies in that any program that re-Defines Key 8 will disrupt the CRLF
+36 ' patch and jam your printer. Use with caution. It has been included mainly for those that travel and might be confronted with various printer's to use or use the same printer with more than one ocmputer. Menu choices are as follows:
+37 ' 1) Recording Setup                      2) Kill RAM file setup                  3) Name RAM file setup                  4) ROM Reset (Caution: will disrupt CRLF patch)
+38 ' 5) Enable/Disable CRLF patch (shows "On" or Off")                               6) Exit FUNCKY.100
+39 ' Generally for Kill & Name, f4 initiates the sequence, use f1 to "keylist" the specific functions. Kill key f4 requires that FILEN be saved in RAM as name "FL". If you have another favorite program that you use a lot,
+40 'you can reduce it's name to two letters and substitute it into line 8. Note: if you keylist, Key 8 (Menu) will show a character string that comprises the CRLF M/L patch. This does not affect the normal Menu function.
+41 ' Delete all remarks for a 687 byte program.....   questions & comments to: J. Bagnall 75765,706

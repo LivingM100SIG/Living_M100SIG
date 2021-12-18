@@ -1,0 +1,201 @@
+ 
+DVI2nd.INF
+ 
+Adding a second disk drive to the DVI & using THREE sides!!!
+ 
+INTRO
+=====
+  Shortly after I purchased my DVI, I realised 166.5K just wouldn't cut it, so
+I sought out a second drive.  Not wanting to pay $260 (plus 75% tax) for the
+2nd drive, I asked my hardware hacking buddy what he thought about it, and this
+article is the result of my endeavor.
+   Normally, adding a double sided drive to the DVI would yield an expensive
+single sided disk drive. By using a SPST switch a manual side select can be
+implemented. Unfortunately, to use the second side would require the operator
+flip the switch under prompts from the program. A better solution is to use a
+micro-jack (the same size as is used on the REM jack on the cassette cables),
+and plug the REM plug into the jack.    (Some of you can see where this is
+leading to.) Now, we can access the second side by using the "MOTOR" commands.
+We will discuss how this is accomplished momentarily.
+   What we are doing here is selectively enabling side 0 and side 1 of the 2nd
+drive. Under normal conditions, side 0 is enabled, and the heads are moved back
+and forth under commands from the controller. If we were to disable the side 0
+head and enable the side 1 head, we will be accessing the second side. The
+easiest method I found to accomplish this is what this article is all about. 
+IMPLEMENTATION
+==============
+ 
+*** WARNING ***
+ BY PERFORMING THIS PROCEDURE YOU WILL VIOLATE AND VOID YOUR WARRANTEE. PERFORM
+THIS PROCEDURE AT YOUR OWN RISK. I CANNOT ACCEPT ANY LIABILITY FOR ANYONE USING
+THIS PROCEDURE.
+ 
+  Parts required:
+    1 sub-miniature jack
+    1 Shugart SA455 DS drive (or equiv)
+    Wire (hook-up, fine)
+    4 Screws (for mounting drive)
+  Tools required:
+    Soldering iron
+    Solder, fine, electronic grade
+    Phillips head screwdriver
+    Drill & bit
+    Magnet
+ 
+  Procedure:
+    1. De-energize the DVI IAW DVI procedures. Disconnect the DVI from the
+M-100/T-200. Place the DVI where you can work on it.
+    2. Open DVI case.
+    3. Remove front cover.
+    4. Insert SA455 in lower slot. Locate mounting holes, mark, and drill holes
+in DVI lower case structure. This step will require patience. Exercise caution
+when drilling - maintain control over the filings. Collect filings using the
+magnet. When you are satisfied the SA455 is securely mounted, remove the drive.
+    5. Locate terminal pads #34 and #12 on the drive edge connector. #12 is
+side 1 enable; #34 is side select; by tying these two together, the DVI will
+access the back side, thinking it's the front side of drive 1:.
+    6. Solder two wires to pad #34 and #12. These wires should be long enough
+to reach the jack installation point you have selected from the edge connector
+with the drive installed. I selected as the location of the jack the front of
+the DVI, about 1.5" below the POWER LED. NOTE: THE JACK MUST NEVER COME IN
+CONTACT WITH THE METAL CASE OF THE DVI. EXTENSIVE DAMAGE MAY RESULT TO THE
+DRIVE CONTROLLER. For this reason I chose the front as it is plastic. Also, by
+using the front, a small cable can be constructed to control the second drive.
+See final comments.
+    7. Connect to the other end of these wires the jack.
+    8. Install drive, connect power and data connectors. Use caution - DO NOT
+FORCE CONNECTORS. The data connector is keyed, so it will connect in only one
+direction.
+    9. Route jack wires to selected mounting point. Drill hole and mount jack.
+Ensure wires do not interfere with moving parts of either drive.
+   10. Secure drive using bolts.
+   11. Check all connections for tightness and integrity.
+   12. Reconnect computer to DVI and power up system IAW DVI procedures.
+   13. Connect your cassette cable to the computer, and the REM plug to the
+jack.
+   14. Test operation of 2nd drive:
+      A. Use system disk. (Supplied with the DVI unit.)
+      B. RUN"0:FORMAT"
+      C. Format drive 1: - there should be no errors. If there are, re-check
+your construction against this procedure.
+      D. LOAD"DNAME" (previously downloaded from DL4)
+      E. Edit line 200:
+          200 DSKO$1,1,13,1,A$
+      F. Edit line 300:
+          300 LFILES 1: END
+      G. SAVE"DNAME" and then RUN
+      H. Name this disk "Side A"
+      I. MOTOR ON
+      J. Format disk 1: again.
+      K. RUN"DNAME"   (again)
+      L. Name this disk "Side B"
+      M. MOTOR OFF
+      N. Type:
+        CLS:LFILES 1:MOTOR ON:LFILES 1
+         You should see:
+           SYSTEM VER MM.DD.YY
+           Side A
+           166.5 K AVAILABLE
+           SYSTEM VER MM.DD.YY
+           Side B
+           166.5 K AVAILABLE
+           Ok
+   15. This completes system checkout.
+ 
+COMMENTS
+========
+   For the cost of a double sided drive (I paid $150) and a jack ($2 MAX) you
+can have a DVI running three drives!!!
+(The factory single sided, and the double sided drive.) Granted, there is one
+major disadvantage: You have to select which side to use with the MOTOR command
+(OFF -> side A, ON -> side B), which can make programming a little tricky or
+tedious, but you save over $100, and get twice the drive. Since my ultimate
+goal here was to create a system to run a small BBS on, and I'm fairly
+proficient at programming, I can accept the tradoffs involved. (I KNOW where my
+files are - so it's no big deal to select side B to get a file, then select
+side A for another file. Prior Proper Planning will clearly reduce the adverse
+effects of selecting sides.)
+   Once again, for 60% of the cost of a 2nd drive from Tandy. you can TRIPLE
+your disk storage. And if your clever, the judicious use of DSKI$ and DSKO$
+will allow you to recover the two inside tracks on both sides of the 2nd drive,
+for an added bonus of 4 more usable tracks (8K per side). Now who can't use an
+additional 16K of disk space???
+   By obtaining the cassette connector, a sub-miniature plug, and a small
+amount of wire (2 lead), a cable can be constructed to control the 2nd disk,
+instead of tying up you cassette cable, or having 3 feet of cabling laying
+about looking untidy. See following diagram for pin connections:
+
+    /---v---\     Pin #   Function
+   /  7   6  \      1    Remote
+   |    8    |      2    GND
+   |3       1|      3    Remote
+   |  5   4  |      4    Receive data
+   \    2    /      5    Transmt data
+    `-------'       6    GND
+                    7    No Connectn
+                    8    No Connectn
+ 
+ 
+    Connect cable to pins 1 and 3 for remote plug.
+ 
+ 
+   Abbreviations used:
+      IAW - In Accordance With
+      MM.DD.YY - Current date.
+      Capital Letters - Either a warning, a filename, or what you must type in.
+ 
+   The previously mentioned friend and I put this project together (including
+interruptions, and one mistake) in about 3 hours. The interruptions were phone
+calls, and our mistake was in trying to mount the jack in the back of the DVI -
+mounted in the metal cabinet. Fortunately we realised what we did, and averted
+any trouble. Also included in this time was hooking up a switch to see if this
+idea would work. When it did, we proceded to the REM jack idea. All-in-all, it
+went fairly smoothly, with no hangups. As a matter of fact, it took longer to
+type up this article than the entire project took to build and verify
+operation.
+ 
+   One final word of caution - If you don't feel confident in the disassembly
+of you equipment, or are hesitant, or have ANY doubts/reservations, by all
+means, DO NOT ATTEMPT THIS PROCEDURE. If you still desire the advantages
+previously described, then seek out someone who is competent in hardware
+manipulations, and employ their help. Even if you have to return a favor, or
+pay for labour, it is far better than the repair bill to fix the DVI.
+   Oh by the way, there is NOTHING to prevent you from buying the same (or
+similar) drive, mounting it, and using it as a single sided drive. It will
+still be cheaper than a Tandy drive and it just plugs in (two cables). And you
+can still make this mod at a later date if you wish. If you are careful and
+patient, you can have a very professional looking installation.
+ 
+Maintenance/Operations Considerations:
+  Problems you will encounter with this set-up:
+  ONE: if you want to backup the back side of drive 1:, you'll have to copy it
+to drive 0:, then copy drive 0: back to the drive 1: backup disk. An
+alternative to this is to write a short program to backup drive 1: to drive 1:
+using disk swaps. Or maybe change out drive 0: with a double sided drive
+modified similarly to drive 1: and using a DPDT relay controlled by the REM
+plug. (This may be my next project. The concept of a 744K DVI is rather
+exciting. Anyone want to buy a factory drive 0:?)
+   Another alternative is to move the data connectors such that the single
+sided drive becomes drive 1:, and the double sided is drive 0:. Using this
+scheme, BACKUP.SNG (and MOTOR ON) will backup the backside of the double sided
+drive.
+   TWO: If you use a single sided disk in the double sided drive, and had
+previously issued MOTOR ON, and then try to access the disk (LFILES 1, or
+whatever), the system will continue to try to read the directory and hang. I
+received an interesting error message from this experience. Escape from this by
+repeated [BREAK]'s & [CTRL][C]'s or by inserting a double sided formatted disk
+and ignoring the error message.
+ 
+   Any comments would be appreciated, but considering my job requires me to
+leave the U.S. periodically for about four months at a time, I may not receive
+your comments.
+ 
+Later...
+ 
+            +-------------+
+            |             |
+            | Robert Toft |
+            | [74716,476] |
+            |             |
+            +-------------+
+ 

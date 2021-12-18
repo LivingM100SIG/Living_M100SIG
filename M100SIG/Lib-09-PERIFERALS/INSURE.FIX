@@ -1,0 +1,21 @@
+
+Minor Fix #1 to INSURE.DIR 5/26/85
+
+In initialing the allocation table to protect clusters 237-239 from being assigned (that's where SAVDIR.BA hides the extra backup copies of the main directory and allocation table), the program BLOCKA.BA sets bytes 237-240 to have the content CHR$(240).
+
+	The original version of the BLOCKA.BA program in INSURE.DIR only did this for Track 0, Sector 5, the first copy of the allocation table.  I have since discovered that the sector 6 backup copy is sometimes swapped into sector 5, losing the protection unless sector 6 is also initialized.  The revised BLOCKA.BA shown below does that (I actually had SAVDIR.BA overwrite a textfile that had been stored at the top of the disk -- and thought for awhile that I had a strange hardware bug unlike the main directory overwrite).
+
+1 CLS:PRINT"This program reserves Clusters"
+2 PRINT" 237-239 for duplicate"
+3 PRINT" directories and allocation"
+4 PRINT" tables.  DO NOT USE on disk"
+5 PRINT" that is, OR HAS BEEN, full"
+6 INPUT"    =====>  Reserve Clusters";A$:IFA$="Y"ORA$="y"THEN10ELSEMENU
+10 DSKO$0,0,5,1,LEFT$(DSKI$(0,0,5,1),109)+CHR$(240)+CHR$(240)+CHR$(240)
+20 DSKO$0,0,6,1,LEFT$(DSKI$(0,0,6,1),109)+CHR$(240)+CHR$(240)+CHR$(240):MENU
+
+Using cut-and-paste, make this program into BLOCKA.DO, load into BASIC and Save.
+
+		William Calvin
+		71256,1353
+

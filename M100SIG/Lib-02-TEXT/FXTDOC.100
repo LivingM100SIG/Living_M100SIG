@@ -1,0 +1,127 @@
+.L10
+.X1
+=======================================
+
+      Documentation for FXTXT.100
+             (Version 3.0)
+        By Rick Phillips,  1986
+              71666, 1721
+
+=======================================
+.X2
+
+
+FXTXT.100 ("FIX-TEXT") is a short, fast, and friendly utility which strips end-
+of-line carriage returns from downloaded CIS vidtext. It allows Model 100 TEXT 
+files stored on CIS to be returned to TEXT-compatable format after downloading.
+Ideal if you use CIS as your "working disk space"!
+
+FXTXT 2.0 supported paragraph breaks if paragraphs were "line-spaced" ( 
+separated by a left-justified carriage return) in the original TEXT file. FXTXT
+3.0 keeps this function but adds two new features:
+
+
+.L15
+1. FXTXT 3.0 fully supports "dot commands" as used in WRITE+ (or SCRIPSIT). 
+FXTXT will return dot commands exactly as embedded in original files.
+
+2. FXTXT 3.0 enables two new dot commands which prevent stripping of CR's from 
+groups of single-spaced list copy such as outlines and tables of contents. 
+Embedded (just like WRITE+ commands) in original files, the new commands do not
+effect WRITE+ operation.
+
+
+.L10
+To see these improvements in action, run FXTDOC (this file) through FXTXT and 
+then print via WRITE+ at any page width greater than 40 (less than 40 will 
+upset title page centred text). All neccessary dot commands are already 
+embedded. Note that FXTXT commands (see below) protect the title page (an 
+example of list copy) from being scrambled into a "paragraph".
+
+FXTXT 3.0 (like FXTXT 2.0) allows the option of CAS input (see below) when 
+available RAM is a problem.
+
+
+.X1
+Instructions for using FXTXT:
+-----------------------------
+.X2
+
+
+1. Paragraph Breaks:
+
+In original file, remember to "line space" (press ENTER twice at paragraph ends
+) if you want FXTXT to return original paragraph breaks.
+
+
+2. List Copy:
+
+Without use of FXTXT dot commands, FXTXT will convert single-spaced list copy 
+into a "paragraph". To prevent this, do the following:
+
+
+.L15
+- On a separate line above the list copy, type ".X1", left-justified and 
+followed by a carriage return.
+
+- On a separate line below the list copy, type ".X2", left-justified and 
+followed by a carriage return.
+
+
+.L10
+NOTHING ELSE SHOULD APPEAR ON THESE COMMAND LINES! This syntax is exactly the 
+same as used with WRITE+ (or SCRIPSIT) dot commands.
+
+In operation, FXTXT will suspend stripping action when it reads ".X1" and 
+resume when it reads ".X2".
+
+When printing, WRITE+ will "beep" and print an "unrecognized command" message 
+to the screen when it reads FXTXT dot commands. However, printing will continue
+and output will be unaffected.
+
+
+When printing directly through TEXT, remember that dot commands are ignored and
+printed-out as copy. To prevent this, delete such commands first.
+
+
+3. Uploading/Downloading:
+
+Follow CIS instructions. Any line width up to CIS "choke limit" (132) will work
+with FXTXT.
+
+
+3. Before Running FXTXT:
+
+After downloading original file, check available RAM. If less than size of 
+file, first save file to CAS and then kill from RAM. Cue tape and press PLAY (
+recorder will not start until directed by FXTXT).
+
+
+4. Running FXTXT:
+
+At first prompt, select RAM or CAS input. At second prompt, enter original (
+source) file name (".DO" is optional). During run, screen will display sequence
+of "*"'s (stripped CR's) and "-"'s (paragraph breaks or lists).
+
+At completion of run, FXTXT will "beep" and return to MENU. Original file is 
+now "fixed"!
+
+
+5. Hints:
+
+- CIS does not support "control-P" type printer commands (although ASCII 
+representations are returned, enabling easy "search and replace"). Such 
+commands should be embedded only after downloading, before or after running 
+FXTXT.
+
+- "Break" will terminate FXTXT at any point. However, input file is only killed
+at end of run so text is protected. Output file will be named "TXT.DO" at 
+break. To re-run FXTXT directly, just press F-4.
+
+- FXTXT contains an error trapping routine that stops program and prints 
+message noting error number, line number, and reference to Model 100 manual. As
+in case of "Break" (see above), original file is protected if program is 
+stopped for any reason.
+
+(end)
+

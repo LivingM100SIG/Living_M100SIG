@@ -1,0 +1,50 @@
+10 CLS:DEFSNGA-Z
+27 CLEAR500:ONERRORGOTO2000
+28 OPEN"datlog"FORINPUTAS1:CLOSE1
+30 PRINT:PRINT" COMLOG: EXTRACTS & ADDS DATABASE COSTS"
+42 PRINT" Ver.2 copyr. 1984, Madeline P. Durholz":PRINT
+50 PRINT"ENTER DATABASE (3 chars.)[,] MINUTES"
+60 E$=DATE$:E=VAL(RIGHT$(E$,2))*10000+VAL(LEFT$(E$,2))*100+VAL(MID$(E$,4,2))
+65 D$=DAY$:PRINT:INPUTF$,G:IFF$=""THENCLOSE1:GOTO180ELSE67
+67 CLOSE1:IFF$="cis"ORF$="CIS"ORF$="sig"ORF$="SIG"ORF$="vet"ORF$="VET"THENW=6.25:GOTO80ELSE69
+69 IFF$="kis"ORF$="KIS"THENW=24.00ELSE2050
+80 H=INT(G*W*100/60+.5)/100
+81 OPEN"datlog"FORAPPENDAS1:PRINT#1,E;D$;",";F$;",";G;H:CLOSE1:CLS
+180 PRINT:INPUT"Want to total costs, etc (Enter Y/N)";L$
+190 IFL$="N"ORL$="n"THENMENU
+195 IFL$="Y"ORL$="y"THEN201ELSE180
+201 PRINT:LINEINPUT "Database? (Enter symbol or ALL)";F1$
+205 PRINT:INPUT"Enter Start Date (mm/dd/yy): ";E1$:PRINT:INPUT"End Date = ";E2$:CLS:PRINT
+210 PRINT"Requested Dates, Minutes, and Costs: ":PRINT
+212 E1=VAL(RIGHT$(E1$,2))*10000+VAL(LEFT$(E1$,2))*100+VAL(MID$(E1$,4,2))
+220 E2=VAL(RIGHT$(E2$,2))*10000+VAL(LEFT$(E2$,2))*100+VAL(MID$(E2$,4,2))
+226 K=0:P=0:OPEN"datlog"FORINPUTAS1
+227 INPUT#1,E,D$,F$,G,H
+228 IF(E<E1ORE>E2)OR(F$<>F1$ANDF1$<>"all"ANDF1$<>"ALL")THEN237
+230 K=K+H:P=P+G:PRINT USING"######    \  \   \  \   ###    $$###.##";E;D$;F$;G;H
+237 IFEOF(1)THEN239ELSE227
+239 CLOSE1:GOTO300
+300 PRINT:PRINT"Total costs of { ";F1$;" }
+301 PRINT"between ";E1$;" & ";E2$;" =";
+310 PRINT USING"$$####.##";K
+315 PRINT USING"Total minutes =#####";P
+370 END
+2000 IFERR=52THENOPEN"datlog"FOROUTPUTAS1ELSEPRINT"error ";ERR;" at ";ERL:END
+2040 GOTO30
+2050 PRINT"Typo in entry; please reenter":FORD=1TO750:NEXT:CLS:GOTO50
+3000 REM COMLOG.100 creates a data file (DATLOG) which stores/can display
+3005 REM each date, day, database, minutes & cost of each online entry.
+3007 REM COMLOG.100 displays specified cumulated costs/minutes to the LCD.
+3011 REM Customize program lines 67 & 69 by substituting your SIG symbol. You may add to or delete others; 6.25=CIS's rate/hr.
+3012 REM Line 69 is for another system ($24hr). You may delete this line but replace the 69 at end of line 67 with 2050.
+3015 REM RUN COMLOG.100 & enter requested data; a typo will cause an error report and another prompt-just reenter data. 
+3017 REM Type 5 (min) as 05; round secs. up to next min. COMLOG.100 will request you to specify 1 or ALL data base entries
+3018 REM between 2 dates. Enter same Start/End dates to screen 1 day's entries.
+3020 REM COMLOG.100 will then scroll a columnar table of the specified entries and display their total costs & minutes.
+3023 REM Hit the PAUSE softkey to stop scroll & view; hit PAUSE to restart.
+3026 REM To use this feature without adding to DATLOG, just hit ENTER at data entry.-you'll be prompted.
+3027 REM To view DATLOG, load from MENU; its cost/minutes column is a bit ragged but clear
+3028 REM as it does not store leading or trailing 0s.
+3029 REM Correct DATLOG, if necessary, with cursor; SHIFT/PRINT for hardcopy.
+3030 REM "REM's" may be deleted if desired. Please direct questions & report glitches to Maddi Durholz 70466,1511.
+

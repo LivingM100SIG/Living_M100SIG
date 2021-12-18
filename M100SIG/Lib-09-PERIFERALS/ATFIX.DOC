@@ -1,0 +1,22 @@
+ATFIX will allow you to repair a damaged FAT (File Allocation Table). It
+assumes that the directory entry for the file has the correct starting cluster
+number.
+
+First, use FATPRT.DVI to get a printout of the directory & FAT.
+
+Now run ATFIX.
+At the prompt enter the number of the starting cluster for the file. The
+current contents of that cluster will be displayed. Enter the new value. (Note
+this value on the printout from FATPRT!!! If you make any mistakes you may need
+it. That is why the FAT portion of the printout is double spaced)
+If you changed the value, you will be prompted for a new cluster number.
+If you did not change the value, you will be prompted for a file name. Enter
+the name of the file and it's contents will be displayed. This will let you see
+if you have added the correct cluster. If not go back and try changing it to a
+different cluster.
+
+The main 'bug' with this program is that after adding a few clusters, it takes
+*forever* to read all the way thru the file. But the input *must* be done with
+INPUT$ so we're stuck.
+Second bug is that if the directory entry is messed up it has to be fixed by
+hand.

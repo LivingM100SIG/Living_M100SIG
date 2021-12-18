@@ -1,0 +1,151 @@
+Backing Up an M100 Chipmunk System
+
+
+Copyright [12/7/90] Lincoln Baxter,2nd
+
+After a career in Applied Physics at the Woods Hole Oceanographic Institution 
+in which I participated in the introduction of computers to Oceanographic 
+research and word processing to technical writing, I was facing retirement.  I 
+desperately wanted a computer of my own so that I could continue to practice my
+programming and writing skills.  Then in 1983 I saw the M100.  Wow!! Portable; 
+small but powerful; lots of different ports; a real typewriter keyboard; and 
+graphics too.  If I'd only had this years ago!  Then came Portable 100, the 
+Chipmunk, the M100SIG, and the Boston Computer Society.  I found that this 
+little machine had possibilities grander than I had thought possible.  It 
+really fits the way I like to work.  I had learned Fortran on the job.  Now I 
+learned Basic and Assembly.  The programmers who designed the ROM in this 
+machine had designed in flexibility! With RAM Hooks, if you didn't like some 
+detail of a "canned" program, you could change it.
+
+Then came the T102 and the M100 was discontinued.  Would my machine last?   
+Would the new machine live up to the promise?  The news was not encouraging.  
+It seemed that the T102 was not compatible with the Chipmunk which I had come 
+to depend on.  Sadly, there would be no new Chipmunks.  Would my Chipmunk last?
+  Horrors!  It began to fail.  Would I be able to fix it?  Yes I could!  The 
+problems were only with the ribbon cable and the battery.  More about this 
+later.  Let's not get into the details before the general topic is fully 
+introduced (see CHPSYS.EX3), but this started me thinking about greater 
+development of my own support and, if the maintenance should ever become too 
+difficult, about compatible transitions to another system.  I hoped that I 
+wouldn't have to replace the system.  Why give up what is in many ways the best
+disk drive ever for working with files.  Rather, I'd like to extend it by using
+the M100 & Chipmunk at home where it's less vulnerable and get a T102 and TDD2 
+for portable work, backup of the system, and keeping up with what other people 
+are now using.  Chipmunks forever!  <<But back it up.>>  Also, it can't hurt to
+learn where my Chipmunk experience can help in organizing the newer T102 & TDD2
+which I wanted for system extension.
+
+The principle of redundancy is involved in the equipment inventory of a 
+completely backed up system.  One would like to be able to continue to work as 
+efficiently as possible despite the loss of any one item.  I have two almost 
+compatible computers, i.e. an M100 and a T102.  I have two disk drives, i.e. a 
+Chipmunk and a TDD2, both compatible with the M100, but with incompatible disk 
+formats.  I have a standard cassette drive and a microcassette drive.  I will 
+have some option ROMs and extRAM.  There is considerable redundancy here, but 
+critical files must be duplicated in the various magnetic media.
+See Part II [CHPSYS.EX1]
+
+Redundancy would be increased if the T102 could also access the chipmunk 
+directly.  Why can't it?  Checking my old issues of Portable 100 I found that 
+the firmware differences of the M100 and T102 computers had been discussed by 
+Carl Oppedahl, "Weighing the Differences" [Portable 100, August 1987].  He 
+concluded that there are a few small but possibly important differences in the 
+firmware.  One of his remarks caught my eye: <<"One Model 100 routine at 7304 
+that I could see no use for (it looked like a routine for a system-bus disk 
+drive) has been gutted in the 102 to make room for the PRINTUSING patch and the
+telecommunications patch.">>  What an interesting clue!!
+
+I think that this could be a reason, more critical than the difference in the 
+the system bus hardware, for the T102 incompatibility with the Chipmunk.  
+Hardware adapters are much easier to "hack" than firmware patches.  However, 
+there is hope... It looks to me as if with an adapter between the Chipmunk 
+interface and the bus and a short driver program in RAM, option ROM, or better 
+yet extRAM, the T102 could work with the Chipmunk.  It's an interesting 
+possibility.  Since there will be no new Chipmunks it's not too practical 
+commercially, but I may think about it later.  For an excellent review of 
+extRAM, see "The Many Personalities of extRAM" by Stan Wong [Portable 100, 
+November 1990]
+
+Otherwise, the T102 seems to be better than the M100, slightly more rugged, 
+slightly more portable, and some minor bugs in the firmware have been patched. 
+  Switching back and forth between M100 and T102 takes a little getting used to
+because of the different arrangement of the cursor arrows.  I've begun 
+practicing the [CTRL] E S D X moves etc. which are compatible between the 
+machines and even intuitive if you think about where these keys are on the 
+keyboard.  Unfortunately they only work in TEXT and the BASIC editor.  For some
+things you still have to use the arrow keys.
+
+The drives may be compared as follows:
+
+My original M100 system with the Chipmunk drive, which connects to the main bus
+on the M100, has the more versatile disk operating system with 370K bytes, 
+random access to disk files, multiple directories and subdirectories, menu 
+selection by cursor in the directories, faster access, and most of my files are
+on it.  <<In my mind backing up the files is a subsidiary idea to backing up 
+the system>>, but if your primary interest is preserving your files while 
+switching systems, keep reading...I'll get to it later.  (See CHPSYS.EX1)
+
+Though I'm fond of the Chipmunk, it is not what most people are using now; so I
+need to also have TDD capability.  The Chipmunk has some other deficits: It has
+a fragile ribbon connector, is slightly less portable than the TDD, works only 
+with the M100, was not designed or manufactured or supported by Tandy, is no 
+longer manufactured, and is not replaceable.  Because CDOS needs a fixed place 
+in high memory it conflicts with some other programs; however CDOS is very easy
+to remove and load which mitigates this problem somewhat.
+
+The Tandy portable disk drive (model 2), TDD2, connects to the serial port, has
+a maximum capacity of 200K bytes on each disk.  With its standard DOS called 
+FLOPPY, it has only two directories and no subdirectories, no random access 
+within a file, and can hold a maximum of 40 files in each directory.  The files
+are selected by typing their names not by cursor.  Some of these inconveniences
+might be eased with a better disk operating system, but I've been told 	that 
+none that has been developed so far beats or equals the convenience of Chipmunk
+CDOS.
+
+The TDD2 is supplied with an operating system called FLOPPY which is a machine 
+language program with some unusual characteristics.  The loading procedure 
+moves MAXRAM and HIMEM down to 60000 and the bulk of FLOPPY resides between 
+60000 and 62959.  A 37 byte section stored as a machine language program on the
+menu but without the .CO extension, when selected by cursor, overlays the 
+section from 62701 to 62738 and begins execution.  The only proper way to 
+remove FLOPPY and recover the normal MAXRAM value of 62960 is to run a short 
+program called FREMEM.BA.  Killing FLOPPY with the simple KILL command will 
+leave you with no simple way to load it again or to recover the memory.  To one
+who is used to normal machine language programs, all this seem unnecessarily 
+complicated, unfriendly, and wasteful of memory.  Other commercial operating 
+systems for the TDD have been reviewed by Thomas L. Quindry in the October 1987
+issue of Portable 100.
+
+Although its software support leaves much to be desired, the TDD2, considered 
+as a portable drive, has several important advantages over the Chipmunk.  It is
+smaller and lighter and its connection to the computer is more rugged.  The 
+TDD2 can be used either with an M100 or a T102 or with "LAPDOS" programs and 
+cables that are available on the serial ports of either a MacIntosh or an IBM 
+PC.  It is still in production and costs less than half of what the Chipmunk 
+cost.  I have confirmed by test that the TDD2 works on the serial port of an 
+unaltered early M100 like mine.  Though this was not true of the early Tandy 
+drive, the TDD model 1.  Some people I know had to pay to have the impedance of
+the serial ports of their M100s altered to make them compatible with the model 
+1 TDD.  This is one reason why I waited so long to add a TDD to my inventory.  
+When I finally did, it was the TDD2, which I was pleased to learn would work 
+with my M100 as well as the T102.
+
+Tony Anderson has pointed out to me that there is a DOS, developed by J.K. 
+Heilman and Phil Wheeler, available from a file called DSKMGR.REL in Library 9 
+of the M100SIG on CompuServe that has the major advantage over FLOPPY of being 
+relocatable which makes it compatible with other machine language programs 
+including CDOS; so that a Chipmunk and a Tandy disk drive can be simultaneously
+operational and connected to the same M100.  It even takes a little less memory
+than FLOPPY.  Though developed for the earlier Tandy drive, it will work on the
+TDD2.  However, it limits the capacity of a disk to 40 files, though 200k bytes
+are still available if the files add up to that much.
+
+DSKMGR.REL is a relocating loader in BASIC that creates a normal relatively 
+friendly machine language program called DSKMGR.CO in file storage space.  It 
+has some very nice features which I will describe in the next section:
+[See CHPSYS.EX1, DSKMGR.DOC, & DSKMGR.DOR]
+
+<<<This is the end of this part of my article.  For CompuServe I am cutting 
+this article into manageable sections; so look for the continuations:>>>
+
+/EX

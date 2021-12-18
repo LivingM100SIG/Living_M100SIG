@@ -1,0 +1,25 @@
+This program creates LOCK.CO, which will be executed everytime the power is 
+turned on.  While in LOCK.CO, you will be staring at a blank screen until you 
+enter a correct password.  A password consists of 0 to 31 characters followed 
+by an ENTER.  Upper and lower case is recognized.  If you make a mistake, you 
+cannot delete a wrong key, instead just ENTER to type the whole password again. 
+   If by any chance should you forget your password, you will be forced to COLD 
+START by CTRL-PAUSE-RESET, in order to get into the system.
+    If you want to change the password, run the program again.
+
+
+
+5 'LOCK.200 File security system:
+8 'James Yi 73327,1653, 12/13/86
+10 FOR L=63574TO63621
+20 READA:POKEL,A
+30 NEXT
+40 PRINT "ENTER A PASSWORD UPTO 31 CHARACTERS.":PRINT "REMEMBER YOUR PASSWORD WELL, OR ELSE."
+60 CALL 21744:FORL=0TO30:A=PEEK(L+61296):IFA=0THENA=13
+65 POKEL+63622,A:IFA=13THEN70ELSENEXT:POKE63653,13
+70 SAVEM"LOCK.CO",63574,63653,63600
+80 IPL"LOCK.CO"
+90 MENU
+100 DATA 175,50,30,253,33,30,253,126,254,32,208,183,202,93,248,23,45,133,111,126,254,13,200,195,90,248,205,86,248,46,31
+110 DATA 17,134,248,26,190,19,35,35,194,112,248,254,13,200,195,120,248
+

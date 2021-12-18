@@ -1,0 +1,44 @@
+	JUXTA.100 a tool for writers and programmers by Carmen Paone [72677,42]
+
+	This program will allow a writer to compare a first draft of a story with a second draft.
+	The changes will be placed in a file called ""JUXTA.DO" That file can be sent to RAM; saved to disk by means of PWR-DOS (Model 100 or 102); or can be sent to your printer.
+	The files to be compared must be in ASCII and they must be DO files.
+	Programmers can compare changes they made in their works on a line by line basis with JUXTA.100.
+	Send all comments to me via this Forum or EMAIL.
+
+
+	Use the paste and cut feature on your 100 to clip the program below the dotted line. Empty the cut material into a DO file called ""Juxta"" and then go into BASIC and type RUN "Juxta. 
+	After the menu appears, Hit "q" or "Q" twice; return to BASIC and then type save "Juxta.
+
+
+
+.......................................
+
+ 1' *************************
+ 2' *                       *
+ 3' *       JUXTA.100       *
+ 4' *                       *
+ 5' *    BY CARMEN PAONE    *
+ 6' *       72677,42        *
+ 7' *  CREATED MAY 3, 1990  *
+ 8' *                       *
+ 9' *************************
+10 CLEAR1000:MAXFILES=3:DEFSTRE,N,R:E=CHR$(27):R=E+"p":N=E+"q
+11 CLS:PRINT@0,RSPACE$(11)"JUXTAPOSITION.100"SPACE$(12)N;:POKE63038,191:ONERRORGOTO26
+12 PRINT:FILES:PRINT@280,R" FILENAME I: "N;:INPUTA$:PRINTSPACE$(39):PRINTR" FILENAME II: "N;:INPUTB$
+13 IFINSTR("qQ",A$)ORINSTR("qQ",B$)THENMENU
+14 CLOSE:OPENA$FORINPUTAS1:OPENB$FORINPUTAS2
+15 PRINTR" Output to: 1) RAM  2) DISK  3) PRINTER "N;:Q$=INPUT$(1):Q=VAL(Q$):PRINTN:PRINTSPACE$(39):IFQ$=ETHENMENU
+16 IFQ<1ORQ>3THEN15
+18 IFQ=1THENF$="JUXTA
+19 IFQ=2THENGOSUB28:F$="0:JUXTA.do
+20 IFQ=3THENGOSUB29:F$="lpt:
+21 OPENF$FOROUTPUTAS3:CLS:PRINT@128,R"  COMPARING FILES...  "N:PRINT#3,"*** TOP ***
+22 LINEINPUT#1,X$:LINEINPUT#2,Y$:IFX$<>Y$THENPRINT#3,"---":PRINT#3,X$:PRINT#3,Y$:PRINT#3,"---":X$="":Y$="
+23 IFEOF(1)ANDEOF(2)THENPRINT#3,"*** END I and II ***":MAXFILES=1:MENU
+24 IFEOF(1)THENPRINT#3,"*** END I ***":MAXFILES=1:MENU
+25 IFEOF(2)THENPRINT#3,"*** END II ***":MAXFILES=1:MENUELSE22
+26 IFERR=52THENPRINTRSPACE$(8)"WRONG FILENAMES"SPACE$(8)N:FORT=1TO999:NEXT:RESUME11
+27 IFERRTHENPRINTRSPACE$(11)"Error"ERR"in line"ERLSPACE$(11)N:END
+28 IFINP(130)AND7=2THENPRINTRSPACE$(11)"DRIVE OFF"SPACE$(11)N:FORT=1TO999:NEXT:GOTO15ELSERETURN
+29 IFINP(187)AND6THENPRINTRSPACE$(13)"PRINTER OFF?"SPACE$(13)N:FORT=1TO999:NEXT:GOTO15ELSE21

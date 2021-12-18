@@ -1,0 +1,103 @@
+0 'PACE_U split time H. Noel 6/88
+1 'Chris Ackerman 6/88 4.2 3 89 I SUGGEST ERROR HANDLING OF NO INPUT FILE & STING SELECT OF 2 CHARACTERS AFTER :IN TIME SO YOU CAN ENTER COMMENTS AFTER THE SPLIT 
+5 MAXFILES=3:DIM TM(5,27),TS(5,27),D(2,27)'CHANGE THIS LINE IF YOU WANT MORE/Less SPLITS
+11 CLS:PRINT
+12 PRINT"PPPP AAAA CCCC EEE        U  U "CHR$(171)"  1988  P  P A  A C    E    The   U  U Namreka"
+14 PRINT"PPPP AAAA C    EE UltimateU  U Products P    A  A C    E   splits U  U v4.2d"
+16 PRINT"P    A  A CCCC EEE  ====  UUUU"
+23 PRINT:PRINT" Press I for instructions or R for run";
+24 A$=INKEY$:IF LEFT$(A$,1)="M" OR LEFT$(A$,1)="m" THEN MENU ELSE IF A$="R" OR A$="r" THEN GOTO 26 ELSE IF A$="I"ORA$="i"THENGOSUB 901:GOTO11 ELSEGOTO 24
+26 CLS:PRINT:PRINT
+27 IN$="PACE_U.DO":INPUT "Enter input file name                   or press ENTER for PACE_U.DO ";IN$
+28 OT$="PU_OUT.DO":INPUT "Enter output file name                  or press ENTER for PU_OUT.DO ";OT$
+29 CLS:PRINT:PRINT:PRINT "CALCULATING SPLITS + CREATING "OT$;: PRINT"               PLEASE WAIT...."
+30 '49 Main line
+33 OPEN IN$ FOR INPUT AS 1
+37 GOSUB 50 'input routine for splits
+40 GOSUB 80 'calc table to tot seconds
+44 GOSUB 90 'cacl table to Hrs/Mins/sec
+46 GOSUB 100'print out routin
+48 GOTO  200'LAST MESSAGE 
+50 'READ INPUT FILE
+51 IF EOF(1) THEN RETURN
+52 L=L+1:INPUT #1,D$,T$
+58 IF D$="" OR LEFT$(D$,1)="!" THEN L=L-1:GOTO 50 ELSE D(1,L)=VAL(D$)
+59 T1=INSTR(1,T$,":")
+60 IF T1=0 THEN PRINT"***ERROR FIX INPUT AROUND THIS TIME "T$:INPUT "PRESS ENTER FOR MENU";X:MENU
+62 H=0:M=VAL(LEFT$(T$,T1-1)):S=VAL(RIGHT$(T$,2)):H=INT(M/100):M=M-(H*100)
+64 TS(1,L)=S+(M*60)+(H*3600)
+66 GOTO 50
+80 'NOW WE HAVE DATA START CALCULATIONS
+81 FOR X=1TOL
+82 IF X=1THEND(2,1)=D(1,1)ELSE D(2,X)=D(1,X)-D(1,X-1)
+83 TS(2,X)=TS(1,X)/D(1,X) 'MILE PACE OVERALL
+84 IF X=1 THEN TS(3,1)=TS(2,1) ELSE TS(3,X)=(TS(1,X)-TS(1,X-1))/D(2,X) 'PACE SINCE LAST SPLIT
+85 TS(4,X)=D(1,L)*TS(2,X)'OVRALL FINISH
+86 IF X=1 THEN TS(5,X)=TS(4,X) ELSE TS(5,X)=TS(1,X-1)+(TS(3,X)*(D(1,L)-D(1,X-1)))
+88 NEXT X
+89 RETURN
+90 'Now with total seconds we compute hours minutes and seconds fo each cell
+91 FORX=1TOL:FORY=1TO5
+92 S=TS(Y,X)
+95 GOSUB 120'formats time
+96 TS(Y,X)=INT(S):TM(Y,X)=M
+97 'PRINT "Y,X,TS(Y,X)",Y,X,TS(Y,X)
+98 NEXT Y:NEXT X
+99 RETURN
+100 'print call routine
+101 CLOSE 1
+102 'OPEN "LCD:" FOR OUTPUT AS 1
+103 'Z1=1:GOSUB300
+104 'CLOSE 1
+105 OPEN OT$ FOR OUTPUT AS 1
+107 Z1=1:GOSUB300
+110 RETURN
+120 'second calculation routine
+122 H=INT(S/3600):S=S-(H*3600)
+124 M=INT(S/60):S=S-(M*60)
+126 M=M+(H*100)
+128 RETURN
+200 'last message
+201 PRINT:PRINT "          OUTPUT IN ";OT$:PRINT"      press the SPACE BAR for MENU";:
+202 A$=INKEY$:IF A$<>CHR$(32) THEN GOTO 202
+203 MENU
+300 'PRINT ROUTINE
+310 PRINT#Z1,"               MILE FINISH*"
+312 PRINT#Z1,"               PACE IF    *LAST   LAST"
+314 PRINT#Z1,"MILE   ELAPSED OVER OVRALL*SPLIT  SPLIT"
+316 PRINT#Z1,"MARKER TIME    ALL  KEPT  *DSTNCE PACE"
+318 PRINT#Z1,"==========================*============"
+327 FOR Z=1TOL
+328 PRINT#Z1,USING"###.## ###:";D(1,Z),TM(1,Z);
+330 IF TS(1,Z)=<.5THENPRINT#Z1,"00";ELSE IF TS(1,Z)>.5 AND TS(1,Z)<10THEN PRINT#Z1,USING"0!";RIGHT$(STR$(TS(1,Z)),1);ELSE PRINT#Z1,USING"##";TS(1,Z);
+332 PRINT#Z1,USING" ##:";TM(2,Z);:IF TS(2,Z)=<.5THENPRINT#Z1,"00";ELSE IF TS(2,Z)>.5 AND TS(2,Z)<10THEN PRINT#Z1,USING"0!";RIGHT$(STR$(TS(2,Z)),1);ELSE PRINT#Z1,USING"##";TS(2,Z);
+333 PRINT#Z1,USING" ###:";TM(4,Z);:IF TS(4,Z)=<.5THENPRINT#Z1,"00*";ELSE IF TS(4,Z)>.5 AND TS(4,Z)<10THEN PRINT#Z1,USING"0!*";RIGHT$(STR$(TS(4,Z)),1);ELSE PRINT#Z1,USING"##*";TS(4,Z);
+335 PRINT#Z1,USING"###.# ";D(2,Z);
+336 PRINT#Z1,USING" ##:";TM(3,Z);:IF TS(3,Z)=<.5THENPRINT#Z1,"00";ELSE IF TS(3,Z)>.5 AND TS(3,Z)<10THEN PRINT#Z1,USING"0!";RIGHT$(STR$(TS(3,Z)),1);ELSE PRINT#Z1,USING"##";TS(3,Z);
+337 PRINT #Z1,USING"    Finish if last pace continued ###:";TM(5,Z);:IF TS(5,Z)=<.5THENPRINT#Z1,"00"ELSE IF TS(5,Z)>.5 AND TS(5,Z)<10THEN PRINT#Z1,USING"0!";RIGHT$(STR$(TS(5,Z)),1)ELSE PRINT#Z1,USING"##";TS(5,Z)
+340 PRINT #Z1,"---------------------------------------"
+389 NEXT Z
+390 RETURN
+900 'INSTRUCTIONS
+901 CLS:PRINT"-----First it was PACE then PACE_M----- Now Namreka Products brings you *PACE_U*"; 
+902 PRINT:PRINT" This amazing program calculates many    different mile pace splits off of the   splits you remember from a run or race"
+904 PRINT"   **WARNING PACE_U CAN BE ADDICTIVE**":GOSUB995
+905 PRINT"To use create an input file using TEXT  (preferably PACE_U.DO) that has 1 line  for each split.  Then run PACE_U and an output file will be produce with the    results.":GOSUB 995
+906 PRINT" (This is an example of an input file)                                          1,7:20           The next screen        2.5,18:00        explains these lines   4,29:00                                 6.2,45:00":GOSUB 995
+914 PRINT"Each line should have the distance the  split was given at followed by a comma  then the split time.  The distance is   entered in relationship to a mile down  to 2 decimal points."
+915 PRINT" (3 6.2 or 1.25 are all valid examples).":GOSUB 995
+920 PRINT"The time is entered in hmm:ss format    where the hour is not necessary but at  least 1 minute, the : and seconds are   necessary(7:20 45:15 and 248:32 are all valid examples).":GOSUB 995
+925 PRINT"Lastly in the input file make sure your splits go in order from the lowest      distance to the highest distance which  is hopefully the end of the race).  You can list up to 27 splits!":GOSUB 995
+930 PRINT"(P.S. I've found it fun to remove some  of my splits and rerun PACE_U to see howI did between certain mile points.  You can put a ! in front of any split you   want to skip in the input file.)" 
+931 PRINT:PRINT"           SEE YOU AT THE TRACK!":GOSUB 995
+933 PRINT "   If you get an error----check...                                              That the input file has the correct nameThat you have at least 1000 free bytes"
+934 PRINT "That each line is distance comma split  That the split times are hmm:ss format":GOSUB 995
+936 PRINT "This program was developed to aid       runners in projecting their run times.  If you decide to keep or modify this    SHAREWARE program please send a develop-ment fee of $8 within 1 week to: H. Noel"; 
+938 PRINT "/1697 Sierra Bonita/Pasadena, CA 91104.":GOSUB 995 
+940 PRINT "Feel free to copy & distribute the      original program as is but please don't delete these SHAREWARE info screens     until you have paid the development" 
+942 PRINT "fee. The concept of SHAREWARE can createquality software at reasonable prices   for all of us.":GOSUB 995 
+944 PRINT "So keep the idea alive and food on my   table by sending in the $8.  After all  it's cheaper than the cost of a race.   A listing of other handy/non-complicated"; 
+946 PRINT "IBM/MAC/M100 running programs and other software (as well as upgrades) is       available upon request.   Happy trails.":GOSUB 995 
+960 RETURN
+995 PRINT @ 280,"    (Press the SPACE BAR to continue)";
+996 A$=INKEY$:IF A$=CHR$(32)THEN CLS:RETURN ELSE IF LEFT$(A$,1)="M" THEN MENU ELSE GOTO 996

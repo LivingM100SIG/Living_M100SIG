@@ -1,0 +1,31 @@
+1 'By Peter Schug 71236,1101
+2 'This program reads a BASIC file in
+3 'ASCII format and creates three files
+4 'LINES, which contains numbers of all
+5 'lines longer than 124 chars
+6 'REMS, which contains all lines BEGINNING with an apostrophe.  (')
+7 'MERGME, which contains only the
+8 'numbers of the lines in REMS and will
+9 'therefore delete those lines if 
+10 'merged with the original program.
+11 'Thus if you wish to prepare a pro-
+12 'gram for uploading, or just want to
+13 'remove the remarks but not lose them
+14 'this program should be a help.
+15 'The program EXPECTS one space after
+16 'the line number, then the "'".
+17 'In other words, the normal format.
+18 'essential REMs may say REM or be
+19 'preceded by TWO or more spaces.
+20 REM like this!!!
+21  'or this!!!
+80 CLEAR500:MAXFILES=4
+90 CLS:INPUT"Enter name of file";F$:IFMID$(F$,LEN(F$)-2,1)<>"."THENF$=F$+".DO"
+100 OPENF$FORINPUTAS1:OPEN"LINES"FOROUTPUTAS2:OPEN"rems"FOROUTPUTAS3:OPEN"MERGME"FOROUTPUTAS4
+110 IFNOTEOF(1)THEN120ELSEIFC=0THENPRINT#2,"No lines over 124 chars. long."
+115 CLOSE:END
+120 LINEINPUT#1,L$:N=INSTR(L$," "):N$=LEFT$(L$,N)+"Length ="+STR$(LEN(L$))
+130 IFLEN(L$)>124THENPRINT#2,N$:C=C+1
+140 IF MID$(L$,N+1,1)="'"THENPRINT#3,L$:PRINT#4,LEFT$(L$,N)
+150 GOTO110
+

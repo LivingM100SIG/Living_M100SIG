@@ -1,0 +1,84 @@
+     CHECKSUM 366911.
+     This program will make the Model 100 into a full-function RPN (Reverse Polish Notation) scientific calculator, designed to
+closely emulate the functions and operation of an HP scientific calculator:
+     > All available functions and the keycodes are visible on screen.
+     > Uses numeric keypad layout of numbers and mathematics keys for fast "touch typing" data entry and manipulation (function
+key settings are not changed).
+     > 10 data storage registers.
+     > Last-X register for easy error correction.
+     > Contents of 4-register stack, last-X register, and 5 data storage registers visible on screen.
+     > Summation function (with correction feature) for finding means and standard deviation of x,y data.
+     > Full trigonometric functions in both degrees and radians modes.
+     > Conversion from degrees to radians and vice versa.
+     > Logarithmic functions.
+     > Number of decimal places displayed is selectable from zero to six; last digit is rounded.
+     > Factorials.
+     There are four screens of data that appear on the right side of the screen.  You can scroll between them using the left 
+and right cursor keys.  Three screens are for displaying the available functions and codes, and the fourth displays five data 
+storage registers.  The stack (registers X, Y, Z, and T) can be rolled up or down with the up and down cursor keys.  The 
+backspace key acts like the "left arrow" key on the newer HP calculators (to erase one digit at a time for number correction).
+     Functions such as square root, etc., are executed by typing in the appropriate keycode of up to three letters.  CAPS LOCK 
+must be down.  The function appears in the "FUNCTION:" line, and is executed immediately after the last letter of the code is 
+entered.  Most codes have mnemonics that do not use letters that are a part of the numeric keypad; however, a few codes do 
+require that the NUM key be released.
+    There are 10 accessible storage registers: 0 through 9.  The machine will prompt for the register number after executing 
+the store or recall function.  Registers 1 through 5 can be displayed by scrolling the display.  The remaining five registers 
+are also used to store the summation function data that are used in the mean and standard deviation functions, as follows:
+     R0: n
+     R6: Sum of X
+     R7: Sum of X^2
+     R8: Sum of Y
+     R9: Sum of Y^2
+    These registers are cleared for new data entry with the "clear sum" function (CA).  If an error is made in data entry, the 
+incorrect data can be reentered and subtracted from the sums with the "sum minus" function (+ key).
+     The program will automatically display the number in scientific notation if necessary.  The program is not perfect (
+without making the program even longer) in respect to display formatting of some numbers.  Occassionally, very large or very 
+small numbers will not format properly and will run onto other parts of the display, especially numbers in the displayed 
+storage registers.  However, the value of the number in memory is not affected and can safely be used in calculations.  The 
+display can be "repaired" without terminating the program by executing the "fix" (FX) function.
+     After downloading, be sure to make the changes in the program listing that are given in lines 1000-.  This program is 
+intended for SIG members' use only and is not to be sold.  Questions and comments are welcome.
+     Terry Morgan  [75735,1635]
+
+     I also have a shortened version of this program (about 3.2K) that does not have many of the scientific functions (like the
+trig functions and exponentials).  You can create this shorter version by MERGING the following numbered lines (everything 
+after this paragraph to the end of this file) with RPNCAL.100.
+
+10 'RPNCAL--SHORTER VERSION (3.2K) by Terry Morgan [75735,1635] 9/83 REVISED 6/84 Copyright (c) 1984 NOT FOR RESALE
+45
+180
+240
+245
+250
+255
+260
+265
+270
+275
+280
+295
+300
+305
+310
+330
+335
+345
+350
+360
+365
+390
+395
+405
+430 IFR2=4THENR2=1
+435 ONR2GOSUB440,470,500:R=1:GOTO50
+510 PRINT@178,"              clrS=CA";
+515 PRINT@218,"              mean=MN";
+520 PRINT@258,"              stdv=SD";:PRINT@298,SPACE$(21);:RETURN
+525
+530
+535
+540
+545
+550
+555
+

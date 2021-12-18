@@ -1,0 +1,53 @@
+
+FIND.100      documentation
+===========================
+
+c1987 by Jon Diercks [73327,2353]
+
+Assembled with Custom Software's ASMBLR.CO.
+
+FIND.100 is a very small, very fast ml routine that searches the M100's memory
+for a given string, listing each location where the string is found.
+
+FIND.100 is just over 100 bytes long, and it can cover the entire 64K of ROM
+and RAM in as little as ten seconds!  It is a handy tool for programmers.
+
+A few notes:
+
+* Loading:  The file FIND.LDR is a relocating basic loader <created with
+BASBLD.PW3 in dl8>.  To load FIND just below maxram, clear256,maxram then run
+FIND.LDR and just hit enter at the end address prompt.  FIND.LDR creates
+FIND.CO, which can be executed from the menu as long as memory is clear.
+
+* Operation:  When you execute the program, you will be prompted for a
+search string.  Type the text you want to find, then <ENTER>.  FIND.100 then
+scans all of the M100's ROM and RAM for the string <Don't ask me about option
+ROMs or expansion RAMs - I've never used them.  Tony?>.  The locations where
+your string is found are printed on the LCD, and you are prompted to press the
+space bar to return to the main menu.  Simple enough?
+
+* No matter what you type for the search string, you will probably always get
+63109 and 65078 as two of your numbers.  <They may be the only two>.  63109 is
+the input buffer.  FIND stores your text there while it's searching.  65078 is
+part of the LCD memory, and you can see that the string is there!
+
+* FIND.100 is CASE-SPECIFIC.  The text search DOES compare literally, unlike
+the normal Find: function on the M100 which is case-independent.  So, if you
+search for "MENU", you will get different numbers than if you search
+for "Menu".
+
+* Shift-Break aborts the search at any time, in case you get impatient in less
+than ten seconds.
+
+* Shift-Break, ^C or a null input at the 'Search string:' prompt will abort the
+program.
+
+* ML programmers may want to check out FIND.SRC.  This file contains the Custom
+Software Assembler Source code for the program.  FIND.SRC is NOT necessary for
+normal operation of the program - average users need not download it.
+
+
+Please EasyPlex any questions, comments, problems, or whatever to:
+Jon Diercks [73327,2353]
+
+Happy hunting!

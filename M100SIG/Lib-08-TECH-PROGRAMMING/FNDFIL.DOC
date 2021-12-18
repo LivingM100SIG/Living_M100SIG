@@ -1,0 +1,28 @@
+Documentation for FNDFIL.100
+----------------------------
+
+This is a (not-short) program which finds the location of the start of menu
+files in the Model 100 [adapted from my program MONTOR.100, DL8].  A similar
+Tandy 200 version could be adapted from MONTOR.200.
+
+   o Lines 10-20 get the name of the file to be found
+    
+   o Lines 30-40 check to see if the name is complete ('.' and full
+     extension).  If not it beeps and goes to beginning.
+    
+   o Lines 50-80 put the name in the format used on the menu (all caps, fill
+     with spaces, no '.', etc.)
+    
+   o Lines 90-110 step thru the directory looking for a match.  If one is
+     found, its starting address on the menu is found (I=PEEK(A+1)....).  If
+     noneis found, the program tells you so in line 120.
+    
+   o Lines 130-150 print the start address, I, and calculate and print the two
+     address bytes (low order byte first).
+ 
+I use this routine as an element of several programs (e.g., DISASM.PW2)
+which process files in the Model 100 by accessing them directly, in their storage position in RAM.
+ 
+Phil Wheeler
+71266,125
+4 Dec 1987

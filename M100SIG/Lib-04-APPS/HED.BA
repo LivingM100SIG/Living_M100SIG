@@ -1,0 +1,115 @@
+1 REM Program to write headlines that FIT!
+2 REM Program written by Steve Caine [72247,1272]
+3 REM Headline sizes and column widths based
+4 REM on format of Digital Review newspaper
+5 REM of Boston, Ma., where I work.
+10 CLS
+20 PRINT@135,"WAIT ..."
+30 CLEAR
+40 DEFINT A-Z
+50 DIM W(122),LW(3),CH(3,70),MX(3)
+60 FN$="LET.DO" 'you can rewrite this as a menu to choose among different stored character sets
+100 OPEN FN$ FOR INPUT AS #1
+110 INPUT#1,L 'number of lines of characters to be read
+120 FOR I = 1 TO L : INPUT#1,LO(I),HI(I) : NEXT I 'start/stop values (in ASCII) of char. widths to be read from LET.DO
+130 FOR I = 1 TO L
+140 LINE INPUT#1,T$ 'read (and discard) line of letters above their widths
+150 FOR J = LO(I) TO HI(I)
+160 INPUT#1,W(J):PRINT@144,W(J); 'store character widths; let user know it's working
+170 NEXT J
+180 NEXT I
+190 CLOSE #1
+200 CLS 'set up screen
+210 C=-1:L=1:ED=59 'max. head width (default)
+220 FOR I = 1 TO 3:LW(I)=0:MX(I)=0:NEXT I
+230 GOSUB 1000:CLS 'go to "choose head" menus
+240 PRINT@280,HD$;CL$;
+250 PRINT@294,"L1:";
+260 PRINT@303,"L2:";
+270 PRINT@312,"L3:";
+300 PRINT@-40+80*L+C,K$ 'update screen & pica count
+310 C=C+1
+320 PRINT@288+L*9,;:PRINT USING"##.#";LW(L)/12*PT!/32;
+330 PRINT@-40+80*L+C,"_ "
+340 K$=INKEY$:IF K$="" THEN 340 'wait for char. from keyboard
+350 K=ASC(K$) 'char.'s ASCII value
+360 IF K=8 THEN 500 'backspace over last char.
+365 IF K=27 THEN 200 'ESC key, back to menu
+370 IF K=30 OR K=31 OR K=13 THEN 600 'cursor keys or CR
+375 IF K=127 THEN 700 'DEL key erases line
+380 IF K>122 THEN 340 'ignore non-alphanumeric character
+385 IF W(K)=0 THEN BEEP:GOTO 340 'ignore char w/ no width stored
+400 CH(L,C)=K 'if it gets this far, a headline char. has been entered
+410 LW(L)=LW(L)+W(K)
+420 IF LW(L)>ED*12*32/PT! THEN BEEP 'over edge of max. headline width
+430 MX(L)=C+1
+440 GOTO 300
+500 'handle backspace key
+510 IF C=0 THEN 320
+520 C=C-1:MX(L)=C
+530 LW(L)=LW(L)-W(CH(L,C))
+540 GOTO 320
+600 'handle cursor keys
+610 IF K=30 THEN 640 'else it's CR or down cursor
+620 IF L<3 THEN GOSUB 800:L=L+1:C=MX(L)
+630 GOTO 320
+640 IF L>1 THEN GOSUB 800:L=L-1:C=MX(L)
+650 GOTO 320
+700 'DEL key erases entire line, or line above if this one is empty
+710 IF C=0 THEN GOSUB 800:L=L-1:IF L=0 THEN L=1:GOTO 320
+720 PRINT@-40+80*L,SPACE$(MX(L)+1); 'clear line
+730 FOR I = 0 TO MX(L):CH(L,I)=0:NEXT I 'clear arrays holding line's char. widths
+740 LW(L)=0:MX(L)=0:C=0
+750 GOTO 320
+800 'erase old "_" cursor
+810 PRINT@-40+80*L+C," "; 
+820 RETURN
+1000 CLS:CL$="" 'subroutine for headline choice menu
+1010 PRINT@45,"Head size?";
+1020 PRINT@90,"<A> 32 on 32";
+1030 PRINT@130,"<B> 24 on 24";
+1040 PRINT@170,"<C> 20 on 20";
+1050 PRINT@210,"<P> other point sizes";
+1060 PRINT@245,"<ESC> to Quit";
+1070 A$=INKEY$:IF A$="" THEN 1070 'wait for choice
+1100 IF A$="a" THEN HD$="A ":PT!=32:GOTO 2000 'these three go on to column width menu
+1110 IF A$="b" THEN HD$="B ":PT!=24:GOTO 2000
+1120 IF A$="c" THEN HD$="C ":PT!=20:GOTO 2000
+1130 IF A$="p" OR A$="P" THEN 1200
+1140 IF ASC(A$)=27 THEN CLS:END
+1150 IF A$="A" THEN HD$="A head":PT!=32:RETURN 'these three skip column width menu
+1160 IF A$="B" THEN HD$="B head":PT!=24:RETURN
+1170 IF A$="C" THEN HD$="C head":PT!=20:RETURN
+1180 GOTO 1070
+1200 CLS 'non-standard head, just enter point size
+1210 PRINT@85,"Point size";
+1220 INPUT P!
+1230 HD$=STR$(INT(P!*10)/10)+"pts "
+1240 PT!=P!*32/21
+1250 IF A$="p" THEN 2000 'go on to column width menu
+1260 RETURN 'skip column width menu
+2000 CLS 'subroutine for menu defining headline's column width (ED=edge in picas)
+2005 PRINT@80,"Columns?";
+2010 PRINT@51,"4-col.page";
+2015 PRINT@66,"5-col.page";
+2020 PRINT@90,"<1> 14 picas";
+2025 PRINT@105,"<1> 11 picas";
+2030 PRINT@130,"<2> 29 picas";
+2035 PRINT@145,"<2> 23 picas";
+2040 PRINT@170,"<3> 44 picas";
+2045 PRINT@185,"<3> 35 picas";
+2050 PRINT@210,"<4> 59 picas";
+2055 PRINT@225,"<4> 47 picas";
+2060 PRINT@240,"<ESC> to Reset";
+2065 PRINT@265,"<5> 59 picas";
+2070 A$=INKEY$:IF A$="" THEN 2070 'wait for choice
+2100 IF ASC(A$)=27 THEN 1000 'ESC key
+2110 IF A$="1" THEN ED=14:CL$="1/4":RETURN
+2115 IF A$="!" THEN ED=11:CL$="1/5":RETURN
+2120 IF A$="2" THEN ED=29:CL$="2/4":RETURN
+2125 IF A$="@" THEN ED=23:CL$="2/5":RETURN
+2130 IF A$="3" THEN ED=44:CL$="3/4":RETURN
+2135 IF A$="#" THEN ED=35:CL$="3/5":RETURN
+2140 IF A$="4" THEN ED=59:CL$="4/4":RETURN
+2145 IF A$="$" THEN ED=47:CL$="4/5":RETURN
+2155 IF A$="%" THEN ED=59:CL$="5/5":RETURN

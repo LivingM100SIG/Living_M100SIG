@@ -1,0 +1,21 @@
+0 REM	MUTIL.BA (V1.0, 29Mar1986)		Model 100 Mini-Utility			David Coons [72507,3172]
+1 REM	DESCRIPTION OF FUNCTIONS:
+2 REM	Clr	Recover unused RAM. Can			be used as often as			desired.
+3 REM	Kill	Kills file. If .BA file			is killed, program will			stop (M100 bug; press			F4 to continue).
+4 REM	Disk	Runs FLOPPY.CO (loaded			at 59400). Assumes no			.CO programs in RAM.
+5 REM 		Change ',50' to	',10' in		line 10 if you don't use		the TDD.
+6 REM		To save 3.5K RAM: (1)			execute FLOPPY.CO from			menu, (2) quit (F8), (3)		CLEAR 256,59400,
+7 REM		(4) kill FLOPPY.CO, (5)			use MUTIL to run			FLOPPY.CO from now on.
+8 REM	Name	Renames files. Enter old		name, comma or ENTER,			new name.
+9 REM	CSum	Computes checksum on .DO		file.
+10 ONERRORGOTO110:ONKEYGOSUB30,40,50,60,70,,,100:CLS:PRINT@280,"Clr  Kill Disk Name CSum           Menu";:KEYON
+20 PRINT@96,TIME$:PRINT@174,FRE(0)+FRE("");"free":GOTO20
+30 PRINT@134,"Clearing ...":MAXFILES=0:CLEAR256,59400:GOTO10
+40 CLS:FILES:F$="":INPUT"<Kill>";F$:IFF$=""THEN10ELSEKILLF$:GOTO10
+50 CALL59400
+60 CLS:FILES:F$="":INPUT"<Rename>Old,New";F$,G$:IFF$<>""ANDG$<>""THENNAMEF$ASG$:GOTO10:ELSEGOTO10
+70 CLS:CLEAR512:MAXFILES=1:FILES:F$="":INPUT"<CheckSum>";F$:IFF$=""THENMAXFILES=0:CLEAR256:GOTO10:ELSEOPENF$FORINPUTAS1:C#=0
+80 IFNOTEOF(1)THENLINEINPUT#1,X$:IFLEN(X$)>0THENFORI%=1TOLEN(X$):C#=C#+ASC(MID$(X$,I%,1)):NEXT:PRINT@280,C#;:GOTO80:ELSEGOTO80
+90 CLOSE#1:MAXFILES=0:PRINT"... ";:BEEP:X$=INPUT$(1):GOTO10
+100 MENU
+110 PRINT"Err"ERR"@"ERL"... ";:X$=INPUT$(1):RESUME10

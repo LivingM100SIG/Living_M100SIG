@@ -1,0 +1,145 @@
+SENDER.DOC
+
+     Documentation for SENDER.200
+      BBS Text-Uploading Program
+     by Andrew Zarchy [73107,3455]
+
+	SENDER.200 formats and uploads text files from the Model 200 to local 
+BBS's that use line prompts or otherwise receive too slowly for TELCOM.  It 
+automaticaly matches TELCOM's current parameters, and allows variable send 
+rates or fussy BBS's.  However, it can ONLY be used with an external, Hayes-
+type modem, as it requires disconnection from TELCOM to be run.
+
+	Because SENDER has no error-checking, is not a dialer, and because it 
+works in conjunction with TELCOM instead of replacing it, it is much smaller 
+than programs like XMODEM.
+
+	Directions:
+
+   1. Log onto the BBS in your usual way.
+
+   2. When the BBS is ready to receive your text file, disconnect from TELCOM 
+by pressing F8 and answering "Y" to the prompt.  You'll return to the Main 
+Menu.  The external modem will maintain the signal carrier.
+
+   3. Select and run SENDER.BA.
+
+   4. Answer SENDER's prompts, pressing ENTER after each:
+
+   "File to Send?": type the file you wish to send (a ".DO" file only).  Type 
+file name only; do not type the extension ".DO"
+
+   "Width (79) ?": type the line width you wish to send.  This is the maximum 
+number of characters per line the BBS displays.  If the BBS uses automatic word
+-wrap, type the number of the column before word-wrap occurs.  (See WORD-WRAP 
+in Notes below.)  Pressing ENTER here defaults to 79, the most common setting. 
+(Second most common is 39.)
+
+   "Char. delay 0-10 ?"  This is how long SENDER will wait between characters. 
+Be optimistic - try pressing ENTER (for 0).  Some slower BBS programs may 
+require a higher setting.  (See CHARACTER DELAY in Notes below.)
+
+   "Prompt?": If the BBS uses line prompts, type the line-prompt character (one
+character only).  Example: If the BBS sends "1>" to start the first line, then 
+enter the ">" character (without quotes).  If the BBS gives you a choice of 
+using or not using a prompt character, always use one.
+
+	If the BBS uses word-wrap or otherwise doesn't send line-prompt 
+characters, press ENTER at "Prompt?" and answer "Line delay 0-10 ?"  (See LINE 
+DELAY in Notes below.)
+
+   5. The message "Sending file" will appear, followed by "Line:" and the line 
+numbers of your file as they are formatted and uploaded.  When it's finished 
+transmitting your file, SENDER will chime and return you directly to TELCOM 
+Terminal Mode.
+
+   6. When you see a flashing cursor, you're back in TELCOM.  Type the 
+abbreviation the BBS uses to indicate you've finished sending text.  (You may 
+have to press ENTER first to begin a new line.)  Then list your file on the BBS
+to check it, editing if necessary.
+
+
+NOTES:
+
+	BBS programs (and the computers they run on) vary in the speed at which
+they can accept data.  Some are quite fast, and some go no faster than a fast 
+typist.  The only sure way to figure out the speed at which a BBS will accept 
+data is to experiment.  Send test files, raising or lowering SENDER's delay 
+rates until you find reliable settings.  Most BBS sysops will be happy to help 
+you and allow you to send test files.  After all, when you begin uploading 
+posts instead of typing them online, you'll be shortening your session time.
+
+	CHARACTER DELAY: Most BBS's I call can receive characters as fast as 
+SENDER can send them, so I usually press ENTER (for 0) at this prompt.  If the 
+BBS is missing characters in the middle of your lines, try raising this 
+setting.
+
+	LINE DELAY: If the BBS's text editor doesn't send prompts characters (
+ie., uses word-wrap), you must tell SENDER how long to wait between lines.  
+Experiment.  Try the 3 setting.  If the beginnings of your text lines are 
+chopped off when you list them, first be sure you're not sending lines that are
+too wide.  (See WORD WRAP.)  Then increase the Line Delay.
+
+	INTERRUPTING: You can stop SENDER and return to TELCOM at any time.  
+Just press SHIFT/BREAK, return to the Main Menu (F8), select TELCOM, and re-
+enter Terminal Mode (F4).
+
+	WORD-WRAP: Many BBS's use word-wrap to format text automatically as it 
+is sent manually.  SENDER bypasses word-wrap by sending a carriage return 
+before the column where word-wrap occurs.  If you're not sure where the BBS's 
+word-wrap occurs: enter a line of text with at least one space in it, count the
+number of characters till the new line begins, and set Width short of that.
+
+	If your text appears DOUBLE-SPACED on the BBS, you are sending lines 
+that are too wide and are activating the word-wrap, causing extra carriage 
+returns.  Use a shorter Width.
+
+	It's rare, but some BBS's with word-wrap will not accept forced 
+carriage returns (which means your post will be one big paragraph).  In this 
+case, enter 0 Line Delay and use a higher Character Delay, since Character 
+Delay will act as the Line Delay at the point of word-wrap.  Experiment and see
+what works.
+
+	FILE LENGTH: Be sure to observe the BBS's maximum post length (number 
+of lines per post).  If you try to send more than the allowed number of lines, 
+all kinds of havoc can break loose as text characters overflow the text editor 
+and answer BBS prompts.
+
+	If you're not sure how many lines your file will be, keep your eye on 
+SENDER as it runs, and INTERRUPT it before it exceeds the maximum number of 
+lines.  Then return to TELCOM, edit the unfinished line of your post, and send 
+the rest of your file in a separate post.  (Remember: the external modem 
+maintains your carrier, so you can freely hop between TELCOM, SENDER, .DO files
+and menus while on-line... even keep a copy of SENDER on each menu!)
+
+	USER HOSTILITY: In the interest of compactness, SENDER has no exotic 
+error-trapping routines.  For example, it assumes you won't select a file that 
+doesn't exist.  If you do, the program will simply stop.  If this happens, run 
+it again.  (If only relationships were so easy.)
+
+	TAB CHARACTERS: SENDER interprets tab characters (chr$(6)) as eight 
+spaces.  To change the number of spaces a tab character represents, change the 
+value of "T" at the beginning of line 54:
+
+     54 T=8:A=A+SPACE$(T):X=X+T-1:
+        NEXT:GOTO60
+
+   Example: T=5 will cause SENDER to treat tabs as five spaces.
+
+	MODIFYING SENDER.200 FOR MODEL 100:  As far as I know, SENDER will work
+on Model 100 with these changes:
+
+   1. The PEEK in Line 20 (61244) must be changed to the beginning address 
+where Model 100 stores TELCOM parameters (whatever it is)
+
+   2. The CALL in Line 95 must be changed to Model 100's jump-to-TELCOM CALL (
+whatever it may be)
+
+   DIALING: I keep a separate dialer program on my menu, a modified version of 
+Tony Anderson's dialer on this SIG.  (It lists BBS numbers in the ADRS.DO file 
+in rotating menus, and auto-dials and logs onto them at the press of a number 
+key.)  I like having the two functions separate, for menu management.  It 
+wouldn't be hard to combine them, though. If anyone's interested, let me know.
+
+- END - 
+

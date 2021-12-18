@@ -1,0 +1,214 @@
+
+CHANGES TO DEFAULT DATAPAC PARAMETERS TO PERMIT UP AND DOWNLOADING FROM
+COMPUSERVE
+
+(Revised:  15 June 1987)
+
+
+---------------------------------------
+
+REVISION NOTE:  (15 June 1987)
+
+This file, dated 15 June 1987, is a revision to DTAPAC.HLP dated 13 April
+1987.  Datapac has added 10 new parameters to their PAD.  However, there is
+no change to the procedure listed in the 13 April 1987 version of DTAPAC.HLP
+nor are there changes or additions to the parameters that are modified.  This
+file has been updated only to reflect the new screens that you will see on
+Datapac that include the 10 new PAD parameters.
+
+It has also come to my attention that many, many Datapac users are accessing
+CompuServe via Tymnet, i.e., Datapac --> Tymnet --> CIS.  Running through a
+second third-party communications network is definitely a detriment to
+throughput.  Datapac has a direct gateway into CompuServe.  The address code
+is P 29400138.  Send this address code instead of the P 1 3106 for Tymnet.
+You will then get the HOST: prompt.  Respond with "CIS<enter>" (omit the
+quote marks) and the familiar User Id: prompt will appear.
+
+
+---------------------------------------
+
+REVISION NOTE:  (13 April 1987)
+
+This file, dated 13 April 1987, is a revision to DTAPAC.HLP dated 7 January
+1987.  There is no change to the procedure, but further testing shows that
+DataPac sends an XOFF in response to the first character typed after you send
+a Ctrl-P to Datapac.  Hence, in order to insure that the procedure will work
+properly, you *must* disable XON/XOFF in your comm program *prior* to logging
+on.  Once the procedure is completed and you are logged on to CompuServe,
+XON/XOFF should be re-enabled in your comm program to insure proper operation
+thereafter.
+
+My thanks to Gary Brown (70003,1215) for this valuable tip.
+
+
+---------------------------------------
+
+REVISION NOTE:  (7 January 1987)
+
+This file, dated 7 January 1987, replaces my original offering, dated 18
+December 1986.  This latest revision adds the use of the question mark (?) in
+the SET command to get an immediate confirmation from DATAPAC on the changes.
+
+An asterisk indicates new additions.
+
+My thanks to Martin Zimmerman (72757,3076) for this valuable tip.
+
+
+---------------------------------------
+
+
+A commmand language is available within Datapac which, among other things,
+allows a terminal to change or control the default Packet
+Assembler/Disassembler (PAD).  The PAD is divided into twenty separate
+functions, but this file will only address those functions that have a direct
+bearing on binary transfers (uploading and downloading) from CompuServe.
+There are six defined profiles (sets of parameters) available and Profile 2
+is the default (Canadian set).  While any profile can be modified for use
+with CompuServe, Profile 1 (International Set) most closely resembles what we
+need and requires the fewest modifications.
+
+To make the required changes, log on to Datapac as you normally would.  The
+changes are made at the point when you receive the CompuServe User Id prompt.
+While the changes can be made from within CompuServe after you've logged on
+the suggested technique is to make the changes at the User Id prompt, thus
+not incurring CIS charges while the changes are being made.
+
+------------------------------------------------------
+Note:  ^P is Ctrl-P (hold down the Ctrl key and hit P)
+------------------------------------------------------
+
+User ID: ^PPROF 1<enter>   (You type Ctrl-P PROF 1<enter>.)
+
+                                       The Ctrl-P escapes to Datapac command   mode and PROF 1 sets Profile 1.  (The
+space between "PROF" and "1" is important!)
+
+PAR<enter>   (You type this)
+
+This is blind, no echo.  PAR asks Datapac for the current set of
+parameters, in this case, Profile 1. Datapac will then send the next block.
+                                       The format is:  Par#:Value.  (This command is not required, but it
+gives a good starting point for reference.)
+
+DATAPAC: par 001:001, 002:000, 003:126, 004:000, 005:001, 006:001
+             007:002, 008:000, 009:000, 010:000, 011:003, 012:001
+             013:016, 014:000, 015:000, 016:del, 017:can, 018:dc2
+             019:002, 020:000, 021:000, 022:000, 118:del, 119:can
+             120:dc2, 121:000, 122:000, 123:000, 125:000, 126:016
+
+SET?002:001,126:004<enter>   (You type this)
+
+This is blind with no echo, so be careful!!!
+
+	002:001 turns the echo back on.
+
+	126:004 tells Datapac to send a linefeed after a carriage return
+
+	*  The ? tells DATAPAC to confirm the change upon receipt, and
+	DATAPAC will echo back the following message:
+
+DATAPAC: par 002:001,126:004
+
+SET?003:000,004:004<enter>   (You type this.  Echo is now back on so
+you should see what you type.  If you cannot see what you type at this
+point re-issue the previous command.)
+
+	003:000 sets the data forwarding to nothing.  Otherwise, packets of
+	data are sent each time Datapac sees a <cr> or any control character.
+
+	004:004 sets the "idle timer delay".  A setting of 004 works, but a
+	lower setting may also do the trick.
+
+	*  The ? tells DATAPAC to confirm the change upon receipt, and
+	DATAPAC will echo back the following message:
+
+DATAPAC: par 003:000,004:004
+
+SET?007:008<enter>   (You type this)
+
+	007:008 allows using a sustained BREAK signal to get into Datapac
+	command mode.  This command is optional but handy since we are
+	disabling the normal Ctrl-P escape in the next command.
+
+	*  The ? tells DATAPAC to confirm the change upon receipt, and
+	DATAPAC will echo back the following message:
+
+DATAPAC: par 007:008
+
+SET?001:000<enter>   (You type this)
+
+	001:000 disables the normal Datapac escape to command mode (Ctrl-P).
+	This is necessary in order to use CIS control codes.
+
+	*  The ? tells DATAPAC to confirm the change upon receipt, and
+	DATAPAC will echo back the following message:
+
+DATAPAC: par 001:000
+
+PAR<enter>   (You type this)
+
+PAR asks Datapac again for the current set of parameters (now changed).  This
+command is not necessary, but it *is* reassuring to know that the changes were
+made successfully.  Datapac will send the next block.
+
+DATAPAC: par 001:000, 002:001, 003:126, 004:004, 005:001, 006:001
+             007:008, 008:000, 009:000, 010:000, 011:003, 012:001
+             013:004, 014:000, 015:000, 016:del, 017:can, 018:dc2
+             019:002, 020:000, 021:000, 022:000, 118:del, 119:can
+             120:dc2, 121:000, 122:000, 123:000, 125:000, 126:004
+
+<enter>   (You type this)
+
+This tells Datapac to set the changes.  Datapac will echo back a pair of
+ASCII 17s (Control-Q) to acknowledge the set.  You will not see anything on
+the Model 100 screen.
+
+<enter>   (You type this)
+
+Returns to host.
+
+User ID:
+
+
+---------------------------------------
+
+
+NOTES:
+
+
+If you enter a SET command and Datapac responds with "invalid command", the
+chances are that "noise" crept into the line.  Just resend the SET command
+and all should be well.
+
+While the SET 001:000 disables the normal access to Datapac command mode via
+Ctrl-P, the disabling is necessary in order to use Ctrl-P within CompuServe
+to interrupt a scroll.  However, SET 007:008 enables a sustained BREAK signal
+(available in many comm programs) to enter Datapac command mode should the
+need arise.
+
+If you are using a command script to logon, then all the parameter changes
+can be done in one line as in:
+
+SET?002:001,126:004,003:00,004:004,007:008,001:000<enter>.
+
+If you are using a script, I also suggest a Delay or Wait 2 seconds before
+sending commands to Datapac.  For instance, I send the above SET? command.
+Datapac echos back the parameter changes, and I wait for the echo of 001:000.
+I then Delay 2 seconds and send the next command.
+
+
+
+KUDOS:
+
+This file is an update to the fine work initiated by Eldor Gemst (74116,2714)
+of Montreal and replaces his original work, DTAPAC.HLP, dated 9 Sep 85.
+Thanks are also in order to Howard Cherniack (75026,3723) who made me welcome
+in Vancouver and helped me with this study during my recent visit to Canada.
+
+I hope that this file will be of value to our Canadian cousins to the North.
+Please leave a message to Sysop if you encounter difficulties in downloading
+via Datapac and we will do our best to assist you.
+
+
+SysOp Conrad Kageyama (76703,1010)
+CompuServe IBMNET
+15 June 1987

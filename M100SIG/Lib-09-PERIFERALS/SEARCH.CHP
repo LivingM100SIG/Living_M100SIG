@@ -1,0 +1,9 @@
+0 'SEARCH.CHP - searching your Chipmunk
+1 'by Bill Templeton [75655,1056]  5/85
+2 'prints output to file:DISK.DO
+3 CLEAR512:E$=CHR$(27):R$=E$+"p":N$=E$+"q":OPEN"disk"FOROUTPUTAS1:CLS:PRINT@45,R$" Searching your Chipmunk "N$:ONERRORGOTO7
+4 PRINT@93,"Track (0-79):";:INPUTT:PRINT@127,"From Sector (1-18):";:INPUTX:PRINT@169,"To Sector (1-18):";:INPUTY
+5 FORS=XTOY:P$=DSKI$(0,T,S,0):Q$=DSKI$(0,T,S,1):PRINT@253,R$" Working..."N$:PRINT#1,
+6 PRINT#1,"--- Track"T", Sector"S"---":PRINT#1,P$;Q$:NEXT:MENU
+7 IFERRTHENPRINT@253,"Error ="ERR
+8 PRINT#1,:PRINT#1,"Error ="ERR:RESUMENEXT

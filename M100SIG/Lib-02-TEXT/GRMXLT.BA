@@ -1,0 +1,21 @@
+0 '"GRMXLT.BA" -- Character Translator 
+1 ' for printing German characters from
+2 ' Model 100 to Epson printers (and
+3 ' compatibles with International
+4 ' character sets). Use as follows:
+5 '   1) Use this program to translate           file in Model 100; do not use
+6 '      [, ], \, |, { or } in original          file
+7 '   2) Send CHR$(27)"R"CHR$(2) to              printer to put in German mode           (can use LPRINT in Basic).
+8 '   3) Print the file with normal              approach (T-WORD, etc.)
+9 ' Phil Wheeler [71266,125] - 5/3/87
+10 CLS:MAXFILES=2:CLEAR256:DEFINTI-Z:DEFSTRA-H:E=CHR$(27):GOTO60
+20 H=INPUT$(1,1)
+30 FORI=1TON:IFH=A(I)THENH=B(I):GOTO40ELSENEXT
+40 PRINT#2,H;:IFEOF(1)THENCLOSE:GOTO50:ELSE20
+50 BEEP:MAXFILES=1:MENU
+60 READN:DIMA(N),B(N),R(N),S(N):FORI=1TON:READR(I):A(I)=CHR$(R(I)):NEXT:FORI=1TON:READS(I):B(I)=CHR$(S(I)):NEXT
+80 CLS:PRINT@2,E"pGerman-to-Epson Character Translator"E"q":FILES:PRINTE"pFile to Convert "E"q";:INPUTF:PRINTE"pOutput File     "E"q";:INPUTG
+90 OPENFFORINPUTAS1:OPENGFOROUTPUTAS2:CLS:PRINT@130,"Working...":GOTO20
+100 DATA 7
+110 DATA  177,178,179,182,183,184,185
+120 DATA   91, 92, 93,123,124,125,126

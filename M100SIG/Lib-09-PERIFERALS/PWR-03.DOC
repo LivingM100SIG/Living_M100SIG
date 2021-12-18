@@ -1,0 +1,305 @@
+
+
+
+                                    Chapter 2
+                                 POWR-DOS Basics
+
+
+          You cannot see POWR-DOS on your computer's menu.  It is an
+          invisible program whose primary purpose is to enhance TEXT
+          and BASIC.  In this chapter, we discuss how to use the most
+          commonly used enhancements.
+
+
+                                Basic Procedures
+
+                               Is POWR-DOS Active?
+
+          There will be times when you want to ask yourself, "is
+          POWR-DOS installed?"  This question will naturally occur to
+          you immediately after first loading it.  To find out, get
+          into BASIC.  Enter the command LFILES V and press [ENTER]. 
+          If POWR-DOS is not installed, you will get an ?FC error.  If
+          it is installed, you will get a message showing the POWR-DOS
+          revision number.  Example:
+
+
+          LFILES V[ENTER]          <--- (You type this)
+          Powr-DOS 2.1 (c)1986 Acroatix
+          OK
+
+
+                              Loading a BASIC File
+
+          In addition to the invisible part of POWR-DOS, your owner's
+          diskette contains seven application programs.  All seven are
+          written in BASIC; the most important of these is called
+          DMENU.BA.  The next chapter discusses DMENU in detail, but
+          before you can use it, you must load it.  To load DMENU.BA,
+          get into BASIC and enter the following commands:
+
+
+          Load ":dmenu[ENTER]      <--- (You type this)
+          Save "dmenu[ENTER]       <--- (You type this)
+
+
+          Once you have loaded DMENU, you can run it immediately by
+          entering the BASIC command RUN, or return to the main menu
+          and run it from there.  If you are in a hurry to get started,
+          skip on to Chapter 3 now.  But don't forget that, even
+          without DMENU, you can still access your PDD with POWR-DOS. 
+          You can load any BASIC program from disk using a similar
+          technique.
+                                     Page 9
+          Chapter 2               POWR-DOS Basics             Page 10
+
+
+                          Examining Disk and RAM Files
+
+          POWR-DOS adds a powerful new command to your computer's
+          BASIC: LFILES.  In its simplest form, LFILES list the files
+          on the current disk. Example:
+
+
+          Lfiles[ENTER]            <--- (You type this)
+          CLEAN .BA     207
+          DIARY .DO    1981
+          FDP   .BA     940
+          PCAL  .BA    1326
+          PTODO .BA     815
+          SETUP .BA     215
+          SRCH  .BA    1321
+          Space or Break
+          TASK  .DO    3755
+          TMPC  .BA     189
+          TMPC  .CO    9599
+          UPDATE.BA      60
+              56 Sectors free
+          Space or Break
+          OK
+
+
+          (NOTE: The 200 Display is different; there are more files
+          between breaks, and the pause message is different.)
+
+          On the Model 100 (only), the screen clears after each "Space
+          or Break" t speed the scrolling.  At each point where the
+          display stops, you may continue the listing by pressing the
+          space bar, or abort it with SHIFT-BREAK or Control-C.
+
+          You can see a very similar display of files in RAM by
+          entering the command LFILES R.  This command will list all
+          visible RAM files and their lengths.  Example:
+
+
+          Lfiles R[ENTER]          <--- (You type this)
+          DMENU .BA    2327
+          TASK  .DO    3755
+          TMPC  .BA     191
+          UPDATE.BA      62
+          Space or Break
+          OK
+          Chapter 2               POWR-DOS Basics             Page 11
+
+
+          Helpful Hint: If you will be using BASIC often without DMENU,
+          you may want to define an unused Function key as follows:
+
+
+          Key 7, "CLS:LFILES "[ENTER]   <--- (You type this)
+
+
+          (Note: Tandy 200 users can omit the CLS:.)  After this
+          command, the [F7] Key will types the LFILES command for you;
+          simply press [F7][ENTER] for disk files and [F7] R [ENTER]
+          for RAM files.
+
+
+                              Saving BASIC Programs
+
+          After creating or change a BASIC program, you may want to
+          save it to disk.  To save the program, simply enter the
+          following command:
+
+
+          Save ":progrm[ENTER]     <--- (You type this)
+
+
+          (NOTE: Use your BASIC program name instead of "progrm".)
+
+          The SAVE command will overwrite any existing disk file
+          without warning.  In the context of normal BASIC development,
+          the automatic overwrite is a convenient feature.
+
+
+                          Loading and Saving Text Files
+
+          If you have used your computer's TEXT program with the
+          cassette player, you know that [F2] loads from cassette, and
+          [F3] saves to cassette.  With POWR-DOS active, you can add an
+          extra colon (":") to the file name to load and save files to
+          diskette.
+
+          To load a new file from diskette, you must first create that
+          file in RAM using TEXT.  Create it just as you would any new
+          DOcument file.  Once you see the blank screen and the
+          flashing cursor, press [F2].  TEXT will prompt you "Load
+          from:"; enter the disk file name preceded by a colon (":"). 
+          If you omit the ".DO" extension, POWR-DOS will add it for
+          you.  Remember, the TEXT prompt also contains a colon, so the
+          bottom line of your screen will look as follows:
+
+
+          Load from::memo
+          Chapter 2               POWR-DOS Basics             Page 12
+
+
+          (NOTE: The file name may be different from "memo".)  There
+          are two colons in all: one from the computer, and one from
+          you.
+
+          To save a file to disk, press [F3].  TEXT will prompt you
+          "Save to:"; enter the disk file name preceded by a colon
+          (":").  If you omit the ".DO" extension, POWR-DOS will add it
+          for you.  Once again, remember that there will be two colons
+          on the bottom line: one from you, one from the computer.  If
+          you specify an existing disk file, POWR-DOS will
+          automatically overwrite it with the new file you are saving.
+
+
+                                The Memory Eaters
+
+          There are four different uses for memory that do not appear
+          on your computer's menu.  The paste buffer contains
+          characters that will appear in TEXT when you press the PASTE
+          key.  The unsaved BASIC program is the program that lists
+          when you get into BASIC from the menu and enter the LIST
+          command.  The reserved memory is an area used by many
+          machine-language programs; you can determine its length by
+          entering the BASIC command: PRINT MAXRAM-HIMEM.  Invisible
+          files will not appear on your menu, although they are normal
+          files in every other sense.  POWR-DOS resides in an invisible
+          BASIC file; your computer may contain other invisible files
+          as well.
+
+          You should realize that there are three other "invisible"
+          memory eaters besides POWR-DOS.  When you need more memory,
+          check these three memory eaters first, and eliminate them. 
+          You can eliminate all three from BASIC with two commands:
+
+
+          CLEAR 0,MAXRAM[ENTER]    <--- (You type this)
+          NEW[ENTER]               <--- (You type this)
+
+
+                              Deactivating POWR-DOS
+
+          As nice as POWR-DOS is, you may occasionally want to remove
+          it from you computer.  To remove it, get into BASIC and enter
+          the following command:
+
+
+          LFILES OFF[ENTER]        <--- (You type this)
+          Chapter 2               POWR-DOS Basics             Page 13
+
+
+          Be certain that you have loaded in a copy of PL.BA before
+          entering this command.  Otherwise, you may find it necessary
+          to type in IPL.BA and reset your drive's DIP switches when
+          re-loading POWR-DOS later.  LFILES OFF removes POWR-DOS
+          completely from memory.
+
+
+                                Notes and Options
+
+
+                            Side Effects of LFILES V
+
+          POWR-DOS enhances BASIC by installing about a dozen "hooks"
+          into the ROM.  Some software - particularly several ROM
+          packages from PCSG - modify the hook table, effectively
+          disabling part of POWR-DOS.  The LFILES V command, in
+          addition to printing a message, also restores the hook table. 
+          It is this behavior (not vanity) that led us to include the
+          LFILES V statement in each of the application programs.  You
+          can use it also, particularly if you are getting ?NM errors
+          when trying to access the disk.
+
+
+                       Options when Loading BASIC Programs
+
+          If a BASIC program exists on disk in ASCII format (as a DO
+          file), you can use LOAD to convert it to BASIC format.  You
+          can also MERGE ASCII-saved programs directly from disk. 
+          These options allow considerable flexibility and power when
+          dealing with public domain software, which almost always
+          downloads in ASCII format.
+
+          After LOADing a BASIC program, you can SAVE it to a different
+          name in RAM, or a different name on disk using SAVE.  Or, you
+          can leave it "unsaved".  In this case, it will not appear on
+          the menu, but will still RUN and LIST from BASIC.  It will be
+          one of the "memory eaters".
+
+
+                               Options with LFILES
+
+          You can direct LFILES output to your line printer or to a
+          file.  The syntax is simple:
+
+
+          LFILES TO "LPT:"[ENTER]  <--- (You type this)
+
+          or:
+
+          LFILES TO "file"[ENTER]  <--- (You type this)
+          Chapter 2               POWR-DOS Basics             Page 14
+
+
+          (NOTE: "file" can be any legal DOcument file name.)  If you
+          specify a file, LFILES will replace any existing file with a
+          new listing.  When you use the TO option, there are no "Space
+          or Break" prompts or cleared screens.  LFILES TO is useful
+          when creating labels of backup diskettes or a
+          diskette-library index.
+
+          You can use the TO option in addition to the R option.  Using
+          both will send a RAM directory listing to your printer or to
+          a file.
+
+
+                                Text File Options
+
+          In TEXT, you can load disk files with different names than
+          the RAM filename you are editing.  Further, text you load
+          with [F2] will always appear at the end of your file.  This
+          behavior makes TEXT, combined with POWR-DOS, a convenient
+          tool for concatenating files.
+
+
+                               Errors and Recovery
+
+
+                             LFILES V has no Errors
+
+          The LFILES V command should never give you an error while
+          POWR-DOS is active.  If it gives an ?FC error, POWR-DOS has
+          been deactivated; if it gives any other error, you should
+          immediately deactivate POWR-DOS and re-load it.  See the
+          "Errors and Recovery" section in Chapter 1 for details.
+
+
+                              Disk Errors in BASIC
+
+          All disk-related errors in BASIC result in a two-letter code. 
+          For example, ?ND stands for "no disk".  Refer to the
+          error-code summary at the back of this manual for a complete
+          listing.
+
+
+                               Quirks of LFILES TO
+
+          LFILES TO has a few peculiarities when writhing to a DOcument
+          file.  For full details, refer to the LFILES description in
+          Chapter 7, which lists all the BASIC command enhancements.
+

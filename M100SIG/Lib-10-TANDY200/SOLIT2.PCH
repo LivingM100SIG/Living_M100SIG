@@ -1,0 +1,28 @@
+The following patch is for the 
+SOLIT2.200 version of Solitaire.
+The patch fixes a problem where
+the computer gets stuck in an endless
+loop when all of the cards are in
+either the foundations or table.
+It tries to FLIP THE DECK when it sees
+that there are no cards in the player's
+hand.  Then after FLIPPING, there still
+are no cards...the loop repeats.
+The following lines should read:
+
+3002 PRINT@600,"  <<DECK FLIP>>";:FOR
+OO=1TO100:NEXTOO:IFHF=0 AND IN=28
+THEN 3010
+
+3010 PRINT@600,STRING$(30,32);:GOTO1330
+
+
+The Solitaire versions available:
+SOLIT.200  original version...many bugs
+SOLIT2.200  almost no bugs
+
+The patch above ... the only bug left?
+
+Any ??...please leave me message
+Max Seim (71116,1347)
+

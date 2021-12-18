@@ -1,0 +1,193 @@
+                                 POWR-DOS
+
+              Information For The Online Version Of POWR-DOS
+
+
+Before you start to use, or for that matter, download any of the POWR-DOS
+files, it is very important that you read the following information.
+
+The online manual (POWR-D.DOC) is a direct translation of the commercial
+manual and as such, contains information that is only applicable if you
+have a copy of the original distribution disk.  Also, there are references
+to a Tandy 200 version of the program. At this time it is not known if
+there ever was such a version. If anyone has a T200 running with POWR-DOS,
+please let us know - we'd be very interested!
+
+Below is information that will hopefully get you up and running with this
+version of the system.
+
+
+                                   Files
+
+The following are the files included in the system:
+
+POWR.DOS       The actual program in HXFER format.  (Plain ASCII TEXT file)
+               Checksum = 475,641
+
+POWR-D.DOC     ASCII version of the manual - ready for echo to printer.
+               (Plain ASCII TEXT File)
+
+POWR-D.ARC     ARC'd version of the manual for those who wish to download
+               to their PC for printing.  (Binary file - protocol download
+               only to IBM type computers)
+
+PWR-01.DOC thru
+PWR-14.DOC     Split-up version of the manual for printing from RAM in the
+               M100.  (Plain ASCII TEXT File)
+
+COPY.PWR       Copy disk <-> disk.  (Binary file - see Special Downloading
+               Considerations below) Checksum = 157,368
+
+COPY-C.PWR     Copy disk <-> cassette.  (Binary file - see below) Checksum
+               = 177,113
+
+D-TEXT.PWR     Disk-based text editor for large-file editing.  (Binary file
+               - see below) Checksum 488,726
+
+DMENU.PWR      POWR-DOS menu program.  (Binary file - see below) Checksum =
+               222,679
+
+FORMAT.PWR     Formatting program.  (Binary file - see below) Checksum =
+               95,326
+
+PRFORM.PWR     Printer setup program for D-TEXT.  (Binary file - see below)
+               Checksum = 40,457
+
+RECOVR.PWR     Damaged disk recovery program.  (Binary file - see below)
+               Checksum = 315,029
+
+TINY.PWR       Itty-bitty DOS for saving and loading files only; in HXFER
+               format.  (Plain ASCII TEXT file) Checksum = 88,786
+
+
+                  Echoing the POWR-DOS manual to printer
+
+It is very important, if you intend to echo the POWR-DOS manual to printer,
+to make sure that your terminal settings are correct (Form FEEDS = REAL) to
+ensure proper page breaks.  If you don't change your profile, pages will
+have random spacing at the page breaks and will look pretty awful.  If you
+have skip-over-perf enabled on your printer, you must disable it.  As of
+the date-stamp of this INF file, the PROFILE area has been changed, so
+below is a step-by-step that should help:
+
+GO PROFILE
+
+[select]:
+
+ 1 Terminal Settings
+
+[select]:
+
+ 2 Change permanent settings
+
+[or]: (your choice)
+
+ 5 Change current session settings
+
+[select]:
+
+ 4 Terminal type/parameters
+
+[select]:
+
+ 4 Form FEEDS                     [REAL]
+
+[and]: (Only for downloading program files without XMODEM):
+
+ 8 PARITY                         [ZERO]
+
+
+                    Special Downloading Considerations
+
+Since the applications programs are stored as binary files, there are only
+two ways you can download the file properly.  If you try to READ the files
+without following the instructions below, you are assured of corrupted
+copies.
+
+  1. Download with XMODEM protocol.  Select one of the XMODEM programs in
+     LIB 3.  SXM.100, XMODEM.312, XMDPW5.100 and XMDM26.100 are all good
+     programs, take your choice.
+
+  2. Log on with your STATs set for 8 bit, no parity (x8N1E).  Doing so,
+     you can safely download the file without protocol and still transfer
+     the graphics characters with the [R]ead command.  To make sure that
+     CompuServe understands that you are logging on with 8 bit, you must
+     change your PROFILE setting to PARITY = [ZERO].  See the PROFILE
+     session above to accomplish this.  I know that doesn't seem very
+     intuitive, but it's the only way that CompuServe enables 8 bit
+     transmission.  When you first log-on with the new settings, you will
+     see a few graphics characters intermixed with the "User ID" prompt -
+     this is normal, and when you either enter your UID manually, or your
+     autolog-on string sends your UID, all text from then on will be
+     normal.  Since CompuServe assumes that you will be logging on with 7
+     bit, it doesn't understand until you type some characters.
+
+
+                             Loading POWR.DOS
+
+Most of the information in chapter 1 of the manual concerning loading of
+the program can be ignored.  There is no PL.BA program for this version,
+and you can't load the program via the standard IPL.BA program that comes
+with the TDD.  Only if you have the original POWR-DOS distribution disk can
+you follow those instructions.  Once you have converted POWR.DOS to a .CO
+file with HXFER (LIB 7, do not specify a load address, use default
+[ENTER]), you can load the program as any other M/L program.  An easy way
+to load the program is by typing in the following loader:
+
+10 CLEAR 256,58904:RUNM"POWR.CO"
+
+Run that one-liner and you will be presented with prompts described at the
+top of page 3 of the manual.  For TINY.PWR, use 62200 in the CLEAR
+statement.
+
+Once that POWR-DOS tells you that it is active, it automatically clears out
+the area it uses in HIMEM and doesn't use that area again until you have to
+reload.  At this point, you are at the BASIC OK prompt and can use any of
+the commands that take a "0:" or ":" prefix.  For example, the first thing
+I'd do is run DMENU.BA from disk.  To do so, just type:
+
+RUN ":DMENU [Enter]
+
+TINY.PWR loads the same way as POWR.DOS, but remember that once you exit
+TINY, the only way to re-enter the program is to load the .CO file again. 
+It does not stay active once you leave its command prompt.
+
+
+                            Miscellaneous Notes
+
+  1. Ultimate ROM II and Sardine ROM users can rename POWR-DOS to DOS100.CO
+     and then be able to boot the program from disk just as you would with
+     TS-DOS.
+
+  2. For pertinent information, see the PWRTIP.nnn files as well as the
+     large quantity of other related files that can be found by using the
+     command: BRO KEY:POWR-DOS.
+
+  3. Killing POWR-DOS:  The time will probably come that POWR-DOS will not
+     load, and you can't use LFILES OFF to disable it.  At that point, it
+     is possible to recover without a cold start by making the DOS visible
+     with one of the utilities in LIB 7 that do that sort of thing
+     (CHANGE.BA, for example), and then rename the file to all upper-case
+     with an extension that is normal for the M100.  (.BA, etc.) The DOS's
+     filename is "powrd.os" which can't be killed as is. The program listed
+     on page 8 of the manual is designed to accomplish this, but it really
+     isn't clear what is happening just by looking at the program. Knowing
+     the theories involved can help you be better equipped to handle this
+     situation, should it arise.
+
+  4. An undocumented feature has been found in DMENU that turns out to be
+     quite handy.  [F7] appears on the menu as "All", but no reference is
+     made in the manual as to what this does. Simply, when depressed, it
+     shows all files of one particular type. (.BA, .CO, .DO)  When pressed
+     again, it shows files of the next type, and so on. 
+
+
+From this point you should be able to move to the POWR-DOS manual starting
+with chapter 2 for the rest of the system.
+
+                                  ENJOY!
+
+                               Denny Thomas
+                                [76701,40]
+
+

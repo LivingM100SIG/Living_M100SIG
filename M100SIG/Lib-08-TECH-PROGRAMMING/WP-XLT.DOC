@@ -1,0 +1,157 @@
+WORD PROCESSOR FILE TRANSLATION ISSUES
+--------------------------------------
+Copyright by Phil Wheeler   ---   1987
+
+
+The question of translating a text file from one word processor (WP) to
+another is critical to some applications.  Often it is extremely difficult;
+for example, Multimate creates non-ASCII files -- but provides a conversion
+utility (thankfully!).  Other WP's (e.g., Wordstar = WS) create ASCII files
+with some "special features".  These are easier to cope with, at least up to
+a point.  WS is the one I know something about, so I will focus on it.
+
+
+1) WORDSTAR FILE DUMP SHOWING THE EFFECT OF FORMATTING FEATURES
+
+It helps to look at a simple WS file showing some of the issues.  This one
+shows the effect of two types of WS commands: Embedded control characters
+(such as ^B for boldface and ^S for underline); and on-screen formatting
+commands (such as ^OL for left margin and ^OG for hanging indent) which do
+not embed unique characters.
+
+The sample file prints out as shown just below.  The second printout is from
+using DEBUG.COM to see what is in the actual WS file.  From this we see:
+
+o  Underline in third line starts with ^S (13h) and ends with soft ^S (93h)
+   Note that soft characters are hard ones with 80h added (93h = 13h + 80h).
+   WS files end all interior words (not at paragraph end) with soft chars.
+
+o  Bold face does similarly with ^B (02h) in lines 3 and 4 of the dump.  Note
+   that it ends with hard ^B since it is at the end of a paragraph (0Dh 0Ah).
+
+o  In line 3 of the dump I used a ^OL, and a ^OG in line 5 and a ^OR in line
+   7.  Note that none of these appear in the dump as characters.  Instead,
+   they result in soft spaces (A0h = 20h + 80h) to pad.  These are adjusted
+   in number whenever you reformat (^B) a WS file.
+
+o  So it would be difficult to translate the formatting to T-WORD.  There
+   are no discrete characters to replace by a ^X or a ^L; instead you would
+   have to looks for strings of 0Ah's and operate on the file in a somewhat
+   global fashion.  NOT easy
+
+      A) PRINT-OUT OF WS FILE
+         --------------------
+
+Wordstar Test File <CR here>
+
+Underline Boldface
+
+    Left margin at 5
+
+o    <^OG here> and now we will do ^OR 50 and let
+     this thing do its hanging indent with the ^OG
+     acting. First chars are <, t)his, and
+     a)cting. (and the last a)!
+
+ Now we are back to the old left margin.
+
+      B) DUMP OF WS FILE
+         ---------------
+
+6B0F:0100  57 6F 72 64 73 74 61 F2-20 54 65 73 F4 20 46 69   Wordstar Test Fi
+6B0F:0110  6C E5 20 3C 43 D2 20 68-65 72 65 3E 0D 0A 0D 0A   le <CR here>....
+6B0F:0120  13 55 6E 64 65 72 6C 69-6E 65 93 20 20 02 42 6F   .Underline.  .Bo
+6B0F:0130  6C 64 66 61 63 65 02 0D-0A 0D 0A A0 A0 A0 A0 4C   ldface.....    L
+6B0F:0140  65 66 F4 20 6D 61 72 67-69 EE 20 61 F4 20 35 0D   eft margin at 5.
+6B0F:0150  0A 0D 0A EF 20 A0 A0 A0-3C 5E 4F C7 20 68 65 72   ...o    <^OG her
+6B0F:0160  65 BE 20 61 6E E4 20 6E-6F F7 20 77 E5 20 77 69   e> and now we wi
+6B0F:0170  6C EC 20 64 EF 20 5E 4F-D2 20 35 B0 20 61 6E E4   ll do ^OR 50 and
+6B0F:0180  20 6C 65 F4 20 8D 0A A0-A0 A0 A0 A0 74 68 69 F3    let ..     this
+6B0F:0190  20 74 68 69 6E E7 20 64-EF 20 69 74 F3 20 68 61    thing do its ha
+6B0F:01A0  6E 67 69 6E E7 20 69 6E-64 65 6E F4 20 77 69 74   nging indent wit
+6B0F:01B0  E8 20 74 68 E5 20 5E 4F-C7 20 8D 0A A0 A0 A0 A0   h the ^OG ..
+6B0F:01C0  A0 61 63 74 69 6E 67 AE-20 46 69 72 73 F4 20 63    acting. First c
+6B0F:01D0  68 61 72 F3 20 61 72 E5-20 3C AC 20 74 29 68 69   hars are <, t)hi
+6B0F:01E0  73 AC 20 61 6E E4 20 8D-0A A0 A0 A0 A0 A0 61 29   s, and ..     a)
+6B0F:01F0  63 74 69 6E 67 AE 20 28-61 6E E4 20 74 68 E5 20   cting. (and the
+6B0F:0200  6C 61 73 F4 20 61 29 21-0D 0A 0D 0A 4E 6F F7 20   last a)!....Now
+6B0F:0210  77 E5 20 61 72 E5 20 62-61 63 EB 20 74 EF 20 74   we are back to t
+6B0F:0220  68 E5 20 6F 6C E4 20 6C-65 66 F4 20 6D 61 72 67   he old left marg
+6B0F:0230  69 6E 2E 0D 0A 1A 1A 1A-1A 1A 1A 1A 1A 1A 1A 1A   in..............
+6B0F:0240  1A 1A 1A 1A 1A 1A 1A 1A-1A 1A 1A 1A 1A 1A 1A 1A   ................
+
+
+2) TYPES OF FORMAT CONVERTERS
+
+      A) CHARACTER TRANSLATORS
+         ---------------------
+
+The simplest of these will replace a single character by one other
+character.  For example, CHRXLT.BA (DL7) will let you replace any character
+by any other character, by putting the conversion OLD/NEW values in a data
+statement.  TW2WS.BA (DL7) is a trifle more sophisticated (replaces ^P by
+.pa), and is "hard-wired" to convert embedded characters from T-WORD (TW) to
+Wordstar (WS).
+
+      B) FORMATTERS/DEFORMATTERS
+         -----------------------
+
+These will remove certain of the formatting features of the WP programs --
+or add them back; most of these either strip the embedded characters, leave
+them alone or give you one of these two options (that is to say, most of
+these will not do character translations).
+
+WS-STP.BA (DL2) is a small program to strip WS formatting, so that the
+resulting file can be used in the Model 100 TEXT editor.  The communications
+program TRANSF.ARC (DL3) -- for use on the PC -- will convert WS or
+Wordperfect to vanilla M100 TEXT files coming into the M100, or will
+convert the M100 file to a WS (or Wordperfect) file as it is transmitted to
+the PC.  The latter involves replacing each ending character (except where
+two or more CRLF pairs occur) by a "soft" character (chrsoft = chrhard+80h),
+a more involved procedure.  In this regard (and others) TRANSF is a program
+to be recommended.
+
+In the Model 100 world, there is a special case of interest -- conversion
+between Wordstar and WRITE ROM (or SuperROM).  These Model 100 ROM programs
+use dot commands of the type employed by WS, making some aspects of the
+conversion a bit easier.  But there are difficulties here, too.  Most WS
+users do not use the dot commands for on-screen formatting (although Release
+4 of WS makes this a more useful approach).  Also, the dot commands are not
+all the same (e.g., margin commands are .OL & .OR in WRITE+, but are .LM &
+.RM in Wordstar), so that some translation is still needed.  This approach to
+compatibility is some help, but not a panacea (and you still have all the WS
+"soft" characters to cope with going from WS to Model 100).
+
+      C) THE ULTIMATE TRANSLATOR
+         -----------------------
+
+The ultimate translator would take into account the conceptual differences
+among WP's.  For example, WS files would be converted to TW files by looking
+globally at the location and length of the soft-space strings and deciding
+where to embed ^X (hanging indent) and ^L (left margin) characters -- while
+removing all the soft spaces associated with on-screen formatting.  An
+easier approach is to replace the soft spaces by hard spaces -- but this
+leaves you with a file which cannot be reformatted by the target WP,
+something of a cop-out!
+
+
+3) CONCLUSION
+
+Lacking the ultimate translator, one which does the least damage (in terms
+of creating a structure which cannot be reformatted) is to be preferred.  My
+approach is to use a character such as TW2WS.BA (or global search-and-
+replace) to change the embedded stuff.  Then I pipe it to the other machine,
+in ASCII form (or using a program such as TRANSF) if it is a WS file coming
+into the M100.  It is generally easy to use the target machine's WP program
+to reformat on that end  (example: use ^QQ^B in WS, with left margins and
+indents resurrected by a little elbowgrease).
+
+Some PC word processors are easier than Wordstar to deal with, since they
+create ASCII files with real CRLF pairs at the end of lines.  Of course,
+just as Real Men don't eat quiche, the hardiest among us will shun such easy
+problem-avoiding software.  In fact, for the real hardy soul, write a
+translator for Multimate files!
+
+I hope someone does create the ultimate translator (Wordstar to T-WORD,
+please!).  But until then, hard work will always suffice -- at least in an
+ASCII world!

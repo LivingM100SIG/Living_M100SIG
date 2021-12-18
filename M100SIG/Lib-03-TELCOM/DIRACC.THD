@@ -1,0 +1,131 @@
+DIRACC.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+DIRACC is a nifty comm utility for the 100/102.  It can be coupled with
+other software (such as SXM.100) for still greater on-line performance and
+convenience.  These messages discuss DIRACC, give some hints regarding its
+installation and removal, and discuss its use with a commercial VT-100
+terminal emulation program (100/100).
+
+Message range: 159979 to 158515
+Dates: 10/10/87 to 10/17/87
+
+Sb: #DL3/DIRACC/PG Ram Banks
+Fm: RON DEISO 72300,3645
+To: All users
+
+I have a PG Design's ram bank (64K) and I have encountered a slight problem in
+the DIRACC.DOC instructions. Using the CALL 32454 command does not release the
+ram hooks for F6. F6 still hooks to TELCOM,although F7 does appear to be
+released. I suggest that you create a short .BA program to reset the function
+keys as per the 100/102 BASIC manual. I use the following short program: 10
+CALL 23164,0,23366:CALL 27795 SAVE"KEYSET Run this program in BASIC after
+exiting TELCOM.
+
+
+Fm: Phil Wheeler 71266,125
+To: RON DEISO 72300,3645
+
+Ron, the DIRACC.PW? series makes the program more user friendly by implementing
+good removal measures.  YOur approach maybe OK for you, but it will also ZAP
+all the function key defintions -- not acceptable to everyone.  Give DIRACC.PW1
+(or DIRACC.PW2) a try. On removeal, these will reset the high RAM definitions
+of only the keys you need to have reset.
+
+
+Fm: RON DEISO 72300,3645
+To: Phil Wheeler 71266,125
+
+Hi Phil: Thanks for the TIP. I did download DIRACC.PW1 and 2 originally but I
+thought that they only applied to the 'munk drive. I have a TDD so I didn't use
+either one.Also I just received Terry Luke's new program "100/100. 100/100
+upgrades a 100 from a VT52 terminal to a VT100 terminal and he says thatit
+compatible with DIRACC.100 ONLY! What to do?
+
+
+Fm: RON DEISO 72300,3645
+To: Tony Anderson 76703,4062
+
+Hi Tony: Thanks for the info on "partitioned computers. I hate to bug you but I
+ran into some problems using DIRACC.100. I have a M100 with PG Designs 64K ram
+banks and I couldn't "unhook" TELCOM from the F6 key. Using "CALL 32454" did
+nothing although F7 was unhooked. I had to reset my keys as per the BASIC
+manual. See my message in DL3/DIRACC. See ya.
+
+
+Fm: Tony Anderson 76703,4062
+To: RON DEISO 72300,3645
+
+I don't use DIRACC, Ron; the best person around to discuss that with is Phil,
+since he dug into the code far enough to write some "shell's" that make it work
+better.  Unfortunately, the author of DIRACC does not frequent this forum.  At
+last report, he was living in South America.
+
+
+Fm: RON DEISO 72300,3645
+To: Tony Anderson 76703,4062
+
+I did get a message from Phil about his DIRPW* utilities,in fact I originally
+downed them with DIRACC. However,Terry Luke,(do you know his Easyplex ID-I need
+to contact him),the author of "100/100" said to use the original DIRACC. This
+is because he has linked his VT100 emulator program with both DIRACC and
+SXM100. The resultant combined modular program, which functions with any
+combinations of modules, is brilliant! A VT100 emulator that expands the
+usefulness of00 and acts as an interface to SXM100 and DIRACC! The only
+drawback is that you can't exit to Basic in DIRACC unless you leave off the
+SXM100 module. Given that jumping around a 80 x 24 screen witha 40 x 8 window
+takes a little getting used to, nevertheless the program delivers. Think I'll
+venture over to the VAX SIG and see what those cats are smiling about. Hee,Hee!
+
+
+Fm: Phil Wheeler 71266,125
+To: RON DEISO 72300,3645
+
+Hmmmmm..."original DIRACC". Well, DIRACC.PW1 & DIRACC.PW2 are the same M/L code
+as the original; only difference is an install-remove shell is added.  Only
+diff of PW1 from PW2 is that one has been byte-fought to reduce memory needed
+if you keep the BA program on the menu.  I would try one of these -- ore copy
+the removal code and make a little BA program from it.  But PW1 & PW2 should
+work out, since one loaded, your computer cannot tell the difference (same M/L
+bytes).
+
+Do not use DIRACC.PW3.  It is slightly different, having a "hook" for use with
+Tony's Macro Program.
+
+The VT100 setup you are using does sound very innovative.
+
+
+Fm: RON DEISO 72300,3645
+To: Phil Wheeler 71266,125
+
+I have 100/100, the VT100 emulation program and just wanted to tell you that
+all its features work well and it is a good buy. As I mentioned to you
+before, 100/100 allows you to link SXM and DIRACC into one 7340 byte .CO
+program. The program requires an additional 2040 to run since it must create
+a screen file for you to view an 80x24 screen. However, you can kill
+DIRACC.BA once you have installed it and give yourself 1447 more bytes free.
+You can also redefine the F6 key from "TERM CALL HIMEM" to anything(I use
+the cold start default) and it will still run fine.
+
+By the way, you are correct in stating that any of your modified versions
+except DIRACC.PW3 will run. I ran them all with no problem. However you must
+load DIRACC at the end address of 59462 unless you relocate VT100. Loading
+DIRACC at just below HIMEM will lead to an address mismatch error when you
+run 100/100's utility "DIRPOK". Another point. There is an ERROR IN THE
+INSTRUCTIONS! I discussed this with Terry LUKE 73126,1775 and he agreed. You
+must run DIRPOK BEFORE you save VTALL. The instructions state incorrectly
+the opposite.Refer to page 25. Terry said he will correct this error in all
+future shipments of his program. He said that not too many users wanted
+DIRACC and SXM together because of space problems. However, as I said
+before, you can kill DIRACC.BA and free up 1447 bytes. This must be done
+after installing it, of course, and the resulting program is only about 150
+bytes more than VT100 and SXM alone. Thus, with SXM and VTALL on your menu,
+you can enter SXM and be able to jump back and forth between SXM,VT100 and
+DIRACC. This especially nice when you want to download a large file and want
+to free up some RAM while staying online. Just enter TEXT in DIRACC and use
+the SELECT-CUT-COPY options to remove text and clear the PASTE buffer. Other
+than that little error in the instructions which created a little
+frustration and a call to Utah, I recommend the program. It runs like a
+clock and behaves rather nicely.

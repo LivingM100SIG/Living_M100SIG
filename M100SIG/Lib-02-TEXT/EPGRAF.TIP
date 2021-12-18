@@ -1,0 +1,132 @@
+
+
+	This article contains a series of programs and other hints to assist
+you in having your Epson printer print graphics.  Many of these will work with
+Star Gemini printers too; I believe the Star does not need to be "turned on" to
+accept graphic characters.  Most of what follows is from the Epson printer
+manual; but it takes time to find and understand it and get the stuff in one's
+machine. It's pretty much all here: just copy and paste out the programs to use
+them.
+
+	The main point is this: the GRPH and CODE keys on the computer generate
+codes; those are transmitted to the printer; the printer interprets them
+differently than does the LCD sceen. So know your translation table.  E.g.
+"graph p" on the keyboard puts a phone on the screen; but this prints as a
+graphic cross. Different printers will print different characters.
+
+
+Translation Table.
+
+	Look up in the Epson manual the "dec" (decimal) code for the "special
+graphic characters". I.e. for a little airplane it's 151.  Look up in the
+computer handbook what makes code 151 (it's "GRAPH .").  So putting a "GRAPH ."
+[holding down the GRAPH key and hitting the 'period' key] in your document will
+print out a little plane on paper. That's all there is to it.
+
+	One problem: GRAPH t, which translates to a printed left-hand corner of
+a box, won't work through SuperRom or WriteRom, because GRAPH t has a special
+function in that software. If you need that graphic character, print outside of
+WriteRom.
+
+	I photocopied the Epson manual's display of special graphic characters,
+wrote in the GRAPH keys to generate those, and have it next to my desk. --
+Recommended.
+
+
+Getting Epson to Understand Graphics.
+
+	The printer doesn't understand graphics until you turn it on with a
+so-called "escape sequence".  This is the program to RUN:
+
+10 LPRINT CHR$(27)+"m"+CHR$(4);:MENU
+
+	You only need run this once for every time the printer is turned on.
+
+	Tony Anderson says the following sequence embedded in your text will
+also turn on the ability to read graphic characters:
+
+control-p; ESC; lower case m; control-p; control-D. 
+
+Then print using the F3 button, save to "LPT:"  I prefer RUNing the little
+program above once in the morning before I fire up the word processor.
+
+
+	If you wish to make boxes or otherwise have printed graphic lines
+vertically touching each other, you must adjust the line feed. RUN this program
+to close up the line feeds:
+
+10 LPRINT CHR$(27)"1":MENU
+
+
+	The following program resets the printer, that is, it kills the ability
+to understand graphics and puts the line feed back to the way it normally is:
+
+10 LPRINT CHR$(27)"@":MENU
+
+
+Making Your Own Graphic Characters.
+
+	Design your own graphic characters. The Epson manual tells you how: 
+Here are the programs. Run the first one to get the DATA to insert in the
+second one. (The manual's discussion is not repeated here.)
+
+To generate data numbers:
+
+100 DIM F(9)
+110 FOR I=1TO9
+120 PRINT"Which rows have dots in column";I:PRINT"[0 if no more]
+130 INPUT R:IF R=0 THEN 150
+140 F(I)=F(I)+2^(R-1)
+150 IF R=0 THENNEXT I ELSEGOTO130
+160 LPRINT CHR$(27)":"CHR$(0)CHR$(0)CHR$(0);
+170 LPRINT CHR$(27)"%"CHR$(1)CHR$(0);
+180 LPRINT CHR$(27)"&"CHR$(0)"<<";
+190 LPRINT CHR$(128);
+200 FOR X=1TO9
+210 LPRINT CHR$(F(X));:NEXT X
+220 LPRINT CHR$(0)CHR$(0);
+230 LPRINT "Your charcter in pica:< < <"
+240 LPRINT "IN EXPANDED EMPHasized PICA: ";
+250 LPRINT CHR$(27)"!*< < <"
+260 LPRINT CHR$(27)"!"CHR$(0)"Your data numbers:"
+270 FOR K=1TO9:LPRINTF(K);:NEXT K
+300 END
+
+Take the DATA numbers from the above program and replace the DATA numbers in
+line 210 of the following program; RUNning this program will set the new
+character into the printer's memory and give you the keyboard character to hit
+to get your invented character:
+
+90 FORP=58TO63:LPRINT CHR$(P);:NEXT P
+100 K=1:IFK>3THENA=58ELSE A=60
+110 LPRINT CHR$(27)":"CHR$(0)CHR$(0)CHR$(0);
+120 LPRINT CHR$(27)"%"CHR$(1)CHR$(0);
+130 LPRINT CHR$(27)"&"CHR$(0)CHR$(A)CHR$(A-1+K);
+140 FOR Z=1TOK
+150 LPRINT CHR$(128);
+160 FOR X=1TO9
+170 READ R
+180 LPRINT CHR$(R);:NEXT X
+190 LPRINT CHR$(0)CHR$(0);
+200 NEXT Z
+210 DATA 56,0,60,0,56,0,60,0,56
+290 FOR P=58TO63:LPRINT CHR$(P);:NEXT P
+300 MENU
+
+
+Embedded codes.
+
+	See Phil Wheeler's (71266,125) EMBED.TXT in this data library to get 
+the keystrokes to generate emphasized, underlined italics, wide, super- and
+sub-script. If you have WriteRom etc you can program some CODE keys to do this.
+If you want more than WriteRom allows, create a LIBRARY file to store the
+keystroke sequences.
+
+	Please let me know if you questions or anything to add. I'll update
+this file as stuff comes in.
+
+	Curtis Karnow 73047,3120
+
+
+
+Copyright 1987, Curtis Karnow

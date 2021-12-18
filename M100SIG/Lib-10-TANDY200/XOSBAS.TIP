@@ -1,0 +1,177 @@
+          XOSBAS.TIP by Paul Globman
+              Copyright (c) 1990
+
+This file is for XOS-C and XBASIC users who would like to integrate all the
+internal RAM banks.  XOS requires all three internal RAM banks are installed.
+XBASIC will function with any two banks.
+
+                    XBASIC
+
+XBASIC runs in the ALTLCD (TELCOM's previous screen) area of system memory,
+which is available when TELCOM is not used.  There are 476 bytes of RAM in
+which many utility programs are designed to run.  The advantage of m/l programs
+which run in the ALTLCD, is that they never require the setting of HIMEM and
+can be run directly from the main menu at any time.  Programs which require the
+CLEAR'ing of HIMEM will not load into its execution address _unless_ HIMEM is
+CLEAR'ed first.
+
+PROGRAMS can be made to operate in other banks by CHAIN'ing", leaving one
+program and continuing in another program in another RAM bank.  All FILES in
+those banks can be displayed.
+
+Programs can be written so DATA (.DO) files can be OPEN'ed for READ or WRITE in
+other banks.  Only one cross bank file can be "opened" at a time, so if you
+must access two files in other banks, one of them must first be copied into the
+current bank.
+
+BASIC programs CHAIN to programs in other banks by setting the destination
+program as the IPL program of that bank.  Then the program switches banks and
+lets the IPL function take over (holding the shift key while bank switching
+will inhibit the IPL feature).
+
+If you CHAIN to a data file, the TEXT editor is run.  If you jump to another
+bank for a file that isn't there, then you will go to the main menu of that
+bank.  The program you CHAIN to should clear IPL with the IPL"" command at the
+beginning of the program (CALL 7194 in m/l).
+
+
+After LOADM"XBASIC" your program will have 7 XBASIC  commands in the form of:
+
+ 10 CALL 63600,CMD
+   :CALL 63600,CMD,VARPTR(X$)
+   :CALL 63600,CMD,BANK
+
+    CMD   FUNCTION    VARPTR(X$)
+    ---   --------    ----------
+     0    CLOSE         N/A
+     1    OPEN READ   X$ = FILENAME
+     2    OPEN WRITE  X$ = FILENAME
+     3    GET X$      X$ = DATA
+     4    PUT X$      X$ = DATA
+     5    CHAIN       BANK (IPL)
+     6    FILES       BANK
+
+See the file XBASIC.200 (docs are part of the file) for programming details on
+how to use XBASIC.
+
+============================================================
+
+                    XBAS-2
+
+XBAS-2, is part of the XOS-C code, and offers the following additional cross
+bank commands:
+
+ 10 CALL 63600,CMD,VARPTR(X$)
+
+    CMD   FUNCTION    VARPTR(X$)
+    ---   --------    ----------
+     7    KILL        X$ = FILNAM.DO
+     8    LOADM       X$ = FILNAM.CO
+     9    RUN         X$ = FILNAM.BA
+
+
+XBAS-2 does not reside in memory as a file, so you cannot LOADM, as you did
+with XBASIC.CO.  Once XOS-C is installed, CALL 41179 (from any bank) will be
+the equivalent of LOADM "XBAS-2".  Once XBAS-2 is LOADM'ed, you can then
+LOADM"XBASIC", regardless of which bank it is stored in (bank #3 is recommended
+as the storage bank for all CO and BA files).  Here's the code...
+
+0 REM XBASIC CROSS BANK LOADER
+1 REM   BY PAUL GLOBMAN (C) 1990
+2 CALL 41179             'LOADM XBAS-2
+3 X$="3:XBASIC.CO"       'SPECIFY FILE
+4 CALL63600,8,VARPTR(X$) 'LOADM XBASIC
+5 IFPEEK(61302)<>0THENSTOP  'BAD LOADM
+
+XBASIC and XBAS-2 both run in the ALTLCD area so after XBASIC.CO is loaded into
+place, XBAS-2 is no longer available.  XBAS-2 can be reloaded by CALL 41179
+(which will then overwrite XBASIC.CO.
+
+A BASIC program with subroutines to LOADM either cross bank BASIC enhancer 
+prior to its use, can be made to perform tasks not previously though possible.
+
+
+PROGRAMS can be called into the current bank to operate there.  Programs have
+either a .BA or .CO file extension and perform a function.  XBAS-2 (and XOS)
+brings BASIC programs into the unsaved program file slot and then IPL's the
+program.
+
+So after using XBAS-2 (or XOS's F3(Cmd)) to call in a BASIC program, you will
+discover that the  program seems to run itself every time you turn power on, or
+switch into that bank.
+
+To turn off the auto-execute of the program, put IPL"" into the code (see line
+10).  This would be installed in any BASIC program that gets called in from
+another bank.
+ 
+  10 IPL"":REM clear IPL
+
+Both XBASIC and XBAS-2 offer a "result descriptor" byte so you can check the
+result of any XBASIC operation.  The RD byte is different for each so careful
+study of the docs are required to ensure proper operation.
+
+============================================================
+
+                    XOS-C
+
+The functions of XOS are explained in the XOS docs, but the applications of the
+functions are left to the user to discover.  Here are a few tips...
+
+INSTALLATION - After installing XOS as per docs, and before doing ANYTHING 
+else, go to each bank and enter/exit BASIC.  This must be done before any
+attempting to copy files between banks to ensure file pointers are properly
+set.
+
+
+PRINT - background printing operates like the TEXT function F3(Save to: LPT:).
+Note the ":" after LPT: directs the output to the printer.  Without the ":" the
+file will be saved to cassette as LPT.DO.  The ":" signifies a "device" name
+rather than a "file" name.
+
+By creating a small file (2 bytes) with an ESC-E (^[E) and calling it EMPH.DO
+(the actual filename is optional), you can cursor select EMPH.DO, press XOS's
+F7(Prnt) and the printer will be put into the EMPHASIZED mode.  If you have the
+kind of printer that allows margin settings and fonts via control characters,
+you can print formatted .DO files while using the Tandy 200 to run another
+program, log on to CIS, or maybe edit another DO file.
+
+Use F7(Prnt) for quick dumps when formatting is not needed or if the file is
+already formatted.  Unlike SHFT/PRINT, background printing does NOT filter out
+control codes.
+
+
+PASTE - you are working on a large file and you CUT a section of TEXT into the
+PASTE buffer, only to discover that you have no room in that bank to PASTE it
+back into the file.  If you go to the Menu and use F6(Pste) and go to another
+bank, you will transfer the PASTE buffer to that bank.  Now you can return to
+the bank you were working in and can use the PASTE buffer for other TEXT
+manipulation.  After clearing memory to make room for that missing block of
+TEXT, you can then go to the bank where you left the PASTE buffer and again use
+F6(Pste) to return to the first bank.  The PASTE buffer will once again contain
+the original block of TEXT you had previously CUT.
+
+
+NAME - if you cursor select a file on the menu and rename it so the first
+character of the filename is a blank, and then use only 5 characters (or
+less) for the filename, you will produce an extensionless filename.  This is
+useful if you wish to protect that file from being accessed by programs because
+the filename will not be recognized.  Simply renaming the file with a normal
+filename will restore its extension.
+
+
+F3(Cmd) - the execution of IPL programs are inhibited by pressing the SHIFT
+key.  When using F3(Cmd) to run a BASIC program, holding the SHIFT key will 
+prevent the program from running but will leave the program intact in the 
+unsaved program area.  You can access the program by simply entering BASIC.
+You can now LIST, EDIT, or RUN the program manually.
+
+BASIC programs called in from another bank via the F3(Cmd) can be made to
+remove itself from RAM upon completion.  The following code can be used to
+terminate the program and return to the Menu, instead of the MENU command.
+
+10010 CLEAR99,MAXRAM:MAXFILES=1
+10020 M$="CALL40961"+CHR$(13):AD=64798
+10030 L=LEN(M$):POKE AD,L
+10040 FORI=1TOL:M=ASC(MID$(M$,I,1))
+10050 POKE AD+2*I,0:POKEAD+2*I-1,M:NEXT
+10060 NEW

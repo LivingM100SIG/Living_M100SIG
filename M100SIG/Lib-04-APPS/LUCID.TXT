@@ -1,0 +1,182 @@
+.ocon
+Super ROM - Lucid
+REPORT PRINTING ROUTINES
+========================
+.ocoff
+
+Introduction
+============
+
+The report printing routine may be thought of as a scenario made up of 
+from 1 to 5 scenes, in which each of 4 actors: Groucho, Chico, Harpo, and
+ Zeppo, each with an unvarying message, performs in three scenes.  Scenes 
+2, 3, and 4 may each be used in any desired sequence.   Each may be 
+repeated as often as necessary or omitted altogether, making the scenario
+flexible enough to accomodate a wide variety of print formats.  However, 
+constraints are imposed by the unvarying roles of the actors and the fixed 
+order of their performances in each scene.
+
+Scene 1 is presented after the page header is printed.  If the page header 
+option is not used, Scene 1 starts at the top of each page.  Scene 2 is 
+presented on Cue 2; Scene 3 on Cue 3; Scene 4 after both cues are 
+presented simultaneously; and Scene 5, followed by the grand total, after 
+the last line item in the Lucid file is printed.  Scenes 1 and 5 are used 
+in most print routines.  The others may be used, as required.
+
+To use any of these scenes in printing, the roles of the individual actors 
+must be defined in a Report Template file and the relevant cue criterion 
+must be defined by a formula in the Report Specifier Block.  Several 
+Report Template files may be used to print different reports from the same 
+Lucid file.  Scenes, cues, and actors, in their order of appearance, are 
+shown in the following table:
+
+     SCENE  CUE                ACTORS
+     =====  ===  ==================================
+       1     *   Groucho  Harpo
+       2     2   Zeppo    Harpo
+       3     3   Chico    Groucho
+       4    2&3  Zeppo    Chico    Groucho  Harpo
+       5     *   Zeppo    Chico
+
+               * See text above
+
+Report Template file
+====================
+
+A Report Template file is a text (.DO) file containing 6 Component 
+Templates, separated by Code-0 paragraph markers.  Its filename, which 
+might be REPRT1.DO, will be entered in the first cell of the Report 
+Specifier Block (see below).  The 6 Component Templates are as follows:
+
+     a) Line item template
+     b) Grand total template
+     c) Page header template
+     d) Page footer template
+     e) Groucho
+     f) Chico
+     g) Harpo
+     h) Zeppo
+
+A Component Template may contain words, a record number, or cell 
+references in any combination.  A record number (line number in the Lucid 
+table) is shown as [#  ].  A Cell Reference may have the form [D#   ] or 
+the form [AB1  ], in which the first form (regular field) will print the 
+text or numerical contents of the cell in Column D of the record; and the 
+second form (virtual field) will invoke the formula in Cell AB1.  In each 
+case, the number of spaces between square brackets, plus the two spaces 
+occupied by the brackets themselves will determine the space cleared for 
+printing that field.  This cleared space is independent of the column 
+widths in the Lucid table.  But the format in which numbers are printed 
+(number of decimal places and presence or absence of dollar sign) will be 
+that selected when individual columns or cells of the Lucid table are 
+formatted.
+
+ A Line Item Template might look like this:
+
+[    ][A#   ][C#      ][D#     ][J# ][E#  ][F#  ][G#  ][H#  ][Z1  ][AB3 ]
+
+The bracketed empty space at the beginning of this example would indent 
+the printing line.  The letters used as Cell References may be either 
+upper or lower case.  The space between brackets must allow for space 
+between printing columns.  Note that text (labels) will print flush left 
+in the cleared space and that numbers will print flush right.
+
+The paragraph marker is typed by holding down the CODE key and typing 0. 
+The result will appear on the screen as a symbol (ASCII 175) resembling a 
+reversed P, but may print, depending on the printer used, as a slash if 
+the Report template file is printed.  When the file is invoked for 
+printing Lucid data, the symbol is not printed, but is understood as a 
+signal introducing the next Component Template.
+
+Example
+=======
+
+As an example:  For a multipage report, the Page Header component of the 
+Report Template file was left blank.  Groucho was given the role of 
+printing the page heading and the column headings.  Chico's role was to 
+deliver 3 carriage returns.  Harpo, as in the old movies, is silent. 
+Zeppo's role was to deliver the label, "Page subtotal", followed by the 
+sum accumulated on the current page and preceded by enough spaces to make 
+that sum print flush right.  The Page Footer was Page [Z2], preceded by 
+enough spaces to center it.  The formula in Cell Z2 was +NBP and that cell 
+was formatted for zero decimal places.
+
+Also, in this example, in order to bring on all four actors for Scene 4,
+Cues 2 and 3 were indentical: +LN1=50.  Since neither cue was presented 
+independently, Scenes 2 and 3 were not invoked.
+
+Scene 1 was used only to start the first page and Scene 5, only to end the 
+last page.  In between, Scene 4 used two actors to end the current page 
+and brought back the two that started the first page to start the next 
+page.
+
+Report specifier block
+======================
+
+The Cue criteria must be described, by formula, in a The Report Specifier 
+Block, often placed in Column DR of the Lucid table.  When there are 
+several Report template files with distinctive filenames, each additional 
+report may use a separate Report Specifier Block.  For those additional 
+blocks, Columns DS through DU are often used.  Each block uses the first 
+10 cells in the column as follows:
+
+
+     001 Report Template filename
+     002 Record Selection criterion (formula)
+     003 Cue 3 (formula)
+     004 Cue 2 (formula)
+     005 Number of columns of label (1, except for mailing lists)
+     006 Starting count for NB1 (number of times Cue 3 is issued) *
+     007 Starting count for NB2 (number of times Cue 2 is issued) *
+     008 Starting count, usually 1, for NBP (number of pages)
+     009 Number of lines per page (usually 66)
+     010 Left margin
+
+     * Since NB1 or NB2 may also be used as an invoice number, the entry 
+       here could be a number larger than 1, say 1000.
+
+General Rules
+=============
+
+In adapting the scenario to a particular set of requirements, the first 
+step is to identify each point at which the printing of line items must be 
+interrupted.  At each such point, a cue must be triggered by a formula 
+that recognizes the peculiar attributes of the line preceding the 
+interruption.  In Example, above, the peculiar attribute was that it was 
+the 50th line on that page.
+
+The second step is to recognize that Scene 1, which does not require a 
+cue, will be staged early in the printing, that Groucho will deliver the 
+first message, and that he will be accompanied by Harpo, who may be mute.
+
+The third step is to determine whether any interruption depends on TWO 
+atributes of the line which precedes it.  A cue based on two attributes 
+would invoke Scene 4, with all four actors speaking in the order shown in 
+the table.  Groucho and Harpo would deliver the same messages in Scene 4 
+as they did in Scene 1; but only after the other two have delivered their 
+messages, if any.  It now becomes apparent that if Scene 4 is used, 
+Groucho and Harpo can not be assigned any messages that would be 
+inappropriate in either Scene 1 or Scene 4.  That fact narrows the range 
+of messages that can be assigned to these two actors.  It is also apparent 
+that if there is to be a Scene 4, no message that would be inappropriate 
+in that scene can be assigned to ANY actor, because all four of them will 
+perform in that scene.
+
+Scene 5, which, like Scene 1, does not require a cue, will be staged at 
+the end of the printing.  If a page subtotal is to be printed at that 
+point, that will be the message delivered by either Zeppo or Chico, who 
+will deliver the same message in any other scene in which he is on stage.  
+That means that if there is a page subtotal and also a Scene 4, there will 
+be a page subtotal in that scene.
+
+Any other circumstance that requires a subtotal will require a cue, a 
+scene, and an actor who delivers the current subtotal every time he is on 
+stage.  That means that if there is a Scene 4, there can be only one kind 
+of subtotal (and the corresponding grand total) in the report.  If Scene 4 
+is used and there are product subtotals or district subtotals, there 
+cannot be page subtotals.
+
+After the third step, the steps needed to complete the scenario adaptation 
+must be left to the ingenuity of the programmer, because they depend on 
+report requirements.
+

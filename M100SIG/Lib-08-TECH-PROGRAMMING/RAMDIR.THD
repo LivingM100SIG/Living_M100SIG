@@ -1,0 +1,184 @@
+RAMDIR.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This started out with the question in the first message re a lost file.
+After several messages it led to some very useful information from Tony
+Anderson on the use and meaning of RAMDIR.100/200 output, and some general
+discussion on how files are organized in these machines.  I've tried to grab
+the essence of the thread in these messages.  Good Stuff for those who
+want/need to know more about these computers!
+
+Message range: 152775 to 153080
+Dates: 7/17/87 to 7/21/87
+
+
+Fm: DICK SPINDLER 76537,1623
+To: ALL
+
+HELLLP! A friend of mine has recently purchased a M200 and has a file in it
+with no name.  She would very much like to recover her meeting notes.  I used
+RAMDIR and found the unnamed file How do we get it back??  I remember that
+there is a recovery program in one of the data libraries, but do not remember
+which. Thanks in advance.
+
+
+Fm: Tony Anderson 76703,4062
+To: DICK SPINDLER 76537,1623
+
+What do you mean there is a file in the machine with no name?  If you could
+find it with RAMDIR, what sort of indication did you have that it was the file
+you wanted?  Was there a name still in the directory?  That doesn't necessarily
+mean the file is still there.  When a file is killed, the attribute byte is
+simply zeroed out, and everything else in RAM just slides down to occupy the
+now vacant space.
+
+Key question is how did the file get no name?
+
+Can you give me a list of what you get when you run RAMDIR - The first and
+second columns, and the name is what would be important.
+
+The "recovery program in the DL is usable after a cold start to dump the ENTIRE
+contents of RAM into a new file, which takes up all available RAM space. If
+your friend didn't have a cold start, the technique is not what you're looking
+for, as it will do more damage than help.
+
+
+Fm: Tony Anderson 76703,4062
+To: DICK SPINDLER 76537,1623
+
+Here is the only portion of the RAM directory that is important in this case:
+
+62100   136     41826   Unnamed Pgm
+62111   200     41829   Paste Buffer
+62122     0     41043   Edit Buffer
+62133   192     41828   NOTE DO
+62144     0     41829   OFFICEDO
+62155   128     40961   RAMDIRBA
+62166     0     41828   BANKIDDO
+62177     0     41828   NOTE1 DO
+62188     0     40965   CODO  DO
+62199     0     40963   NOTE  DO
+62210     0     40963   DDO
+
+By rearranging it, (sorting by RAm address) it shows the following RAM
+allocation:
+
+
+62155   128     40961   RAMDIRBA
+62199     0     40963   NOTE  DO
+62210     0     40963   DDO
+62188     0      40965   CODO  DO
+62122     0     41043   Edit Buffer
+62100   136     41826   Unnamed Pgm
+62166     0     41828   BANKIDDO
+62177     0     41828   NOTE1 DO
+62133   192     41828   NOTE DO
+62144     0     41829   OFFICEDO
+62111   200     41829   Paste Buffer
+62221     0         0
+
+
+RAMDIR is the only BASIC program in RAM, and is loaded at the bottom of RAM
+space, as it should be.  At one time, NOTE.DO and D.DO resided at 40963, but
+are now gone.  CODO.DO once resided at 40965, but is now gone.  RAMDIR uses all
+the space between 40961 (where it is loaded) and 41826.  At 41826 you have a
+three byte "pointer" that is the storage area of an unnamed program.  The three
+bytes is normal, and indicates an empty buffer; i.e. no unnamed program exists.
+
+The last time a program was edited, the edit file started at 41043.  But it is
+now gone, since that area is currently occupied by RAMDIR.
+
+At 41828, you used to have file named BANKID.DO and NOTE1.DO.  They no longer
+exist.  At present, you have a NOTE.DO file on the menu, and it's starting
+address is 41828, but there is nothing in the file, so it occupies 0 bytes. (1
+really, just the EOF marker)
+
+At 41829 you used to have a file named OFFICE.DO... it is no longer there. The
+address is currently the pointer to the Paste Buffer.
+
+Beyond that, there is nothing in RAM, according to the directory.  There may be
+some stuff there, but it would be random data, no telling what, or how useful
+it would be.
+
+I don't see where there's anything you can recover.  You essentially have
+nothing in RAM but the program, and since the paste buffer is the last item in
+RAM (uses the highest address), it has slid down over whatever else might have
+been there, effectively erasing anything that used to be there.  You might be
+able to recover some data from the OFFICE.DO file, assuming the paste buffer
+was actually empty when it took over the address that was formerly used by
+OFFICE.DO.
+
+You might try the recovery program in the file RECOVR.101 (Read RECOVR.DOC
+first) by starting the program to read at 41829.  But it's a very slim chance.
+By the way... I see no indication of a 7000 byte gap anywhere.  In the 200,
+User RAM starts at 40961, and goes up to Maxram, normally 61104. .... an empty
+machine normally has only a little more than 20K available to the user.  That
+appears to be all there.
+
+
+Fm: Tony Anderson 76703,4062
+To: DICK SPINDLER 76537,1623
+
+Actually, there is much more documentation about how the Model 100 works, than
+the 200, but many of the ROM routines are the same, since the 200 is an update
+of the 100.  Since there is less information available about the 200, much of
+what is known is extrapolated from the way the 100 operates.  And there is
+plenty of information about how the 100 works, although you have to dig it out
+from here and there.
+
+The way "partitioned" computers work (computers that hold more than one program
+or file in RAM at the same time), is that programs and files are loaded into
+specific areas, and when one is deleted, everything else moves down to occupy
+the now empty space.  That way, all the "empty" space is usually at the top,
+where it can be found easily by the ROM routines.
+
+The Model 100 family stores files starting at the lowest available address,
+storing all BASIC programs first, with document files (.DO) above them, and
+machine language (.CO) files above that.  When you create a new BASIC program,
+usually what happens is that the .DO and .CO files move up so the BASIC program
+can be inserted at the top of the BASIC "heap".  When you create a new .DO
+file, the .CO programs move up to make room for the new file.  The buffers move
+around, utilizing space at the top of the heap, for their respective type of
+files; the paste buffer moves to the top of the .DO area, the edit buffer moves
+to the top of the BASIC area, etc.
+
+All this is invisible to the user, and that's why programs like RAMDIR are
+useful to show you what's happening in the RAM area.  If you try creating and
+deleting files of various types, and running RAMDIR after each action, you can
+see what's happening, and get an idea of how the RAM space is managed.  But
+there is no specific file or book on the subject.  You learn by experience.
+
+
+#: 153044 S10/Tandy 200
+    20-Jul-87  20:16:19
+Sb: #153038-#M200 LOST FILE
+Fm: Tony Anderson 76703,4062
+To: DICK SPINDLER 76537,1623
+
+The RAM directory only reflects the storage locations of programs.  When you
+move a machine language program into high RAM to execute, it's only an image of
+the program in storage, and does not appear on the menu because it's not
+normally "stored" at the high RAM location.
+
+Clearing space, as in the command CLEAR256,nnnnn does not affect the directory,
+it only moves HIMEM around, reserving operating space for the ML program.  (The
+256 part is a reserved space for variables below the "nnnnn")
+
+A program in the execution area between HIMEM and MAXRAM has no name.
+
+
+Fm: DICK SPINDLER 76537,1623
+To: Tony Anderson 76703,4062
+
+Thanks.  There OUGHTTA be a book on this stuff!  Somebody has missed an
+opportunity.  Like you say, I'll learn by doing.
+
+
+Fm: Tony Anderson 76703,4062
+To: DICK SPINDLER 76537,1623
+
+There are two books considered to containt the best "advanced" information of
+this type.  "Hidden Powers of the TRS-80 Model 100" by Christopher Morgan, and
+"Inside the Model 100" by Carl Oppedahl, a now-and-then visitor here.

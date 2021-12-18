@@ -1,0 +1,86 @@
+LINEFD.INF
+
+Copyright Tony B. Anderson, All Rights Reserved
+
+
+One of the problems in the Tandy line of computers, especially the portables,
+the Model 100 family, is that in stock mode, the computer does not send a
+linefeed character to the printer, after sending a carriage return.  This is
+based on the fact that the Tandy printer line automatically adds a linefeed
+character to any incoming carriage return - so it was not necessary to send it
+from the computer.
+
+On many printers, this is not a problem, since the printer contains a switch,
+either hardware or software, which can be set to add the linefeed to an incoming
+carriage return, thus advancing the paper at the end of each printed line.
+Many Tandy printers do not have this switch, the function is included as part
+of the printer control software.
+
+Problem is, many portable users, who may need to use any available printer,
+cannot reconfigure such printers to suit their needs easily, or may need to use
+printers that are already configured for other systems, like at work, or at a
+nearby Radio Shack store, or at conventions, sales, swap-meets or computer
+faires.
+
+Another problem developed among those users who happened to own both the Tandy
+portable and an MS-DOS computer, which DOES send the linefeed after the
+carriage return.  There was no easy way to disable the LF-after-CR in the
+MS-DOS machine, so the printer could be configured to work with both computers
+without having to install a linefeed patch in the portable.
+
+Early in the life of the Tandy portables, the printer linefeed patch was
+developed, which used the system hook table to reroute the printer output
+routine, and add a linefeed to any carriage return that passed through the
+routine.  In order to make such a routine "resident", and virtually invisible,
+it had to be installed in the function key table area, where it would not
+interfere with other machine language programs, or program operations.
+
+The principal objection to the linefeed patch program of course, was that it
+was lost at any time the computer suffered a cold-start, or the function key
+table was changed, since that is where the routine was stored.
+
+Nevertheless, the linefeed patch program was the only way to deal with the
+problem, since the linefeed could not be disabled from the PC/compatible, it
+had to be added at the Tandy portable.  That gave rise to a second problem, by
+adding the linefeed patch, the portable was ALWAYS going to send it after a
+carriage return, and you had to be able to toggle it on or off, to accomodate
+the various printers you might be using, which means keeping a copy of the
+program in RAM, or easily available - which meant carrying a disk drive and
+utility disk, or a cassette recorder and utility cassette - along with the
+computer at all times, just in case.  Another option, was storing the program
+in another bank - if you had installed a multi-bank board (in a Model 100), or
+in a RAMdisk, if you bought and attached one.
+
+As it turns out, there IS a way to disable linefeeds in an MS-DOS machine,
+which eliminates the whole problem at the source.  While it won't do much to
+help in cases where you're using someone else's printer, in the case of a
+single user having different computers, and/or different printers, they can all
+be configured the same way, to send the carriage return only, and setting the
+printer switches to add the linefeed when it gets the carriage return.
+
+Tandy includes a 293-byte utility called LF.COM on it's distribution disks of
+MS-DOS (IBM, with PC-DOS, didn't!), which can be used to toggle the linefeed
+off or on, as needed.  LF.COM can be added into the MS-DOS system configuration,
+via the CONFIG.SYS file, and the linefeed can be toggled with the MODE command:
+MODE LFOFF, or MODE LFON.
+
+The LF.COM utility appears to be available on Tandy's release of MS-DOS 3.2,
+as well as 3.3.  Tandy's Customer Service in Fort Worth advises me that any
+user who needs it can get a copy by going to a store that carries the MS-DOS
+line of computers (preferrably a Tandy Computer Center) with a blank (formatted)
+disk, and asking that the dealer copy LF.COM onto their disk.  (It helps to
+tell them Customer Service in Fort Worth told you to do so!)
+
+Once installed in the PC/compatible, and the printer switch set to automatically
+add the linefeed to incoming carriage returns, you can eliminate the linefeed
+patch program from the portable.  But if you regularly use other people's
+printers, you'll still have to keep it handy.
+
+
+If you determine that you NEED the linefeed patch in the Tandy portable, then
+for the Model 100/102 see LFUTL.DES and LFUTL.PW1 in Library 7, or LFEED.200
+in Library 10.
+
+
+Enjoy.
+

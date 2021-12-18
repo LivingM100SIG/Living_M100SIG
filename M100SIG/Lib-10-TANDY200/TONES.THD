@@ -1,0 +1,235 @@
+
+	(c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: ANDY ZAAYENGA
+To: All
+
+Hi Folks: I have a Tandy 200 that I would like to use to generate dial tones
+for use with bank andr use with bank and stock data retrieval services.  In
+other words, I would be on a voice link and would like to send dial tones tto
+o send dial tones to access my various accounts and get balances while on
+voice lines.  Can anyone help me out with info on how to generate these tones
+in a fairly straightforward manner?  Much obliged.  - Andy
+
+
+		- 0 -
+
+Fm: Tony Anderson
+To: ANDY ZAAYENGA
+
+Dual tone frequencies are generated as part of the dialing sequences of the
+TELCOM program.  They are not generally available elsewhere, particularly once
+you have signed onto some service, since you have no way of commanding them to
+happen while you are still in TELCOM.  If you were in BASIC, perhaps you could
+cause them to be sent with a proper CALL, but that hasn't been documented
+anywhere that I know of, and wouldn't be useful in the context you need it.
+Have you considered one of those small phone dialers?  There are a number of
+sources for them, including Radio Shack, and they can be "programmed" to send
+whatever tone sequences you might need.  Just hold it close to the phone and
+push the proper buttons.
+
+
+		- 0 -
+
+Fm: ANDY ZAAYENGA
+To: Tony Anderson
+
+
+Hi Tony:  Thanks a lot for the reply.  I have been playing with a m100 tone
+generating program in BASIC that I adapted for the proper CALLs in m200 code.
+It works well but for some odd reason sends the sequence twice.  This is
+unacceptable in the use I am trying to implement.  I would like to use the
+m200 because I am writing some code that will concatenate string variables
+which will then l then generate the proper tone sequence.  For your info, the
+BASIC program that I am adapting to the m200 is in "Hidden Powers of the
+TRS-80 Model 100" book which I am sure you have seen.  Again, thanks for the
+feedback.  - Andy
+
+
+		- 0 -
+
+Fm: Tony Anderson
+To: ANDY ZAAYENGA
+
+It works well?
+
+Since two simultaneous tones are required for DTMF signalling, and the Tandy
+computers can only generate one, how are you getting it to "work well"?  You
+must know something we don't know about using the tone generators.  So could
+you be a little more specific about what you are doing, and how, so we can
+play with it ourselves, and perhaps give you some additional input?
+
+
+		- 0 -
+
+Fm: ANDY ZAAYENGA
+To: Tony Anderson
+
+Hi Tony:  I'll do some off line editing and send you the program I'm using to
+generate the tones.  So far I've just been using them to dial out, not data
+retrieval so if the tones are'nt dual tone I may not be aware of it. What does
+the m200 send out, pulse replicates?  Sorry if I am confusing the is issue.
+Thanks for the feedback
+
+
+		- 0 -
+
+Fm: Tony Anderson
+To: ANDY ZAAYENGA
+
+The Tandy 200 will dial with either pulse or touch-tone methods; the 100 and
+102 will only dial by pulse.
+
+The phone system uses a tone coding system known as DTMF, Dual Tone
+Multi-Frequency, which is fairly standard around the world.  A push of the
+button produces two tones; one tells the receiving equipment which row the
+pushed button is in, and the other tells which column.  A standard 12-button
+keypad involves generating 7 different tones, but in 12 combinations, each
+unique.  Tone receiving equipment is standardized in a single IC chip, which
+you can buy at Radio Shack if you want one, for around $7.95. - The
+frequencies of the tones are so precise, that 5 or 10 cycles off the standard,
+and the receiver won't respond to them.
+
+My asumption would be that, any system that involves sending tone commands
+from a standard telephone, such as MCI, Sprint, Dow Jones, or whatever, would
+be based on the standard DTMF system, which requires two tones be sent
+simultaneously.  That is not possible with the tone generator in the Tandy
+portables, which can only generate one tone at a time - except that the 200
+has a DTMF tone generating system in the TELCOM program which is connected to
+the communications port.  But it will be interesting to see what you've got.
+
+
+		- 0 -
+
+Fm: ANDY ZAAYENGA
+To: Tony Anderson
+
+Hi Tony:  Here is the BASIC program from the "Hidden Powers" book that I am
+trying to work with.  I have modified the CALLs to work with the m200.  As far
+as tone generation goes, my m200 Tech Ref Manual leads me to believe that
+there is a tone generator IC in the m200.  Is the 200 different from the 100
+in this respect?  Thanks for the interest.     --Andy
+
+100 ' DIAL A TELEPHONE NUMBER M200 110 ' 120 INPUT "TELEPHONE #";T$ 130
+S$=T$+CHR$(13) 140 S=VARPTR(S$) 150 H=PEEK(S+1)+256*PEEK(S+2) 160 CALL
+25131,0,H 170 CALL 25018 180 PRINT 185 CLEAR 190 GOTO 120
+
+P.S.  Tony, I composed this message before I read your previous answer so
+please excuse the redundancy.  I have been playing with this code and I
+believe it is using the same TELCOM code for DTMF.  If you have the time to
+check it out I would be much obliged to you for any feedback.  Thanks much!
+
+
+		- 0 -
+
+Fm: Tony Anderson
+To: ANDY ZAAYENGA
+
+Well, it goes to show you that you can't believe everything you read in books
+nowdays...  The program you list, from page 185 of "Hidden Powers of the...
+Model 100" has a bug in it. (!)
+
+I assume your biggest problem with the program is that it dials, or sends, the
+telephone number twice.  That's because of an error in line 130.  The line
+should end with CHR$(0), not CHR$(13).  CHR$(13) causes the routine to send
+the numbers twice.  Change that, and you may have a usable system.
+
+I still don't understand exactly how you intend to use this, but I guess if it
+works, it works.  What it sends - what it "dials" - is based on the terminal
+status in TELCOM.  If you have it set for T (tone dialing), then it will
+generate the DTMF tones, and send them to the modem port.  If you have
+selected dialing pulses, 10 or 20, then all you get is a series of clicks as
+the computer tries to "dial" the number.  Incidently, this program calls the
+ROM routines directly, so it doesn't matter what the rest of your stats are
+set to; they still send the tones out the modem port.  That's useful if you
+use a 1200 baud external modem, and want to use the modem port in this manner
+- it doesn't change the external modem parameters.
+
+The Model 100 or 102 do not have a DTMF tone generator, and cannot generate
+tones this way.
+
+My first response was based on the idea that you would be "connected" to some
+service via the TELCOM program, and once connected, could not use this method
+to send tones.  Obviously, if you are using a "voice" connection, with audible
+responses, and you need to send tones, then this method will work to do that.
+You can probably enhance the program so that it presents a menu of sound
+choices, selecting a number or function key can send the tones you want.  You
+just need to flesh out the basic program to make that work.
+
+
+		- 0 -
+
+Fm: ANDY ZAAYENGA
+To: Tony Anderson
+
+Tony:  Thank you very much for your time in troubleshooting the code.  I
+really appreciate it.  I never would have caught that bug on my own.  I
+assumed the problem was ROM based from within the call.  You're right - I want
+to use it during a voice link, not from within TELCOM, to generate tones used
+in getting account balances and share prices at a brokerage firm.  I have a
+few acco accounts to access so I want to do it in a menu format to simplify
+retrieval. Again thanks a lot.  This type of sharing information is what it's
+all about.    Regards,  Andy
+
+		- 0 -
+
+Fm: Paul Globman
+To: ANDY ZAAYENGA
+
+Andy - If you are on a voice call with the T200 also on the phone line,
+dialing tones is pretty straightforward.  From TELCOM press F2 (Call) then
+enter the numbers you want generated as tones.  There will be about a 5 second
+delay from the time you press ENTER until the tones are generated.  Just make
+sure your STAT is set for tone dialing.  You can set the stat for tones with
+STAT ,T<cr>.
+
+You can even set delays between the numbers with an equal sign (=), ie... CALL
+7=3<enter>  will wait about 5 seconds to begin, then tone dial a 7, wait 2
+seconds and tone dial a 3.
+
+You can put in your account number, a couple of ='s (for a delay while a voice
+menu is announced) and then the command needed.
+
+You can even automate the command with the phone dialer.  Here's a sample
+entry in your ADRS.DO file...
+
+BANK:555-1234====1234567==3:
+
+..where 555-1234 is the bank phone number, 1234567 is your account number, and
+3 is the command to tell you your balance.  All those "=" are for 2 second
+delays that you would adjust as needed.
+
+But since this is a voice link, you must be listening in on an extension
+phone.  There will be no carrier detection or modem connection.
+
+Experiment a little... you should be able to get the desired results.  With a
+variety of entries in the ADRS.DO file, you should be able to use the F1(
+Find) to bring up different commands via keywords, and press ENTER to tone
+dial the command.
+
+Have fun.... Paul
+
+
+		- 0 -
+
+Fm: ANDY ZAAYENGA
+To: Paul Globman
+
+Hi Paul:  Thanks for the info.  If you read my reply to Tony Anderson I think
+you would see why I need to do this from within BASIC or machine code.  I
+would like the ability to concantenate like to have the ability to
+concantenate string variables to send various sequences.  I also would like to
+present this in a menu format.  I can handle all of the code except that I am
+having a problem with the m200 AT DIAL code sending double sequences.  Thanks
+for the reply!  - Andy
+
+		- 0 -
+
+
+Starting message #: 25097   Starting date: 17-May-90  21:34:06
+ Participants:
+ANDY ZAAYENGA 71301,1614
+Tony Anderson 76703,4062
+Paul Globman 72227,1661

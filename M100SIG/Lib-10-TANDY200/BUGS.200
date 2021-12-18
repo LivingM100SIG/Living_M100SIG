@@ -1,0 +1,56 @@
+BUGS.200
+
+A file documenting known bugs in the TANDY 200 ROM.
+
+Compiled by: Jim Irwin  72346,1020
+
+
+1.  FILE SWAP BUG
+
+The Tandy 200 will, under some circumstances, change the contents of your
+files!  The problem arises when files are in a specific order in the directory.
+ It has happened to BASIC and .CO files, but not TEXT files.  The bug occurs
+when you SAVE to an EXISTING file.  For example, if TEST.CO exists on the menu,
+and you SAVEM TEST.CO from BASIC, then TEST.CO could end up as a different
+machine language file.  And another ML file could end up as TEST.CO.
+
+This is truly confusing to try to explain properly.  Suffice it to say, to be
+safe, don't do a SAVE to an existing file name.  KILL the old file first, or
+save to a different file and RENAME later.
+
+2. TELCOM Upload Problem
+
+I used TELCOM to upload a file to CIS with a width of 60.  The Tandy 200 did
+exactly that - uploaded with a width of 60.  There was no word wrap!  The
+upload was full of split words, a real mess.  I tried another upload a few days
+later, and it wrapped fine!  The solution is this:
+
+TELCOM "remembers" whether you were last in the EDIT mode of BASIC (no word
+wrap) or if you were in TEXT (with word wrap).  TELCOM simply uploads with or
+without word wrap depending on where you last used the Tandy 200 text editor. 
+I suppose there may be some occasions when it's nice to know that you can
+upload without word wrap.  But don't get caught by surprise!
+
+The flag governing word wrap is location 61964.  If PEEK(61964)=0 then NO word
+wrap will occur.  If PEEK(61964)=1 then word wrap will be performed.
+
+3.  PRINT PROGRAM FROM TEXT
+
+At least with the 200 you can set a few print parameters now.  But the print
+processor still leaves an occasional stray space at the start of a line.  To
+eliminate the problem, you can't put two spaces after a period.  The Model 100
+had the same problem.
+
+4.  YEAR JUMP
+
+Perhaps the most "popular" bug on the Model 100 was the "automated year
+indexer."  The year would change from 1985 to 1986 to 1987 to.....
+
+I'm pleased to report that my Tandy 200 has stayed on 1985 ever since I set it
+several weeks ago!  Perhaps the bug has been fixed.
+
+If you find more bugs in the Tandy 200, send me a message or EasyPlex.  I'll
+update this file if(?) more are found.
+
+Jim Irwin
+72346,1020

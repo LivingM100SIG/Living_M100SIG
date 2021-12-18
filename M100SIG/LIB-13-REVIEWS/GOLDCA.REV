@@ -1,0 +1,190 @@
+                           THE GOLD CARD SYSTEM
+ 
+    What is it:
+    Expensive! Credit card size memory expansion for the M100, M102. The
+    cards are available in sizes of 32, 64, 128, 256, 512k and up. The unit
+    connects to the system buss and includes a ROM chip (GoldBasic). This
+    ROM chip is not necessary for operation. *see #4 below. The small card
+    holder (6" x 6" x 1/4") will hold two cards, these card(s) are easily
+    inserted and removed. They are powered by lithium batteries and the
+    batteries last well over a year.
+ 
+    Just What it is:
+    1.  A menu system or direct access that allows files in RAM and GoldCard
+    to be copied back and forth, renamed, deleted, etc.
+    2.  The ability to read from and write to files on the Gold Card using
+    familiar syntax. (OPEN"A:xxx) etc. The ability to RUN BASIC files that
+    are resident on the Gold Card. This makes it possible to create an
+    entire system in small BASIC modules that can load and run each other,
+    thus eliminating the M100,102 code size limit.
+    3.  Downloading directly to the GoldCard as Drive A or B (GoldCard).
+    (the same as D'loading to RAM - no loss of carrier)
+    4.  A series of extended service calls that may be executed from within
+    a BASIC program that provide services that are not available within
+    BASIC. (GoldCard Basic on the ROM chip).
+    5.  A comprehensive series of testing programs for testing the hardware
+    integrity of the GoldCard.
+    6.  A variety of miscellaneous services i.e. the ability to load from or
+    save to the GoldCard while running TEXT, or to run the TEXT editor or
+    .CO programs from within the GoldCard menu.
+    7.  Edit files the size of the GoldCard (not in banks or sections) in my
+    case a file of 256k that works just like the built-in TEXT editor.
+        a.  In EDIT mode you can load a file into TEXT "in place"
+    (merge/boilerplate)
+    8.  A Dual Disk Drive approach that configures the GoldCard as drives A:
+    and B:. That combined with the availability of GoldCard ROMs makes it
+    possible to develop large BASIC applications and burn them into a
+    GoldCard ROM to be placed in one drive, while the application themselves
+    access data files on the other drive.
+    9.  ROM Emulation. Image as many ROM chips as you want and switch from
+    one to the other with ease. No need to switch ROM chips or use a ROM
+    bank.
+ 
+    Why did I purchase it:
+    Using a M100 since 1984, finally the time came to upgrade to an IBM
+    clone. At that time weighing the prices including the software to
+    duplicate what I was doing with my M100's easily made the 100 upgrade my
+    choice. I got real lucky. I bought a used Gold Card system, including a
+    M102 for $550. I then sold one of my M100s, some software and hardware I
+    no longer needed and realized about $450 from this. My original (circa
+    1984) $995 M100 is now my desktop. More on this later.
+ 
+    The system is menu driven, easy to use and offers drive protection.
+    There are no hook conflicts as a simple call turns GoldCard hooks off or
+    on. Hooks on/off, protection services can also be accessed from the
+    GoldCard Menu.
+ 
+    I love the system! The ease of use and ROM emulation, the elimination of
+    the disk drive, the TEXT editing and the instant loading of PowrDos or
+    any DOS, the elimination of M/L conflicts make INTENTIONAL cold starts a
+    frequent occurence - when finished with a large number of files - why
+ 
+ 
+ 
+ 
+ 
+ 
+    waste the time to erase them, when a cold start does it in one easy
+    sweep plus resetting all hooks etc. The system menu is very easy to read
+    and F-keys control all operations. The "Calls" are easy to remember
+    e.g., "CALL 63012'rmv" = Remove the system; "CALL 63012'h" = Hooks
+    Installed; "CALL 63012'u" = Hooks UN-installed. All "CALLs" work in a
+    BASIC program. Here's just two of the many examples of using GoldCard
+    Basic:
+ 
+    10 CLEAR 200,60000
+    20 FN$ = "TEST.CO"
+    30 CALL 63012,, VARPTR(FN$)'LCO
+ 
+    The 'LCO service request has one big advantage over LOADM. LOADM
+    destroys the current BASIC variable list, LCO does not. This makes it
+    possible to load a .CO program in the middle of a BASIC program without
+    losing the values of existing variables.
+    In the above program substituting the service call suffix 'RCO (line 30)
+    for 'LCO allows to load an run the .CO program with the same variable
+    condition. Notice that LCO = Load .CO and RCO = Run .CO. All service
+    calls are in this easy to remember format.
+    Just a note on the ROM image function. Option ROM programs can be
+    developed on an IBM or compatible and loaded directly from the PC into
+    the "ROM Eliminator" and tested without the need for time consuming ROM
+    burns. A version can be saved to the GoldCard while another version is
+    prepared for testing. The software is included and menu driven from the
+    GoldCard Utility Menu. Here's an example of loading a ROM to the
+    GoldCard:
+    1. Insert desired ROM chip
+    2. Select RAMROM from utility menu (to load to RAM) one keystroke.
+    3. CALL 63012'rmv (remove GoldCard system.
+    4. type the command  OUT 56,1 (clear option ROM socket)
+    5. run RAMROM from M100 menu and select the SAVE ROM option (one
+    keystroke).
+ 
+    You can save as many ROM images as the size of your GoldCard will hold.
+ 
+    I find that I only use 5 service calls so I have a set of F-Keys for use
+    of the system.
+ 
+    Overall View:
+    Each card is structured with 9 banks, designated BANK 1, BANK 2, etc.
+    These banks are available from the GoldCard Menu or with a BASIC call
+    (OPEN"A:xxxxxx). When accessing a file from the Card(s) all 9 banks are
+    addressed as 1 bank, i.e., you don't have to designate the bank just the
+    card. Actually each card has 10 banks, one bank being the UTILITY menu
+    which VERIFY's, TEST's, INITIALIZE's, or COPY's or LOAD's ROM chips.
+    I've designated Bank 9 as my ROM Bank - SupeRom, Sardine, CRDFIL, RAM+,
+    TS-Dos/TS RANDOM and RAMROM.
+    Bank 8 is my TELCOM Bank - XMDPW6, NSXM, EM8SIG, XMD5HZ, Q-PORT, ADRS.DO
+    and PIN# file. Depending what I'm doing on TELCOM dictates the COM
+    program(s) I'll load to RAM or RUN from the GoldCard. Using CMD.BA, one
+    keystroke executes any method I chose. If I'm downloading anything in
+    access of 12k I then download directly to the GoldCard.
+    With the 2 Card System I have 18 banks + RAM available.
+ 
+    M100 as a DeskTop System:
+ 
+    1.  GoldCard System - 2 ea.  256k GoldCards w/ GoldText and ROM
+    Emulation.
+    2.  2 ea. Tandy Disk Drives  w/RS232 port expander
+ 
+ 
+ 
+ 
+ 
+ 
+    3.  32k Printer Spooler
+    4.  DMP 130 and Epson printers.
+        a. the spooler allows printer output with no down time for computer
+        b. actually, I can be printing 2 different files (w/2 printers) and
+           my laptop is available!
+    5. 1200 baud external modem
+    6. CompuServe member
+        a. I upload data to my CIS "Personal File Area" from my office to
+           later download at home or on the road for further processing
+    7.  Color disks - easy ID and searching with this method. Red = Form
+        Letters, Green = Spreadsheets, etc.
+ 
+    Because I have large data files 20k + the 2 drives and also the
+    GoldCards allow editing from the Card and saving to disk "as I go" while
+    retaining the original file. This with the Append function to drives 1
+    or 2 or drives A or B allow for further manipulation. As I write this I
+    realize I have 4 mass storage devices plus the RAM available at all
+    times. The 2 drive system is not really necessary with the GoldCards but
+    I have it and I use it. Incidentally, the 2 drive system also allows
+    downloading to disk while online.
+ 
+    Hardware and Software Used:
+ 
+    SOUNDSIGHT GoldCard System
+       2 ea. 256 k cards
+       GOLDTEXT editor
+       GOLD ROM ELIMINATOR
+ 
+    WORLDPORT 1200 Baud Pocket Modem
+       software:
+        Q-PORT
+        XMDZH5 allows 1200 Baud access with XMDPW5 OR XMDPW6
+ 
+    TBA RS 232 Port Expander (for 2 drive use)
+        RS 232 A/B Switch Box - no need to switch modem and drive cables.
+ 
+    TANDY PDD 1 (100 k) 2 ea.
+        PowrDos, DiskPower, TS-DOS
+          prefer PowrDos but like DiskPower for printing files from disk
+           without extra software.
+ 
+    MICROMINI Printer Spooler/Buffer
+        Practical Peripherals  32 k  2 ea. Footprint 4"x 3"x 1".  If you
+        have a Printer Spooler, and desire a download VIA EHCO use the spooler
+       as there is no "catch-up" time for the printer - time and $ saver.
+ 
+    PRINTERS:
+        DMP 130
+        EPSON FX-80 w/"DOTS PERFECT" upgrade
+ 
+    Eugene Nestro   10/23/90
+ 
+ 
+ 
+ 
+ 
+ 
+ 

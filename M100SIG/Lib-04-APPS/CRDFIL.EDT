@@ -1,0 +1,104 @@
+
+        Like many of you, I have been fascinated with the new crdfil program
+uploaded by Tony Anderson. It won't replace a major datebase program, but it
+meets many of my portable computing needs. There were two functions I wanted,
+however, so I decided to fiddle a bit. Note that these modifications are keyed
+to versions 1-3 of the CRDFIL.BAS program. The EDIT program will work with any
+version of CRDFIL.
+
+	First, as an error prone typist, I wanted to be able to change an entry
+without having to retype every field. The following lines have been added (or
+changed) to allow this:
+
+606 PRINT@P(A),A$(A);B$(0);:PRINT@P(A),A$(A);
+608 LINEINPUTI$:IFI$=""THENB$(A)=B$(0):B$(0)="":GOTO609ELSEB$(0)=I$:GOTO606
+626 CLOSE:GOSUB1450:GOTO604
+
+	This modification to the "Add New Data" routines will allow you to
+"review" a typed line before going to the next prompt.  This gives you a chance
+to correct a typing error immediately or change the entry (via overtype) if it
+is incorrect. If the entry is correct, just press the ENTER key a second time
+to go to the next prompt; if it's not correct, retype the correction over the
+original data.  If the new item is shorter than the original, you will have
+some left-over characters at the end of the new data.  It looks a little messy
+on the screen, but the final result is OK.
+
+
+        Secondly, I wanted to be able to edit cards that had been previously
+entered into a file. Rather than trying to add this as a subroutine in CRDFIL,
+I just prepared a new program. I also changed two lines in the original program
+so that you could call the editing program without having to exit. The program
+assumes the editing program is called EDIT.BA, and the editing program assumes
+that the original is CRDFIL.BA. You can change line 130 in the original program
+if you don't want to use EDIT.BA as the name of the new program.
+
+        Here are the changes in the original program's menu: (CRDFIL.BAS)
+
+110 PRINT"  Do you want to <C>reate a new file,     <D>isplay or <A>dd to an
+existing       File, <E>dit or <M>enu? (C/D/A/E/M) ";
+130 IFINSTR("Ee",Q$)THENRUN"edit"
+
+
+Here is the new program. (EDIT.BA) Feel free to any make improvements or
+additions you like.  The program works with the 100/102 or 200 as CRDFIL does,
+and can work with RAM, cassette or disk fles by prefixing the filename with the
+proper device specifier.  If you are editing RAM files, you will need RAM space
+to hold two copies of the file in RAM as the edited copy is being created.  It
+may be necessary to have the original file on external disk or on cassette,
+depending on the size of the file, and the amount of RAM space you have
+available.  If the file is on an external device, you may wish to remove the
+"KILL" related statements in Line 170.  For those with disk drives that will
+support more than one open file, the temporary file could also be on disk.
+
+
+0 ' Program prepared by Charles Lewis / Route 3, Box 284 / Fitzgerald, GA 31750
+10 ' Copyright 1988; Permisssion extended to modify or give, but not to sell.
+20 ' Modified for series compatibility by Tony Anderson 76703,4062, 1/14/88
+30 MAXFILES=2:CLEAR1000:CLS:SE=0
+40 LINEINPUT" Name of file: ";F$:IFINSTR(".DO.Do.do.dO",F$)THEN50ELSEF$=F$+".DO"
+50 ON ERROR GOTO320
+60 OPEN F$ FOR INPUT AS 1
+65 OPEN"temp.do"FOROUTPUTAS2
+68 INPUT#1,N:DIM A$(N),B$(N),T$(N),P(N):PRINT#2,N
+70 PRINT" Edit: <A>ll or <S>elected? ";:W$=INPUT$(1):W$=CHR$(ASC(W$)AND223)
+80 PRINTW$:IF W$="S" THEN LINEINPUT" Search string: ";S$ELSE110
+90 FORA=1TOLEN(S$):IFASC(MID$(S$,A,1))>64THENMID$(S$,A,1)=CHR$(ASC(MID$(S$,A,1))AND223)
+100 NEXT:PRINT" In which entry will the Search String   be found";:INPUTSE
+110 CLS:PRINT:PRINT" For each card, press ENTER if correct   or E (edit) if incorrect. Type over     incorrect entries to edit."
+112 PRINT:PRINT" Press ENTER to continue   ";:Q$=INPUT$(1):CLS:GOSUB315
+120 ' retrieve field names - transfer
+140 FOR A=1TON:IF EOF(1)THEN PRINT"Data file error":STOP
+150 LINEINPUT#1,A$(A):INPUT#1,P(A):PRINT#2,A$(A):PRINT#2,P(A):NEXT
+160 ' if finished, rename
+170 IFEOF(1)THENCLS:PRINT" Last card done":CLOSE:KILLF$:NAME"temp.do"ASF$:RUN"crdfil"
+180 ' get card data
+190 FOR A=1TON:IF EOF(1)THENPRINT"Data file error":STOP
+200 LINEINPUT#1,B$(A):NEXT:IFSE=0THEN230
+202 C$=B$(SE): FORA=1TOLEN(C$):IFASC(MID$(C$,A,1))>64THENMID$(C$,A,1)=CHR$(ASC(MID$(C$,A,1))AND223)
+210 NEXT:IFINSTR(C$,S$)THEN230ELSE250
+220 ' display card
+230 CLS:FORA=1TON:PRINT@P(A),A$(A);B$(A):NEXT
+240 PRINT@39,"";:C$=INPUT$(1):IFINSTR("EeNn",C$) THEN 280
+250 CLS:IFSETHENGOSUB315
+255 FOR A=1TON:PRINT#2,B$(A):NEXT
+260 GOTO 170
+270 ' Edit routine
+280 FORA=1TON:T$(A)=B$(A):NEXT
+290 CLS:FORA=1TON:PRINT@P(A),A$(A);B$(A);:PRINT@P(A),A$(A);:LINEINPUTB$(A)
+300 IF B$(A)=""THENB$(A)=T$(A)
+310 NEXT:GOTO230
+315 PRINT" Now reading datafile...":RETURN
+320 PRINT:IFERR=52THENPRINT" File does not exist":STOP
+322 IFERR=54THENPRINT" Datafile is empty":STOP
+324 PRINT" Error"ERR"in Line"ERL:STOP
+
+
+        I haven't done any fancy error checking, but anyone who wants to add
+that shouldn't have any problems.
+
+        I hope you find these to be useful modifications.  Thanks to Tony
+Anderson for the original CRDFIL.BAS program (and it's support programs), and
+for editing and modifications to the above program that makes it compatible
+with the other programs in the series.
+
+			- Charles -

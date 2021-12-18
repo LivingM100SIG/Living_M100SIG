@@ -1,0 +1,25 @@
+0 'Printer mode initialization for Mannesman-Tally Spirit printer
+1 'Wayne West  75655,242
+110 CLEAR200:READZ9:DIMF$(Z9):CLS
+120 FORX=1TOZ9:F$(X)="":READY9:FORY=1TOY9:READT:F$(X)=F$(X)+CHR$(T):NEXTY:READD$:PRINT@(X-1)*20,USING" ## ";X;:PRINTD$;:NEXTX
+230 E$=CHR$(27):PRINT@295,E$;"p";" Enter Mode: ";E$;"q";E$;"Q";
+240 T$=""
+250 X$=INKEY$:IFX$=""THEN250
+260 IFX$=E$THENMENU
+265 IFX$=CHR$(13)THEN280
+270 T$=T$+X$:GOTO250
+280 X=VAL(T$)
+290 IFX<1ORX>Z9THENBEEP:GOTO240
+300 LPRINTF$(X);:GOTO240
+1000 DATA 8:'Number of Modes
+1010 DATA 2,27,64,Reset All Modes
+1020 DATA 1,12,Form Feed
+1030 DATA 1,15,Compressed ON
+1040 DATA 1,20,Compressed OFF
+1050 DATA 2,27,52,Italic ON
+1060 DATA 2,27,53,Italic OFF
+1070 DATA 3,27,78,6,Skip Perf ON
+1080 DATA 2,27,79,Skip Perf OFF
+2000 'This is usable with almost any printer, just format the data statements in the following manor:
+2010 '# of control codes, control codes (in ASCII) follow.  Thus, form feed (CHR$(12)) is 1,12.
+2020 'Reset all modes, <ESC>@ is 2,27,64.  Thus it is easy to reconfigure for other printers.

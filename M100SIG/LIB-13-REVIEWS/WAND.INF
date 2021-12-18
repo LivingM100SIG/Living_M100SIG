@@ -1,0 +1,53 @@
+EVERYTHING YOU ALWAYS WANTED TO KNOW ABOUT THE RADIO SHACK BAR-CODE READER
+
+Bob Scott  73125,1437
+
+The Radio Shack Bar-code reader (BCR) is designed to interface with the Model 
+100/102/200 Portable Computers. The BCR is furnished with a cassette tape which 
+contains the following programs:
+
+B3OF9.CO - Driver for reading three of nine encoded bar codes. This is a very 
+common alpha-numeric code used by industry.
+
+UPC.CO - Driver for reading Uniform Product Codes (UPC-A) such as appear on 
+items in the supermarket.
+
+PLESY.CO - Driver to read the less popular Plessy Bar Code.
+
+READBC.BA - A sample application program demonstrating how the above drivers can
+be used in a BASIC program.
+
+INVCRE.BA and INVENT.BA - A simple set of inventory programs which produces 
+inventory lists based on scanning the bar codes of items in stock.
+
+HARDWARE:
+
+The wand plugs into you computer via the DB-9 jack labeled "BCR".  The wand is 
+manufactured by Hewlett-Packard, and is equivalent to their Model HEDS-3000. 
+Since most of the HP wands are electrically identical(except for the connector),
+you may wish to use another model for special purposes (e.g. a metal-cased, 
+sapphire-tipped model for heavy use).
+
+The wand features a press-to-read switch to conserve battery power, and a 
+replaceable tip.
+
+SOFTWARE:
+The "driver" programs listed above are the key to the use of the wand.  After 
+loading them from disk or tape, you activate the driver of your choice with a 
+"RUNM filename" from BASIC.  This may also be done under program control.  The 
+driver is deactivated with a CALL statement.  Although you may have all three 
+drivers in memory as .CO files, only one may be active at a time.  Since the 
+activation and deactivation may take place under program control, this is not a 
+serious limitation.
+
+After activating a driver with the RUNM statement, you get data from the BCR 
+just like any other device (cassette, RS-232, etc.) with an INPUT# statement.  
+The BCR is set up as a numbered I/O unit with the usual OPEN statement, e.g.
+
+10 OPEN "WAND:" FOR INPUT AS 1
+
+That's pretty much it.  Software is available on the SIG to print out 3-of-9 
+barcodes on several popular printers, although the quality of dot-matrix printed
+bar-codes can be problematic.  You may wish to buy commerically printed bar-code
+stickers for critical applicaions.
+

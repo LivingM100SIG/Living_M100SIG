@@ -1,0 +1,458 @@
+
+
+
+
+        SYNOPSIS OF STATEMENT SYNTAX FOR SEQUENTIAL FILES
+
+        OPEN "drivenumber:filename.ext" FOR mode AS filenumber --
+        allocates a file buffer for a disk file.  If the file number
+        or file name specified has already been opened, error is
+        reported.
+            drivenumber:  either 0 for the first drive or 1 for the
+        second drive.
+            mode:  OUTPUT -- a new file will be created and data will
+        be written sequentially to the filename.ext specified.
+                   INPUT -- the filename.ext specified will be located
+        and data will be read sequentially from it starting at the
+        beginning.  If the file cannot be located, an error will be
+        reported.
+                   APPEND -- the filename.ext specified will be
+        located and data will be written sequentially to it starting
+        at the end of the file.  If the file cannot be located, an
+        error will be reported.
+            filenumber:  specifies which file buffer to use.  This can
+        be up to 15, provided buffers have been allocated with the
+        MAXFILES statement.  A # is optional.
+
+        CLOSE # filenumber -- de-allocates the file buffer specified
+        by filenumber, and closes the file associated with it.  This
+        may involve writing the last record(s) to the file, so if this
+        statement is omitted or if a program error occurs prior to its
+        execution, some data may not be written to the file.  If no
+        filenumber is included then all file buffers previously opened
+        are de-allocated.
+
+        EOF(filenumber)  -- tests for end-of-file on the file opened
+        under filenumber for INPUT.  A logical true (-1) is returned
+        if an end-of-file condition exits, or a logical false (0) if
+        not.  Use with an IF statement prior to reading the next
+        record in the file.
+
+        INPUT # filenumber,variable list --  reads from the file
+        opened as filenumber.  Variable list can be any number of
+        variables separated by commas.  Each data value in the file
+        delimited by a comma is assigned to a corresponding variable
+        name.  Each subsequent INPUT # statement advances the file
+        pointer by the number of variables read.
+
+        INPUT$(numeric expression,filenumber) -- gets a string of
+        length defined by the numeric expression from the file opened
+        under filenumber.  The length cannot exceed 255 characters.
+        The string returned must be assigned to a variable.
+
+        LINE INPUT # filenumber;string variable -- reads one record
+        from the file opened under filenumber and assigns it to string
+        variable.  The record cannot exceed 255 characters in length.
+
+
+
+                                    - 20 -
+
+
+
+
+
+
+
+
+
+
+
+        PRINT # filenumber,expression list -- writes one record to the
+        file opened under filenumber.  The items in expression list
+        may be variables of any type, constants, or expressions.  They
+        may be separated by commas or by semicolons.
+
+        PRINT # filenumber, USING format string; expression list  --
+        writes one record to the file opened under filenumber with
+        items in the expression list (same as above) formatted
+        according to the format string. The more common format
+        characters are:
+            \ -- string data, in between and including the backslashes
+        (left-justified).
+            # -- numeric data, one per digit (right-justified).
+            . -- insert decimal point here in numeric data.
+            , -- insert a comma every three digits in numeric data.
+            (Refer to the Model 100 Manual or Tandy 200 Basic
+        Reference Guide for more detailed information on characters to
+        use in the format string.)
+
+            In addition, the commands explained in the section "Using
+        the Chipmunk From Basic and Text" may be used in a Basic
+        program.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    - 21 -
+
+
+
+
+
+
+
+
+
+
+        RANDOM ACCESS FILES
+
+            Sounds pretty disorganized, right?  Not really.  Actually,
+        CDOS does most of the work of organizing the file and finding
+        records for us.  Random access files provide the capability to
+        add, delete, or change any record in a data file at any time
+        and in any order with a single access.  Records can be
+        accessed at random.  It's not necessary to add records in
+        sequence only at the end of the file, nor is it necessary to
+        read all records in sequence just to find one record.
+
+            The random access file (or random file) is very similar in
+        structure to the sequential file with fixed-length fields.
+        The crucial difference is that now each record has, indeed
+        must have, a record number.  You cannot see the record number
+        when the file is loaded into TEXT.  In fact, the record number
+        is not printed to the file at all.  CDOS uses the record
+        number to determine the record's physical location in the
+        file.  This makes it possible to access any record in the file
+        in any sequence.  The need for record numbers makes random
+        file handling an interesting task for the programmer, because
+        the program itself (or the user) must supply CDOS with the
+        record number of the record to access.
+
+            Our random file handling programs tell CDOS how many
+        fields are in a record and how long each field is.  For
+        example, if a record has three fields and each field is 10
+        characters long, then each record takes up 30 characters in
+        the file.  If we then ask for the third record, CDOS will look
+        for data beginning at the 91st character in the file (if we
+        start counting at 1;  the 90th character if we start counting
+        at zero.)  And CDOS automatically expands the size of the file
+        as necessary to accomodate new records added past the end of
+        the file.  An interesting feature of a random file is that not
+        every record need contain data.  Suppose a file has data
+        stored under record numbers 1, 2, 3, 4, 6, and 8.  We could
+        legitimately add record number 14 and CDOS will increase the
+        file size accordingly and place the record in the correct
+        position.  There will be no valid data at record numbers 5, 7
+        and 9 - 13.  However, space will be provided in the file
+        should we need to put records in those locations at some
+        future time.  CDOS fills the "empty" record locations with the
+        ASCII value zero, also referred to as a "null".
+
+            CDOS stores numbers in a random file as numbers, not as
+        strings.  A number in the file preserves the same precision -
+        integer, single, double - as the variable from which it came.
+        CDOS prints numbers to disk in the same format in which
+        they're stored in memory.  An integer consumes two bytes in
+        memory and it likewise uses two bytes (or two characters) of
+        data on disk.  Therefore, we must be sure to allocate the
+
+
+
+
+                                    - 22 -
+
+
+
+
+
+
+
+
+
+
+
+        correct field length to numeric data.  A field that contains
+        an integer quantity must be two characters in length.  Single
+        precision numbers need four characters and double precision
+        numbers need eight characters.  BASIC's default (normal)
+        precision is double precision, so if variables in a program
+        are not defined otherwise, allow eight characters per numeric
+        field.  This sounds complicated, but actually it's an
+        advantage: we don't have to remember to convert numeric data
+        back to numbers when reading from a random file.  Most of the
+        time, it's more convenient for all the numeric variables in a
+        program to have the same precision, so a single DEFINT or
+        DEFSNG at the beginning of the program avoids confusion, and
+        allows use of the same field length for all numeric variables
+        transferred to and from a random file.  Refer to the M-100/200
+        manual for more details on data types and precision.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    - 23 -
+
+
+
+
+
+
+
+
+
+        NEW CDOS DISK BASIC STATEMENTS
+
+            CDOS adds several entirely new BASIC statements not
+        included in the Microsoft ROM to make the BASIC interpreter
+        fluent in random access file handling.
+
+
+        OPEN FOR RANDOM
+
+            The OPEN statement is very similar to the OPEN statement
+        for sequential files, but differs in one important aspect:
+        only one OPEN statement is required to open a random file for
+        BOTH input and output.  OPEN"0:DATA.DO" FOR RANDOM AS # 1
+        opens the disk file DATA.DO for both input and output through
+        file buffer number one.  Both the keyword RANDOM and the # are
+        optional.  OPEN"0:DATA.DO" AS 1 has the same effect.  If the
+        type of operation is not specified, it's assumed to be random.
+        When the file named in the OPEN statement does not exist in
+        the folder currently open, a new file is created in that
+        folder.  A tip: if you don't know whether you're in the right
+        folder and you don't want to exit to CDOS or to create a new
+        file, do a sequential OPEN ... FOR INPUT on the desired file
+        preceded by an ON ERROR GOTO ... error trap.  If the file
+        isn't in the folder, the OPEN returns an error and execution
+        branches to the error routine "... not in this folder."  If
+        there's no error, the file is present.  Close it, then re-open
+        it as a random file.
+
+
+        FIELD
+
+            We tell CDOS Disk BASIC about the format of the records in
+        a random file with the FIELD statement.  The FIELD statement
+        must be executed after the OPEN statement for the file
+        buffer specified.  The FIELD statement names each variable
+        used for transferring data to and from the file and specifies
+        the length of its associated field.  Suppose we open a random
+        file using file buffer number two: OPEN"0:WORKRS.DO" FOR
+        RANDOM AS #2.  Then FIELD#2,NM$:20,AG%:2,JB$:20 specifies that
+        this particular file has three fields per record.  Field one
+        contains string data which we wish to represent with string
+        variable NM$ (Name) and the field is 20 characters long.
+        Field two contains integer data which we'll represent with the
+        integer variable AG% (Age).  Integer fields are always two
+        characters long.  (Variable AG doesn't need the per cent sign
+        if a DEFINT A statement precedes the FIELD statement.)  Field
+        three contains more string data which we'll represent with
+        string variable JB$ (Job Classification), and it's also 20
+        characters long.  Only one FIELD statement can be active for a
+        particular file, so if a second FIELD statment is executed, it
+        supercedes the first.  The number of variables contained in a
+
+
+
+                                    - 24 -
+
+
+
+
+
+
+
+
+
+
+
+        FIELD statement is limited only to the length of a line of
+        BASIC code.  FIELD statements for different file buffers may
+        share the same variable names.
+
+
+        GET
+
+            The GET statement reads a record from a random file.  GET
+        with a random file is equivalent to LINE INPUT with a
+        sequential file.  Specify which file buffer to use and which
+        record number to read.  GET#1,32 reads record number 32 from
+        the file opened on file buffer number one.  The record number
+        will usually be represented by a variable or an expression:
+        GET#1,RC.  If the record number is not specified, the next
+        sequential record in the file is read.  GET#1 reads record
+        number 33 if the previous record read was record number 32.
+        When the GET is executed, the data contained in the fields in
+        the record read are assigned to their associated variables
+        listed in the FIELD statement.
+
+
+        PUT
+
+            PUT puts a record in a random file.  It's the equivalent
+        of PRINT with a sequential file.  Like GET, PUT also needs the
+        file buffer number specified, and if a specific record is
+        desired, the record number: PUT#2,RC.  If the record number
+        isn't specified, a record is printed to the file in the next
+        sequential location.  PUT prints data to the file in
+        accordance with the variables listed in the associated FIELD
+        statement.  Strings too long for the field length specified
+        are truncated and strings too short are left-justified.
+        Numeric data is converted to the data type of the variable in
+        the FIELD statement.  Both GET and PUT must be preceded by an
+        appropriate FIELD statement.  And both work only with random
+        files.
+
+
+        LOF
+
+            The number of records in a random file is easily found
+        with the LOF statment.  Specify the file buffer number and the
+        total number of records in the file associated with that file
+        number will be returned.  LOF may be used in any valid
+        expression.  NO=LOF(1) assigns the number of records in the
+        file opened as #1 to the variable NO.
+
+
+        LOC
+
+            The LOC statement returns the record number of the last
+
+
+
+                                    - 25 -
+
+
+
+
+
+
+
+
+
+
+
+        GET or PUT.  If the last record read from the file opened as
+        #2 was record number 33, then LR=LOC(2) assigns the value 33
+        to the variable LR.  LOC may be used in any valid expression.
+
+
+        EOF
+
+            Trying to read past the end of the file is an error.  The
+        EOF statement tests for an end-of-file condition on the
+        specified file buffer.  When at the end of the file opened as
+        #3, EOF(3) returns a value of -1, which is interpreted by an
+        IF comparison as "True".  If not at the end of the file, it
+        returns a value of 0, which is interpreted as "False".  EOF
+        may be used in any valid expression.  EOF with a random file
+        works the same as with a sequential file.  Normally reading
+        past the end of the file shouldn't be a problem if all GETs
+        are supplied with record numbers and those record numbers are
+        equal to or less than LOF.  Note that the end of the file is
+        reached when LOC = LOF.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    - 26 -
+
+
+
+
+
+
+

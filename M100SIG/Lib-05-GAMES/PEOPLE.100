@@ -1,0 +1,63 @@
+10 REM People by Mark Lutton, 73106,1627 5/27/85.  Public Domain.
+11 REM Based on "Animal"
+12 REM This version is self-contained in RAM.  Every time you run it
+13 REM it reinitializes the data base.  It runs until it
+14 REM gets an OS or BS error.
+15 DEFINTA-Z
+16 REM Change the next statement according to how much free memory you
+18 REM have in your machine.
+19 REM Un-REM-ing line 545 might help.
+20 CLEAR 5000:DIM A$(100),Y(100),N(100)
+21 REM To remember n names, clear n*100:dim a$(n*2),y(n*2),n(n*2)
+25 REM
+50 REM initialize
+60 PRINT"I'm learning all about people."
+61 PRINT"In fact, if you think of a person"
+62 PRINT"I can probably guess who it is. If I"
+63 PRINT"don't guess right, I'll remember"
+64 PRINT"that person and get it right next time."
+70 A$(0)="Ronald Reagan":Y(0)=0:N(0)=0
+71 A$(1)="Jane Fonda":Y(1)=0:N(1)=0
+72 L=1
+99 REM main loop
+100 Q$= "Are you thinking of a person":GOSUB8000
+110 IFR$="Y"THEN120
+115 PRINT"Well, either think of one or type Q to"
+116 PRINT"quit!!!":GOTO100
+120 INPUT"Is this person male or female";R$
+130 R$=LEFT$(R$,1):IFR$="M"ORR$="m"THENP=0ELSEIFR$="F"ORR$="f"THENP=1ELSEIFR$="Q"ORR$="q"THENGOSUB9000:GOTO120ELSEGOTO120
+199 REM loop down tree
+200 IFY(P)=0THEN300
+210 Q$=A$(P):GOSUB 8000
+220 IFR$="Y"THENP=Y(P):ELSEP=N(P)
+230 GOTO200
+299 REM guess person
+300 PRINT"I know! It's ";A$(P);"!"
+310 Q$="Am I right":GOSUB 8000
+320 IFR$="Y"THENPRINT"Yay! I got one!  Let's try another.":GOTO 100
+399 REM guessed wrong.
+400 LINEINPUT"I give up. Who is it? ";P$
+410 PRINT"Please type a question that would"
+420 PRINT"distinguish ";A$(P)
+430 PRINT"from ";P$;":"
+440 LINEINPUTQ1$
+450 PRINT"For ";P$
+460 Q$="the answer would be...":GOSUB 8000
+499 REM add new person to tree
+500 PRINT"Hmmm... I'll remember that..."
+510 L=L+1:IFR$="Y"THENY(P)=L:N(P)=L+1ELSEY(P)=L+1:N(P)=L
+520 A$(L)=P$:Y(L)=0:N(L)=0
+530 L=L+1:A$(L)=A$(P):Y(L)=0:N(L)=0
+540 A$(P)=Q1$
+545 REM PRINT"Free space = ";FRE(0):PRINT"Free string space = ";FRE("")
+550 GOTO100
+7999 REM input to print q$, get r$=y, n or q.
+8000 PRINTQ$;:INPUTR$:R$=LEFT$(R$,1)
+8010 IFR$="q"ORR$="Q"THENGOSUB9000
+8020 IFR$="y"ORR$="Y"THENR$="Y":RETURN
+8030 IFR$="n"ORR$="N"THENR$="N":RETURN:ELSEGOTO8000
+8999 REM quit
+9000 INPUT"Do you really want to quit now";R$
+9010 R$=LEFT$(R$,1):IFR$="Y"ORR$="y"THEN9020ELSER$=" ":RETURN
+9020 PRINT"Goodbye.":END
+9999 REM End of People

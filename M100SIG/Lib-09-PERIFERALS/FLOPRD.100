@@ -1,0 +1,44 @@
+ERRATA for M100/102 only.
+-------------------------
+Many Model 100/102 users have come across a conflict when trying to load
+or use RAMDSK.CO with FLOPPY (Tandy's TDD2 disk manager) installed.  Go into
+BASIC and PRINT MAXRAM.  If MAXRAM is 60000 then FLOPPY is installed.  The
+following instructions will convert FLOPPY to FLOPP2.CO and permit
+RAMDSK.CO to be used when needed.
+
+You cannot simply rename FLOPPY to FLOPP2.CO.  You have to convert it,
+as follows:
+
+1) With FLOPPY uninstalled, boot FLOPPY as usual (see TDD2 instruction manual).
+
+2) Goto BASIC and run this program:
+
+ 10 POKE 62116,154:POKE 62117,249
+ 20 POKE 62118,0
+ 30 SAVEM"FLOPP2",60003,62700,60003
+
+3) FLOPP2.CO should be on the menu but before you use it, run FREMEM.BA to get
+rid of FLOPPY (use FLOPP2.CO to load FREMEM.BA from disk).
+
+4) After running FREMEM and uninstalling FLOPPY you can kill FREMEM.BA and
+begin to use FLOPP2.CO exactly as you would use FLOPPY.  Save FLOPP2.CO to
+the Datapac for backup.
+
+5) RAMDSK.CO can now be loaded or used as needed.
+
+6) With RAMDSK.CO and FLOPP2.CO in RAM, here is a BASIC utility that will
+allow you to select between them.
+
+0 REM DISK.BA (C) 1990 BY P.GLOBMAN
+1 CLS:PRINT@50,"1 - FLOPPY DISK"
+2 PRINT@90,"2 - NODE RAMDISK"
+3 PRINT@170," Esc/Select =>":X$=INKEY$
+4 IFX$="1"THENCLEAR99,60003:RUNM"FLOPP2
+5 IFX$="2"THENCLEAR99,61681:RUNM"RAMDSK
+6 IFX$=CHR$(27)THENMENUELSE3
+
+This program can also be used with the original FLOPPY.CO (TDD1) if line 4 is
+changed to:
+
+4 IFX$="1"THENCLEAR99,59400:RUNM"FLOPPY
+

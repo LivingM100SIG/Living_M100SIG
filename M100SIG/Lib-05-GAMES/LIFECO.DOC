@@ -1,0 +1,142 @@
+                                         LIFE
+                              --------------------------
+
+          This program implements the Game of Life, a diversion, by John
+          Conway. It produces a new generation every 3.5 seconds.
+
+          The rules set forth dictate that every empty cell surrounded by
+          exactly 3 live neighbors gives birth. Every living cell
+          surrounded by either 2 or 3 live neighbors remains alive. Any
+          living cell surrounded by 4 or 5 live neighbors dies out from
+          over crowding and dies from isolation if surrounded by 1 or no
+          living neighbors.
+
+          Interesting patterns emerge over generations. I find this the
+          interesting feature of this diversion. An article in the
+          December, 1978 issue of BYTE magazine describes some of these
+          patterns. (Unfortunately, I no longer have access to that
+          article. I would appreciate anyone who could electronic mail me
+          the patterns mentioned in the article.)
+
+          Some patterns are static such as in figure 1. Other patterns are
+          cyclic patterns which go through a determined set of
+          tranformations and return (figure 2). A few cyclic patterns,
+          called gliders, move as they go through their transformations. I
+          list the simplist one in figure 3. Finally, other cyclic patterns
+          called generators create other patterns. After a set number of
+          transformations they remain the same, but have produced some
+          others along the way.
+
+                                       x
+                                      x x      xx
+                                      x x      xx
+                                       x
+
+                                          Figure 1
+                                      Static Patterns
+
+
+
+                                          xxx
+                                         x   x
+                                         x   x       xxx
+                                         x   x
+                                          xxx
+
+                                          Figure 2
+                                    Oscillating Patterns
+
+
+
+                                          x
+                                           x
+                                         xxx
+
+                                       Figure 3
+                                     Simple Glider
+
+          This program will accept graphic screens created by the Palette
+          program found in Library 5. The area used by life run from dot
+          column 1-128 and dot rows 1-64. The center of the life grid lies
+          at x=64, y=32.
+
+          The program begins with a random 20 by 24 dot pattern.
+
+          The following functions are provided:
+
+                  F8      Return to menu.
+                  F7      Load a screen.
+                  F6      Create a random pattern.
+                  F5      Save a screen.
+                  F4      Reload the previous random screen.
+                  PRINT   Print the screen. (DMP-400 dot matrix printer.)
+
+          Any other key causes the program to wait until the SPACE key is
+          pressed.
+
+          To use this program download LIFEHX.DO and use James Yi's
+          HXFER.100 in library 7 to change to machine code.
+
+          This program requires approximately 11 K for buffers. Himem
+          should be set (with the BASIC CLEAR command) at 10115 bytes below
+          the beginning address of the program. For the default loading,
+          this is 51132. The program itself occupies about 1705 bytes and
+          resides at the high end of memory.
+
+          Another screen print program may be inserted at 62711 to high
+          memory on my machine, 62960. The address of this printer routine
+          should be placed in a jump table at the beginning address + 7.
+          (Low byte at beginning address + 7 and high byte at beginning
+          address + 8.) The program jumps to 62711 when beginning address +
+          6 is called. Prior to calling the printing routine, the screen is
+          transfered to a 1920 byte buffer. The printing routine included
+          then uses this buffer to print the image.
+
+          Note, relocating the life program will cause compatibility
+          problems with Palette. The LOAD and SAVE commands produce a
+          Binary file which will load at 54254 where Palette expects to
+          find it. Relocating the program will move the loading location of
+          the file. To relocate the program retrieve the source file and
+          use James Yi's ADSM.100 program to reassemble it. (Be careful!
+          The various buffers have been arranged around the PALETTE 1920
+          buffer at 54254.)
+
+          Thanks to Robert D. Covington and his Model 100 System Map. I
+          also learned much studying James Yi's HXFER.100 source code.
+
+          John Conway's game of life.
+                          SCIENTIFIC AMERICAN October 1970
+                          BYTE September 1975
+                          BYTE December 1978
+
+          For those who have a dot matrix printer similar to my DMP-400 I
+          include the command codes so you can poke in the proper codes for
+          your machine. I have left some room for expansion. Note the code
+          string should end with $FF, not the more usual $00.
+
+          TWIXT   DB 30           ;GRAPHICS OFF - Called between each line
+                  DB 27,28,$D     ;LINEFEED
+                  DB      18      ;GRAPHICS MODE
+                  DB      27,16   ;POSITION
+                  DB      0,20    ;AT COL 20
+                  DB      $FF     ;DONE
+                  DB      $FF,$FF,$FF ;extra
+
+
+          PSTRNG  DB      27,20   ;CONDENSED - Initial command sent to
+          printer
+                  DB      18      ;GRAPHICS MODE
+                  DB      27,16   ;POSITION
+                  DB      0,20    ;AT COL 20
+                  DB      $FF     ;DONE
+                  DB      $FF,$FF,$FF
+                  DB      $FF     ;extra
+
+          GOFF    DB      30,$ff,$ff ;at conclusion of printing.
+
+
+          Ken Jackson
+          71316,01321
+
+          1023 West Sixth St
+          Duluth, MN  55806

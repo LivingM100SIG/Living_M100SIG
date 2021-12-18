@@ -1,0 +1,1782 @@
+TITLE M-100 XmodemXtend by J R Chenoweth
+SUBTTL copyright and version
+$EJECT
+;
+;
+;	M-100 XmodemXtend/ Copyright (C)1985 by J R Chenoweth
+;
+		.Z80	; Zilog mnemonics
+;
+;	assembled using MACRO-80 (trademark by Microsoft,Inc.)
+;	under CP/M (trademark by Digital Research, Inc.)
+;	on a TRS-80 Model 100 (trademark by Tandy Corporation)
+;	with a PICDISC (trademark by Personal Integrated Computers)
+;
+;	  Any resemblance to actual programs,
+;	either living or dead,
+;	is purely coincidental.
+;
+;
+;
+VERSION	EQU	105	; version number
+;
+MONTH	EQU	11	; revision month
+DATE	EQU	12	; revision date
+YEAR	EQU	85	; revision year
+;
+;	XMODEM (CRC or checksum) protocol capability for the Model 100
+;
+;
+SUBTTL equates
+$EJECT
+;
+;	general equates
+;
+NO	EQU	0	; NEGATIVE, OFF, FALSE, RESET, ZERO
+YES	EQU	NOT NO	; AFFIRMATIVE, ON, TRUE, SET, 2^16-1
+BIGNUMBER EQU	65501	; A BIG 16-BIT NUMBER (tired of FFFF)
+;
+;
+;	operating parameter equates
+;
+RECSIZE	EQU	128		; standard record length (CP/M)
+NONAKMAX EQU	11		; NAK wait retries
+NAKWAITMAX EQU	BIGNUMBER	; NAK wait loop timing
+INITNAKDLY EQU	12		; initial NAK wait delay
+SENDRTMAX EQU	11		; send block retries
+BLKACKMAX EQU	BIGNUMBER	; maximum ACK wait
+EOTRTMAX  EQU	11		; max EOT resends
+EOTACKDLY EQU	100		; EOT ack wait delay
+EOTACKMAX EQU	BIGNUMBER	; EOT ACK wait loop
+RECVRTMAX EQU	11		; receive block retries
+RECVCRCMAX EQU	7		; max CRC receive retries before checksum mode
+RECVDELAY EQU	10		; delay before rechecking for receive char.
+RECVLOOPTIM EQU	15		; standard timeout for receive character loop
+RECVTIMAX EQU	3333		; receive character inner loop counter
+CANCELNUM EQU	5		; number of ^X's sent upon break abort
+CANCELDLY EQU	BIGNUMBER	; delay between sending abort signals
+CANCELWAIT EQU	150		; timeout for second cancel character
+;
+;	character equates
+;
+CR	EQU	0DH	; carriage return
+LF	EQU	0AH	; line feed
+NULL	EQU	NO	; nuthin'
+ACK	EQU	06H	; acknowledge
+NAK	EQU	15H	; negative acknowledge
+CRC	EQU	'C'	; 'CRC' request code
+SOH	EQU	01H	; start of header
+EOT	EQU	04H	; end of transmission
+EOF	EQU	1AH	; end of file
+ESC	EQU	1BH	; ESCAPE
+BELL	EQU	'G'-40H	; BEEP CHARACTER
+TAB	EQU	'I'-40H	; TAB
+CNTLC	EQU	'C'-40H	; BREAK SIGNAL
+CLS	EQU	'L'-40H	; MDL-100 CLEAR SCREEN CHARACTER
+CNTLX	EQU	'X'-40H	; abort signal
+;	NOTE: <ESC 'M'> IS THE DELETE LINE SEQUENCE FOR THE MODEL 100 DISPLAY
+;
+;	RAM storage equates
+;
+RECNUM	EQU	RAMBUF		; record number
+DIRADR	EQU	RECNUM+2	; target file directory address
+FILEADR	EQU	DIRADR+2	; file starting address
+BLKADR	EQU	FILEADR+2	; block address
+CHKSUM	EQU	BLKADR+2	; block checksum
+RETRYZ	EQU	CHKSUM+1	; operation retry number
+EOFLAG	EQU	RETRYZ+1	; end-of-file flag
+EOFDUN	EQU	EOFLAG+1	; EOF sucessfully received flag
+CRCFLG	EQU	EOFDUN+1	; CRC mode flag
+CRCVAL	EQU	CRCFLG+1	; CRC value
+REC1FLG	EQU	CRCVAL+2	; first block flag
+KEYTAB	EQU	REC1FLG+1	; TERM/XMOD KEY MODE TABLE ADDRESS
+SERPARSAVE EQU	KEYTAB+2	; SAVE NORMAL SERIAL PARAMETERS
+SERPARXMOD EQU	SERPARSAVE+6	; XMODEM SERIAL PARAMETERS
+CRCTBL	EQU	SERPARXMOD+6	; CRC lookup table
+BLOCKBUF EQU	CRCTBL+200H	; receive block buffer
+RAMEND	EQU	BLOCKBUF+RECSIZE ; end of RAM storage
+;
+;	TRS-100 OS equates
+;
+ABORTMSG EQU	5771H
+BEEP	EQU	4229H
+BRKCHK	EQU	7283H
+CALLMSG	EQU	5244H
+CAPTUR	EQU	0FAC2H
+CARDET	EQU	6EEFH
+CHGET	EQU	12CBH
+CHKRECV	EQU	5673H
+CHSNS	EQU	13DBH
+CLRSCRN	EQU	4229H
+CLSCOM	EQU	6ECBH
+CONNECTION EQU	52E4H
+CONVD	EQU	39D4H
+CRLF	EQU	4222H
+CUROFF	EQU	424EH
+CURSON	EQU	4249H
+DIALER	EQU	532DH
+DIR	EQU	1F3AH
+DIRRST	EQU	2146H
+DISCON	EQU	52BBH
+DISCONMSG EQU	5786H
+DEFILE	EQU	7F2BH
+DOWNLDR	EQU	568FH
+DOWNLD2MSG EQU	5768H
+DSPFNK	EQU	42A8H
+DUPLEXDSP EQU	5544H
+DUPLEX	EQU	553EH
+DUPLEXFLG EQU	0F658H
+ECHOSTDSP EQU	5556H
+ECHOTG	EQU	5550H
+FCLOSE	EQU	4D38H
+FILENG	EQU	21FAH
+FILENOTFND EQU	577CH
+FILES	EQU	1F3AH
+FILNAM	EQU	0FC93H
+FINDCALLTBL EQU	5D2BH
+FNAME	EQU	4C0BH
+FNKSB	EQU	5A9EH
+FOPEN	EQU	4D12H
+FREERAM	EQU	7EACH
+GETC	EQU	4E7AH
+GTXTTB	EQU	5AE3H
+INPLIN	EQU	4644H
+INPRMP	EQU	463EH
+INSCHR	EQU	6B61H
+KEYDSPBASE EQU	0F789H
+KEYX	EQU	7270H
+KILASC	EQU	1FBEH
+;			the L#### labels were even less understood vectors
+;				into the operating system
+L112E	EQU	112EH
+L208F	EQU	208FH
+L3457	EQU	3457H
+L45D3	EQU	45D3H
+L56C5	EQU	56C5H
+L5A58	EQU	5A58H
+L5A9E	EQU	5A9EH
+L5AA6	EQU	5AA6H
+L5C3F	EQU	5C3FH
+L5C6D	EQU	5C6DH
+L5C74	EQU	5C74H
+L5CAE	EQU	5CAEH
+L5DB1	EQU	5DB1H
+L5DBC	EQU	5DBCH
+L5DC5	EQU	5DC5H
+L6370	EQU	6370H
+L6383	EQU	6383H
+L6CA7	EQU	6CA7H
+L729F	EQU	729FH
+LCD	EQU	4B44H
+LF62B	EQU	0F62BH
+LF650	EQU	0F650H
+LF659	EQU	0F659H
+LF65A	EQU	0F65AH
+LF67B	EQU	0F67BH
+LF7D9	EQU	0F7D9H
+LFAC3	EQU	0FAC3H
+LFAC6	EQU	0FAC6H
+LFF40	EQU	0FF40H
+LFF42	EQU	0FF42H
+MAKHOL	EQU	6B6DH
+MAKTXT	EQU	220FH
+MENU	EQU	5797H
+CHGDSP	EQU	556BH
+PREV	EQU	5523H
+PRINT2NULL EQU	27B1H
+PRINTMSG EQU	5791H
+PRTTAB	EQU	4B55H
+PUTC	EQU	4B44H
+RCVX	EQU	6D6DH
+RTNADR	EQU	0F652H
+RV232C	EQU	6D7EH
+SD232C	EQU	6E32H
+SNDCOM	EQU	6E3AH
+SERIALPARM EQU	0F65BH
+SETDSPFNK EQU	42A5H
+SETFNK	EQU	5A7CH
+SETIO	EQU	4C84H
+SETSER	EQU	17E6H
+STKINIT	EQU	5D53H
+STKSET	EQU	5D5DH
+UNLOCK	EQU	4244H
+UPCASE	EQU	0FE9H
+UPLOADR	EQU	55A0H
+UPLOAD2MSG EQU	5759H
+WAIT	EQU	551DH
+WAITSTDSP EQU	5562H
+;
+;
+SUBTTL main program
+$EJECT
+;
+;*************************************************************
+;
+;			main program
+;
+;*************************************************************
+;
+;
+;	program starts here
+;
+TELXMODEM:
+	LD	HL,STARTUPMSG		; initial logon message
+	CALL	PRINTMSG
+;
+STARTELCOM:	
+	CALL	UNLOCK			; unlock display scroll
+	LD	HL,FUNCTAB1		; display primary function table
+	CALL	SETDSPFNK		; set and display functions
+	JP	PRINTPARM		; join code at serial status display
+CMDENTRY:
+	CALL	CLRSCRN			; CLEAR SCREEN
+	LD	HL,FUNCTAB1		; reset function key table
+	CALL	SETFNK			; for command mode
+CMDPROMPT:
+	CALL	STKINIT			; adjust stack return address AND SET
+					;  SOME FLAGS
+;
+	CALL	SETXMODPAR		; SETUP ALTERNATE XMODEM SERIAL PARMS
+	CALL	SAVESERIAL		; SAVE CURRENT SERIAL PARAMETERS
+;
+	LD	HL,CMDENTRY		; set break address
+	LD	(RTNADR),HL
+	LD	HL,PROMPTMSG		; display command prompt
+	CALL	PRINTMSG
+	CALL	INPLIN			; get user input line from keyboard
+	RST	10H			; fetch first character
+	AND	A
+	JP	Z,CMDPROMPT		; go ask again if empty line
+	LD	DE,CMDLIST		; search command list
+	CALL	L6CA7
+	JP	Z,CMDENTRY		; start again if we don't know this one
+	RET				; else execution address is on stack
+PROMPTMSG:
+	DB	'TelXcommand: ',NULL
+;
+;	command mode list
+;
+CMDLIST:	
+	DB	'STAT'
+	DW	STAT
+	DB	'TERM'
+	DW	TERM
+	DB	'CALL'
+	DW	CALL
+	DB	'FIND'
+	DW	FIND
+	DB	'MENU'
+	DW	MENU
+	DB	'FILE'
+	DW	DIRECTORYV
+	DB	'FREE'
+	DW	FREERAMDSPV
+	DB	0FFH
+;
+;	command mode function key table
+;
+FUNCTAB1:	
+	DB	'Find ',80H
+	DB	'Call ',80H
+	DB	'Stat ',80H
+	DB	'Files',CR+80H
+	DB	'Free',CR+80H
+	DB	80H
+	DB	'Term',CR+80H
+	DB	'Menu',CR+80H
+	DB	'JRC37'
+;
+;	DISPLAY FILE DIRECTORY
+;
+DIRECTORYV:
+	CALL	DIRECTORY
+	JP	CMDPROMPT
+;
+;	DISPALY FREE RAM
+;
+FREERAMDSPV:
+	CALL	FREERAMDSP
+	JP	CMDPROMPT
+;
+;	change or display serial port status
+;
+SERPORTMSG:	DB 'Serial Port Status: ',NULL
+;
+STAT:
+	DEC	HL			; skip space
+	RST	10H			; get first character on queue
+	INC	A
+	DEC	A			; check for null
+	JP	NZ,CHGSTAT		; go change serial status
+;
+;	display serial port parameters
+;
+PRINTPARM:
+	LD	HL,SERPORTMSG
+	CALL	PRINTMSG
+	LD	HL,SERIALPARM
+	LD	B,5
+PRINTPAR2:	
+	LD	A,(HL)
+	RST	20H		; PUT CHARACTER TO SCREEN
+	INC	HL
+	DEC	B
+	JP	NZ,PRINTPAR2
+	LD	A,','		; PRINT COMMA TO SEPARATE PULSES-PER-SECOND
+	RST	20H
+;  CONVERT PULSES-PER-SECOND TO ASCII
+	LD	A,(LF62B)
+	RRCA
+	LD	A,'2'
+	SBC	A,B
+	RST	20H		; DISPLAY DIGIT
+	LD	HL,PULSEPSMSG
+	CALL	PRINT2NULL
+	JP	CMDPROMPT
+PULSEPSMSG:	
+	DB	'0 pps',NULL
+;
+;	change serial status values
+;
+CHGSTAT:	
+	JP	C,SETSERIAL
+	CP	','
+	JP	Z,SETPULSE
+	CALL	UPCASE
+	CP	'M'
+	JP	NZ,CMDENTRY
+	INC	HL
+SETSERIAL:	
+	CALL	SETSER
+	CALL	CLSCOM
+	DEC	HL
+	RST	10H
+	AND	A
+	JP	Z,CMDPROMPT
+SETPULSE:	
+	RST	8
+	INC	L
+	CALL	L112E
+	CP	14H
+	JP	Z,SETPULS2
+	SUB	0AH
+	JP	NZ,CMDENTRY
+	INC	A
+SETPULS2:	
+	LD	(LF62B),A
+	JP	CMDPROMPT
+FINDCALL:	
+	LD	HL,CALLMSG
+	CALL	L5A58
+	POP	DE
+	CALL	FINDCOLN
+	JP	Z,CMDENTRY
+	EX	DE,HL
+;  THIS 'F6' IS 'OR 037H' WITH THE 'SCF' BELOW (clears carry)
+	DB	0F6H
+;
+;
+;
+CALL:	
+	SCF
+	PUSH	HL
+	LD	HL,CALLMSG
+;  CARRY IS CLEAR IF ENTERED AT 'FINDCALL' (message already printed)
+	CALL	C,L5A58
+	POP	HL
+	CALL	DIALER
+	JP	C,CMDENTRY
+	JP	NZ,CMDPROMPT
+	JP	TERMCONNCT
+;
+;	SEARCH FOR NUMBER TO CALL
+;
+FIND:	
+	SUB	A
+	CALL	L5DB1
+	PUSH	HL
+	CALL	L5AA6
+	JP	Z,CMDENTRY
+	CALL	GTXTTB
+	EX	DE,HL
+	POP	HL
+FINDLOOP:	
+	CALL	L5C3F
+	JP	NC,CMDENTRY
+	PUSH	HL
+	PUSH	DE
+	CALL	L5DC5
+	CALL	FINDCOLN
+	CALL	NZ,FINDLOGON
+	CALL	CRLF
+	CALL	FINDCALLFNCT
+	JP	Z,CMDENTRY
+	CP	'C'
+	JP	Z,FINDCALL
+	POP	DE
+	CALL	L5C6D
+	POP	HL
+	JP	FINDLOOP
+;
+FINDCOLN:	
+	CALL	FINDNEXTCH
+	RET	Z
+	RST	20H
+	CP	':'
+	INC	DE
+	JP	NZ,FINDCOLN
+	JP	FINDEOF
+;
+FINDLOGON:	
+	CALL	FINDNEXTCH
+	RET	Z
+	CP	'<'
+	JP	Z,FINDSKIPLOG
+	CP	':'
+	RET	Z
+	RST	20H
+	INC	DE
+	JP	FINDLOGON
+FINDSKIPLOG:	
+	RST	20H
+	LD	A,'>'
+	RST	20H
+	RET
+;
+FINDNEXTCH:	
+	CALL	L5C74
+	DEC	DE
+	LD	A,(DE)
+	RET	Z
+;
+FINDEOF:	
+	CP	EOF
+	JP	Z,CMDENTRY
+	RET
+;
+;	SETUP PHONE NUMBER SEARCH FUNCTION TABLE AND GET USER RESPONSE
+;
+FINDCALLFNCT:
+	PUSH	DE
+	LD	HL,FINDCALLTBL
+	CALL	SETFNK
+	CALL	L5CAE
+	PUSH	AF
+	LD	HL,FUNCTAB1
+	CALL	SETFNK
+	CALL	L5DBC
+	POP	AF
+	CP	'Q'
+	POP	DE
+	RET
+;
+;
+SUBTTL terminal mode
+$EJECT
+;*************************************************************
+;
+;			terminal mode
+;
+;*************************************************************
+;
+TERM:	
+	LD	HL,LF65A
+	RST	10H
+	CALL	NC,L3457
+	PUSH	AF
+	CALL	SETSER
+	POP	AF
+	CCF
+	CALL	C,CONNECTION
+	JP	C,GOBYEBYE
+;
+TERMCONNCT:	
+	CALL	SAVESERIAL		; SAVE CURRENT SERIAL PARAMETERS
+	LD	A,'@'
+	LD	(LF650),A
+	LD	(LF67B),A
+	XOR	A
+	LD	(CAPTUR),A
+	LD	(LFAC3),A
+	CALL	L45D3
+;
+	LD	A,LOW YES		; SET CRC MODE FLAG
+	LD	(CRCFLG),A
+	CALL	CRCGEN			; GENERATE CRC TABLES
+;
+TERMCONN1:
+	CALL	SETFNKNORM		; SET NORMAL FUNCTION DISPLAY
+	CALL	DUPLEXDSP		; DISPLAY DUPLEX STATUS
+	CALL	ECHOSTDSP		; DISPLAY ECHO STATUS
+	CALL	WAITSTDSP		; DISPLAY WAIT STATUS
+;
+TERMCONN2:
+	CALL	DSPFNK			; display function keys
+	CALL	CURSON			; turn on cursor
+	JP	TERMONITOR		; jump over terminal reset
+;
+;	terminal reset to normal mode
+;
+TERMRESET:
+	CALL	RESETSERPARM		; RESET NORMAL SERIAL PARAMETERS
+	CALL	DIRRST			; RESET DIRECTORY FILE INFORMATION
+;
+;	terminal mode monitor
+;
+TERMONITOR:	
+	CALL	STKSET			; RESET STACK POINTER
+	LD	HL,TERMONIT6
+	LD	(RTNADR),HL
+	LD	A,(LFF42)
+	AND	A
+	JP	Z,TERMONIT2
+	LD	A,(LFF40)
+	LD	HL,LF7D9
+	XOR	(HL)
+	RRCA
+	CALL	C,WAITSTDSP
+TERMONIT2:	
+	CALL	CHSNS
+	JP	Z,TERMONIT3
+	CALL	CHGET
+	JP	C,CNTRLFNKEY
+	LD	B,A
+	LD	A,(DUPLEXFLG)
+	AND	A
+	LD	A,B
+	CALL	Z,LCD
+	AND	A
+	CALL	NZ,SD232C
+	JP	C,TERMONIT4
+TERMONIT3:	
+	CALL	RCVX
+	JP	Z,TERMONITOR
+	CALL	RV232C
+	JP	C,TERMONITOR
+	PUSH	AF			; SAVE CHARACTER
+	AND	01111111B		; STRIP PARITY FOR DISPLAY
+	RST	20H			; DISPLAY
+	POP	AF			; RESTORE CHARACTER WITH PARITY
+	LD	B,A
+	LD	A,(LF659)
+	AND	A
+	LD	A,B
+	CALL	NZ,PRTTAB
+	CALL	L56C5
+	JP	TERMONITOR
+TERMONIT4:	
+	XOR	A
+	LD	(LFF40),A
+TERMONIT5:	
+	CALL	L729F
+	JP	C,TERMONIT5
+	JP	TERMONITOR
+TERMONIT6:	
+	CALL	CLRSCRN
+	XOR	A
+	LD	(LF659),A
+	CALL	ECHOSTDSP
+	JP	TERMONITOR
+;
+;	CONTROL (FUNCTION) KEY PROCESSOR
+;
+CNTRLFNKEY:	
+	LD	E,A
+	LD	D,0FFH
+	LD	HL,(KEYTAB)		; GET ADDRESS OF APPROPRIATE TABLE
+	ADD	HL,DE
+	ADD	HL,DE
+	LD	A,(HL)
+	INC	HL
+	LD	H,(HL)
+	LD	L,A
+	LD	DE,TERMRESET	; PUSH MONITOR RESET FOR RETURN ADDRESS
+	PUSH	DE
+	JP	(HL)			; JUMP TO CNTRL-KEY SUBROUTINE
+;
+;	CONTROL KEY VECTORS IN TERMINAL MODE
+;
+	DW	PREV
+	DW	DOWNLD
+	DW	UPLOAD
+	DW	DUPLEX
+	DW	ECHOTG
+	DW	WAIT
+	DW	XMODEM
+	DW	BYEBYE
+CNTRLKTABN EQU	$		; END OF NORMAL CNTRL-KEY VECTOR TABLE
+;
+;	NORMAL TERMINAL MODE FUNCTION TABLE
+;
+FUNCTABN:	
+	DB	'Pre','v'+80H	; previous screen
+	DB	'Dow','n'+80H	; raw download
+	DB	' U','p'+80H	; raw upload
+	DB	80H		; full or half duplex
+	DB	80H		; echo to printer
+	DB	80H		; wait
+	DB	'Xmo','d'+80H	; Xmodem send or receive
+	DB	'By','e'+80H	; exit terminal mode
+;
+;
+;	EXIT TERMINAL MODE - RETURN TO COMMAND MODE
+;
+BYEBYE:	
+	LD	HL,DISCONMSG	; YOU REALLY WANT TO DISCONNECT ?
+	CALL	GETANSWER	; PRINT, GET ANSWER, AND CHANGE TO UPPER CASE
+	CP	'Y'		; YES
+	JP	Z,GOBYEBYE
+	LD	HL,ABORTMSG	; OR NO
+	CALL	PRINTMSG
+	JP	TERMRESET
+GOBYEBYE:	
+	XOR	A
+	LD	(LF650),A
+	LD	L,A
+	LD	H,A
+	LD	(CAPTUR),HL
+	CALL	CLSCOM			; close communication channel
+	CALL	CUROFF			; turn cursor off
+	CALL	DISCON			; disconnect
+	CALL	L6370
+	JP	STARTELCOM		; back to command mode
+;
+;
+SUBTTL XMODEM mode
+$EJECT
+;
+;*************************************************************
+;
+;			XMODEM mode
+;
+;*************************************************************
+;
+;	XMODEM protocol send and receive routines
+;
+XMODEM:
+	LD	A,(CAPTUR)	; CHECK CAPTURE FLAG
+	OR	A
+	CALL	NZ,DOWNLDEND	; STOP DOWNLOAD IF CAPTURE ON
+;
+	LD	HL,CNTRLKTABX	; USE 'XMODEM MOD' AS CNTRL-KEY TABLE
+	LD	(KEYTAB),HL	;
+;
+	LD	HL,FUNCTABX	; 'XMODEM' FUNCTION KEY DISPLAY
+	CALL	SETFNK		; RECONFIGURE FUNCTION DISPLAY
+;
+	LD	A,(CRCFLG)	; DISPLY CURRENT CRC/CHKSUM STATUS
+	CALL	CRCDSPR		;
+;
+	JP	TERMCONN2	; REJOIN TERMINAL EMULATOR
+;
+;	XMODEM FUNCTION (CNTRL) KEY DISPLAY TABLE
+;
+FUNCTABX:
+	DB	'Pre','v'+80H	; previous screen
+	DB	'Rec','v'+80H	; XMODEM receive (upload)
+	DB	'Sen','d'+80H	; XMODEM send (download)
+	DB	'Fil','e'+80H	; ram directory
+	DB	'Fre','e'+80H	; free RAM remaining
+	DB	80H		; wait
+	DB	80H		; CRC/checksum mode toggle
+	DB	'Nor','m'+80H	; exit XMODEM mode (to TERM)
+;
+;	XMODEM CNTRL-KEY TABLE
+;
+	DW	PREV
+	DW	XMODRECV
+	DW	XMODSEND
+	DW	DIRECTORY
+	DW	FREERAMDSP
+	DW	WAIT
+	DW	CRCTOGGLE
+	DW	TERMCONN1
+CNTRLKTABX EQU	$		; END OF XMODEM KEY VECTOR TABLE
+;
+;	DISPLAY FREE RAM
+;
+FREERAMDSP:
+	CALL	CRLF		; NEW LINE
+	CALL	FREERAM		; USE ROUTINE IN ROM
+	JP	CRLF
+;
+;	DIRECTORY DISPLAY
+;
+DIRECTORY:
+	CALL	CRLF		; NEW LINE
+	JP	DIR		; USE ROUTINE IN ROM
+;
+;	CRC/CHECKSUM SWITCHER
+;
+CRCTOGGLE:
+	LD	A,(CRCFLG)		; GET CRC FLAG
+	XOR	LOW YES			; TOGGLE IT
+CRCRSET:
+	LD	(CRCFLG),A		; PUT CRC FLAG BACK
+CRCDSPR:
+	LD	DE,KEYDSPBASE+60H	; POINT TO LOCATION OF CRC/CKSM DISPLAY
+	LD	HL,CRCTOGMSG		; AND CRC/CKSM MESSAGE
+	JP	CHGDSP			; USE ROM CODE TO CHANGE DISPLAY
+;
+;	send XMODEM
+;
+XMODSEND:
+	LD	HL,XMODSNDABORT		; return through abort message if error
+	LD	(RTNADR),HL		; save as BREAK address
+	PUSH	HL			; and regular return address
+;
+	LD	HL,XMODSENDMSG		; ask for filename
+	CALL	GETANSWER	; PRINT, GET ANSWER, AND CHANGE TO UPPER CASE
+	AND	A
+	RET	Z			; abort if no filename
+	LD	(LFAC6),A
+	CALL	FILENG			; get length of filename
+	CALL	FNAME			; and parse into FILNAM (FC93H)
+	RET	NZ			; abort upon parsing error
+	CALL	L208F		; search for .DO file (.CO or .BA gives error)
+	LD	(DIRADR),HL		; save address of directory entry
+	EX	DE,HL			;
+	LD	(FILEADR),HL		; save top-of-file address
+	LD	(BLKADR),HL		; as first block address too
+;
+	LD	HL,FILENOTFND		;
+	JP	Z,PRINTMSG		; say if file not found (AND ABORT)
+;
+	CALL	SETXMOD			; CHANGE TO XMODEM SERIAL PARAMETERS
+;
+	LD	HL,SNDFILMSG		; SAY READY TO SEND
+	CALL	PRINTMSG		;
+;
+	XOR	A			;
+	LD	(EOFLAG),A		; clear end-of-file flag
+	LD	(RETRYZ),A		; clear retry counter
+	LD	HL,1			;
+	LD	(RECNUM),HL		; initialize record number
+	JP	XMODSEND2		; skip over NAK timeout
+;
+XMODSNONAK:
+	LD	A,(RETRYZ)		; initial NAK not received - retry ?
+	INC	A			;
+	LD	(RETRYZ),A		; replace old retry count
+	CP	NONAKMAX		;
+	RET	NC		; return through send/abort if no retries left
+	LD	HL,NONAKMSG		; tell user NAK timeout
+	CALL	PRINTMSG		;
+	CALL	RETRYZDISP		; and number of tries attempted so far
+;
+	CALL	BREAKCHKR		; CHECK FOR ^C OR ^X PRESSED
+	JP	Z,XMODBRKXIT
+;
+XMODSEND2:
+	LD	HL,NAKWAITMAX		; initial NAK wait loop timing
+XMODSNAKCHK:
+	DEC	HL			; decrement NAK wait loop counter
+	LD	A,L
+	OR	H
+	JP	Z,XMODSNONAK		; out of time waiting for initial NAK ?
+;
+	LD	BC,INITNAKDLY		; PAUSE AWHILE
+	CALL	DELAYER			;
+;
+	CALL	RCVX			; character received ?
+	JP	Z,XMODSNAKCHK		; no:go wait some more
+;
+	PUSH	HL			; yes:save wait counter
+	CALL	RV232C			; and go get character
+	POP	HL			; recover wait counter
+	JP	NZ,XMODSNAKCHK		; receive error:go wait some more
+	JP	C,XMODBRKXIT		; BREAK pressed:exit
+	CP	NAK			; NAK received ?
+	JP	NZ,XMODSNAKCH2		; nope, not NAK
+	XOR	A			; YUP, IT'S A NAK:CLEAR CRC FLAG
+	LD	HL,CHKREQMSG		; point to "checksum request rcv'd"
+	JP	XMODSNAKCH3
+XMODSNAKCH2:
+	CP	CNTLX			; cancel request ?
+	JP	Z,CANCELABORT		; yes:host abort request
+	CP	CRC			; CRC REQUEST ?
+	JP	NZ,XMODSNAKCHK		; nothing:start over
+;
+;	yes:setup CRC mode
+;
+XMODSCRCGOT:
+	LD	A,YES			; GOT CRC REQUEST, ENSURE CRC MODE
+	LD	HL,CRCREQMSG		; point to "CRC request rcv'd" msg
+XMODSNAKCH3:
+	PUSH	HL			; save message pointer
+	CALL	CRCRSET			; SET CRC/CKSM MODE
+	POP	HL			; recover message pointer
+	CALL	PRINTMSG		; say CRC or checksum request
+;
+;	initial NAK OR CRC REQUEST received - prepare to send
+;
+XMODSENDBLK:
+	XOR	A			; clear retry counter
+	LD	(RETRYZ),A		;
+XMODSENDRT:
+	LD	A,(RETRYZ)		; retries re-enter here:check 'em
+	INC	A
+	LD	(RETRYZ),A		; replace old retry count
+	CP	SENDRTMAX		; enough retries ?
+	RET	NC			; yes:return through abort message
+;
+	CALL	BREAKCHKR		; CHECK FOR ^C OR ^X PRESSED
+	JP	Z,XMODBRKXIT
+;
+	CALL	SENDRECDISP		; display sending record number
+;
+	LD	C,SOH			; start-of-header
+	CALL	SNDCOMLOCAL		; send SOH character
+	LD	A,(RECNUM)		; send record number (low byte only)
+	LD	C,A			;
+	CPL				; will also send 1's complement
+	PUSH	AF			; of record number
+	CALL	SNDCOMLOCAL		;
+	POP	AF			; recover complement and send
+	CALL	SENDER			;
+;
+	XOR	A			; clear checksum AND CRC
+	LD	(CHKSUM),A		;
+	LD	HL,0			;
+	LD	(CRCVAL),HL		;
+	LD	HL,(BLKADR)		; get starting address of block
+	EX	DE,HL			; address pointer in DE
+	LD	C,RECSIZE		; set block send counter
+;
+SENDBLKLOOP:
+	LD	A,(DE)			; get byte from file
+	CP	EOF			; is it end-of-file ? (^Z)
+	JP	NZ,SENDBLK2		;
+	LD	(EOFLAG),A		; set end-OF-file flag
+SENDBLK2:
+	LD	B,A			; SAVE SEND BYTE
+	LD	A,(EOFLAG)		;SEND ONLY NULLS(OR WHATEVER) AFTER EOF
+	OR	A
+	JP	Z,SENDNOTEOF		; SKIP NULLIFYING CHARACTER
+	LD	B,NULL			; ELSE SEND NULL (OR WHATEVER) INSTEAD
+SENDNOTEOF:
+	LD	A,B			; GET CURRENT SEND BYTE BACK
+	CALL	ADDACHKSUM		; add current byte into checksum OR CRC
+	CALL	SENDER			; send the byte
+	INC	DE
+	DEC	C			; decrement block byte counter
+	JP	NZ,SENDBLKLOOP		; 'round again if not done
+;
+	LD	A,(CRCFLG)		; CHECK CRC MODE
+	OR	A
+	JP	NZ,SENDCRC		;
+;
+	LD	A,(CHKSUM)		; send checksum
+	CALL	SENDER
+	JP	SENTCHKSUM		;
+;
+SENDCRC:
+	LD	HL,(CRCVAL)		; OR SEND CRC
+	LD	A,H			;
+	CALL	SENDER			;
+	LD	A,L			;
+	CALL	SENDER			;
+;
+;	block sent - wait for ACK or NAK
+;
+SENTCHKSUM:
+	LD	BC,BLKACKMAX		; set wait time counter
+SENDBLK3:
+	CALL	RCVX			; character received ?
+	JP	Z,SENDBLK4		;
+	PUSH	BC			; save time counter
+	CALL	RV232C			; get character from receive queue
+	POP	BC			;
+	CP	ACK			; acknowledge ?
+	JP	Z,SENDBLKOK		; if yes, we're done with this block
+	CP	NAK			; negative ACK ? (NAK)
+	JP	NZ,SENDBLKABCK		; if not, see if cancel char [^X]
+;
+;	NAK received - send block again
+;
+	LD	HL,SENDNAKMSG		; tell user block was NAKked
+	CALL	PRINTMSG
+	CALL	RETRYZDISP		; display retry number
+	JP	XMODSENDRT		; go send block again
+;
+SENDBLKABCK:
+	CP	CNTLX			; cancel signal ?
+	JP	Z,CANCELABORT		;
+;
+SENDBLK4:
+	DEC	BC			; decrement ACK wait counter
+	LD	A,C			;
+	OR	B			;
+	JP	NZ,SENDBLK3		; go wait for ACK some more
+;
+	LD	HL,NOACKMSG		; timeout awaiting ACK or NAK
+	CALL	PRINTMSG
+	CALL	RETRYZDISP		; display retry number
+	JP	XMODSENDRT		; go send block again
+;
+;	block ACKnowledged - send another
+;
+SENDBLKOK:
+	LD	A,(EOFLAG)		; was that the last block ?
+	OR	A
+	JP	NZ,SENDEOT		; if yes: send end-of-transmission byte
+;
+;	prepare for next block send
+;
+	LD	HL,(BLKADR)		; point block address to
+	LD	DE,RECSIZE		; beginning of next block
+	ADD	HL,DE
+	LD	(BLKADR),HL		; save new block address
+	LD	HL,(RECNUM)		; increment record (block) number
+	INC	HL
+	LD	(RECNUM),HL
+;
+	JP	XMODSENDBLK		; go send another record
+;
+;	no blocks left - send end-of-transmission character (EOT)
+;
+SENDEOT:
+	XOR	A			; clear retries
+	LD	(RETRYZ),A		;
+;
+SENDEOT1:
+	LD	A,(RETRYZ)		; check retries
+	INC	A			;
+	LD	(RETRYZ),A		;
+	CP	EOTRTMAX		;
+	RET	Z			; abort: no ACK of EOT
+;
+	CALL	BREAKCHKR		; abort request on this side ?
+	JP	Z,XMODBRKXIT		;
+;
+	LD	C,EOT			; send EOT
+	CALL	SNDCOMLOCAL		;
+;
+	LD	BC,EOTACKMAX		; set EOT wait time counter
+SENDEOT2:
+	CALL	RCVX			; character received ?
+	JP	Z,SENDEOT3		;
+	PUSH	BC			; save wait counter
+	CALL	RV232C			; get character from receive queue
+	POP	BC			;
+	CP	ACK			; acknowledge ?
+	JP	Z,XMODSENDOK		; if yes, we're done with transmission
+	CP	CNTLX			; abort ?
+	JP	Z,CANCELABORT		; received a canecl signal
+;
+;	else send EOT again - 'til out of time
+;
+SENDEOT3:
+	PUSH	BC			;
+;
+	LD	BC,EOTACKDLY		; EOT send delay
+	CALL	DELAYER			;
+;
+	POP	BC			;
+;
+	DEC	BC
+	LD	A,C
+	OR	B
+	JP	NZ,SENDEOT2		; go back and check receive again
+;
+	LD	HL,NOEOTACKMSG		; say not getting EOT ACK
+	CALL	PRINTMSG
+	CALL	RETRYZDISP		; display retry number
+	JP	SENDEOT1		; go back and retransmit EOT
+;
+XMODSENDOK:
+	POP	HL			; pop off error abort address
+;
+	LD	HL,XMODSOKMSG		; tell user 'OK and in terminal mode'
+	JP	XMODDONE		; back to terminal mode
+;
+;	receive XMODEM
+;
+XMODRECV:
+	LD	HL,XMODRCVABORT		; load abort return on stack
+	LD	(RTNADR),HL		; and in usual place
+	PUSH	HL
+	LD	HL,XMODRECVMSG		; ask for receive file name
+	CALL	GETANSWER	; PRINT, GET ANSWER, AND CHANGE TO UPPER CASE
+	AND	A
+	RET	Z			; abort if no filename
+	LD	(LFAC6),A
+	CALL	FILENG			; get length of filename
+	CALL	FNAME			; and parse into FILNAM (FC93H)
+	RET	NZ			; abort upon parsing error
+;
+XMODRECV2:
+	CALL	MAKTXT			; create file
+	LD	(FILEADR),HL		; save top-of-file address
+	LD	(BLKADR),HL		; and save as first block address
+	EX	DE,HL			; move directory entry address into HL
+	LD	(DIRADR),HL		; and save directory entry address
+	JP	NC,XMODRECVRDY		; file already exists if carry set
+;
+	LD	HL,FILEXISTMSG		; say file exists, WANT TO ERASE ?
+	CALL	GETANSWER	; PRINT, GET ANSWER, AND CHANGE TO UPPER CASE
+	CP	'Y'			; erase (Y or N)
+	RET	NZ			; if no then abort
+;
+	LD	HL,XMODRECV2		; SET AS RETURN ADDRESS FROM "KILASC"
+	PUSH	HL			; STACK ADJUST FOR ENTRY TO "KILASC"
+;
+	LD	HL,(FILEADR)		; get top-of-file address
+	EX	DE,HL			;
+	LD	HL,(DIRADR)		; and directory entry address
+	CALL	KILASC			; DUE TO "KILASC" LOGIC EXPECTING
+					; HL PUSHED ON STACK, ROUTINE DOES
+					; NOT RETURN HERE
+;
+XMODRECVRDY:
+	LD	HL,1			; set starting block number to 1
+	LD	(RECNUM),HL		;
+	XOR	A
+	LD	(EOFLAG),A		; clear end-of-file flag
+	DEC	A			;
+	LD	(REC1FLG),A		; set first block flag
+;
+	CALL	SETXMOD			; SET XMODEM SERIAL PARAMETERS
+;
+	LD	HL,RECVREADYMSG		; say ready to receive
+	CALL	PRINTMSG
+;
+XMODRECVRD1:
+	LD	HL,CHKSUMOPMSG		; assume checksum operation
+	LD	C,NAK			; with initial NAK
+	LD	A,(CRCFLG)		; see if CRC mode
+	OR	A			;
+	JP	Z,XMODRECVRD2		;
+	LD	HL,CRCCHKOPMSG		; say it's CRC operation
+	LD	C,CRC			; with CRC request
+;
+XMODRECVRD2:
+	PUSH	BC			; save NAK or CRC request
+	CALL	PRINTMSG
+	POP	BC
+;
+	CALL	SNDCOMLOCAL		; send NAK or CRC request
+;
+XMODRECVBLK:
+	XOR	A			; clear retries
+	LD	(RETRYZ),A		;
+;
+XMODRECVRT:
+	LD	A,(EOFDUN)		; check if previous sucessful block
+	OR	A			; has had EOF character in it
+	JP	NZ,XMODRECVRT1		; if yes: don't clear EOF flag
+	XOR	A
+	LD	(EOFLAG),A		; clear EOF flag for retry
+;
+XMODRECVRT1:
+	LD	A,(RETRYZ)		; check retries
+	INC	A			;
+	LD	(RETRYZ),A		;
+	CP	RECVRTMAX		;
+	RET	NC			; abort: out of retries
+	CP	RECVCRCMAX		; reached CRC mode max retries ?
+	JP	C,XMODRECVRT2		; if yes: switch to checksum mode
+;
+	LD	A,(REC1FLG)		; check first block flag and
+	LD	B,A			;
+	LD	A,(CRCFLG)		; CRC flag
+	AND	B			; if both set, switch to checksum
+	JP	Z,XMODRECVRT2		;
+;
+	XOR	A
+	LD	(CRCFLG),A		; clear CRC mode flag
+;
+	LD	HL,SWTCHCRCMSG		; say switching out of CRC mode
+	CALL	PRINTMSG		;
+;
+	JP	XMODRECVRDY		; and start over
+;
+XMODRECVRT2:
+	CALL	BREAKCHKR		; CHECK FOR ^C OR ^X PRESSED
+	JP	Z,XMODBRKXIT
+;
+	XOR	A
+	LD	(CHKSUM),A		; clear checksum
+	LD	HL,0			;
+	LD	(CRCVAL),HL		; AND CLEAR CRC
+;
+	CALL	RECVCHR			; receive a character
+	JP	NZ,RECVTIMOUT		; timeout if Z false
+	CP	EOT			; end-of-transmission ?
+	JP	Z,RECVEOT		;
+	CP	SOH			; start-of-header ?
+	JP	NZ,RECVBADHEAD		; no: bad header
+	XOR	A
+	LD	(REC1FLG),A		; yes: CLEAR FIRST RECORD FLAG
+	CALL	RECVCHR			; get record (block) number
+	JP	NZ,RECVTIMOUT		; timeout if Z false
+	LD	E,A			; save for comparision
+	LD	A,(RECNUM)		;
+	CP	E			; block number correct ?
+	JP	NZ,RECVBADHEAD		;
+	CALL	RECVCHR			; get block number complement
+	JP	NZ,RECVTIMOUT		; timeout if Z false
+	CPL				;
+	CP	E			; complement correct ?
+	JP	NZ,RECVBADHEAD		;
+;
+;	block receive loop
+;
+	LD	D,0			; characters-before-EOF count
+	LD	E,RECSIZE		; block size
+	LD	HL,BLOCKBUF		; put in buffer for now
+RECVBLKLOOP:
+	CALL	RECVCHR			; get a character
+	JP	NZ,RECVTIMOUT		; timeout if Z false
+	LD	(HL),A			; save character in buffer
+	CALL	ADDACHKSUM		; add to checksum
+	CP	EOF			; see if EOF
+	JP	NZ,RECVBLKLP2		; 
+	LD	(EOFLAG),A		; if EOF, set flag
+RECVBLKLP2:
+	LD	A,(EOFLAG)		; check EOF flag
+	OR	A			;
+	JP	NZ,RECVBLKLP3	; don't increment characters-before-EOF if set
+	INC	D		; else increment characters-before-EOF count
+RECVBLKLP3:
+	INC	HL			; increment buffer pointer
+	DEC	E			; decrement block count
+	JP	NZ,RECVBLKLOOP		; loop for another character
+;
+	LD	A,(CRCFLG)		; CRC MODE ?
+	OR	A			;
+	JP	Z,RECVCHKSUM		; CHECKSUM MODE:SKIP CRC RECEPTION
+;
+	LD	C,2			; TWO CRC BYTES
+RECVCRCLOOP:
+	PUSH	BC
+	CALL	RECVCHR			; RECEIVE BYTE OF CRC
+	POP	BC
+	JP	NZ,RECVTIMOUT		; timeout if Z false
+	CALL	ADDACHKSUM		; ADD IN WITH CRC
+	DEC	C			; DONE ? BOTH BYTES ?
+	JP	NZ,RECVCRCLOOP
+	CALL	CRCCHK			; CHECK THE CRC
+	JP	NZ,RECVCRCBAD		; OK ?
+	JP	RECVBLKOK		;
+;
+RECVCHKSUM:
+	CALL	RECVCHR			; receive the checksum
+	JP	NZ,RECVTIMOUT		; timeout if Z false
+	LD	B,A			;
+	LD	A,(CHKSUM)		;
+	CP	B			; check the checksum
+	JP	NZ,RECVCHKSBAD		; bail out if checksum no good
+;
+RECVBLKOK:
+	LD	A,D			; GET VALID FILE CHARACTER COUNT
+	OR	A			; (i.e., BEFORE EOF) AND CHECK IF 0
+	JP	Z,RECVBLKOK2		; skip file insertion if no count
+;
+	LD	C,A			; just move character before EOF
+	LD	B,0			; into file
+	LD	HL,(BLKADR)		; point into file
+	PUSH	BC			; save character count
+	PUSH	HL			; and file pointer
+	CALL	MAKHOL			; MAKE ROOM IN THE RAM FILE
+	POP	HL			; recover file pointer
+	POP	BC			; recover character count
+	JP	C,RECVMEMOUT		; OUT-OF-MEMORY ERROR IF CARRY SET
+;
+	LD	DE,BLOCKBUF		; move from buffer
+	CALL	MOVEBLK			; into hole we made in RAM file
+
+	LD	(BLKADR),HL		; SAVE NEW BLOCK ADDRESS
+;
+RECVBLKOK2:
+	CALL	RECVRECDISP		; SHOW user BLOCK RECEIVED
+;
+	CALL	SENDACK			; ACKNOWLEDGE BLOCK RECEIVED
+;
+	LD	HL,(RECNUM)		; INCREMENT RECORD (BLOCK) NUMBER
+	INC	HL			;
+	LD	(RECNUM),HL		;
+;
+	LD	A,(EOFLAG)		; COPY EOF FLAG TO EOF-DONE-ONCE FLAG
+	LD	(EOFDUN),A		;
+;
+	JP	XMODRECVBLK		; GO GET ANOTHER BLOCK
+;
+;	RECEIVE ERROR REPORT AND RETRY
+;
+RECVCHKSBAD:
+	LD	HL,CHKSUMERRMSG		; CHECKSUM ERROR
+	JP	RECVCOMERR		; JOIN COMMON ERROR CODE
+;
+RECVCRCBAD:
+	LD	HL,CRCERRMSG		; CRC ERROR
+	JP	RECVCOMERR		; JOIN COMMON ERROR CODE
+;
+RECVBADHEAD:
+	LD	HL,BADHEADMSG		; BAD HEADER RECEIVED
+	JP	RECVCOMERR		; JOIN COMMON ERROR CODE
+;
+RECVTIMOUT:
+	LD	HL,RECVTOUTMSG		; RECEIVE TIMEOUT
+;
+;				common error routine
+;
+RECVCOMERR:
+	CALL	PRINTMSG
+	CALL	RETRYZDISP		;
+	CALL	WAITQUIET		;
+	JP	Z,XMODBRKXIT		; also check for break abort
+;
+	LD	C,NAK			; send NAK or CRC request
+	LD	A,(REC1FLG)		; as appropriate
+	LD	B,A			;
+	LD	A,(CRCFLG)		;
+	AND	B			;
+	JP	Z,RECVCOMERR2		;
+;
+	LD	C,CRC			;
+;
+RECVCOMERR2:
+	CALL	SNDCOMLOCAL		;
+	JP	XMODRECVRT		; go do retry
+;
+RECVMEMOUT:
+	LD	HL,MEMOUTMSG		; out-of-memory (for RAM file
+	CALL	PRINTMSG		;
+	LD	HL,(FILEADR)		; setup to delete the partial file
+	EX	DE,HL			;
+	LD	HL,(DIRADR)		;
+	CALL	KILASC			; "KILASC" POPS STACK BEFORE RETURN
+					; SO WILL RETURN TO TERM MONITOR RESET
+;
+;	RECEIVE SUCCESSFUL EXIT
+;
+RECVEOT:
+	POP	HL			; REMOVE ABORT ERROR RETURN
+;
+	CALL	SENDACK			; acknowledge EOT
+;
+	LD	HL,RECVOKMSG		; say receive OK
+	JP	XMODDONE		; back to monitor
+;
+;
+SUBTTL subroutines
+$EJECT
+;
+;*************************************************************
+;
+;			subroutines
+;
+;*************************************************************
+;
+;	break key abort
+;
+XMODBRKXIT:
+	CALL	XMODCANCEL		; send some cancel characters (^X)
+;
+	LD	HL,BRKABORTMSG		; break key abort message
+	JP	PRINTABORT		;
+;
+;	send some ^X's
+;
+XMODCANCEL:
+	LD	A,CNTLX			; [^X] gets sent
+	LD	C,CANCELNUM		; how many characters to send
+XMODCANCL2:
+	PUSH	BC
+	LD	BC,CANCELDLY		; send loop delay
+	CALL	DELAYER
+	POP	BC
+	LD	A,E			; get character to send
+	CALL	SENDER			; send character in A
+	DEC	C
+	RET	Z
+	JP	XMODCANCL2		; 'til we've sent enough
+;
+;	cancel [^X] received
+;
+CANCELABORT:
+	LD	HL,BRKCANCLMSG		; show cancel by host
+	JP	PRINTABORT		; join abort routine
+;
+;	 add character in A to checksum
+;
+ADDACHKSUM:
+	PUSH	AF			; save character
+	PUSH	HL			;
+	LD	HL,CHKSUM		; point to checksum
+	ADD	A,(HL)			; add in (no carry)
+	LD	(HL),A			;
+	POP	HL			;
+	POP	AF			;
+	JP	CRCUPD			; UPDATE CRC ALSO
+;
+;	RS232 byte sender (no XON/XOFF)
+;
+SENDER:
+	PUSH	AF			; save everything ???
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+	LD	C,A			; character expected in A
+	CALL	SNDCOMLOCAL		;
+	POP	HL
+	POP	DE
+	POP	BC
+	POP	AF
+	RET
+;
+;	send RS232 system call
+;	  - join system code with BC pushed on top of return address
+;
+SNDCOMLOCAL:
+	PUSH	BC		; to match stack level
+	JP	SNDCOM		; system call
+;
+;	delay routine - BC has delay desired
+;
+DELAYER:
+	PUSH	AF
+DELAYER2:
+	NOP		; for subroutine call patch
+	NOP
+	NOP
+	DEC	BC
+	LD	A,C
+	OR	B
+	JP	NZ,DELAYER2
+;
+	POP	AF
+	RET
+;
+;	display byte in A as decimal number
+;
+DISPADEC:
+	PUSH	HL
+	LD	L,A
+	LD	H,0
+	CALL	DISPHEX2DEC
+	POP	HL
+	RET
+;
+;	display word in HL as decimal number
+;
+DISPHEX2DEC:
+	PUSH	AF	; save everything ?
+	PUSH	BC
+	PUSH	DE
+	CALL	CONVD
+	POP	DE
+	POP	BC
+	POP	AF
+	RET
+;
+;	retry number display
+;
+RETRYZDISP:
+	PUSH	AF
+	LD	A,(RETRYZ)
+	CALL	DISPADEC
+	CALL	CRLF
+	POP	AF
+	RET
+;
+;	display sending record number
+;
+SENDRECDISP:
+	LD	HL,SENDRECMSG
+	JP	RECDISP
+;
+SENDRECMSG:	DB CR,ESC,'M','   SENDING BLOCK # ',NULL
+RECVRECMSG:	DB CR,ESC,'M','  RECEIVED BLOCK # ',NULL
+;
+;	receiving record number display
+;
+RECVRECDISP:
+	LD	HL,RECVRECMSG
+RECDISP:
+	CALL	PRINTMSG
+	LD	HL,(RECNUM)
+	CALL	DISPHEX2DEC
+	LD	A,CR
+	RST	20H
+	RET
+;
+;	send ACKnowledge
+;
+SENDACK:
+	LD	C,ACK			;
+	JP	SNDCOMLOCAL		;
+;
+;	RECEIVE CHARACTER - WITH TIMEOUT
+;		- TIME VALUE IN BC
+;		- Z IF CHARACTER RECEIVED, NZ IF TIMEOUT
+;
+RECVCHR:
+	LD	BC,RECVLOOPTIM		; preset timeout
+;
+RECVTIMER:
+	PUSH	DE			; any timeout
+	PUSH	HL			;
+;
+RECVTIM1:
+	PUSH	BC			;
+	LD	BC,RECVTIMAX		; inner receive loop count
+RECVTIM2:
+	PUSH	BC			;
+RECVTIM3:
+	CALL	RCVX			; check receive queue
+	JP	Z,RECVTIM4		;
+	CALL	RV232C			; character in queue: get it
+	JP	NZ,RECVTIM4		; error if Z false
+	POP	BC			; character good: reset stack
+	POP	BC			; then return with character
+	POP	HL
+	POP	DE
+	RET
+;
+RECVTIM4:
+	LD	BC,RECVDELAY		; inner loop delay
+	CALL	DELAYER			;
+	POP	BC			;
+	DEC	BC			;
+	LD	A,C			; decrement receive inner loop count
+	OR	B
+	JP	NZ,RECVTIM2		;
+;
+	POP	BC			;
+	DEC	BC			; decrement receive outer loop count
+	LD	A,C			;
+	OR	B
+	JP	NZ,RECVTIM1		;
+;
+	DEC	C			; TO RESET Z, INDICATING TIMEOUT
+	POP	HL			; reset stack for return
+	POP	DE			;
+	RET
+;
+;	CHECK FOR ABORT (^C OR ^X) - Z true if break abort
+;
+BREAKCHKR:
+	CALL	KEYX			; check key queue
+	JP	Z,BREAKCHKR2		; none: go make Z false and return
+	CALL	CHGET			; get character from keyboard
+	CP	CNTLC			; ^C ?
+	RET	Z
+	CP	CNTLX			; ^X ?
+	RET	Z
+BREAKCHKR2:
+	XOR	A			; RESET Z IF NO BREAK key PRESSED
+	DEC	A
+	RET
+;
+;	WAIT FOR A QUIET LINE
+;
+WAITQUIET:
+	LD	BC,1
+	CALL	RECVTIMER		; ONLY 2 WAYS OUT OF THIS ROUTINE
+	RET	NZ			; EITHER WE RECEIVE NOTHING FOR A WHILE
+	CALL	BREAKCHKR		; OR WE HAVE ABORTED
+	RET	Z			; Z SET FOR ABORT, RESET FOR QUIET
+	JP	WAITQUIET		;
+;
+;	SET NORMAL FUNCTION DISPLAY
+;
+SETFNKNORM:
+	LD	HL,CNTRLKTABN		;
+	LD	(KEYTAB),HL		;
+	LD	HL,FUNCTABN		;
+	JP	SETFNK
+;
+;	SET XMODEM SERIAL PARAMETERS (8 BITS, NO PARITY)
+;
+SETXMOD:
+	LD	HL,SERPARXMOD		; POINT TO XMODEM PARAMETERS
+	JP	SETSERLOCAL
+;
+;	RESET TO NORMAL SERIAL PARAMETERS
+;
+RESETSERPARM:
+	LD	HL,SERPARSAVE		; POINT TO SAVED PARAMETERS
+SETSERLOCAL:
+	LD	A,(HL)
+	CP	'M'			; MODEM ?
+	JP	NZ,SETSER		; NOPE:PRESS ON
+	INC	HL			; YUP: POINT TO NEXT SERIAL PARAMETER
+	JP	SETSER
+;
+;	SAVE NORMAL SERIAL PARAMETERS
+;
+SAVESERIAL:
+	LD	HL,SERPARSAVE		; DESTINATION:SAVE AREA
+	LD	DE,SERIALPARM		; SOURCE: OS SERIAL PARAMETER STRING
+	LD	A,(DE)			; FIRST MOVE BAUD TO XMODEM PARAMETERS
+	LD	(SERPARXMOD),A		; 'CAUSE OTHER XMODEM STUFF IS FORCED
+	LD	BC,5			; THEN SAVE THE 5 PARAMETER CHARACTERS
+	JP	MOVEBLK			;
+;
+;	SETUP XMODEM SERIAL PARAMETER CONVERSION
+;
+XMODSERSET:	DB '8N1D' ; 8 BITS, NO PARITY, 1 STOP BIT, XON/XOFF DISABLED
+;
+SETXMODPAR:
+	XOR	A			; GET A NULL
+	LD	(SERPARSAVE+5),A	; SET (RESET ?) TERMINATING NULLS FOR
+	LD	(SERPARXMOD+5),A	; NORMAL AND XMODEM PARAMETER STRINGS
+;
+	LD	HL,SERPARXMOD+1		; DESTINATION: RAM COPY OF XMODEM PARM
+	LD	DE,XMODSERSET		; FORCE TO 8 BITS, NO PARITY, 1 STOP
+					; AND XON/XOFF FLOW CONTROL DISABLED
+	LD	BC,4			; FALL INTO MOVE BLOCK BELOW
+;
+;
+;	MOVE BLOCK : (DE) => (HL) // BC TIMES (BC=0:NOTHING MOVED)
+;
+MOVEBLK:
+	LD	A,C
+	OR	B
+	RET	Z
+	LD	A,(DE)
+	LD	(HL),A
+	INC	DE
+	INC	HL
+	DEC	BC
+	JP	MOVEBLK
+;
+;	PRINT QUESTION AND GET ANSWER
+;
+GETANSWER:
+	CALL	PRINTMSG		;
+	CALL	INPRMP			;
+	RST	10H			;
+	JP	UPCASE			;
+;
+;	raw download (capture)
+;
+DOWNLD:
+	CALL	DIRRST
+	LD	A,(CAPTUR)
+	XOR	0FFH
+	LD	(CAPTUR),A
+	JP	Z,DOWNLDEND
+	LD	HL,DOWNLDABORT		; set OUR return
+	JP	DOWNLDR 		; join ROM download code
+;
+DOWNLDEND:
+	CALL	FNKSB
+	JP	L6383
+;
+;	raw upload
+;
+UPLOAD:
+	LD	HL,UPLOADABORT		; set OUR return
+	JP	UPLOADR			; join ROM upload code
+;
+;	download abort
+;
+DOWNLDABORT:
+	XOR	A
+	LD	(CAPTUR),A
+	CALL	L5A9E
+	LD	HL,DOWNLD2MSG
+	JP	PRINTABORT
+;
+;	upload abort
+;
+UPLOADABORT:
+	LD	HL,UPLOAD2MSG
+	JP	PRINTABORT
+;
+;	XMODEM receive abort
+;
+XMODRCVABORT:
+	LD	HL,XMODRCV2MSG
+	JP	PRINTABORT
+;
+;	XMODEM send abort
+;
+XMODSNDABORT:
+	LD	HL,XMODSND2MSG
+PRINTABORT:
+	CALL	PRINTMSG
+	LD	HL,ABORTMSG
+;
+;	BACK TO THE MONITOR
+;
+XMODDONE:
+	PUSH	HL		; SAVE MESSAGE POINTER
+	CALL	RESETSERPARM		; RESET 'NORMAL' SERIAL PARAMETERS
+				; (DO THIS NOW SO WE DON'T MISS ANYTHING)
+	POP	HL
+	CALL	PRINT2NULL	;PRINT WHATEVER MESSAGE
+	JP	TERMRESET
+;
+;
+;
+SUBTTL CRC subroutines
+$EJECT
+;
+;*****************************************************************
+;
+;			 CRC SUBROUTINES
+;
+;*****************************************************************
+;
+;	Check 'CRC' bytes of record just received
+;
+CRCCHK:
+	PUSH	HL
+	LD	HL,(CRCVAL)
+	LD	A,H
+	OR	L
+	POP	HL
+	RET	Z
+	LD	A,0FFH
+	RET
+;
+;	Generate the CRC tables for fast calculations
+;
+CRCGEN:
+	LD	HL,CRCTBL	;address at start of 'CRC' lookup table
+	LD	C,0
+;
+CRCGEN1:
+	EX	DE,HL		;store table location into 'DE'
+	LD	HL,0		;clear 'HL' pair
+	LD	A,C
+	PUSH	BC
+	LD	B,8
+	XOR	H
+	LD	H,A
+;
+CRCGEN2:
+	ADD	HL,HL		; x2 for index into the table
+	JP	NC,CRCGEN3
+	LD	A,16		;using x^ 16 + x^12 + x^5 + 1 algorithm
+	XOR	H
+	LD	H,A
+	LD	A,32+1
+	XOR	L
+	LD	L,A
+;
+CRCGEN3:
+	DEC	B
+	JP	NZ,CRCGEN2	;make 8 loops, one for each bit
+;
+;
+; Value now in 'HL', table address still stored in 'DE'.  Exchange, and
+; store the 'CRC' value in the two tables after splitting.
+;
+	POP	BC		;finished borrowing the 'B' reg.
+	EX	DE,HL		;address back in 'HL', 'CRC' in 'DE'
+	LD	(HL),D		;store 1st part of 'CRC' value
+	INC	H		;move up 256 bytes
+	LD	(HL),E		;store 2nd part of 'CRC' value
+	DEC	H		;move back 256 bytes
+	INC	HL		;increment to next location
+	INC	C		;done when 'C' reg. turns zero again
+	JP	NZ,CRCGEN1	;now go do the next location
+	RET
+;
+; Update the CRC value from a character in the 'A' register
+;
+CRCUPD:
+	PUSH	AF		;save all registers just in case
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+	LD	HL,(CRCVAL)	;get current value
+	EX	DE,HL		;put in 'DE' for now
+	LD	B,0
+	XOR	D
+	LD	C,A		;now have the character in 'BC' pair
+	LD	HL,CRCTBL	;start of 'CRC' lookup-table
+	ADD	HL,BC		;index into the 'CRC' table	
+	LD	A,(HL)		;get the value from the table
+	XOR	E
+	LD	D,A
+	INC	H		;move 256 bytes for 2nd table location
+	LD	E,(HL)		;put value there into 'E' register
+	EX	DE,HL		;put 'DE' into 'HL'
+	LD	(CRCVAL),HL	;updated 'CRC' value with this character
+	POP	HL		;restore all registers
+	POP	DE
+	POP	BC
+	POP	AF
+	RET
+;
+;==================== END OF CRC subroutines ============================
+;
+;
+SUBTTL text messages (et cetera)
+$EJECT
+;
+;*****************************************************************
+;
+;			text messages (et cetera)
+;
+;*****************************************************************
+;
+;
+XMODSENDMSG:	DB 'File to send ',NULL
+XMODSND2MSG:	DB 'Send',NULL
+;
+XMODRECVMSG:	DB 'File to receive ',NULL
+XMODRCV2MSG:	DB 'Receive',NULL
+;
+SNDFILMSG:	DB CR,LF,'FILE FOUND - READY TO SEND'
+		DB CR,LF,'WAITING...',NULL
+CRCREQMSG:	DB ESC,'M',CR,BELL,'     CRC REQUEST RECEIVED',CR,LF,NULL
+CHKREQMSG:	DB ESC,'M',CR,BELL,'CHECKSUM REQUEST RECEIVED',CR,LF,NULL
+;
+NONAKMSG:	DB ESC,'M',CR,BELL,TAB,'Initial NAK timeout # ',NULL
+;
+NOACKMSG:	DB ESC,'M',CR,BELL,TAB,'Block ACK/NAK timeout # ',NULL
+;
+SENDNAKMSG:	DB ESC,'M',CR,BELL,TAB,'Block NAKked - resend # ',NULL
+;
+NOEOTACKMSG:	DB ESC,'M',CR,BELL,TAB,'Final ACK timeout # ',NULL
+;
+XMODSOKMSG:	DB CR,LF,LF,BELL,' SEND OK (now in TERM mode)',CR,LF,NULL
+;
+FILEXISTMSG:	DB 'File exists - erase (Y/N) ',NULL
+;
+RECVREADYMSG:	DB CR,LF,'FILE OPEN - READY TO RECEIVE',CR,LF,NULL
+;
+CHKSUMOPMSG:	DB 'CHECKSUM IN EFFECT',CR,LF,NULL
+CRCCHKOPMSG:	DB '     CRC IN EFFECT',CR,LF,NULL
+SWTCHCRCMSG:	DB ESC,'M',CR,TAB,'SWITCHING TO CHECKSUM MODE',CR,LF,NULL
+CRCTOGMSG:	DB 'CRC CkSm'
+;
+RECVTOUTMSG:	DB ESC,'M',CR,BELL,TAB,'Receive timeout # ',NULL
+;
+BADHEADMSG:	DB ESC,'M',CR,BELL,'Bad header received - retry # ',NULL
+;
+MEMOUTMSG:	DB CR,LF,BELL,'Out of memory - file deleted',CR,LF,NULL
+;
+CHKSUMERRMSG:	DB ESC,'M',CR,BELL,TAB,'Checksum error # ',NULL
+CRCERRMSG:	DB ESC,'M',CR,BELL,TAB,'     CRC error # ',NULL
+;
+RECVOKMSG:	DB CR,LF,LF,BELL,' Receive OK (now in TERM mode)',CR,LF,NULL
+;
+BRKABORTMSG:	DB ESC,'M',CR,BELL,'BREAK key -',NULL
+BRKCANCLMSG:	DB ESC,'M',CR,BELL,'CANCEL received -',NULL
+;
+STARTUPMSG:	DB CR,'M-100 XModem XTension '
+		DB 'Version ',VERSION/100 +'0'
+		DB '.'
+		DB (VERSION MOD 100)/10 +'0'
+		DB VERSION MOD 10 +'0',CR,LF
+		DB ' - revised - ',MONTH/10 +'0',MONTH MOD 10 +'0','/'
+		DB DATE/10 +'0',DATE MOD 10 +'0','/'
+		DB YEAR/10 +'0',YEAR MOD 10 +'0',' -',CR,LF
+		DB '(C)19',YEAR/10 +'0',YEAR MOD 10 +'0'
+		DB ' by J R Chenoweth',CR,LF,NULL
+;
+;
+RAMBUF	EQU	$
+;
+SUBTTL SYMBOLS / MACROS / LABELS / CROSS-REFERENCE
+;
+	END	TELXMODEM
+;

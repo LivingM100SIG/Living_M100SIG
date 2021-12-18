@@ -1,0 +1,75 @@
+1 '   by Allan Trick  [71256,757]
+2 ' Adapted for PC-8201 by Robinson          Markel (72456,3604).
+3 ' Substitute your organization's info
+4 ' in lines 50 & 80.  Connection name
+5 ' in 120 should be modified "ttyh".
+6 ' 
+7 ' Select <T> for 300 baud send over
+8 ' phone line (3E71NN); <D> sends 1200
+9 ' baud directly into Wang TC wkstn.
+10 MAXFILES=2:SCREEN0,0:CLS
+20 GOSUB270
+30 IFAO=1THENGOSUB380
+40 IFST$="D"THEN100ELSECLS
+50 PRINT"1 Call ext ....; wait for the high tone"
+60 PRINT"2 Connect cable and/or acoustic cups"
+70 PRINT"3 Type document name below and ENTER":PRINT"  (or just ENTER to return to Menu)"
+80 PRINT"4 After transfer, call Office Systems     Hotline (ext ....) for Wang Doc ID no."
+90 GOTO140
+100 CLS:PRINTCHR$(27)+"p"+"----------WANG-------------|--PC-8201---"+CHR$(27)"q";
+110  PRINT"Select:  Utilities, Tele-  | When Wang":PRINT"  communications, & Begin  | is set up,"
+115 PRINT"  an Interactive Session   | just type"
+120 PRINT"Connection: trs  (Chg lib) | in name of"
+130 PRINT"Blank key to open document | PC-8201  ":PRINT"Name document and EXECUTE  | doc. below"
+140 LINEINPUT"--- PC-8201 DOCUMENT NAME -->  ";FN$
+150 IFFN$=""THENCLOSE:MAXFILES=0:MENU
+160 CLS:OPENFN$FORINPUTAS1
+170 IFAO<>1THEN180ELSE190
+180 AO=1:IFST$="T"THENOPEN"COM:3E71NN"FOROUTPUTAS2ELSEOPEN"COM:5E71NN"FOROUTPUTAS2
+190 IFST$="T"THENPRINT#2,"*** This is the beginning of '";FN$;"' sent by ";YN$;" ***"
+195 PRINT#2,"*** Transfer to '";LN$;"' library on System ";SN$;" ***"
+200 I$=INPUT$(1,1)
+210 PRINTI$;:IFASC(I$)<>10THENPRINT#2,I$;
+220 IFASC(I$)=10THENPRINT"";:PRINT#2,"";
+230 IFNOTEOF(1)THEN200
+240 PRINTTIME$:PRINTDATE$
+250 IFST$="T"THENPRINT#2,"+++ End of Document '";FN$;"' -- REC'D AT  ";TIME$;"  ";DATE$;" +++":PRINT:PRINT
+260 CLOSE1:BEEP:GOTO30
+270 X0=5:Y0=3:X1=230:Y1=19:DE=0:GOSUB40000
+280 PRINT:LOCATE2,1:PRINT"PC-8201-to-Wang Document Transfer":PRINT
+290 PRINT"  Type <T> for telephone transfer, or":LOCATE7,4:PRINT"<D> for direct Wang connection":PRINT
+300 PRINT"  Your choice? ";
+310 ST$=INKEY$:IFST$=""THEN310
+315 PRINTST$
+320 IFST$="t"ORST$="T"THENST$="T"
+330 IFST$="T"THEN360
+340 IFST$="d"ORST$="D"THENST$="D"
+350 IFST$="D"THEN420
+355 IFST$=CHR$(13)THENMENUELSE300
+360 PRINT:LINEINPUT"  Type name and/or department <ENTER>:    ";YN$
+370 GOTO400
+380 IFST$="T"THENPRINT"Quit?  <Y>es <N>o  ";
+381 IFST$="D"GOTO390
+383 P$=INKEY$:IFP$=""THEN383
+384 PRINTP$
+385 IFP$="y"OR P$="Y"THENCLOSE:MAXFILES=0:MENUELSEPRINT"Send to same library and system--Y/N? ";
+386 SS$=INKEY$:IFSS$=""THEN386
+387 PRINTSS$
+388 IFSS$="y"ORSS$="Y"THENRETURNELSE400
+390 PRINT"Quit?  <Y>es <N>o  ";
+392 Q$=INKEY$:IFQ$=""THEN392
+393 PRINTQ$
+395 IFQ$="y"OR Q$="Y"THENGOSUB430:CLOSE:MAXFILES=0:MENUELSERETURN
+400 PRINT:PRINT" Send doc to which library (a-z,A-Z)? ";
+402 LN$=INKEY$:IFLN$=""THEN402ELSEPRINTLN$:GOTO408
+408 PRINT" On which Wang system? ";
+410 SN$=INKEY$:IFSN$=""THEN410ELSEPRINTSN$:GOTO420
+420 RETURN
+430 CLS:PRINT" Before cancelling out of Telecommuni-   cations, make a note of Receive Doc ID"
+440 PRINT" in upper right of Wang screen.  Then    press the GOTOPAGE key to close the"
+450 PRINT" Wang document.   CANCEL and EXECUTE     to return to the Wang main menu."
+460 PRINT"=======================================":LINEINPUT"     Press ENTER to return to Menu ";EX$
+470 IFEX$=""THEN CLOSE:MAXFILES=0:MENU
+480 RETURN
+40000 FORBC=X0TOX1STEPSGN(X1-X0):PRESET(BC,Y0,DE):PRESET(BC,Y1,DE):NEXT
+40010 FORBC=Y0TOY1STEPSGN(Y1-Y0):PRESET(X0,BC,DE):PRESET(X1,BC,DE):NEXT:RETURN

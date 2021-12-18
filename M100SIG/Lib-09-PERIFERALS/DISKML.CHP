@@ -1,0 +1,132 @@
+
+
+
+
+                 ACCESSING DISK FILES VIA MACHINE LANGUAGE
+
+            This is a brief and preliminary summary of information
+        supplied by Portable Computer Support Group on machine
+        language access to disk files through CDOS.
+
+
+        ML ACCESS TO CDOS DISK COMMANDS
+
+            Disk commands are carried out via the RST 7 instruction.
+        As you know, the RST 7 instruction provides a means of
+        vectoring to the user's routine.  RST 7 results in a jump to
+        a routine that uses the byte immediately following the RST 7
+        instruction as an index into a RAM vector table located at
+        $FADA.  In addition, the routine leaves the address of the
+        second byte on the stack.  CDOS uses the byte found there as
+        an index into a disk command table.  The code to use CDOS
+        disk commands is as follows:
+
+            CDOS    RST    7       ;hook into RAM vector table
+                    DB     $42     ;index to CDOS hook
+                    DB     $hh     ;index into command table
+                                   ;($hh listed below)
+
+            The routines available and their associated indices are
+        as follows.  On disk error, these routines return with the
+        carry flag set and the error code in register E.
+
+            READ1 - index $00 - command #1.  Read/write without
+        seek.  Use when head already on desired track for fast
+        access and for transfer of entire track.
+
+                A = command: read sector = $80
+                             write sector = $A0
+                             read track = $A0
+                             write track $F0
+                HL = address of data buffer
+                DE = D: track #
+                     E: sector #
+
+            SRSECT - index $02 - command #2.  Read a sector.
+
+                HL = address of buffer
+                DE = D: track #
+                     E: sector #
+
+            SWSECT - index $04 - command #3.  Write a sector.
+
+                HL = address of buffer
+                DE = D: track #
+                     E: sector #
+
+
+
+
+                                  - 1 -
+
+
+
+
+
+
+
+
+
+            Commands number four and five are also sector read and
+        write, as above.
+
+            RNDPOS - index $0A - command #6.  Position record
+        pointer to selected random record.  PTRFIL ($FC8C/$FC8D)
+        must be previously set to the desired file channel using the
+        appropriate ROM routine.
+
+                BC = record length
+                DE = desired record number
+
+            LENFIL - index $0C - command #7.  Returns length of
+        opened file in FAC1 ($FC18ff) Floating Point Accumulator.
+        PTRFIL must have been previously set to the appropriate file
+        channel.
+
+            BYTPOS - index $0E - command #8.  File pointer.  Returns
+        offset into opened file in FAC1.  PTRFIL must have been
+        previously set to the appropriate file channel.
+
+
+        ACCESS TO DISK FILES
+
+            To access disk files, use the same ROM routines that are
+        used to access any other file, (information available
+        elsewhere in this database) except use device code $00 for
+        disk drive one and $01 for disk drive two.
+
+            General procedure is to open the file, select the file
+        channel, and do i/o using standard ROM calls.
+
+            When using random files, the mode code to use on the
+        open file call is $04.  To access a random record, set the
+        file channel pointer with the appropriate routine, and do
+        the RNDPOS CDOS call.  Then do normal sequential read or
+        write as desired.  Use of the put character and get
+        character ROM routines is suggested.
+
+
+            This information made available courtesy of Michael
+        Stanford of PCSG.  CDOS code is Copyrighted by PCSG.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                  - 2 -
+
+
+
+
+
+

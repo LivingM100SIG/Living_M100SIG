@@ -1,0 +1,136 @@
+Introduction to QBUG
+
+The Qbug is intended to simplify debugging of assembly language programs on the
+Model 100 by providing interactive user information and control of the CPU
+registers, stack, memory locations, break and execution points.  Qbug
+accomplishes this by accessing your code through a ML link rather than direct
+call. The values selected by the user are transferred to the appropriate
+registers and then the routine is called.  When returning, the linkage saves
+stack and register values for interpretation through Qbug.
+
+In general, assembly language programs should be debugged much more
+meticulously than Basic.  Below are some suggestions:
+
+Always work from a printed copy of assembler output listing.  Consult it
+meticulously, don't rely on memory.
+
+Execute small stretches of code at a time setting breakpoints at key areas
+(always set a breakpoint at a conditional branch (JNZ etc) the first time
+through with each set of trial values; use the R)egisters command of Qbug to
+check  condition of the flags).  I find it helpful to repeatedly use the same
+execution entry point and data, moving the breakpoint further down the line as
+the segments are verified; then choose new entry values.
+
+It may be necessary to assemble a test version of your routine at a location
+different from your final working version to keep from interfering with Qbug.
+Proper use of labels in your source code will allow the reassembly at the
+running location without incident.
+
+When testing any routines which access a system function or value which can
+affect Basic (a hook into the background task for example) always test with
+dummy memory locations referenced instead.  You can easily insert and read
+values in these areas without danger of crashing the debugger (or all your
+files).  Only after the routine is verified to perform exactly as expected
+should the actual addresses be assembled in place.
+
+Never execute a stretch of new code without having tape copies of everything in
+RAM.  Proper use of the debugger can greatly reduce chances of a runaway
+program, but occasional mistakes are inevitable.
+
+Using the QBUG debugger:
+
+Running QBUG:
+
+When the program is run, the maximum user address (F53C in current version
+1.2.2) is calculated and displayed on the title screen.
+
+Before running the program, load the code to be tested, and set HIMEM, being
+sure that you don't overwrite the maximum user address.  Qbug will check HIMEM
+and halt if it does not appear to be correct.
+
+After the title screen is a brief pause as the support routine is loaded and
+then the menu is presented.  All control of your program is through the menu
+options.  After executing each option, Qbug returns to the menu; all options
+(except Quit) can be repeatedly called, reviewed and changed before executing
+the code.
+
+Simply press the letter key for each command from menu.  (Every option can be
+aborted after selection in case of an error.)
+
+NOTE: Always leave CAPS LOCK ON and enter all values in HEXADECIMAL when using
+Qbug.  The BKSP key is used to make corrections when entering values in hex.
+
+QBUG OPTIONS:
+
+Registers--Allows you to preset and examine values in registers A-L and Flag
+before and after executing a section of code.  As the value in each register is
+presented hit [enter] to leave it unchanged or [hex value] [enter] to set a
+value.
+
+Memory--when prompted enter a starting address; memory locations, values, and
+characters (displayable) are displayed and can be changed as with the
+registers.
+  While viewing memory values use the cursor control keys (UP for next
+location; DOWN for previous location) to move around or press [enter] to return
+to menu.
+To look at an area of memory far removed, return to menu and re-select the
+Memory option.
+
+Breakpoint--Use this to set the stop point (address) for your test run.  The
+execution stops just before address you specify.  If a breakpoint is already
+set, it is displayed upon entry and can be left unchanged by simply hitting
+[enter].  If another breakpoint is selected, the first one is automatically
+cleared.  Breakpoints are cleared and must be reset after Executing code.
+Selecting a breakpoint replaces 3 bytes of your code with a jump into the
+cleanup part of the ML support.  When a breakpoint is cleared your original
+values are automatically placed back.  DO NOT exit you code by any way except
+through a breakpoint; the cleanup routines are essential for the return to
+Qbug.
+
+
+Execute--Allows the execution of a section of code starting at address
+specified and ending at the breakpoint (Execute will automatically abort if no
+breakpoint is set).  When entering you are prompted for a starting address;
+hitting [enter] will abort to menu.  After the starting address, you may opt to
+place up to 5 values on the stack; these are 2 byte entries which will be on
+top of the stack when the actual execution begins.  Hitting [enter] or "0" will
+bypass this option.
+
+After execution, breakpoints are cleared and you are returned to the main menu.
+
+Stack--Allows inspection of the top 5 items "user stack"; that is items
+remaining on the stack at the end of the most recent execution which are not
+part of the BASIC or Qbug operations.  While the stack can be inspected from
+this option, it can only be loaded as part of the Execute operation.
+
+Quit--Always leave the program through the Quit option; this clears any pending
+breakpoints to leave your code intact.
+
+NOTE: Qbug will not accept breakpoints, entry points, or changes to memory
+addresses outside your program area.
+
+TECHNICAL NOTES:
+
+When selecting breakpoint locations, bear in mind that you cannot RETurn up
+through more layers on the stack than you have CALLed unless the appropriate
+return addresses have been placed there ahead of time.  Qbug uses the warm boot
+address as its flag to determine what part of the stack belongs to the code
+being evaluated; if you accidently RETurn through this a warm boot will be
+executed, saving from a system crash.  This is not bulletproof however, if you
+use a lot of PUSHes and POPs you could conceivably go through this protection.
+
+It is easily possible for an error in the user program to overwrite part of
+Qbug, other files, our system utilities in RAM.  Always keep tape copies of
+everying in RAM when exercising a program.  If you start having trouble with
+Qbug, perform a cold boot and reload (for example, part of BASIC's CALL
+statement executes out of RAM--if this code is overwritten, the statement will
+not execute properly).
+
+To allow the support to be reassembled for different locations, the ML entry
+points are handled through variables (see REMmarks) set at the beginning of the
+program.  If necessary the source code supplied can be reassembled at different
+addresses.
+
+
+Jay Holovacs
+74756,413

@@ -1,0 +1,257 @@
+	X-TUTOR
+	-------
+
+	This is a file devoted to some of the more "philosophical" aspects of 
+programming in the new T200 operational environment created by Paul Globman's 
+innovative XOS-C.200.  Paul has literally changed the way we think and use 
+these venerable machines and has brought us a giant step closer to "seamless" 
+multi-bank operation.
+
+
+	XOS-C offers the user two distinct levels of operation.  
+
+		The "non-programmer" can put the program to use IMMEDIATELY by 
+following the simple procedures clearly stated in XOS-C.DOC.  It is a complete,
+user friendly, easy to use program which will quickly become as much a part of 
+the day-to-day use of your T200 as any of the other "built-in" features.  Paul 
+designed XOS-C to work together with the other routines of your computer while 
+adding those that the factory "should" have included.
+
+		The "programmer" user will find that XOS-C, in combination with
+XBASIC.CO, offers for the first time true cross-bank programming opportunities 
+in an easy to use, "friendly" operating system.  There is literally NO 
+programming operation that cannot be done to/with a file in AWAY banks as was 
+previously available only to files in the HOME bank.  The programmer has ALL 
+three banks at his disposal for OPENing, APPENDing, WRITEing, READing, 
+CLOSEing, KILLing, RUNing, RUNMing, LOADing and LOADMing. Additionally, 
+CHAINing of programs to automatically jump from bank to bank to process data is
+easy and offers limitless opportunities for the creative programmer.
+
+
+	This file will offer additional insights on XOS-C use to both types of 
+user.  It has been conceived as a dynamic document which will be updated from 
+time to time as new and innovative applications of XOS-C are discovered.
+	Any "User Guide" to an operational system as unique as XOS-C would not 
+be complete without an initial discussion by the author of his program's 
+operational "philosophy".  Here is Paul Globman's discussion.
+
+
+	------
+
+	THE XOS-C PHILOSOPHY 
+
+
+	For years I've been hearing Tandy T200 users lamenting the fact that 
+the 72K of RAM was unconnected, and I was one of them.   Tandy felt the limited
+  storage in each bank was overcome by the ability to COPY and KILL files.   
+"Move them around as needed" was the approach you HAD to take, but not any 
+more!
+	I wrote XOS-C with the following conventions in mind, and you may 
+discover the hidden powers of XOS-C by adapting to these conventions.
+
+	BANK #3 CONVENTION (RAMDISK)
+
+	Bank #3 should be used for PROGRAM files (BA and CO) and TEXT files 
+only if they are accessed for reading by a program in another bank.  In bank 
+#3, HIMEM should be set to MAXRAM and MAXFILES=0 for additional storage space.	
+Fill bank #3 with pertinent programs often used: Less often used programs if 
+space permits.  You should only go to bank #3 to kill or modify a program, 
+never to run one.  ALL PROGRAMS ARE RUN FROM Bank #1.
+
+
+	BANK #1 CONVENTION (HOME BANK)
+
+	Bank #1 should be used as the active bank.   Run all programs in Bank 
+#1.   Do  all TEXT processing in Bank #1.   Bring needed programs in from other
+banks with the Cmd> function or XBAS-2 and run them here.  Bank #1 is the "work
+bank".   Move files not relevant to the current project to bank #2/3.   Keep 
+Bank #1 as empty as possible.  Bank #1 is the development Bank.   Keep 
+XOSLDR.CO and XOSDAT.CO in Bank #3 to install XOS in case of a cold start.   A 
+cold start when in bank #1 will leave  Bank #2/3 unharmed, so backup work files
+to bank 2 before running untested code.
+	After a cold start, run XOSLDR in Bank #3 and restore bank #1 by 
+copying backed up files to Bank #1.   
+
+
+	BANK #2 CONVENTION (ALL PURPOSE BANK)
+
+	Bank #2 is where you store programs if Bank #3 overflows.  Bank #2 is 
+where you would open DATA files when single bank operation is too memory 
+restrictive.  Bank #2 is where you "save" backup copies of a current project 
+while making experimental changes.  Bank #2 is your secondary "execution" bank 
+when more than one "environment" is  needed.
+	 For example, suppose you have a resident DOS active in bank #1 and  
+another HIMEM program you wish to run.  Use Bank #2.
+
+	THESE ARE JUST SUGGESTIONS and need not be strictly adhered to but do 
+demonstrate a different "functional" approach to T200 use that was not 
+previously available.
+
+
+	"BASIC" PROGRAMMING CONVENTIONS
+
+	Since all BASIC programs that are called in from another bank run in 
+the unsaved program buffer, as one program runs another, RAM is automatically 
+reallocated.   Large BASIC programs can be run in sections leaving room for 
+bigger DATA files.   BASIC programs can be made to delete themselves upon exit,
+returning its space to the system.
+
+	Just exit the program like this
+
+	1000 IPL"":CLEAR10,MAXRAM:MAXFILES=0
+	1001 M$="MENU"+CHR$(13):AD=64798
+	1002 POKE AD,5:FORI=1TO5
+	1003 M=ASC(MID$(M$,I,1)):POKE AD+2*I,0
+	1004 POKEAD+2*I-1,M:NEXT:NEW
+
+	...  or keep this program in bank #3 as CLR.BA and run it using F3(Cmd)
+whenever you want to maximize space in bank #1.
+	As for DOS/.COfile/ROM conflicts that could possibly arise, it is 
+possible to store the DOS in Bank #3 as an object file, and have a BASIC 
+program (also stored in bank #3) that loads DOS into place and installs it.   
+Now you can keep bank #1 without DOS and safe to create other environments.
+	Whenever you need DOS, its loader will correct the environment (HIMEM, 
+MAXRAM,  Hooks, etc.).   The above CLR.BA can be made to uninstall DOS so other
+environments can be created.
+
+	-------
+
+	(Paul continues with a discussion of the CMD> abilities of F3, probably
+the most useful function key on the XOS-C menu!)
+
+	FUNCTION KEY 3
+
+	I've decided that further discussion is required to point out the 
+various features of the Cmd> function key.  I think the best way to begin is by
+regarding the Cmd> function as having two distinct MODES of operation.   The 
+mode of operation is set at the Menu with the CAPS LOCK key.   I'll refer to 
+these modes as the DYNAMIC mode and the DEFAULT mode.
+	The DYNAMIC mode was the original design for the Cmd> function, and is 
+set with CAPS LOCK UP.   When you press F3(Cmd) in the DYNAMIC mode, you will 
+be prompted for a command input.   The response you enter will be the name of 
+the file you wish to run, and is in the format: Bank#,colon,Filename
+	(The prefix "3:" is assumed if "1:" or "2:" is not found, so you must 
+not use "3:" as part of your input.)
+
+	1:PROGRM
+	2:PROGRM
+	PROGRM
+
+	The .BA or .CO is added automatically and is determined by the position
+of the widebar cursor on the menu.   By keeping the cursor over BASIC when 
+pressing F3, a .BA will be added to the filename.  If the widebar cursor is 
+positioned over ANY filename other than BASIC, a .CO is added.
+	You now have the ability to execute any program IN any of your banks, 
+FROM any bank.   (If the .CO program being called runs in HIMEM, then HIMEM 
+must have been previously set, or the system will beep.)
+	If pressing F3(Cmd) results in a beep, or runs a program without ever 
+leaving the menu, then some internal memory pointers are altered and they must 
+be restored before you can execute any other programs.   You will still be able
+to move the cursor at the menu, and you will still be able to use any function 
+key, but any attempt to run a MENU program (i.e. pressing ENTER) will simply 
+AUTOMATICALLY restore all the pointers and return to the menu.
+	This would happen if you used F3 to run a program that didn't exist.   
+Then if you tried to enter a file or run a program it would seem as if 
+something was amiss.   Well it was just the pointers and you're protected from 
+doing anything fatal if they are not set correctly.   Once XOS-C gently returns
+to the Menu, you can go on to run any 
+program you wish.
+	As powerful as it may be to have the ability to run any program, some 
+users really prefer a dedicated key that requires no typing, but instead just 
+knows what to do.  By pressing CAPS LOCK, you put the Cmd> function into the 
+DEFAULT mode.   In the DEFAULT mode F3(Cmd) requires no user input.   It will 
+automatically look for and run (if found) files named as CMD>.BA or CMD>.CO IN 
+BANK THREE, depending upon the location of the widebar cursor: if over BASIC 
+then CMD>.BA will AUTOMATICALLY run and, if over any other file CMD>.CO will 
+run!.
+	The NAME command of F6 can become an powerful tool when using F3 in the
+"DEFAULT" (CAPS LOCK) mode.  By jumping to Bank 3 and RE-NAMING resident files 
+as needed to CMD>.BA/CO (re-name the current CMD> file first to avoid dupes), 
+you can quickly and easily change your "profile" for the job at hand.  
+	For example: if you're doing a lot of TEXT work you might want to have 
+James Yi's TEXT-E stored in bank 3 as CMD>.CO; then by simply pressing CAPS 
+LOCK/F3 each time you cursor over a .DO file it will run CMD>.CO (TEXT-E) 
+against that file.  When you've finished with the creating your TEXT work you 
+might want to run some other .CO utility against the file and this is simply 
+done by swapping the file names again to give "one-key" access to a new 
+routine.   (Remember, too, that you can always use F3 in the Cmd> mode (CAPS 
+LOCK up) and simply type in the program name.)
+	So there can be 2 DEFAULT command files, accessible with CAPS LOCK 
+depressed that you can also run from the DYNAMIC mode if desired simply by 
+typing "CMD>".
+	You might even find it more convenient to run at the Menu in the 
+DEFAULT mode with only have one CMD> file.   By having both a .BA and .CO file,
+it is possible to invoke the wrong one.   So here's a convention that works: If
+you use only one CMD> file, then work at the Menu in the DEFAULT mode and have 
+a dedicated function key that you can unlock to do other things.  Otherwise 
+work at the Menu in the DYNAMIC mode and simply use CAPS LOCK as a "macro" for 
+CMD>.xx
+
+
+	Installation and Operation
+	--------------------------
+
+	Occasionally you may have a program installed in a bank that has 
+lowered MAXRAM as a way of self-protection.  (You can check this by entering 
+BASIC and typing ?MAXRAM and pressing <ENTER>.) If MAXRAM is lower than 61104 
+you'll need to "un-install" whatever program is installed BEFORE you run 
+XOSLDR.CO.  Install XOS-C with all MAXRAMs equal and HIMEM set to equal MAXRAM 
+in each bank.
+	Follow the XOS-C.200 instructions and run XOSLDR.CO TWICE each time you
+run it.  Then re-load whatever program you had installed.  Once XOS is 
+installed the user should follow the "BANK CONVENTIONS".
+
+	XOS-C operates in an area of the T200 known as "Lomem": the "bottom" of
+user RAM.  The only commercial program known to compete for this area of memory
+is DISK-POWER.200 by Ultrasoft.  XOS-C will not run with DISK-POWER so I 
+suggest that you download POWR-DISK by Acroatix from DL10 and use it as your 
+DOS instead.
+
+	Function Key 8
+	--------------
+
+	Here's a picture of memory and an explanation of F8 as supplied.   As 
+you use F8 you actually swap the corresponding code between banks to permit 
+instant access to SIX options from THREE function keys
+
+
+	BANK #1    BANK #2    BANK #3
+	+------+   +------+   +------+  65535
+	|SYSRAM|   |SYSRAM|   |SYSRAM|
+	+------+   +------+   +------+  61104 (MAXRAM)
+	|USER  |   |      |   |      |
+	|RAM   |   | RAM  |   | RAM  |
+	|AREA  |   |      |   |      |
+	+------+   +------+   +------+  41728 
+	| Roms |   | Cmd> |   |      |
+	| Pste |   | Name |   |XBAS-2|  XOS-C occupies the "bottom"
+	| Prnt |   | File |   |      |   768 bytes in each bank.
+	+ -  - +   + -  - +   + -  - +
+	| XOS  | = | XOS  | = | XOS  |
+	+------+   +------+   +------+  40960 (Bottom of user Ram)
+	| ROM  |   | ROM  |   | ROM  |
+	+------+   +------+   +------+  0
+
+	Pressing F8(Menu) causes XOS to swap itself with the next bank that 
+does not contain XBAS-2.   The entire block of code, from RAM address 40960 to 
+41728  is exchanged with another XOS module.   A small portion of XOS is 
+identical in  each bank so there is no change of operation as the XOS modules 
+switch.
+	F8 will never bring in the XBAS-2 module but XBAS-2 is made available 
+by CALLing 41179 from any bank.  The XOS-C.200 Docs demonstrate how to use this
+when programming.
+
+
+		=====================
+
+	As new uses for XOS-C's operating capabilities are developed please 
+bring them to Paul Globman's attention.  His user I.D. is 72227,1661 and you'll
+quickly discover that he's VERY interested in helping you make the most of XOS-
+C! I'll try and keep this file updated with many of the general usage tips 
+received.
+
+
+Randy Hess
+Omaha, Nebraska
+6/7/89
+[73267,552]

@@ -1,0 +1,288 @@
+SROM10.TIP by Algis Kaupas [73327,3157]
+
+(Note: This file is formatted for a line length of 80 spaces.   It's suggested 
+that this line length be kept for examples to make sense.)
+
+SROM10.TIP and subsequent files will step through the development of CKREG.CA, 
+an application for Lucid and Lucid Database.  They will describe a simple 
+checkbook register, input and report templates for the register, reconciling 
+with the bank statement, and methods of assigning the information in the 
+register to account codes.
+
+I hope they will begin to give you a feel for spreadsheets in general and Lucid
+in particular.  I also hope they encourage you to develop your own 
+applications, to experiment further with both Lucid and Lucid Database, and to 
+try adapting approaches found in guides for other spreadsheets and other 
+computers for use with Lucid and the Model 100.
+
+SROM10.TIP describes the design of the check register, and a method for 
+printing it from within Lucid.
+
+MANUAL CHECK REGISTER:
+====== ===== ========
+
+Here's an example of a manual checkbook register as it might look a few days 
+into January of a new year:
+
+*******************************************************************************
+
+CHART 1. CHECKBOOK EXAMPLE:
+===== =  ========= =======
+
+ X   REF NO   DATE DESCRIPTION        DEBIT     CREDIT     BALANCE   
+---------------------------------------------------------------------
+                   BALANCE FORWARD              1,000.00    1,000.00 
+    101       1.01 Computer supplie    100.00                 900.00 
+    8601      1.02 Deposit-Inv. #8601           1,200.00    2,100.00 
+    102       1.04 Rent                500.00               1,600.00 
+    103       1.05 Office supplies     100.00               1,500.00 
+    8602      1.07 Deposit- Inv. #8602            500.00    2,000.00 
+    104       1.08 Telephone           100.00               1,900.00 
+    105       1.09 Utilities            50.00               1,850.00 
+*******************************************************************************
+
+
+
+Information about each financial transaction is entered into the check 
+register, and a running balance maintained by subtracting debits (checks and 
+payments) from the previous balance, and adding credits (deposits) to it.
+
+At the end of the month, items are checked to see if they have cleared the 
+bank, and any additional credits/charges entered.  The items recorded are 
+checked against the bank's version of account activity, and a reconciliation 
+made to verify the accuracy of the inputs and calculations.
+
+
+BASIC FORMAT OF CKREG.CA:
+===== ====== == ========
+
+A format similar to the checkbook example can be used for CKREG.CA.  Column [A]
+, "X," will be used later for reconciliation, and column [D], "ACCT," for 
+assigning transactions to account codes.
+
+
+*******************************************************************************
+
+CHART 2. CKREG.CA FORMAT:
+===== =  ======== ======
+
+[A]   [B]    [C]    [D]          [E]             [F]        [G]        [H]    
+
+ X   REF NO  DATE  ACCT#     DESCRIPTION        DEBIT     CREDIT     BALANCE  
+------------------------------------------------------------------------------
+                         BALANCE FORWARD                    [INPUT]  [FORMULA]
+                                                                     [FORMULA]
+                                                                     [FORMULA]
+*******************************************************************************
+
+
+
+Information is entered into the appropriate cells, and, when F2/Calc is 
+pressed, the formulas placed in cells will perform the calculations done by us 
+in the manual checkbook.
+
+This version of CKREG.CA is designed to be printed from within the spreadsheet,
+so it is desirable to add a label and summary section at the top of the 
+spreadsheet.  
+
+
+*******************************************************************************
+
+CHART 3.  CKREG.CA FORMAT WITH LABEL AND SUMMARY SECTION.
+===== =   ======== ====== ==== ===== === ======= =======
+
+     [A]  [B]    [C]  [D]      [E]         [F]        [G]          [H]      
+[01] CKREG.CA V.1.0:  [INPUT]          PREVIOUS BALANCE:     [+G8]          
+[02]                                   CREDITS:              [+SUM(G9:G249)]
+[03] LAST UPDATE      [INPUT]          DEBITS:               [+SUM(F9:F249)]
+[04] RECONCILIATION   [INPUT]          NEW BALANCE:          [+H1+H2-H3]    
+[05] ====================================================================   
+[06]  X   REF   DATE  ACCTDESCRIPTION     DEBIT     CREDIT       BALANCE    
+[07] --------------------------------------------------------------------   
+[08]                      BAL FORWARD               1,000.00 [+H7-F8+G8]    
+[09]     101     1.01     Comp supplies    100.00            [+H8-F9+G9]    
+[10]     8601    1.02     Deposit-#8601             1,200.00 [+H9-F10+G10]  
+[11]     102     1.04     Rent             500.00            [+H10-F11+G11] 
+[12]     103     1.05     Office suppl     100.00            [+H11-F12+G12] 
+[13]     8602    1.07     Deposit-#8602               500.00 [+H12-F13+G13] 
+[14]     104     1.08     Telephone        100.00            [+H13-F14+G14] 
+[15]     105     1.09     Utilities         50.00            [+H14-F15+G15] 
+*******************************************************************************
+
+
+
+Data entries start at cell A8.  Debit amounts are entered into column F, and 
+credit amounts into column G.
+
+Cell G8 is the cell for inputting the balance carried forward from the previous
+time period (or the starting balance, if CKREG.CA is being set up for the first
+time.)
+
+Column H has the formula for finding the current balance.  The general form of 
+the formula is "CURRENT BALANCE (current H cell)=PREVIOUS BALANCE (previous H 
+cell)-DEBIT(F cell in this row)+CREDIT(G cell in this row).  Setting up the 
+formula this way allows the balance to be found whether the row item is a debit
+or a credit.
+
+In cell H8, this is entered as +H7-F8+G8.  This formula is then copied and 
+pasted into as many cells down column H as you need.
+
+        1.  Push F7/Sel.
+        2.  When the prompt "Range Cn:Cn" appears, press <ENTER>.
+        3.  Press F5/Copy.  "Wait" will flash on the screen.  When it 
+disaapears, the contents of the cell is in Lucid's paste buffer.
+        4.  Move the cursor to the next cell down, and press PASTE.  
+        5.  Press F1/Fmla to select Lucid's paste buffer for pasting.
+        6.  When the prompt "Range Cn:Cn" appears, use the bksp key to erase 
+the second Cn and change it to the end of the range that you want the formula 
+pasted into, and press <ENTER>.
+        7.  When "Wait" ceases to flash, the pasting is complete.
+
+The formula being copied and pasted uses RELATIVE CELL REFERENCES.  This means 
+that the formula will be adjusted depending upon the cell that it's copied 
+into.  In cell H9, for example, the formula will become +H8-F9+G9; in cell H10,
++H9-F10+G10; etc.  (If the cell number is preceded by a "$," it is an ABSOLUTE 
+CELL REFERENCE, meaning that the cell number will stay the same, whatever cell 
+it is pasted into.)
+
+LABELS AND SUMMARY SECTION.
+====== === ======= =======
+                                
+The top section of the spreadsheet is for information, labels and a summary of 
+account activity.  Cell D1 identifies the time period for the check register.  
+Cell D3 is for the date of the last entry, and cell D4 for the date of 
+reconciliation with the bank statement. (The current date can be entered into 
+either of the date cells by pressing F1/Edit, and then entering ctrl-D, made by
+pressing the D key while holding down the ctrl key.)
+
+
+The summary section in the upper right-hand corner of the spreadsheet also acts
+as a proof section.  Cell H1,  for the PREVIOUS BALANCE, has the formula +G8 
+entered into it.  Whatever value is placed in Cell G8 (the balance forward 
+credit cell) will also appear in cell H1.  Cell H2, Credits, has the formula +
+SUM(G9:G249.)  This will total all the credits in column G EXCEPT the starting 
+balance in G8.  Cell H3 has the formula +SUM(F9:F249).  This is the formula for
+totalling all the entered debits.
+
+Cell G4 has the formula +H1+H2-H3, which is PREVIOUS BALANCE+TOTAL CREDITS (
+excluding the starting balance)-TOTAL DEBITS.  This should equal the current 
+balance in the last cell of column H.
+
+
+PRINTING.
+========
+
+When printing directly from a LUCID.CA spreadsheet (i.e., NOT using a REPORT 
+template), characters will be printed only if they are "uncovered."  A 17-
+character entry, for example, in a column that has the Lucid default width of 9
+characters will only print out the first 9 characters if there is an entry in 
+the cell to the right of it.  If that cell is blank, the full 17 characters 
+would be printed out.  Scanning through the spreadsheet with the cursor allows 
+one to view what will be printed out.
+
+(When using the REPORT templates, the printing width of a cell is determined by
+the width of the cell reference, and the spreadsheet can be left with its 
+default width of 9 for all cells.  This will be described more fully in future 
+uploads.)
+
+In any case, it's useful to format the column widths before printing when 
+printing directly from the spreadsheet. 
+
+The column width is set by following this procedure:
+        1.  Place cursor over a cell in the column whose width is being set.
+        2.  Push F7/Sel
+        3.  At prompt, "Range Cn:Cn,"press <ENTER>.
+        4.  Press F2/Width.
+        5.  At prompt "Width?," type in the number of spaces and press <ENTER.>
+
+        6.  The column will change to the number of spaces desired.
+
+Here's one way of formatting the column widths:
+
+
+*******************************************************************************
+
+Chart 4.  Column widths.
+===== =   ====== ======
+
+column  label        typical entry       spaces
+===============================================
+A       X            X                       3 
+B       REF          8601                    6 
+C       DATE         12.12                   7 
+D       ACCT         5                       6 
+E       DESCRIPTION  BALANCE FORWARD        20 
+F       DEBIT        10,000.00              11 
+G       CREDIT       10,000.00              11 
+H       BALANCE      10,000.00              11 
+                                      ---------
+TOTAL NUMBER OF SPACES ...............      75 
+*******************************************************************************
+
+
+
+This totals 75 spaces, which allows printing in either standard type (10 
+characters per inch, 80 characters per line) with total left and right margins 
+of 5 spaces on 8-1/2 X 11 paper; or in elite type (12 cpi, 96 characters per 
+line) with total margins of 21 spaces, sufficient for hole punching and putting
+in a binder.
+
+Here's the procedure for printing from the spreadsheet:  (see also pp. 44-48 of
+the Lucid manual)
+
+        1.  Set up your printer for the type size you want.  (This may require 
+going into BASIC to enter the control codes - Lucid, unlike Write, doesn't 
+support global printer setup codes).
+        2.  Go into your CKREG.CA spreadsheet, and go to the upper left corner 
+using ctrl-up arrow.
+        3.  Hit the <PRINT> function key.
+        4.  Hit F4/Page to format the printout, as detailed in the Lucid manual
+on pp. 44-48.
+        5.  Hit F2/Rnge.  To print the whole spreadsheet, press the period key 
+to "lock" the range, and then hit ctrl and down arrow.  A portion of the 
+spreadsheet can also be printed out.
+        6.  Hit F1/Go.
+
+Here's how the above example would be printed out using the column widths in 
+the above example:
+
+
+*******************************************************************************
+
+Chart 5.  Example printout.
+===== =   ======= ========
+
+CKREG.CA V.1.0:  [INPUT]                   PREVIOUS BALANCE:       1,000.00 
+                                           CREDITS:                1,700.00 
+LAST UPDATE      [INPUT]                   DEBITS:                   850.00 
+RECONCILIATION   [INPUT]                   NEW BALANCE:            1,850.00 
+============================================================================
+ X   REF   DATE   ACCT DESCRIPTION            DEBIT     CREDIT     BALANCE  
+----------------------------------------------------------------------------
+                       BAL FORWARD                      1,000.00   1,000.00 
+    101     1.01       Comp supplies           100.00                900.00 
+    8601    1.02       Deposit-#8601                    1,200.00   2,100.00 
+    102     1.04       Rent                    500.00              1,600.00 
+    103     1.05       Office suppl            100.00              1,500.00 
+    8602    1.07       Deposit-#8602                      500.00   2,000.00 
+    104     1.08       Telephone               100.00              1,900.00 
+    105     1.09       Utilities                50.00              1,850.00 
+*******************************************************************************
+
+
+
+The CKREG.CA spreadsheet is essentially done.  However, a view template can be 
+created to make data entry easier on the model 100's small screen, and a 
+routine established to give a statement balance that does not include 
+transactions that are not on the bank statement.  These will be discussed in 
+SROM12.TIP.
+
+SROM11.TIP is a blank, formatted CKREG.CA template in HEX form, which should be
+converted into Lucid's machine code format with CHANGE.BA in DL4.  It is the 
+template for CKREG.CA as discussed so far.
+
+
+Algis Kaupas [73327,3157]
+October 26, 1986
+
+

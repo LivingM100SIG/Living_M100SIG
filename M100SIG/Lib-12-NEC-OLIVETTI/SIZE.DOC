@@ -1,0 +1,48 @@
+
+
+I recently purchased an assembler for my NEC PC-8201A which included
+a program to determine RAM file sizes. This program was an example
+of why I purchased an assembler in the first place. I soon discovered
+a small quirk in the program's logic with the BASIC files. Using the
+companion interactive debugger, I discovered that Microsoft encoded
+their BASIC line statements as follows:
+
+        Next Line   Current Line
+         Address       Value
+
+         LSB  MSB    LSB  MSB     TEXT & TOKENS
+
+The programs original theory was correct because Microsoft did encode
+the end of each BASIC program with two hex 00 bytes, but ther are other
+occurances of the double hex 00 bytes within a BASIC program.  If you
+number your BASIC program beginning with line number zero, the example
+program would return a length of 4 bytes.  There are also other ways
+that this can occur because of the way constants are stored in the
+tokenized line statement.
+
+From the BASIC statement encoding above, I noticed that a program could
+go from one statement to the next by repeatedly loading the next line
+address and jumping to that location.  When this next line address was
+zero the program had indeed found the actual end of the file.  By sub-
+tracting the starting address from this ending address, a program could
+calculate the actual length of the file and would work even if the first
+statement's line number was zero and it's probably faster than counting
+each character in the file.
+
+I hope that you enjoy this enhancment.  You can reach me at the 
+following if you would like to leave any comments:
+
+     Computer Insights
+     1910 Knob Creek Rd.
+     P.O. Box 2466
+     Johnson City, TN 37601
+
+     SOURCE:     BCN041
+     Delphi:     CLAWS
+     MCI:        247-7899
+     Compuserve: 74646,656
+
+Sincerely,
+Chuck Laws
+
+

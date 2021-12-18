@@ -1,0 +1,273 @@
+TDD2B.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This is a collection of message re the TDD2, gathered over a week's time.
+topics include:
+
+   o FLOPPY for TDD2 (recovery from killing menu program and calls
+     available from Ba or CO programs, and general info)
+   o Disk Power 100 with TDD2
+   o TDD1/TDD2 disk format difference
+   o TS-RANDOM -- TDD2 compatibility, and other stuff
+
+Of interest to all TDD2 users!
+
+Message range: 155295 to 155817
+Dates: 8/21/87 to 8/28/87
+
+---------------------------
+Messages on FLOPPY for TDD2
+---------------------------
+
+Fm: DEBBIE CYRONAK 74016,643
+To: ALL
+
+I RECENTLY BOUGHT A TANDY PORTABLE DISK DRIVE 2.  AND I JUST MADE A GIANT
+MISTAKE I KILLED FLOPPY WITH THE KILL COMMAND AND CANNOT LOAD IT AGAIN TILL I
+RUN FREMEM.BA. CAN ANYBODY FIGURE OUT A WAY THAT I CAN CLEAR MEMORY WITH THIS
+PROGRAM OR ANOTHER WAY!!!
+
+
+Fm: Phil Wheeler 71266,125
+To: DEBBIE CYRONAK 74016,643
+
+Debbie, so long as you still have the REAL FLOPPY in memory, you can run it
+without the one on the menu.  Just go into basic and type 'CALL MAXRAM'. That
+will get you into the program. Then you can load FREMEM and reboot. The menu
+program FLOPPY calls the running version in high memory and does an integrity
+check.  It's well to use it, but the above approach will work in a pinch.  By
+the way, how did you manage to kill the menu FLOPPY?
+
+
+Fm: DEBBIE CYRONAK 74016,643
+To: Phil Wheeler 71266,125
+
+I JUST TYPED KILL "FLOPPY" IN BASIC. I WAS IN A HURRY FOR SOME FREE SPACE TO
+GET ANOTHER PROGRAM RUNNING AND NEGLECTED TO CHECK WHAT I WAS DOING FIRST
+
+
+Fm: Phil Wheeler 71266,125
+To: DEBBIE CYRONAK 74016,643
+
+Debbie, did my advice reach you in time and do the trick?
+
+
+Fm: DEBBIE CYRONAK 74016,643
+To: Phil Wheeler 71266,125
+
+YES IT DID!  I WAS SO SURE I BROKE IT AND THERE WAS NO WAY OUT! THANK'S FOR THE
+HELP!!
+
+
+Fm: BOB H. 76626,225
+To: ALL
+
+HAS ANYBODY DONE A LISTING OF THE CALLS FOR FLOPPY2 AND WHAT THEY DO.
+
+
+Fm: Phil Wheeler 71266,125
+To: BOB H. 76626,225
+
+Mark, see the TD2TIP files.  Also my RECOV2 & TD2MON -- all in DL9.
+
+Actually, studying BACKUP.BA on the utility disk will yield the most info.
+
+And -- in one TD2TIP file is some info that I found to be wron in doing
+RECOV2/TD2MON re the sector access read or write (forget which).
+
+
+Fm: John Burns 70307,272
+To: MIKE PHILLIPS 70116,1076
+
+Where to get description of TDD2 software.  And is Tdd2 relocatable or can it
+be loaded down so other himemsoftware can run
+
+
+Fm: Tony Anderson 76703,4062
+To: John Burns 70307,272
+
+Not sure exactly what you mean... What "TDD2 Software" do you want a
+description of?  If you mean commercial software, perhaps contacting the
+company that sells it would be a good idea. -- If you mean a description of the
+DOS that comes with it, FLOPPY, there isn't one that I know of.
+
+There are some review files in DL13 from users of the TDD-2 disk drive that
+might help.
+
+FLOPPY, a machine language DOS program that comes with the TDD-2 is not
+relocatable as it comes!  A smart machine language programmer can probably
+relocate it, but to what purpose?  You'd have to relocate it to several
+different addresses, depending on what other ML programs you wanted to use. ...
+It would be easier to relocate the other programs.  Also, be very careful about
+relocating programs that use system hooks as part of the way they "hook into"
+the normal operating system.  If more than one ML program wants to use the same
+hooks, it's cold-start city.
+
+
+---------------------------------------------
+On Disk Power 100 from Ultrasoft and the TDD2
+---------------------------------------------
+
+Sb: #Ultrasoft Loader, TDD2
+Fm: Mark Earle 73117,351
+To:  73117,351
+
+Here we go again... no one at ultrasoft knows about the tdd2, so with
+permission, sysops (kill if this ain't "cosher" I present a problem... The
+program comes on tape, they say run"cas" to get it going. Fine. It loads a
+loader in to do the work of getting the program into the compuer. Copy of
+loader presented below. I'd like to know how to change the loader to do
+the following. I get the usc100.co loaded to and from disk, but when I put
+cursor over that file name at main menu it just beeps at me... any
+thoughts?
+
+
+Fm: Phil Wheeler 71266,125
+To: Mark Earle 73117,351
+
+Will take a look, Marke -- but more info would help: what computer, what
+accessories?  Is this the orig DP100 (or DP200) and nwo you are trying it with
+TDD2?  Seems there is something on this in one of the TD2TIP file or TDD2?.THD
+files in DL9.
+
+
+Fm: Mark Earle 73117,351
+To: Phil Wheeler 71266,125
+
+OK, Phil, here it is if SU command works right <grin> I'm using
+a Mod 100, TD2 with standard Tandy operating system software
+(Flopy2.sys) and Node 256k Ram with the RamDisk 1.5 ROM. If
+I do the following trick I
+ can get it to work
+
+1. Load US in to ram from tape as normal specify 62960 as maxram. BEFORE putting
+cursor over USC100.CO, save to disk or expanded RAM.
+2. CLOAD just the loader.
+3. Now, kill USC100.CO from menu.
+4. Copy it back to main menu from disk or expanded ram.
+5. edit line 5 to change the cas: to any dummy file name.
+Run loader. IT
+halts with about 6k memory gone.
+6. Put cursor over usc100.co. Hit enter. USC100.CO now works!
+7. Goto basic, kill USC100.CO and LOADER.BA.
+ Aparently, the loader wants cas only, but doing the above tricks
+it into reading the program in from ram.. aparently USC100.CO
+that shows up on the main menu is not a loader, but the object
+code? Also, they state that in the docs, one copy only is needed.
+After a normal tape install, one can safely kill the USC100.CO
+from main menu to free RAM, a copy hides in hi memory they say.
+So aparently this is like the original FLOPY.CO? Thanks, Mark
+
+0 'Ultrascreen 100/102 Loader/Relocator
+1 MAXFILES=1:CLS
+2 INPUT"Install under address?                  (Max=62960  Min=38455)";
+E:S=E-2789
+3 IF S>60171 OR S<35666 THEN BEEP:PRINT"Illegal Value!":GOTO 2
+4 CLS:PRINT@120,"Loading Ultrascreen Please Wait...":PRINT
+"Completed:    %":CLEAR 256,S:IF PEEK(1)=51 THEN F$="100" ELSE F$="102"
+5 S=HIMEM:D$="CAS:":OPEN D$+"TXT"+F$ FOR INPUT AS 1
+7 A$=INPUT$(2,1):IF LEFT$(A$,1)<>"$" THEN GOSUB 10:
+POKE S,A:S=S+1 ELSE A$=RIGHT$(A$,1)+INPUT$(3,1):
+A$=RIGHT$(A$,2)+LEFT$(A$,2):GOSUB 10:A=A+HIMEM:GOSUB 11:
+POKE S,A2:POKE S+1,A1:S=S+2
+8 Z=(Z MOD 2)+1:PRINT@170,INT((S-HIMEM)/27.89);:IF NOT EOF(1) THEN 7
+9 CLOSE:Q$=CHR$(34):R$=CHR$(13):Z$="Savem"+Q$+"USC"+F$+Q$+
+",Himem,Himem+2788,Himem+52"+R$+"Load"+Q$+D$+"Font"+Q$+R$+
+"Save"+Q$+"Font"+Q$+R$+"Menu"+R$+CHR$(0):Z=VARPTR(Z$)
+:POKE63020,PEEK(Z+1):POKE63021,PEEK(Z+2):END
+10 A=0:FORX=1TOLEN(A$):B$=MID$(A$,X,1):A=A*16+ASC(B$)-48+7*(B$>="A"):
+NEXT:RETURN
+11 A1=INT(A/256):A2=A-(A1*256):RETURN
+
+
+----------------------------------------
+On TDD1 and TDD2 Disk Format Differences
+----------------------------------------
+
+Sb: #TDD1 vs. TDD2
+Fm: Phil Wheeler 71266,125
+To: Tony Anderson 76703,4062
+
+To close out the track width question raised last week:  TDD1 is 67.5 tracks
+per inch; TDD2 is 135 tpi.  No way a TDD1 could read a TDD2 disk, since the
+head will see two tracks at once, or worse.  TDD2 being able to read a TDD1
+disk makes sense, and does work.
+
+
+Fm: Tony Anderson 76703,4062
+To: Phil Wheeler 71266,125
+
+OK... that's interesting.  That works differently than the old Shugart drives
+where "double Density" meant that you packed twice as much data into the same
+amount of space with the disk controller.  It appears that in the TDD series,
+they have gone the hardware route, rather than software. In that case, I can
+see why a TDD-1 won't read TDD-2 disks.
+
+----------------------------------------------
+On TS-RANDOM, Generally and TDD2 Compatibility
+----------------------------------------------
+
+Sb: #100K/200K Drives
+Fm: Phil Wheeler 71266,125
+To: David C. Ridge 70416,1435
+
+Yes, can read TDD1 disks with TDD2, but not the other way.  Check the various
+TD2TIP files in dl9 for much info.
+
+
+Fm: David C. Ridge 70416,1435
+To: Phil Wheeler 71266,125
+
+Thanks for the info Phil. By the way, I am interested in one particular feature
+of the new DOS TS RANDOM. And that feature is the "snap-shot" of The entire RAM
+you can send to disk. I hate to buy the product just for this one feature. Is
+there anything on the sig that allows this? Later...Dave
+
+
+Fm: Phil Wheeler 71266,125
+To: David C. Ridge 70416,1435
+
+One caution: I think that TS-RANDOM is for the TDD1 only.  It uses TDD ROM
+sector access features, and these have changed forthe TDD2.  Recent TS catalog
+re TS-RANDOM says "not available for the Tandy drive 2".
+
+But the Sall command is actually part of TS-DOS, of which there IS a version
+for the TDD2 -- but not in a ROM chip, only on disk for loading into RAM.
+
+I'm not certain how usefule that feature is -- since it saves all the high RAM
+pointers, hooks and everything -- not only the files -- as a single file on the
+disk.  You must reload it all, or none of it.  Clearly it does something pretty
+unique; the question is whether it is really what you want to do.
+
+DSKMGR (DL9) has a Sval key, which saves all the files in RAM to the disk. I
+think that is the closest thing in the DL's to doing what TS-DOS Sall will do.
+
+
+Fm: David C. Ridge 70416,1435
+To: Phil Wheeler 71266,125
+
+Great stuff Phil! That 's exactly what I wanted to know. Later...Dave
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Phil Wheeler 71266,125
+
+Phil, Me again.  The "snapshot" of RAM is one of the things I like about
+TS-RANDOM. It allows me to have _several_ M100's -- pointers, hooks and all --
+for different applications.  Much the way people with multi-bank memories
+designate different functions to different banks.
+
+If nothing else, it sure takes the sweat out of cold-starts -- if you've done a
+half decent job of backing things up.
+
+
+Fm: Phil Wheeler 71266,125
+To: Wilson Van Alst 76576,2735 (X)
+
+Agree with your comments re the Sall funtion -- for that purpose. In my case,
+with 8 banks, I might find it more useful than I have thought previously -- so
+I will look into it.  BTW -- that is really a TS-DOS function, and all you
+really need is that program.  Downside of that approach is that TS-DOS will
+always be in the RAM image you save; ROM approach is handier.

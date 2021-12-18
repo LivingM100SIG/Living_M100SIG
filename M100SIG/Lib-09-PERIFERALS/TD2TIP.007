@@ -1,0 +1,30 @@
+DSKMGR.100/200 and the TDD2
+---------------------------
+
+Contrary to some statements, DSKMGR will work in all its functions (even
+Format) with the TDD2.  But there are some constraints and cautions to
+observe.
+
+1) Although you can access all 200K+ of the disk, after formatting it in
+   the TDD2, you can write no more than 40 files -- and only read the first
+   40 if they have been put there with another OS.  This is due to the Bank
+   1 directory being in Sector 1 (with the Bank 0 directory in Sector 0).
+   The banks are a directory structure, with the additional 158 sectors not
+   allocated to a specific bank.
+
+2) So far as I can tell, writing to a disk formatted in the TDD2, with
+   DSKMGR and the TDD2, is completely safe.  The danger would be overwrite
+   of the Sector 1 directory (assuming you have been using the disk with
+   FLOPPY2); so far as I can tell, this cannot happen -- based on
+   examination of sector contents using TD2MON.100.
+
+3) Do not try to write to a TDD2 disk with a TDD1.  It will work, but you
+   will end up with a disk with limited capacity showing in Bank 0.  The
+   first byte in bank 0 of a TDD1 disk is 00h, and in the TDD2 is 16h.
+   Writing to the TDD2 disk with a TDD1 puts 00h in that byte -- and the
+   sector access mode apparently will write every byte in the sector except
+   that one.  So TD2MON cannot be used to undo the damage. Of course, there
+   may be a way I haven't yet found!
+
+Phil Wheeler -- 71266,125
+17 July 1987

@@ -1,0 +1,13 @@
+0 CLEAR256:DEFINTA-Z:DEFSNGY-Z:DEFSTRC-G:DIMF(23),A(23):FORX=-1408TO-1639STEP-11:IFPEEK(X)THENFORZ=0TO7:F(Y)=F(Y)+CHR$(PEEK(X+3+Z)):NEXT:GOSUB7
+1 NEXT:Y=Y-1:X=Y\2
+2 FORZ=0TOY-X:W=Z
+3 IFA(W)>A(W+X)THENB=A(W):A(W)=A(W+X):A(W+X)=B:E=F(W):F(W)=F(W+X):F(W+X)=E:W=W-X:IFW>-1THEN3
+4 NEXT:X=X\2:IFXTHEN2ELSEZ=0
+5 CLS:FORW=ZTO15+Z:IFW=YTHENW=98ELSEV=INSTR(F(W),"BA"):V=V+INSTR(F(W),"DO"):IFVTHENBEEP:C=LEFT$(F(W),6)+"."+MID$(F(W),V):PRINTC;:PRINTUSING" #####";A(W+1)-A(W);:PRINT"  <P>urge or <Enter> ?":GOSUB8
+6 NEXT:IFW=99THENMENUELSE5
+7 A(Y)=PEEK(X+2)*256+PEEK(X+1)-65536:Y=Y+1:RETURN
+8 E=INKEY$:IFE=""THEN8ELSEIFE<>"P"ANDE<>"p"THENRETURNELSEBEEP:PRINT" <P> to verify; any other to cancel ";:E=INPUT$(1):PRINT:IFE<>"P"ANDE<>"p"THENE="":RETURNELSEIFINSTR(C,"DO")THENE="":KILLC:RETURN
+9 G="KILL"+CHR$(34)+C+CHR$(34)+CHR$(13)+"GOTO0"+CHR$(13):FORY=1TOLEN(G):Z=(Y-1)*2+65451:POKEZ,ASC(MID$(G,Y,1)):POKEZ+1,0:NEXT:POKE65450,Y-1:END
+10 'PURGE.100 emulates the PURGE routine on some DOS's.  It shows each .DO or .BA in the 100's RAM, its length, and gives you the option of killing it.  Prompts for verification if you decide to kill.  A quick file management tool.
+11 'A decision to kill a .BA file restarts the program with that file deleted because 100 Basic will not permit a program to continue once a KILL"abcdef.BA" command is given.
+12 'Public domain.  Written by Howard Benner  70235,1337

@@ -1,0 +1,235 @@
+
+
+
+
+          Weather Maps to Go
+
+
+        by Alexander B. Trevor
+
+           5 September 1983
+
+
+
+
+
+
+Weather Maps to Go               Page 2
+
+
+Sometimes the applications  for  a  new
+device  are  so obvious that you hardly
+have to point them out.   For  example,
+set  a  Model-100  in front of a pilot,
+and it won't take long for him (or her)
+to  realize  that  this little portable
+powerhouse  could  be  very  handy  for
+pre-flight    and   in-flight   chores.
+Although there have been other machines
+that   one  could  tote  along  in  the
+cockpit, the 100 is the first one  with
+a  screen  large enough to be useful in
+flight.   Not  only   can   the   pilot
+retrieve   flight   plans  and  textual
+weather  information  obtained   before
+takeoff from an information service (or
+entered  manually),  but  the  100   is
+capable  of  pretty decent graphics - a
+capability that can be used to  display
+weather radar maps.
+
+     Graphical   weather    maps    are
+available from a number of sources, but
+one of  the  least  expensive  ways  to
+obtain  maps  that are easily displayed
+on the Model 100  is  to  download  the
+Vidtex (tm) Radar Maps from CompuServe.
+To do this, one must have a  CompuServe
+Information  Service  account,  and  at
+least 16K of  memory.   The  downloaded
+maps  can  consume  up to 4K.  The maps
+are   transmitted   in   "run    length
+encoding",  which  reduces transmission
+time as well as minimizing  the  amount
+of   RAM   required   to   store  them.
+However, without a  program  to  decode
+the  run length encoding, the maps make
+about as much sense as the listing of a
+.CO file.
+
+     Two different graphic  resolutions
+are  used:  "high resolution", which is
+256  pixels  wide  by  192  high,   and
+"medium   resolution"   (128   x   96).
+Listing 1 is a program that  will  plot
+either  high  or medium resolution "run
+length encoded"  graphics  on  the  LCD
+screen.   Since the Model 100 screen is
+only 240 x 64 pixels, high res maps are
+displayed in three sections, and medium
+res in two.
+
+
+
+
+
+
+Weather Maps to Go               Page 3
+
+
+     Although  anyone   interested   in
+weather  should find these maps useful,
+they  are  of  particular  interest  to
+aircraft  pilots, especially since maps
+can be displayed at any time (including
+in  flight).   They  provide  a  useful
+reminder  of  general  weather  trends,
+although  they  are  not  practical for
+detailed  storm  avoidance  like   true
+airborne  radar,  since  the data is at
+least  a  half  hour   old,   and   the
+resolution  is  too coarse.  Each pixel
+represents an area 20 x 20 miles.
+
+     The run-length encoding spans  all
+characters  from  30  (decimal) through
+511, so eight  bit  reception  must  be
+enabled  on  your  Model  100.  This is
+done by setting the  Telcom  status  to
+M8N1E.   However,  CompuServe  normally
+sends 7 bit data with even  parity,  so
+you  will  see  some strange garbage if
+you log  in  with  this  setting.   The
+solution  is  to  log  on  with default
+status (M7I1E) and change your terminal
+parameters  on  CompuServe  to  set the
+parity bit to  zero.   This  is  easily
+accomplished by logging on, then typing
+"GO CIS-9" at the "!" prompt or running
+DEFALT   from  the  programmers'  area.
+From the DEFALT menu, select 5 (View or
+Change  Current  Terminal  Parameters).
+Next, select 8 (Parity) and set  it  to
+zero.  Finally, exit the DEFALT program
+and request that changes  be  effective
+for future sessions.  Before logging in
+the next  time,  change  your  terminal
+parameters  to  M8N1E  in  Telcom.  Now
+when you log on you will see  a  little
+bit  of  strange stuff until you get to
+the Password:  prompt.  This is because
+until  you  identify yourself, the host
+computer does not  know  what  terminal
+parameters you desire.  So, the initial
+"User ID:" prompt  is  sent  with  even
+parity,  and  those characters with the
+parity bit set to one (s,I  and  space)
+will  appear  as graphics characters on
+the 100.
+
+
+
+
+
+
+Weather Maps to Go               Page 4
+
+
+     At  this  point  eveything  should
+appear  normal,  and  you can go to the
+Aviation Weather section,  or  directly
+to  the  weather  maps  (GO AWX4).  The
+program will correctly inform you  that
+Telcom   is  not  equipped  to  display
+graphics,  and  they  may   appear   as
+meaningless  characters,  but  you  can
+ignore this.  When you see:
+
+CompuServe Vidtex Radar Maps
+choose 1 - Prepare a map  for  display.
+Next,  select  2 - Prepare current U.S.
+radar reports.  The  system  will  list
+the three letter id of each radar site,
+and the GMT time of  the  report  being
+collected.    After   all  reports  are
+collected, choose 2 - Display  prepared
+map.   You  may select any of the maps,
+but before you press ENTER  after  your
+choice,  you must first press F2 (Down)
+and specify the name you  wish  to  use
+for   the   downloaded  file  (MAP1  or
+whatever).  THEN, press ENTER, and  you
+will be treated to several screen fulls
+of  utter  garbage,  but  don't  panic!
+Just  wait  until you hear a BEEP, then
+press  F2  (Down)  to   terminate   the
+download,  and  ENTER  to tell the host
+computer to procede.  You can  now  log
+off   or  continue  with  your  on-line
+session.
+
+     Once off-line, disconnect  and  go
+back  to  the  menu.  From here you can
+run the GRAPHR.BA program.  Give it the
+file  name you specified to Telcom, and
+watch the current weather  map  appear!
+An outline of the state boundaries will
+be   drawn    with    radar    "echoes"
+superimposed   on   top.    "Weak"  and
+"moderate"   echos   will   appear   as
+horizonal   shading,   while   stronger
+echoes appear solid  black.   When  the
+screen  is  full,  press any key to see
+the next section.
+
+     A design "feature"  of  the  Model
+100  will very occasionally cause a map
+to  be  partially  trashed.   For  some
+reason,  the Model 100 will not store a
+delete character (&H7F) in a  RAM  file
+
+
+
+
+
+
+Weather Maps to Go               Page 5
+
+
+without  some  sleight of hand, and one
+does not get an opportunity to do  much
+magic  in  TELCOM.   The problem can be
+avoided by writing  a  special  purpose
+communications  program  which replaces
+the  delete  character  with  something
+else.
+
+     One   final   remark   for   those
+contemplating  the  use of this program
+in aircraft:  pilots need not be overly
+concerned  about  operating a Model 100
+in  flight.    Although   the   Federal
+Aviation Regulations (FAR's) saddle the
+pilot    in    command     with     the
+responsibility  of  determining whether
+or not an electronic  device  (such  as
+the   Model  100)  will  cause  harmful
+interference with  your  navigation  or
+communications  radios,  I  have  found
+nothing to suggest a problem.  My Model
+100 has many hours of instrument flight
+time in my Cherokee Challenger,  and  I
+have  never noticed any ill effects.  I
+hear the same thing from  other  pilots
+who  regularly fly 172's, King Airs and
+such with their little white boxes.
+
+     For your convenience, this program
+may  be  downloaded  from the Model 100
+SIG XA1 Data Base on  CompuServe.   The
+file name is:
+
+          GRAPHR.100[70000,130]
+
+
+OK

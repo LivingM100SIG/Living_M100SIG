@@ -1,0 +1,456 @@
+This Memory Map appeared originally in the December 1983 issue of 80micro it is
+reproduced here with the permission of the publishers of 80micro and the author
+David Sumner (75515,1507) of Micro Demon, Inc.
+
+
+
+                        Model 100 Memory Map
+           
+Material in single quotes represents ASCII text. All addresses are in decimal.
+
+
+' RST 0) JMP 32051
+3      'Menu' 
+8      (RST 1) Test for special character and fall into RST2.
+16     (RST2) Set pointer to next character of BASIC text. (JMP 2136)
+24     (RST3) Compare registers HL,DE directly
+32     (RST 4) PRINT ASCII contents of accumulator. 
+36     (TRAP) Handles power-down. User interface at 62978.  
+40     (RST 5) JMP 4201  Checks variable type.
+44     (RST 5.5) JMP 62969 
+48     (RST 6) Returns sign of FAC1. (JMP 13276)
+52     (RST 6.5) JMP 28076 (62972 RAM vector interface)
+56     (RST 7) Executes routine indicated by next byte. (JMP 32767)
+60     (RST 7.5) Updates timer, adjusts power-down values etc. (JMP 6962, user 
+        can interface at 62975). 
+64     BASIC function addresses.
+128    BASIC Keywords with high bit set in the first character of each word.
+610    BASIC command addresses.
+750    Table of BASIC addresses.
+796    2-Byte error codes.
+858    Initial values for pointers 62960-63103.
+1003   'Error'
+1010   'in'
+1014   'ok'
+1019   'Break'
+1094   Syntax error. Entry points at 1100, 1103... 1115 for other errors
+1117   Error message based on contents of E register. 
+1245   PRINTs error messages (accumulator holds a value from 28 to 58).
+1520   Builds BASIC line pointers.
+1576 Enter with DE containing a line number. Exit with BC containing the 
+location of the line, and HL the location of the next line. The cary flag is 
+used to indicate if the line already exists.
+1606   Tokenize BASIC text.
+1830   FOR
+1899   TO
+2112   BASIC command dispatcher; accumulator holds token.
+2136   Set pointer to BASIC text.
+2162   DEF (general)
+2177   DEFDBL
+2182   DEFINT
+2198   DEFSNG
+2207   DEFSTR
+2267   FC error.
+2283   Used by GOTO, GOSUB, and RUN to determine the 2-byte value of the line (
+in ASCII) to branch to. The HL register points to the string of digits, the 16-
+bit integer is returned in DE. This routine contains a bug!
+2319   RUN
+2334   GOSUB
+2358   GOTO
+2381   UL error
+2406   RETURN
+2462   DATA
+2464   REM,ELSE
+2499   LET
+2607   ON (general)
+2736   RESUME
+2831   ERROR
+2842   IF
+2894   LPRINT
+2902   PRINT
+3073   TAB(
+3141   LINE (general)
+3152   LINE INPUT
+3188   '?Redo from start'
+3225   INPUT #
+3235   INPUT
+3289   READ
+3442   'Extra ignored'
+3625   >,=,<
+3926   ERL
+3966   VARPTR
+4072   If character in M is lowercase, the upper-case equivalent is returned in
+the accumulator.
+4236   OR
+4247   AND
+4258   XOR
+4269   EQV
+4277   IMP
+4296   LPOS 
+4302   POS
+4305   Store accumulator as low byte of 16-bit integer.
+4352   INP
+4364   OUT
+4398   ASCII text (string/variable) converted to integer.
+4411   LLIST
+4416   LIST
+4514   PRINTs from buffer until 0 byte is encountered.
+4522   Put data into buffer until a 0 byte is reached.
+4740   PEEK
+4747   POKE
+4811   Saves registers, waits for  character of input, and restores registers.
+4848   Paste
+5029   Toggles the label line.
+5138   Break routine.
+5145   POWER
+5169   Power off /Returns to program on power-up.
+5201   Power off
+5209   POWER CONT
+5225   Sets power-down values.
+5288   Preliminary tape I/O routine
+5290   Called at the end of tape I/O.
+5296   Returns byte from tape in the accumulator
+5313   Sends byte in the accumulator to tape.
+6281   EOF
+6404   TIME$
+6436   DATE$
+6485   DAY$
+6520   ASCII of days stored here.
+6571   TIME$ (as command assignment)
+6589   DATE$ (as command assignment)
+6641   DAY$  (as command assignment)
+6647   MAXRAM
+6776   IPL   
+6814   COM,MDM
+6851   KEY ON/OFF/STOP
+7096   KEY (general)
+7101   KEY LIST
+7136   PRINTS B PRINTable-characters starting at address in HL.
+7182   Defines function key.
+7255   PSET
+7270   PRESET
+7277   LINE drawing routine.
+7519   Subroutine for PRINT @
+7568   CSRLIN
+7579   MAX (general)
+7602   MAX FILES
+7609   HIMEM
+7619   WIDTH
+7621   SOUND (general)
+7653   SOUND OFF
+7654   SOUND ON
+7660   MOTOR
+7667   Turns motor on.
+7669   Turns motor off.
+7674   CALL
+7714   SCREEN
+7774   LCOPY
+7994   FILES
+8081   KILL
+8247   NAME
+8446   NEW
+8832   CSAVE (general)
+8856   CSAVEs current BASIC program.
+8889   Sends the DE bytes starting at location in HL to tape
+8908   SAVEM
+8925   CSAVEM
+9079   CLOAD (general)
+9235   Gets DE bytes from tape and stores them at the location pointed to by HL
+
+9302   CLOAD?
+9345   'Verify failed'
+9361   LOADM, RUNM
+9383   CLOADM 
+9538   Moves B bytes from address in HL to address in DE in an increasing      
+        manner.
+9587   CLOADM?
+9685   'Top End Exe'
+9697   'Exe:'
+9982   'Found'
+9989   'Skip'
+10042  STR$
+10161  PRINTs message pointed to by HL. Message ends in quote or zero byte.
+10444  String addition
+10508  Moves L bytes from address in BC to address in DE (increasing).
+10563  LEN
+10575  ASC
+10597  CHR$
+10605  STRING$
+10638  SPACE$
+10667  LEFT$
+10716  RIGHT$
+10726  MID$
+10759  VAL
+10807  INSTR
+11084  FRE
+11113  FAC1 
+ FAC1-FAC2.
+11128  FAC1 
+ FAC1+FAC2.
+11519  FAC1 
+ FAC1*FAC2.
+11719  FAC1 
+ FAC1/FAC2.
+12006  Moves C bytes starting from address in HL to address in DE, in a
+       decreasing manner.
+12015  COS
+12041  SIN
+12120  TAN
+12145  ATN
+12239  LOG
+12378  SQR
+12452  EXP
+12606  RND
+12686  MOVE FAC1 to 64633-64640.
+12692  Adds memory to FAC1.
+12698  Subtracts memory from FAC1.
+12704  FAC1 
+ FAC1*FAC1 (squares FAC1).
+12707  Multiplies memory and FAC1.
+12725  Moves FAC1 to FAC2.
+12728  Moves number at address HL to FAC2.
+12737  Moves FAC2 to FAC1.
+12740  Moves number at address HL to FAC1.
+12746  Moves FAC1 to address in HL.
+12852  Saves FAC1 on the stack.
+12892  Floating point constants.
+12942  .25
+12974  pi/2
+12990  Square root of 3.
+13015  1
+13203  2*pi.
+13289  ABS
+13309  Negate FAC1.
+13319  SGN
+13417  Moves B bytes of memory from address in DE to address in HL in an
+       increasing manner.
+13426  Moves B bytes of memory from address in DE to adress in HL in a
+       decreasing manner.
+13569  CINT
+13610  CSNG
+13754  CDBL
+13893  FIX
+13908  INT
+14804  PRINTs the 16-bit integer stored in the register pair HL.
+16288  TIME$ ON
+16306  TIME$ OFF
+16313  TIME$ STOP
+16393  Clears COM and TIME$ locations. Clears KEY definitions and sets 63060 to
+0.
+15743  MOD
+15758  ^
+16511  RESTORE
+16538  STOP
+16543  END
+16602  CONT
+16625  Determines if HL points to an alphabetic character letter.
+16626  Determines if the accumulator contains an alphabetic character.
+16633  CLEAR
+16756  NEXT
+16930  PRINTs CHR$(13)+CHR$(10)
+16937  BEEP
+16941  PRINTs CHR$(11)
+16945  CLS
+17001  Turns on reverse video.
+17006  Turns off reverse video.
+17008  PRINTs CHR$(27)+CHR$ of accumulator.
+17034  Clears the label line.
+17064  PRINTs label line.
+17994  Puts input data into input buffer.
+18315  DIM
+18320  Get variable name and type.
+18833  USING
+19268  PRINTs ASCII character in accumulator.
+19322  Sends byte in accumulaor to the printer
+19360  Sends carriage return to the printer
+19434  INKEY$
+19659  OPEN
+19824  LOAD
+19825  MERGE
+19919  SAVE
+20008  CLOSE
+20591  LFILES
+20725  'CRT CAS COM WAND LPT MDM RAM'
+20593  DSKO$
+20806  TELCOM program.
+20860  'Telcom'
+20869  'STAT'
+20874  'TERM CALL RFIND MENU'
+20900  'Find Call Stat Term Menu'
+20906  'x pps'
+21060  'Calling'
+21890  'Full Half Echo'
+21909  'Wait'
+22353  'File to upload File to download
+22385  'aborted'
+22396  'No file'
+22406  'Disconnect' 
+22417  PRINTs message. Sends a carriage return if not at start of line.
+22423  MENU
+22574  PRINTs number of free bytes.
+22580  PRINTs 'Select:' and responds appropriately to input.
+23128  PRINTs starting at address in HL until a zero byte is reached.
+23164  Sets up function keys.
+23273  Months stored in ASCII.
+23312  'Microsoft'
+23332  'Select:'
+23366  Original key definitions stored here. FILES LOAD" SAVE " RUN LIST MENU
+23400  ADDRSS (program)
+23407  SCHEDL (program)
+23450  PRINTs 'Not found press space bar for menu"
+23758  ADDRS.DO
+23767  'Not found'
+23852  'Call'
+23920  PRINTs date and time at top of screen and updates it until a key is
+       pressed.
+24046  TEXT (program)
+24051  Requests a file to edit.
+24085  'File to edit'
+24106  'FIND LOAD SAVE COPY CUT SEL             MENU'
+24145  EDIT (program)
+24367  Waits for a space keypress and then returns.
+24376  'Text ill-formed'
+24395  'Press space bar for TEXT'
+24753  'Memory full
+26051  Moves memory starting at address in HL to address in DE until a 0 byte 
+is       reached.
+26062  'No Match'
+26071  'String'
+26380  'Width'
+26421  'Save to:'
+26579  'Load from:'
+27611  Moves BC bytes from address in HL to address in DE increasing.
+27636  'BASIC TEXT TELCOM ADDRSS SCHEDL         Suzuki Hayashi'
+27721  BASIC
+27795  Temporarily saves the function keys.
+27804  Restores the function keys.
+29156  Adds a character to the keyboard buffer.
+29250  Returns ASCII of keypress in the  accumulator; does not wait-returns 0
+       if no keypress.
+29381  SOUND routine. DE contains pitch abd B contains duration.
+29772  Turns on the pixel (x,y) where D contains x and E contains y.
+29773  Turns off the pixel (x,y) where D contains x, and E contains y.
+30326  Toggles the speaker.
+30306  Equivalent to BEEP.
+30481  Character set 5-bytes each.
+31729  Keyboard matrix
+32051  Initialization
+32231  Initialize pointers (cold start).
+32422  PRINTs TRS-80 logo.
+32428  PRINTs number of free bytes.
+32523  MAX
+32523  MAX FILES=
+32664  ' bytes free'
+32676  TRS-80 logo stored in ASCII.
+40960-62959  User RAM in 24K machine.
+62964  HIMEM value
+62991  Code called at 896.
+62966  Code called at 32145 and 32197.
+62969  RAM vector for RST 5.5.
+62972  RAM vector for RST 6.5.
+62975  RAM vector for RST 7.5.
+62978  JMP 5169
+62981  Code called at 32108 and 32292.
+63012  Code for optional ROM
+63017
+63024  KEY ON/OFF ON=1 OFF=0
+63031
+63033  Vertical Print position 0 to 7.
+63034  Next horizontal print position 0-39.
+63035  Number of active lines 0-8.
+63036  Number of active columns 0-40.
+63037  Label line flag; 0=unused, 255=used.
+63038  Inhibits return to first line if not zero.
+63040  Cursor line.
+63041  Horizontal print position.
+63048  Reverse video if not zero.
+63054  x-pixel set.
+63055  y-pixel set.
+63063  Power-down value (constant).
+63070  Code
+63078
+63079  OUT/IN self-modifying code.
+63082
+63090  Error code
+63092  Value of LPOS
+63093  Output flag; 0=display, 1=printer.
+63096  Top of available RAM.
+63097
+63098  Current BASIC line number; 65535 stored here if no program is running.
+63099
+63100  Start of current BASIC program text.
+63104  End of statement marker (: OR 0).
+63105  Multi-purpose buffer area. Tokenized text starts at 63105. Input        
+  buffer starts at 63109. Extends to 63362.
+63368  Value of POS
+63369  Function key definitions currently being used. Extends to 63497
+63498  Function key defintions used by BASIC Extends to 63626
+63639  Work area /temporary storage.
+63785  Day of month low digit, high digit in 63786
+63787  Current day of the week, e.g. 3=Wed.
+63788  Current Month - decimal 1-12
+63789  Current year stored with low decimal value here and high decimal value 
+in 63790
+63791  Timer; decreases from 125 to 0.
+63792  Timer decreases from 12 to 0.
+63793  Power-down countdown value (varies).
+63795  Low digit of seconds.
+63796  High digit of number of seconds
+63797  Low digit of number of minutes
+63798  Time and date continue here with one decimal value per location
+63805  6-byte value of TIME$ for ON TIME$ statement (In reverse order)
+63812  COM ON/OFF flag.
+63813  Address of COM ON routine.
+63815  TIME$ ON/OFF flag.
+63816  Address of TIME$ ON routine.
+63818  ON/OFF flag and routine address of function keys; 3 bytes per key. 
+Extends to 63841
+63842  Files in the format: address, 6-character name, 2-byte extension.
+63898  Address of BASIC program that has not been saved to RAM. (Suzuki) 
+63909  Address of the end of documents.(Hayashi) 
+64173  Label line enable flag; enabled if not zero.
+64175  Name of IPL program Name starts here.
+64190  Used for temporary storage of stack pointer.
+64208  Length of CLOADed/CSAVEd program.
+64357  BASIC variable type.
+64404  Line number of active DATA statement.
+64409  Location of BASIC variable for assignment statement.
+64411  Start of current BASIC statemen
+64413  2 less than value in 63096-63097
+64415  Line where error occured.
+64417  Most recently entered/listed line.
+64419  Location of statement where error occured.
+64421  Location of ON ERROR GOTO line
+64423  Error status flag
+64424  End of BASIC expression.
+64426  Line where Break occured.
+64428  Location after error (contains 0 or 58).
+64430  Start of documents.
+64434  Start of Variables.
+       The region from 64536 to 64640 is used for floating point computations.
+
+64536  FAC1 (floating point accumulator). Extends to 64543
+64617  FAC2 (floating point accumulator). Extends to 64624
+64642  Maxfiles.
+64659  Name of current BASIC program.
+64668  Name of program loaded from tape
+64904  Start of DATE$ and TIME$ stored in ASCII. Used for MENU Display not for 
+TIME$.
+65024  Start of screen memory.
+65348  SOUND Flag 0=on, 175=off
+65349  Cassette on/off flag.
+65424  Holds the value 2 as long as a noncontrol key is held down.
+65429  Devoted to the number keys.
+Also uses 65430
+65431  Bits are set here according to which of the following keys are
+       pressed: SPACE,DEL,TAB,ESC,PASTE,LABEL,PRINT,ENTER.
+65432  Pressing a function key sets the corresponding bit in this location.
+65441  Behaves like 65432.
+65442  The following keys set bits in this location:
+       SHIFT,CTRL, GRPH,CODE,NUM,CAPS LOCK.
+65446  Code for most recently pressed key. (Not ASCII)
+65450  Number of characters in keyboard buffer.
+65451  Keyboard buffer (32 byte maximum). Odd bytes contain ASCII values. A 255
+in an even byte indicates a function key.
+65515  Used to store 5-byte character 
+

@@ -1,0 +1,41 @@
+Documentation for CHRXLT.BA, a Character Translator
+---------------------------------------------------
+
+CHRXLT.BA is a text file character translator for the Tandy
+100/102/200.  It goes through a text file and replaces designated
+characters by specified replacement characters.  I wrote it as
+part of the process of developing a tool to translate T-WORD files
+into Wordstar files (i.e., translate the embedded print codes).
+
+The translation tables are inputted in line 100-120.  Line 100
+specifies the number of characters to be converted.  Line 110
+identifies the input file characters (decimal representation) to
+be converted, and line 120 specifies the new values in the output
+file.  Lines 110 and 120 must both have the number of entries
+specified in Line 100.  Input/output files can be from any device,
+RAM being the most obvious one.
+
+In the uploaded program the translations are:
+
+ A -> ^A, B -> ^B, ..., I -> ^I and the reverse of each.
+
+A typical four-line test file is:
+
+AB
+^A^B <create by CTRL-P,CTRL-A,CTRL-P,CTRL-B>
+CD
+^C^D <create by CTRL-P,CTRL-C,CTRL-P,CTRL-D>
+
+With the default data statements, the order within line pairs
+(1,2) and (3,4) will be reversed.
+
+Certain characters will give some interesting results when
+converted -- one example being ^J = CHR$(10), which is a linefeed
+(the little "triangle" you see at the end of each line on your
+screen will be processed).
+
+I'm not sure that this program "as-is" has any real practical
+applications -- but it may have.  Please report any you come up
+with!
+
+Phil Wheeler -- 71266,125

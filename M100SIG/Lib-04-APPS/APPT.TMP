@@ -1,0 +1,51 @@
+5   'Example Program to add appnts or memos to Task File
+10  'Entries must be in the format of
+15  'mm/dd/yy hh:mm Appnt Descr.
+16  'or
+17  'mm/dd/yy memo Descr.
+18  'Also, this prog can be used to insert Diary to Task File
+20  CLEAR 500:MAXFILES=3:CLS
+25  'Set Note.do as default input
+40  LINEINPUT "Enter Appointment Filename: ";A$:IFA$=""THENA$="note"
+45  'Open Appnt file as input
+50  OPEN A$ FOR INPUT AS 1
+60  LINEINPUT "Enter Task Filename: ";F$
+65  'Open Task file as input
+70  OPEN F$ FOR INPUT AS 2
+75  'Open a temporary file as output
+80  OPEN "tmptsk" FOR OUTPUT AS 3
+85  'Copy the 1st four sections of 2 to 3
+90  IF EOF(2) THEN 300
+95  'Copy Section 1
+100 A$=INPUT$(7,2):PRINT#3,A$;:I=1
+110 IF EOF(2) THEN 300
+120 IF I<4 THEN GOSUB500:GOTO110
+125 'Form 1st 2 header bytes
+130 B$=CHR$(32)+CHR$(32)
+132 C$="":D$=""
+135 'Insert appnts into Section 5
+140 IF EOF(1) THEN 250
+145 'Read mm/dd/yy as Date
+150 A$=INPUT$(1,1):IF A$=" " THEN 140
+160 C$=C$+A$
+170 IF EOF(1) THEN 250
+175 'Form next 3 bytes as dmy
+180 A$=INPUT$(1,1):IF A$=" " THEN 190 ELSE IF A$="/" THEN J=VAL(C$)+32:D$=D$+CHR$(J):C$="":GOTO170 ELSE 160
+190 J=VAL(C$)-80+32:C$=RIGHT$(D$,1)+LEFT$(D$,1)+CHR$(J)
+195 'Read Appnt Descr.- get 1st 2 chr
+200 A$=INPUT$(2,1):LINEINPUT#1,D$:IFA$="C "ORA$="X "THEN132ELSEB$=B$+C$
+205 'Form last byte of header bytes
+210 IFA$="A "ORA$="M "THEN220ELSED$=A$+D$
+215 'Appt will start with digits
+220 A$=LEFT$(D$,1):IF A$<"0" OR A$>"9" THEN B$=B$+CHR$(64) ELSE B$=B$+CHR$(72)
+230 J=LEN(D$)+32
+235 'Copy to 3
+240 PRINT#3,B$;CHR$(J);D$;:GOTO 130
+245 'Copy the last 3 sections of 2 to 3
+250 IF EOF(2) THEN 300 ELSE B$=INPUT$(1,2):PRINT#3,B$;:GOTO250
+255 'Close & rename files
+300 CLOSE:KILL F$+".do"
+310 NAME "tmptsk.do" AS F$+".do":END
+315 'Read & copy count and descr.
+500 B$=INPUT$(1,2):J=ASC(B$)-32:IF J>0 THEN A$=INPUT$(1,2):J=ASC(A$)-32:B$=B$+A$+INPUT$(J,2) ELSE I=I+1
+510 PRINT#3,B$;:RETURN

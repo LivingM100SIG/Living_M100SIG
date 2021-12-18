@@ -1,0 +1,9 @@
+0 REM PDFDIR V03 WM - Patches POWR-DISK V100.1.1 (normal or relocated) for full screen directory which can be printed by pressing PRINT when display pauses.  CAUTION: LFILES TO command no longer prints file length.  CHECK your programs.
+1 M=MAXRAM:IFPEEK(M)<>195 THENBEEP:PRINT"No Powr-Disk <ENTER>";INPUT$(1):MENU
+2 DATA152,23,177,10,181,58,184,183,185,196,186,34,187,66,188,195,191,205,192,24,193,90,194,205,197,201,198,0,212,205,213,34,214,66,287,13,288,0,289,0,290,0,291,0,292,0,299,27,300,112,309,27,310,113,311,0,0,0
+3 READO,V:IFOTHENPOKEM+O,V:GOTO3:REM Patch Opcodes, constants and external addresses
+5 A=1967:O=182:GOSUB9:A=199:O=189:GOSUB9:A=272:O=195:GOSUB9:A=191:O=237:GOSUB9:REM Patch internal addresses
+6 FORO=1TO8:POKEM+300+O,ASC(MID$(" <Enter>",O)):NEXT:REM Patch message
+7 END:REM delete line to save as CO file
+8 SAVEM"PDFDIR.CO",MAXRAM,MAXRAM+1963,MAXRAM:END
+9 X=M+A:H=INT(X/256):L=X-256*H:POKEM+O,L:POKEM+O+1,H:RETURN

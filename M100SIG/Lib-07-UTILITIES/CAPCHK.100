@@ -1,0 +1,15 @@
+
+
+Sometimes a program, especially when using INKEY$ to check the keyboard, is 
+sensitive to the position of the CAPS LOCK and NUM keys.
+
+This 1 line routine can be used to check both keys.  After returning from the 
+routine, check value CL.  If CL AND 32=32 then the CAPS LOCK is off, if 0 then 
+it is on.  If CL AND 16=16 then NUM key is off, else it is on.
+
+10000 CALL30300:OUT185,255:CL=INP(186):OUT 186,CLAND252:CL=INP(232)
+:CALL29756:RETURN
+
+
+J Holovacs 74756,413
+

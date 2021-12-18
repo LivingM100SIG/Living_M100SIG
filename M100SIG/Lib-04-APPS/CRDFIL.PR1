@@ -1,0 +1,117 @@
+0 ' CRDFIL.PR1    Card File Printing        Program for the Model 100/102 and
+1 ' Tandy 200, which prints cards or        labels in user selectable formats.
+2 ' For operating instructions, see the     file CRDPRT.DOC
+3 '
+4 ' Copyright 1988 Tony B. Anderson         All Rights Reserved
+5 '
+6 ' V1 - 1/3/88
+7 '
+100 MAXFILES=1:CLEARFRE(0)-1000
+102 CLS:PRINT@48,"CARD FILE PRINT PROGRAM":PRINT
+104 PRINT" This program prints cards or labels     from the data file in various formats."
+106 PRINT" What is the name of the data file to    be used";:INPUTF$:PRINT:IFF$=""THENMENU
+108 ONERRORGOTO110:OPENF$FORINPUTAS1:ONERRORGOTO0:GOTO112
+110 BEEP:PRINT" File does not exist.  Press ENTER to    continue.   ";:Q$=INPUT$(1):RUN
+112 IFEOF(1)THEN290
+114 IFPEEK(1)<>171THENCLS
+116 PRINT" Would you like to print <A>ll the data  cards or <S>earch for specific word     matches? <E>nd or <M>enu? (A/S/E/M) ";
+118 Q2$=INPUT$(1):PRINTQ2$:Q2$=CHR$(ASC(Q2$)AND223):IFINSTR("EM",Q2$)THENMENU
+120 CLS:IFINSTR("AS",Q2$)THEN122ELSEBEEP:CLS:PRINT:GOTO116
+122 PRINT:PRINT" Do you want them in <C>hronological     order (as entered), or in a Pseudo-     <S>orted order? (C/S/E/M) ";
+124 Q3$=INPUT$(1):PRINTQ3$:Q3$=CHR$(ASC(Q3$)AND223):IFINSTR("EM",Q3$)THENMENU
+126 IFQ3$="S"THENGOSUB262
+128 IFINSTR("CS",Q3$)THEN130ELSEBEEP:CLS:GOTO122
+130 IFPEEK(1)<>171THENCLSELSEPRINT
+132 PRINT" Let's look at your original screen      prompts, change any that need to be     changed, and select the ones you want"
+134 PRINT" printed. The screen display will give   you a number for each prompt. Note the  numbers, or press PRINT for a copy!"
+136 GOSUB286:GOSUB290:CLS:FORA=1TON:PRINT@P(A),LEFT$(A$(A),LEN(A$(A))-1);A:NEXT:GOSUB288
+138 CLS:PRINT" Type the number of the prompt you want  to change. Type a zero to change none   of them.":PRINT
+140 INPUT" Number to change";X:PRINT:IFX=0THEN148
+142 IFPEEK(1)<>171THENCLS:PRINT
+144 PRINT" Prompt #"X;CHR$(8)": "A$(X):PRINT:LINEINPUT" Change it to: ";A$(X):PRINT
+146 PRINT" Do you wish to change another? (Y/N) ";:Q$="":Q$=INPUT$(1):PRINTQ$:Q$=CHR$(ASC(Q$)AND223):IFQ$="Y"THEN140
+148 CLS:IFFTHENPRINT" Data Prompts All Restored":F=0
+150 PRINT@41,"Do you want to print all the data       fields? (Y/N) ";:Q$="":Q$=INPUT$(1):PRINTQ$:Q$=CHR$(ASC(Q$)AND223):PRINT
+152 IFQ$="Y"THEN160
+154 PRINT@161,CHR$(27)"J";"Type a zero to end this routine.":PRINT
+156 INPUT" Data field NOT to print";XP:IFXP=0THEN160
+158 F(XP)=1:GOTO154
+160 CLS:PRINT" You are left with the following:"
+162 L=1:FORA=1TON:IFF(A)THEN 168
+164 PRINTA$(A):L=L+1:IFL=7ANDPEEK(1)<>171THENGOSUB286:CLS:L=0
+166 IFL=15ANDPEEK(1)=171THENGOSUB286:CLS:L=0
+168 NEXT:PRINT" Is this correct? (Y/N) ";:Q$="":Q$=INPUT$(1):PRINTQ$:Q$=CHR$(ASC(Q$)AND223)
+170 IFQ$="N"THENFORA=1TON:F(A)=0:NEXT:F=1:GOTO148
+172 CLS:PRINT:PRINT" Assuming you are going to print on      continuous-form card stock, how many    lines on a standard card?  ";
+174 INPUTL1:IFPEEK(1)<>171THENCLS
+176 PRINT:PRINT" How many blank lines do you want for    a top margin on the card?  ";:INPUTL2
+178 PRINT:PRINT" Set left margin at? ";:INPUTL3:CLS:PRINT
+180 IFQ2$="A"THEN190
+182 PRINT" You have selected `Selective Search'.   What `word' would you like to search    for?  ";:LINEINPUTS$:PRINT
+184 SL=0:PRINT" In what entry number will this word     appear? ";:INPUTSL
+186 FORA=1TOLEN(S$):IFASC(MID$(S$,A,1))>64THENMID$(S$,A,1)=CHR$(ASC(MID$(S$,A,1))AND223)
+188 NEXTA:CLS:PRINT
+190 PRINT" OK, We're now ready to print. Line up   the cards in the printer, and press     ENTER to start non-stop printing.  ";
+192 Q$=INPUT$(1):PRINT:IFSETHENPRINT:PRINT" Now Search-Sorting for character "CHR$(34);:P=CSRLIN*40+POS(0):GOTO196
+194 IFQ2$="S"THENPRINT" Now Searching for matching entries."ELSEPRINT" You should have printer output now."
+196 FORA=1TON:IFF(A)=0THENC=C+1
+198 NEXT:L1=L1-L2-C:IFSETHEN216
+200 IFEOF(1)THEN230
+202 GOSUB302:IFQ2$="A"THEN206
+204 IFINSTR(C$,S$)THEN206ELSE200
+206 IFL2THENFORA=1TOL2:LPRINT:NEXT
+208 FORA=1TON:IFF(A)THEN214
+210 IFL3THENLPRINTSPACE$(L3);
+212 LPRINTA$(A);B$(A)
+214 NEXT:FORA=1TOL1:LPRINT:NEXT:GOTO200
+216 X=2*N+1:CLOSE
+218 IFSN$="Y"THENFORS=48TO57:S1=S:GOSUB232:NEXTS
+220 IFSU$="Y"THENFORS=65TO90:S1=S:GOSUB232ELSE228
+222 IFSL$="Y"THENS1=S1+32:GOSUB232:F1=1
+224 NEXTS
+226 IFF1THEN230
+228 IFSL$="Y"THENFORS=97TO122:S1=S:GOSUB232:NEXTS
+230 CLS:PRINT:PRINT" Last card has been printed.  Press      ENTER to return to option menu. ":Q$=INPUT$(1):RUN
+232 OPENF$FORINPUTAS1:FORA=1TOX:LINEINPUT#1,A$(0):NEXTA
+234 PRINT@P,CHR$(S)CHR$(34);
+236 IFEOF(1)THEN244
+238 GOSUB302
+240 IFASC(B$(SE))=S1THENGOSUB246
+242 GOTO236
+244 CLOSE:RETURN
+246 IFQ2$="S"THENIFINSTR(C$,S$)THEN248ELSE258
+248 IFL2THENFORA=1TOL2:LPRINT:NEXT
+250 FORA=1TON:IFF(A)THEN256
+252 IFL3THENLPRINTSPACE$(L3);
+254 LPRINTA$(A);B$(A)
+256 NEXT:FORA=1TOL1:LPRINT:NEXT
+258 RETURN
+260 DIMA$(N),B$(N),F(N),P(N):RETURN
+262 CLS:PRINT:PRINT" You selected Pseudo-Sort for output.    Pseudo-Sort will list the data in       character groups, but";
+264 PRINT" not in a `true'   sort; and take much longer to print.    Do you still want the output sorted?    (Y/N) ";
+266 Q$=INPUT$(1):PRINTQ$:Q$=CHR$(ASC(Q$)AND223):IFQ$="N"THENQ3$="C":CLS:RETURN
+268 IFQ$="Y"THEN270ELSEBEEP:GOTO262
+270 IFPEEK(1)<>171THENCLS
+272 PRINT:PRINT" Sort will be by the first letter in a   specified entry. What entry number is   your sort key";:INPUTSE
+274 CLS:PRINT:PRINT" Answer each of the next 3 prompts with  a `Y' or a `N'. Do you wish to sort on  numbers? ";
+276 SN$=INPUT$(1):PRINTSN$:SN$=CHR$(ASC(SN$)AND223):IFINSTR("YN",SN$)THEN278ELSEBEEP:GOTO274
+278 PRINT" Do you wish to sort on Upper-case       letters? ";:SU$=INPUT$(1):PRINTSU$:SU$=CHR$(ASC(SU$)AND223)
+280 IFINSTR("YN",SU$)THEN282ELSEBEEP:PRINT:GOTO278
+282 PRINT" Do you wish to sort on Lower-case       letters? ";:SL$=INPUT$(1):PRINTSL$:SL$=CHR$(ASC(SL$)AND223)
+284 IFINSTR("YN",SL$)THENCLS:RETURNELSEBEEP:PRINT:GOTO282
+286 PRINT" Press ENTER to continue: ";:Q$=INPUT$(1):RETURN
+288 PRINT@39,"";:Q$=INPUT$(1):CLS:RETURN
+290 IFEOF(1)THENBEEP:PRINT" Data file is empty":PRINT:CLOSE:STOP
+292 INPUT#1,N:GOSUB260
+294 FORA=1TON:IFEOF(1)THEN300
+296 LINEINPUT#1,A$(A):INPUT#1,P(A):NEXT
+298 RETURN
+300 BEEP:PRINT" Data file error":PRINT:CLOSE:STOP
+302 FORA=1TON:IFEOF(1)THEN300
+304 LINEINPUT#1,B$(A):NEXT
+306 C$=B$(SL):IFC$=""THEN314
+308 FORA=1TOLEN(C$)
+310 IFASC(MID$(C$,A,1))>64THENMID$(C$,A,1)=CHR$(ASC(MID$(C$,A,1))AND223)
+312 NEXTA
+314 RETURN
+316 FORA=1TON:B$(A)=" ":NEXT:RETURN

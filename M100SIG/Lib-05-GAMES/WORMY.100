@@ -1,0 +1,103 @@
+10 'WORMY -- by Mark Lutton 11/24/84
+11 'Public Domain
+95 DIM S%(1279)
+97 J=63795:FOR I=64634 TO 64637:POKE I,16*PEEK(J)+PEEK(J+1):J=J+2:NEXT I
+100 GOSUB 1000
+150 IF FS%>0 THEN 200
+170 GOSUB 1500
+200 '
+210 R$=INKEY$:IF R$<>""THEN K%=ASC(R$)
+220 IF K%<28 OR K%>31 THEN 210
+260 IF K%=28 THEN IF HX%=79 THEN GOTO 2000: ELSE NH%=SH%+1:HX%=HX%+1:GOTO 300
+270 IF K%=29 THEN IF HX%=0 THEN GOTO 2000:ELSE NH%=SH%-1:HX%=HX%-1:GOTO 300
+280 IF K%=30 THEN IF HY%=0 THEN GOTO 2000:ELSE NH%=SH%-80:HY%=HY%-1:GOTO 300
+290 IF K%=31 THEN IF HY%=15 THEN GOTO 2000:ELSE NH%=SH%+80:HY%=HY%+1:GOTO 300
+300 '
+301 SOUND ((K%-20)*1200),1
+305 IF S%(NH%)>0 GOTO 2500
+310 PB%=SH%:GOSUB 3000
+320 S%(SH%)=NH%:S%(NH%)=32767
+330 PB%=NH%:GOSUB 3500
+340 SH%=NH%
+400 '
+410 IF F%>0 THEN F%=F%-1:L%=L%+1:IF L%>=1280 GOTO 4000:ELSE GOTO 450
+420 PB%=ST%:GOSUB 3800
+430 T% = S%(ST%):S%(ST%)=-1:ST%=T%
+450 '
+460 IF SH%<>FL% THEN 150
+470 F%=F%+FS%:FS%=0
+480 GOTO 150
+1000 '
+1003 INPUT"Would you like instructions";R$
+1005 IF R$="y" THEN GOSUB 1400
+1007 K%=8
+1010 PRINT:PRINT "Wait a minute ... "
+1020 FOR I%=0 TO 1279:S%(I%)=-1:NEXT I%
+1025 CLS
+1030 '
+1040 FOR I%=648 TO 655
+1050 PB%=I%:GOSUB 3000
+1060 S%(I%)=I%+1
+1070 NEXT I%
+1080 PB%=656:GOSUB 3500
+1090 S%(656)=32767
+1100 ST%=648:SH%=656
+1110 HX%=16:HY%=8
+1115 L%=9
+1120 FS%=0
+1130 F%=0
+1399 RETURN
+1400 CLS:PRINT "                 WORMY"
+1410 PRINT "       by Mark Lutton  73106,1627"
+1420 PRINT "You are a greedy little worm. Use the"
+1430 PRINT "arrow keys to squinch around the screen.";
+1440 PRINT "Eat the food.  Every meal will"
+1450 PRINT "make you longer by 1 to 12 segments."
+1460 PRINT "Don't run into yourself or the wall."
+1470 PRINT "      Hit any key to continue.";
+1480 R$=INPUT$(1)
+1499 RETURN
+1500 '
+1530 I%=0
+1540 FL%=RND(1)*1280
+1550 IF S%(FL%)<0 THEN 1600
+1560 I%=I%+1:IF I%<10 THEN 1540
+1580 FL%=FL%+1:IF FL%>1279 THEN FL%=0
+1590 IF S%(FL%) >-1 THEN 1580
+1600 '
+1610 FS%=RND(1)*12+1
+1630 F2%=FS%:I%=3:PX%=(FL%MOD80)*3:PY%=(FL%\80)*4
+1640 PSET (PX%,PY%):F2%=F2%-1:IF F2%=0 THEN 1700
+1650 PX%=PX%+1:I%=I%-1:IF I%>0 THEN 1640
+1660 PX%=PX%-3:PY%=PY%+1:I%=3:GOTO 1640
+1700 '
+1999 RETURN
+2000 FOR I=1 TO 5:SOUND 12538,1:SOUND 0,1:NEXT I:PRINT:PRINT "In your greed and haste, you ran into"
+2010 PRINT "the wall so hard you broke your head."
+2020 PRINT "You are dead, a victim of your own "
+2030 PRINT "greed."
+2040 GOTO 4050
+2500 FOR I=1 TO 15:SOUND 12538,1:NEXT I:PRINT:PRINT "In your foolish haste you ran into"
+2510 PRINT "yourself so hard you injured yourself"
+2520 PRINT "mortally."
+2530 GOTO 2020
+3000 '
+3010 PX%=(PB%MOD80)*3:PY%=(PB%\80)*4
+3020 LINE (PX%,PY%)-(PX%+2,PY%+3),1,BF
+3499 RETURN
+3500 '
+3510 PX%=(PB%MOD80)*3:PY%=(PB%\80)*4
+3520 LINE (PX%,PY%)-(PX%+2,PY%+3),1,B
+3799 RETURN
+3800 '
+3810 PX%=(PB%MOD80)*3:PY%=(PB%\80)*4
+3820 LINE (PX%,PY%)-(PX%+2,PY%+3),0,BF
+3999 RETURN
+4000 CLS:PRINT "I can't believe you ate the whole thing."
+4010 PRINT "You greedy little worm!  You have"
+4020 PRINT "filled up the screen with your slimy"
+4030 PRINT "self.  Now what will you do? You have"
+4040 PRINT "won, only to die of starvation!"
+4050 PRINT "Your score: ";L%;:INPUT "Play again";R$:IF R$="n" THEN MENU
+4060 GOTO 100
+4998 'end of WORMY by Mark Lutton

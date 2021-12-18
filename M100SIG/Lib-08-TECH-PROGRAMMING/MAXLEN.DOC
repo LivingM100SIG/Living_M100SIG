@@ -1,0 +1,27 @@
+MAXLEN.CO   For the TRS-80 M100 will 
+limit the keyboard input for the INPUT 
+and LINEINPUT statments. See MAXLEN.DOC
+ and MAXLEN.LDR files.
+ 
+To Enable :CALL 57857
+To Disable:CALL 57864
+ 
+To set Max length :poke 57856,length
+ 
+MAXLEN.CO  Will auto Disable when
+ program stops, but you will need to 
+disable it if you use the INPUT$ 
+statment.
+ 
+DEMO BASIC PROGRAM
+ 
+5  CLS:CLEAR 256,57856:LOADM"MAXLEN.CO"
+10 CALL 57857	'Enable RST7 interrupt
+20 POKE 57856,12'Set Max line length=10
+30 LINEINPUT "First name: ";A$
+40 CLS:PRINT:PRINT"Hello ";A$:PRINT
+50 CALL 57864	'Disable for INPUT$ statement
+60 PRINT"Press any key for MENU ";:B$=INPUT$(1):MENU
+ 
+ 
+	Good Luck

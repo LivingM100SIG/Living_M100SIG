@@ -1,0 +1,41 @@
+0 'Directory Recovery Procedure
+1 ' assumes that main directory is overwritten, GOSUB900 looks for subdirectory cluster#
+3 'Then read a good directory from another disk, fudge it up to point to folders, write over clobbered directory
+4  CLEAR3000,MAXRAM
+5 CLS:PRINT "Mount disk with damaged main directory":PRINT "Will find subdirectories":INPUT;A$
+6 PRINT DSKI$(0,0,1,0):PRINT:INPUT"If directory overwritten, type Y";A$:IFA$="Y"THEN10ELSEMENU
+10 GOSUB900
+12 CLS:INPUT"Now mount a good disk";A$
+16 GOSUB20:GOTO200
+20 DA$=DSKI$(0,0,1,0):DB$=DSKI$(0,0,1,1):DC$=DSKI$(0,0,3,0):DD$=DSKI$(0,0,3,1)'reads first copy dir
+70 RETURN
+200 INPUT"Name of damaged disk (9 lower-case letters only";A$
+202 DX$=DA$+LEFT$(DB$,127)
+205 MID$(DX$,1)=CHR$(240)+LEFT$(A$,9)  'disk title
+210 FORN=1TOKK-1'if more than 6 clusters, need DB$ too
+218 MID$(DX$,18*N+1+1)=F$(N)'Nth folder
+220 MID$(DX$,18*N+11)=CHR$(C(N))+CHR$(C(N))+"U1U1"'cluster #
+222 MID$(DX$,18*N+1)=CHR$(240)'folder code
+225 NEXT N
+260 FOR ST=1TO(KK-1)*18+1 STEP18 :GOSUB400:NEXT ST'
+290 BEEP:INPUT"Switch to DAMAGED DISK NOW....Ready to write directory? Y/N ";A$:IFA$="Y"ORA$="y"THEN295ELSESTOP
+295 DA$=LEFT$(DX$,128):DB$=RIGHT$(DX$,127)
+300 DSKO$ 0,0,2,0,DA$:DSKO$ 0,0,1,0,DA$
+310 DSKO$ 0,0,2,1,DB$:DSKO$ 0,0,1,1,DB$
+320 DSKO$ 0,0,3,0,DC$:DSKO$ 0,0,4,0,DC$
+330 DSKO$ 0,0,3,1,DD$:DSKO$ 0,0,4,1,DD$
+340 MENU 'writes duplicate directory
+400 PRINT ASC(MID$(DX$,ST+10,1));:PRINT TAB(15);MID$(DX$,ST+1,9):RETURN
+900 'look for subdirectory
+906 KK=1:ONERRORGOTO990
+910 FORT=0TO79:FOR S=1 TO18 STEP 6
+915 K=KK:EN=0:IFT=0ANDS<7THEN930
+920 KK=K:IF DSKI$(0,T,S,SW)<>DSKI$(0,T,S+1,SW) THEN 930 'test of subdir is s1=s2,s3=s4
+923 IF MID$(DSKI$(0,T,S,0),1,1)=CHR$(240)THEN924ELSE930'additional test for subdirectory
+924 C(KK)=3*T+INT(S/6):F$(KK)=MID$(DSKI$(0,T,S,SW),2,9):IFLEN(F$(KK))<2ORC(KK)=0THEN930ELSEKK=KK+1
+925 PRINT MID$(DSKI$(0,T,S,SW),2,9);:PRINT "  Cluster #";3*T+INT(S/6);"  KK=";KK-1
+930 NEXT S,T
+940 RETURN
+990 PRINT"Error ";ERR,T;S;EN;CHR$(13);:IFEN<4THENEN=EN+1:RESUME920ELSEN=0:RESUME930'skips flaky sectors aftr 4 tries
+991 ' hunts for subdirectories when main directory clobbered
+994 'revision 5/4/85 W.H.Calvin CIS:71256,1353

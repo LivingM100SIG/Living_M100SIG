@@ -1,0 +1,23 @@
+0 'CO-RUN.100 by Russ Villanueva		[70526,1434] 19-May-85		      - For M100 Sig Users Only -
+1 'This program Lists M/L programs and	   will load & run the one you chose.	   CHANGING THIS PROGRAM MAY CAUSE IT
+2 'NOT TO WORK.  This program assumes	   that you will always load .CO	   programs at MAXRAM
+3 'lines 15,25 are from Rick Perrys'		CO2BA.BA in DL4
+4 'Ricks's PRINTZ.CO is automatically      disabled to avoid "CCCold SSStarts".
+5 'This program is 1045 Bytes long when    loaded. Checksum may be different I	   use real Tabs.
+6 GOTO100
+10 INPUT"Which one";A$
+11 IF A$="" THEN MENU
+15 ONERRORGOTO60:RUNMA$
+25 X=64206:P=PEEK(X)+256*PEEK(X+1):IFP<>HIMEMTHENPRINTA$".CO  = ";P;:CLEAR256,P
+27 FORP=65304TO65309:A$=A$+CHR$(PEEK(P)):NEXT:RUNM A$
+30 MENU
+60 IFERR=7THENRESUME25ELSEGOTO600
+100 CLEAR256,MAXRAM:POKE64228,243:POKE64229,127:CLS:PRINT@280,"Auto M/L List & Run":PRINT:GOSUB200:GOTO10
+200 FORM=-1408TO-1617STEP-11:F$="":IFPEEK(M)THENFORN=0TO7:F$=F$+CHR$(PEEK(M+3+N)):NEXT
+210 IFMID$(F$,7,2)="CO"THENPRINTLEFT$(F$,6)+"    ";
+220 NEXT:PRINT:PRINT:RETURN
+600 PRINTA$+".CO"
+601 IF ERR=5 THEN PRINT" does not have an Execute address.":END
+602 IF ERR=52 THEN PRINT"Is not a valid .CO File.":END
+603 STOP
+

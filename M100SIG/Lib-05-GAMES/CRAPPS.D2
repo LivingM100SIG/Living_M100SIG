@@ -1,0 +1,52 @@
+CRAPPS.QIK file
+
+CRAPPS.QIK creates the machine language file CRAPS!.CO, necessary for running 
+CRAPPS.100.  It is a major improvement in the graphics of this game, as the 
+playing table no longer dissappears, as it did in earlier versions.
+
+To create CRAPS!.CO, you must use RLCLDR.BA from DL7.
+
+First, name the .DO file containing CRAPPS.QIK "CRAPS!.DO".  CRAPS! has to be 
+the name of the final .CO file, and this is the easiest place to name it.
+
+Before running RLCLDR, you must clear memory.  If you have no other machine 
+language programs in high memory, enter
+
+CLEAR 256, 60991.
+
+Otherwise, use a lower address instead of 60991.
+
+Then, run RLCLDR.  Answer the first prompt with 1 (for LOAD).  When it asks for
+a .DO file, enter CRAPS!.  When it asks for start address, enter the memory you
+cleared earlier (just the last 5 digit number, not the 256).  The program will 
+finish the job itself, and when it tells you it is DONE, you are almost ready 
+to play!
+
+If you would like to save CRAPS!.CO as a .CO file on cassette, go into BASIC 
+and enter LOADM "CRAPS!" , and write down the three numbers that appear on the 
+screen (Top, End, Exe).  Ready your recorder, and enter 
+CSAVEM"CRAPS!.CO",xxxxx,xxxxx,xxxxx
+where the xxxxx's are the three numbers you copied.
+
+You can check your CSAVEM by rewinding the tape and entering: CLOADM?
+
+The next time you want to load the program from cassette, the command will be:
+
+CLOADM "CRAPS!"
+
+After it is loaded, immediately type:
+
+SAVEM "CRAPS!",xxxxx,xxxxx,xxxxx
+
+using the numbers as above.
+
+EDIT line 263 of CRAPPS.100, changing 58267 to whatever start address you used 
+above.  The number appears twice on that line; change it in BOTH places.
+
+If you are using an address lower than 60991 to protect some higher-memory 
+program, you may also EDIT line 45; change MAXRAM to
+
+HIMEM+1968
+
+Now, run CRAPPS.100 and have fun!
+

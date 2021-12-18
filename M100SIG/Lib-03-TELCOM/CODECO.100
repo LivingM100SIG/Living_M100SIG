@@ -1,0 +1,31 @@
+1 'Written by Don Corbitt, Dec 5, 1983
+2 'Copyright 1983. For private use only
+5 'File encodeing - decoding program for6 ' .DO files.  Allows the Model 100 to
+7 'send files with graphics characters
+8 'over the modem with a setting of
+9 'M7I1E.
+10 IF MAXFILES<2 THEN MAXFILES=2
+11 CLS:PRINT"Encode a file (to send it)":PRINT"or Decode a file (to view it)
+.":PRINT"E/D":ED$=INPUT$(1):PRINT ED$:IF ED$="e" OR ED$="E" THEN 15 
+12 IF ED$="d" OR ED$="D" THEN 90 ELSE BEEP:GOTO 11
+15 INPUT"File to Encode";F1$
+16 INPUT"New file name (must be different)";F2$
+17 OPEN F1$ FOR INPUT AS 1:OPEN F2$ FOR OUTPUT AS 2
+20 IF EOF(1) THEN 80 ELSE I$=INPUT$(1,1):I=ASC(I$):IF I<123 AND I>9 THEN 
+PRINT#2,I$;:GOTO 20
+25 IF I=9 THEN PRINT#2,CHR$(123);:GOTO 20 'save tabs as other char
+30 IF I<128 THEN PRINT#2,CHR$(124);I$;:GOTO 20 ' escaped codes
+40 IF I<192 THEN PRINT#2,CHR$(125);CHR$(I-96);:GOTO 20
+50 PRINT#2,CHR$(126);CHR$(I-160);:GOTO 20
+80 PRINT"File encoded and ready to be sent":MENU
+90 INPUT"File to be Decoded";F1$
+92 INPUT"New file name (must be different)";F2$
+94 OPEN F1$ FOR INPUT AS 1:OPEN F2$ FOR OUTPUT AS 2
+110 IF EOF(1) THEN 200 ELSE I$=INPUT$(1,1):I=ASC(I$):IF I<123 THEN 
+PRINT#2,I$;:GOTO 110
+120 IF I=123 THEN PRINT#2,CHR$(9);:GOTO 110
+130 IF I=124 THEN PRINT#2,INPUT$(1,1);:GOTO 110
+140 IF I=125 THEN PRINT#2,CHR$(96+ASC(INPUT$(1,1)));:GOTO 110
+150 PRINT#2,CHR$(160+ASC(INPUT$(1,1)));:GOTO 110
+200 PRINT"File Decoded, and ready to view.":END
+

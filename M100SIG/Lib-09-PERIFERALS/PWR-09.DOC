@@ -1,0 +1,219 @@
+
+
+
+                                    Chapter 6
+                                  Data Recovery
+
+          From time to time, the PDD will malfunction and ruin a
+          diskette.  By some derivative of Murphy's law, you can
+          predict that it will ruin a valuable diskette without a
+          backup.  RECOVR.BA is a POWR-DOS utility that can recover
+          some or all of the data.  Even better, if you accidentally
+          KILL a file, the chances are good that you can recover it -
+          provided that you realize your mistake immediately.
+
+
+                                Basic Procedures
+
+          Before running RECOVR, prepare a diskette to receive the
+          data.  RECOVR moves files from the "damaged" diskette to a
+          destination diskette, which does not need to be empty, but
+          should be formatted and have sufficient room to hold the
+          files.
+
+          Once you have the destination diskette ready, run RECOVR.  It
+          will prompt you:
+
+
+          Insert Source Diskette...press key
+
+
+          Insert the diskette containing the lost data.  After a short
+          pause, the program will respond with one of two messages. 
+          Either:
+
+
+          Directory is damaged.
+
+          or:
+
+          Ignore sectors in use (y/n)?
+
+
+          In the first case, the directory sector itself has been
+          damaged.  This is most often the case when an entire diskette
+          appears to be "trashed", i.e., you cannot even use LFILES to
+          examine its contents.  In the second case, you can look at
+          the diskette contents, but perhaps an important file has been
+          deleted or cannot be read properly.  Normally, you will
+          always want to ignore sectors that the directory has marked
+          "in use", so answer the question with a "y".
+
+
+                                     Page 39
+          Chapter 6              Data Recovery               Page 40
+
+
+          The next message will be a series of messages saying
+          something like "reading sector 1". Eventually, the following
+          screen will appear: 
+
+
+                     ----------------------------------------
+                    | -------------------------------------- |
+                    ||    POWR-DOS Data Recovery Program    ||
+                    | -------------------------------------- |
+                    |    Sectors 2-9    File Length Range:   |
+                    |                   8961 to 10240        |
+                    |    Choose Type:                        |
+                    | ------------------                     |
+                    ||BA   DO   CO  Skip| GO                 |
+                     ----------------------------------------
+
+
+          RECOVR knows that there is a series of sectors that could
+          make a file, but it is not smart enough to know what sort of
+          file it is: DOcument, BAsic, or COmmand.  You can examine
+          each possibility and select a type, or choose to ignore the
+          file altogether, using [F1] to [F4].  For each different
+          file, RECOVR will give some data:
+
+
+             * For DOcument-type files, the first characters in the
+               file;
+
+             * For BAsic-type files, the first several line numbers;
+
+             * For COmmand-type files, the TOP, END, and EXE.
+
+
+          Normally, it is simple, using this data, to decide which type
+          of file.  (If you're not sure, see the notes in the next
+          section.)
+
+          Pressing [F1] to [F4] will do nothing except show you the
+          option; you can press them indefinitely until you can decide
+          which file type to choose.  Once you do decide, press [F5] to
+          GO.  If you choose a file type, RECOVR will ask you for a
+          file name.  You must specify a full name, i.e., including an
+          extension.  Then RECOVR will begin reading the lost file into
+          RAM; eventually, it will prompt you:
+
+
+          Enter Destination Disk...press key
+          Chapter 6              Data Recovery               Page 41
+
+
+          You may need several swaps before the file is completely
+          restored to the destination diskette.  Once the transfer has
+          completed, RECOVR will look for other "lost" files on the
+          diskette; once all files have been recovered or ignored, it
+          prints the message:
+
+
+          All sectors accounted for...
+          Recovered:  nn
+          Ignored:  nn
+          Bad:  nn
+          Allocated:  nn
+          Empty:  nn
+          Press Space Bar for Menu
+
+
+          You now have recovered all you can from the diskette.  If
+          there were any "bad" sectors on the diskette, you should now
+          consider re-formatting it.  Use it carefully until it proves
+          reliable, otherwise discard it.
+
+          Recovered BAsic and DOcument files will usually have some
+          "garbage" at the end.  You should examine them to remove this
+          garbage.
+
+
+                                Notes and Options
+
+                                How RECOVR Works
+          THe PDD divides disks into 80 sectors.  The first sector is a
+          directory, which keeps track of the following information:
+
+
+             * The active files on the disk.  For each file, the
+               directory also stores the beginning and ending sectors,
+               and the length of the file.
+
+             * Which sectors are "in use" on the diskette.  When your
+               computer tries to write more data to the diskette, the
+               PDD always uses an unused sector for the data.
+          Chapter 6              Data Recovery               Page 42
+
+
+          RECOVR takes advantage of a peculiarity of the PDD: It does
+          not store the precise series of sectors in the directory. 
+          Instead, the directory only contains the number of the first
+          sector of the file; then, the first sector "points" to the
+          second, and so on.  The most common way a disks gets
+          "trashed" is by losing the directory; this is logical,
+          because the directory is being updated constantly, whenever
+          any file changes.  Even without the directory, though, the
+          other sectors (provided they are still readable themselves)
+          can be used to form a chain which contains a file.
+
+          There are several implications to this basic recovery
+          procedure:
+
+
+             * If a file contains a bad sector in the middle, it
+               cannot be fully read.  In the case of DOcument and
+               BAsic files, RECOVR can still construct a partial file.
+
+             * RECOVR must assume that the first sector of a file will
+               have the lowest number.  This is nearly always a good
+               assumption, except when dealing with certain cases where
+               a DOcument file has been appended to.
+
+             * The precise lengths of DOcument files and BAsic files
+               are not available.  COmmand file-lengths can be
+               determined from the TOP, END, and EXE values, stored in
+               the file itself.
+
+
+                             Deciding the File Type
+
+          It is usually obvious which file type makes the most sense. 
+          One will look "normal", and the other will be nonsensical or
+          unfamiliar.  Here are a few quick tip-offs:
+
+
+             * A file is almost never a DOcument file unless it
+               contains readable text.  Graphics characters are usually
+               a dead giveaway that a file is not a DOcument file.
+
+             * If there is only one BAsic line number in the first
+               sector of a file, or the numbers are not in ascending
+               order, the file is almost certainly not a BAsic file.
+          Chapter 6              Data Recovery               Page 43
+
+
+             * If END is lower than TOP, or EXE falls outside the range
+               of TOP and END, it probably isn't a COmmand file.  An
+               exception is PCSG (CT and CA) files, which will have a
+               TOP of 65535, and an END equal to the file length less
+               1, and an EXE of 63012 (for the M100).  Unfortunately,
+               there is no easy way to tell whether it is a CA or a CT
+               file except by trial and error.
+
+
+          If you cannot decide which type of file a sector series
+          should be, it is probably best to ignore it.  It might be
+          some leftover data from an old deleted file.
+
+
+                               Errors and Recovery
+
+          Data recovery is more of an art than a science.  RECOVR will
+          work in many cases, but there are cases when it does not.  If
+          you cannot recover your data, you may want to save the
+          diskette in anticipation of receiving help from someone else
+          in the future; however, we cannot guarantee that you will be
+          able to recover anything at all.
+

@@ -1,0 +1,210 @@
+USING THE TANDY PORTABLE DISK DRIVE (TDD) IN CONJUNCTION WITH THE 
+TANDY DISK/VIDEO INTERFACE (DVI).
+										
+
+OTHER REFERENCES:  DL5: D100.BA
+	 	   DL5: TDDTIP.006
+										
+
+GENERAL
+										
+
+If you own a Disk/Video Interface (DVI) and wish to use the Tandy
+Portable Disk Drive (TDD) at the same time, there are some RAM obstacles that
+need to be overcome.  However, once these problems are resolved the two
+devices can be attached to the M100 concurrently and operated with only
+some minor inconveniences.
+										
+
+Specifically, software must be employed to
+switch MAXRAM between 58263 and 62960 depending on what disk drive is going to
+be used.  Hardware-wise there are no immediate conflicts since the DVI
+uses the 40 pin expansion bus located on the bottom of the M100 and the TDD
+uses the RS232 interface.  The resetting of MAXRAM can be done from
+BASIC by executing CALL instructions.
+										
+
+SOME BACKGROUND
+										
+
+Presently in DL5 there is a program (George Saladino's D100.BA) that allows the
+
+user to switch (or recapture) the RAM used by the DVI.  However,
+as it exists this switching or recapaturing process is ONLY safe if the M100
+remains attached to the DVI and the DVI DOS *must* be reinstalled prior to
+disconnecting M100 from the DVI.  Otherwise, if the user recaptures the memory
+used by the DVI DOS (MAXRAM to 62960) and then disconnects from the DVI
+itself -- a cold start will occur after files are modified and the M100 is
+powered down and up again.
+										
+
+FIX
+										
+
+or the past several months I have been able to successfully recapture the
+RAM used by the DVI, disconnect from the DVI, modify-add-delete .BA, .CO, .DO,
+and .CA (Lucid) files.  Upon returning to the DVI, the modified version of
+D100.BA is again run only this time the DVI software is loaded back into the
+M100 (MAXRAM is reset to 58263 with the DVI occupying 58263-62960).
+In some case this would require a utility file of
+sufficient size be killed (in my case usually SUPERA) to provide RAM for the
+reset process to occur.  The only modification needed to the D100.BA program
+was a POKE instruction in line 170 (after CALL 32454: insert POKE 62966,201).
+										
+
+(NOTE:  This information was previously discussed on the bulletin
+board but at that time I was unsure as to whether any adverse effects would
+result.  Since a significant period of time has elapsed with no problems
+resulting, I am now confident that this procedure is safe.)
+										
+										
+
+AS IT RELATES TO THE TDD
+										
+
+ith this information a utility program 
+can be installed that allows the loading and unloading of the DVI or
+TDD operating systems at the discretion of the user and the
+following can occur:  (with DVI DOS installed) download files from DVI ---> 
+switch out DVI DOS (recover RAM) and load and run TDD DOS ---> save file
+previously downloaded from DVI to TDD, or vica-versa, etc. etc.
+										
+										
+
+ABOUT THE PROGRAM
+										
+
+The below program is a modified version of D100.BA.  Because
+of the frequent DOS transfers and resetting of MAXRAM, I elected to remove
+that portion dealing with updating DATE$/DAY$/TIME$ in a semi-automatic
+manner.  I would suggest
+that the original version be downloaded and studied if further
+information on updating DATE$/DAY$/TIME$ is desired.
+										
+
+*** For this program the TDD DOS must be renamed from FLOPPY.CO to TPDD.CO and
+saved in RAM as TPDD.CO.  If you wish to continue to use FLOPPY.CO as
+your TDD DOS file name then you will have to scan the program and
+make the appropriate changes. ***
+										
+
+When you elect to reload the DVI DOS the M100 must be connected to
+the DVI.  If it isn't you will be returned to the utility
+menu.  If you attempt to activate the TDD DOS
+prior to recovering the DVI RAM and resetting MAXRAM to 62960,
+the program will just BEEP at you and return to the utility menu.
+In either case no harm will befall your programs, documents, etc.
+										
+
+What the function keys do:
+										
+
+	(F1)	Sets or resets MAXRAM between 62960 and 58263.  If reset
+		to 58263 the DVI DOS will also be loaded from the
+		DVI system disk in drive 0.  The DVI
+		must be connected for MAXRAM to be changed to
+		58263 and the DVI DOS loaded.
+										
+
+	(F2)	Prepares the F6 & F7 keys to enable (F6) and disable (F7)
+		the LCD screen scroll.  (On aplication of disabling the LCD
+		scroll allows downloading from other computers, via the
+		RS232, at a baud rate of up to 2400 without
+		losing characters.)  After loading F6 & F7, the prgram
+		transfers control to TELCOM.
+										
+
+	(F3)	If MAXRAM is appropriate (62960) then HIMEM is
+		set to 59400 and the TPDD DOS is loaded.  After
+		being loaded it is POKED to return it to the
+		original DOS released by Tandy.
+		As such it loads BASIC programs from the 'bottom'
+		and will displace the first .BA program previously
+		saved in the M100 (See TDDTIP.006).
+										
+		Control then transfers to the TDD DOS and its MENU appears.
+										
+
+	(F4)	Similar to (F3) only the POKES performed are as described in
+		TDDTIP.006 and allow for .BA program to be saved without
+		displacing the first saved .BA program, i.e., .BA programs are
+		saved from the 'top'.
+										
+	(F5)	Allows DATE$/DAY$/TIME$ to be set by the user.
+										
+
+	(F8)	Returns to the M100 main MENU.
+										
+										
+
+UTILITY PROGRAM
+										
+
+1000 CLS:AA=PEEK(63036):IFAA=80THENWIDTH40:PRINTCHR$(27)+CHR$(81)
+1100 PRINT@1,DATE$:PRINT@81,"F1: RESET MAXRAM":PRINT@102,"F2: SCROLL/TELCOM"
+1200 PRINT@121,"F3: TPDD DOS (1)"
+1300 PRINT@142,"F4: TPDD DOS (2)":PRINT@161,"F5: DATE/DAY/TIME"
+1350 PRINT@182,"F8: MENU"
+1400 IFMAXRAM=58263THENPRINT@241,"MAXRAM: DVI"ELSEPRINT@241,"MAXRAM: TPDD"
+1500 KEY(1)ON:KEY(2)ON:KEY(3)ON:KEY(4)ON:KEY(5)ON:KEY(6)ON:KEY(7)ON:KEY(8)ON
+1600 ONKEYGOSUB1900,2400,2500,2700,2900,1800,1800,3200
+1700 A$=INKEY$:IFA$=""THENPRINT@31,TIME$:GOTO1700
+1800 BEEP:GOTO1500
+1900 CLS:CLEAR256,HIMEM:SCREEN0,0:IFMAXRAM=62960THEN2100
+2000 GOTO2200
+2100 CLEAR256,HIMEM:PRINT@132,"GOING TO DISK ":CALL27862
+2200 PRINT@123,"GOING BACK TO 100 MEMORY!"
+2300 CALL32454:CLEAR256,62960:POKE62966,201:RUN
+2400 POKE64268,68:POKE64269,66:POKE64270,63:POKE64271,66:WIDTHAA:CALL20806
+2500 IFMAXRAM=58263THENBEEP:RUN
+2600 CLEAR256,59400:LOADM"TPDD.CO":POKE61571,192:POKE61572,250:POKE61573,35
+2650 CALL59400
+2700 IFMAXRAM=58263THENBEEP:RUN
+2800 CLEAR256,59400:LOADM"TPDD.CO":POKE61571,154:POKE61572,249:POKE61573,0
+2850 CALL59400
+2900 ONERRORGOTO3300:CLS:PRINT:LINE INPUT"DATE (MM/DD/YY) : ";DT$:DATE$=DT$
+2950 PRINT
+3000 ONERRORGOTO3400:LINEINPUT"DAY: ";DY$:DAY$=DY$:PRINT
+3100 ONERRORGOTO3500:LINEINPUT"TIME (HH:MM:SS) : ";TM$:TIME$=TM$:RUN
+3200 MENU
+3300 RESUME2900
+3400 RESUME3000
+3500 RESUME3100
+										
+										
+
+CAUTION TO MODEL 200 USERS
+										
+
+Since the Model 200 has differences in its ROM/RAM, the above program
+will not work.  However, if the corresponding addresses can be determined
+for the M200, there is no reason that a similar program could not be
+executed successfully.  Perhaps TANDY would
+be willing to give the needed information reference the correct
+address locations.  With that, the above program could be changed
+appropriately.
+										
+
+OTHER ALTERNATIVES
+										
+
+Another alternative to switching DOS systems in the M100 RAM is the 
+using of multiple memory banks and having the DVI DOS in one bank and the
+TDD DOS in the other, with files being transferred from bank to
+bank as needed for final placement on disk.  Presently I do not have
+multiple banks and so have not actually performed this procedure but
+see it as an alternative.
+										
+										
+
+SUMMARY
+										
+
+In light of the popularity of the TDD there will, hopefully, be
+made available in the future months alternative DOS systems that
+can be relocated to facilitate DVI or other
+needs.  During the interim, the above information will serve as a
+start and will allow the TDD to serve as a peripherial to the M100
+while at the same time being relatively compatable with the DVI.
+
+

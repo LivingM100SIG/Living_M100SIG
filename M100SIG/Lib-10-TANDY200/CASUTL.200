@@ -1,0 +1,41 @@
+1 'CASUTL.200  [7/12/89]
+2 'Cassette file saver/loader.
+3 'Copyright (c)1989 by James Yi [73327,1653]
+4 'Basic loader to create CASUTL.CO
+5 'See CASUTL.DOC for documentation.
+10 CLEAR99:GOSUB20
+15 F$="CASUTL.CO":F=0:GOSUB30
+19 END
+20 PRINT"11 seconds..":FORN=63580TO63822:P=P+2:IFP>LEN(D$)THENREADD$:P=1
+24 D=(ASC(MID$(D$,P,1))-65)*16+ASC(MID$(D$,P+1,1))-65:POKEN,D:C=C+D:NEXT:IFC=34996THENRETURN
+28 GOSUB45:PRINT"loader.  Can't continue.":END
+30 PRINT"End address for ";F$;:A=-1:INPUT" (Press ENTER for just below HIMEM)";A
+40 CALL63580,F,A:F=F+1:E=PEEK(63574):IFETHENPRINT"Warning - ";:GOSUB45ELSEPRINT"Loaded ";
+44 CALL4556,,63302:PRINT".CO":RETURN
+45 PRINT"Bad checksum on ";:BEEP:RETURN
+50 DATA MGDADCFGPIDCFHPIOFCKGHOPOLONCLCCFKPICBEGPHFHMNNCPICBPLPEMNNCPIOBNFAIMKKLPICDAIMCIJPICKLEOOOFCKPNPEEEENOBAIOFBBPLPEONEEEN
+55 DATA OBNJAICCFIPIOLCKPPPEHMLFMKKLPIBJCCPPPEMNGCCMMNKGCLMEMOCKMNGCCMMNGGDAMNKGCLOLMNKBEBCDCDNBMNNFPIDCEMPHMNPHPIJCDCFGPIMJABAG
+60 DATA AAMFOFMNPHPIOBHHEHHKNKOLPICLEOOLCKFIPIAJNJOLCDIAAPFHCDMBALHILBMCNFPIMJNFFEMNBEPJPOCKNCAPPJNGCFFHAPAPOGMAFPMNBEPJNGDALDNG
+65 DATA GLBINBMJCKFKPIHOLHMKCHPJHOPOCJCDCCFKPIMADODKMJABAFAAAJHONGIDMCEDPJCDLOMKCKPJABFGPIAKLHMKEDPJDKFHPIJGACCDHOMKBIPJLHMCEDPJ
+70 DATA MDCHPJ
+100 DATA0#^#\#n$0#o#g$GSip$GS.$S&C#>VX#=$A&I.!8&C#SkV#=$6&I|#OZX#=$C&I#<$H&ED#<kk#=$A&I#<#0&I8!9$B#<$j&CP8b}R8"o{A$1#M$@&I5P&D
+101 DATA ia5P&Dih55&Ci[5/&CA!R-!4&C#E$C&I#=#OZL48$R$5.#E#E8$=#G8!R&D/>&D#U#abi#V5$;&D#<!E]#=$>&I#U$8&Ii#E-#0&D8+#0#Yq8"o$=#E$>
+102 DATA &I8]#F5#n&D#=$>&I#>#>#>qs|#ab@8!B#ML|#j&Iys8|$I5\&C87#F7#`#j58&CVi$[5!>&Di!;5$W&Di+-\&CP8$C$],0s#=h_#Y!78#`&HLP8#_#3L
+103 DATA yk$Yi#55!5&D#>x-#`&D.#Y&D!J#M$8&I#<#V#V#=#ab.$C&D8+#0#Yw8"o$=#<kk#=j_#>#=h_V#<jj#=f_.$f&DP|f_8!@#ML8!<#\#k$4#>#>P@#Y;
+104 DATA 8#`&H8!H#N<L8#g#K#U$8&Ii#E+.L&CP8#9q#F,s#=h_0P#Y>8#`&H.$m&D#E$A&I$W!P#F-4&D#<z&I8!9$B8^#oB,30#M$8&Ii#E48#^#H85$5|#gb#
+105 DATA 5i#;+#<#^#jD48!R&D5`&Di#Z5#[&Fi#I/>&D8$=#G8*&Fi>5y&Fi!75#h&Fi;5#6&E`#<j&H8!9$B\$J#Ak8v#b.>&E#U$8&Ii#V#Eh_|kkV5#m&E#U$
+106 DATA @&I!R5#m&EVPlqkt#=$9&I#E$>a#=$;&I#Y!;8S&EV#=$>aqq|f_8!U#\<P@8!=#083#0<Li$h-$Y&E8$^#L-$Y&E#M$=&I.>&E$Vi#T#<#R&I5!Q&Ei#
+107 DATA R#<j&H5$\&E#<#a&I#U$=&I!R5!U&EP#E$>&I$Y`#Qk#E$9&I#_#h#E$;&I08E$],\i!;|$>a5!F&E#6#6XslXtD!J#M$=&IL.!U&E!J#M$8&IV#E$A&I
+108 DATA $W!P-!D#0V8!9$B8#`#j#E$6&Id#V#V.D&E#<b&H87|8$D$fC#U$8&Ii#E5`&D.-#0`8t#G#=$>&IP#E$9&I#_#h#E$;&I8!C$]P#<!G$DE!Q&E<L\#M$
+109 DATA =&I#68!G#H~4#U$@&I!R5#;&E#Eh_#>#>P#=$9&I#E!0]#=$;&I#Y$[8S&E,#E$<at#=$<aVvt#Qk#F#Qkvs#k$4.#m&EB-#b&F#<#O&I8#^#H85$58$R
+110 DATA $5#U$@&I!R5$;&F#<#ab8$N#H8$C$]P8!=#083#0i$h-$<&F#<$GZ|klP8$^#L-$Y&E8-#0Llkk$Yi#55!0&F#U$@&I!R$Y7#;k#>n$S!R5$[&F$S!L<5
+111 DATA >&EV#U$@&I!R5!L&F8!C$]Eg&EV#<$GZ8$0#WVp5$;&F.>&E#<U&H8$l&G\8!=#083#0#<#]#\i>5Y&F#<#o#^i$k5W&F#<#_#ji!75Y&F#Hi;5Y&Fi$h
+112 DATA 5*&F#E#gbl#Y;#=$0b`#<#jb|mqyk83#0$R#>#0-e&F#<f_#1u#8-e&F83#0$T!B-!Y&F8#W&H#=l`$W!P5#I&G#=$0b8#W&H#=$2&I8#W&H#=$4&I#<#
+113 DATA jb#U$8&Ii#V-#]&G$Yi#V5$L&G.!S&Fi#E5#g&Gi#I-$<&G$Yi#V-$L&G#U#kb!1-!S&F#M$8&I,,.#;&E|#abqs#5!Y-!S&F~#>p-$A&G#<[&H8$i&G8
+114 DATA *#H#U$@&I!R/7#F/$a&G\4Q[8#H#F.$=#G8$c#jl$h#j08!9$Bl#jbui#V#<f&H/#Y#j#Y#;R57|#1q8#>#P#Y#IR#1m8#>#P#Y#;R#Eh_8z#b#<!7a87
+115 DATA |#Y#;R#E$2&I$W!P3$W#)$X#2#2#2#2Qz8#G&H#Y#JR$XQ#)8#G&H#Y#JR!R$W#)8#G&H#E$4&I#Y#;R$X`{{{$WQ#)Awq$K=q&H1wq$<!R-w&H#Yw8#G
+116 DATA &H$X#)#)Q#Z8#B&H\rQ#Y8#B&H#Y#;R$SR#Y$HR4`#Y#UR\y#JAuw=#I&H1#U`$TR\R483#0$J83#0$B4`8n#6#<#9]8C&H$28C&Hrrrr$)#38C&H!N$)
+117 DATA V#=$2&I#<#2]8C&H$28C&Hrr$)#3#3#38C&HzQ#)!N$)V#=$4&I8*#H#<M&H8$i&G8*#H8!L#0\8D#0yk#<#ab|mq$Y8D#0#>#0-!4&H#<f_#1u#8-!4&
+118 DATA H$T#J#W8D#0#E#gb8;&H#E$2&I8;&H#E$4&I8;&Hq"o!J8D#0p-0&H.-#0$X8D#0$W.D#0$Yr#jrr$\#F$a#F4#n$<$Q$D$I$B#Hk#n$F$D$K#Hk#a$J$
+119 DATA P$I$?#Hk#;#j#fk$B$<$Kk#n$F$D$K#;$A$D$G$@#;$O$T$K$@#;k#a$D$G$@#Uku#W#a#Y$D$G$@#;#W#g#Y$J$<$?#;#W#n#Y$<$Q$@#;#W$1#Y$@$M
+120 DATA $D$A$T#;#Z#;k#_$D$M$@$>$O$J$M$T#;$A$P$G$Gk#d#j#;#`$M$M$J$Mk#^#\#n$0#o#g#^#jkkkkkkkkkkkkkkkkkkk#Z

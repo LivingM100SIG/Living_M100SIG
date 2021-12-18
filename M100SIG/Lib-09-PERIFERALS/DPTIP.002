@@ -1,0 +1,29 @@
+DPTIP.002:
+
+Using DP100 BASIC to create files up to 64K length.
+
+In BASIC,files may be created up to 64K in length.  However, the disk drive has
+an  idiosyncrasy  in that if you exceed the  maximum  file  length  by even one
+single  byte,  the  drive will not save the file.  To overcome this difficulty,
+we suggest one possible solution:
+
+When performing disk output operations, instead of:
+
+    OPEN "0:data.do" FOR OUTPUT AS #1
+use
+    OPEN "0:data.do" FOR APPEND AS #1
+
+When  a  file  is opened for append and the maximum file size is exceeded,  the
+previous  file  data remains intact and only the appended data is lost.
+
+In fact, you may periodically close and re-open a file  for  append.  This will
+ensure that only a small amount of data is  lost  when  maximum  file  size  is
+exceeded.
+
+Finally,   if you monitor the file data output  from  within the BASIC program,
+you can avoid this problem completely.
+
+Note  that  during   normal  DISK POWER operations  there  is  no such problem,
+since files do not exceed 32K.
+
+DPTIP.002 (C) 1986 Ultrasoft Innovations

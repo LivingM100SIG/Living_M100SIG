@@ -1,0 +1,168 @@
+STAT.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This is a short collection of messages explaining some constraints in
+setting the Telcom STAT in the 100/102/200, and explaining in detail the
+meaning of the STAT parameters for the 200.  Good reference data!
+
+Message range: 175108 to 175198
+Dates: 10/3/88 to 10/4/88
+
+
+Sb: #Tandy to Compaq
+Fm: george Pickett 76137,2311
+To:  76703,4062
+
+Thanks for the help.  Sorry to be a pest, but I assume that to use the 200 to
+upload a file to a PC, I need to enter communications parameters at the STAT
+command.  Is it possible to tell me the syntax for them in this forum?
+   If I follow you correctly, I enter TELCOM, then press F3 (STAT). Then the
+parameters.  Do I ENTER them, or push F4 (TERM) to start the next step.  (What
+is TERM?)  F# then uploads by name and F@ F2 downloads by name.  Press F? at
+the end to terminate the transfer. Right?
+   But I don't know the command syntax for entering the parameters.
+
+
+Sb: #175108-#Tandy to Compaq
+Fm: Tony Anderson 76703,4062
+To: george Pickett 76137,2311
+
+Your "Status" setting consists of 3 groups of characters, separated by commas.
+To change or create your status setting, just press F3, and respond to the
+prompt with the new setting.  Type it in, then press the ENTER key.  The first
+group is 7 characters, selected from the following options:
+
+First Character:        M = Modem (at 300 baud)
+                        1 = 75 baud
+                        2 = 110  "
+                        3 = 300  "
+                        4 = 600  "
+                        5 = 1200 "
+                        6 = 2400 "
+                        7 = 4800 "
+                        8 = 9600 "
+                        9 = 19.6K "
+
+Second Character:       6 = 6-bit words
+                        7 = 7 bit  "
+                        8 = 8-bit  "
+
+Third Character:        I = Ignore parity
+                        O = Odd      "
+                        E = Even     "
+                        N = None     "
+
+Fourth Character:       1 = 1 stop bit
+                        2 = 2  "    "
+
+Fifth character:        E = Enable Xon/Xoff handshaking
+                        D = Disable   "        "
+
+Sixth Character: (Control Character filter)
+                        N = Normal (filter off)
+                        I = Ignore incoming Control Characters
+
+Seventh Character: (Line Feeds added to incoming data)
+                        N = No.  C/R = C/R
+                        I = Yes. C/R = C/R + L/F
+
+COMMA
+
+Modem mode:             O = Originate
+                        A = Answer
+
+COMMA
+
+Modem dial method:      10 = 10 pulses/sec
+                        20 = 20    "
+                        T = Tone dialing
+
+The "normal recommended setting" for modem communications is M7I1ENN,O,T. This
+indicates, Internal Modem, 7-bit words, Ignore parity, 1 stop bit, Xon/Xoff
+handshaking enabled, No filter, No added line feed, Originate mode, and Tone
+dialing.
+
+When you press the ENTER key, it will return you to the TELCOM: prompt, where
+you can then do something else.  If you get a beep, it means the computer did
+not accept your parameter settings.
+
+When you press F4 (Term), you go into terminal mode.  It is like a terminal
+where you can type stuff and it is sent, or anything the other computer types
+will show up on your screen.
+
+F2 downloads to a file you name; Pressing F2 again aborts any download in
+progress.  F3 uploads from a file you name.  Pressing BREAK will abort an
+upload.
+
+
+Fm: george Pickett 76137,2311
+To: Tony Anderson 76703,4062
+
+Thank you very much for taking the time to give me such complete and detailed
+information.  I'll go to work on it.
+
+
+Sb: #Modem Help
+Fm: Tom Glovier 70346,1720
+To: sysop
+
+Can the M100's modem be set to 8 bits?  The book says it will go 6,7,or 8 bits,
+but when I use STAT and enter 8 I get a "beep" and the setting in not accepted.
+I can set is a setting M8I1E possable?
+
+Also I saw a note in the message base about M200 answering the phone The M100
+will not do this, will it?
+
+
+Fm: Denny Thomas 76701,40
+To: Tom Glovier 70346,1720
+
+When you use 8 bit, the parity bit is not available for use, so you must use
+M8N1E. I know, it would seem that [I]gnore would be just as valid as [N]o
+parity, but I guess [I]gnore means that "I know it's there, but I'm not going
+to do anything about it" while [N] makes all 8 bits available for transmission.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tom Glovier 70346,1720
+
+   The parity has to be set to N (none) for an 8-bit transfer.
+   As in:
+                M8N1E
+
+   In computerese, the 8th bit (cleverly called bit-7, because the 1st bit is
+called bit-0; got it?  Oh, yeah: and the bits are counted from right to left)
+is used to _create_ parity for information coded into the other seven bits.
+   The binary bit for the letter 'C' looks like:
+
+        0  1  0  0  0  0  1  1
+
+   You'll note that it has an odd number of 1's.
+   If communications parity is set to "Even", the sending computer changes that
+left-most (8th) bit to a 1, so that the total count of 1's is always even.
+   The receiving computer checks every byte as it comes in -- and if it finds
+one where the number of 1's is odd, it "knows" there has been a communications
+error.
+   Since the 8th bit is used for that rudimentary form of error-checking, it
+clearly can't be used as part of the code for the actual character being sent;
+so communication is limited to a range of 127 characters and control symbols (
+the number of combinations you can achieve with 7 bits).
+
+   With 8-bit communication, your range of symbols increases to 255.  But you
+have to tell the computer that there is no parity to encode or interpret; thus,
+None.
+
+
+Fm: Tom Glovier 70346,1720
+To: Denny Thomas 76701,40
+
+Thanks, That helps a lot! the book does not explain a lot of things.
+
+
+Fm: Tom Glovier 70346,1720
+To: Wilson Van Alst 76576,2735
+
+Thanks Van! It helps to know why things work the way they do.  Radio Shack
+often does not tell the user much about how their products work. Thanks again.

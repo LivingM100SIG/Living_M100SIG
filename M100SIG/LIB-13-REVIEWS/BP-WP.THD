@@ -1,0 +1,158 @@
+BP-WP.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+A "standard" option for Booster Pak is a somewhat stripped-down WorldPort
+1200 modem.  These messages discuss some of the hardware differences and
+some of the related software compatibilities vis-a-vis M100 Forum software
+designed to support the WorldPort modem
+
+Message range: 171986 to 172057
+Dates: 7/23/88 to 7/24/88
+
+
+Sb: #USE OF Q-PORT.BA
+Fm: Joe B. 72527,1246
+To: DENNY THOMAS
+
+        I've got the Booster Pak, with all the bells and whistles, and just now
+bought my Worldport 1200.  I did manage to get into the system (CIS) using it
+today, but need help interpreting your message about the Q-PORT.100 program.
+        I guess what I need is a detailed, step-by-step, "push this
+key..."-type explanation.  For instance, when I go into Q-PORT.BA, all I get is
+an "OK" prompt. Is that correct?  What do I do then, as far as writing my
+autologon sequence, accessing it in that program, etc? In other words, what
+does the program do for me?  Is there a way to read an autologon sequence out
+of ADRS.DO, or somewhere else, so that it (or they -- in the case of multiple
+sequences for various services) does not have to be re-typed each time?
+        By now, you know the magnitude of my ignorance -- but it sure is
+wonderful to get the faster transmission of data!
+        I think I'll love this gadget, if I get some help.
+
+
+Fm: Denny Thomas 76701,40
+To: Joe B. 72527,1246 
+
+  This modification should take care of the problem.
+
+Put Q-PORT in the workarea (F1+F2 - I'll assume that you're working from the
+BP) Go into BASIC and type LOAD "Q-PORT[ENTER]. That will allow you to enter
+the edit mode for the line that needs changing. Type: EDIT 47[ENTER]
+
+You should have one line of the program now displayed in TEXT edit mode. There
+is only one character that needs to be changed and it is in the phrase
+...THENQ$="0:"
+
+Change "0:" to "R:"
+
+Press F8 to exit TEXT and go back to the OK prompt. Exit the program and save
+it back to the Booster Pack.
+
+Now you should be able to leave your ADRS file on the BP.
+
+I hope you have downloaded W-PORT.DOC as well. It gives you detailed
+instructions on how to use the program. There is a lot to the program, but if
+everything is set up correctly, you should be able to just hit [CR], type in
+the address file entry that you want, [CR], then space bar.
+
+The program should take over from there and will log you onto the service that
+you selected at the Find: prompt. There is a setup menu that allows you to
+change the modem defaults, but for CompuServer, you shouldn't need to bother
+with that.
+
+
+Fm: Denny Thomas 76701,40
+To: Joe B. 72527,1246 
+
+ If you noticed, the STAT line in the setup menu doesn't have the baud rate
+displayed. You have to change baud rates at the main menu. Just key in 7E1E to
+change the balance of the STAT. If that is your default that you use most of
+the time, (7I1E is standard for CIS) then you can change it permanently by
+using the same general procedure outlined in the other message for line 42. ST$
+is the variable that you want to change. Other bootup values are:
+
+CS$ = "ATDT" - Change to "ATDP" if you want pulse dialing most of the time.
+
+C2$ = "ATB1" - Change to "ATB0" if traveling abroad and using CCITT type data
+communications standard.
+
+R$ = "COM:5" - Change to "COM:n" where 'n' is a value from 1 to 9 indicating
+baud rate.
+
+
+Fm: Joe B. 72527,1246
+To: DENNY THOMAS
+
+        Using the Q-port.BA program, I get as far now as the listing of the
+number for the service I want to access.  When I hit any key, to actually dial
+the number, though, I get a "Modem not connected!" prompt, and nothing further
+is possible, even though I do have the phone cord plugged into the modem!
+        Any idea what's happening?  Incidentally, I've decided to try this
+program first, with the modem, before trying installation of the X-tel
+programs, and will probably use the other one when I get around to it, which
+you said was best, anyway.
+
+
+Fm: Denny Thomas 76701,40
+To: Joe B. 72527,1246 
+
+Well, the only reason that message comes up is if there is no power to the
+modem or the modem is not connected to the computer. Do you have the modem
+connected directly to the back of the M100? If you are using a cable, it should
+be one that has all lines connected straight thru. A null modem cable won't
+work. Other than that, you can disable the modem check, but that shouldn't be
+necessary. Try the modem with the supplied power adaptor attatched and
+connected directly to the back of the M100 and let me know what happens.
+
+
+Sb: #USE OF WORLDPORT
+Fm: Joe B. 72527,1246
+To: DENNY THOMAS
+
+        When you order the Worldport 1200 for use with the Booster Pak, they
+send you kind of a stripped down model, I'd call it. This one has no cover on
+it, with all the innards right there lookin' at you, and all you do is install
+it and its accompanying 9-volt battery right into its lil' ol' spot in the BP.
+        In other words, I din't git no cable, or did I find anywhere on the
+ gadget to attach an outside power adapter to replace the 9-volt.
+        And besides, I've been USING the modem, right along, over the last two
+days, employing the commands "ATDTxxxxxxx" as you instructed.  Is that not
+proof that the modem itself is working all right?  Sounds strange to me.
+        And I'm only plugging the phone cord directly into the female
+phone-type plug on the modem, which projects to the externa of the M102.
+        And I'm not using any other cords, null modem or otherwise. Does the
+fact that I'm using the modem to send this to you indicate that all the four
+switches are set correctly on the modem?
+        I really do appreciate your continued help in figuring all this out!
+
+
+Fm: Tony Anderson 76703,4062
+To: Joe B. 72527,1246 
+
+Ah, Joe... you didn't mention before that it was the model that becomes a
+"built-in" of the Booster Pak.  When you first asked, you simply referred to it
+as the Worldport modem... there's a bit of a difference there.
+
+But hang in there, if anyone can get it working for you, it's Denny.
+
+
+Fm: Denny Thomas 76701,40
+To: Joe B. 72527,1246 
+
+Well! That eggsplains it then! The tiny little cable that goes to the RS232
+port from the modem just doesn't have the connection necessary to make the
+program happy.
+
+What you need to do is delete part of line 13 starting at :IFINP(187)AND32....
+
+to the end of the line. That should fix you right up.
+
+(boy, I hope Fill is making a thread of this!)
+
+
+Fm: Phil Wheeler 71266,125
+To: Denny Thomas 76701,40 
+
+Mais oui!  Keep those messages coming!
+

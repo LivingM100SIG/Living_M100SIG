@@ -1,0 +1,264 @@
+                         N-DKTR.BA (c) 1992  R.W.Hess
+                         ----------------------------
+
+
+
+N-DKTR.BA is a 3500 byte, 100/102/200 compatible, file and sector maintenance
+utility for use with the 256K NODE DATAPAC(c) and the 256K NODE RAMPAC(c).
+(All references to the DATAPAC in this document include the RAMPAC).  N-DKTR
+permits the user to safely, quickly, reliably, and automatically:
+
+        - 'Soft format' and recover data from a 'crashed' DATAPAC
+        - Recover 'KILLed' DATAPAC .DO file data
+        - Recover 'BROKEN' DATAPAC .DO file data
+        - Correct illegal and garbled DATAPAC file names
+        - Verify DATAPAC file continuity
+        - Confirm DATAPAC directory sector allocation
+        - Review 'orphan' and 'unknown' DATAPAC sectors for possible recovery
+        - Return 'orphan' and 'unknown' DATAPAC sectors to system use
+        - Print a list of DATAPAC files, sizes and sector allocations
+
+
+N-DKTR provides both 'beginning' and 'seasoned' DATAPAC users with a variety
+of useful and important features: all performed with minimal input from the
+user.  N-DKTR does not assume or require ANY special technical expertise,
+set-up process or other hardware or software.  It can and should be used
+often: regular use will maintain maximum DATAPAC storage capacity and ensure
+continued file integrity.
+
+It is important to read all these instructions at least once BEFORE running
+N-DKTR.  Understanding and correctly using the various routines is crucial to
+successful file maintenance and data recovery.
+
+Getting started is easy.  See the section near the end of this document,
+"Set-Up", for downloading and program creation information.
+
+
+
+                                   OPERATION
+                                   ---------
+
+Conventions:
+  The familiar BEEP (or two) means that some unusual condition has occurred.
+'Normal' user prompts are preceded by a brief and lower pitched tone.  <ESC>
+at most prompts aborts to the Main Menu: <ESC> in the "Recover Data" routines
+skips to the NEXT group of sectors.  If a simple flashing cursor appears after
+a tone, then pressing any key other than <ESC> will continue operations.  If a
+question-mark precedes the tone and flashing cursor, then only "Y" or "y" will
+continue, otherwise N-DKTR aborts and returns to BASIC or the Main Menu.
+UPPER and lower case letters are interchangable at all prompts.
+
+
+Initial Display/Soft Format:
+  ONLY run N-DKTR.BA by cursor selection from the main menu.  One of the first
+automatic functions of N-DKTR is to do a 'soft format' re-set of the DATAPAC's
+'format bytes'.  In a 'healthy' DATAPAC this process simply duplicates current
+settings.  In a DATAPAC whose format bytes alone have been corrupted, this
+ensures continued DATAPAC file access which could otherwise be lost if the
+NODE ROM or RAMDSK.CO were to do a 'hard' format of an 'un-formatted' DATAPAC.
+
+The screen will clear and a "D" will print in the upper-left corner followed
+quickly by 255 "F", "c", "?", or "+" characters.
+                F = a File's First sector
+                c = file continuation sectors
+                + = an open 'Free' sector
+                ? = an 'Unknown', unattributed sector (ideally none)
+
+This plot is a simple visual representation of the current DATAPAC Sector
+Allocation Table (SAT).  The screen print position corresponds to the actual
+sector number: D = the directory sector "0" and the remaining sectors are
+1-255.  When all sectors have 'plotted', "N-DKTR(c) Sector Map" displays and
+the first 'tone' sounds.  
+
+This display can be printed with the <PRINT> key as a useful reference
+document when combined with the more complete File Allocation List available
+later in the program.  <ESC> aborts to the Main Menu: any other keypress
+continues.
+
+     ** NOTE **  If you are attempting to recover data from a
+     'crashed' DATAPAC with a truly scrambled directory sector, then
+     this display will be meaningless and you'll have to recover your
+     .DO files sector by sector.  N-DKTR will PROBABLY begin the
+     sector review with 'Orphan' files but ALL sectors should
+     eventually display.  'Bad name' and 'BROKEN' file routines may
+     also operate: be patient.  You may have a few hours of work ahead
+     for a packed DATAPAC but you CAN eventually recover any usable
+     .DO file data still in the DATAPAC!
+
+
+"Validating file and sector allocation...":
+  This message will display on the bottom screen line as N-DKTR examines all
+of the DATAPAC file-names and sector assignments for:
+        - 'Legal' file names
+            No initial character 'less' than semi-colon: CHR$(59)
+            None of 5 remaining characters 'less' than space: CHR$(32)
+        - File continuity and integrity
+            The 'whole' file is saved in DATAPAC sectors
+            All the continuation sectors are properly labeled
+
+As/if N-DKTR encounters illegal file-names, you will be immediately prompted
+to "Fix?" the names.  Only "Y" will continue the program.  An illegal first
+character will become "A" and any subsequent illegal character of the next 5
+will become "B".  (N-DKTR is written to expect legal names and won't continue
+if an 'illegal' is not fixed.)
+
+As validation proceeds, you will see the "F" and "c" characters disappear from
+the display as sectors are matched to files.  IDEALLY all that should be left
+are "+", ("Free") sectors and the initial D.  There MIGHT also be "?"
+("Unknown") or some un-assigned ("Orphaned") "c" sectors left on the screen.
+N-DKTR will later help you identify these sectors and recover them if
+necessary.
+
+When the sector flags have stopped disappearing, the message display changes
+to "Validating open sectors...".  This process labels un-used sectors as
+Orphans, Unknown or Free and confirms that all files are complete.
+
+
+"BROKEN" files:
+  If any file is incomplete, or its continuation sectors are mislabeled in the
+SAT, then the validation process will be interrupted and you will be shown a
+table of "BROKEN" files.
+
+This is an IMPORTANT list and should be carefully noted for use in the
+"Recovering Data" function of N-DKTR.  Any attempt to add to or delete from a
+DATAPAC with BROKEN files could result in COMPLETE and PERMANENT loss of file
+data on a RANDOM basis.
+
+You will be prompted to begin the "...recovery?" process.  Any key other than
+"Y" aborts to the Main Menu.  "Y" takes you to the "Recovering Data" routines
+(below) beginning at the FIRST sector of the _FIRST_ BROKEN file: the
+beginning sector review type will be "Orphan#".  ALL subsequent Orphan,
+Unknown and Free sectors may have to be reviewed for possible data recovery.
+
+Distribution Message:
+  If there are no BROKEN files, then a message will display showing the sector
+distribution and pause for a keypress.
+      "vv Orphans  vv Unknown  vv Free"
+
+If N-DKTR found Orphan or Unknown sectors, the review process will
+automatically begin with Orphan sectors: see "Recovering Data", below.
+Otherwise N-DKTR will ask if you want to "Review Free sectors?".
+
+     ** IMPORTANT NOTE **  "Answer "Y" to the "Review Free sectors?"
+     prompt if only Free sectors are found but you're trying to
+     recover data from an erroneously KILLED FILE.  Your ability to
+     recover 'KILLed' data depends almost entirely on how soon you run
+     N-DKTR after the 'KILL', because KILLed file sectors immediately
+     become Free sectors which will probably be overwritten by the
+     next DATAPAC 'Save/Copy' command!!
+
+<ESC> at "... Free sectors?" exits to the Main Menu, any other response than
+"Y" will jump to N-DKTR's final menu: see "Final Menu" below.
+
+
+Recovering Data:
+  These routines let you recover .DO file data from KILLed files, BROKEN
+files, and unassigned sectors.  The success of your recovery efforts depends
+on the time elapsed between the 'error' and N-DKTR use.  You may arrive at
+these recovery sequences from one of three subroutines.
+        - "Y" to "Review Free sectors?"
+        - "Y" to the "BROKEN file" recovery prompt
+        - Any keypress other than <ESC> at the 'distribution' message above
+
+The nature and number of the sector being reviewed will print in the lower
+left corner of your screen and the 1024 bytes of sector data, starting from
+the beginning of each sector, begin to display.  The following menu is
+displayed at the end of each sector or if any key is pressed during a sector
+display:
+        <V>ue  - Views the sector's data again
+        <R>cvr - Recovers the sector data to [RCVR].DO
+        <N>xt  - Skips to the Next unassigned sector
+        <ESC>  - Skip to the next CATEGORY of sectors
+                   Orphan -> Unknown -> Free
+
+ONLY data acceptable to a .DO file will display and can be recovered into
+"[RCVR].DO", the target file for ALL recovered data.  CHR$(0), CHR$(26) and
+CHR$(127) are neither displayed nor recoverable.  (Recovery of KILLed .BA and
+.CO DATAPAC files are not possible using N-DKTR.)
+
+Files are stored in DESCENDING sector order in the DATAPAC: if a file
+'started' in sector 145, the 'rest' of the file would be found, if at all, in
+sectors BELOW 145.  Each recovered sector begins with "]nnn][" in [RCVR].DO.
+The numerical value "nnn" is the sector number: the "][" notation can be
+searched-for within [RCVR].DO when re-assembling files.
+
+N-DKTR will abort the recovery process whenever less than 1500 bytes of Free
+RAM remains in memory prior to a sector recovery attempt.  If this occurs,
+save and/or print [RCVR].DO, kill [RCVR].DO and re-run N-DKTR.
+
+
+Final Menu:
+
+ "<R>eturn Orphans and Unknowns to system"
+   This prompt will display ONLY if there were any Orphan or Unknown sectors
+found by N-DKTR.  "Return..." use is optional and can be done after any N-DKTR
+session.  You may find it helpful to first prepare the list printed by
+"Lprint..." below, and RE-review the contents of Orphan and Unknown sectors
+with N-DKTR BEFORE returning the sectors to Free status.  As a general rule,
+the DATAPAC will only overwrite Free sectors.
+Each Orphan or Unknown sector represents 1024 bytes of potential additional
+storage capacity.  Press "R" to re-set the sectors' SAT bytes to 0,0 and
+permit their use as Free sectors.  N-DKTR automatically re-runs when this
+option is selected.
+
+ "<L>print File Allocation List"
+   This will print a list of all files, sizes and the DATAPAC sectors they
+occupy, beginning with the file's first sector.  Orphan, Unknown and/or Free
+sectors are also listed.  Because of the way the DATAPAC stores data, this
+list begins with the highest used sector and continues in descending sector
+order.
+
+ "<ESC> to Main Menu"
+   Exits to the computer Main Menu.
+
+
+
+                                    Set-Up
+                                    ------
+
+Download N-DKTR.DOC, DL9 (this file). It is pre-formatted to a 78 character
+line width and should be printed and saved.  Download N-DKTR.BA (DL9) as
+N-DKTR.DO and clean up any 'extra' download characters.  Because of the nature
+of N-DKTR, its .DO file version MUST be check-summed BEFORE conversion to a
+.BA file: DO NOT attempt to use N-DKTR without check-summing the .DO file
+first!!  Otherwise you risk a garbled DATAPAC and hours of file
+reconstruction!!
+
+When you have successfully check-summed N-DKTR.DO, simply enter BASIC, type
+LOAD:N-DKTR and press <ENTER>.  Then SAVE the file to RAM as N-DKTR.BA.  Now
+SAVE N-DKTR.BA to a back-up media OTHER than the DATAPAC.  It should be loaded
+into RAM from THAT media whenever it's used.
+
+
+                                    ERRORS
+                                    ------
+
+The only condition trapped and identified by N-DKTR relative to its own
+operation is the size of Free RAM available for the data recovery file
+[RCVR].DO.  Other errors will simply show ERR ##, ERL ##.  If re-running
+N-DKTR, FROM THE MAIN MENU, does not resolve the problem, drop me E-mail on
+CIS.  There are only two, brief routines in N-DKTR which actually write to any
+part of the DATAPAC: the Name Corrector and Unused Sector Return.  N-DKTR
+never writes to DATAPAC files.
+
+
+                               Acknowledgements
+                               ----------------
+
+I'm indebted to Paul Globman for his research into the operation of the NODE
+DATAPAC and his generosity in permitting me to share some of his work in a
+public forum.
+
+
+Randy Hess
+March 24, 1992
+Omaha, NE
+CIS 73267,552
+
+
+
+
+
+
+
+

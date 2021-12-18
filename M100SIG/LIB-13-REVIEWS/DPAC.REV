@@ -1,0 +1,169 @@
+Node DATAPAC/RAMDisk Review
+Copyright 1987 by Tom Fitzpatrick
+
+
+The Product
+
+DATAPAC 128K or 256K RAM expansions with RAMDisk ROM software, for Model 
+100/102/200 computers.  This review was written using a M100 with the 256K RAM 
+and v.1.05 of the RAMDisk software.
+
+Available for $249 (256K) or $179 (128K) from:
+ Node Systems, Inc.
+ 408 Broad Street
+ Nevada City, CA 95959
+ (916) 265-4668
+
+
+What you get
+
+The DATAPAC is a wedge-shaped anodized aluminum box approximately 10" long by 
+1 7/8" wide by 1" tall.  It attaches to the Model 100 with provided Velcro 
+strips and a cable that connects to the system bus.  Once connected, the 
+device raises the M100 up to a nice viewing angle and eliminates the need for 
+"legs."  The entire package just barely fits into the M100 case if the closing 
+flap is left open.  RAMDisk software comes on a ROM and thus avoids high 
+memory conflicts with machine language programs.
+
+Instructions come in two forms; installation, menu-driven operation and 
+trouble-shooting information come on three pages (front and back).  These 
+instructions are brief and to the point.  Page 3 should look familiar; it is a 
+reproduction of page 8 of the Model 100 owner's manual!
+
+Instructions for using the Datapac in Basic are included on the ROM.  This is 
+done in an interesting way.  When the Datapac is first set up, an 11K file is 
+placed on the RAMDisk menu called, appropriately enough, RAMDSK.DO.  This file 
+can be edited or printed like any other Document file and can be reduced to an 
+empty file.  If the file is killed, it is automatically restored to its 
+original 11K size.
+
+
+The Good. . .
+
+This device adds 256K to an existing 32K Model 100 for a total of 290K.  This 
+256K of memory is made available through the use of an alternate file menu.  
+When the RAMDisk software is activated, files are displayed in a format 
+similar to the main menu.  The first display line shows the date and time, 
+followed by the TEXT ROM program, BAsic, DOcument and COmmand files on lines 
+two through seven.  Line eight shows function key definitions:  EXIT, NAME, 
+PAGE, COPY and KILL.
+
+In addition to providing a file menu, the RAMDisk software also makes 
+enhancements to TEXT.  Search-and-replace, length and word count, and a toggle 
+between text overwrite and text insert are all available with control keys L, 
+J and O, respectively.
+
+
+The Bad. . .
+
+"Contiguous RAM" is an ambiguous term where the Model 100 is concerned.  The 
+reason appears to be a limit of the Model 100 central processing unit--the 
+80C85--itself.  It can address only 64K at a time.
+
+Datapac designers found an unusual way to circumvent this problem.  Files are 
+run or edited only in the main 32K, not in the Datapac.  In the case of a Text 
+file, RAMDisk software moves the file from the Datapac to main RAM, allows you 
+to edit the file, then moves it back to the Datapac.  The entire process is 
+invisible to the user.
+
+This procedure limits the Datapac's use.  If no other programs exist in the 
+main 32K of memory, the largest file that can be created is 29500 bytes long.  
+If a 2500 byte text formatter is kept in the main RAM, the size of the largest 
+Datapac file accessible decreases to only 27000 bytes.  The benefit of having 
+a Datapac is that anywhere from eight 29500 byte files to over 200 1K files 
+(256K model) can be maintained at one time without a disk or tape drive.
+
+Using Basic or Command programs isn't quite as easy as Text files.  Running a 
+program is accomplished by either selecting it from the RAMDisk menu or 
+copying it to the main 32K.  Programs selected from the RAMDisk menu are 
+copied into the main RAM as part of another program, executed, then left in 
+the main 32K.  If copied to the main 32K, a program can be run as usual from 
+the main menu.
+
+For instance, to run a 2500 byte Basic formatter from the Datapac, one would 
+select it from the RAMDisk menu, it would execute, then would remain in and 
+continue to take up 2500 bytes of main memory.
+
+Using the latter method, the program would be copied into the main RAM and 
+run.  The program could be killed from Basic when through.
+
+A method is offered to simplify the process, but it involves editing each and 
+every Basic program and substituting {MENU for MENU.
+
+Also inconvenient is the matter of file size.  The Datapac saves files in 1K 
+blocks, so ten 512 byte files that would require 5K in the M100 would occupy a 
+full 10K in the Datapac.
+
+The Ugly. . .
+
+Problems found with the product involve the RAMDisk software and documentation.
+
+The first software problem is bug.  If one tries to copy a RAM file to the 
+Datapac and types RAM:FILENAME instead of FILENAME, the software thinks it is 
+displaying the Datapac files when in fact it is listing the main RAM instead.  
+No damage is done, but can prove confusing.
+
+The RAMDisk software has what might be called "function key ease," but it 
+isn't completely user-friendly.  Should one do something the software 
+dislikes, it beeps but provides no error message or indication of what was 
+done incorrectly.  Copying files from the Datapac to the main 32K and back is 
+fairly simple, but requires the filename to be typed in each time.  To copy 
+from the Datapac to main RAM requires typing RAM:FILENAME.  An undocumented 
+feature is that you DO NOT have to type a file's extension.  (For example, to 
+copy RAMDSK.DO from the Datapac to the main RAM you only need type RAM:RAMDSK, 
+not RAM:RAMDSK.DO.)
+
+
+Placing instructions for Basic access on ROM might come in handy, but the 
+least the folks over at Polar Engineering (who apparently wrote the RAMDisk 
+software and instructions) could do was proofread them and run the file 
+through a spelling checker first!
+
+Information on the Problems/Hints page appears to be inaccurate in regards to 
+the corruption of a small program that invokes the RAMDisk software.  If this 
+program is corrupted or deleted, all one need do is type KILL"RAMDSK and press 
+ENTER.  A quick CALL 63013,1 from Basic restores the program.  Removing the 
+Datapac and turning off the memory power switch is NOT necessary unless the 
+computer locks up and cannot be recovered with CTRL-PAUSE-RESET.
+
+Hardware for the Model 100 Datapac is a modified Tandy 102 version.  The cable 
+connecting it to the system bus isn't lined up correctly, leaving a small 
+twist in an otherwise neat installation.
+
+Most unsettling were installation instructions that read, "The cover of the 
+ROM expansion compartment may optionally be reinstalled ... a small 2" wide 
+notch may be cut on the cover to facilitate cable entrance into the 
+compartment."  Why couldn't Node have just provided a thirty cent piece of 
+plastic to save buyers the inconvenience?!?
+
+Finally, because the unit monopolizes both the system bus and the option ROM 
+socket it prevents use of the DV/I, Chipmunk disk drive and ROM software.  The 
+Tandy portable disk drives can be used, as can third party disk operating 
+systems not on ROM.
+
+
+To sum up
+
+Contiguous RAM is easier to use than the banked RAM products offered by other 
+companies, and the price of Node's product is about half of the competitors.  
+Because the unit functions as a solid-state disk drive instead of banked RAM, 
+cold starts in the Datapac are non-existent.  (The Datapac can be "formatted," 
+but this requires a CALL 63013,9 from Basic)  Should a cold start happen in 
+the Model 100, information in the Datapac is left untouched.
+
+The best feature of the device is what it eliminates--the need for a disk or 
+tape drive when traveling.  I've found 256K holds most of my utility programs, 
+a text formatter and an Xmodem telecommunications program with more than 
+enough room left over for text files written on the road.
+
+Although not perfect, the Node Datapac is worth owning.
+
+
+Suggestions
+
+Worthy improvements that could be made include Terminal enhancements for 
+downloading to the Datapac, a Tandy portable disk drive operating system and a 
+Datapac-to-disk backup utility on the ROM with the RAMDisk software.  All 
+these are available now in public domain or commercial software, but it would 
+be much more convenient to have them on ROM.  Unfortunately, the people at 
+Node say a ROM update is not likely in the near future.

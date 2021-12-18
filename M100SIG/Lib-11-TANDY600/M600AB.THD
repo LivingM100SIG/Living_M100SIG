@@ -1,0 +1,235 @@
+M600AB.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This set of messages deals with using a sctipt file to automate downloads
+to the Tandy 600.  It's also an example of  "not taking no for an answer",
+with good results!  General advice is given and the successful approach is
+described in detail.
+
+Message range: 148307 to 148765
+Dates: 5/20/87 to 5/26/87
+
+
+Fm: Susan Burleson 71615,647
+To: all
+
+Does anyone know how to open & close the buffer to Session.txt (like using f3),
+only automatically with a Script file? I'm trying to automate something, and
+got stuck on this. Thanks much for help............Susan
+
+
+Fm: Tony Anderson 76703,4062
+To: Susan Burleson 71615,647 
+
+Since it requires pressing a function key to open the SESSION.TXT buffer, it is
+not possible to do it in a script file.
+
+
+Fm: Susan Burleson 71615,647
+To: Tony Anderson 76703,4062 
+
+Ok, if I can't open & close the buffer via a script file, then what aabout
+using download, & finding out what CIS uses at the end of a listing to screen
+(eof marker?), & have script send that marker to the SIG, SIG bounces it back,
+Script receives it with "respond to:", then "respond with:off", or whatever.
+Does this make any sense??? The trouble I was having using download to receive
+a listing to screen was that when it got to "Function:", everything just
+stopped, and just sat there.  IE, no more automatic. Have to then use the
+keyboard. There HAS to be a way to do this! (??)  Tony, have mercy on the
+ignorant.......Susan
+
+
+Fm: Tony Anderson 76703,4062
+To: Susan Burleson 71615,647
+
+No, you can't do that, either.
+
+
+Fm: Tony Anderson 76703,4062
+To: Susan Burleson 71615,647
+
+I found I was mistaken on the matter of opening and closing a buffer with your
+Tandy 600 logon script.  You _can_ do it, and a file describing the technique,
+and it's ramifications will be uploaded soon, for the benefit of those who
+want/need automated download (or upload) of files.
+
+Here's a primer on how it's done...
+
+While making your script, you can insert a <T>ransfer option, either to receive
+of send a specified file.  You do that by selecting "T" when making your
+script, and at the next menu, select either Recieve or Send, and at the next
+menu specify a file name for download or upload.  I would recommend receiving
+into a file different than SESSION, perhaps CAPTURE.TXT.
+
+Or, you could download into specific files with Xmodem, selectable on that last
+menu.
+
+Now, as to respond to and with prompts; on the Option menu (type OP and press
+ENTER at the main menu function prompt) you can set a special prompt character.
+Many of the "scripted" programs use ^B to be sent after a prompt.  This can be
+used to maneuver through the necessary commands to get to where you want to go,
+by taking careful note of the normal chain you must go through, and the
+responses you must give.  Then you can open your capture file, download
+everything into it (or upload from it), and at the next prompt, OFF will take
+you off the system.
+
+Your script might be long and complex, if you attempt to do more than one or
+two things, but it _can_ be done.  And, if there were any changes in the normal
+conditions, you'd have to revise your script accordingly.
+
+I may be uploading a sample script that can emulate the EMAIL and AUTO-SIG type
+programs, along with instructions.  But don't expect it in the next few days...
+will require some work.
+
+
+Fm: Susan Burleson 71615,647
+To: Tony Anderson 76703,4062
+
+Tony - THANK YOU!! Will be eagerly watching the sig for info. Many times,
+because of my work hours, I don't have time to log on to the sig, so if I could
+automate it with using the wake command, it would be super. Again, thanx
+much..........Susan
+
+
+Fm: Susan Burleson 71615,647
+To: Tony Anderson 76703,4062
+
+
+Tony - IT WORKS, IT WORKS!!  Following is a Script file that worked all the way
+thru to logoff, opening & closing 2 different files.
+2 things first - on CIS, I have the M100SIG set as Top menu, so it'll go there
+automatically; and - I have CIS set for xmodem (8N1E),and it seems that Script
+can't understand  what the garbage means at logon (I get different garbage
+every time).  So I have Script set the parameters at the start of logon to
+7E1E, and set it back again after my user # has been logged in. In the User
+Options area of the SIG, I set the prompt character to ^B.
+So here goes - nobody type in the extra notes!, and I hope theres no line-hits
+while uploading this.....!
+
+Options:  ;;;;;0;T;F;2;30;10    Note: I only use this to set the dialing speed
+to Fast.
+
+Modify:  300;1;7;E;X;F;V;N;L;F  Note: So Script gets the right logon prompts
+instead of garbage.
+
+Connect:  CIS;8835551;M
+
+Respond with:  ^M   Note: At the "Respond to:" part, just leave it empty by
+hitting the tab key to move over to the "with:" part.
+
+Respond to: Name: Respond with: CIS^M
+
+Respond to: ID: Respond with: 71615,647^M
+
+Modify: 300;1;8;N;X;F;V;N;L;F  Note: Changed back to what Xmodem requires.
+
+Respond to: Password:    Note: This comes across in English. Respond with:
+*********  whatever your password is.
+
+Respond to: ^B Respond with: qs^M   Note: Quick Scan of message board.
+
+Respond to: ^B Respond with: new^M   Note: or whatever start # you want.
+
+Receive: qsm24.txt  Note: Whatever filename you want to capture to.
+
+Respond to: ^B Respond with: off^M
+
+Receive: off.txt   Note: to capture the connect time, etc.
+
+Respond to: Name:  Note: no "^B" - a brand new logon.
+
+Disconnect:
+
+Now, I can use the "Wake" command from the main system menu to run Telcom with
+this (or another) Script at 4 AM and have all the info to browse thru later -
+neat, neat!!!  The ultimate in laziness! We could add a couple more lines when
+first entering the SIG for RM - Read Messages and occasionally add lines to go
+to DL1 to see whats new in the download area. Tony, thanks for all your help.
+And I hope this helps others - maybe our M600's aren't so obsolete after all!
+
+
+Fm: Tony Anderson 76703,4062
+To: Susan Burleson 71615,647
+
+Your script technique is exactly the sort of script that I tried.  And your
+feedback also provides the additional information that you can change your
+TELCOM parameters while online.  Didn't know that was possible before!
+
+On your Quick Scan command, you can combine that: Respond with: QSN^M.
+
+There's one other thing you need to be aware of, if you have messages waiting,
+and you do an RM, then the system will hang at the end of each one, unless you
+preset your option list to never stop.  That can be done in  your script before
+using an RM command as in:
+
+Respond to: ^B with: OP;SM N T;S^M
+Respond to: ^B with: RM^M
+Respond to: ^B with: OFF^M (or whatever)
+
+Note that the space before and after the N are significant.
+
+For those who do not have M100SIG set as the first service, they can key off
+CompuServe's opening banner with:
+
+Respond to: C with: ^OGO M100SI^M
+
+I see that you've also found that you can set up the script to wait for a
+specific letter, OR an entire word.  Advise care if you ever use the word
+"Function", since it can be fouled up with some of the system responses that
+aren't really the function prompt.  The ^B is the best method.
+
+You can also use the technique to access and download specific files from the
+data library, if you're interested in that, but you'd have to modify the script
+each time you wanted to use it.  May be more trouble than it's worth.
+
+I have not yet tested whether a similar script can be made to go to EasyPlex
+and query for, and retrieve messages.  That may be more difficult, since there
+doesn't seem to be a way to deal with EasyPlex options depending on how many
+messages are there.  For example, if there is more than one message, and you
+issue a "Read" command, you get a prompt for "Which one, or all?".  The script
+approach may not work there.  And I'm not yet sure whether EasyPlex has a
+settable prompt character.
+
+But, an interesting pursuit.
+
+Did you find a way to close a capture file? or did you get the "Off" data in
+both files?
+
+
+Fm: Susan Burleson 71615,647
+To: Tony Anderson 76703,4062
+
+Greetings - will have to experiment with Easyplex - but, with an initial
+"LOGON.TXT" file open in Script, you can capture the message that you have mail
+waiting. When you open a new file tthe system seems to close the previous one
+first, and "LOGOFF.TXT" will capture all that info, too.  Still need to play
+around with this - thanks lots for the added info - will let you know if I find
+anymore goodies! I'm liking this computer more & and more! (Pardon the garbage
+in the last line - hit the label key by mistake)............Susan
+
+
+
+#: 22570 S11/Tandy 600
+    25-Feb-90  20:42:53
+Sb: Telcom Script Tips
+Fm: Steve Ringley 73727,1202
+
+     Here is some additional information to append to M600AB.THD if you would.
+In that thread, a bunch of uneccessary effort is expended in capturing the
+results of ones scripted logons.  To wit, one will only need to leave the
+normal SESSION.TXT capture text buffer [F3] or print text [F4] on during a
+previous use of Telcom.  Telcom saves its workfile, and no matter which method
+you use to access it (Normal, script, wake-up, answer), Telcom will turn back
+on whatever was left on during the previous session.  The only drawback to
+this is that the capture text buffer is limited to 64K, so if you anticipate
+an unattended session that will draw more than 64K, you need to figure some
+ingenious way to get the 600 switch files once every so often.
+     One other point: When a script finishes without executing a disconnect,
+control passes to the keyboard.  In simple terms this means that you can
+automate your logons with a script.  To start off you off, use the script in
+this thread (M600AB) to the point where it ^O's the What's New junk.  If you
+have set your first service, etc. in Profile, simply running the script will
+take you to your first prompt.  Have Fun!
+

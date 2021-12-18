@@ -1,0 +1,22 @@
+1 CLS:PRINT@5,"PDD Disk Catalog Print Program";:PRINT@81,"This program is public domain, free to";
+2 PRINT@122,"all finders, birds, beasts, or men.";:PRINT@162,"It may be copied and/or distributed";
+3 PRINT@201,"freely, so long as it is not sold, and";:PRINT@246,"this message remains intact.";:MAXFILES=2:CLEAR1500:DEFSTRA-H
+4 DEFINTI-V:DIMF(40),D(40),L(40):H="DIRLST":OPENHFORINPUTAS1:OPEN"LPT:"FOROUTPUTAS2:P=0:Q=99:N=0:R=66:E="
+5 IFEOF(1)THENIE=1:GOTO8
+6 LINEINPUT#1,A:IFLEFT$(A,1)="<"THEN8
+7 N=N+1:F(N)=LEFT$(A,9):D(N)=RIGHT$(A,LEN(A)-16):L(N)=VAL(MID$(A,11,5)):GOTO5
+8 E=MID$(A,2,10):G=MID$(A,12,8):IFN=0THENB=E:C=G:GOTO5
+9 IFR-Q-10<NTHENGOSUB19
+10 PRINT#2,:PRINT#2,SPACE$(6)"Disk - "BSPACE$(10)"Last updated - "C:Z=0:M=0:FORI=1TON:M=M+(L(I)+1279)/1280:Z=Z+L(I):NEXTI
+11 Z=(Z/M)/12.80:Y=(79-M)*1280:PRINT#2,SPACE$(6)"Free space -";:PRINT#2,USING"#######";Y;:PRINT#2,SPACE$(8)"Utilization -";
+12 PRINT#2,USING"####.##";Z:PRINT#2,:B=E:C=G:Q=Q+4:FORI=1TON:PRINT#2,SPACE$(10)F(I)"    ";
+13 IFL(I)>0THENPRINT#2,USING"######";L(I);ELSEPRINT#2," .....";
+14 PRINT#2,"   "D(I):Q=Q+1:IFQ>R-6THENGOSUB19
+15 NEXTI:N=0:IFIE=0THEN5
+16 IFQ=RTHEN18
+17 FORI=QTOR-1:PRINT#2,:NEXTI:MAXFILES=1
+18 MENU
+19 IFQ>RTHEN21
+20 FORI=QTOR-1:PRINT#2,:NEXTI
+21 P=P+1:PRINT#2,STRING$(72,"="):PRINT#2,"=    Disk Catalog listing of "H"       Date "DATE$"      Page ";
+22 PRINT#2,USING"###";P;:PRINT#2,"  =":PRINT#2,STRING$(72,"="):PRINT#2,:Q=4:RETURN

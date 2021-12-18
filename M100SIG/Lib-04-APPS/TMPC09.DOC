@@ -1,0 +1,531 @@
+
+
+
+
+
+
+
+                        Reference Section Two: Data Elements
+
+          The data-element reference section describes each of the four
+          major data types that TMPC manipulates: the to-do, the fixed-date
+          item, the weekly-repeating item, and the monthly-repeating item.
+
+
+                                      The To-Do
+
+          The purpose of the to-do it to record a task to be done, or a
+          task "to do", whence its name.  Screens that manipulate to-dos
+          are screens 1, 4, 7, and 11; screens 5 and 8 report information
+          about to-dos.
+
+          A specific flow of information is associated with a to-do.  When
+          inspiration or circumstance first originates the idea of doing
+          some task, you enter a description of a new to-do on screen 1. 
+          It then waits in the "warehouse", a storage area, until you rank
+          it (see below).  Eventually, you select it as something to be
+          done today, and move it to a daily list; at this point, it
+          becomes a constant reminder to you until you complete the task,
+          cancel it, or return it to the warehouse.  Its final form is a
+          note in the diary.  This process may take place in a short time
+          (as with a task which quickly arises and is simply done), or it
+          may extend for weeks or even months (as with a low-priority
+          project resulting from a midnight inspiration).
+
+
+          Attributes
+
+          The to-do has three attributes: a description, a priority, and a
+          stress rating.  The description must consist of 63 characters or
+          less, and cannot include characters with ASCII codes less than 32
+          ("control" characters).  The priority classifies the urgency of
+          the task into three categories; you are free to attribute
+          whatever meanings you want to them.  The stress grade classifies
+          the difficulty of doing the task; again, you determine the exact
+          meanings.  You must assign both a priority and a stress grade to
+          a to-do (called "ranking" the to-do) before you can select it for
+          the daily list.
+
+
+
+
+
+
+
+
+
+
+
+                                      Page: 42
+
+
+
+
+
+                        Reference Section Two: Data Elements
+
+
+
+                                 The Fixed-Date Item
+
+          Unlike the to-do, which has no specific date associated with it,
+          the fixed-date item resembles an entry in a date book.  The word
+          "item" refers to two things at once: an appointment, which has a
+          specific time associated with it, and a memo, which is a reminder
+          associated with a date.
+
+          There is little difference between appointments and memos.  TMPC
+          makes no attempt to sort appointments by the time of day; you
+          must keep them in order as you enter them (see the section
+          Entering an Item, in the Procedure Reference Section above).  The
+          only distinction between appointments and memos is that an
+          appointment's description begins with a digit (0-9), while a memo
+          begins with some other character.  This means that you should not
+          begin a memo description with a number.  Appointments and memos
+          each appear in their own section of the item list in screen 6.
+
+          A fixed-date item has a particular time sequence associated with
+          it.  At some point, you enter it using screen 9.  From then on,
+          it is present as a reminder in either the appointments or memos
+          section of the daily list - they will appear whenever you select
+          the date when they entered.  For example: today is March 9. You
+          enter an appointment for March 17.  It will appear as a reminder
+          whenever you examine the item list  for March 17.  Then, once the
+          date of the item is past, TMPC removes it from  the item list and
+          puts it into the diary (if the diary is disable, TMPC merely
+          deletes the entry).  Consequently, after an appointment date is
+          past, there is no record of it in the item list.
+
+
+          Attributes
+
+          The only real attribute that an item can have is a warning, which
+          creates deadline entries in the days preceding the date of the
+          item.  For instance, if you must submit a paper on September 19,
+          1985, and you want a reminder of its impending deadline, you can
+          enter a memo on September 19, 1985 entitled "paper due" and give
+          this memo a warning of, say, 10 days.  Then, each of the 10 days
+          preceding September 19, 1985 will show the days left until "paper
+          due".
+
+
+
+
+
+
+
+
+                                      Page: 43
+
+
+
+
+
+                        Reference Section Two: Data Elements
+
+          You have the further option of specifying a warning in terms of
+          business days ("bdays") or calendar days ("cdays").  A business
+          day is a weekday, excluding holidays.  In the above example, if
+          the warning were type "C" (cdays), the deadlines would begin in
+          the September 9, 1985 item list.  If the warning were type "B"
+          (bdays), the deadlines would begin in the September 5, 1985 item
+          list.
+
+          There is a special case of a warning.  If an item has a warning
+          type of "B" and no warning period (i.e., 0 days), the item is
+          taken as a business holiday.  So, to enter Christmas as a
+          business holiday, put a memo on December 25, give it a warning
+          type "B" and leave the warning period at 0.  The table below
+          summarizes the types of warnings:
+
+
+
+               Type           No. Days = 0   No. Days = n
+               Cdays          No Warning     Deadlines begin n calendar
+                                             days before item.
+
+               Bdays          Business       Deadlines begin n business
+                              Holiday        days before item.
+
+
+          The Procedure Reference Section contains detailed information
+          about entering, editing, and removing single-entry items.
+
+
+                               Weekly Repeating Items
+
+          weekly repeating items allow you to make one entry for repetitive
+          items in your schedule, provided they are scheduled by weeks in
+          every month.  For example: you go to a Bible class every Thursday
+          evening; a civic club meets every third Tuesday for lunch;
+          newspaper recycling pickups are on Tuesday and Thursday in the
+          last week of every month.
+
+          Weekly-repeating items are very much like single-date items. You
+          enter them the same way; they can be memos or appointments; they
+          can have warnings; and they are listed in the diary for each date
+          when they appear.  however, there are three very important
+          differences:
+
+
+             # After you enter an item, you must specifically activate
+               screen 13 and set the repeating parameters for it to be a
+               weekly-repeating item.
+
+
+
+                                      Page: 44
+
+
+
+
+
+                        Reference Section Two: Data Elements
+
+             # You cannot "cut" or "paste" weekly-repeating appointments
+               using the item list "c" and "p" boxes.  See screen 6 in the
+               Screen Reference section for more details.
+
+             # TMPC will never automatically remove a weekly-repeating
+               item.  After each date passes with an entry, TMPC will add a
+               note of it to the diary, but it will not remove the item.
+
+
+          Weekly-repeating items always appear below the single-date items
+          in the item list, regardless of when and where you enter them. 
+          This is a software limitation, and it means that you will not
+          always be able to show your appointments in order through the
+          day.
+
+          For more information about how to set the date for a
+          weekly-repeating item, see screen 13 in the Screen Reference
+          section.
+
+
+                               Monthly Repeating Items
+
+          A monthly-repeating item is very similar to a weekly repeating
+          item.  There are only two major differences:
+
+
+             # A monthly-repeating item allows you to set item dates by
+               days of the month.  For example: your birthday, which comes
+               once per year, and your paycheck, if it comes on the 15th
+               and the last day of every month.  You must activate screen
+               14 to set monthly-repeating dates, as opposed to screen 13
+               for weekly repeating dates.
+
+             # TMPC list monthly-repeating items after single-date items
+               and weekly-repeating items in the item list.
+
+
+          In every other way, monthly-repeating items are the same as
+          weekly-repeating items.
+
+
+
+
+
+
+
+
+
+
+
+
+                                      Page: 45
+
+
+
+
+
+
+
+                          Reference Section Three: Screens
+
+          The screen reference section describes each of TMPC's fourteen
+          screens: what they do and what they show.  It lists each screen
+          in numerical order, and each in a similar format.  The screen
+          numbers are arbitrary; the arrangement is as follows:
+
+
+                                  ENTER           
+                                    |             
+                                    V             
+                             1      2      3           
+
+                             4      5      6           
+
+                             7      8      9      13/14
+
+                             10     11     12          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      Page: 46
+
+
+
+
+
+                          Reference Section Three: Screens
+
+
+
+                                 Screen 1: Add To-Do
+
+
+
+                                      Screen 1
+                      ****************************************
+                      *Get sales approval for Drynan - *******
+                      *call TSD                        *edit**
+                      ************************************* **
+                      *                                    %  
+                      * ***************** ***************** **
+                      ************************************* **
+                      *Unassigned********Unassigned******** **
+
+
+
+                                Information Presented
+
+          This screen displays the three major attributes of a to-do: the
+          description in a text-display area, the stress at the lower left,
+          and the priority at the lower right.
+
+          If you enter the screen from screen 2, there will never be a
+          to-do displayed.  Instead, the text-display area will be empty,
+          and both the stress grade and the priority will be unassigned. 
+          If you enter this screen from screen 4, the to-do that was
+          selected in screen 4 will be displayed in screen 1.
+
+
+                                      Functions
+
+          There are three major functions available in this screen:
+
+
+             # Change Priority.  From indicated stick-figure position,
+               press [Left-Arrow].  After this, pressing [Down-Arrow] will
+               change priorities; they will cycle from "unassigned" to
+               "priority 1" to "priority 2" to "priority 3".
+
+             # Change Stress Grade.  From indicated stick-figure position,
+               press [Left-Arrow] [Left-Arrow].  After this, pressing
+               [Down-Arrow] will change stress grade; it will cycle from
+               "unassigned" to "Grade A" to "Grade B" to "Grade C".
+
+
+
+
+
+
+                                      Page: 47
+
+
+
+
+
+                          Reference Section Three: Screens
+
+             # Change Description.  From indicated position, press
+               [Up-Arrow].  TMPC will enter the TEXT program; the active
+               file will contain the text found in the text-description
+               area.  Change the text as you wish.  Deleting all of the
+               text will eliminate the to-do from the warehouse.  Adding
+               new text, separated from any existing text with [ENTER],
+               will create new to-dos.  Changing the existing text will
+               update the description of the existing to-do.
+
+
+                                        Exits
+
+          To exit from the screen, press [Right-Arrow] to move to screen 2,
+          or [Down-Arrow] to move to screen 4.  Exiting the screen saves
+          any changes made to the to-do.  If a new priority or stress grade
+          changes a to-do's position in the warehouse, screen 4 will
+          select the to-do after the old position.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      Page: 48
+
+
+
+
+
+                          Reference Section Three: Screens
+
+
+
+                               Screen 2: Today's Date
+
+
+
+                                      Screen 2
+                      Wed, 01/11/84******  Menu***************
+                      ******************* ********************
+                      Day  11/355 Left*** ********************
+                      ******************* ***********Appt Cal 
+                                         % 
+                       Add To Do********* ********************
+                      ******************* ********************
+                      TMPC by Acroatix***  Overall Status*****
+
+
+
+                                Information Presented
+
+          This screen shows three pieces of information.  First, it shows
+          today's date (the value that DATE$ returns in BASIC) and the
+          weekday.  Second, if today is a business holiday, it shows the
+          name of the holiday.  Finally, it shows the day number in the
+          year (sometimes called the "Julian date"), and how many days are
+          remaining in the year.  All of this information appears in the
+          upper left corner of the screen.
+
+
+                                      Functions
+
+          This is a "corridor" screen - all you can do from it is exit to
+          other screens.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      Page: 49
+
+
+
+
+
+                          Reference Section Three: Screens
+
+                                        Exits
+
+          There are four exits from this screen:
+
+
+             # Pressing [Up-Arrow] will end execution of TMPC and return to
+               the main menu.
+
+             # Pressing [Right-Arrow] will move to screen 3, the
+               appointment calendar.
+
+             # Pressing [Down-Arrow] will move to screen 5, the "overall
+               status" screen.
+
+             # Pressing [Left-Arrow] will move to screen 1, where you can
+               add to-dos to the warehouse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      Page: 50

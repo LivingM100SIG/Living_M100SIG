@@ -1,0 +1,576 @@
+  0	GOTO 66
+	REM XMODEM 1/23/85 by Rick Perry [75665,1045]
+  1	T=0
+  2	CALL VARPTR(M(16)),0,VARPTR(X(0)) 	check queue for received chars
+ 	IF X(0) THEN
+	    RETURN
+	ELSE
+	    T=T+1
+	    IF T<66*S THEN
+		{goto} 2
+	    ELSE
+		RETURN
+  3	CALL VARPTR(M(21)),0,VARPTR(X)		get chars from queue
+	PRINT CHR$(X);
+	IF D THEN
+	    N=N+1
+	    Z(N)=X
+	    IF N>255 THEN
+		{goto} 6
+  5	RETURN
+  6	S=0					set flag for XON
+	GOSUB 61				XON/XOFF handler
+     +--FOR J=0 TO N
+     |	    PRINT#3,CHR$(Z(J));
+     +--NEXT
+	N=-1
+	GOTO 61
+  7	IF L THEN				external modem?
+	    CLOSE 1,2				yes, close i/o buffers
+	    OPEN Q$ FOR INPUT AS 1		open 8-bit input buffer
+	    OPEN Q$ FOR OUTPUT AS 2		open 8-bit output buffer
+	ELSE					no
+	    A$="8N1D"+N$			8-bit MDM parameter
+	    R=6118				set serial interface & mdm
+	    GOSUB 55				execute CALL
+  8	A=256
+	B=1
+	GOSUB 53
+	ON ERROR GOTO 28
+	IF E THEN
+	    {goto} 17
+  9	S=1
+	GOSUB 1
+	IF X(0) THEN
+	    {goto} 9
+ 10	IF INKEY$=G$ THEN
+	    {goto} 29
+	ELSE
+	    PRINT#2,CHR$(21);
+	    PRINT "X";
+	    S=10
+	    GOSUB 1
+	    IF X(0) THEN
+		{goto} 12
+	    ELSE
+		{goto} 10
+ 11	IF INKEY$=G$ THEN
+	    {goto} 29
+	ELSE
+	    PRINT#2,CHR$(6);
+	    PRINT ".";
+	    S=10
+	    GOSUB 1
+	    IF X(0)=0 THEN
+		{goto} 10
+ 12	IF X(1)=1 THEN
+		{goto} 13
+	ELSE
+	    IF X(1)=4 THEN
+		PRINT#2,CHR$(6);
+		GOTO 27
+	    ELSE
+		IF X(1)=24 THEN
+		    {goto} 29
+		ELSE
+		    {goto} 9
+ 13	CALL VARPTR(M(24)),0,VARPTR(Z(0))	timed read of 131 chars from
+						queue
+	IF Z(0)=0 THEN
+	    {goto} 9
+	ELSE
+	    IF Z(2) <> (255 AND NOT Z(1)) THEN
+		{goto} 9
+	    ELSE
+		IF Z(1)=A THEN
+		    {goto} 11
+		ELSE
+		    IF Z(1)<>B THEN
+			{goto} 29
+ 14	X=0
+     +--FOR N=3 TO 130
+     |	    X=X+Z(N)
+     +--NEXT
+	X=X AND 255
+	IF X<>Z(131) THEN
+	    {goto} 9
+ 15  +--FOR N=3 TO 130
+     |	    IF Z(N)=26 THEN
+     |		N=130
+     |	    ELSE
+     |		PRINT#3,CHR$(Z(N));
+ 16  +--NEXT
+	A=B
+	B=B+1 AND 255
+	GOTO 11
+ 17	GOSUB 24
+ 18	PRINT "?";
+ 19	IF INKEY$=G$ THEN
+	    {goto} 29
+	ELSE
+	    S=10
+	    GOSUB 1
+	    IF X(0)=0 THEN
+		{goto} 18
+	    ELSE
+		IF X(1)=6 THEN
+		    {goto} 23
+		ELSE
+		    IF X(1)=21 THEN
+			{goto} 20
+		    ELSE
+			IF X(1)=24 THEN
+			    {goto} 29
+			ELSE 18
+ 20	PRINT "X";
+ 21	IF N=0 THEN
+	    PRINT#2,CHR$(4);
+	ELSE
+	    PRINT#2,CHR$(1)CHR$(A)CHR$(255 AND NOT A);
+	    X=0
+     +------FOR J=1 TO 128
+     |		X=X+Z(J)
+     |		PRINT#2,CHR$(Z(J));
+     +------NEXT
+	    X=X AND 255
+	    PRINT#2,CHR$(X);
+ 22	S=0					set flag for XON?
+	GOSUB 1
+	IF X(0) THEN
+	    {goto} 22
+	ELSE
+	    {goto} 19
+ 23	IF N=0 THEN
+	    {goto} 27
+	ELSE
+	    PRINT ".";
+	    GOSUB 24
+	    GOTO 21
+ 24	A=A+1 AND 255
+	N=0
+	IF NOT E THEN
+	    RETURN
+ 25  +--FOR N=1 TO 128
+     |	    IF E THEN
+     |		IF NOT EOF(3) THEN
+     |		    Z(N)=ASC(INPUT$(1,3))
+     |		ELSE
+     |		    E=0
+     |		    Z(N)=26
+     |	    ELSE
+     |		Z(N)=0
+ 26  +--NEXT
+	RETURN
+ 27	CLOSE 3
+	PRINT
+	PRINT "File transfer complete."
+	BEEP
+	GOTO 31
+ 28	RESUME 29
+ 29	SCREEN,0				turn off label line
+	PRINT
+	PRINT "ABORT"
+	SOUND 9394,9
+	CLOSE 3
+ 30	S=1
+	GOSUB 1
+	IF X(0) THEN
+	    {goto} 30
+	ELSE
+	    PRINT#2,CHR$(24);
+ 31	IF L THEN				external modem?
+	    CLOSE				yes, close *all* buffers/files
+	    OPEN P$ FOR INPUT AS 1		open 7-bit input buffer
+	    OPEN P$ FOR OUTPUT AS 2		open 7-bit output buffer
+	ELSE					no
+	    A$="7I1E"+N$			7-bit MDM spec
+	    R=6118				set serial interface & mdm
+	    GOSUB 55				execute CALL
+ 32	POKE -86,0				clear keyboard buffer
+	D=0
+	ON ERROR GOTO 44			set up ERROR handler
+	POKE 63056,64				enable PREV buffer, change f-key
+						definitions
+	A$="PrevDown UpTermBrkFreDirBye"	f-key definition string
+	GOSUB 54				execute f-key redefinition
+ 33	CALL 16969				cursor on
+	ON COM GOSUB 3				set up COM (& MDM!) handler
+	S=-1					set flag for XOFF
+	GOSUB 61				XON/XOFF handler
+	K=0
+ 34	ON K GOTO 39,45,56,42
+	A$=INKEY$
+	IF INSTR(N$,A$)=0 THEN
+	    A=INSTR(F$,A$)
+	    IF A THEN
+		ON A GOSUB 60,36,37,56,64,65,63,38
+	    ELSE
+		PRINT#2,A$;
+ 35	GOTO 34
+ 36	IF D THEN
+	    K=4
+	    RETURN
+	ELSE
+	    K=1
+	    RETURN
+ 37	IF D THEN
+	    RETURN
+	ELSE K=2
+	    RETURN
+ 38	K=3
+	RETURN
+ 39	COM STOP
+	MDM STOP
+	SCREEN,0				turn off label line
+	PRINT
+	LINE INPUT"File to Download? ";Y$
+	IF INSTR(Y$,":")<4 THEN
+	    PRINT "Append? ";
+	    GOSUB 93
+	    IF A$="Y" THEN
+		OPEN Y$ FOR APPEND AS 3
+		GOTO 41
+ 40	OPEN Y$ FOR OUTPUT AS 3
+ 41	GOSUB 92
+	IF A$="Y" THEN
+	    E=0
+	    GOTO 7
+	ELSE
+	    A$="Prev@@@@TermBrkFreDirBye"	f-key defintion string
+	    GOSUB 54				execute f-key redefinition
+	    N=-1
+	    D=-1
+	    GOTO 33
+ 42	SCREEN,0				turn off label line
+	D=0
+	IF N>-1 THEN
+	    GOSUB 6
+ 43	S=0					set flag for XON
+	GOSUB 61				XON/XOFF handler
+	CLOSE 3
+	GOTO 32
+ 44	PRINT " aborted"
+	IF ERR=22 THEN				MO error
+	    SCREEN,1				turn on label line
+	    RESUME 33
+	ELSE
+	    CLOSE 3
+	    RESUME 32
+ 45	COM STOP
+	MDM STOP
+	SCREEN,0				turn off label line
+	PRINT
+	LINE INPUT"File to Upload? ";Y$
+	OPEN Y$ FOR INPUT AS 3
+	GOSUB 92
+	IF A$="Y" THEN
+	    E=-1
+	    GOTO 7
+	ELSE
+	    W=1
+	    INPUT"Width";W
+	    W=W-1
+	    T=W-9
+	    C=0
+	    S=0					set flag for XON?
+	    GOSUB 53
+	    GOSUB 49
+ 46	IF INKEY$=G$ THEN
+	    PRINT
+	    ERROR 7
+	ELSE
+	    IF N<0 THEN
+		CLOSE 3
+		BEEP
+		GOTO 32
+	    ELSE
+		GOSUB 47
+		GOTO 46
+ 47	J=J+1
+	IF J>N THEN
+	    {goto} 49
+	ELSE
+	    PRINT#2,CHR$(Z(J));
+	    IF W THEN
+		IF Z(J)=13 THEN
+		    C=0
+		ELSE
+		    C=C+1
+		    IF T<C AND Z(J)=32 OR C>W THEN
+			C=0
+			PRINT#2,CHR$(13);
+ 48	RETURN
+ 49	J=-1
+	N=-1
+	IF EOF(3) THEN
+	    RETURN
+	ELSE
+	    GOSUB 61				XON/XOFF handler
+ 50	N=N+1
+	Z(N)=ASC(INPUT$(1,3))
+	IF Z(N)=10 THEN
+		N=N-1
+ 51	IF N>255 OR EOF(3) THEN
+		{goto} 61
+	ELSE
+		{goto} 50
+ 53	A$="Abrt"
+ 54	R=17061					set & display temp f-keys
+ 55	V=VARPTR(A$)				execute CALL
+	CALL R,60,PEEK(V+1)+256*PEEK(V+2)	general CALL routine
+	RETURN
+ 56	COM STOP
+	MDM STOP
+	SCREEN,0				turn off label line
+	PRINT
+	IF K=3 THEN
+	    PRINT "Disconnect? ";
+	ELSE
+	    PRINT "Telcom? ";
+ 57	GOSUB 93
+	IF A$<>"Y" THEN
+	    ERROR
+	ELSE
+	    IF D AND N>-1 THEN
+		GOSUB 6
+		CLOSE 3
+ 58	IF K=3 THEN
+	    MAXFILES=2
+	    MENU
+	ELSE
+	    IF L THEN				external modem?
+		MAXFILES=2			set MAXFILES before exit
+		CLEAR 0				(set HIMEM before exit)
+ 59	CALL 21608				jump to TELCOM's term mode
+ 60	S=0					set flag for XON
+	GOSUB 61				XON/XOFF handler
+	CALL 21795				display PREV screen
+ 61	S=NOT S					toggle XON/XOFF flag
+	IF S THEN				XOFF?
+	    COM STOP				yes, put COM interrupt on hold
+	    MDM STOP				put MDM interrupt on hold
+	    PRINT#2,CHR$(19);			send XOFF (^S)
+	    CALL VARPTR(M(59)),100		delay 200 msec
+	ELSE					XON
+	    PRINT#2,CHR$(17);			send XON (^Q)
+	    MDM ON				enable MDM interrupt
+	    COM ON				enable COM interrupt
+ 62	RETURN
+ 63	PRINT
+	FILES
+	RETURN
+ 64	STOP
+	RETURN
+ 65	PRINT
+	PRINT FRE(0)"Bytes Free"
+	RETURN
+ 66	MAXFILES=3				program initialization
+	CLEAR 500
+	DEFINT A-Z
+	DIM X,X(1),M(60),Z(300)
+	SCREEN,0				turn off label line
+	CLS
+     +--FOR N=0 TO 60
+     |	    READ M(N)				read in ML routines
+     +--NEXT
+	K=3
+	FI$="ADRS"				name of default ADRS file
+ 67	N$=CHR$(0)
+						G$ & F$ are composed of
+						graphics chars, but have had
+						the high-bit stripped off in
+						the upload
+	G$=""					grph-C [chr$(255)]
+	F$="xyz{|}~"				grph-< grph-L grph-K grph-H
+						grph-T grph-G grph-Y grph-C
+						[chr$(248)...chr$(255)]
+	U$=CHR$(27)+"A"				cursor up code
+	POKE 63056,64				enable PREV buffer, change f-key
+						definitions
+	CALL 17875				clear PREV buffer
+	POKE 63056,0				???turn off PREV buffer?
+	CALL 27804				restore f-key definitions
+
+ 68	P$="com:57i1e"				parameters for term mode
+	Q$="com:58n1d"				parameters for up/down mode
+	CLOSE
+	OPEN FI$ FOR INPUT AS 1			open ADRS file
+	LINE INPUT"Find:";A$			get command
+	CALL VARPTR(M(3)),0,VARPTR(A$)		convert A$ to UC
+	IF A$="MENU" THEN
+	    {goto} 58				exit program
+	ELSE
+	    IF A$="DIAL" THEN
+		{goto} 76			skip dialing & autolog.
+	    ELSE
+		IF A$="FILES" THEN		change ADRS files
+		    LINE INPUT"File:";FI$	enter name of new file
+		    IF FI$="" THEN		<c/r> response to prompt
+			FI$="ADRS"		set to default file
+			GOTO 68			get next command
+		    ELSE
+			{goto} 68		get next command
+		{else}				not a command, must be a search
+						 string
+ 69	IF EOF(1) THEN				search string not found
+	    {goto} 68				get next command
+	ELSE
+	    LINE INPUT#1,Y$			get a line from ADRS file
+	    I=INSTR(Y$,":")			find start of phone # 
+	    B$=LEFT$(Y$,I)			b$=portion *before* phone #
+	    CALL VARPTR(M(3)),0,VARPTR(B$)	convert B$ to UC
+	    IF INSTR(B$,A$)=0 THEN		does it match search string?
+		{goto} 69			no, go back and try again
+	    ELSE				yes
+		J=INSTR(I,Y$,"<")		find autolog string
+		IF J=0 THEN			is there one?
+		    {goto} 69			no, go back and try again
+ 70	PRINT LEFT$(Y$,J)">";			display the line & # *only*
+	Z$=INPUT$(1)				input option char
+	PRINT					goto next screen line
+	ON INSTR(CHR$(27)+"356Mm",Z$)GOTO 68,78,78,78,71,71
+						branch on option
+	GOTO 69					input not a valid option, so go
+						 back and try again
+ 71	CLOSE					start of MDM dialing routine
+	L=0					set modem flag to internal
+	A$="7I1E"+N$				MDM parameter string
+	R=6118					set serial interface & mdm
+	GOSUB 55				execute CALL
+	A$=MID$(Y$,I+1,J-I-1)+N$		extract phone number
+ 72	PRINT "Calling "LEFT$(Y$,I);		display entry being called
+	R=21293					dial phone number
+	GOSUB 55				execute CALL
+	CALL 21172				keep phone off hook
+	PRINT					goto next screen line
+	N=0					initialize loop counter
+ 73	N=N+1					increment loop counter
+	CALL VARPTR(M(0)),0,VARPTR(X)		carrier detect routine
+	IF X=0 THEN				carrier detected?
+	    {goto} 77				yes
+	ELSE					no
+	    B$=INKEY$				check for keypress
+	    IF B$="" AND N<600 THEN		keypress or max # of loops?
+		{goto} 73			no, loop again
+ 74	CALL 21179				hang up phone
+	IF B$>"" THEN				keypress?
+	    {goto} 68				yes. abort dialing & get
+						 next command
+	ELSE
+	    PRINT "NO CARRIER"
+	    N=0					zero loop counter
+ 75	N=N+1					increment loop counter
+	CALL 21264				wait 2 sec
+	IF INKEY$>"" THEN			keypress?
+	    {goto} 68				yes. get next command
+	ELSE					no
+	    IF N<2 THEN				max # of loops?
+		{goto} 75			no, loop again
+	    ELSE				yes
+		{goto} 72			retry number
+ 76	CLOSE					"dial" routine
+	Y$=""					clear search string
+	J=1
+	L=-1					set modem flag to external
+	Z$=INPUT$(1)				input option
+	ON INSTR("356Mm",Z$)GOTO 81,81,81,77,77	branch on option
+	GOTO 68					not a valid option so go back
+						 and get next command
+ 77	L=0					set modem flag to internal
+	PRINT "CONNECT"
+	BEEP
+	OPEN"mdm:7i1e"FOR INPUT AS 1		open input buffer
+	OPEN"mdm:7i1e"FOR OUTPUT AS 2		open output buffer
+	A$=MID$(Y$,J)+N$			A$=autolog sequence
+	R=21392					execute auto-logon sequence
+						 mdm only!
+	GOSUB 55				execute CALL
+	GOTO 32					goto term mode
+ 78	CLOSE
+	B$="com:"+Z$+"7i1e"			create parameter string
+	OPEN B$ FOR OUTPUT AS 2			open output buffer
+	PRINT#2,"ATE1X1V0S0=0S7=15"+CHR$(13);	initialize external modem
+	CALL 21274				wait .5 sec
+ 81	P$="com:"+Z$+"7i1e"			parameters for term mode
+	Q$="com:"+Z$+"8n1d"			parameters for up/down mode
+	IF Y$="" THEN				is there an autolog sequence?
+	    {goto} 31				no, open buffers & goto term
+						 mode
+ 82	CLOSE
+	L=-1					set modem flag to external
+	OPEN P$ FOR INPUT AS 1			open input buffer
+	OPEN P$ FOR OUTPUT AS 2			open output buffer
+	D=0					set flag for handler
+	ON COM GOSUB 3				set up COM (and MDM!) interrupt
+	COM ON					enable COM interrupt
+	PRINT#2,"ATDT"+MID$(Y$,I+1,J-I-1)	tell modem to dial number
+						 command is echoed by interrupt
+						 routine
+	COM OFF					disable interrupt
+	PRINT "			";U$TIME$	print time after dial command
+	GOSUB 99				modem result code handler
+	COM ON					enable COM interrupt
+	A$=MID$(Y$,J)+N$			A$=autolog sequence
+ 83	R=21443					execute auto-logon sequence
+						 com setting *must* be #7I1E
+						 for this to work!
+	GOSUB 55				execute CALL
+	GOTO 32					goto term mode
+ 92	PRINT "Use XMODEM protocol? ";
+ 93	A$=INPUT$(1)				get response
+	IF INSTR("YyNn",A$) THEN		valid response?
+	    PRINT A$				yes, print response
+	    CALL VARPTR(M(3)),0,VARPTR(A$)	convert A$ to UC
+	    RETURN
+	ELSE					response invalid 
+	    {goto} 93				try again
+ 94	DATA
+	-4147,30574,201,				M(0) carrier detect
+	-18562,20424,32291,26147,4463,2,-5683,6449,	M(3) convert to UC
+	6865,-5683,4623,3347,-5688,
+	54,28109,-14227,9012,35,			M(16) check queue for
+							      received chars
+	32461,30573,201					M(21) get chars from
+							      queue
+ 95	DATA
+	54,23892,-5683,1585,-14973,8677,7282,28109,	M(24) timed read of
+	-16019,-14907,483,39,-7415,-15936,31787,-15947,	      131 chars from
+	-14907,483,7,-7415,-15936,-15935,-13887,32461,	      queue
+	4973,4627,-15903,-15099,485,4,-6903,-7744,
+	-7711,13537,201,
+	-15537,21276					M(59) delay A*2 msec
+ 99	CALL VARPTR(M(21)),0,VARPTR(X)
+	IF X<47 THEN
+	    {goto} 99
+	ELSE
+	    ON X-47 GOTO 100,101,102,103,104,105
+	    GOTO 99
+100	PRINT Q;"	ok";U$
+	X=0
+	Q=Q+1
+	GOTO 99
+101	BEEP
+	PRINT Q;"	connect    ";CHR$(27);"K"
+	BEEP
+	RETURN
+102	PRINT Q;"	ring		";U$
+	X=0
+	Q=Q+1
+	GOTO 99
+103	PRINT Q;"	no carrier	";TIME$;U$
+	Z$=INKEY$
+	IF Z$>"" THEN
+	    PRINT
+	    GOTO 68
+	ELSE
+	    CALL 21264				wait 2 sec
+	    PRINT#2,"A/";
+	    X=0
+	    Q=Q+1
+	    GOTO 99
+104	PRINT Q;"	modem error";U$
+	STOP
+105	BEEP
+	PRINT Q;"	connect 1200";CHR$(27);"K"
+	BEEP
+	RETURN

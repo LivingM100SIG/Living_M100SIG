@@ -1,0 +1,301 @@
+TXTHK.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The Model 100 family of computers is based on ROM-ware, permiting basic
+operations without loading software.  But these ROM routines can be
+limiting.  The designiers of the firmware wisely provided "hooks" into the
+ROM routines, so programmers can jump out of the ROM program into their own
+routines, and back again.  The overwrite programs for the M100/102 and 200
+owe thire existence to use of these hooks.  These messages discuss how it
+works -- plus a bit about EPROM's!
+
+Message range: 166733 to 167108
+Dates: 3/29/88 to 4/7/88
+
+
+Sb: #TEXT Hook (RST 7)
+Fm: Stan Wong 70346,1267
+To: All
+
+Anyone know what the hook at address 24673d=6061h in the TEXT program does?
+The HOOK.100 file lists the hook and I can't find any other documentation about
+it.  If anyone has figured it out already I would appreciate any info you might
+already have.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Stan Wong 70346,1267
+
+   I'm having a bit of trouble interpreting your question.  Hooks, in their
+nominal (post cold-start) state, don't really "do" anything.  They are a quick
+detour, out of the machine's various ROM routines, to a designated RAM address
+above user memory (I call that area SYSRAM).
+   Usually the contents of that address will just return to execution of the
+routine in ROM.  But if you change what's in the RAM address, you can attach (
+or "hook") your own program onto the ROM routine.
+   (Forgive me if you already know all this; but the phrasing of your question
+made me believe you didn't.)
+   The RST 7 routine is a special case: instead of diverting *directly* to an
+address in SYSRAM, the RST 7 instruction checks the byte immediately following
+RST 7 and uses it to look up the diversion address from a table in SYSRAM
+starting at 64218d.
+   For example, in TELCOM pushing <F6> in the TERM mode will execute
+
+                RST 7
+                DB 50d
+
+   That, in turn, looks up the 50th and 51st bytes of the hook table (i.e.,
+64268d and 64269d) and CALLs the address specified there in L-H format.  After
+a cold start those numbers would be 243d and 127d, yielding a CALL address of
+32755d.  The instruction at 32755d is a simple RET; so the <F6> key does
+nothing (in a very complicated way).
+
+   But if you *change* the bytes at 64268d and 64269d, the <F6> TERM key will
+CALL the routine you specify.  The CLS routine, for example, is located at
+16945d.  The L-H components would be 49d and 66d.  So, POKEing those two
+numbers into the hook table addresses just mentioned will cause the screen to
+clear whenever you press <F6> in TERM.
+   The RST 7 routine is used in many parts of ROM, including some "standard"
+BASIC commands, and some commands that BASIC recognizes, but isn't prepared to
+execute.  For the latter, the RST 7 hook table contains the value 2267d.  The
+CALL to that address displays "FC ERROR" on the screen and halts program
+execution.  But, again, if you change the appropriate values in the hook table,
+you can divert execution to an address of your choice.  That is how commercial
+DOS's implement the LFILES command, for example.
+   The full-scale use of such hooks depends on at least superficial knowledge
+of the ROM routines they're attached to.  Which variables are stored in which
+registers at the time the RST 7 instruction is given.  And how will altering
+those values accomplish what you want?
+   If you don't have them already, you'll want to download the files HOOK.100
+and HOOK2.100 from DL8.
+                Happy hooking!
+
+
+Fm: Stan Wong 70346,1267
+To: Wilson Van Alst 76576,2735
+
+That was a pretty clear explanation of the RST 7 hooks.  I am aware of what
+hooks are and how they are used.  What I didn't make clear in my original
+message was what part of the TEXT program the RST 7 occurs (functionally that
+is).  I have disassembled the TEXT program and have mapped out only a bit of
+its function.  The rest is still a mystery to me.
+
+Now, what I really want to do is to intercept keystrokes and take a look at
+them, sort like a TSR on an IBM PC.  In TEXT there is a control key vector
+table located at 6018H.  If a control-Y is pressed, then TEXT sends control to
+the 25th address in the table.  Since that table is in ROM, I can't modify it.
+I was hoping that the RST 7 might give me a mechanism to do that by allowing me
+to substitute my own vector table in RAM.
+
+Studying Paul Globman/Phil Wheeler/James Yi's TXT-OV.ASM file gives me the clue
+that I need.  I have to  intercept the keystroke at the GetKey call and unwind
+the stack to insert a RETurn to my code to handle, say, a control-Y. There must
+be a simpler way but I don't see it.
+              The Happy Hook'er
+
+
+Fm: Paul Globman 72227,1661
+To: Stan Wong 70346,1267
+
+see March Portable 100!  That's the basic principle tha was applied to get
+TXT-OV to work.
+
+
+Fm: Stan Wong 70346,1267
+To: Paul Globman 72227,1661
+
+Read your article in the March Portable 100, finally.  I missed it because it
+was about the Tandy 200 and I ignore those articles.  Anyway, the GetKey hook
+is now clear but it seems awfully messy.  Thanks for the help.
+
+
+Fm: Paul Globman 72227,1661
+To: Stan Wong 70346,1267
+
+Tsk, tsk!  Don't forget to check out the April issue.  I cover background
+printing, which could easily be done on the M100/102.
+
+
+Fm: Stan Wong 70346,1267
+To: Paul Globman 72227,1661
+
+I haven't received my April Portable 100 yet, but I'll check out the background
+printing article.  It's interesting to note that a sig member asked for a
+background printing method several months ago (Carl Casscadan??).  At that time
+I worked up a method to do it using the real-time clock interrupt.  It'll be
+interesting to see how you did it.  If the methods look similar (and Phil
+Wheeler hasn't beaten everyone to the punch) I'll consider a M100 version.
+
+The M100 is so much fun that I haven't used it for what I bought it for:
+working whilst traveling.  I spend my time in airplanes and hotel rooms doing
+disassemblies and m100sig'ing instead of writing memos.  Oh well...
+
+
+Fm: Paul Globman 72227,1661
+To: Stan Wong 70346,1267
+
+Stan -  I have been using TSI's 8 ROM PAK with Sardine for over 6 months and
+like it very much.
+
+Running BASIC programs from a option ROM is not a likely prospect at this time.
+  You will simply store the program on ROM and move it to RAM (in its entirety)
+for execution.  I'm not sure how TSI or PCSG code it for execution in ROM, but
+I assure you it's probably even trickier than the trickiest things I have
+uncovered so far.
+
+If you want to give background printing a shot, I *may* have the needed info. I
+originally began developing that on the M100 but didn't have ROM2 for the M100
+(back then, got it now).
+
+On the M100 version I had a file P.CO in ram, and I would place the widebar
+cursor over ANY .DO file any type "P.CO"<enter>, to initiate the background
+printing.
+
+Also, please send details of the format you need to xfer bytes to eproms.
+
+
+Fm: Denny Thomas 76701,40
+To: Paul Globman 72227,1661
+
+  The concept is pretty simple - it's the implementation that staggers me. I
+talked to Tom Bennett about it, and he said (not giving away *too* much, mind
+you) that basically he sets aside a small dab o'ram and then brings in a line
+of BASIC to be interpreted. I would suppose he switches out the option ROM for
+a second so he could use the already existing BASIC routines.
+
+The thing that boggles me is the amount of housekeeping necessary to keep track
+of variables, strings and line numbers.
+
+Since there is a lot more overhead for this procedure, it starts to make sense
+why URII programs (T-BASE and IDEA!) run so slow.
+
+
+Fm: Stan Wong 70346,1267
+To: Paul Globman 72227,1661
+
+I would like to give background printing a shot for the M100. I still haven't
+received my April copy of Portable 100.  I'll probably have to run out and buy
+one (they missed February also). If you have any other details, please send
+them to me.  I'm on the verge of completing several projects so I'll have some
+time.
+
+About the EPROMs, if you need one programmed I can take any Motorola S-Record
+format or Intel HEX format although I haven't tried the latter.  i2hhave
+written ixPprogram MOTOHX.100 in DL7 which makes a file from an address range.
+It's intended for CO files where you give it the start and end addresses.  I
+have another unreleased piece of software which reads the .CO file back into
+the high memory area.  You can put as many .CO files in the EPROM as you
+want.  The advantage is that you only need to keep one .CO in ram at a time.
+Reading from the EPROM takes less than a second.
+
+
+Fm: Paul Globman 72227,1661
+To: Denny Thomas 76701,40
+
+Denny - Are T-BASE and IDEA! basic programs?  Well that might explain why it's
+slow.  It's the Basic interpreter, not the ROM switching.  I believe that even
+in RAM, the interpreter grabs a line at a time, and although I don't know the
+exact technique, I can sorta see the 'block diagram' of the code.
+
+All those variables and such are handled by the std Basic Interpreter.  The
+option ROM, like RAM, is merely storage for the basic program.
+
+Although it is commonly thought that Basic programs are executed "in place", I
+do not believe that is exactly correct.  The code never moves, but each
+executed line (tokenized) was extracted from storage and moved into place for
+interpretation and execution.
+
+A method of pulling these lines out of ROM was devised and I have not studied
+it.  I have no BASIC in ROM programs to look at.  Gee, I do have a UR-II for
+the T200 sitting here, but the package isn't open so I must fight temptation.
+
+
+Fm: Denny Thomas 76701,40
+To: Paul Globman 72227,1661
+
+Well, your answers are just a rapidly ripped wrapper away. (sorry) Yes, T-Base
+and Idea are both in BASIC and T-Word is in pure M/L - hence its blindingly
+fast print speed (faster than any W/P program I have on the 8088 PC at work).
+
+I've harped on Mark for 2 years about those BASIC programs, he promised that
+the next time around they'll be better. (Ultra-penultimate-URIII+ ????)
+
+I figured that the BASIC interpreter is being used quite heavily, but there are
+a lot of entry points and set-ups to keep track of.
+
+
+Fm: Paul Globman 72227,1661
+To: Stan Wong 70346,1267
+
+Stan - The code for the T200 background printing is pretty straight forward,
+but designed to run in LOMEM.  If you run it in ALT LCD buffer, then you cannot
+use TELCOM while printing, and if you run it in HIMEM you may conflict with the
+needs of another program you want to run.
+
+I believe James has a 'stand alone' version of BkGrPrt that runs in the LCD
+buffer, but I don't know if he's gonna put it out.
+
+How do you want to approach it?  LOMEM, HIMEM, SYSRAM?  How do you want to
+activate it?  At the Menu or from within a program?  Ya gots ta work these
+little things out before you begin.
+
+Re: Eproms
+
+With some luck you should be able to solder a low profile socket into the
+little ram carrier allowing you to use standard Eproms in the Molex socket. The
+socket in the laptop is not that deep so the 'hatch' won't fit on.  In the
+SAFE/8 ROMPAK you have a better shot.
+
+Did you know that if you get the Sardine chip set, that the top half of the
+first Eprom is blank, and I dont know how much of the bottom half is blank too.
+  But that's at least 16K to play with!   If you're thinking of getting SAFE,
+send me email before you do.  I'll make you an offer too good to refuse!
+
+If you have any questions about SAFE or TSI ROMPAK, I'm sure I can help.
+
+
+Fm: Stan Wong 70346,1267
+To: Paul Globman 72227,1661
+
+re: Background printing - My initial approach to background printing was to use
+the ALTLCD buffer for debugging purposes and not have to worry about fighting
+other memory problems.  Once I got that working I was planning on one of
+several approaches.  One would be to stick a .BA program as the first .BA in
+memory and use memory allocated there, sort of like MAXRAM.BA which wants to be
+the first .BA (which I use). Another approach would be to stick something just
+under HIMEM and move the himem pointer down.  The caveat with this approach
+would be that the user must be aware not to do anything that would disrupt it.
+An already load .CO file would still be able to run (I usually keep my
+COs loaded in high memory with a 7-byte driver on the menu.  HIMEM is set to
+point just below the lowest .CO).  Anyway you are right that memory allocation
+is a sticky problem.
+
+re: EPROMs - I tried a low profile socket and it still was too tall.  The
+circuit board and EPROM combination fill up the socket by itself.  During
+development, having it stick out would be okay I guess.  Once programmed,
+hopefully the EPROM would be relatively stable.  I could always build a Molex
+style socket with appropriate cabling to adapt it to a standard 28-pin header
+for reprogramming once it soldered into place.
+
+
+Fm: Stan Wong 70346,1267
+To: Denny Thomas 76701,40
+
+Paul's on the right track about the Basic interpreter.  The Basic code never
+moves but there is a rom call that interprets each tokenized statement.  Other
+rom routines find the next statement to execute.  It's been a while but my
+memory is sort of dim on the subject but each Basic statement in storage is
+prefixed with the line line followed by the statement tokens followed by a
+null.  Three nulls indicate the end of the program (end-of-statement null
+followed by a line number of zero).
+
+A small program could switch to the option rom, read a Basic line (tokenized)
+into ram, switch back to system rom, and then feed it to the interpreter loop.
+There is no housekeeping since Basic takes care of it.  Oops, I forgot, as part
+of each line I believe that there is also the address of the next statement.
+That needs to be fixed up also.  Anyway, it's a fairly starightforward
+proposition.  If there is any interest I can dive back into my notes and
+re-figure out what's what (in any case I got all my info from Robert
+Covington's ROM maps in the DLs).

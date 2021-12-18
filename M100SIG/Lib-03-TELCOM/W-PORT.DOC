@@ -1,0 +1,241 @@
+                              Q - P O R T . 1 0 0
+
+                              X - P O R T . 1 0 0
+
+
+                                By Denny Thomas
+                              All Rights Reserved
+
+          Software For The M100/T102 And The WorldPort External Modem
+
+      Q-PORT = TELCOM for the WorldPort Modem (or 100% Hayes compatibles)
+
+                X-PORT = X-TEL interface for the WorldPort Modem
+
+  For those of you who have an external modem and find the lack of support a
+real pain, here are two programs that will make your life a lot easier.
+
+  The first program (Q) is a bread-and-butter auto-dialer - redialer -
+auto-logon program that will jump to TELCOM as soon as the logon sequence is
+complete.
+
+  The second, (X) is an interface to X-TEL V2.1 and V2.2 which does the same
+functions but with different procedures tailored to the way X-TEL works.
+
+                           ---->VERY IMPORTANT!<----
+
+          Before attempting to run X-PORT, PLEASE read the section on
+          them!  I do not check to see if X-TEL has been relocated.
+          If you run a relocated version of X-TEL with X-PORT, THE
+          PROGRAM WILL BOMB.  Change the variable "D" in line 2 to
+          indicate the TOP (or HIMEM) address of your version of
+          X-TEL.  Also, the program assumes that you use the standard
+          basic loader that is supplied with X-TEL (X-TEL.BA).  If
+          you do not use that program name for your loader, change
+          line 4 to reflect the new name that you have given the
+          loader program.
+
+  Both programs use the ADRS.DO file to store phone numbers and auto-logon
+strings.  The ADRS file can be in RAM or on the Chipmunk, DVI, or Tandy Disk
+Drive (if an alternate operating system is installed); the program will find it
+wherever it is.  If you already have your ADRS file set up, fine, you are ready
+to start using the program.  If not, create one using the procedures listed in
+the M100 User Manual, pages 89-92.  These programs use EXACTLY the same syntax
+as the TELCOM program in the M100/T102 with one exception: you cannot have any
+characters past the [ > ] in the auto logon string.
+
+                    ----------------------------------------
+                              Running the Program
+                    ----------------------------------------
+
+                          Commands at (Find:) prompt:
+
+                   [CR]........Find first/next phone number.
+                   [ESC].......Go back to (Find:) prompt.   
+                   [BKSP]......Go to top of program.        
+                   [F8]........Menu or X-TEL.               
+                   [DIAL]......Go to TELCOM for manual dial.
+                   [any key]...Dial last number listed.     
+
+  Anything that is inside of brackets - [] - is to be typed in.  Do not type
+the brackets
+
+                            ------------------------
+                            Specifics for Q-PORT.100
+                            ------------------------
+
+  To run the program, make sure you have a copy of your ADRS file in RAM or on
+disk (for the TDD, you must have a DOS that supports BASIC to access from
+disk).
+
+  Upon entering the program, you will be able to make three decisions:
+
+1) Each time you depress [1], you will toggle the baud rate between 1200, 300,
+   2400 baud, and the internal modem.
+
+2) Select Setup Menu by depressing [2]. (see the section on this)
+
+3) If you depress any other key, you should see the Find: prompt.  At this time
+   the above commands become active.  You can now type in the string you wish
+   to search for.  The program is designed to keep keystrokes to a minimum, so
+   if you have your primary logon string as the first number in your ADRS file,
+   all you should have to do is hit [CR] and then any other key to start the
+   autodial process.  If you have the wrong number up on the screen, you can
+   hit the [ESC] key to get the find prompt back, or keep hitting [CR] to cycle
+   through the ADRS file.  If you hit the [BKSP] key, you will return to the
+   top of the program to allow selection of a different baud rate or go to the
+   Setup Menu.  Once you have found the number you wish to call and hit a key,
+   the rest of the process is automatic.
+
+  If not using the internal modem, the program will check for or use the
+following Hayes commands:
+
+                         ATZ              ATDT        
+                         ATDP             ATB0        
+                         ATB1             ATX1        
+                         ATX4             A/          
+                         CONNECT          CONNECT 1200
+                         NO CARRIER       BUSY        
+                         NO DIALTONE                  
+
+  There are 6 S-registers that are supported, but are not necessary for normal
+operation. (see Setup Menu)
+
+  If, while the program is redialing, you wish to go back to try another
+number, (Find:) hit any key.  If the program doesn't respond immediately, be
+patient, it might take one more redial to recognize your keystroke.  With the
+internal modem, you may go back after the first time number is dialed as well
+as after redials.
+
+                             ---------------------
+                             Screen Scroll Disable
+                             ---------------------
+
+  As you entered the program, you might have noticed the two function key
+definitions.  (F6 & F7)  The M100/T102 screen has a problem with 1200 baud
+operation in that it will not scroll the screen at any thing over 600 baud.
+This takes away the advantage of high speed operation on services such as
+CompuServe that charge extra for 1200 baud.  But you can "beat the system" by
+turning off the screen scroll during downloads.  The M100 will then receive at
+any baud rate.  The only trade-off is that you will have to read what you have
+downloaded afterwards, offline.
+
+  The two keys are to be used while online.  When you get to a point where you
+want to download, hit the [F7] key.  At this point the screen will stop
+scrolling and start printing on one line only.  You will still be able to see
+prompts and do normal commands, but it will just be a bit more confusing until
+you get used to it.  When finished with high speed downloads, hit the [F6] key
+to return to normal operation.
+
+                               ------------------
+                               Setup Menu Options
+                               ------------------
+ Upon selecting the [2] option at the main screen, you will be presented with a
+new screen with a list of options:
+
+ 1) STAT = Allows you to change the other parameters of your STAT setting.  Use
+    if you need to change to 8 bit, stop bits, etc.
+
+ 2) Pulse/Tone = Toggles between the two methods of dialing.  Note: You cannot
+    use pulse dialing with the acoustic coupler.
+
+ 3) Modem Std. = Toggles between Bell 103/212A and CCITT V.21/V22 modem
+    standards.  Bell is used in the U.S. and CCITT is used internationally.
+    Refer to your modem manual for full details.
+
+                                  -----------
+                                  S-Registers
+                                  -----------
+
+ There are 17 software registers that can be modified to change the operating
+characteristics of the modem.  I have selected the 6 most useful of these to be
+included in Q-PORT and X-PORT.
+
+ To change a value, select the desired register then enter a new value.  An
+asterisk [*] will be displayed next to a register that has a non-default value
+stored in it.  If you wish to see what you have entered, select the register
+and then press [CR] with no other input. The value that you previously entered
+will then be displayed.  If there isn't an asterisk next to the register,
+nothing will print.
+
+ 4) S6 = Wait time for dial tone.  2-255 seconds.  Default = 2 seconds.
+
+ 5) S7 = Wait time for carrier (after dialing).  1-255 seconds.  Default = 30
+    seconds.
+
+ 6) S8 = Pause time (caused by comma).  0-255 seconds.  Default = 2 seconds.
+
+ 7) S9 = Carrier detect response time.  1-255 1/10 second.  Default = 6/10ths
+    seconds
+
+ 8) S10 = Delay time between loss of carrier and "hang up".  1-255 1/10 second.
+    Default = 7/10ths seconds.
+
+ 9) S11 = Duration and spacing of Touch-Tones.  50-255 milliseconds.  Default =
+    70 milliseconds.
+
+ 10) Reset to Defaults = Allows you to clear all of the registers and set all
+     other parameters back to their original values.
+
+                            ------------------------
+                            Specifics for X-PORT.100
+                            ------------------------
+
+  Due to the nature of X-TEL, it will be necessary to make a small change to
+X-PORT in order to make it run with a relocated version of X-TEL.  If you just
+use the standard non-relocated version, this program is ready to run and you
+can skip to the section on running X-PORT.
+
+                              -------------------
+                              Modifing X-PORT.100
+                              -------------------
+
+  To modify X-PORT, first you need to find out the number that you will insert
+into the program.  That number is the TOP address of X-TEL.  To find it, you
+can go into basic and type [LOADM"X-TEL].  Three numbers will print out, the
+first of which is the TOP address that you are looking for.
+
+  Another method would be to go into X-TEL, set your STAT for 57I1E, press
+[F4], press and hold the [CODE & SHIFT] while pressing [F7].  This will get you
+into X-TEL basic.  At this point, type [KEY LIST].  This will list the function
+key definitions.  The definition for key 8 will be a CALL nnnnn.  That is the
+number you will want to write down for X-PORT modification.
+
+  After you get the number, go into basic, load X-PORT.DO, and enter [EDIT2].
+You can then edit the number that is associated with the variable "D".  After
+finishing, save the program.
+
+                               ------------------
+                               Running X-PORT.100
+                               ------------------
+
+  Since you need to access X-PORT while online, I have found that there are
+several ways to load and run the program depending on how many keystrokes you
+can tolerate.  I will assume in the following discussion that you have set
+function key 7 to: RUN"X-PORT" 
+
+Below is a line that can be merged into X-PORT to set function key 7.
+
+3 KEY7,"Run " + CHR$(34) + CHR$(88) + CHR$(45) + CHR$(80) + CHR$(79) + CHR$(82)
++ CHR$(84) + CHR$(34) + CHR$(13)
+
+  Run X-PORT from the main menu.  It will look for the loader program
+(X-TEL.BA) and excecute it.  Once inside X-TEL, at the Telcom: prompt, press
+[F4] (Term).  Next, go into X-TEL basic by pressing and holding [CODE + SHIFT]
+while hitting the [F7] key.  Press the [F7] key again to excecute X-PORT again.
+This time you will see the X-PORT menu.  The menu should be self explainitory.
+When you select option 1 or 2, the program will toggle and update the screen
+with the new status.  Once you press [CR], the program will start working
+exactly like Q-PORT.  The only exception is the method for disabling and
+enabling screen scroll.  You have to go back into X-TEL basic every time you
+want to toggle that option.
+
+                    ----------------------------------------
+                                    CREDITS
+                    ----------------------------------------
+
+  First I'd like to thank Rich Young, Rick Perry, Joel Dinda and Dan Drasin for
+various parts of the program and Bill Templeton for excellent beta testing.
+But mostly I'd like to thank Leonard Erickson whose fine bit of detective work
+in finding the entry point for the Telcom auto-logon routine really made the
+program possible.

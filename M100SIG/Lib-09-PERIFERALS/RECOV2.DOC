@@ -1,0 +1,132 @@
+RECOV2.TD2 -- TDD2 DO file Recovery
+-----------------------------------
+
+RECOV2.TD2 is a Model 100/102 program which will let the user explore the
+files on a disk and recover text (DO) files.  This can be done even on
+disks that have been rendered unreadable by damage to their directory
+sector(s).  It will work with the TDD2 drive (only) and will recover DO
+files from both TDD1 and TDD2 disks.
+
+RECOV2.TD2 (= RECOV2.BA) works with FLOPPY2, the OS provided with the TDD2;
+no other commercial software is required.  To use it, load it in with
+FLOPPY and run it.  It is a good idea to clear everything else (but FLOPPY)
+off the menu, making the largest possible space for recovered files; but if
+you know the file you want is small, just make sure you have that much
+memory plus 2-3K bytes.
+
+RECOV2.TD2 is strictly a reading program; it will not modify bytes on the
+disk (if you want to do that, use TD2MON.100 in DL9).  It does display the
+first 48 bytes of seleted Sectors, letting you quickly move through the
+disk and find the beginning of DO files.
+
+1. Functions of RECOV2.TD2
+
+When you run RECOV2 you will see a menu of six actions.  When in the "File
+Display" mode, press <ESC> to get back to the recovery menu.  At this menu,
+press a letter key (upper or lower case) to select one of the six actions:
+
+S)elect New Start Sector -- this is the necessary first thing you do when
+  you enter the program.  Range is 0 to 159 for TDD2 disk and 0 to 79 for
+  TDD1 disk.  If you go above the limit for a TDD1 disk, you get a "Sector
+  Unreadable" message.
+
+G)o to Next Sector on Disk -- after returning to menu via <ESC> , this
+  takes you to the next sector.
+
+R)ecover DO file at this Sector -- Starts the recovery process at the
+  Sector which was just displayed.  You will be prompted for a file name
+  (extension not required).
+
+A)ppend to Recover File -- lets you add a new sector of text to a file
+  already begun with the R)recover function.
+
+L)ink Next Sector Automatically -- takes you to the file display mode, at
+  the next sector in the file (which may or may not have the same effect as
+  the "G" function).  A beep and redisplay of the menu means that the last
+  sector was the final one in the file (or that the operation is otherwise
+  illegal).
+
+E)xit -- exits to the Model 100/102 main menu.
+
+2. Typical Operation
+
+Put the target disk (TDD1 or TDD2) in the disk drive (TDD2 only).  Run
+RECOV2.BA and use the "S" function to select Sector 0 to start.  If the
+sector is unreadable, the program will tell you so; if a TDD2 disk, repeat
+for Sector 1, using the "G" function (TDD2 disks have two directory
+sectors).  If the directory is readable, you should be able to load the
+files with FLOPPY -- so exit this program and try to do so.
+
+For a damaged disk, select the first possible data sector (1 for TDD1, 2
+for TDD2).  You will get a display of the first 48 bytes of the sector.  Do
+they look like text (no graphic characters in the ASCII representation at
+the right of the screen -- except in the second byte)?  Is it a file you
+want?  If both answers are yes, hit ESC key to get to the recovery menu.
+Use "R" to start the recover of the file starting in the sector you just
+examined.
+
+"R" will prompt you for a file name (extension not required).  After
+specifying it you will see a flashed "Writing" message. Then you will
+ be returned to the recover menu.  A beep at this point means you have
+insufficient free memory to saving the recovered file.  Clear some and
+start over.
+
+At this point, select the "L" action.  It will take you to the file
+display, at the next sector in the file.  If it looks good (it should) hit
+ESC and use the "A" function to append this sector to the recovery file.
+
+Eventually you will get to the last sector in the file.  If you attempt to
+recover beyond it with "L", you will get a beep and return to the recover
+menu.  Note that the "S" and "G" functions will let you go beyond the end
+of the file, so that you can find the next one.
+
+My approach is to use the "S" function and then the "G" action and ESC key
+in rapid succession to "run" though the disk quickly -- making notes on
+where files start.  Then I go back and recover the ones I need.
+
+3. Technical Notes
+
+This program uses the sector access mode of the TDD2 with FLOPPY2.  FLOPPY1
+has no such capability (that I've been able to find), so this program will
+not work with the TDD1.  Get POWR-DOS or TS-RANDOM for TDD1 use.
+
+In the file display mode, the first four bytes header data.  Byte 1 (at
+0000) is 16h for a TDD2 disk and 00h for a TDD1 disk; I have not been able
+to write to this byte (and trick the system!) with TD2MON.100.  The second
+byte is (in hex) the next byte in the file (linkage data), is FFh if this
+is the last sector in the file (or a directory sector), and is 00h if the
+sector is blank (and perhaps if it is unallocated).  I don't know what the
+next two bytes do (always zero in my experience, and not used by this
+program).
+
+When you recover a DO file, there may be garbage at the end, from another
+(old) file.  The EOF is not written to the disk (no 1Ah), and the TDD
+firmware uses the file length data from the directory sector (unavailable
+in a zapped disk).  Just edit the junk out with TEXT before saving the file
+to a disk.
+
+This version has been sped up substantially over the original
+RECOV.TD2 by use of a machine language subrouting, loaded unobtusively
+into the alternate LCD memory area.
+
+This program solves 90% of recovery problems.  My needs are to recover
+documents which I have written and which don't exist anywhere else.
+Programs are usually available without using a trashed disk -- and I never
+trust BA or CO files recovered from a bad disk.
+
+Will you ever need this program?  I have had 5 TDD1 disks go bad in a long
+period of use, and no TDD2 difficulties in a bit over a week.  I believe
+the TDD1 problem was in the ROM (switching from file mode to sector access
+mode), and I have test data that says that part of the code is different.
+So you may never need RECOV2.TD2 (I hope not!).  But knowing this program is
+available may let you use the TDD2 with more comfort.  And I will use it
+on some old TDD1 disks I have!
+
+Hopefully, some hardy programmer will extend this program to grab BA and CO
+files from an unreadable disk.
+
+For further examination of sectors (e.g., total sector vs. just the
+beginning) get TD2MON.100.
+
+Phil Wheeler -- 71266,125
+20 July 1987

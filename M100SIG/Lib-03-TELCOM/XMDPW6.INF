@@ -1,0 +1,137 @@
+Information on XMDPW6.100/200: Update of 7/18/88
+------------------------------------------------
+
+1.  What it Does That's New
+    -----------------------
+
+XMDPW6.CO is a full-featured machine language communications program which
+provides xmodem upload from and download to external devices, inclouding the
+DVI, Chipmunk and the Booster Pak.   XMDPW6.CO is essentially identical to
+XMDPW5.CO --except it supports upload and download of files from/to external
+devices (CAS:, 0:, R:, etc.). Note that it will NOT let you download to a
+TDD, due to both the phone and the TDD needing the comm chip (internal modem
+operates on same UART as the RS-232 port).  See XMDPW5.DOC (Lib 3) for a
+summary of XMDPW5 features and usage.
+
+Is XMDPW6.CO for you?  Only if you need to upload from or download to
+Chipmunk, DVI, Booster Pack -- or some other external device connected to
+the Model 100/102/200 system bus.  Note that Booster Pack has X-TEL built
+in-- an excellent program (but you may prefer some XMDPW6 features, like
+split screen in COnference, macros and DIRACC).  I don't recommend getting
+this program to use CAS: as your external device; CAS: makes things go very
+slow, since all I/O is done in Xmodem 128 byte blocks!
+
+Based on the above observations, XMDPW5.CO will remain the standard
+version..  But both versions will be available and supported.
+
+2.  The XMDPW6 Files, and Installation
+    ----------------------------------
+
+The following files are provided:
+
+    o XMDPW6.100 (Lib 3)  -- Relocating 100/102 Basic Loader
+    o XMDPW6.200 (Lib 10) -- Relocating Tandy 200 Basic Loader
+    o XMDPW6.ASM (Lib 3)  -- The ADSM.CO source of XMDPW6.CO (100/102)
+    o XMD62A.SRC & XMD62B.SRC -- Linked ADSM.CO source files for the 200
+          (both Lib 10)          version of XMDPW6.CO.
+    o XM6CHP.200 (Lib 10) -- A 200 version to be loaded below CDOS (and DVI
+                             OS, I believe); see below
+    o XMDPW6.INF (Lib 3)  -- This file, on installation and usage, including
+                             latest any reports of functional or non-
+                             functional hardware combinations (at the end of
+                             this file)
+    o XMDHZ6.100 (Lib 3)  -- Provides autodial/redial utility for Hayes
+                             compatible modems and XMDPW6.CO (100/102 only)
+
+XMDPW6.100 is a relocating Basic loader which will create XMDPW6.CO in the
+100/102 at a memory location of your choice (obviously subject to memory
+limitations, etc.).  Just load it as a BA program and run it.
+
+If you use XMDPW6.100 with the Chipmunk, note the following important tip
+from Denny Thomas: "CDOS doesn't like having a program end at the last byte
+before its MAXRAM (57967).  What you need to do is run the loader program
+again and instead of hitting [CR] for the default location, type in the
+value 57960.  That gives a 7 byte buffer between XMDPW6 and CDOS.  There is
+no reason that I have ever found why this happens, but it just seems to be a
+quirk of CDOS".
+
+XMDPW6.200 does the same thing in the Tandy 200.  However, due to the
+limited per-bank memory of the 200, it may not be feasible to run the Basic
+loader with the loading location set low enough to leave room for either
+CDOS or the DVI's operating system.  So I've provided XM6CHP.200, a hex form
+of XMDPW6.CO for the 200.  Use HXFER.200 (Lib 10) to load this program to
+its default running location (Himem = 51600), which puts its END address
+abbout 50 bytes below the beginning of CDOS.  And, using ADSM (Lib 10) and the
+two-part linked source of XMDPW6.200 (XMD62A.SRC & XMD62B.SRC), you have the
+option of assembling th eprogram to run at any ORG address you prefer or
+need (including the ORG = 51600 I chose).
+
+3.  Usage with Device Files
+    -----------------------
+
+To specify a device file, type the name as Pre:File, where File is the
+file name and Pre: is the device prefix.  Pre: is 0: (or 1:) for disk
+files [Chipmunk CDOS or DVI OS], R: for Booster Pack, RAM: for RAM files
+(the RAM: can be omitted in this case), and CAS: for cassette files.  The
+extension can be omitted, but if given, MUST be .DO.  Only ascii files
+(i.e., those supported by the built-in Basic ROM file code) are supported;
+but these files can be extended ascii (8 bit "binary").  But if you want
+to send or receive BA or CO files in their binary format, you must have X-
+TEL -- the only Model 100 software I know of that deals with all file
+types for upload and download.
+
+4.  Usage and Operating Notes
+    -------------------------
+
+Note that the Tandy 200 version of this program will overwrite files if
+download is to an existing file; backup or rename as required.  The 100/102
+now prompts before overwrite of a RAM file, but will overwrite external
+device files.
+
+If you start a download to RAM, and do not have enough memory, the program
+will exit to TERM in the middle of the file transfer, and you will get
+some garbage on the screen.  When you next get a CIS prompt, use SHIFT-F6
+to go to BAsic and then Kill enough files to get the space you need; or
+download to a device file.  The handling of OM (out-of-memory) errors
+needs a bit of work to make it a bit cleaner; perhaps in a later version
+or update of this version.
+
+Model 100/102 version (only): You can do a checksum of a RAM or device file
+while on line.  SHIFT-F2 accesses this code.  This will feel slow, compared
+to other M/L checksummers (e.g., QKRCHK) due to use of BAsic file access
+code;  But it is fast enough.
+
+XMDPW6.CO for the 200 (only) has the following small bug:  You cannot set
+the dialing mode to 10 or 20 pps from within the program.  Go to Telcom to
+change STAT.
+
+In order to conveniently return from Basic to Term when using the DIRACC
+Basic access function, define Basic key 6 as:
+
+    Key 6, "Term"+chr$(24)+callxxxxx"+chr$(13), where xxxxx = TOP+27.
+
+If you use the auxiliary program XMDHZ6.100 for autodial/redial with a
+Hayes-compatible modem (e.g., WorldPort), the above function key
+definition is performed when you run XMDHZ6.  Note that XMDHZ6 will require
+customizing for your loading addresses -- and that XMDHZ6.100 will not work
+on the 200, just the 100 and 102.
+
+5.  Hardware Notes
+    --------------
+
+I have little of the hardware which this program supports (no Tandy 200,
+DVI, Chipmunk or Booster Pak).  These early reports are from Denny Thomas,
+Mo Budlong and Eiji Miura.
+
+   o Model 100 -- Tested with RAM:, CAS:, Chipmunk and Booster Pak (internal
+                  or external modem).  And Mo Budlong has verified that
+                  XMDPW6 funtions with the new Gold Card.
+
+   o Tandy 200 -- Works with RAM: and CAS:.  Works with Chipmunk and
+                  external modem; does not work with Chipmunk and internal
+                  modem (no theory as to why this is).
+
+Please report any experiences you have with XMDPW6.
+
+Phil Wheeler -- 71266,125
+Torrance, CA -- 7/18/88

@@ -1,0 +1,63 @@
+
+PDSK04.200
+
+Converted, transcribed and tweaked as necessary by Tony Anderson, 76703,4062.
+September 1988
+
+      (C) 1985 Acroatix Inc.
+Released for exclusive distribution on CompuServe's Model 100 Forum.  All
+other rights reserved.
+
+
+This is the complete START.BA program, as it appears on the release disk.  It
+was designed to be loaded from the disk using FLOPPY.CO, and after loading,
+FLOPPY.CO could be killed from the menu.  Should you ever need to boot the
+Power-Disk system from a storage disk using FLOPPY.CO, this would be the START
+program to use to load POWR-D.CO into high memory, activate the hooks, and make
+it operational.
+
+
+10 'Initializes POWR-DISK from POWR-D.CO
+20 '(C) 1985 Acroatix Inc.
+30 IFMAXRAM<61104THEN50
+40 CLEAR 100,58960:RUNM"POWR-D":LFILESOFF:CALL58960
+50 CLS:PRINT@124,"POWR-DISK is now operational..."
+60 GOSUB270:PRINT"You no longer need to keep a copy of":PRINT"FLOPPY.CO in RAM.  However, you will":PRINT"still want to use it for formats and":PRINT"backups."
+65 PRINT:PRINT"NEVER NEVER use FLOPPY.CO directly":PRINT"when POWR-DISK is operational!"
+70 PRINT:PRINT"The most convenient arrangement is to":PRINT"have FLOPPY.CO, FLOPPY.BA, PD-FLP.CO,":PRINT"POWR-D.CO, and RESTOR.BA on a separate":PRINT"disk."
+80 GOSUB270:PRINT"- To continue with no saves, press 'C'":PRINT:PRINT"- If you want to save FLOPPY.CO to THIS":PRINT"disk, make sure the write protect tab":PRINT"is closed, and press 'F'":C$="CcFf"
+90 IFFRE(0)>3500THENPRINT:PRINT"- To put FLOPPY.CO, FLOPPY.BA,":PRINT"PD-FLP.CO, POWR-D.CO, and RESTOR.BA to":PRINT"ANOTHER Disk, press 'D'":C$="CcFfDd"
+95 PRINT@600,"          >>>>  PRESS KEY  <<<<<";
+100 A$=INKEY$:IFA$<>""THENI=INSTR(C$,A$):IFI=0THEN100ELSEIFI<3THEN250ELSEIFI<5THEN120ELSE140
+110 GOTO100
+120 ONERRORGOTO490:SAVEM":floppy.co":GOTO245
+140 CLS:PRINT"Put in a POWR-DISK owner's disk.":GOSUB270
+150 ONERRORGOTO300
+160 F$=":pd-flp.co":LOADMF$,F
+170 ONERRORGOTO500:A$="Run 180":GOSUB290:F$=":floppy.ba":LOADMF$,F
+180 ONERRORGOTO510:A$="Run 190":GOSUB290:F$=":restor.ba":LOADMF$,F
+190 CLS:PRINT"Put in a non-write-protected":PRINT"disk to save it."
+200 GOSUB270
+210 F$=":floppy.co":GOSUB450:F$=":floppy.ba":GOSUB450:F$=":pd-flp.co":GOSUB450:F$=":powr-d.co":GOSUB450:F$=":restor.ba":GOSUB450
+220 KILL"pd-flp.co"
+222 A$="Run 224":GOSUB290:KILL"restor.ba"
+224 A$="Run 230":GOSUB290:KILL"floppy.ba"
+230 CLS:PRINT"Put in the POWR-DISK customer disk."
+240 GOSUB270
+245 CLS:PRINT"From now on, when you want to use":PRINT"FLOPPY with POWR-DISK, load and run":PRINT"FLOPPY.BA from the disk you just":PRINT"modified."
+247 PRINT:PRINT"To clear out the maximum RAM":PRINT"available with POWR-DISK (after running":PRINT"FLOPPY), load and run RESTOR.BA.":GOSUB270
+250 ONERRORGOTO255:CLS:KILL"POWR-D.CO"
+255 PRINT"Preparing MENU.BA..."
+260 ONERRORGOTO265:A$="New"+CHR$(13)+"Kill"+CHR$(34)+"Start.ba"+CHR$(13)+"Run"+CHR$(34)+"Menu":GOSUB290:LOADM":MENU.BA",F
+265 IFERR=67THENNEWELSEXK=0:PRINT"Cannot load MENU.BA from disk!":GOSUB270:LFILESMENU
+270 PRINT@600,"Press Space bar to continue...";
+280 B$=INPUT$(1):IFB$<>" "THEN230ELSECLS:RETURN
+290 XK=64798:A$=A$+CHR$(13):NU=LEN(A$):FORI=1TONU:POKE (XK+2*I),0:POKE(XK+2*I-1),ASC(MID$(A$,I)):NEXT:POKEXK,NU:RETURN
+300 IFERR=67THENKILLRIGHT$(F$,LEN(F$)-1):RESUME
+450 ONERRORGOTO470:SAVEMF$
+460 RETURN
+470 IFERR=67THENRESUME460
+490 IFERR=67THENRESUME245
+500 IFERR=67THENPOKEXK,0:RESUME180
+510 IFERR=67THENPOKEXK,0:RESUME190
+520 CLS:PRINT"Error";ERR;"  Line #";ERL:PRINT"Consult User's manual or run START":PRINT"again.":GOSUB270:LFILES MENU

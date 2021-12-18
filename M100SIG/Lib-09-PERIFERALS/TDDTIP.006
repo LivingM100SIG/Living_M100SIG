@@ -1,0 +1,59 @@
+USE OF TANDY DRIVE WITH PG DESIGN 64K
+-------------------------------------
+
+
+A. PATCHING FLOPPY.CO TO WORK WITH PG DESIGNS 64K RAM
+
+This information was provided by PG Designs.  I'm sure the usual 
+disclaimers about no liability for loss of data, etc. apply.
+
+1) Load FLOPPY.CO, per instructions (or from disk)
+
+2) Load MENU*.BA per instructions (can be from disk, if other 
+steps are done before loading INVISO, or any other Basic progam --
+i.e., MENU*.BA must be the lowest program in the * bank; load from
+disk must be done BEFORE modifying FLOPPY per the following steps)
+.
+
+3) Enter Basic and do the following:
+
+   CLEAR 256,59400
+   LOADM "FLOPPY"
+   POKE 61571,154
+   POKE 61572,249
+   POKE 61573,0
+   SAVEM"FLOPPY",59400,62959,59400
+
+4) Save this new FLOPPY.CO to disk as NEWDOS.CO.  In my case, the 
+original version has been saved on the same disk as OLDDOS.CO.; of
+course, this version can always be derived by re-booting using 
+IPL.BA.
+
+5) This change alters pointers in FLOPPY.CO to make the DOS load 
+Basic programs into RAM without disturbing MENU; presumably, it 
+will work as well with SUPERA.
+
+
+B. HOW I USE THE DRIVE WITH THE 64K RAM
+
+I have dedicated one bank of RAM for use with the drive; FLOPPY.CO
+is the only CO program in that bank.  It is loaded permanently 
+into the area above HIMEM and run via a 7-byte machine language 
+driver, DOS.CO.  DOS.CO was created by entering Basic and doing:
+
+    'SAVEM"DOS",59400,59400,59400'
+
+This is a useful trick for running most machine language programs,
+IF you only have only one M/L program per bank.  I think the 
+source of this approach is Jim Irwin (PRN100, LAPWRD, etc.)
+
+Having FLOPPY.CO in one bank, and the PG Designs MENU utility 
+installed, it a simple matter to load/save with the DOS bank and 
+transfer the files from/to the other two banks.  With this 
+approach, files as large as 24K or so can be saved or loaded.  Of 
+course, you can load the DOS bank up with other files (for more 
+portability) -- and kill them when uou need the added space for 
+disk operations.
+
+Finally -- I keep a copy of IPL.DO (not BA, so it can't be run by 
+accident) in each bank, just in case!

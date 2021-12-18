@@ -1,0 +1,88 @@
+/N20;
+
+1 REM SORT Subroutines    Jan 84  (MERGE with BTEMPL/JGB)
+2 ' This listing and support articles were published in Portable 100 Magazine, March 1984, and May 1984
+3 ' - "Bender's Better Way to Better Basic, Parts 2 & 4" by J. Gary Bender.
+6 ' Part 4 of the series added code to the 600-699 range (SORT routines).
+7 '
+8 ' Submitted to the Public Domain by the publisher, Portable 100 Magazine, and the author, J. Gary Bender, Rio Grande Software, [70375,1070]
+9 '
+161 IF ZQ$="sort%"    THEN 610
+163 IF ZQ$="sort$"    THEN 630
+165 IF ZQ$="reorder%" THEN 650
+167 IF ZQ$="reorder$" THEN 670
+600 REM  SORT Routines          Jan 84       JGB
+602 ' "sort%" -- Sort integer array ZS%() by pointers.
+603 '         -- Sorted subscripts returned in ZV%() vector.
+604 '         -- DIM ZS%(), ZV%() the same size.
+606 '         -- change ZS%() to name of actual array.
+608 '         -- call w/ ZN% = number of elements in ZS%() to sort
+609 '
+610 IF ZN% > 0 THEN FOR Z1%=0 TO ZN%-1: ZV%(Z1%) = Z1%: NEXT
+611 IF ZN% < 2 THEN Z3% = ZN%\2 ELSE 618         ' Z3% == gap
+612 FOR Z6%=1 TO 1: IF Z3% > 0 THEN Z6% = 0 ELSE 617
+613     FOR Z1%=Z3%+1 TO ZN%: FOR Z2%=Z1%-Z3% TO 1 STEP -Z3%: Z4% = Z2%+Z3%
+614         IF ZS%(ZV%(Z2%)) > ZS%(ZV%(Z4%)) THEN Z5% = ZV%(Z2%): ZV%(Z2%) = ZV%(Z4%): ZV%(Z4%) = Z5%
+615     NEXT: NEXT
+616     Z3% = Z3%\2       ' shorten gap
+617 NEXT
+618 RETURN
+619 '
+620 ' "sort$" -- Sort string array ZS$() by pointers.
+622 '            Sorted subscripts returned in ZV%() vector.
+624 '         -- DIM ZS$(), ZV%() the same size
+626 '         -- change ZS$() to name of actual array
+628 '         -- call w/ ZN% = number of elements in ZS$() to sort
+630 IF ZN% > 0 THEN FOR Z1%=0 TO ZN%-1: ZV%(Z1%) = Z1%: NEXT
+631 IF ZN% < 2 THEN 638 ELSE Z3% = ZN%\2       ' Z3% == gap
+632 FOR Z6%=1 TO 1: IF Z3% > 0 THEN Z6% = 0 ELSE 637
+633     FOR Z1%=Z3%+1 TO ZN%: FOR Z2%=Z1%-Z3% TO 1 STEP -Z3%: Z4% = Z2%+Z3%
+634         IF ZS$(ZV%(Z2%)) > ZS$(ZV%(Z4%)) THEN Z5% = ZV%(Z2%): ZV%(Z2%) = ZV%(Z4%): ZV%(Z4%) = Z5%
+635     NEXT: NEXT
+636     Z3% = Z3%\2       ' shorten gap
+637 NEXT
+638 RETURN
+639 '
+640 REM  "reorder%" -- reorder integer array ZS%() by subscripts in ZV%()
+642 '    Assumes ZS%() was just sorted by the "sort%" routine
+644 '            ZV%() is list of sorted subscripts to ZS%()
+646 '    ZN% == number of elements sorted in ZS%()
+650 FOR Z0%=1 TO 1: FOR Z1%=0 TO ZN%-1: IF ZV%(Z1%) > 0 THEN IF ZV%(Z1%) <> Z1% THEN Z2% = Z1%: Z1% = ZN% ELSE ZV%(Z1%) = ZV%(Z1%) OR -32768
+651     NEXT: IF Z1% = ZN% THEN 657
+652     Z4% = ZS%(ZV%(Z2%))     ' get value that belongs here at ZS%(Z2%)
+653     FOR Z5%=1 TO 1: Z3% = ZS%(Z2%): ZS%(Z2%) = Z4%: Z4% = Z3%: ZV%(Z2%) = ZV%(Z2%) OR -32768
+654         FOR Z1%=0 TO ZN%-1: IF ZV%(Z1%) = Z2% THEN Z2% = Z1%: Z5% = 0: Z1% = ZN%
+655         NEXT
+656     NEXT: Z0% = 0
+657 NEXT
+658 FOR Z1%=0 TO ZN%: ZV%(Z1%) = ZV%(Z1%) AND 32767: NEXT  ' remove flags
+659 RETURN
+660 REM  "reorder$" - similar to "reorder%" - switches string pointers
+662 '    Entry: ZS$() array to reorder, ZV%() array of sorted subscripts
+664 '           ZN% number of active elements (0 to ZN%-1) in ZS$()
+665 '
+666 ' *** THIS CODE IS SENSITIVE -- USE EXTREME CARE IF YOU MODIFY IT ***
+667 '
+670 Z0%=0: Z1%=0: Z2%=0: Z4%=0: Z4%=0: Z5%=0: Z6%=0: Z7%=0: ZN%=ZN%:Z4$="   ": Z3$="   "        ' 3 byte holding areas
+672 FOR Z0%=1 TO 1: FOR Z1%=0 TO ZN%-1: IF ZV%(Z1%) > 0 THEN IF ZV%(Z1%) <> Z1% THEN Z2% = Z1%: Z1% = ZN% ELSE ZV%(Z1%) = ZV%(Z1%) OR -32768
+674     NEXT: IF Z1% = ZN% THEN 690
+676     Z4% = VARPTR(ZS$(ZV%(Z2%))) - 1: FOR Z1%=1 TO 3: MID$(Z4$,Z1%,1) = CHR$(PEEK(Z4%+Z1%)): NEXT    ' save ptrs to value to move "here"
+678     FOR Z5%=1 TO 1: Z3% = VARPTR(ZS$(Z2%)) - 1
+680         FOR Z1%=1 TO 3: MID$(Z3$,Z1%,1) = CHR$(PEEK(Z3%+Z1%)): POKE Z3%+Z1%, ASC(MID$(Z4$,Z1%,1)): MID$(Z4$,Z1%,1) = MID$(Z3$,Z1%,1): NEXT
+682         ZV%(Z2%) = ZV%(Z2%) OR -32768       ' mark as moved
+684         FOR Z1%=0 TO ZN%-1: IF ZV%(Z1%) = Z2% THEN Z2% = Z1%: Z5% = 0: Z1% = ZN%
+686         NEXT                        ' find where old Z2% belongs
+688     NEXT: Z0% = 0                   ' continue outer loop
+690 NEXT
+692 FOR Z1%=0 TO ZN%-1: ZV%(Z1%) = ZV%(Z1%) AND 32767: NEXT  ' remove flags
+694 RETURN
+699 '
+20600 ' Initialization for "sort." routines
+20605 ' ZS%() is array to sort
+20610 DIM ZS%(100), ZV%(100) ' 100 == size of sort arrays
+20620 Z2%=0: Z1%=0: Z3%=0: Z4%=0: Z5%=0
+20630 '
+
+60000 ' end
+
+

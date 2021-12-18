@@ -1,0 +1,29 @@
+SIDWAY.100  DOCUMENTATION
+
+SIDWAY.100 is a M100 program to read in a .DO file and print it out sideways on a dot matrix printer.  It uses the dot graphics mode to turn the text around and "plot" it.  I use it with my Tandy DMP-120, DMP-106 and TTXpress printers, which can do dot matrix graphics.  The internal M100 character set is used as the template for each character, so any character which will show on the screen will print.  The program is written in BASIC, structured to be compiled by TCOMP.121 .  The BASIC version is slow, but if you want to try it, first CLEAR 256,MAXRAM-1001 to make space for the output string.  This program uses several routines adapted from several authors.
+
+COMPILING: Download SIDWAY.100. Load it and save it as a .BA file.  Compile using TCOMP.121 . NOTE: to make enough space, modify the dimension of A%(1000) and A(1000) in line 7021 in TCOMP to A%(500) and A(500).  Start TCOMP, use a start address of 57300 and an end address of 61950.  TCOMP will probably end with an OM error.  Simply CLEAR and SAVEM"SIDWAY.CO",57300,61950,57300.  BE SURE TO SAVE EVERYTHING IN MEMORY BEFORE TRYING TO RUN THIS PROGRAM -- JUST IN CASE!
+
+USE:  (See note above if you want to try the BASIC program first)  The program expects to find a file named PRTDAT.DO . This is the file to be printed.  Next, you will be asked if this print file is Epson(E)/TTXpress(X) or Tandy(T) compatible.  This is so the routine can recognize special character codes for underlining.  Then, the type to printer the output will be sent to is requested, again E, X or T.  Next is a question of whether to send a special ESC 2 code for the DMP-106.  The final input is the number of dots/line you want.  Standard is 10, but you can pick others as well.  The highest density is 8 dots/line, which allows you to put the graphics characters next to each other.  The input table appears as below, with values of lines/page depending on the output printer, because Tandy/Epson uses 480 dots/line while TTXpress uses 560.
+
+                 Tandy/Epson   TTX
+                    -----     -----
+1. 8 dots/line        60        70
+2. 9 dots/line        53        62
+3. 10 dots/line       48        56
+4. 11 dots/line       43        50
+5. 12 dots/line       40        46
+
+To choose, enter the number(1-5).
+You will get approximately 130 characters/line (12 characters/inch).
+
+It is suggested that the print file be formatted with left and right margins of about 8 spaces, and top and bottom of about 3 spaces, to allow for mismatch.
+
+The program recognizes only carriage return, end of file and underline on and off.  Tandy underline on is 015, and off is 014.  Epson underline on is 027,045,049 (ESC -1) and off is 027,045,048 (ESC -0).  Any other special characters are ignored.  Note also that while the program is written to "convert" underline codes, it can't correct for mismatched paging.
+
+Copyright is claimed for all original code.
+
+
+
+JAN 17,1988
+D A LAPINSKI

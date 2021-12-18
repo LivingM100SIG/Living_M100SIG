@@ -1,0 +1,43 @@
+2' Blood Pressure records program
+4' Copyright Apr.  4, 87
+5' Revised   Oct. 27, 87
+6' All Rights Reserved
+7' by Bill Heiman [72300,3072]
+8' ----- Cut on dotted line ---------
+10 C$="  ":DS$="-----":
+12 CLS:PRINT"	 Blood Pressure Record"
+14 PRINT"	 ";:PRINTSTRING$(21,231)
+16 PRINT@85,"      <CR> to enter B/P"
+18 PRINT"           <R>  to read  B/P"
+20 PRINT"           <M>  for menu":PRINT
+22 PRINT@319,"";:X$=INPUT$(1)
+24 IFX$="R"ORX$="r"THEN58
+26 IFX$="M"ORX$="m"THENMENU
+28 CLS:PRINT@90,"Blood Pressure Record"
+30 DT$=LEFT$(DATE$,5):TI$=LEFT$(TIME$,5)
+32 PRINT:B1$="":PRINT"	B/P reading [120/80] ";
+33 FORX=1TO6:IFX=4THENB1$=B1$+CHR$(47):PRINTCHR$(47);:NEXT:ELSEX$=INPUT$(1):B1$=B1$+X$:PRINTX$;:NEXT
+34 Y$="":X$="":PRINT"		Enter Pulse Rate         ";:X$=INPUT$(1):PRINTX$;:Y$=INPUT$(1):PRINTY$:P$=X$+Y$:P=VAL(P$)
+36 INPUT"	Comments (8 letters) ";CM$:CM$=LEFT$(CM$,8)
+37 FORX=1TO200:NEXT
+38 X=0:CLS:PRINT@47,"Is the following correct ?":PRINT
+40 PRINT"  Date  Time    B/P    Pulse"
+42 PRINT" -----  -----  ------  -----"
+44 PRINT" ";DT$;C$;TI$;C$;B1$;C$;P;C$;CM$
+46 PRINT:INPUT"If correct <CR>   Error <E>";X$
+48 IFX$="E"ORX$="e"ORX$="5"THEN12
+50 OPEN"ram:bp.do"FORAPPENDAS1
+52 PRINT#1,DATE$;C$;TI$;C$;B1$;C$;P;C$;CM$
+54 CLOSE1
+56 CLS:PRINT@170,"Entered to File":FORX=1TO300:NEXT:GOTO12
+58 CLS:OPEN"RAM:BP.DO"FORINPUTAS1
+60 'PRINTC$;"Date";C$;"  Time";C$;"  B/P";C$;"  PULSE"
+62 'PRINT"  --------";C$;DS$;C$;DS$;C$;" ";DS$
+64 FORX=1TO250:NEXT
+66 IFEOF(1)THEN74
+68 LINEINPUT#1,L$:PRINTL$
+70 GOTO66
+72 END
+74 CLOSE1:PRINT@315,"<cr>";:X$=INPUT$(1)
+76 GOTO12
+

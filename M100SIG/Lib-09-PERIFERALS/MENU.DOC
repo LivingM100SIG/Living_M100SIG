@@ -1,0 +1,166 @@
+Documentation for MENU.jr, MENU.jr2, & PDMENU.TDD
+=================================================
+joel dinda [75725,1134]
+CHECKSUM for MENU.jr:  58,118
+CHECKSUM for MENU.jr2:  98,098
+CHECKSUM for PDMENU.TDD:  120,094
+
+
+These programs are file transfer utilities for use with a Model 100, Acroatix'
+Powr-Disk and/or Powr-DOS, and the Tandy Portable Disk Drive.
+
+Much as I like Powr-Disk/DOS, it's a pain to go to BASIC to transfer files to
+and from a disk.  And I can't afford 3+ K for a utility program, however well
+done.  These programs address these matters; all are simple file transfer
+utilities without frills and with reasonable error traps.  MENU.jr (".jr", by
+me) is around 600 bytes, and meets minimal requirements.  .jr runs with either
+Powr-Disk or Powr-DOS.  MENU.jr2 (".jr2", also by me) is just under 1K and adds
+several functions to .jr.  It runs ONLY with Powr-DOS, however.  PDMENU.TDD
+("PDM", by Woods Martin [70235,232]) is the largest of these, and also adds
+several features to .jr.  While PDM works only with Powr-Disk, adapting it to
+run with P-DOS should not be terribly difficult.
+
+
+
+Operation:
+----------
+
+These programs are function key driven.
+
+<F-1> (DDir or Ddir) makes a call to LFILES.  Write options (you'll get a
+prompt):  "LPT:" will write the directory to your printer; <ENTER> will dump it
+to your screen; a legal filename will become a .DO file's name, into which
+LFILES will place the catalogue.
+
+<F-2> (Load) prompts for a filename to load from the disk drive.
+
+<F-3> (Save) prompts for a filename to save to disk.
+
+<F-4> (Apnd) [.jr2 only] prompts for a filename to append to a disk file.  The
+name in RAM must match the disk file's name.
+<F-4> (Dlen) [PDM only] prompts for a disk filename and returns the file's
+length.
+
+<F-5> (Erase, Del or Dkil) prompts for a filename to delete from the disk.
+
+<F-6> (Free) [.jr2 only] reports sectors free available on disk.
+<F-6> (Fmat) [PDM only] formats the disk in the drive.  If the disk contains
+data, PDM prompts to verify that you actually wish to format it.
+
+<F-7> (Rkil) [PDM only] prompts for a filename to delete from RAM.
+
+<F-8> (Menu) returns to the Model 100 menu.
+
+
+<ENTER> escapes to M100's menu from the program's main screen, and to the main
+screen from any "File?" prompt (except "Dir to File?" in PDM).
+
+
+
+
+
+
+
+
+
+
+
+MENU.jr/MENU.jr2/PDMENU.TDD                                            10/07/86
+Page 2 
+
+
+
+
+Errors:
+-------
+
+Errors 55 (Bad File Name) and 52 (File Not Found) are trapped by .jr and .jr2
+to BEEP and return directly to the previous prompt; the assumption's that all
+such errors are unintended (probably typing) and that you'll wish to try again.
+These are trapped by PDM to print "File Error <ENTER>?", as are attempts to
+overwrite PDM; <ENTER> returns you to the previous prompt.
+
+Error 67 (Already Exists) gains a BEEP from .jr and the message "Already
+Exists <ENTER>?"; <ENTER> returns you to .jr's main screen.  PDM and .jr2
+inquire whether you wish to overwrite the file, and continue on the basis of
+your response; ultimately, you return to the previous prompt.
+
+Errors 63 (Write Protected), 64 (Disk Full), and 65 (No Disk) bring BEEP and
+"Disk Error <ENTER>?"; .jr & .jr2 return you to the main program screen, PDM
+returns you to the previous prompt.
+
+Errors 59 (Drive Not Ready), 60 (Drive Not Responding), 61 (Communications
+Error), 62 (Drive Done Early [actually a file error, but shouldn't occur]), and
+66 (Hard Trouble) yield BEEP and "Drive Error <ENTER>?"; .jr & .jr2 again
+return to the program's main menu, PDM to the previous prompt.
+
+Most other errors in .jr or .jr2 result in the familiar "Error xx in line xxx
+<ENTER>?"  PDM restarts the program on any error it doesn't trap.
+
+
+Notes:
+------
+
+These are three versions of the same program; Woods and I worked on them
+simultaneously and borrowed each others' code and ideas freely.  They behave
+similarly; the visible differences can mostly be attributed to different
+programming styles.  All are derived from PD-UTL.BA1, by Phil Wheeler, for
+which we both thank him.
+
+The major differences in the programs are that PDM and .jr2 offer a prompted
+overwrite option and check to see if Powr-Disk/DOS is loaded.  .jr2 defaults to
+a .DO extension if none is supplied (the code's in line 7, & easily changed if
+you wish -- substitute .BA or .CO for .DO).  PDM has disk formatting.  There
+are slight differences in the prompts.  There are significant variations in the
+programs' structures, and the error traps used differ greatly; these can fairly
+be called disagreements about style.
+
+Properly speaking, these are not "menu" programs.  Woods started calling the
+project "MENU.jr" early on, since what we were writing was an alternative to
+MENU.BA; the name just sorta stuck.
+
+Since all three programs use POKEs, and PDM also uses some PEEKs and a CALL,
+they won't work on a Tandy 200 without conversion.  The POKES are to the
+
+
+
+
+
+
+
+
+
+
+
+MENU.jr/MENU.jr2/PDMENU.TDD                                            10/07/86
+Page 3 
+
+
+keyboard buffer; conversions should be easy.
+
+The intricate code in these programs is largely due to quirks in M100 BASIC,
+which does peculiar things when you use SAVEM and LOADM.  The programs are NOT
+deliberately difficult to unravel.
+
+The crucial code in these programs involves stuffing the keyboard buffer
+(curiously, we're each using a routine written by the other).  Phil's
+documentation thanked Tony Anderson for teaching him the technique; my thanks
+go (instead) to Jesse Bob Overholt and to Woods.
+
+Programmers attempting to edit or revise these programs are STRONGLY advised
+to study the behavior of variable I, which does some things you may not
+expect.
+
+A WARNING:  Experience suggests that .jr2 can crash a Model 100 with Powr-Disk
+installed.  At fault is LFILESV, which is a legal command for Powr-DOS but
+which apparently does unfortunate things to Powr-Disk.
+
+Finally, a resounding THANKS! to Ed Giese of Acroatix.  Powr-Disk is
+(REMAINS!) the most exciting computer purchase I've made since I bought my
+Model 100.
+
+joel
+LSJ-Access/TBBS
+517-482-8144
+21 jan 86
+7 oct 86

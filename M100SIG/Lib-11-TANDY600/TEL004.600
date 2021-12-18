@@ -1,0 +1,164 @@
+
+TRANSFER.600 - Copyright 1986 by David Dunn Thomas, Timonium, MD
+CompuServe Model 100 SIG file: TEL004.600
+
+       File transfers with the Tandy 600 to/from CompuServe Data Libraries
+are covered in this file. Prior to attempting any use of the fine XMODEM
+protocol transfer capability, it is essential that user's CompuServe DEFALT
+be set up with 8 bit, zero parity as described in TEL001.600 file in DL 1.
+Note that these instructions cover transfers in any SIG/Forum and Public Access
+on CompuServe but would need mild modification for use in the Personal File
+Area, for which see PERFIL.HLP in DL 0.
+
+   1) Introduction:
+       It is highly recommended that users dispense with the Data Library menu
+system as rapidly as possible. These instructions are based on the assumption
+that the member will be operating without the menu, at least in the database.
+The "User Options Menu", accessed from the Function Menu, allows selection of
+"1 (MEN) Use menus [No]" and "2 (BR) Use brief prompts [Yes]" which is known
+as "expert mode" and is recommended for ease of Data Library use. However, if
+expert mode has not been pre-selected from the Options Menu, the same result
+may be obtained on a temporary basis by use of "SET NO MENU" command entered
+in any of the SIG's Data Libraries. That is, upon arrival in the Data Library
+and being shown the list of commands that ends with:
+ "Enter selection or H for help:" just type the words "SET NO MENU" and press
+the ENTER key. The result will be that you'll then have a "DL 1:" prompt, or
+whatever numbered Data Library you've entered.
+       The remainder of this file assumes that commands will be entered at
+the "DL n:" prompt, though the same result would be obtained if the DL Menu
+was totally ignored and commands were entered at ".... H for help:" prompt.
+ 
+   2) No protocol, plain transfer:
+       This method should be used ONLY for textual material such as this file
+and other documentation. It MAY be used for Basic program transfers IF they
+are in ASCII format, but it is not recommended. This method MUST NOT be used
+for transfer of ready to run BASIC 600 programs. Such programs include those
+with a double file length listing in the Data Library, like 12345(9876), that
+generally have BIN among the keywords, as well as programs in member's
+Tandy 600 with the .BAS extension. Repeat: do NOT use no protocol transfer for
+BASIC programs.
+ 
+       a) Downloading:
+          Often misunderstood, downloading refers to the transfer of files
+FROM CompuServe TO your Tandy 600 or other computer. Specifically for the
+Tandy 600, the simplest procedure is as follows, using this file as example.
+          (1) At the DL n: prompt, type the <R>ead command and filename.ext;
+thus: R TEL004.600  - do NOT press ENTER at this point.
+          (2) On your Tandy 600, press the F3 key. "Cp" will appear on line 16
+of your screen near F8 marker.
+          (3) Now press ENTER. The command typed in (1) will take effect and
+CompuServe will proceed to send the file to your computer.
+          (4) When the end of the file has been reached (which will be obvious)
+press the F3 key again and the "Cp" will disappear.
+          (5) The file just <R>ead will now be in your SESSION.TXT, or whatever
+file you set up as default with your "Options" command in Telcom.
+          (6) Offline you may now load the file to WORD by placing System
+Manager's cursor over the filename, pressing ENTER, and responding to "RUN
+application:" prompt with WORD and pressing ENTER again. In WORD, the file may
+be edited, copied to disk, and printed as desired. [This may also be done while
+still connected and online, but watch the clock and $$$ tick off!!]
+          (7) Note that it is entirely acceptable to download more than one
+file to SESSION.TXT during one online connection. The additional files will be
+appended, they won't overwrite the first file. Then when offline the files may
+be separated into their proper parts using the WORD editing capability.
+ 
+       b) Uploading:
+          Clarifying again, the term uploading refers to transfer of files
+FROM your computer TO CompuServe's Data Libraries or message board. The method
+described in this paragraph should be used only for textual material in ASCII
+format and NOT for programs.
+          (1) Files to be uploaded may be prepared with the Tandy 600's WORD
+application, but should NOT be uploaded as .WRD files. After preparation of
+the file in WORD, <P>rint it to a .TXT file with "formatted NO" option. Prior
+to <P>rinting, <F>ormat <D>ocument should have been used to set up file with
+page width of 79.
+          (2) Arriving in the SIG's Data Library use the UPL command at the
+DL n: prompt thus: UPL THISUN.TXT/PROTO:CAPTURE and press ENTER.
+          (3) At the query concerning prompt desired, just respond with NO and
+you will be advised to start the transfer and to send CTRL-Z when completed.
+          (4) Now press SHIFT-ESC on your Tandy 600 which will take you to the
+Telcom command line.
+          (5) Select <T>ransfer
+          (6) Select "Send" by use of <spacebar> and press ENTER
+          (7) Type the filename, THISFILE.TXT in the "TRANSFER SEND from" field
+          (8) Press TAB to move to the protocol field, use <spacebar> to select
+the "(None)" option.
+          (9) Now press ENTER. Upon completion of the file transfer, the
+Tandy 600 will return to the Telcom command line. Select "Connect" and then
+press CTRL-Z in order to close the file in the Data Library. Respond to the
+Keyword and Description prompts in the manner described in UPLOAD.HLP.
+ 
+   3) XMODEM protocol transfers:
+       This is the preferred method for ALL file transfers to/from the Data
+Library and Personal File Area and MUST be used for transfer of programs for
+the Tandy 600. Though the non-protocol transfer method described above may be
+used, with slight modification, on the message board, XMODEM transfers may NOT
+be used on the message board (except in the EasyPlex area.)
+ 
+       a) Downloading:
+          (1) Binary transfers --- used for .BAS programs. Normally programs
+for the Tandy 600 in Basic have a .600 extension, BIN among the Keywords, and
+have double number file length listings; 8765(789) type of notation.
+             (a) Type DOW command at the "DL n:" prompt with the syntax:
+ DOW THATFILE.600/PROTO:XMODEM/TYPE:BIN and press ENTER
+             (b) Press SHIFT-ESC on Tandy 600 to access Telcom commands.
+             (c) Press <T>ransfer
+             (d) Use <spacebar> to select "Receive" and press ENTER
+             (e) Type THATFILE.BAS in "TRANSFER RECEIVE to" field; note that
+the .BAS extension is important in order to receive the program in a ready to
+run format.
+             (f) Press TAB to move cursor to protocol field.
+             (g) Press <spacebar> to select "(Xmodem)" option.
+             (h) Press ENTER. After a bit of "Waiting" whilst your computer
+and CompuServe shake hands, a report on blocks (128 bytes) received will show
+until transfer completed. An occasional "Waiting" may show up when a squirrel
+chews on the phone line, but transfer is likely to resume.
+             (i) When transfer is completed, the Telcom command line will
+return; "Connect" should be selected and then ENTER pressed.
+             (j) Press ENTER to notify CompuServe that transfer is completed
+and to return to the "DL n:" prompt.
+ 
+          (3) ASCII text transfers:
+               This method is best to use when downloading a Basic program that
+has been prepared for a Model 100 or Tandy 200 and is not in binary format.
+Also for use in error checking transfer of any documentation.
+              (a) Procedure is identical to binary except for the command
+given to CompuServe at the DL n: prompt and the filename given for Tandy 600.
+              (b) Syntax for the DOW command:
+ DOW THATUN.DOC/PROTO:XMODEM/TYPE:ASCII
+              (c) Filename extension for the Tandy 600 may be .BAS if it is
+a Basic program that will run without modification; not likely but possible.
+Best is to use the extension of .TXT on any ASCII file and then load into WORD
+as described above for editing. If a Basic program, it may then be <P>rinted
+in unformatted mode to .BAS file and loaded to Basic.
+ 
+       b) Uploading
+          (1) Binary transfers - again the method to use for any .BAS
+file in your Tandy 600.
+              (a) Similar in every way to uploading as described above,
+the differences will be clarified.
+              (b) At the DL n: prompt, type the command with syntax:
+ UPL THISUN.600/PROTO:XMODEM/TYPE:BIN and press ENTER.
+              (c) Filename in "TRANSFER SEND from:" field should be the
+Basic program you have ready, such as THISUN.BAS
+              (d) Select "(Xmodem)" as protocol
+              (e) "Waiting" message and block transfer report will be
+just like that in XMODEM downloading.
+              (f) When transfer complete, "Connect" and press ENTER to
+notify CompuServe of completion and then respond to Keyword and Description
+prompts as described in UPLOAD.HLP in DL 0.
+
+
+          (2) ASCII text transfers - for documentation; no Tandy 600
+program should be uploaded as an ASCII file.
+              (a) Procedure is identical to that explained above except
+that the command syntax is: UPL THUSIT.DOC/PROTO:XMODEM/TYPE:ASCII
+              (b) Most likely filename extension for "TRANSFER SEND
+from:" field would be .TXT since .WRD files should NOT be uploaded to Data
+Library.
+ 
+02-Jan-86
+
+Sysop Dave Thomas 76703,446
+
+	Transferring the 600 way ...

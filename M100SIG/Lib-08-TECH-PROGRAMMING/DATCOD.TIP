@@ -1,0 +1,28 @@
+
+
+   The following code will calculate the difference, in days, between
+any two dates in the same century.  Dates are expressed in the format:
+
+                29-Oct-85
+
+   The core of the calculation is in the subroutine starting at line
+100, and it can be readily modified for use in a larger program.
+
+ 10 lineinput"Today's date: ";d$:gosub100:t=d
+ 20 lineinput"Another date: ";d$:gosub100
+ 30 print"Difference ="t-d+(t-d)/365\4
+ 40 end
+ 100 d=val(d$)
+ 110 i=instr(d$,"-"):m$=mid$(d$,i+1,3):y$=mid$(d$,i+5,2)
+ 120 o$="Feb31Mar59Apr90May120Jun151Jul181Aug212Sep243Oct273Nov304Dec334"
+ 130 o=instr(o$,m$):ifothend=d+val(mid$(o$,o+3))
+ 140 d=d+365*val(y$)
+ 150 return
+
+   Note that the method of accounting for leap years in Line 30 is somewhat
+inaccurate.  It will add a day for every span of four years; but it will not
+account for a three-year (or shorter) interval containing a single leap year.
+For the purpose of most analysis, this should not be a significant factor.
+
+
+

@@ -1,0 +1,62 @@
+Disable BREAK KEY - CONTROL-C - FUNCTION KEYS
+by Terry Kepner
+     The interrupt routine can be turned on and off at RAM 
+location 63059.  The command to disable one of these functions 
+will disable them all.  There is no way to "selectively" disable 
+one or the other.  
+    POKE 63059,128 will disable the Break Key, Control-C 
+and Function Keys.
+    POKE 63059,0 will re-enable the same functions.
+
+Hide ADDRSS and SCHEDL
+     If you don't use ADDRSS or SCHEDL, it is irritating to see 
+them in the MENU all the time.  This solution makes them 
+invisible, although it doesn't give you any extra room in the 
+MENU area.  To hide ADDRSS, go into BASIC and type POKE 
+63878,184.  To conceal SCHEDL, type POKE 
+63889,184.  If you have the international version of the 
+Olivetti M10, use POKE 63882,184 to hide ADDRSS and 
+POKE 63893,184 to stash SCHEDL.
+
+Hidden Storage Area
+     There are 36 bytes of RAM (Random Access Read/Write Memory) 
+which you can use in the memory reserved by the M10 operating 
+system.  This 36-byte area will be protected from everything 
+short of a cold start.  It can be used to store an identification 
+name, number, or machine code program safely and permanently in 
+RAM.  You could use this 36-byte area in BASIC programs or to 
+transfer data from one program to another without creating a file 
+in user-RAM.
+     This technique uses the area in the operating system that 
+normally holds the routines for accessing the optional ROM 
+(Read Only Memory), if it is installed in your machine.  If you 
+have an alternate ROM installed in your M10, then these 36 bytes 
+are not available to you.
+     Before using these 36 bytes, type POKE 62981,201 
+and POKE 63018,255 in BASIC.  Once these two pokes are 
+executed, memory addresses 62982 to 63017 are free to use for 
+anything you want.  The above pokes remain effective until a 
+cold-start occurs, or you install and use an optional ROM.
+     Normally, the code from 62981 to 63011 checks for the 
+existence of an optional ROM everytime you power up. If the ROM 
+is installed, then the value 255 is stored in 63018, and the name 
+of the ROM (for the Menu) is placed in 64167-64174.  The code 
+from 63012 to 63017 is used when choosing the option ROM from the 
+Menu.
+     The POKE 62981,201 puts a machine language Return there, 
+making the M10 think that the optional ROM is installed.  The 
+POKE 63018,255 prevents a cold-start when you turn on your 
+computer. 
+     Whatever you put in those 36 bytes will stay there, unless 
+you write a program to change them. Obviously, you use POKE 
+commands to get whatever you want into these locations.
+     Finally, these 36 bytes are available in the same locations 
+for both the US and International versions of the M10.  And be 
+prepared, anytime you start using POKE, you could cause a cold-
+start in your computer. Therefore, make a backup of all your 
+files BEFORE you start experimenting.
+
+Reprinted from Pico Magazine with their permission
+Copyright (c) 1985, still held by Pico Magzine
+-Terry Kepner, Technical Editor, Pico Magazine
+

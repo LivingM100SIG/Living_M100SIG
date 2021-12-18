@@ -1,0 +1,294 @@
+          Chapter 7            Command Descriptions           Page 53
+
+
+                                   LFILES OFF
+
+                                     Purpose
+
+          LFILES OFF removes POWR-DOS from memory and deactivates the
+          hooks.
+
+
+                                     Syntax
+
+
+          LFILES OFF
+
+
+                                   Description
+
+          There are two steps involved in removing POWR-DOS.  First the
+          "hooks" which modify the BASIC ROM must be restored to their
+          original values.  Then, the 3K POWR-DOS program module, which
+          exists in RAM as an invisible BASIC file, must be removed. 
+          LFILES OFF performs both of these steps.
+
+          LFILES OFF closes all open files, clears all variables, and
+          stops execution of any running BASIC program.
+
+
+                                     Errors
+
+          There should never be an error with LFILES OFF.  An ?FC error
+          indicates that POWR-DOS is already inactive, i.e., the hooks
+          have been disabled already.  If this happens, refer to the
+          "Errors and Recovery" section of Chapter 1.
+          Chapter 7            Command Descriptions           Page 54
+
+
+                                    LFILES V
+
+                                     Purpose
+
+          LFILES V verifies the POWR-DOS version number and restores
+          all hooks.
+
+
+                                     Syntax
+
+
+          LFILES V
+
+
+                                   Description
+
+          POWR-DOS needs two things to be fully active: the program
+          module must be in memory, and the "hooks" into the BASIC ROM
+          must be installed.  Some software, notably some PCSG ROM
+          programs, deactivate some of these hooks.  LFILES V will
+          restore them.  In addition, it prints out the version number. 
+          It is a handy way to ensure that POWR-DOS is active.
+
+
+                                     Errors
+
+          LFILES V will never result in an error when POWR-DOS is
+          properly installed.  If an ?FC error results, the hooks have
+          been completely deactivated.  The program module may still be
+          in place; see Chapter 1 and the section on MAXRAMC for more
+          details.
+          Chapter 7            Command Descriptions           Page 55
+
+
+                                    LOADM ,F
+
+                                     Purpose
+
+          The LOADM command with the ",F" option allows any file to be
+          loaded from disk into RAM
+
+
+                                     Syntax
+
+
+          LOADM ":file.xx",F
+
+
+                                   Description
+
+
+          The LOADM command in normal BASIC copies the contents of a
+          COmmand file into reserved memory.  You can still use the
+          LOADM command in this way; you can also prefix the COmmand
+          file name with a ":" or "0:" to copy a disk-COmmand file into
+          reserved memory.
+
+          The ",F" option allows you to load a COmmand file into RAM as
+          a file instead of loading it into reserved memory.  THe same
+          option also allows you to load any file, not just COmmand
+          files.
+
+          LOADM has a restriction:  it cannot overwrite a file.  If you
+          attempt to use LOADM to load a file from disk when a file
+          with the same name already exists in RAM, you will get an ?AE
+          ("already exists") error.  You must KILL the RAM file first,
+          then do the LOADM.
+
+          If you load in a BAsic file with LOADM, any running BASIC
+          program will halt and the variables will be cleared.  If you
+          want to incorporate LOADM for a BAsic file into a program,
+          see the notes in Chapter 8.  For any other type of file,
+          LOADM will clear out any FOR-NEXT loops and GOSUB statements. 
+          In other words, you cannot normally use LOADM in a FOR-NEXT
+          loop or a SUBROUTINE.
+          Chapter 7            Command Descriptions           Page 56
+
+
+                                     Example
+
+          10 LOADM ":SORT"
+          20 INPUT "File to Sort:;F$
+          30 LOADM "0:"+F$+".DO",F
+          40 CALL 61000,0,VARPTR(F$)
+
+          This program assumes that a COmmand file called SORT.CO needs
+          a file in RAM to sort.  THe program loads the SORT.CO file
+          into reserved memory (using the "normal" LOADM), then asks
+          for a file name, then loads in that file from disk.  Note
+          that LOADM with the ",F" option always requires an extension.
+
+
+                                     Errors
+
+          DSKI$ reads from the disk.  Any of the following errors
+          indicate problems accessing the drive:
+
+
+               ?IO - Unreadable Diskette
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - LOADM misspelled; missing ",F" at end, etc.
+              ?NM - Bad file name; file prefix must be 0: or :.
+              ?FL - No more room in directory to create RAM file.
+              ?OM - No more memory for creating a RAM file.
+              ?FF - Disk file not found.
+              ?AO - LOADM cannot be used when a disk file is OPENed for
+                    INPUT, OUTPUT, or APPEND.
+              ?AE - LOADM cannot overwrite an existing RAM file.  It
+                    must be KILLed first.
+          Chapter 7            Command Descriptions           Page 57
+
+
+                               MAXRAMC (Function)
+
+                                     Purpose
+
+          MAXRAMC Provides machine-language CALL access to POWR-DOS
+          routines.
+
+
+                                     Syntax
+
+
+          MAXRAMC
+
+
+                                   Description
+
+          MAXRAMC is a descendent of the POWR-DISK jump vectors. 
+          POWR-DISK, a pre-cursor to POWR-DOS, lowers the value of
+          MAXRAM and resides just above it; the first 18 bytes are
+          "jump" vectors to routines inside the code.  On the other
+          hand, POWR-DOS does not reside above MAXRAM at all; yet, we
+          still wanted to provide the ability to CALL POWR-DOS
+          routines, so we added a function, MAXRAMC.
+
+          For a complete description of the routines and data relative
+          to MAXRAMC, see the next chapter.
+          Chapter 7            Command Descriptions           Page 58
+
+
+                                      SAVEM
+
+                                     Purpose
+
+          SAVEM allows you to save any file from RAM to disk.
+
+
+                                     Syntax
+
+
+          Case 1.   SAVEM ":file.xx"
+          Case 2.   SAVEM ":file.xx",A
+
+
+                                   Description
+
+          The SAVEM command, as it performs with your computer's
+          standard BASIC, saves a block of memory to a COmmand file. 
+          In that form, it requires TOP and END addresses.  You can use
+          SAVEM to create a COmmand file directly on the disk using the
+          regular SAVEM, if you specify a ":" or "0:" before the file
+          name.
+
+          However, if you omit the TOP and END addresses, you can save
+          almost any RAM file.  The structure of the file must be
+          obvious from its extension name:
+
+
+             * File extension beginning with "B" are BAsic-type files;
+
+             * File extensions beginning with "C" are COmmand-type
+               files, which includes CT, CW, and CA (Super-ROM types);
+
+             * File extensions beginning with "D" are DOcument-type
+               files.  Note that the "DT" extension used by PCSG's
+               Write-ROM cannot be saved to disk, since it is actually
+               a COmmand-type file.  (In Super-ROM, PCSG wisely changed
+               this extension to type CW).
+
+
+          In addition, you can specify ",A" after a DOcument-type file
+          name to indicate an "appending" save.  If there is already a
+          file on the disk with the same name as the RAM file you are
+          saving, the ",A" option will append the RAM file onto the end
+          of the disk file.
+          Chapter 7            Command Descriptions           Page 59
+
+
+          With the exception of the ",A" option, SAVEM cannot overwrite
+          a file.  If you attempt to use SAVEM to save a file from RAM
+          when a file with the same name already exists on disk, you
+          will get an ?AE ("already exists") error. You must kill the 
+          disk file first, then do the SAVEM.
+
+
+                                     Example
+
+          10 INPUT "File to Save";F$
+          20 INPUT "Save to disk as";D$
+          30 F$=F$+".DO":D$=D$+".DO"
+          40 NAME F$ AS D$
+          50 ON ERROR GOTO 70
+          60 SAVEM":"+D$
+          65 NAME D$ AS F$:END
+          70 IF ERR<>67 THEN RESUME
+          80 INPUT "Append, Overwrite, or Quit";A$
+          90 B$=LEFT$(A$,1
+          100 IF B$ = "O" THEN KILL ":"+F$:RESUME
+          110 IF B$ = "A" THEN SAVEM ":"+F$,a
+          120 RESUME 65
+
+          This program asks the user for a DOcument file to save on
+          disk, then attempts to save it.  If the file exists on disk,
+          it asks the user to select an overwrite or append.  If the
+          user selects append, it uses the ",A" option of SAVEM. 
+          Chapter 7            Command Descriptions           Page 60
+
+
+                                     Errors
+
+          SAVEM writes to the disk.  Any of the following errors
+          indicate problems accessing the drive:
+
+
+               ?IO - Write error or user BREAK
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+               ?WP - Disk Write-protect tab open
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - SAVEM misspelled or illegal use of ",A" option
+              ?NM - Bad file name; file prefix must be 0: or :.
+              ?AO - SAVEM cannot be used when a disk file is OPENed for
+                    INPUT, OUTPUT, or APPEND.
+              ?FF - RAM file not found.
+              ?AE - SAVEM cannot overwrite an existing disk file.  It
+                    must be KILLed first.
+

@@ -1,0 +1,326 @@
+THERML.DOC	09/24/87
+[GEORGE FLANDERS 73300,2272]
+Copyright 1987 - All Rights Reserved
+
+	THERML.CO is an 8085 machine language program for M-100 which quickly 
+formats and sends .DO files to the Radio Shack TP-10 thermal printer through 
+the RS-232 serial port. This unlikely, but briefcase-sized pair affords an 
+easy, inexpensive source of hard copy on the road. The mnemonic file is 
+THERML.SRC (DL2: checksum 256,902), and an Intel format hexdump of the machine 
+code for THERML.CO appears in THERML.HEX (DL2: checksum 80250). Use HEX2CO.100 
+in DL8 to create a run-able .CO version.
+	Probably quite a few lap-toppers will be interested in this utility, 
+since the TP-10 thermal printers have proliferated as peripherals for Radio 
+Shack MC-10 and Color Computers. With correct interfacing, the TP-10 becomes a 
+viable traveling companion for Model 100 laptops. Although THERML.CO has not 
+been tested on 102's, etc., with minor (if any) address changes, it may work.
+	When I bought my TP-10, the difficulties in making the two units 
+produce neat printouts without word-wrap were apparent. The TP-10 prints 32 
+characters (remembering two more) and then performs a carriage return and line 
+feed, during which data transmission must pause until the printer head is in 
+position for the next line. A "status" signal is available at the TP-10's DIN 
+pin 2, but that only controls the flow of bytes. Even with XON/XOFF protocol, 
+parts of words would still "wrap".
+	I set about to (1) make a proper connecting cable and (2) write a BASIC
+program to format text files into lines less than 32 characters long, 
+interdicting the printer's automatic CHR$(13). I wired a cable with a four-pin 
+DIN plug on one end for the TP-10 and a small RS-232 connector on the other for
+the M-100, running continuities as follows:
+	TP-10	M-100
+	-----	-----
+RCV	  4	  2	SEND
+GRND	  3	7 or 1	GRND
+STATUS	  2	  6	DSR - The latter connection just added mechanical 
+strength; I had no intention of using it.
+	The BASIC program I experimented with created a new formatted file from
+the source file, and then sent the new file to the printer. The TP-10 does 
+funny things with the M-100 character set below ASCII 32 and above ASCII 126. 
+Consequently, the sequences for detecting spaces, tabs, hyphens, carriage 
+returns and "illegal" characters expanded the program beyond belief for such a 
+simple utility. And,  although a means was provided to my end, it ran very 
+slowly. The obvious but challenging solution was (drum roll) MACHINE LANGUAGE! 
+(cymbal crash).
+	Unfamiliar with the 8085 instruction set and the M-100 ROM, I leaned 
+heavily on Bob Covington's ROM disassembly on the SIG and devoured a few of the
+better M-100 books which we all know and love. Intel's manuals on the 8085 
+instruction set were also very helpful.
+	To follow this discussion, you will need a hard copy of the source code
+(THERML.SRC - DL2). That file is not annotated, so we'll track through it here,
+commenting on its operation. I need to preface all of this with a disclaimer: 
+There is usually more than one way to get an 8085 job done, given the 
+flexibility of its instructions. I have probably used more bytes than needed to
+do some jobs. But THERML.CO zips through its task with nearly the speed of a 
+parallel line printer.
+	Assembly was done with ZBGASM.CO from Radio Shack. Not wanting to mess 
+up high RAM, and leaving a hundred or so bytes just below MAXRAM for things 
+like my Chipmunk's CDOS to play with, I chose a starting address of E000/57344.
+Most disk drive users, I reasoned, keep RAM fairly open, so THERML.CO minds its
+own business while BASIC operates under the new HIMEM, 57344. With the Chipmunk
+on line, MAXRAM=E26F/57967. If you don't use a disk drive, MAXRAM=F5F0/62960. 
+In that case, assembly of THERML.CO could very nicely start higher - say 
+F390/62352 or even closer to MAXRAM.
+	EQUATES - Prefacing the actual instructions is a list of labels and 
+addresses referencing ROM routines used in the program. Assemblers use equate 
+labels as string variables to be referenced during production of the machine 
+code. In some cases I used labels which differ from the documented ones, but 
+which to me better described what action to expect in this application.
+	INSTRUCTIONS - E000-E004 clears the screen, and homes the cursor by 
+sending 0C/12 (form feed) and 0B/11 (vertical tab) to the LCD. Next, we want to
+list only .DO filenames. At E005, the C register is loaded with C0 (192). 
+You'll recall that the specification byte of .DO files holds a value of 192 
+(see Page 75, "Hidden Powers of the TRS-80 Model 100").
+	At E007, we call ROM (R) 5970, which prints all filenames of the type 
+loaded in C. E00A points HL to the text string at FI (E1BA), which is the 
+prompt "FILE:". E00D calls R5791, which prints characters in a buffer until a 
+null or CHR$(34) (") is found, starting with a carriage return and line feed if
+the cursor doesn't happen to be at the beginning of a line. Using print 
+routines like R5791 and R27B1 which is called later on, instead of one of the 
+others which only accept a null as the end of a text buffer, makes it possible 
+to save bytes by embedding the CHR$(34) just ahead of the text delimiter 
+required by ZBGASM.
+	E010 points HL to the beginning of the 48 reserved bytes, which run 
+from FILDIR (E1D5) through the end of WBUF at E201. You won't find E201 in the 
+source code, but WBUF extends through that address. Specifically, the reserved 
+buffer block includes two two-byte buffers FILDIR and TOPFIL which store 
+addresses; a 10-byte buffer NMBUF which holds the name of the file to print; 
+two one-byte buffers for word length (WL) and line length (LL) and finally a 
+32-byte buffer WBUF to hold words as we extract them from the text file. These 
+buffers comprise a block of 30h/48 bytes. At E013 we load that number of bytes 
+into B; and E015 calls R4F0A which fills B bytes with nulls.
+	E018 points the DE register pair to NMBUF, and E01B sets a counter of 
+six in the B register. (Six characters is the maximum for filenames). E01D 
+(LUP1) starts an involved, but user-friendly sequence, calling R5D64 to fetch a
+character from the keyboard and converts it to upper case if appropriate. 
+Conversion is necessary, since lower case is not recognized in the subsequent 
+filename search routine.
+	E020-E024 rejects entries above CHR$(91), foiling users who depart from
+the standard alphabet when naming their text files. E025-E02E intercepts 
+CHR$(13) and CHR$(44) ("."), since in either case we assume the user has 
+finished entering the filename. To be sure, we jump to a "mugtrap" at E03E-E043
+(CK) which hustles us back if NMBUF is empty (in which case the counter B still
+holds 6).
+	E02F-E033 rejects any other characters under CHR$(32). I decided not to
+bother handling the DEL/BKSP or arrow keys. How much editing should we have to 
+do while entering six or fewer characters - with the correct spelling sitting 
+right there in front of us? Finally, from E034-E037 we print any legal 
+character (RST 4), store it in NMBUF (STAX D), increment NMBUF (INX D)and 
+decrement the counter (DCR B). At E038, if the counter has reached zero, we 
+jump to E044 (EXT). But at E03B, fewer than six legal characters have been 
+entered (and obviously the user still hasn't pressed ENTER or hit "."), so we 
+jump back to LUP1 for another character.
+	A much less involved way to get user input is to CALL INLIN (4644) and 
+read the resulting buffer at F685, but that wouldn't guarantee either all caps 
+or the input of the filename extension, as required by the file search routine 
+to be called. So, we add the .DO extension ourselves at E044-E04B. The call 
+MOVE (R2542) at E04A takes B bytes starting at the address pointed to by HL and
+copies them into DE, which we have incremented to the next open byte in NMBUF.
+	At E04C, we again point DE to NMBUF. R5AA9 (SEEK), called at E04F, 
+compares the filename in NMBUF which includes the .DO extension) with names in 
+the file directory. If a bad filename has been entered, the zero flag is set 
+when SEEK returns (see E052). The resulting jump to E05B displays an 
+appropriate message: INVALID!, followed at E061 by a delay allowing time to 
+read it. Then we jump back to E000 (SQ1) for the user to try again.
+	Assuming the filename entered is valid (see E055), the DIRECTORY 
+ADDRESS of that file, having returned in HL, is stored in FILDIR for later 
+reference. Remember, the filename is also preserved in NMBUF. From E058, we 
+jump to E067 (SQ2).
+	HL is again pointed to FILDIR, and at E06A we call R5AE3 (STADR). This 
+routine returns with the STARTING ADDRESS of the file in HL. That's the 
+location in RAM where the actual ASCII file is located. At E06D-E072, we store 
+the starting address in TOPFIL for later use. E070 clears the screen in 
+preparation for echoing subsequent output.
+	E073-E077: now it's time to wake up the thermal printer, but not before
+loading BAUD rate in H and serial transfer protocol in L. The TP-10 manual says
+the device is glued to 600 BAUD. On page 86 of the M-100 manual, "4" is listed 
+as the code for 600 BAUD. E073 loads the H register. How to determine the 
+serial word configuration to load into L is explained on page 123 of Carl 
+Oppedahl's "Inside the Model 100". Matching bits with the requirements of the 
+TP-10, the needed byte looks like this:
+
+BIT	 7  6  5  4  3  2  1  0
+	------------------------
+CODE	 0  0  0  1  1  1  1* 1
+
+Bits 5-7 are ignored. Bits 3 and 4 are used together to discern whether 
+characters are 6, 7 or 8 bits long. To get 8 bit length, bits 3 and 4 are both 
+set. A 1 in bit 2 denotes no parity, which obviates bit 1 (* a zero would serve
+as well in bit 1). Bit 0 is set, denoting two stop bits. E075 loads the 
+resulting binary number 00011111 (1F hex, 31 decimal) into the L register. At 
+E077, the carry flag is set (STC) to be sure the RS-232 port is used instead of
+the internal modem; and R6EA6 (INZCOM) is called at E078, making the TP-10 
+"listen".
+	At E07B, we call the subroutine at E114 (SCR) to be sure the print head
+is "homed". The LCD echos this action unnecessarily at this time; but in 
+subsequent calls of SCR we'll want that to happen.
+	At E07E, we load the file starting address in the HL pair; and at E081 
+we push it on the stack. We use the stack to remember where we are in the file 
+during the following SQ3 sequences, because the PUSH and POP instructions are 
+byte-saving. Remember that the starting address always lives in TOPFIL, and the
+directory address is preserved in FILDIR. We'll use both addresses again, 
+should the user decide to kill the file.
+	E082: Pointing the BC pair to WBUF, where words will be assembled, we 
+get down to the business of formatting. You will note that everything sent to 
+the printer is echoed on the M-100 screen. This keeps the user from having to 
+squint at the TP-10 to see how things are coming along.
+	At E085 (SQ3), we set up a counter in the H register to make sure we 
+never overload WBUF. This would probably never happen in the course of 
+processing normal text files, but it is useful when printing hexdumps or ASCII 
+versions of BASIC programs, which usually do not contain many of the spaces and
+hyphens THERML.CO recognizes as word delimiters.
+	At E087 (SQ3A), the current position in the file is popped off the 
+stack into the DE pair. The character is read into the accumulator (A) at E088,
+the source file position is incremented at E089 and the new file position is 
+pushed on the stack at E08A.
+	From E08B-E0AB, we conduct a series of tests to handle the ASCII value 
+in the accumulator. Some characters are intercepted and sent on to "handler" 
+routines, while others are either rejected or accepted. In E08B-E08F, the 
+end-of-file character CHR$(26) is dispatched to its handler (EOFQ). In 
+E090-E094, ASCII values greater than CHR$(126) are rejected because the LP-10 
+wasn't designed to cope with most of them. E095-E099 routes tabs to their 
+handler; and E09A-E09E sends carriage returns to theirs. At E09F-E0A3, we send 
+hyphens to HYQ. E0A4-E0A8 takes care of spaces. At E0A9, ASCII values in A less
+than 20h/32 which haven't already been dealt with are rejected, and we jump 
+back to SQ3A for another character.
+	However, arriving at E0AC, legitimate characters are added to WBUF 
+(STAX B). E0AD increments WBUF (INX B). E0AE decrements the counter in H, and 
+E0AF loops back for more (JMP SQ3A) if the H counter hasn't zeroed out. If it 
+has, though, under special conditions alluded to above, we drop through to CRQ,
+one of our handlers.
+	HANDLERS - as mentioned, jumps to handler routines are executed 
+whenever ASCII values of 9 (TAB), 13 (CR), 32 (SPACE), 45 (HYPHEN) or 26 (EOF) 
+are found in the source file. Until one of those characters appears, we keep 
+cycling through SQ3, stuffing characters in WBUF. That may sound like an 
+extensive process, but remember that it's all happening in milliseconds! The 
+handlers labeled CRQ, HYQ, TABQ, SPCQ and EOFQ have some similarities. Rather 
+than putting each one under a microscope, abbreviated accounts follow.
+	CRQ deals with a carriage return. First it checks to see if line length
+(LL) plus word length (WL) is =>31. If so, it sends a carriage return, then the
+word and then the carriage return asked for. It then does LL and WL 
+housekeeping before looping back.
+	HYQ (E0C7-E0D2) - because hyphens often separate a longer than usual 
+word, we deal with them as potential "word-enders" to be sure we are optimizing
+the printer's line length. HYQ calls the subroutine PREP, which puts the hyphen
+in WBUF and drops through to CKL, which returns with the flags indicating the 
+result of comparing WL with 20h/32. How it does that will be discussed below. 
+If the comparison results in a carry (A<32), HYQ at E0CA jumps to the tail end 
+of the SPCQ routine labeled DONE. We'll track that later.
+	TABQ: The M-100 tab default is eight spaces. That is wasteful, given 
+the TP-10's short line length, so we arbitrarily shorten tabs to four spaces. 
+This routine puts three spaces in WBUF, and drops into SPCQ with CHR$(32) still
+in A. On this occasion, SPCQ adds the fourth space and proceeds to handle the 
+tab as just another word.
+	SPCQ (E0DD-E0F4) - recognizes a space as the end of a word. It calls 
+the subroutine PREP, which places the space character in WBUF (without 
+incrementing WBUF for now), and drops through to CKL which returns to SPC1, 
+having compared 20h/32 with the current value of LL (representing the number of
+characters which have already been sent to the printer without a carriage 
+return). Then it tests to see if there is still enough room (including the 
+final space) for the current unsent word to fit on the current line. Now it 
+gets a bit complex.
+	If LL equals 20h/32, the zero flag is set and at E0E0 (SPC1) we jump to
+RMVS. This code zeros the accumulator (SUB A results in A-A=0), puts the null 
+in WBUF (STAX B) and recalls CKL. The comparison done there remains intact when
+CKL returns and E0FA jumps back to SPC1. At E0E3, if there's room for the new 
+word without the space, we jump to DONE, where we would have gone anyway had 
+there been room for the final space on the earlier comparison, eliminating "JZ 
+RMVS".
+	If both comparisons have failed (i.e., the pending word with or without
+the added space is too long for the existing line), we end up at E0E6. Now we 
+send a carriage return (CALL SCR). E0E9 (SPC2) sends the pending word to the 
+printer, adjusts WL and LL and goes back for a new word. Before getting into 
+the nitty-gritty of the subroutines, etc., lets complete our discussion of the 
+special handlers.
+	EOFQ (E130-E155) - has a relatively simple job. It measures WL and LL 
+and deals with pending word transmission much as the other handlers do; but 
+since CHR$(26) signals the end of the source file, EOFQ ends by jumping to the 
+"get ready to exit" stuff at E143 (RTX).
+	Now let's track the program through the end, assuming we've processed 
+the EOF character. We come to RTX (E143-E155), which loops five times, moving 
+the TP-10 paper up far enough so it can be torn off below the printout. This is
+another user-friendly frill at the expense of a few more bytes of code. When 
+this is done, we drop through to...
+	ENDQ (E156-E17D) - we pop DE off the stack, where it was pushed the 
+last time we cycled through SQ3. Failing to do this would louse up subsequent 
+operations. Next, at E157, we de-activate the printer by calling R6ECB 
+(CLSCOM). At E15A-E15F we print "KILL "; and at E160-E165, reaching back into 
+NMBUF, which still holds the name of the file we've printed, we print the name 
+on the screen and follow it (E166-E168) with a question mark. It is worth 
+mentioning that this time we call a different routine (R27B1) to print NMBUF 
+because it does NOT conditionally start with a carriage return/line feed. We 
+want all the above to appear on the same line: "KILL (name).DO?"
+	At E169, we wait for the user to hit a key, checking the response at 
+E16C for CHR$(59h/89) ("Y") if the file is to be killed. Remember that R5D64 
+converts keypresses to upper case. Any other keystroke jumps to MENU to exit at
+E16E.
+	If a "Y" is received, we drop through the conditional jump, and at 
+E171-E177 we fetch the starting address from TOPFIL, load it in HL, XCHG it so 
+the address resides in DE and then load HL with the directory address of the 
+file from FILDIR. The subsequent call at E178 to R1FBE (KILL) quickly puts the 
+source file on inactive status. Finally, at E17B we jump to the main MENU, our 
+job finished. The file has been printed on the TP-10 in legible form (no word 
+wraps), and the hard copy is ready to tear off. This assumes that we've 
+remembered to turn the printer on at the outset. If the power light isn't 
+glowing, not to worry. Turn it on and run the program again. No harm has been 
+done.
+	SUBROUTINES/AUXILIARIES - a brief look: The purpose of a subroutine or 
+auxiliary routine is to condense repetitive instruction sequences in a callable
+section of code ending in a RET or appropriate jump in order to save bytes. I 
+planned some of them, and after early assemblies of THERML.CO, I added others. 
+Maybe you can find more ways to shorten the program - have at it!
+	DONE (E0FD-E10C) - this routine sends the pending word to the printer 
+by repeatedly calling R6E32 (THERM), gets the word length and stores it 
+temporarily in E. Then CNTSW, a subset of SWAP, is called, followed by SWAP 
+itself. When SWAP returns, we jump back for a new word at SQ3.
+	PREP (E10D) - simply loads the character in the accumulator into WBUF 
+and drops through to...
+	CKL (E10E-E113) - which calls GETCT, compares LL+WL with 20h/32 and 
+returns without acting on the comparison.
+	SCR (E114-E11D) - sends CHR$(0D/13) to the LCD and thermal printer. 
+After calling LDLY, it returns.
+	SNDW (E11E-E12F) - points the BC pair to WBUF, and loops internally 
+until it encounters a null in the buffer. When that happens, the instruction at
+E124 (RZ) sends us back to the instruction following the call.
+	GETCT (E17E-E187): counts the characters in the WBUF. R21FA (COUNT) 
+does that when HL is pointed to a buffer, which must end in a null. The 
+resulting count returns in the E register. GETCT copies E into A, stores A in 
+WL and drops through to...
+	CNTSW (E188-E18C) - which loads LL in A, adds WL (still in E) and 
+returns.
+	SWAP (E18D-E19F) - loads LL in A, zeros A and puts the resulting null 
+in WL. Then, from E194-E19B SWAP points the HL pair to WBUF, loads B with 
+20h/32 and calls CLRBF in order to fill WBUF with nulls. Then SWAP returns to 
+the instruction following the call.
+	LDLY (E1A0-E1AC) - sets a counter in A. The value 20h/32 indicates that
+DELAY will be called 32 times before a return. This routine provides an 
+appropriate pause while the TP-10 performs a carriage return. The section 
+E1A5-E1AC (LDYL) simply calls DELAY, decrements A and returns when A zeroes 
+out.
+	DELAY (E1AD-E1B9) - provides the short delay used between printable 
+characters sent to the thermal printer. This is absolutely necessary. 
+Mechanical peripherals move at a snail's pace compared with the lightning speed
+of the microprocessor. I fiddled a good deal with the loop values trying to 
+make the TP-10 operate as fast as possible without being overrun by the 
+program.
+	TEXT STRINGS (E1BA-E1D1) - these are messages to be sent to the LCD as 
+appropriate. All but "XT" contain a quotation mark to signal the ROM routines 
+that print them that the end has arrived. XT doesn't need such a flag because 
+it is "moved" with the aid of a counter loop (review EXT at 
+E044).		Labels we haven't discussed are simply internal to certain routines and
+subroutines.
+	Once THERML.CO has been loaded into RAM, you may want to set HIMEM to 
+protect THERML.CO with the direct command	CLEAR256,ORG where ORG=start of
+the code for THERML.CO. If you assemble as I did at E000 to honor CDOS, 
+ORG=57334. If you don't use a Chipmunk drive, ORG could end up being a higher 
+address corresponding to where you assemble. I'm sorry, but I don't know where 
+other drives' DOS codes may occupy RAM. Interestingly, even without first 
+issuing that command, once THERML.CO runs from menu selection you'll find that 
+HIMEM will equal the strating address of THERML.CO!
+	Well, that's it. If there are others in the user group who have a 
+reason to interface the TP-10 and M-100, this has all been worthwhile. And, it 
+may have been entertaining to others who are perfecting their 8085 machine 
+language skills. I know I've had a ball writing it, debugging it, finding ways 
+to shorten it and finally watching it perform. The least fun was editing the 
+nearly five pages of source code file to include all the hex calculations for 
+transmission to the SIG. You see, the ZBGASM.CO assembler toggles F675 on the 
+user's input of a "switch" code (/LP) to print the source to the line printer. 
+Otherwise, the source is printed to the LCD.

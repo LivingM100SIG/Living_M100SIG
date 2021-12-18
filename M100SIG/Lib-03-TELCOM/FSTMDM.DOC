@@ -1,0 +1,56 @@
+FASTMODEM - A software modem speed up for the Model 100 : Bob Scott 
+73125,1437
+This file describes the use of FSTMDM.100, a program which allows you to 
+speed up the M100 modem by 50% to 450 baud.  Some CIS direct dial numbers 
+support this rate (use GO PHONES to check), however it is NOT supported by 
+TeleNet or TYMNET.  Of course, two M100's can use this rate to communicate 
+with each other over a dialup circuit.
+Cautions:
+This program nastily grabs and clears high memory.  It also reassigns the 
+TELCOM f7 key to give you a readout of bytes free while you're online.  f6 
+is reset as described below.  This program CANNOT be used with an autologin
+macro of any type (yet).  If you can put up with these "features", it 
+really does speed up the internal modem.
+Theory:
+The M100 modem can be pushed to as much as 600 baud over standard phone 
+lines.  Since CIS thoughtfully supports 450 baud, it is possible to 
+communicate at that faster rate with an M100. The program FASTMDM loads a 
+machine language routine above HIMEM and assigns the online TELCOM function
+key F6 to call the routine.  When executed, the M/L program resets the 
+internal baud rate generator to 450 baud.  Since TELCOM sets the rate to 
+300 when it shifts to online mode, you must press F6 after going online, 
+but BEFORE typing anything(hence the restriction on login macros).  If you 
+type anything before pressing F6, CIS will sense that you are at 300 baud, 
+and will not let you change to 450.
+Use:
+  Clear any machine language programs out of high memory.  Place the cursor
+over FASTMDM and press RETURN.  You will see the screen flash "Installing 
+450 bps" then get the menu back.  You may now enter TELCOM and dial CIS 
+manually, or with a number from ADRS.DO, just so long as it is followed by 
+only a "<>" (remember, NO login strings!).  After you get connected, 
+indicated by the label line chaning to the online mode ("Up Down" etc.) and
+BEFORE typing anything press F6.  You'll hear a beep, which indicates that 
+you are in 450 baud mode. You can then hit "ENTER", login and enjoy.
+After you finish your TELCOM session, you can remove the machine language 
+routine, and free up high memory for other uses, by again executing FSTMDM 
+from the main menu.  You'll see the legend "Removing 450 bps.." and be 
+returned to the main menu.  (The TELCOM F6 key will be set to a CLEAR 
+SCREEN function by the program when it deinstalls).
+
+Reference:
+  For you hackers, the M/L routine is:
+     DI
+     PUSH PSW
+     MVI A,85
+     OUT 188
+     MVI A,65
+     OUT 189
+     MVI A,195
+     OUT 184
+     CALL 16937
+     POP PSW
+     EI
+     RET
+Permission for non-commercial use granted to M100 SIG members.  All other 
+rights reserved.
+

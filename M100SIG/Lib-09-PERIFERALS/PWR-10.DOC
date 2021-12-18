@@ -1,0 +1,349 @@
+
+
+
+                                    Chapter 7
+                              Command Descriptions
+
+          This chapter describes BASIC commands that POWR-DOS adds or
+          enhances.  Its organization differs from earlier chapters; it
+          contains a series of mini-sections for each command.
+
+          Some commands behave exactly the same with or without
+          POWR-DOS installed, except that they can access disk files
+          after a program OPENs them.  The Tandy 200 manual refers to
+          these commands and functions as "device generic".  The
+          following list summarizes the commands which can access disk
+          files; since their syntax and behavior are identical for disk
+          files as for other files, refer to your computer's manual for
+          more detailed information.
+
+          Special Note: The prefixes ":" and "0:" are completely
+          interchangeable.  The first is short and easy to type; the
+          second gives a measure of compatibility with other disk
+          software.
+
+
+               LOAD "0:fname"
+               SAVE "0:fname"
+               KILL "0:fname"
+               PRINT #n, ...
+               INPUT #n, ...
+               LINE INPUT #n, ...
+               CLOSE n
+               EOF (n)
+               MERGE "0:fname"
+               RUN "0:fname"
+               RUNM "0:fname"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     Page 44
+          Chapter 7            Command Descriptions           Page 45
+
+
+                                DSKI$ (Function)
+
+                                     Purpose
+
+          To provide information about disk files, RAM files, and free
+          space on disk.
+
+
+                                     Syntax
+
+
+          Case 1.   DSKI$ ("file.xx")
+          Case 2.   DSKI$ (":file.xx")
+          Case 3.   DSKI$ ("")
+
+
+                                   Description
+
+          Case 1:   DSKI$ returns the length of the file in RAM in
+                    bytes.  file.xx can be any RAM filename.  If the
+                    file does not exist in RAM, DSKI$ returns a 0
+
+          Case 2:   DSKI$ returns the length of the file on disk in
+                    bytes.  file.xx can be any disk file name.  IF the
+                    file does not exist on disk, DSKI$ returns a 0.
+
+          Case 3:   DSKI$ returns the number of free sectors on the
+                    disk.  Each sector can store 1,280 bytes.
+
+
+                                     Example
+
+          10 INPUT "Disk File Name"; A$
+          20 PRINT "File Len ="; DSKI$(":"+A$)
+          30 PRINT "Free Sectors: "; DSKI$("")
+          40 IF DSKI$("DMENU.BA")>0 THEN RUN "DMENU"
+
+          This program will ask for a file name, print its length,
+          print the free sectors on the disk, then run DMENU only if it
+          exists in RAM.
+          Chapter 7            Command Descriptions           Page 46
+
+
+                                     Errors
+
+          DSKI$ reads from the disk, except in case 1.  Any of the
+          following errors indicate problems accessing the drive:
+
+
+               ?IO - Unreadable Diskette
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - DSKI$ misspelled; missing parentheses, etc.
+              ?NM - Bad file name; file prefix must be RAM:, 0:, or :.
+              ?AO - DSKI$ cannot be used when a disk file is OPENed
+                    for  INPUT, OUTPUT, or APPEND.
+          Chapter 7            Command Descriptions           Page 47
+
+
+                                DISKO$ (Function)
+
+                                     Purpose
+
+          DSKO$ reads sectors from disk to RAM and writes sectors from
+          the RAM to disk.  A sector is 1280 bytes; in addition, DSKO$
+          adds the 12-byte control block to the end of the sector, for
+          a total of 1292 bytes.
+
+
+                                     Syntax
+
+
+          DSKO$ SW, SE, AD
+
+
+                                   Description
+
+          The PDD divides diskettes into 80 sectors of 1280 bytes each. 
+          In addition, each sector has a 12-byte control block
+          associated with it.  Reproducing the sectors and control
+          block of a diskette will produce an identical copy of the
+          diskette.
+           
+          DSKO$ either reads or writes one sector of the diskette,
+          followed by the bytes in the control block.  The three
+          arguments of DSKO$ are all integers.  SW is a switch; if
+          zero, DSKO$ reads a sector from disk to RAM, and if non-zero,
+          DSKO$ writes a sector from RAM to disk.  SE is the sector
+          number, which must be an integer from 0 to 79.  AD is a RAM
+          address; if SW is 0, it is the destination address for the
+          sector data, and if SW is non-zero, it is the beginning of
+          the sector data to be written to disk.
+
+          DSKO$ is a dangerous command.  IF AD is improperly specified,
+          it can cause coldstart; in addition, it can trash diskettes.
+
+
+                                     Example
+
+          10 CLEAR 0,MAXRAM-1292        
+          20 DSKO$ 0, 1, HIMEM                
+          30 POKE HIMEM+20, 0
+          40 DSKO$ 1, 1, HIMEM
+
+
+          This program reads in sector one from a diskette, changes the
+          20th byte to a zero, then re-writes the sector to diskette.
+          Chapter 7            Command Descriptions           Page 48
+
+
+                                     Errors
+
+          DSKO$ reads from and writes to the disk. Any of the following
+          errors indicate problems accessing the drive:
+
+
+               ?IO - Unreadable Diskette
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+               ?WP - Disk Write-protect tab open
+               ?HT - Can happen with user BREAK
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - DSKO$ misspelled; missing operands, etc.
+              ?FC - Bad sector number (not 0-79)
+              ?AO - DSKO$ cannot be used when a disk file is OPENed for
+                    INPUT, OUTPUT, or APPEND.
+          Chapter 7            Command Descriptions           Page 49
+
+
+                                     LFILES
+
+                                     Purpose
+
+          To read contents of disk and RAM directories.
+
+
+                                     Syntax
+
+
+          Case 1.   LFILES
+          Case 2.   LFILES R
+          Case 3.   LFILES TO "file"
+          Case 4.   LFILES R TO "file"   
+
+
+                                   Description
+
+          LFILES outputs a list of files either to the screen (cases 1
+          and 2) or a file (cases 3 and 4).  Without the "R" option,
+          LFILES produces a list of disk files and lengths followed by
+          a message showing the number of free sectors on the disk. 
+          With the "R" option, LFILES produces a list of RAM files and
+          lengths.  Pause message will appear in the listing unless you
+          specify the TO option.
+
+          The TO option (cases 3 and 4) allow you to send the directory
+          listing to the line printer (using "LPT:" for "file") or to a
+          RAM file.  This option gives you access to the directory from
+          within BASIC programs.
+
+
+                                     Example
+
+          10 LFILES TO "temp"
+          20 OPEN "temp" FOR INPUT AS 1
+          30 IF EOF (1) THEN 80
+          40 LINE INPUT #1,A$
+          50 if len(a$)<>17 THEN 30
+          60 T=T+VAL(RIGHT$(A$,5))
+          70 GOTO 30
+          80 CLOSE:PRINT "Total Bytes: ";T
+          90 KILL "temp.do":END
+
+          This program reads a disk directory into a file and adds up
+          all of the file lengths.  Notice that any line containing a
+          file name will be 17 characters long.
+          Chapter 7            Command Descriptions           Page 50
+
+
+                                     Errors
+
+          LFILES reads from the disk in cases 1 and 3.  Any of the
+          following errors indicate problems accessing the drive:
+
+
+               ?IO - Unreadable Diskette
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - DSKI$ misspelled; missing parentheses, etc.
+              ?NM - Bad file name; file prefix must be RAM:, 0:, or :.
+              ?FL - No more room in directory to create RAM file.
+              ?OM - No more memory for creating a RAM file.
+              ?AO - DSKI$ cannot be used when a disk file is OPENed for
+                    INPUT, OUTPUT, or APPEND.
+
+
+          There are several quirks of LFILES TO.  First, the RAM file
+          created by LFILES TO will occasionally contain a blank line
+          at the beginning.  Second, the file lengths created by LFILES
+          R TO "file" (where "file" is a RAM file) will often be
+          incorrect.  Do not use LFILES R TO "file" to obtain RAM file
+          lengths; use DSKI$ instead.  LFILES R TO "file" is useful for
+          determining the names of the files currently in RAM.
+          Chapter 7            Command Descriptions           Page 51
+
+
+                                  LFILES FORMAT
+
+                                     Purpose
+
+          LFILES FORMAT formats a diskette.
+
+
+                                     Syntax
+
+
+          LFILES FORMAT
+
+
+                                   Description
+
+          LFILES FORMAT will format the disk immediately, with no
+          prompt. Once it begins, the only way to stop it is to turn
+          off the drive.
+
+
+                                     Example
+
+          10 ON ERROR GOTO 40
+          20 LFILES
+          30 PRINT "Already Formatted!":END
+          40 IF ERR=18 THEN LFILES FORMAT
+          50 RESUME 60
+          60 END
+
+          This program formats a disk only if it is unreadable.
+          Chapter 7            Command Descriptions           Page 52
+
+
+                                     Errors
+
+          LFILES FORMAT writes to the disk.  Any of the following
+          errors indicate problems accessing the drive:
+
+
+               ?IO - Diskette will not format
+               ?NR - Drive disconnected or off
+               ?DN - Drive not responding
+               ?CM - Communications Error
+               ?ND - No disk in drive
+               ?WP - Disk Write-protect tab open
+
+
+          See the error section in Chapter 8 for more details.
+
+          Other errors:
+
+
+              ?SN - LFILES FORMAT misspelled
+              ?AO - LFILES FORMAT cannot be used when a disk file is
+                    OPENed for INPUT, OUTPUT, or APPEND.
+
+          LFILES FORMAT will work consistently if performed immediately
+          after an LFILES or LFILES TO command.  In other cases, it can
+          "hang" unpredictably; if this happens, press SHIFT-BREAK,
+          type LFILES, and try again.
+

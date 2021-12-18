@@ -1,0 +1,31 @@
+Subject: Tandy Disk Drive - Function Key Call
+From:    Ches Looney, 73016,1336
+To:      All
+
+
+For those who might wish to call FLOPPY.CO with a function key rather
+than with a short BASIC program (e.g. 10 CALL 59400 stored as DISK.BA),
+either function key 6 or 7 is normally unused in BASIC.  The command:
+
+KEY 7,"Disk"+CHR$(24)+"CALL59400"+CHR$(13)
+
+can be entered while in BASIC to set key 7 for use in CALLing FLOPPY.CO once
+it has been placed in high memory by LOADMing or by placing the cursor
+over FLOPPY and ENTERing.  Once this is done, going into BASIC and pressing key
+7 will call the Disk File System.  The purpose of "Disk"+CHR$(24) is to make a
+meaningful label (Disk) available while in BASIC.  Additionally, the command:
+
+KEY 6,"Plan"+CHR$(24)+"CALL63012"+CHR$(13)
+
+will make MultiPlan available by the press of function key 6 (assuming
+you have the ROM installed).  In this case, "Plan" will show above the key 6
+screen identifier.  The purpose of CHR$(24) [Control-X] is to erase the word
+Disk or Plan from the BASIC interpreter before proceeding with the CALL
+command.  Without "Disk"+CHR$(24) or "Plan"+CHR$(24), the label line would
+show CALL for either the Disk System or
+MultiPlan function key.  Model 200 users will have to modify the above commands
+for their particular CALL addresses.  Your comments are welcome.  Ches Looney
+
+ 
+(Ed. note: The CALL address for the DOS in the model 200 is 57500. There is no
+similar call address for the MSPLAN ROM; see TDDTIP.004)

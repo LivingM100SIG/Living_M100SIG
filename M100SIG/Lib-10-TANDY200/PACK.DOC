@@ -1,0 +1,99 @@
+
+
+PACK.DOC by James Yi 73327,1653
+Feb 24, 1990
+
+  PACK is a file compression utility.
+  Any type of file can be packed and grouped into one file.
+
+  PACK is downloaded as Basic program listing in text; convert it into a Basic
+program; run it to create PACK.CO; then run PACK.CO.
+
+---------------------------------------
+  The commands are: (optional parameters appear enclosed in brackets [].)
+
+P Group File [N] [Comment] -  Pack File into Group, using "window size" of N, 
+and comment it.  File is packed and stored in group file Group.  Group file's 
+default extension is "CP"; just enter the first six letters of the name for 
+Group.  N and Comment are optional.  N is a number from 1 to 15, and 
+determines how small a file is packed and how fast it is done.  Usually, best 
+compression is achieved when 2^N, 2 raised to the power of N, is somewhat 
+smaller than the total file size, but more than half the file size.  If you do
+not specify N, default N of 12 is used; adjusting N usually does not vary 
+compression more than 5%, so you may not really want to bother with it, unless
+speed is your concern; it could be done about 4 times faster by compromising 
+about 5% on size.  More about how to adjust N later.  When adding comments, if
+the comment starts with a numeric character, precede it with some non-numeric 
+character, like a quotation mark.
+
+U Group [File] - Unpack File stored in Group.  If File is not specified, you 
+will be prompted to unpack every file in Group.
+
+
+F [Group] - List all files grouped in Group, or if Group is not specified, 
+files in memory are listed.
+
+
+M GroupA File GroupB - Move File out of GroupA, into GroupB.  Use this command
+to merge in and out(delete) already packed files.  You can rearrange the order
+in which the packed files are listed within a group by moving them within the 
+group: GroupA = GroupB.
+
+
+R Group File NewName- Rename File in Group, as NewName.
+
+
+K File - Delete any file from memory.
+
+? or H - List available commands.
+
+---------------------------------------
+
+What the error codes mean:
+
+  1 - User-abort during compression; press CTRL to break.
+
+  5 - A file cannot be unpacked and replace old because its name is same as 
+that of the group file that it's being unpacked from.
+
+  7 - Insufficient memory.
+
+ 12 - The file has been damaged; cannot unpack it.
+
+ 13 - The file specified for a group file, is not a group file.
+
+ 22 - File name not specified.
+
+ 52 - File not found.
+
+ 55 - Bad file name format.
+
+ 57 - Cannot create a new file because the directory is full.
+
+  When you enter an invalid command, a list of valid commands will be shown.
+
+Text documents can be squeezed at an average of about 50%, Basic programs 
+about 20%, and machine language programs (CO file) about 10%.
+
+  There is 22(+length of comment) overhead for each file packed, to keep the 
+name, size, date&time, etc.
+
+  The "window size" = N^2 (2 to the power of N) and determines the compression
+size and speed.  Usually, larger N gives better compression, but slower speed;
+smaller N means faster but less compression.  The "window" is an area of the 
+file being compressed that the program uses as its "dictionary".  Compression 
+is achieved by looking in this dictionary to represent the original data in 
+more compact form.  Larger dictionary means more chance of finding more 
+compact form, but takes longer.  In a trial run, an 8K of English text, using 
+N of 12, took about 2 minutes.  By using N of 9 on the same file, time was 
+reduced to about half a minute and resulted in about 4%(300+ bytes) less 
+compression.   But sometimes larger N doesn't neccessarily mean better 
+compression, depending on the type of data(files with a lot of repetitious 
+data works better at lower N), so experiment for different type of data to 
+determine the best compromise between speed and compression.  Unpacking speed 
+is very quick, usually around several seconds.
+
+
+Have fun!
+
+

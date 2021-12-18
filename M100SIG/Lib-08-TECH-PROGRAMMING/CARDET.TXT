@@ -1,0 +1,157 @@
+To all M100 Hardware Hackers,
+
+	I finally have news for those who want to write a
+routine to detect a BUSY signal, a CARRIER, or any other type
+of noise on the phone line!
+
+	I was looking at the schematic of the Model 100 in the
+Service Manual to where the Carrier Detect signal is mapped
+(i.e. what port or what bit in what register).  It seems that
+the chip used for the Modem in the Model 100 has a CD (Carrier
+Detect) signal, but the Model 100 ignores it!
+
+	This seemed real mysterious to me, so I perused my 
+disassembly of the ROM to look at the CARDET call.  Let me 
+share with you my insights into what seems to be happening:
+
+CARDET	EQU	6EEFH		;Carrier Detect routine
+	PUSH	HL		;Save registers
+	PUSH	DE		;  .  .
+	PUSH	BC		;  .  .
+	LD	HL,6F2CH	;Put address on stack
+	PUSH	HL		;  .  .
+	IN	A,(0BBH)	;Read Port C 8155 Chip
+	AND	10H		;Only want bit 4 (CTS)
+	LD	HL,0249H	;Set up Answer tone
+	LD	BC,1A0EH	;  Values
+	JP	NZ,6F09H	;Skip if Answer mode
+	LD	HL,0427H	;Set up Originate tone
+	LD	BC,0C07H	;  Values
+
+6F09H:				;Here if Answer 
+	DI			;Let's not get interrupted
+	IN	A,(0D8H)	;Now read UART port
+	AND	01H		;Just get LSB
+	LD	D,A		;Save the value
+	CALL	6ED6H		;Check zero crossings
+				;(See Disassembly below)
+	JP	M,6F1AH		;No tone... skip down a bit
+	XOR	D		;Else flip value
+	LD	D,A		;Save the value
+	CALL	6ED6H		;and try once more
+
+6F1AH:
+	EI			;We're finished the tough part
+	RET	M		;Jump to 6F2CH (remember stack?)
+				;  if no tone found
+	LD	A,E		;Test tone frequency
+	CP	B		;Low enough?
+	RET	NC		;No... 6F2CH
+	CP	C		;High enough?
+	RET	C		;No... 6F2CH
+	DEC	HL		;Else decrement count
+	LD	A,H		;Test value
+	OR	L		;Zero?
+	JP	NZ,6F09H	;No... loop back
+
+;We now have valid carrier (originate or answer as appropriate)
+
+	CALL	6F39H		;Clear some pointers (See below)
+	POP	HL		;Get rid of 6F2C address
+	JP	NZ,0FFF6H	;Dont do this! (Z flag is set!)
+	JP	14EEH		;Restore BC, DE, HL, Return
+
+;Note that due to sneaky programming by Microsoft, the last two
+;instructions can be called at 6F2C (in middle of JP NZ, 0FFF6H
+;instruction) and executed as:
+
+6F2C:
+	OR	0FFH		;Set A to 0FFH
+	JP	14EEH		;Restore BC, DE, HL, Return
+
+;This bit of schenanigans will allow A to become 0FFH if no
+;carrier and 00H if carrier.
+
+;Next code is used to check to see if tone at UART is stable:
+
+6ED6H:
+	LD	E,00H		;Maximum 256 iterations
+	IN	A,(0D8H)	;Listen to phone line
+	AND	01H		;Just get low bit
+	XOR	D		;Test against prior value
+	JP	NZ,6EE5H	;Change... skip down below
+	INC	E		;No change... increment E
+	JP	P,6ED6H		;Loop until change
+	RET			;No zero crossings... no tone!
+
+6EE5H:
+	PUSH	AF		;Save A and flags
+	LD	A,(0FF44H)	;Get SOUND ON/OFF flag
+	OR	A		;Is SOUND enabled (=0?)
+	CALL	Z,7676H		;Yes... toggle the speaker
+	POP	AF		;Restore A and flags
+	RET			;Back to caller
+
+;End of disassembly
+
+
+As you can see, the code is involved, but the appropriate
+carrier tone (ORIGINATE or ANSWER) will be compared with the
+values stored in HL and BC in the code right before 6F09H.
+If these values are altered (I haven't figured out exactly
+what values would indicate "ring" as opposed to "busy" or
+somebody saying "Hello?"), the following code could do the
+trick for you:
+
+TEST	EQU	$		;Test for BUSY, etc.
+	PUSH	HL		;Save registers
+	PUSH	DE		;  .  .
+	PUSH	BC		;  .  .
+	LD	HL,6F2CH	;Put address on stack
+	PUSH	HL		;  .  .
+	LD	BC,aabb		;aa = low value
+				;bb = high value
+	LD	HL,nnnn		;Number of times to test
+	CALL	6F09H		;Perform test
+
+After the return is made from the CALL, the Z flag and A
+register will reflect the same conditions as if the CARDET
+call was made; Z flag set if tested tone was found else reset,
+A will ocntain X'00' if tone was found else X'FF'.
+
+
+
+BONUS!!
+
+Code for testing existance of printer (or... How to See If The
+Printer Is Available Without Hanging):
+
+Machine code:
+
+	IN	A,(0BBH)	;Get 8155 Port C
+	AND	06H		;Just want bits 1 & 2
+	XOR	02H		;See if printer is ready
+	JP	NZ,NOTRDY	;NOTRDY if non-zero
+	...			;Else Printer is available
+
+BASIC:
+
+9000 REM PRINTER TEST: PR RETURNS PRINTER STATUS (0 OR -1)
+9010 REM SAMPLE USE:
+9020 REM GOSUB9000: IF PR THENPRINT"READY" ELSE PRINT"NOT READY"
+9030 PR=((INP(187)AND6)XOR2)=0:RETURN
+
+
+
+The machine code is taken from 6D47 to 6D4B, except the ROM
+routine also scans for the BREAK key (to print ?IO Error).
+Use this in good health.
+
+
+Please direct any comments about the subjects contained herein
+to:
+
+	larry gensch
+	[72236,3516]
+
+

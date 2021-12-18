@@ -1,0 +1,452 @@
+NOTVAN.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This is a highly edited thread (down from 50K+), including an epic sequence
+of a dozen or so messages from Wilson Van Alst which amount to a great
+tutorial on binary mathematics.
+
+    Highly recommended, even if somewhat difficult reading.
+
+It started (I think!) with a discussion of how NOT works in Basic; title is
+NOT from that root, plus VAN from Van's epic discourse.  Hope I haven't lost
+too much of Tony+Paul+Van.  An AWFUL thread to edit!
+
+Message range: 174730 to 174802
+Dates: 9/25/88 to 9/27/88
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+And why doesn't NOT work that way all the time?  I'd give you some examples
+I've discovered over the years, but I've forgotten them.  Here's one example:
+
+F=1:IF NOT F THEN BEEP<ENTER> (beep)
+F=0:IF NOT F THEN BEEP<ENTER> (beep)
+F=-1:IF NOT F THEN BEEP<ENTER> (silence)
+
+Or is that "NOT BEEP" ???  (grin)
+
+Seems like NOT F implies a "not absolute number", and -1 should qualify as a
+"not absolute number", or a "not real number".  Therefore, if F= -1, then "NOT
+F" should be true.  Then there's the case that (1 NOT 1) should = 0.
+
+Then try this one:
+
+F=1<ENTER>
+PRINT F<ENTER> (1)
+PRINT NOT F<ENTER> (-2)
+PRINT FNOTF<ENTER> (1 -2)
+
+How does NOT F get to -2?  Boy, this one get's confusled.
+
+Fm: Paul Globman 72227,1661
+To: Tony Anderson 76703,4062
+
+Your question re:
+
+F=1:IF NOT F THEN BEEP<CR> (beep)
+F=0:IF NOT F THEN BEEP<CR> (beep)
+F=-1:IF NOT F THEN BEEP<CR> (silence)
+
+Logical true is a -1 (or multiple, ie any negative), therefore both F=1 and
+F=0 set F to FALSE.  Since NOT FALSE = TRUE you get the beep.  The converse
+applies to the third example... NOT TRUE = FALSE therefore silence.
+
+==============================
+
+this problem is tricky:
+
+F=1
+PRINT F (1)
+PRINT NOT F (-2)
+PRINT FNOTF (1 -2)
+
+The flaw is in your usage.  The keyword NOT is for logical computation (to
+negate the following TRUE or FALSE) but you are applying a numerical value
+and trying to print it.  Numerically NOT adds 1 to its operand and negates
+it. If it simply negated the operand, then a 0 (false) would remain a false
+after negation.
+
+
+Fm: Tony Anderson 76703,4062
+To: Paul Globman 72227,1661
+
+Okay... but when I use a monitor to inspect a tokenized BASIC program, all
+numbers less than 65535 are contained in two bytes, in the lo/hi convention.
+
+When it's assembly language it's still lo/hi hex, and not a negative value or
+restricted to a -32K to +32K number.
+
+It seems to me the difference here is in the difference between the two words
+"can" and "is".  While you CAN use a negative value, if it's in a tokenized
+BASIC program it's irrelevant.  Might be different if you defined a variable as
+an integer, then used that variable in a loop. But the form we're discussing
+isn't an integer, unless it is so by the very act of converting it to a "real
+number" with the NOT statement.  So it seems to me, what we have here is a loop
+counter that starts out in full double precision, and by the NOT statement gets
+converted into a negative integer.  The CPU then has to change the sign of the
+hex pair and subtract it from 2^16-1 in order to get the "real address", since
+there are no negative addresses.
+
+Question: Why does BASIC have to deal with numbers greater than 32K in double
+precision.  The two bytes can represent any number up to 65535, and with the
+carry flag set, or the Z flag, or some other flag, can also represent any
+number down to -65535.  So why does it take 4 bytes?  I could accept three
+bytes, allowing for a sign that couldn't be included in the two bytes of the
+hex pair.  But Four???  No reason.  What does BASIC do with all the extra bits?
+
+Interestingly, a peek of -10 will not give you the same results as a peek to
+10; or even +10.  So we're not converting absolutely here (ABS(-10)), we're
+subtracting the absolute of -10 from 2^16-1. That MUST use some CPU time to
+calculate.
+
+I considered the PRINT FNOTF to be of interest, since it printed both values,
+instead of a computation like F times NOTF, or FNOTF (like 6AND6).  But another
+interesting point, 6 AND 6 = 6!  If I'd told one of my teachers that, they'd
+have flunked me for sure! (grin)
+
+  (This is sort of like that MOD problem George Sherman came up with a few
+weeks ago.)
+
+  (Phil's going to LOVE this thread!)
+
+
+Fm: Paul Globman 72227,1661
+To: Tony Anderson 76703,4062
+
+Wait, let me correct myself... INTEGER variables are 2 bytes, single precision
+is 4 bytes and double precision is 6(?)
+  This is defined by BASIC not the CPU.
+
+You see hex via a monitor because the RAM image you are looking at is already
+tokenized.  You are NOT looking at variable storage, but at the program.
+
+I can't explain to you with clarity the basics of two's compliment storage or
+the evaluation of an 11 bit mantissa ( plus a sign bit) over a four bit
+exponent.
+
+But I can tell you that you cannot use a flag bit to represent the sign of a
+number stored somewhere in RAM.  If you did, you would need a separate flag bit
+for every number that your program has stored.  If two bytes (16 bits) can
+represent 64K, and you set one bit aside for the sign, the remaining 15 bits
+can only go up to 32K.  The sign bit restores the 64K range of numbers but is
+viewed as -/+ 32K.
+
+Larger numbers are stored in scientific notation (as an exponent, mantissa, and
+sign bit) and BASIC uses all the 'extra' bits to maintain a high degree of
+accuracy.
+
+-10 and 10 represent different addresses and peeking them will yeild different
+results.
+
+PRINT FNOTF is simply printing 2 values. If you want the product, PRINT F*NOTF.
+
+Any byte ANDed with itself yeilds itself (boolean fundamentals).
+
+
+Fm: Tony Anderson 76703,4062
+To: Paul Globman 72227,1661
+
+What is the mechanism of computing the NOT value?  It seems to be: Change the
+sign and lower the value by 1.  Lower, meaning to add -1 to a negative result
+[-x + (-1)], or to subtract 1 from a positive result [x + (-1)].
+
+Witness:
+
+F=7:PRINT NOTF <ENTER>  (-8)  [(F-2*F)+(-1)]
+F=-8:PRINT NOTF <ENTER> (7)   [(F-2*F)+(-1)]
+
+I think I understand NOT as a boolean operator, where it's being used in a
+True/False test (IF NOT F THEN), but I was under the impression that T/F was
+1,0,-1, whereas I seem to be getting a true for any negative value in the
+statement:
+
+F=-8:IF NOT F THEN BEEP <ENTER>  (beep)
+
+But I also get it for:
+
+F=-8:IF F THEN BEEP <ENTER>  (beep)
+
+So how come NOT F = F?
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062
+
+Tony (&Paul),
+   This *thread* is gonna keep Phil in *stitches*. (grin)  But let's see if we
+can untangle a few of these NOTs:
+
+   First of all, forget for a moment about concepts of true and false in
+connection with the NOT operator.  (It can be a powerful tool in true/false
+expressions; but that tends to confuse, more than explain, how it actually
+works.)
+   NOT is a Boolean operator, like the ANDs, ORs, XORs, etc., that tend to
+confuse people so much.
+   What NOT does is _complement_ the bits of the byte(s) being NOTted.  It sets
+all the 0's to 1's, and all the 1's to 0's.
+   That's it.
+   And that's all the _computer_ cares about.  But -- for better or worse -- we
+humans have to figure out what those 1's and 0's signify; and that's where
+things sometimes get recondite.
+   So, if you wanna understand NOT, you gotta take a simple lesson in binary
+math:
+
+   Let's start with a surprise quiz, to show how much you already know.
+        1.  (a) How many numbers can you express with a _single_ binary bit?
+            (b) List them.
+            (c) What is 2^1?
+
+        2.  (a) How many numbers can you express with _two_ binary bits?
+            (b) List them.
+            (c) What is 2^2?
+
+        3.  (a) How many numbers can you express with _three_ binary bits?
+            (b) List them.
+            (c) What is 2^3?
+
+   Answers:
+        1.  (a) Two.
+            (b) 0 and 1
+            (c) 2^1 = Two
+        2.  (a) Four.
+            (b) 00, 01, 10, and 11
+            (c) 2^2 = Four
+        3.  (a) Eight.
+            (b) 000, 001, 010, 011, 100, 101, 110, and 111
+            (c) 2^3 = Eight
+
+   And so it goes: the number of binary values you can express with n-number of
+bits is, 2^n.  An eight-bit byte can have 2^8 = 256 discrete values.
+
+   For the moment, to keep things relatively simple, we'll now pretend that
+eight bits is the upper limit of our computer's processing ability.
+   We've got 256 binary values, ranging from
+
+                0 0 0 0 0 0 0 0
+        to
+                1 1 1 1 1 1 1 1
+
+   If we want, we can think of those as having decimal values between 0 and
+255.  But that creates a major problem: we have no _negative_ numbers.  Our
+checkbook-balancing program can handle deposits, but we have no way to account
+for withdrawals.  (Pleasant thought, but slightly out of touch with reality!)
+   So, let's see what a negative number would look like.  The number -1 is, of
+course, +1 subtracted from 0.  In our eight-bit byte, this looks like:
+
+                0 0 0 0 0 0 0 0
+            -                 1
+                ---------------
+                1 1 1 1 1 1 1 1
+
+   "But golly, Batman, that's not -1.  That's 255!"
+
+   To make a long story short, Batman got on the phone with the Commissioner
+... who submitted the matter to a committee ... which deliberated less than a
+full year ... and finally issued a proclamation declaring -1 and 255 to be the
+same number.
+   And to an 8-bit computer, which understands only 0's and 1's, they *are* the
+same number -- which is fine for the computer, but not too good, yet, for our
+checkbook program.
+   The answer, the wizards discovered, was to write smaller checks.
+   If we go back to that -1 = 255 byte...
+
+                1 1 1 1 1 1 1 1,
+
+        ...you'll notice that we can continue subtracting 1's for a long time
+before we turn off the leftmost bit (bit-7).  In fact, we can make 128
+subtractions before bit-7 would be pulled down to 0.
+
+   Going the other way, _adding_ 1's to our 0-byte...
+
+                0 0 0 0 0 0 0 0
+           +                  1
+                ---------------
+                0 0 0 0 0 0 0 1
+
+        ...we find we can get to a value of +127 before an extra 1 would "turn
+on" bit-7.
+   Thus, the wizards concluded, if we _need_ negative numbers on our eight-bit
+computer, we can express a range of -128 to +127.  Bit-7, as it happens, can
+tell us whether a numbers is positive (bit-7 off) or negative (bit-7 on).  In
+fact, bit-7 is sometimes referred to as the "sign bit".
+
+   It's important to recognize, however, that you can't convert a positive
+value to its equivalent negative value merely by "toggling" bit-7.
+
+           0 0 0 0 0 0 1 1  = 3
+
+        but
+
+           1 0 0 0 0 0 1 1  does not equal -3.  (It is, in fact, equal to -125.
+)
+   To get the value -3, we need to remember what -3 really is.  It is the value
++1 subtracted three times successively from 0.  When we perform that operation
+to an eight-bit zero, we get the result:
+
+           1 1 1 1 1 1 0 1  = -3
+
+   It is no accident that these "negative" binary numbers do what they're
+supposed to do in addition and subtraction:
+
+         3  =   0 0 0 0 0 0 1 1
+      +(-3) =   1 1 1 1 1 1 0 1
+      -----     ---------------
+         0      0 0 0 0 0 0 0 0
+
+        or
+
+         8  =   0 0 0 0 1 0 0 0
+      +(-1) =   1 1 1 1 1 1 1 1
+        ---     ---------------
+            =   0 0 0 0 0 1 1 1
+
+        ...which is 7.
+
+   That's the story on 8-bit numbers.  If they're interpreted as absolute
+values, they can express a range from 0 to 255.  If we use them to signify both
+positive and negative values, the range becomes -128 to +127.  Either way --
+and this can't be stressed strongly enough -- the _computer_ sees them merely
+as combinations of 1's and 0's.
+
+   Sixteen-bit numbers work the same way.  They are used in BASIC to handle
+integer variables (not single-precision variables as one of Paul's messages
+said).  If BASIC didn't need negative numbers, the integers could express a
+range from 0 to 65535.   But the BASIC operating system wants us to balance our
+checkbook.  It interprets the 16-bit integers as both positive and negative
+numbers; and thus it treats bit-15 (the leftmost, or "most significant", bit)
+as a sign bit.  That limits our range of integer values from -32768 to +32767.
+   The computer, of course, doesn't care about this convention.  When we tell
+it to POKE to a "negative" address, it just looks at the combination of 1's and
+0's created by BASIC and it does what it's told.
+
+   Which brings us back to the NOT operation.
+
+   Recall that it tells the computer to complement all the bits of a binary
+number:
+
+           NOT  0 0 0 0 0 0 0 0   0 0 0 0 0 0 0 0
+    becomes
+                1 1 1 1 1 1 1 1   1 1 1 1 1 1 1 1
+
+   Thus, as BASIC interprets these bytes, NOT 0 becomes -1.  (If this doesn't
+quite make make sense yet, go back to our eight-bit discussion and take another
+look at how Batman got -1 to equal 255.  Here, because we're using 16-bit
+numbers, -1 equals 65535.)
+   It should be clear that if we re-complement the complement, we get the
+original value.  So, NOT -1 is equal to 0.
+   Lets try a few more NOTs:
+
+        NOT 3  =  NOT ( 0 0 0 0 0 0 0 0  0 0 0 0 0 0 1 1 )
+               =   1 1 1 1 1 1 1 1  1 1 1 1 1 1 0 0)
+
+        ... which the BASIC integer system interprets as a -4.
+
+
+        NOT 8  =  NOT ( 0 0 0 0 0 0 0 0  0 0 0 0 1 0 0 0 )
+               =        1 1 1 1 1 1 1 1  1 1 1 1 0 1 1 1
+
+        ... which has a two-byte BASIC value of -9.
+   Further exploration will reveal that, in BASIC,
+
+                NOT(n) = -(n+1) = -n-1,
+
+   So, Tony, when I was POKEing to NOT 737, I was really POKEing to -738 --
+which carries the same combination of 1's and 0's as the non-integer number
+64798.
+   I wish I could make all this stuff 'intuitively' clear.  But we are not
+dealing with intuition; we are dealing with the mechanics of a machine we call
+the computer -- and the 'logic' we use to make those mechanics, limited as they
+are, useful.
+   Now, let's see if Phil is patient enough to sift through the questions and/
+or corrections in the thread that follows....
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062
+
+   My preceding long-winded discussion failed to give specific answers to some
+of the specific questions and issues you raise.  Here is an attempt:
+
+        o  The use of negative addresses was never a deliberate attempt at
+obfuscation.  It was simply an efficient way (-738 can be a two-byte integer
+variable, compared to 64798 which BASIC will accept only as a 4-byte single
+precision, or 8-byte double precision, variable) to send the correct
+combination of 1's and 0's to the central processor.
+
+        o  Since the CPU only cares about those 1's and 0's, it does not have
+to do "extra work" because we have chosen to use a negative number.  The issue
+of "extra work" is important, however, in the way BASIC handles our code; and
+in every case, it works _much_ more efficiently with integers than with higher-
+precision numbers.
+
+        o  The use of negative numbers in tokenized BASIC statements is not
+entirely irrelevant.  POKE-738 uses one less byte than POKE64798.  If your
+program uses a lot of SYSRAM addresses, you can cut the size significantly by
+converting them to negatives.
+
+        o  The preferred way of converting from xxxxxx to -yyy is by
+subtracting 2^16 from xxxxxx.  Conversely, you go the other way by adding 2^16
+to -yyy.  So,
+
+                PRINT64798-2^16  (-738)
+                PRINT-738+2^16  (64798)
+
+
+        o  I hope the more theoretical stuff earlier provides some insight
+about the way BASIC interprets two-byte variables.  It doesn't use a CPU flag
+to indicate sign because there's no good way to store that flag when you store
+the number for later reference.  (There are other problems with the CPU-flag
+approach, but this one would be enough.)
+
+        o  Paul got a bit confused between 'integer' (two-byte) and 'single-
+precision' (four-byte) variables in one of his messages to you, and that has
+muddied the waters even further than they already were.  BASIC does _not_ use
+single-precision to deal with two-byte hex numbers.  It uses two bytes.  But,
+instead of interpreting those numbers in the range 0 to 64K, it divides them
+into positive and negative, from -32K to +32K.
+
+        o  Concerning PRINT FNOTF -- the NOT operator is called a "unary"
+function.  It modifies its operand without regard to any other number or
+condition.  So the expression 'FNOTF' designates two numbers: F and NOTF, and
+each is printed.
+
+        o  Concerning 6 AND 6 = 6.  Your teachers didn't have computers! (grin)
+
+   Whew.  Seems like this thread has turned into a hawser.  And I gotta get
+some sleep.
+
+
+Fm: Paul Globman 72227,1661
+To: Wilson Van Alst 76576,2735
+
+Van - that was an excellent dialog. Sorry about the blooper (re:integer) but I
+hopefully redeemed myself when I caught my error and corrected myself.
+
+Well like politicians, people remember the mistakes (grin).  I thought double
+precision was 6 bytes (like pascal's REAL scalar type), but I'll yeild to your
+correction.
+
+Your thread really brought back memories of college courses (is that stuff
+taught in high school now)?  I got 100% on your quiz.
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+I nearly had a heart attack this morning when I signed on and got the message
+that I had 18 messages waiting! (grin)
+
+For some reason, you have several duplicate messages... must have been REAL
+late last night, huh? I've deleted some of the repeats so Phil can get a better
+grip on the balance of the thread.  (This is NOT going to be easy... grin)  And
+your clear explanations were what I was hoping for when I asked the original
+question.
+
+Just a few quick comments before I'm off for some needed dental work...  And
+that's NOT my favorite thing... grin*2)
+
+GREAT THREAD!  Once again, you've come through with a lucid description of what
+it's all about, and this is something we should archive.

@@ -1,0 +1,173 @@
+Documentation for Materials Handling Software - Module One:Barcode Printer.
+
+This is the first Module of three that will allow anyone with a Model 100 and 
+a Tandy bit-image graphics printer to print quality Barcode Labels. While this
+ package is public domain software, I have tried to incorporate many of the 
+features used in regular commercial packages costing hundreds of dollars. 
+
+Properly used, this package will print barcode labels on standard 1-wide 
+mailing labels in many formats. The labels produced are easily readable by 
+the Tandy barcode Wand. All labels are printed in the popular 3 of 9 format.
+
+Currently the menu shows support for three printers,however, the mode is
+identical for each.I haven't used any other printers,but I left it in the
+structure of the program anyway
+
+General Features:
+Modes of setup:
+1. File Printing: 
+Here labels are printed from reading a .DO file in memory. Basically, the 
+program inputs a line from the .DO file, and prints that line in barcode. You 
+have the option of having the text on the label (the alphanumerics printed 
+below the barcode) be the same as what the barcode READS as, OR being the next 
+line input from the file. 
+For instance, if we were to print from a file called 'bar.do' that had these lines:
+
+26-3801
+12K MODEL 100
+26-3802
+24K MODEL 100
+
+If we selected this file and selected ALPHA as 'Yes', the first label would 
+have '26-3801' printed in barcode, with the TEXT (description) '24K MODEL 100' 
+printed right below the barcode on the same label. If we selected ALPHA as 'No'
+ , the first label would have '26-3801' printed in barcode,with '26-3801' 
+printed right below it. The next label,in this case, would then have '8K 
+MODEL 100' printed in barcode, with '8K MODEL 100' printed right below it.
+
+As you can see, this is a very powerful feature of the Module. It can allow 
+you,for instance, to have '26-3801' to be your item in your computer inventory 
+records, while '8K MODEL 100' printed on the label for human readability. You 
+could add to the text the cost and/or the date recieved...it's up to you.
+
+2. Custom Printing:
+ Need only one label or a number of the same one? Custom printing does it for 
+you. You can select what you want printed in barcode, and what you want 
+printed for the text below it. Finally, the Module asks you for how many copies 
+of the label you want printed.
+
+3. Sequential Printing
+   Do you need a series of barcode labels numbered from 0002 to 0234 ?? In 
+increments of 4 ?? Sequential will do this!
+The first thing you must enter is the width of the label. For instance, 0234 
+is 4 spaces wide. This must be done since smaller numbers must be padded 
+with zeroes. You see, 0024 and 24 are two very different numbers to a true 
+barcode system. As a rule in barcode systems,each number must be descrete in 
+itself. So we do the padding for you!
+The next step is to enter the SKIP, 
+which is the increment between each number. Then you enter the start and 
+stop numbers. Each will appear on the screen with the appropiate zeroes padded
+ on! Finally, you're prompted for COPIES, which will allow you to make 
+copies of each sequential label!
+
+Running Module One:
+
+On startup:
+ The program first displays the greeting message, and then clears and displays 
+'Loading System..' . There is a wait here while the program loads the main 
+array that 'codes' each legal ASCII charcter into memory.
+
+Parameter Setup:
+
+First make sure the CAPS LOCK is ON.
+
+Here two things appear- 'PRINTER' and 'SETUP' . 
+
+PRINTER is the choice of the printer you are using. The choices are Tandy DMP 
+420, 2100, and 2150 printers.
+To scroll through the choices, press any key. When you're at your choice, press ENTER.
+
+SETUP is the type of printing you want to do as mentioned earlier. The choices 
+are FILE (read from a .DO file), CUSTOM (Custom label creation) and SEQENT (
+Sequential label creation).
+Press any key to scroll through the choices. Press ENTER to confirm your 
+choice and move on to the appropiate SETUP screen.
+
+Notes at this point : There is no exit from the program at this stage yet! If 
+you must exit, you must BREAK or CONTROL-C the program. Remember to issue a 
+CLOSE command next!
+
+Module Setup : FILE
+Prompt- FILE NAME: Type in the name of the .DO file (no extension) 
+that you wish to read from.
+ If you make a mistake typing, you can press the BKSP key to backspace, or 
+press the ESC key to erase the total entry. Note: No other editing keys work!
+If you type in a file name that does not exist, the Module 'beeps' and erases 
+the entry for you to start over again.
+You can Exit the Module now by pressing 
+the UP-ARROW key, which will return you to the menu.
+
+PROMPT- ALPHA:
+ALPHA specifies the format of the file you'll be reading from. The choice of 
+ALPHA = 'N' means that the barcode and the text are the same. ALPHA ='Y' means 
+that the barcode label will be printed from the first input from the file, and 
+the text from the second input.Each label will take two lines in the .DO file.
+
+Module setup: CUSTOM
+
+Prompt: TEXT
+Here type in the text you wish to be produced at the bottom of the label
+Editing works the same as file name entry in FILE
+
+Prompt: CODE
+Here type in what you want barcoded. Editing same as FILE
+
+Prompt: COPIES
+Enter the number of copies you wish of the custom label. Editing same as FILE.
+
+Setup: SEQUENTial
+
+Prompt: WIDTH
+
+Here you must enter the maxium width of the number set to be printed. Remember 
+that this is required to 'pad' entries with appropiate zeroes. The entry fields
+ for entering the start and stop numbers will automatically be formatted to the 
+proper width.Edit same as FILE
+
+Prompt: SKIP
+
+SKIP lets you increment the labels by a factor. It works just like Skip does in 
+a 'FOR n=1 TO 6 SKIP 2' statement in basic.
+
+Prompt: START
+
+Enter the starting number for the labels. Editing same as FILE. Note the 
+entries become padded with zeroes.
+
+Prompt: END
+
+Enter the ending number for the labels. Works just like Start.
+
+Prompt: COPIES
+
+Lets you make multiples of each sequential label. 
+
+
+Go ahead prompt:
+
+Says "ESC=> REDO ENTER=>cont"
+Esc erases the total entry and returns you to the initial menu
+Hitting ENTER takes you to the Print Menu
+
+PRINT MENU
+
+First there is a prompt for checking the alignment of the printer. The printer 
+head should be at the point where you want the printing to start; i.e. the 
+first line of the label.
+
+             ****SAMPLE LABEL ******
+            pqqqqqqqqqqqqqqqqqqqqqqqqr
+   LINE ===>upqqqqqqqqqqqqqqqqqqqqqqru
+ UP HERE    uu** BARCODE PRINTED ** uu
+            uu******** HERE ******* uu
+            uvqqqqqqqqqqqqqqqqqqqqqqwu
+            u*** TEXT printed here **u
+            vqqqqqqqqqqqqqqqqqqqqqqqqw
+
+
+Tap any key once aligned,and let it print away.
+
+Once printing is done, you'll return to the startup menu.
+
+Enjoy!    BarUser
+

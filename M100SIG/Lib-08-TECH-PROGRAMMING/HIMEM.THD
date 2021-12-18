@@ -1,0 +1,268 @@
+
+        (c)1990 Golden Triangle, Inc.
+        (c)1990 Wilson Van Alst
+          All rights reserved.
+
+[This thread started in an earlier message, with a T200 user's question
+about HIMEM and CO programs.  ed.]
+
+Fm: Tony Anderson
+To: Dorian Gray
+
+Your questions on HIMEM, loading and using CO files, and other utilities will
+have to be handled on a question-by-question basis, since the answers cover a
+wide range, and could conceivably fill a whole book.
+
+HIMEM is a movable partition which can be set to allow you to load and protect
+a machine language program in a reserved area of RAM just below MAXRAM.  An
+area between the HIMEM partition and MAXRAM.  Normally, HIMEM = MAXRAM, but
+using the CLEAR,N,X command, you can move the HIMEM pointer to some address
+below MAXRAM, "X", then load a machine language program between HIMEM and
+MAXRAM, and the operating system will not overwrite the program by storing
+variables, the file buffers, or the stack pointer in that area.  Such things
+are normally stored just under the HIMEM address.  The "N" figure in the above
+CLEAR statement specifies a number of bytes whicz should be reserved for
+variable storage; usually it's 256, but it could be more, or less, depending on
+what you want.
+
+In order to load a machine language program, designated with the filename
+extension ".CO", first you go into BASIC and test to see if HIMEM = MAXRAM. Use
+the command PRINT HIMEM;MAXRAM and press the ENTER key.
+
+If the two addresses are different, then you clear out any existing machine
+language program with the command CLEAR 256,MAXRAM.  That resets the HIMEM
+partition back to it's default value, in effect "unloading" any machine
+language program that was already in that area.  Then you attempt to load the
+.CO program you want to run with the command LOADM"(filename)".  I say
+"attempt", because the program will not load because the HIMEM partition has
+not yet been set.
+
+BASIC will return three addresses, "Top", "End", and "Exe".  Note what the
+"Top" address is.
+
+Now type CLEAR 256,"address", putting the top address where I indicated
+"address".  A typical clear might be CLEAR 256,58000, if 58000 was the "Top"
+address given to you.
+
+You can now LOADM the .CO program again, return to the menu, move the cursor
+over the .CO filename and press ENTER to run the program, or you can type
+RUNM"(filename)", which will load and run the program automatically.
+
+HIMEM should remain where it was put, and the machine language program should
+remain loaded for further use until you set HIMEM to something else.  Depends
+on how the .CO program was written, and what other programs may do to the HIMEM
+pointer, or what may be loaded into the reserved area, or what might be poked
+into the reserved area.  It is possible, although not suggested, that several
+different machine language programs might run in the same area, each one
+overwriting the previous one.  This could lead to problems, so is not advised
+unless you really know what you're doing.
+
+Machine language programs which are designed to run in the computers alternate
+screen buffer do not need to have an area reserved for them, and you do not
+have to set HIMEM.  Once such programs are on your menu as a .CO program, all
+you have to do is move the cursor over the filename and press the ENTER key.
+They can also be LOADMed from BASIC, and run with a call to the "Exe" address,
+or they can be RUNMed from BASIC.  Some of these programs can be used as
+subroutines from other programs, check the documentation or check with the
+author for information on those applications.
+
+For additional information, refer to the Tandy 200 BASIC Reference Guide which
+came with your computer.  It's in the form of a dictionary, more or less, and
+you can look up the words you want more information on, such as HIMEM, MAXRAM,
+LOADM, RUNM, CLEAR, etc.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Dorian Grey
+
+Dorian,
+   I can remember many months of grappling with the concept of HIMEM before I
+started to understand it.  Even now, I'm not sure I can explain it all -- but
+here's a shot:
+   Memory in the Tandy laptops can be thought of as a range of addresses, from
+0 to 65535.  In the T200, the area from 0 to 40959 is devoted to "firmware" --
+the factory programs on ROM chips that actually run the computer.  In addition
+to ROM space, these system programs also use the very highest areas of RAM,
+from 61104 to 65535, to hold changing data like file names, time/date
+information, cursor position, etc.
+   Thus the space available for user files (and some other less romantic stuff
+like BASIC variables and input/output buffers) lies between the addresses 40960
+and 61103.  There's no 'official' name for that lowest address, but 61104 is
+called MAXRAM -- and you can see that value by going into BASIC and typing
+PRINT MAXRAM.
+   The computer is very protective of the memory space above MAXRAM -because,
+again, that's where the operating system keeps all the information it needs to,
+uh, operate.  If you try to create a file that intrudes on this area, you'll be
+met with the joyous "?OM Error" salutation.
+
+   Which brings us to HIMEM.  It's the computer's way of giving you, the user,
+a plot of memory with the same "protected" status as the turf above MAXRAM.  If
+you set HIMEM to some value lower than MAXRAM, all the space between the two
+boundaries will wave that "don't tread on me" flag -- and you won't be able to
+create files that intrude there.
+   What you =can= do, however, is load and execute machine language (.CO)
+programs in that space.  This is important because of two related items: 1) the
+files in your computer actually "float" in memory, packing themselves into the
+lowest addresses available in RAM, and moving to different addresses as other
+files expand and contract below them; however, 2) because of technical
+limitations within the 8085 microprocessor, machine language programs in these
+computers must run at =specific= addresses, designed into the software when
+it's written.
+   So, what you're really doing, when you put the cursor over a .CO file and
+press <ENTER>, is loading the contents of that "floating" file to the address
+where it was designed to run.  First, though, the operating system asks an
+important question: is it OK put the file there, or is there a chance it will
+overwrite some other file?  The answer is OK only if you've "protected" that
+section of memory by pre-setting HIMEM at, or below, the address where the file
+will load.  Otherwise, you'll get that stupid beep.
+
+   I don't know if this 'theory' approach will help with the practical aspects
+of using .CO files.  If you need more primitive step-by-step guidance, drop me
+a note.  But I've always found it's easier to remember the mechanical stuff if
+I know why I'm doing it.
+
+		- 0 -
+
+Fm: Dorian Grey
+To: Wilson Van Alst
+
+Like you, I would much rather understand the basic workings of a system than
+follow a bunch of steps by rote.  I hav a PC as well as the 200 and am pretty
+conversant with DOS, but the 200 just seems to be its own little world off unto
+itself.  Fancinating all the things people in this forum have come up with.  I
+just used TAPCIS to create a Catalogue of all the files in the 200 Lib (10) and
+it's just amazing.
+
+		- 0 -
+
+Fm: TRACY ALLEN
+To: Wilson Van Alst
+
+The Tandy manuals are very ambiguous when they say that MAXRAM is "the maximum
+value of available RAM".  I ran into that, and discovered that MAXRAM-1 is
+actually the highest location in "user memory" as you say.  Poke something into
+MAXRAM, and pretty soon you get a cold start.  Do you happen to know what that
+first byte does in the system RAM?  It is not listed in the Covington maps.
+
+Another thing that causes unwanted cold starts is something a BASIC programmer
+might easily run into.  That is, never put a CLEAR A,B  statement in a BASIC
+_subroutine_, if B is less than the current value of HIMEM.  Doing so seems to
+mess up the BASIC stack. Arctic Start...   Always put the CLEAR A,B in the root
+level of the program. Have you run into that?
+
+                - 0 -
+
+Fm: Tony Anderson
+To: TRACY ALLEN
+
+Just for what it's worth...  some memory maps indicate that the value
+stored at 62960+61 holds the address of MAXRAM.  But that doesn't seem to
+be the case.  The ROM values from 858d+ are mapped to 62960+ on start up, and
+62960+61 = 77 and 138d.  And the same two values are mapped to 61104+05 in the
+200.  Using conventional lo/hi hex notation, it figures out to 35405, and I'm
+at a loss to figure out any way that can relate to the MAXRAM address. -
+Particularly in light of the fact that it's the same in both machines.
+
+Interestingly, there are several programs that change MAXRAM, like Power-Disk
+for the 200, and the Chipmunk's CDOS in the 100, and while MAXRAM is changed,
+the values at 62960+61 remain the same.
+
+77 is MOV C,L.  Do you suppose 62960 is a ML routine of some kind?
+
+62962+63 seem to always remain 0.
+
+62964+65 accurately point to HIMEM.
+
+		- 0 -
+
+Fm: Bill Boyd
+To: TRACY ALLEN
+
+I'm convinced that the numbers stored at 62960 and 62961 are used only as a
+signature to determine whether the RAM has valid contents. (If these bytes
+don't have the right values, then the content of the memory is considered to be
+corrupt.)  Changing the contents of either byte is a SURE route to a cold
+start.  I have found no other references to these bytes in the code of the
+Model 100.
+
+                - 0 -
+
+Fm: Paul Globman
+To: Bill Boyd
+
+Bill - If you check the code at 32087 you will find the reference to those two
+bytes.  The first two bytes of system RAM are compared to 8A4DH and if not
+found, a cold start is forced. Similar code is found in the T200 ( since the
+T200 has option RAM banks, I think the first action is to switch to bank #1 and
+test again).
+
+                - 0 -
+
+Fm: TRACY ALLEN
+To: Paul Globman
+
+That's kind of like what happens with the option ROM, when the machine checks
+at startup for certain characters ("TA" or "AB") at 40h in the option ROM,
+which if found cause the ROM trigger file to be created. But why have such a
+check in the RAM?  Aren't there enough causes of arctic freezes without
+building one in?
+
+                - 0 -
+
+Fm: Paul Globman
+To: TRACY ALLEN
+
+Tracy - the failure to find those bytes causes a cold start, not an arctic
+freeze.  Actually, I believe the purpose of the forced cold start is to prevent
+an arctic freeze.
+
+If system RAM is corrupt, then who knows what else is corrupt?  Imagine the CPU
+executing a 76H (HLT instruction), or going into a loop after a DI instruction,
+or the dreaded lockup that requires battery removal!
+
+At least a cold start will allow some RAM file recovery, if the files were not
+corrupted.
+
+		- 0 -
+
+Fm: Bill Boyd
+To: TRACY ALLEN
+
+One very practical reason that Tandy probably had for putting in this way of
+generating a cold start is that the machine would have to cold start the first
+time it was turned on (after just having been built). Initially none of the RAM
+is initialized, and the computer can detect that by noticing that two bytes (at
+62960 and 62961, say) don't have the very special values that they should have
+if the memory has been initialized.
+
+Actually, in most of the cases where the computer cold starts, you should be
+glad; it beats have the computer hopelessly locked up due to corrupted memory
+contents.
+
+                - 0 -
+
+Fm: Paul Globman
+To: Bill Boyd
+
+Bill - you are quite correct about testing an uninitialized RAM bank.  If you
+arctic start a T200, power up into bank one, then move some files into RAM...
+if you try to copy those files into one of the other banks without first
+jumping to that bank (for initialization) you get "target bank not
+initialized", or some such message.
+
+When you jump into the other bank a cold start is forced and the time/date is
+reset, even though you may have set it in bank one before initializing the
+other RAM banks.
+
+                - 0 -
+
+Starting message #: 188626  Starting date: 11-Oct-89  18:28:19
+ Participants:
+Dorian Grey 70032,1513
+Tony Anderson 76703,4062
+Wilson Van Alst 76576,2735
+TRACY ALLEN 76670,326
+Bill Boyd 75715,70
+Paul Globman 72227,1661
+

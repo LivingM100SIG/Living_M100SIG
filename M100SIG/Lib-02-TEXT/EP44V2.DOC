@@ -1,0 +1,58 @@
+EP44V2.100 is an update of the Brother EP44 Printer/Typewriter print format
+program previously submitted as EP44.100 in this section.  Thanks to those
+who submitted suggestions and additions from the original.  New features have
+been added as well as no longer using the "typewriter" code, which seemed to
+have some problems when used with this program.  Version 2 uses the terminal
+(8 BIT) code as well as including some additional features.  It also allows
+use of additional EP44 characters if they are imbedded in a TEXT file.
+
+To use EP44V2, put the EP44 in the terminal mode and make certain it is set
+up according to the description on the first screen of the program.  Use the
+RS-232 cabling as recommended in the manual.  Insert first sheet of paper
+and set for proper top margin.
+
+You will be prompted for the NAME OF FILE TO BE FORMATTED, LEFT MARGIN WIDTH,
+RIGHT MARGIN WIDTH, PAGE LENGTH, PAGE NUMBERING and DOUBLE SPACE.
+If Page numbering or double spacing is desired, enter 'Y' at the prompt.
+IMPORTANT: .DO file MUST be in memory before running the program AND MUST end
+with a CR.
+
+There are three control codes which can be imbedded in text before running the
+program:
+     1. UNDERLINING - To start underlining, immediately PRECEDE the word to be
+underlined with <CTRL>'P'<CTRL>'U'.  To end underlining, FOLLOW the word with
+the same coding.  It is best to underline each word separately, unless you are
+certain the sentence or phrase will not wrap around because you will get a left
+margin of underlining without characters.
+     2. LINE CENTERING - To center a line for headings, etc., start the line by
+entering ,<GRPH>'C'. End the line with <ENTER>. (Note: This centers the line
+within the "CURRENT" left-margin and right-margin settings.)
+     3. RESETTING LEFT-MARGIN - It is possible to reset the left-margin within
+the TEXT file by using <GRPH>'I' AND <GRAPH>'O'. IMPORTANT: Set the new left-
+margin at the END of the line PREVIOUS to the line to be printed with the new
+left-margin.  There should be NO SPACES between the end of this line and the
+<GRPH> codes to reset the margin!  To move the margin in from its present
+setting, use <GRPH>'I' to move one space.  Repeat as necessary.  To move the
+margin back out, use <GRPH>'O' as many times as necessary.
+
+EXAMPLE:
+     We will now move the margin in three spaces.<GRPH>'I'<GRPH>'I'<GRPH>'I'
+        Ok, this is the line moved in three spaces.  Now, we will move the line
+        back out three spaces.<GRPH>'O'<GRPH>'O'<GRPH>'O'
+     This new line is back to where it was set before. End.
+
+NOTE: For graphics purposes on the Model 100, it would be convenient to use
+<GRPH>'l' and <GRPH>'k' (right arrow and left arrow) to move the margin, but
+these are available on the EP44 as additional characters, if desired.
+
+In order to see how the EP44 printer interprets <GRPH> and <CODE> characters
+run the following program and try the different combinations.  Use the same
+EP44 settings as on the first screen of EP44V2.100 **EXCEPT** "NEW LINE"
+SHOULD BE 'CR'.  This will print EP44 "2nd Shift" characters.
+          10 CLS
+          20 OPEN"COM:58N1E"FOROUTPUTAS1
+          30 A$=INPUT$(1):PRINTA$;:PRINT#1,A$;:GOTO30
+You will see a lot of "foreign" characters printed as well as some useful
+characters for printing on the EP44.  Checksum for EP44V2 is: 123,665.
+Richard Helman Comp#:70536,1061
+

@@ -1,0 +1,165 @@
+WP2-07.THD
+        (c)1989 Golden Triangle, Inc.
+        (c)1989 Wilson Van Alst
+
+    =+=+=+=+=+=
+
+Fm: Carmen Paone
+To: Paul Globman
+
+    Did you catch the note at the end of Nuge's comments on the WP-2
+on the first page of this month's P100?
+
+    =+=+=+=+=+=
+
+Fm: Paul Globman
+To: Carmen Paone
+
+Yes ... I just got the mag today and am quite surprised to see Tandy
+_encouraging_ 3rd party development. In the past they seemed to keep the
+inner workings of their product a secret and 3rd party developers had to
+struggle to get whatever info they have.  I'd really have to see what
+they offer in the way of ROM, i/o port, and hardware info before I stand
+up and cheer.
+
+I think the CPU is a Z-80 and I still have the Zilog Z-80 manual and reference
+cards (the Z-80 reference card is almost a book!).  This is a VERY powerful
+8-bit processor and it can run circles around the 8085!  It has two sets of
+registers, index registers, relative jumps and calls, 4 byte opcodes, extensive
+bit manipulation, and more.  Most programmers don't use the Z-80 to its full
+potential.  It will be interesting to see what gets developed for this and how
+the programming is approached.
+
+    =+=+=+=+=+=
+
+Fm: Carmen Paone
+To: Paul Globman
+
+You're right, kiddo, the WP-2 CPU is a Z-80 type CPU with a 5.5296 MHz
+clock speed. If Tandy parts with their secrets on how to program the
+WP-2, I wonder what ways they will use to get that info out to the
+public? The Z-80 CPU sounds like a winner, and I could see - after
+reading your description - how it would run circles around the 8085.
+Hey, could we have a new generation of Tandy portables on our hands?
+
+    =+=+=+=+=+=
+
+Fm: Paul Globman
+To: Carmen Paone
+
+Carmen - I used to write Z-80 code many years ago, but with CP/M yeilding to MS
+-DOS, the Z-80 is relatively unknown today (the Z-88 uses it).
+
+Program development is costly and marketing even moreso.  Third party vendors
+would be unlikely to get started with the WP-2 until sales demonstrate a vast
+potential market. Furthermore, people who spend $250-$300 for a system expect
+decent software at about 10% to 15% of the cost of the hardware.
+
+Selling $100 programs will not make users rally around the flagpole.  Tandy
+will have to sell far more WP-2's than T600's before developers consider the
+market worth approaching.  You will probably see some enthusiasts like yourself
+trying to put out something useful, but hobbiests don't always have the
+resources or the time that third party software vendors have.
+
+In the beginning there will be a lot of misc. notes about discovered secrets
+surfacing, and expectations will be high.  But in the long run, I think it
+would be much more worthwhile (read cheaper) for the user to buy the WP-2 for
+word processing, and the M102 for other tasks, than to try to build the WP-2
+into a fully programmable computer.
+
+I kinda hope I'm mistaken, but I just don't see the WP-2 becomming much more
+than what it was intended to be.
+
+    =+=+=+=+=+=
+
+Fm: Carmen Paone
+To: Paul Globman
+
+        Your wisdom on the marketing potential for third-party support of the
+WP-2 has been noted and filed away.
+        Chances are that you are correct in your assessments since you have
+been down the marketing road a great deal longer than I have.
+        Thanks for taking this kid by the hand and leading him through Z-80
+land.
+        I'll do some research on the Z-80 myself as far as programming
+is concerned, and I hope I can throw some questions down South when I
+get stuck.
+
+    =+=+=+=+=+=
+
+Fm: Stan Wong
+To: Carmen Paone
+
+As you know the WP-2 is the Z80.  The Z80 is essentially a superset of the 8085
+used in the M100 series.  Any code written for an 8085 will run on the Z80
+(machine differences aside -- like I/O port locations, etc.).  That means an
+m/l program written for the M100 could be easily ported to the WP-2 if:
+
+ o  it doesn't make any rom calls
+ o  I/O calls (like LCD) are localized
+
+ROM calls will either need equivalents in the WP-2 are the equivalent code
+written.
+
+The Z80 CPU provides some powerful indexing and string operations that make
+some tasks trivial.  Smaller programs are the result but again the 8085 can do
+anything the Z80 can it might take more instructions. Basic programs would not
+be able to be transferred (actually they could but it would be a big task).
+
+    =+=+=+=+=+=
+
+Fm: Paul Globman
+To: Stan Wong
+
+Stan - I must disagree with your comment about the Z-80 being a superset of the
+8085.  And for this reason I offer caution about "any code" written for an 8085
+running on the Z-80.
+
+Both the 8085 and the Z-80 are supersets of the 8080.  The 8085 runs the
+complete 8080 instruction set plus the RIM and SIM instruction (20h and 30h).
+
+In the Z-80, 20H and 30H are the first byte of conditional relative jumps,
+which is a 2-byte instruction.  Trying to run 8085 code that contains the RIM
+or SIM instruction will fail to yield the same result, and could possibly be
+disasterous.
+
+In addition to RIM and SIM, all the other "undocumented" opcodes of the 8085 do
+not exist in the Z-80.
+
+It's a minor point but one worth noting.  There's another reason why M100
+programs may not easily be ported over to the Z-80 besides the reasons you
+cited.  Remember that absolute addressing is a major factor and RAM in the M100
+is from 8000H to 0FFFFH.  If a program made no ROM calls, no I/O operations,
+etc., the program would _still_ have to run in the exact same address
+locations.
+
+    =+=+=+=+=+=
+
+Fm: Stan Wong
+To: Paul Globman
+
+I don't think that porting most 8085 programs would be too hard (other than the
+machine specific differences such as ROM calls).  I am assuming that source
+code is available.  If the program is well structured then the "core"
+processing portion would transport easily leaving the machine specific parts to
+be recoded or translated.
+
+I've ported a number of programs from different microprocessors and this is the
+general approach that seems to work.  Of course I've run into many programs
+that are so badly coded (relative to portablility) that I didn't even start.
+In the case of the 8085/Z80 (in the CP/M world) I haven't found an 8085 program
+that wouldn't run on the Z80.  Of course most CP/M assembler/compilers seem to
+generate code, as you say, for the 8080 regardless of the target micrprocessor.
+
+Anyway, I didn't say that a conversion would necessarily be easy but since the
+instruction sets are relatively compatible (at least going from the 8085 to the
+Z80) then there's hope.  Trying to convert an m/l program from a, say MC68000
+to the Z80, now that would be hopeless!
+
+
+Starting message #: 189144  Starting date: 27-Oct-89  15:48:53
+ Participants:
+Carmen Paone 72677,42
+Paul Globman 72227,1661
+Stan Wong 70346,1267
+

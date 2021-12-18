@@ -1,0 +1,40 @@
+TELTIP.003 -- Uploaded by Phil Wheeler, based on Randy Hess' Message
+--------------------------------------------------------------------
+
+There are special programs, DIRACC & X-TEL, which (among other things) will
+let you run BA programs with your Model 100 while on line.  This edited
+message from Randy Hess tell how to do that WITHOUT any special software.
+It also goves some cautions re modifying the software you run while on line,
+to avoid returning to the M100 menu and breaking your connection.
+
+
+
+#: 156497 S4/Applications
+    09-Sep-87  19:02:34
+Fm: RANDY HESS 73267,552
+
+
+How to Run a BA Program While ON-Line
+-------------------------------------
+
+1) POKE64270,73:POKE64271,108 will allow F7 to take you right to BASIC from
+   TELCOM.
+
+2) Then a CALL20806 from BASIC returns to TELCOM. I've run SORTHI and QKRCHK
+   while On-Line using these routines with no problem.
+
+[Once you are in Basic, you can type 'RUN "PROG"' for a BA program or
+'RUNM "PROG"' for a CO program'.  See below for cautionary notes].
+
+How to STAY On Line
+-------------------
+
+Perhaps it goes without saying, but be sure to change the MENU call in SORTHI
+to a RETURN (C90000) before running it while On-Line or you'll hang up the
+modem when you dump back to MENU.
+
+[Similar changes are needed in other CO programs.  In BA programs, replace
+any 'MENU' statements with 'END'].
+
+
+Phil Wheeler -- 71266,125

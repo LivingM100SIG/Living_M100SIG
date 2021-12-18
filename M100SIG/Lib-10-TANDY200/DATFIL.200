@@ -1,0 +1,182 @@
+DATFIL.200 by Paul Globman
+        Copyright (c) 1989
+
+DATFIL.200 is a data organizer/filer program with user defined prompts and
+display parameters.
+
+Data files are initialized with the built-in TEXT program, and the data you
+wish to organize is entered and displayed by using the DATFIL program.
+
+Data file organization
+----------------------
+Before initializing the data file you should organize the file structure and
+display layout.  Data files are organized into groups of records, and
+records are organized into groups of fields.  You should determine:
+
+a) the number of fields for the data file record.
+b) the name (prompt) for each field.
+c) the "location" on the LCD where each field prompt will appear.
+
+The "location" is the print position that would be used by BASIC's PRINT@
+function, and is calculated as follows:
+
+ R = row (or line)
+ C = column
+ LOCATION = 40*(R-1)+(C-1)
+
+So if you want a prompt to appear on the third line (row), column 5, you would
+calculate the location as follows:
+
+    LOCATION = 40*(R-1)+(C-1)
+             = 40*(3-1)+(5-1)
+             = 40*(2)+(4)
+             = 84
+
+Data is entered and displayed immediately following the prompt, so
+for a comfortable appearance you should add a space after the prompt.
+
+Since lines are 40 characters, you can make one prompt appear directly under
+the previous prompt by just adding 40 to the location.  Add 80 if you wish to
+skip a line, etc.
+
+Data file initialization
+------------------------
+Create a new TEXT file using the TEXT program.  On the first line enter the
+number of fields (prompts) you need for this data file.  For EACH field, enter
+a prompt <cr> and a location <cr>.  For example:
+
+3
+Name   :
+44
+Phone  :
+84
+Comment:
+124
+
+This example is for a file with 3 prompts (first line).  The first prompt
+is the word "Name   :", and it will display at location 45.  Lines 4/5 and
+lines 6/7 represent fields 2 and 3.  Be sure there are no extra CR's (blank
+lines), but be sure there is a carraige return at the end of each line.
+
+That's all you do manually, to set up a data file.  Some programs do this minor
+chore for you, but to keep the program small enough to run in the ALTLCD
+buffer, this task is done manually.
+
+
+The Program
+-----------
+When you run DATFIL.200 the following menu will appear:
+
+DataFiler
+
+        <A>dd
+        <D>isplay
+        <E>xit
+
+        =>
+
+Only an A, D, or E will have any affect.  All other responses are considered
+invalid.
+
+Press A to add data records to your new data file.  Press D to display records.
+Press E to returm to the Tandy 200 main menu.  The program accepts upper or
+lower case characters.
+
+ADD data
+--------
+You will be prompted to enter the name of a previously created data file you
+wish to use.  If the file does not exist, the program will beep and return
+to the A/D/E menu.
+
+Assuming you have entered the name of a data file created for this program,
+DATFIL will read the "header" info (the number of prompts, field names, and
+locations).  You will then be prompted to enter data by displaying the prompts
+ you selected, and the program will accept your input.
+
+After each record is entered, you will be prompted with "More?".  Press N for
+no more!  You are in the ADD mode so the program assumes you wish to continue
+to add data, and only a "N" will break out of the ADD mode and return to the
+A/D/E menu.
+
+If you feel that a mistake was made when entering data, you will be able to
+correct that error with the TEXT program.
+
+DISPLAY data
+------------
+You will be prompted to enter the name of the data file you wish to display.
+If the file does not exist, the program will beep and return to the A/D/E menu.
+
+Assuming you have entered the name of a data file created for this program,
+DATFIL will read the "header" info (the number of prompts, field names, and
+locations).  You will then be prompted to enter "String" data for selective
+record display.
+
+Press ENTER if you wish to display all records, or enter characters to be
+matched.  Only records containing the match string will be displayed, if a
+match string is specified.
+
+Each record is displayed by printing the field prompt at its location, followed
+by the data entry.
+
+After each record is displayed, the cursor jumps to the upper left corner
+of the LCD and waits for a keyboard input.  Any key will bring up the next
+record except "N".  Press N for no more!  You are in the DISPLAY mode so the
+program assumes you wish to continue to display data records, and only a "N"
+will break out of the DISPLAY mode and return to the A/D/E menu.
+
+A beep will sound when the last record of the file is displayed, and the next
+keypress will return to the A/D/E menu.  If the last record doesn't match the
+specified string, then a beep will sound with a blank screen when the file has
+been completely searched.
+
+
+ERRORS
+------
+The beep is the only indication of an error.  If it occurs during the ADDing
+of data then it may indicate an out of memory condition and you should examine
+the data file to see if the last entry is properly organized.  If only a
+partial record is found, you should delete that last partial record, and
+then see about making more room in RAM before continuing to ADD data records.
+
+If the last record is not properly organized, DATFIL may display data
+ which is past the "end of file" marker.  This is harmless to your programs or
+data files and is easily corrected using TEXT to correct the last data record
+in the file.  Use the N command to abort the display.
+
+All other errors are trapped within the program and the operation is aborted.
+This is usually a bad A/D/E command, or a file name error.
+
+
+XOS-C Command
+-------------
+Because DATFIL is compact enough to run in the Tandy 200 ALTLCD buffer, it can
+be accessed as an XOS command.  At the Menu you must move the widebar cursor
+off BASIC and press F3(Cmd).  At the Cmd> prompt you enter DATFIL (DATFIL.CO is
+stored in bank #3).  DATFIL will load and run.  The data file you wish to
+access must be in the bank you are in.  Data files are not called in from other
+RAM banks.  Only programs can be called in with XOS_C.
+
+SUPPORT UTILITIES
+-----------------
+DATFIL data files are completely compatible with files created by
+CRDFIL.BA, and there are many utilities in DL4 that will enhance the use of
+DATFIL.  These utilities can be located with KEY = CRDFIL when scanning or
+browsing DL4.
+
+
+Enjoy the program.... 
+
+Paul Globman [72227,1661]
+-----------------------------
+Use HXFER to create DATFIL.CO
+
+
+54F8DC0154F837D4454F21E8F9CD74F832C6F8E7D641CADBF8D603CA80F83DC255F8C72124FACDCC11CDF712CD1410FE4EC9CD70F9D255F821CC79CDCC11CDF6
+540570CD31F9CD04F9CD31F93A6FEFFE00C2A0F9D5CD12F9D5CDC6262AF4FFE5CD3CF922F4FFE1CDC626E1CD3CF9D11DC2A2F8CDD5F8F53E00FE1ACAD1F8F1C2
+97F8F5F1C354F8212DFAC374F8CD70F9D255F8CD31F9D5CD12F9D5CDC626CDF654CD52F9E1CD3CF9D11DC2E4F8CD71F8C2E1F8C354F87B874FCD3CF90DC207F9
+22F4FFC9E5CD3CF9E5C5CD1609EB230128001100001C5508F223F9EBCD9B4FC1D1E1C9CD4D4F2AF0FFE5CD1609E13E0A06FF2B2304BEC241F9237EFE1AC032C6
+F8C3454F0423E52AF2FF480600CDA882D141DA454FCDBA4122F2FF2B360A2B360DC92118FACDCC11CDF654E5D7E1DA9EF9A7CA9EF9055823CDCA5ACD7C2DE5F5
+22F0FFCD688222F2FFF1E1D8EBCDB52AB7C9E5D5C54F7B32AFF91170EF2AF4FF0601E5D5C5CD116EC1D1E1CADCF97EFE0A23CAC6F9C3B0F905C2B0F97EFE1A22
+F4FFC2AEF9CD4CF921C1F8C3DFF921A2F822E6F9C1D1E1C3A2F80C4461746146696C65720A0A0D093C413E64640A0D093C443E6973706C61790A0D093C453E78
+69740A0A0D093D3E20000C576F726B66696C653F20000D0A0A4D6F72653F001B4800
+

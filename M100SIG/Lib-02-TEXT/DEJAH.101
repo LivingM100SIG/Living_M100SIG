@@ -1,0 +1,167 @@
+
+0 REM  DEJAH.101
+100 GOTO4000
+190 'Hello-----------------------------
+200 DE$="Hi Boss._Hello Boss._Yawn! Hi there._Hello good lookin'._Finally got around to talking to me?_Hi sweetie._"
+210 GOSUB2300:DE$=DE$(I):GOSUB2100:RETURN
+290 'List files------------------------
+300 CLS:P%(1)=-1705
+310 GOSUB1800:IFNOTP%(0)THEN350
+320 PRINTE$+"p";:PRINTUSING"\       \    Addr #####    Length ##### ";NM$,AD!,LN;
+330 IFCSRLIN>6THENPRINTE$"U";:PRINT@280,E$"TPress any key to continue, Boss.";:BEEP:A$=INPUT$(1):SCREEN,0:CLS
+340 GOTO310
+350 DE$="That's all, Chief!":GOSUB2100:RETURN
+390 'Time------------------------------
+400 DE$="I've got @, Boss._It's exactly @._Isn't your watch working?&My clock says '@'._Boss... I have @._If you've got the money,
+I got the time.&It's @, sweetie._"
+410 GOSUB2300:DE$=DE$(I):X=INSTR(DE$,"@"):DE$=LEFT$(DE$,X-1)+TIME$+MID$(DE$,X+1)
+420 GOSUB2200:RETURN
+490 'Date------------------------------
+500 DE$="Today is %, $, Boss._What am I, a calendar?&I have %, $._The date is $.&That's a %._It's %, $, sweetie._"
+510 GOSUB2300
+520 T$=MID$(DY$,INSTR(DY$,DAY$),9):T$=LEFT$(T$,INSTR(T$+" "," ")-1)
+530 DE$=DE$(I):X=INSTR(DE$,"%")
+540 DE$=LEFT$(DE$,X-1)+T$+MID$(DE$,X+1)
+550 T$=MID$(STR$(VAL(MID$(DATE$,4,2))),2)+" "+MID$(MN$,VAL(LEFT$(DATE$,2))*3-2,3)+" 19"+RIGHT$(DATE$,2)
+560 X=INSTR(DE$,"$")
+570 DE$=LEFT$(DE$,X-1)+T$+MID$(DE$,X+1)
+580 GOSUB2200:RETURN
+590 'Shucks <BLUSH>--------------------
+600 DE$="You know it, Chief._Awww, shucks! <<BLUSH>>_I bet you say that to all the computers._If you insist, Boss._I agree!_"
+610 F=F+1:GOSUB2300:DE$=DE$(I):GOSUB2100
+620 IF F=>2THENDE$="Flattery will get you anywhere!!!_Blatant flattery, I like it!!!_You shameless flatterer,&what can I do for 
+you?_":GOSUB2300:DE$=DE$(I):GOSUB2200
+630 RETURN
+690 'Good------------------------------
+700 GOSUB2500:W$=W$+"     ":W$=LEFT$(W$,5)
+710 IFW$="MORNI"ORW$="AFTER"ORW$="EVENI"THENDE$="What's up, Chief?":GrUB2100:GOTO740
+720 IFW$="LOOKI"THENDE$="(sigh) <<BLUSH>>":GOSUB2100
+730 GOSUB600
+740 RETURN
+790 'Find------------------------------
+800 GOSUB2508
+810 DE$="I'll check ADRS.DO for "+CHR$(34)+W$+CHR$(34)+"._Sure thing, Boss. That's "+CHR$(34)+W$+CHR$(34)+
+".&Right?_":GOSUB2300:DE$=DE$(I):GOSUB2200:A$="":GOSUB1700:RETURN
+890 'Phone-----------------------------
+900 NN=0:GOSUB2500
+910 FORJ=1TOLEN(W$):J$=MID$(W$,J,1):IFJ$<"0"ORJ$>"9"THEN NN=-1:NEXTJ
+920 IF NN THEN DE$="Scanning ADRS.DO for "+CHR$(34)+W$+CHR$(34):GOSUB2100:A$="":GOSUB1700:ELSE N$=W$+":":GOTO960
+930 IFA$<>"y"ANDA$<>"Y"THEN970
+940 DE$="Calling "+CHR$(34)+W$+CHR$(34):GOSUB2100
+950 X=INSTR(L$,":"):N$=RIGHT$(L$,LEN(L$)-X):X=INSTR(N$,":"):N$=LEFT$(N$,X)
+960 GOSUB 1600
+970 RETURN
+990 'Thanks----------------------------
+1000 DE$="It was nothing, Boss._Anytime Chief._You're very welcome, good looking._Glad to be of service._It was nothing._What are 
+friends for?_"
+1010 GOSUB2300:DE$=DE$(I):GOSUB2100:RETURN
+1090 'Kill files-----------------------
+1100 GOSUB2500
+1110 DE$="Are you sure you want to remove&file "+CHR$(34)+W$+CHR$(34)+"?":GOSUB2200:INPUTA$:A$=LEFT$(A$,1)
+1120 IFA$="y"ORA$="Y"THEN1140
+1130 IF A$<>"n"ANDA$<>"N"THENDE$="Type Y or N please.":GOSUB2100:GOTO1110 ELSEDE$="Good, Boss.  "+W$+" stays&where it 
+is.":GOSUB2200:GOTO1170
+1140 ONERRORGOTO5010:KILLW$:GOTO1160
+1150 DE$="Hey Chief, I think there may not be a&file "+CHR$(34)+W$+CHR$(34)+"!!!":GOSUB2200:GOTO1170
+1160 DE$=W$+" is gone, Boss._Consider "+W$+" zapped!_Another file into the bit bucket._":GOSUB2300:DE$=DE$(I):GOSUB2100
+1170 RETURN
+1590 'Dialer-Bye-Menu-Telcom-&tc-------
+1600 CALL21200:X=VARPTR(N$):AD=PEEK(X+1)+(PEEK(X+2)*256):CALL21293,0,AD:PRINT:RETURN
+1610 CLS:DE$="See you later Chief!!!":GOSUB2100:FORX=1TO1000:NEXT:CLS:POWER OFF:RESUME:RUN
+1620 MENU
+1630 CLS:DE$="See you later Boss.&&You're in BASIC, I'm here too,&but not running.":GOSUB2200:END
+1640 CLS:CALL20806
+1690 'Seek name in ADRS.DO-------------
+1700 OPEN "ADRS.DO" FOR INPUT AS 1
+1710 IF NOT EOF(1) THEN LINE INPUT #1,L$:L1$=L$:ELSE1770
+1720 FORX=1TOLEN(L1$):A$=MID$(L1$,X,1):IFA$>="a"ANDA$<="z"THENMID$(L1$,X,1)=CHR$(ASC(A$)AND(255-32))
+1730 NEXTX
+1740 X=INSTR(L1$,W$):IFX=0THENGOTO1710
+1750 DE$="Is this the record you want, Boss?":GOSUB2100:PRINTL$:DE$="End the scan here and use this 
+data?":GOSUB2100:INPUTA$:A$=LEFT$(A$,1)
+1760 IF A$<>"Y"ANDA$<>"y"THENDE$="NO?  Continuing scan.":GOSUB2100:GOTO1710:ELSECLOSE1:GOTO1780
+1770 IFEOF(1)THENCLOSE1:DE$="That's it.  I've scanned ADRS.DO.":GOSUB2100:DE$="The record you seek containing":GOSUB2100:DE$=CHR$(
+34)+W$+CHR$(34)+" is not here.":GOSUB2100
+1780 RETURN
+1790 'Get next directory entry---------
+1800 NM$="":LN=0:P%(2)=VARPTR(NM$)
+1810 CALL62300,3,VARPTR(P%(0)):IFP%(0)THENFT=P%(3):AD!=P%(4)+65536:LN=P%(5)
+1820 RETURN
+1890 'Wake up--------------------------
+1900 CLS:GOTO1930
+1910 DE$="you keep some mean hours, Chief.&It's "+TIME$+" A.M.&Deety, (yawn) here._(yawn), What time is it?&Oh!  That's MY job.  
+It's "+TIME$+"&What'sup. (beside us)_Deety here. Good morning Boss._Hi Boss, Deety here._":RETURN
+1920 DE$="Good afternoon Boss.  Deety here._Good evening Boss. Deety here._Working late tonight?&It's "+TIME$+", Chief._":RETURN
+1930 T=VAL(LEFT$(TIME$,2))
+1940 IFT<13THENGOSUB1910ELSEGOSUB1920
+1945 IFT<3THENT=0ELSEIFT<6THENT=1ELSEIFT<11THENT=2ELSEIFT<13THENT=3ELSEIFT<18THENT=0ELSEIFT<22THENT=1ELSET=2
+1950 GOSUB2300:DE$=DE$(I):GOSUB2200
+1960 RETURN
+1990 'Center Deety text----------------
+2000 DE$=SPACE$((WI-LEN(DE$))/2)+DE$
+2090 'Output Deety text----------------
+2100 PRINTE$+"p"+DEETY$+SPACE$(40-LEN(DEETY$))+E$+"q";:RETURN
+2190 'Split Deety$---------------------
+2200 A=INSTR(DE$,"&"):X$=DE$:IF A=0THEN2230
+2210 DE$=LEFT$(X$,A-1):GOSUB2100
+2220 DE$=MID$(X$,A+1):GOTO2200
+2230 GOSUB2100:RETURN
+2290 'Random response------------------
+2300 N1=1:I=0
+2310 DE$(I)=MID$(DE$,N1,INSTR(N1+1,DE$,"_")-N1)
+2315 'PRINTI;"  ";DE$(I):'Debug
+2320 N1=N1+LEN(DE$(I)):IF LEFT$(DE$(I),1)="_"THENDE$(I)=RIGHT$(DE$(I),LEN(DE$(I))-1)
+2330 IFN1<LEN(DE$)THENI=I+1:GOTO2310
+2340 SC=VAL(RIGHT$(TIME$,2)):FORJ=0TOSC:DU=RND(1):NEXT
+2350 I=INT((I+1)*RND(1)):IF N=0 THENI=T
+2360 RETURN
+2395 'input----------------------------
+2400 IP$="":PRINTE$+"P";
+2405 SCREEN,0:A$=INKEY$:IFLEN(A$)=0THEN2405
+2410 C=ASC(A$):IFC=13THEN2435
+2415 IFC=8ORC=127THENIFLEN(IP$)=0THENBEEP:GOTO2405ELSEPRINTCHR$(127);:IP$=LEFT$(IP$,LEN(IP$)-1):GOTO2405
+2420 IFC=24ORC=21THENPRINTSTRING$(LEN(IP$),127);:GOTO2400
+2425 IFASC(A$)<32ORASC(A$)>127THENBEEP:GOTO2405
+2430 IP$=IP$+A$:PRINTA$;:GOTO2405
+2435 IFLEN(IP$)=0THENBEEP:GOTO2405
+2440 IP$=IP$+" ":PRINTE$+"Q"
+2445 FORX=1TOLEN(IP$):A$=MID$(IP$,X,1):IFA$>="a"ANDA$<="z"THENMID$(IP$,X,1)=CHR$(ASC(A$)AND(255-32))
+2450 NEXTX:RETURN
+2490 'Scan routine---------------------
+2500 W$=MID$(IP$,N,INSTR(N+1,IP$," ")-N)
+2510 N=N+LEN(W$):IF LEFT$(W$,1)=" "THENW$=RIGHT$(W$,LEN(W$)-1)
+2520 RETURN
+2590 'Parser---------------------------
+2600 X=1:N=1:IP$=IP$+" ":M=0:F=0
+2610 GOSUB2500
+2615 'PRINT2615;"W$=";W$'Debug
+2620 IFW$=""THEN2700ELSEL$=RIGHT$(W$,1):IF(L$<"A"ORL$>"Z")AND(L$<"0"ORL$>"9")THENW$=LEFT$(W$,LEN(W$)-1)
+2630 W$=W$+"    ":W$=LEFT$(W$,5)
+2640 X$=MID$(VERB$,X,5)
+2645 'PRINT2645;INT(X/5)+1;"  ";X$:'Debug
+2650 IFW$=X$THENM=-1:X=INT(X/5)+1:GOTO2670
+2660 IFX=>LEN(VERB$)THEN2680ELSEX=X+5:GOTO2640
+2670 
+ONXGOSUB200,200,300,400,500,500,600,600,600,600,600,700,800,900,900,900,1000,1100,1100,1100,1610,1610,1610,1620,1620,1630,1630,164
+0
+2680 IFN<LEN(IP$)THENX=1:GOTO2610
+2690 IF NOT M THEN DE$="*** NULL PROGRAM ***":GOSUB2000
+2700 RETURN
+2990 '<< MAIN BLOCK >>=================
+3000 GOSUB1900'Wake Up
+3010 GOSUB2400'Input
+3020 GOSUB2600'Parse
+3030 GOTO 3010'Loop
+3040 END
+3990 'Init section---------------------
+4000 CLEAR1024,62299:ONERRORGOTO5000
+4010 LOADM"Sublib":POKE62959,1
+4020 MAXFILES=1:E$=CHR$(27):WI=39:DIMP%(5),DE$(10)
+4030 DY$="Sunday   Monday   Tuesday  WednesdayThursday Friday   Saturday "
+4040 MN$="JanFebMarAprMayJunJulAugSepOctNovDec"
+4050 VERB$="HI   HELLOFILESTIME DATE DAY  NICE BRIGHSMARTCLEVEINTELGOOD FIND CALL DIAL PHONETHANKKILL REMOVDELETGOODNOFF  BYE  
+LATERMENU QUIT EXIT BASICTELCO"
+4060 GOTO3000
+4990 'ERRORS---------------------------
+5000 IF ERL=4000THENPOKE62959,0:RESUME4010 
+5010 IFERR<>52THENPRINT"Error #";ERR;"in line";ERL:STOP ELSE RESUME1150

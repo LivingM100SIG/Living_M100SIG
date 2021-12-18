@@ -1,0 +1,149 @@
+Intro
+-----
+DEF.BA is a small, simple, fast (for BASIC!), easy-to-learn, & easy-to-use 
+BASIC preprocessor. You write your code in an extended form of M100 BASIC, & 
+DEF.BA translates it into "vanilla" BASIC.
+
+DEF is useless for "one-liners", and little use for small programs, but- when 
+used intelligently -is an ENORMOUS help when writing large programs.
+
+
+What for? Why?
+--------------
+DEF can save you time & effort, and eliminate some common errors, over the 
+entire life of a program (you won't appreciate it FULLY until you resume work 
+on a program you've neglected for a year!).
+
+DEF's source form is much easier to read, change, & maintain than is BASIC's. 
+It is, essentially, M100 BASIC, but without line #'s: with DEF, you NAME 
+subroutines & jump targets; DEF computes & inserts line #'s FOR you:
+
+ o You can write, e.g., "gosub[sortByName]" instead of "gosub2000"; or "goto[
+error]" instead of "goto7901". The advantages are obvious.
+
+ o Constants can also be named: e.g., you can write "poke a,[JNZ]" instead of 
+"poke a,193"; or "call[tokenize],0,a" instead of "call1606,0,a".
+
+ o Because there are no line #'s, you can add new lines anywhere (ever have to 
+put a line BETWEEN lines 12 & 13? No problem here!). For the same reason, 
+subroutines can be rearranged instantly: there are no line #'s to readjust, or 
+to get in the way.
+
+ o DEF throws comments away, so you can comment as lavishly as you like WITHOUT
+incurring the run-time speed & space penalties of BASIC's comments.
+
+ o Program logic is far easier to read, since only NAMED lines can be the 
+targets of GOTO's & GOSUB's.
+
+To use:
+
+ 1) write your code in an ASCII (.DO) file, as described below.
+ 2) run DEF.BA - this will create file XX.DO.
+ 3) Do LOAD"XX" from BASIC (or change DEF.SRC to do this).
+ 4) KILL"XX.DO" (if you want).
+
+
+Example
+-------
+NOTE: this was calculated to illustrate EVERY feature in a few lines; it's 
+hardly TYPICAL, but will reward close study:
+
+/ 1st line of sample input (a comment)
+/ "Friendly" average-computer (ditto)
+/EOD 0 -- end-of-data (a constant definition)
+/phooey Jerk: no input! -- (ditto)
+/unlucky 13
+/tricky! if c then ?"Average is"s/c:end -- (don't despair yet, plow on!)
+
+/loop -- (a label definition: next text line's name is "loop")
+gosub[getN]
+/ (getN is defined later)
+if n<>[EOD] then c=c+1:s=s+n:goto[loop]
+
+[tricky!]
+?"[phooey]":stop
+
+/getN -- read # from keyboard
+input"Hurry up -- gimme a #!";n
+if n=[unlucky] then ?"I don't like that one!":goto[getN] else return
+
+/ last line of sample input
+
+Feeding EXACTLY that (INCLUDING the "editorial comments") into DEF.BA, we get 
+XX.DO:
+
+1gosub5
+2if n<>0 then c=c+1:s=s+n:goto1
+3if c then ?"Average is"s/c:end
+4?"Jerk: no input!":stop
+5input"Hurry up -- gimme a #!";n
+6if n=13 then ?"I don't like that one!":goto5 else return
+
+XX.DO can then be LOAD'ed & RUN.
+
+A TYPICAL example is in file DEF.SRC, which is the source code from which 
+DEF.BA was created (i.e., DEF.SRC was run thru DEF.BA, creating XX.DO, & 
+loading XX.DO yielded DEF.BA itself).
+
+
+Details
+-------
+Each line in the source file is classified as "comment", "control", or "text". 
+DEF makes two passes over the source file. In the 1st pass, symbol definitions 
+are collected from "control" lines; in the 2nd pass, symbol references in 
+"text" lines are replaced by their definitions.
+
+A "comment" line is a null line, or a "control" line w/ a blank in column 2. 
+Comment lines are discarded.
+
+A "control" line is any line beginning with a "/". There are two (non-comment) 
+forms of control lines; they merely serve to define symbols, and are NOT copied
+to the output file:
+
+  1) Label definitions: of the form "/sym" or "/sym -- comment"; this gives the
+name "sym" to the next "text" line. Instances of [sym] in text lines will be 
+replaced by the named line's line number. sym cannot contain blanks.
+
+  2) Constant definitions: of the form "/sym val" or "/sym val -- comment"; 
+this gives "sym" the definition "val". Instances of [sym] in text lines will be
+replaced by "val". sym cannot contain blanks; one blank must separate val from 
+sym; val may be null; val CAN have leading & embedded blanks, but trailing 
+blanks are discarded.
+
+Every (non-null) line that does NOT begin with "/" is a "text" line. Text lines
+(& ONLY text lines) are copied to the output file.
+
+In text lines, "[" and "]" must be used to delimit symbol references; DEF will 
+replace the brackets and their enclosed symbol by that symbol's definition. A 
+line number will also be prefixed to the text line.
+
+
+Subtleties
+----------
+ o The length of any symbol plus the length of its value must be <= 252; it's 
+likely you'll never hit this limit, & it allows a very efficient symbol-table 
+implementation.
+
+ o On a reference to an undefined symbol, the reference is copied to output 
+unchanged (so "[" & "]" are not RESERVED characters).
+
+ o Substitution is NOT attempted in control lines.
+
+ o Replacement text is not scanned for further symbol references; it's written 
+to the output file immediately & forgotten.
+
+ o Brackets don't "nest"; e.g., if "joe" is defined as "3", then PRINT"[ [joe] 
+]" will NOT become PRINT"[ 3 ]" - instead, you'll get an error 'cause no defn 
+is found for symbol " [joe".
+
+ o If you don't like "/", change "clc" in DEF.SRC.
+
+ o If you don't like "[" & "]", change "lbrac" & "rbrac" in DEF.SRC, but be 
+aware that the code requires them to be different.
+
+
+DEF.BA can be extended in many ways; I've put it ALL in the public domain, so 
+get DEF.SRC & change it to do what YOU want it to do.
+
+Enjoy!  Tim Peters  CIS 72227,2416
+

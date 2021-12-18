@@ -1,0 +1,45 @@
+If a disk contains a CRC error, it is sometimes helpful to determine the 
+name of the file that contains the error so a backup copy of the file can be 
+recopied over the bad file.  If the track and sector containing the error 
+are known (can be found using FINDCC or SEARCH), the cluster containing the 
+error can be calculated (see documentation for DISKPP).  Next, 
+search the allocation table (using DISKPP) for the byte containing that 
+cluster.  Now backtrack through the allocation table bytes (again see the 
+documentation for DISKPP) until the cluster originating the file is 
+found.  This will be the cluster that is not contained in any of the 
+allocation table bytes.  Knowing this cluster, the directories and/or 
+folders can be searched until the file which originates in that cluster is 
+identified.
+
+This enhancement to DISKPP.324 version 2.2 allows the user to find which 
+byte of the allocation table contains a particular cluster value (between 1 
+and 239).  Once the byte is known, the  table can be read byte by byte 
+backtracking the file to its originating cluster.
+
+When a cluster cannot be found, that cluster is the originating cluster for
+the file (unless the allocation table is messed up).
+
+The following lines should be merged into DISKPP.324.  Be sure you have 
+merged DISKPP.BUG and any earlier updates first.
+
+If you have previously merged DISKPP.UD2, you may just merge this
+DISKPP.UD3 into that file.
+
+430 CALL16954:GOTO9000
+431 PRINT@280,E$;" Display a single byte? (Y/N)";
+438 IN$="":PRINT" Byte number";:INPUTIN$:IFLEN(IN$)=0THEN150
+440 R=PEEK(63033):IFR=8THENR=240ELSER=(R-1)*40
+441 PRINT@R,;" Byte number  "+IN$+"   ";ASC(MID$(TA$,BN+1,1)):GOTO438
+9000 PRINT@280,E$;" Find contents? (Y/N)";:GOSUB30:IFA$<>"Y"ANDA$<>"y"THEN431
+9005 PRINT:PRINTP1$
+9010 IO$="":PRINT@280," Contents to find";:INPUTIO$:IFLEN(IO$)
+=0THENPRINT:GOTO431
+9020 BO=VAL(IO$):IFBO<1ORBO>239THEN9010
+9030 BN=INSTR(1,TA$,CHR$(BO))-1
+9040 IFBN<0ORBN>239THENPRINT" Not found":GOTO9010
+9050 IN$=STR$(BN):IN$=RIGHT$(IN$,LEN(IN$)-1)
+9060 PRINT@240,;" Byte number  "+IN$+"   ";ASC(MID$(TA$,BN+1,1));:GOTO9010
+
+WILLIAM SCHNEIDER
+[70146,1107]
+

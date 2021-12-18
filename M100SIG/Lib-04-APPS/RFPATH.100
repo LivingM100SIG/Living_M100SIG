@@ -1,0 +1,134 @@
+
+
+10  REM * PATH CALCULATIONS USING DBM 3-8-87 & 9-01-87 *
+100 MAXFILES=1:A$="####.##"
+102 CLS:PRINT:INPUT"Select output mode:                      1) RAM file                             2) Disk file                            3) LCD display";DF
+104 ONDFGOTO106,110,114
+106 CLS:INPUT"Name of RAM file:";F$
+108 OPEN"RAM:"+F$FOROUTPUTAS1:GOTO116
+110 CLS:INPUT"Name of DISK file:";F$
+112 OPEN":"+F$FOROUTPUTAS1
+114 CLS:OPEN"LCD:"FOROUTPUTAS1
+116 CLS:PRINTTAB(40)"":INPUT"Select from the following:              1)  Free Space Loss in Miles            2)  Free Space Loss in Feet             3)  Free Space Loss <Emperical> in Miles4)  Exit      				    Selection:";X
+118 ONXGOTO244,244,244,178
+120 GOSUB128:PRINT#1,"Path Loss:       ";:PRINT#1,USINGA$;L;:PRINT#1," DB"
+122 GOSUB180
+124 PRINT#1,"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+126 GOSUB364:GOTO284
+128 L=20*LOG(F)/LOG(10)+20*LOG(D)/LOG(10)+33
+130 L=L-2*L
+132 RETURN
+134 GOSUB142:PRINT#1,"Path Loss:       ";:PRINT#1,USINGA$;L;:PRINT#1," DB"
+136 GOSUB180
+138 PRINT#1,"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+140 GOSUB364:GOTO284
+142 L=20*LOG(F)/LOG(10)+20*LOG(D1)/LOG(10)-41.5
+144 L=L-2*L
+146 RETURN
+148 GOSUB168:PRINT#1,"Path Loss:       ";:PRINT#1,USINGA$;L1;
+150 IFL1<LTHENPRINT#1," DB <EMPERICAL>" ELSE PRINT#1," DB <FREE SPACE>"
+152 IFL1<LTHENL$="<EMPERICAL>"ELSE L$="<FREE SPACE>"
+154 IF L1<LTHENL=L1
+156 GOSUB180
+158 PRINT#1,"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+160 GOSUB364:GOTO284
+162 L=20*LOG(F)/LOG(10)+20*LOG(D)/LOG(10)+33
+164 L=L-2*L
+166 RETURN
+168 GOSUB162:L1=117+20*LOG(F)/LOG(10)+40*LOG(D)/LOG(10)
+170 L1=L1-20*LOG(H1*H2)/LOG(10)
+172 L1=L1-2*L1
+174 IFL<L1THENL1=L
+176 RETURN
+178 CLOSE1:MENU
+180 'Power calculations
+182 SN=TX-RX+A1+AS+A2+AT+L
+183 SD=TX+A1+AS+A2+AT+L
+184 PRINT#1,"Signal level:    ";:PRINT#1,USINGA$;SN;:PRINT#1," DB above RX                                Sens"
+186 'conversion from dbm to uv
+188 GOSUB192
+190 PRINT#1,"Signal level:    ";:PRINT#1,USINGA$;E/1000;:PRINT#1," uv";:PRINT#1,USINGA$;SD;:PRINT#1,"  DBM":RETURN
+192 SG=RX+SN:E=(SG+167)/20:E=EXP(E/.4342945)
+194 IFE=>1THENE=INT(10*E+.5)/10:RETURN
+196 E=INT(100*E+.5)/100:RETURN
+198 CLS:PRINT#1," Free Space (MI) "
+200 PRINT#1,"":GOSUB364:GOTO216
+204 CLS:PRINT#1," Free Space (FT) "
+206 PRINT#1,"":GOSUB364:GOTO216
+210 CLS:PRINT#1," Free Space (EMP)"
+212 PRINT#1,"":GOSUB364:GOTO216
+216 PRINT#1,TAB(16)"";:PRINT#1,"  Xmtr       Rcvr"
+218 PRINT#1,"Locations:     ";:PRINT#1,USING"\         \";Y$;:PRINT#1," ";:PRINT#1,USING"\          \";Z$
+220 PRINT#1,"Power/Sens:       ";:PRINT#1,USING"####";TX;:PRINT#1," DBM   ";:PRINT#1,USING"####";RX;:PRINT#1," DBM"
+222 PRINT#1,"Antenna Gain:     ";:PRINT#1,USING"####";A1;:PRINT#1," DB    ";:PRINT#1,USING"####";A2;:PRINT#1," DB"
+224 PRINT#1,"Antenna Loss:     ";:PRINT#1,USING"####";AS;:PRINT#1," DB    ";:PRINT#1,USING"####";AT;:PRINT#1," DB"
+226 PRINT#1,"Frequency:        ";:PRINT#1,USING"####";F;:PRINT#1," Mhz"
+228 IFX=1GOTO240ELSEIFX=2GOTO242ELSEIFX=3GOTO240
+230 IFX=3GOTO232ELSE234
+232 PRINT#1,"Height:           ";:PRINT#1,USING"####";H1;:PRINT#1," Ft    ";:PRINT#1,USING"####";H2;:PRINT#1," Ft"
+234 GOSUB364:GOTO238
+238 IFX=1GOTO120ELSEIFX=2GOTO134ELSEIFX=3GOTO148
+240 PRINT#1,"Distance:         ";:PRINT#1,USING"####";D;:PRINT#1," Miles":GOTO230
+242 PRINT#1,"Distance:         ";:PRINT#1,USING"###";D1;:PRINT#1," Feet":GOTO230
+244 CLS:IFX=3GOTO245ELSEGOTO250
+245 GOSUB366
+246 PRINT"":GOSUB364:GOTO250
+250 CLS:PRINT:PRINT"Transmitter location:";"["Y$"]";:INPUT"";Y$
+252 CLS:PRINT:PRINT"Transmitter power: (DBM)";"["TX"]":PRINT:PRINT" (ENTER -99 TO GOTO WATTS/DBM              SUBROUTINE)";:INPUT"";TX
+254 IFTX=-99GOTO344ELSEGOTO256
+256 CLS:PRINT:PRINT"Transmitter antenna gain (DB)";"["A1"]";:INPUT"";A1
+258 CLS:PRINT:PRINT"Transmitter antenna system losses       (-DB)";"["AS"]";:INPUT"";AS
+260 CLS:PRINT:PRINT"Receiver location:";"["Z$"]";:INPUT"";Z$
+262 CLS:PRINT:PRINT"Receiver sensitivity: (-DBM)";"["RX"]";:PRINT:PRINT" (ENTER 0 TO GOTO uv/DBM                 SUBROUTINE)";:INPUT"";RX
+264 IFRX=0GOTO354ELSEGOTO266
+266 CLS:PRINT:PRINT"Receiver antenna gain: (DB)";"["A2"]";:INPUT"";A2
+268 CLS:PRINT:PRINT"Receiver antenna system losses          (-DB)";"["AT"]";:INPUT"";AT
+270 CLS:PRINT:PRINT"Frequency (Mhz)";"["F"]";:INPUT"";F
+272 IF X=1GOTO274ELSEIFX=2GOTO276ELSEIFX=3GOTO278
+274 CLS:PRINT:PRINT"Distance  (Mi) ";"["D"]";:INPUT"";D:GOTO198
+276 CLS:PRINT:PRINT"Distance (Feet)";"["D1"]";:INPUT"";D1:GOTO204
+278 CLS:PRINT:PRINT"Distance  (Mi) ";"["D"]";:INPUT"";D
+280 CLS:PRINT:PRINT"Height, TX Antenna:";"["H1"]";:INPUT"";H1
+282 CLS:PRINT:PRINT"Height, RX Antenna:";"["H2"]";:INPUT"";H2:GOSUB210
+284 CLS:PRINT:INPUT"Do you want a hard copy";H$
+286 IFH$="Y"GOTO288ELSEIFH$="y"GOTO288ELSEGOTO116
+288 CLOSE1
+290 OPEN"LPT:"FOROUTPUTAS1
+292 IFX=1GOTO294ELSEIFX=2GOTO298ELSEIFX=3GOTO302
+294 PRINT#1,TAB(30)" Free Space (MI) "
+296 PRINT#1,"":GOTO306
+298 PRINT#1,TAB(30)" Free Space (FT) "
+300 PRINT#1,"":GOTO306
+302 PRINT#1,TAB(30)" Free Space (EMP)"
+304 PRINT#1,"":GOTO306
+306 PRINT#1,TAB(20)"  Xmtr                 Rcvr"
+308 PRINT#1,"Locations:         ";:PRINT#1,USING"\         \";Y$;:PRINT#1,"      ";:PRINT#1,USING"\          \";Z$
+310 PRINT#1,"Power/Sens:       ";:PRINT#1,USING"####";TX;:PRINT#1," DBM          ";:PRINT#1,USING"####";RX;:PRINT#1," DBM"
+312 PRINT#1,"Antenna Gain:     ";:PRINT#1,USING"####";A1;:PRINT#1," DB           ";:PRINT#1,USING"####";A2;:PRINT#1," DB"
+314 PRINT#1,"Antenna Loss:     ";:PRINT#1,USING"####";AS;:PRINT#1," DB           ";:PRINT#1,USING"####";AT;:PRINT#1," DB"
+316 PRINT#1,"Frequency:        ";:PRINT#1,USING"####";F;:PRINT#1," Mhz"
+318 IFX=1GOTO334ELSEIFX=2GOTO336ELSEIFX=3GOTO334
+320 IFX=3GOTO322ELSE324
+322 PRINT#1,"Height:           ";:PRINT#1,USING"####";H1;:PRINT#1," Ft           ";:PRINT#1,USING"####";H2;:PRINT#1," Ft"
+324 IFX=3GOTO326ELSE330
+326 PRINT#1,"Path Loss:     ";:PRINT#1,USINGA$;L;:PRINT#1," DB";
+328 PRINT#1,L$:GOTO332
+330 PRINT#1,"Path Loss:     ";:PRINT#1,USINGA$;L;:PRINT#1," DB"
+332 PRINT#1,"Signal Level:  ";:PRINT#1,USINGA$;SN;:PRINT#1," DB above RX Sens."
+333 PRINT#1,"Signal Level:  ";:PRINT#1,USINGA$;E/1000;:PRINT#1," uv /";:PRINT#1,USINGA$;SD;:PRINT#1," DBM":GOTO338
+334 PRINT#1,"Distance:         ";:PRINT#1,USING"####";D;:PRINT#1," Miles":GOTO320
+336 PRINT#1,"Distance:         ";:PRINT#1,USING"###";D1;:PRINT#1," Feet":GOTO320
+338 CLS:IFX=3GOTO340
+340 PRINT#1,"":PRINT#1,"^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+342 CLOSE1:IFDF=1GOTO114ELSEIFDF=2GOTO112ELSEIFDF=3GOTO114 
+344 CLS:PRINT:INPUT"Watts output";W
+346 TX=10*LOG(W)/LOG(10):TX=INT(TX*10+.5)/10:TX=TX+30
+348 PRINTW;" Watts =";TX;" DBM"
+350 PRINT:PRINT:PRINT:PRINT:GOSUB364:GOTO252
+354 CLS:PRINT:INPUT"receiver sensitivity in uv";ET:IFET=<0THEN354
+356 GOSUB358:PRINTET;" uv = ";RX;" DBM":GOTO360
+358 RX=20*LOG(ET)/LOG(10)-107:RX=INT(RX*10+.5)/10:RETURN
+360 PRINT:PRINT:PRINT:PRINT:GOSUB364:GOTO262
+364 INPUT"         PRESS <ENTER> TO CONTINUE";S$:IFS$=""GOTO365ELSE364
+365 RETURN
+366 PRINT#1,"NOTE: Emperical calculation will compare      to Free Space calculation and           choose largest figure.  You will        receiver a note of <EMPERICAL>          or <FREE SPACE> depending on            results.":RETURN

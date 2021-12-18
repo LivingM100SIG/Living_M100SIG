@@ -1,0 +1,94 @@
+XTLCM3.200 by Paul Globman (72227,1661)
+             Copyright (c) 1988
+
+######### FOR USE WITH A TANDY 200 WITH ALL THREE (3) INTERNAL BANKS ##########
+
+XTLCM3.CO is created by running the BASIC loader listed below.
+
+XTLCM3.CO need only be run once from any bank.  It will automatically take you
+to TELCOM for immediate use.  Once run, XTLCM3.CO can be saved and deleted from
+RAM.  It is permanently installed in all three banks until FIXDIR.BA is run, a
+cold start, or another program resets the TELCOM hooks.
+
+XTLCM3.CO adds the following to TELCOM's TERM mode...
+
+  F6 = display files and bytes
+  F6+SHIFT = direct access to TEXT
+  F7 = jump to TELCOM in next bank
+  F7+SHIFT = jmp TELCOM in prev. bank
+
+XTLCM3.CO will allow you to jump from bank to bank while on-line with either
+an external or internal modem.  And whichever bank you jump to, the hooks
+are active to allow you to switch banks again.
+
+XTLCM3.CO uses no user RAM!  It need not be in RAM after it has been run once.
+It does not run in HIMEM so there are no conflicts with other .CO programs.  
+
+XTLCM3.CO runs in system RAM.  The code in each bank resides in the last 15 
+file slots of the directory.  This means that you can have a maximum of 31
+files per bank, instead of 46.  From the T200 users I have spoken to, this is
+not a problem.
+
+In return for the 15 file sacrifice you get several excellent TELCOM 
+enhancements.
+
+NOTE: The first time you enter TELCOM in another bank, you will enter the TERM
+mode by pressing F4(Term).  Should you exit this bank, and re-enter it, you 
+will have to type TERM<ENTER> if F4(Term) doesn't work.
+
+1 '************************
+2 '*  XTLCM3.CO           *
+3 '*    by Paul Globman   *
+4 '*  Copyright (c) 1988  *
+5 '************************
+10 FOR I = 63600 TO 63830 
+20 READ X:POKE I,X:SM=SM+X
+30 NEXT
+40 IF SM = 30659 THEN 60
+50 PRINT"error in data":STOP
+60 SAVEM"XTLCM3.CO",63600,63830,63764
+1000 DATA 255,205,62,79,58,22,253,31
+1010 DATA 210,70,244,33,27,244,34,52
+1020 DATA 239,196,69,79,205,75,113,33
+1030 DATA 196,113,205,23,53,205,240,84
+1040 DATA 215,202,64,244,205,115,45,229
+1050 DATA 33,0,0,34,210,239,62,1
+1060 DATA 33,64,244,195,39,115,205,150
+1070 DATA 79,195,139,99,205,42,42,205
+1080 DATA 253,154,195,62,79,243,58,22
+1090 DATA 253,31,219,216,220,93,244,33
+1100 DATA 103,244,229,198,4,230,12,254
+1110 DATA 12,202,93,244,201,50,155,244
+1120 DATA 33,245,238,6,0,87,205,176
+1130 DATA 155,33,60,239,84,93,1,7
+1140 DATA 0,205,153,244,42,172,254,58
+1150 DATA 155,244,211,216,34,172,254,49
+1160 DATA 156,249,205,71,76,205,77,79
+1170 DATA 175,50,30,253,195,253,95,197
+1180 DATA 6,0,213,86,227,205,176,155
+1190 DATA 209,235,193,35,19,11,121,176
+1200 DATA 194,153,244,201,243,175,205,42
+1210 DATA 249,62,4,205,42,249,62,8
+1220 DATA 205,42,249,195,253,95,11,244
+1230 DATA 79,244,50,68,249,33,38,249
+1240 DATA 17,63,245,1,4,0,205,66
+1250 DATA 249,33,112,248,17,10,244,1
+1260 DATA 164,0,197,6,0,213,86,227
+1270 DATA 205,176,155,209,235,193,35,19
+1280 DATA 11,121,176,194,66,249,201 
+1290 REM      END OF DATA
+
+
+
+
+0 REM FIXDIR.BA by Paul Globman
+1 REM            Copyright (c) 1988
+2 REM
+3 REM This MUST be run in ALL 3 BANKS
+4 REM
+5 FOR I=62474 TO 62638:POKE I,0:NEXT
+6 POKE I,255
+7 POKE 62783,168:POKE 62784,156
+8 POKE 62785,168:POKE 62786,156
+9 MENU
+

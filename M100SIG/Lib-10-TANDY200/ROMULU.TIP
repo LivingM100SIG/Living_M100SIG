@@ -1,0 +1,63 @@
+
+        (c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+[Preceding discussion talked about the possibility of storing and
+loading ROMULUS from the TDD instead of cassette.  Here's how it was
+done, using POWR-DOS:]
+
+                - 0 -
+
+Fm: Larry Sloan
+To: Wilson Van Alst
+
+ Thanks for the idea, which worked as follows:
+ I have POWR-D installed in bank 3, which means MAXRAM there is set to 58960.
+You are right about ROMULUS being lower in memory than POWR-D.  The version of
+ROMULUS I use has a top adrs of 44328 and end adrs of 56000.  Anyway, in BASIC
+I executed the following commands:
+        CLEAR99,44328
+        LOADM":CHESS" (which is what I call ROMULUS on disk)
+        LFILES OFF (which disables POWR-D and changes MAXRAM back to 61104)
+        CALL44328 (which runs ROMULUS)
+
+Again, I really appreciate your idea.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Larry Sloan
+
+   Glad you've put the scheme to work.  As I mentioned, I'm a little fuzzy on
+the procedure I recommended last time -- but you've filled in the gaps. Since
+you've got a fresh recollection, what were the precise steps used to put
+Romulus on disk in the first place (assuming your version of the program came
+on cassette, as mine did)?
+
+		- 0 -
+
+Fm: Larry Sloan
+To: Wilson Van Alst
+
+  Well, to put ROMULUS on disk involves the same fact that the DOS and ROMULUS
+need to occupy different areas of RAM.  If you use TS-DOS, then in a clear
+bank with only DOS200.CO present, turn DOS-ON (F-5); go to MENU; kill
+DOS200.CO; go to BASIC; type CLEAR99,44328 (or CLEAR99,42312 if loading
+CHESSX.CO); at the OK prompt type CLOADM"CHESS",44328,56000,44328 (or
+CLOADM"CHESSX",42312 56000,42312 if loading CHESSX.CO); at the OK prompt type
+SAVEM"0:CHESS",44328, 56000,44328 (or SAVEM"0:CHESSX",42313,56000,42312); then
+you're in business. Obviously, you can't run CHESS.CO after you load from
+cassette and before you save to disk or you'll corrupt the DOS.
+  With POWR-D installed and in a clear bank with no files, it's essentially
+the same procedure, except easier because you don't have to kill the DOS200.CO
+and everything is done in BASIC command mode.  Type CLEAR99,44328; at the OK
+type CLOADM"CHESS",44328,56000,44328; at the OK type
+SAVEM":CHESS",44328,56000, 44328; and you're set.
+
+		- 0 -
+
+Starting message #: 24311   Starting date: 17-Apr-90  23:01:24
+ Participants:
+Larry Sloan 76616,3015
+Wilson Van Alst 76576,2735

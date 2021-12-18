@@ -1,0 +1,265 @@
+
+
+
+                               DISKIT DOCUMENTATION
+
+       Diskit  is  a  sample program to demonstrate how to access PCSG RAM+
+       banks and the Tandy Disk Drive within the same program on the  Model
+       100.   RAM+ allows you to read and write files in other banks within
+       a BASIC program.  PWR-Disk allows you to read and write files on the
+       TDD within a BASIC program.  But, since each resets each others  ram
+       hooks, after running one, the other doesn't work.  
+
+       This  program  sets  the  hooks back and forth inside the program to
+       enable you to read a file from another bank and write to a disk file
+       on the TDD, or  visa  versa.   The  CALL  MAXRAM  command  sets  the
+       Pwr-Disk hooks and can be executed anywhere inside a program without
+       interrupting  it.  PCSG, on the other hand, normally requires a call
+       63012 which terminates program execution  and  brings  up  the  RAM+
+       menu.   PCSG  wouldn't give me the pokes to reinstall the ram hooks,
+       but a few peeks in the ram hook table after  running  each  revealed
+       the  following  pokes  required  to  reactivate  RAM+  after running
+       Pwr-disk. 
+
+       The poke for RAM+ is as follows:
+
+       POKE 64262,18:POKE64263,246:POKE64266,18:POKE64267,246
+
+       The CALL MAXRAM command and these  pokes  can  be  used  inside  the
+       program to toggle back and forth between Pwr-Disk and RAM+ to access
+       the different banks.  The hooks must be installed before any and all
+       file handling instructions in the program, i.e. open, close, input#,
+       print#,  etc.  If you print to a different bank's file you must poke
+       the Ram hooks first.  If you then read from a disk  file,  you  must
+       poke  the  disk  ram  hooks (CALL MAXRAM)  To open a file in another
+       bank poke the hooks, then to open a second file on  the  disk,  poke
+       the  disk  hooks.   Even  to  close  the  files, you must close them
+       separately - CLOSE1  CLOSE2 - and poke the appropriate hooks  before
+       each close.  Get the picture?
+
+       I  use the Ram+ pokes at the beginning of any program which accesses
+       another bank, whether or not I am also accessing the disk,  then  if
+       Pwr-Disk has been run before running such a program it will crap-out
+       with  a Bad File Name ?BN Error.  Putting the pokes at the beginning
+       assures that my program will run no matter what.  (Except if I  have
+       done  an F3 while on the RAM+ menu since this deinstalls everything,
+       not just the hooks)  It also allows me to do a  RUN":NAME"  and  run
+       the program off disk and still access files in other banks.
+
+       There  is  a  potential that the wrong poke, or some other cause may
+       result in a cold start using this method.  I have played around with
+       it for quite a while now and have yet to  cold-start,  so  it  seems
+       quite  safe,  but  I  take  no responsibility if your combination of
+       prgrams results in such.
+
+       If you have any other program messing around with  ram  hooks  which
+       deactivates  your  RAM+  capabilities,  this should work as well for
+       that.  Just back up before you try it the first time.
+
+       By the way, if you use Lucid by PCSG and the 4 Ram Bank product, you
+       may have noticed that Lucid won't  print  out  a  spreadsheet  until
+       deinstalling  the RAM+ software.  You deinstall by pressing F3 while
+
+                                     page -1-
+
+
+
+
+
+
+       in the PCSG menu.  This also places a small  Goto  program  in  each
+       bank.   I  have found that by using the following poke, I deactivate
+       RAM+ in the bank I am in, but don't deinstall it in every  bank.   I
+       can  then print out the Lucid file without the "M100 ERROR! message.
+       Use the following poke:
+
+       POKE 64262,243:POKE64263,127:POKE64266,243:POKE64267,127
+
+       Good luck!
+
+       Terry Luke  73126,1776
+
+       0 REM << TDD/PCSG Ram Bank Transfer Program by Terry Luke 73126,1775
+       >>       
+       1 REM *********************************
+       2 REM * Set up the Program and input  *
+       3 REM * the first file. Instr search  *
+       4 REM * to check the position of ':'  *
+       5 REM * 1st position = disk files     *
+       6 REM * 2nd position = ram bank       *
+       7 REM * eg:':test'=disk or'A:test'=ram*
+       8 REM * D=1 for Disk, D=0 for Ram     *
+       9 REM *********************************
+       10 CLEAR:MAXFILES=2:PRINT"Input       File:";:INPUTF$:C=INSTR(F$,":")
+          :IFC=1THEND=1ELSED=0
+       11 REM
+       12 REM ********************************
+       13 REM * Go to subroutine to determine*
+       14 REM *    which hooks to install    *
+       15 REM *   Then open the input file   *
+       16 REM ********************************
+       16 REM
+       20 GOSUB90:OPENF$FORINPUTAS1
+       21 REM
+       22 REM ********************************
+       23 REM * Go to Subroutine to determine*
+       24 REM * which hooks to install for   *
+       25 REM *         output file          *
+       26 REM *      (Pwr-Disk or Ram+)      *
+       27 REM * Determine mode of transfer   *
+       28 REM ********************************
+       29 REM
+       30 GOSUB100:INPUT"Output File:";OF$:OPENOF$FOROUTPUTAS2:INPUT"<L>ine
+       or <C>haracter Transfer:";Y$:IFY$="L"ORY$="l"THENY=1:GOTO50
+       31 REM
+       32 REM ********************************
+       33 REM *  GoSub to install ram hooks  *
+       34 REM * Input one character at a time*
+       34 REM * Character mode is 3-4 times  *
+       35 REM * slower than line mode but if *
+       36 REM * the file has more than 255   *
+       37 REM * char. before a C/R, like a   *
+       38 REM * paragraph,line mode craps out*
+       39 REM ********************************     
+       40 GOSUB90:IFNOTEOF(1)THENA$=INPUT$(1,1):GOTO60ELSE9
+
+
+
+
+                                     page -2-
+
+
+
+
+
+
+
+       41 REM
+       42 REM ********************************
+       43 REM * Gosub to install alternate   *
+       44 REM * Ram hooks to prepare for out-*
+       45 REM * put.  Inputs a line at a time*
+       46 REM * If any line in the file is   *
+       47 REM * longer then 255 characters,  *
+       48 REM * you must use character mode  *
+       49 REM ********************************    
+       50 GOSUB90:IFNOTEOF(1)THENLINEINPUT#1,A$ELSE70
+       51 REM 
+       52 REM ********************************
+       53 REM * Gosub to install alternate   *
+       54 REM * Ram Hooks before printing the*
+       55 REM * present line or character to *
+       56 REM * output file and return to the*
+       57 REM *  proper line for more input  *
+       58 REM ********************************
+       59 REM
+       60 GOSUB100:PRINT#2,A$;:IFY=1THENPRINT#2,:GOTO50ELSEGOTO4
+       61 REM
+       62 REM ********************************
+       63 REM * Gosub to install the appro-  *
+       64 REM * priate ram hooks to close 1  *
+       65 REM * then install the other ram   *
+       66 REM * hooks before closing 2. End  *
+       67 REM ********************************
+       68 REM
+       70 GOSUB90:CLOSE1:GOSUB100:CLOSE2:END
+       71 REM
+       72 REM ********************************
+       73 REM * This line pokes the PCSG     *
+       74 REM *       RAM+ hooks             *
+       75 REM ********************************
+       76 REM
+       80 POKE 64262,18:POKE64263,246:POKE64266,18:POKE64267,246:RETURN
+       81 REM
+       82 REM ********************************
+       83 REM * This line determines if the  *
+       84 REM * input file is a Ram Bank or  *
+       85 REM * a disk file then branches to *
+       86 REM * the proper subroutine to in- *
+       87 REM * stall the right ram hooks    *
+       88 REM ********************************
+       89 REM
+       90 IFD=0THENGOSUB80:RETURNELSEGOSUB110:RETURN
+       91 REM
+       92 REM ********************************
+       93 REM * This line determines if the  *
+       94 REM * output files is a Ram Bank   *
+       95 REM * or a Disk files and branches *
+       96 REM * to the proper subroutine to  *
+       97 REM * install the right ram hooks  *
+       98 REM ********************************
+       99 REM 
+       100 IFD=1THENGOSUB80:RETURNELSEGOSUB110:RETURN
+
+
+                                     page -3-
+
+
+
+
+
+
+
+       101 REM *******************************
+       102 REM * This routine installs the   *
+       103 REM * Pwr-Disk ram hooks by call- *
+       104 REM * ing MAXRAM. It assumes PD   *
+       105 REM *  is already installed and   *
+       106 REM * only Ram hooks need be poked*
+       107 REM * Doesn't work after LFILESOFF*
+       108 REM * command has been executed   *
+       109 REM *******************************  
+       110 CALLMAXRAM:RETURN
+       111 REM
+       112 REM *******************************
+       113 REM * Note: In character mode it  *
+       114 REM * sometimes seems like nothing*
+       115 REM * is happening since the      *
+       116 REM * characters are stored and   *
+       117 REM * sent to disk in bunches.    *
+       118 REM *    Just be patient!         *
+       119 REM *******************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                     page -4-
+
+
+
+

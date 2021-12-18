@@ -1,0 +1,76 @@
+XMDPW5.LOD -- Loading XMDPW5.200
+--------------------------------
+
+Using XMDPW5.200 to create XMDPW5.CO in the Tandy 200 will take special
+measures -- compared to the 100 version, where you can simply "Load" the
+DO file to create the BA loader, and then run the BA file to create the CO
+program.  Since the total size of the DO file (XMDPW5.200) and resulting
+BA loader exceeds the memory capacity of the 200, this approach will not
+work.  There is now a "James Yi Special" approach!
+
+0. Use DO2BA.200 (Lib 10)
+
+This is the approach of choice.  Get James Yi's DO2BA.200 and use it to
+create DO2BA.CO in your 200.  Download XMDPW5.200 as XMDPW5.DO, and back it
+up (e.g., to another bank).  Then run DO2BA to convert XMDPW5.DO to
+XMDPW5.BA.  Then -- after doing CLEAR 256,MAXRAM -- run XMDPW5.BA to create
+XMDPW5.CO. Afterward, save everything to a mass storage device (e.g., TDD).
+
+1. Use a Cassette
+
+If you have (and don't mind using!) a cassette, try the following
+procedure (which I have verified):
+
+  a) Download XMDPW5.200 into your 200 as XMDPW5.DO, edit any garbage if
+     done with R)ead, verify the checksum (a must!), and save to a blank
+     cassette from Text as XMDPW5.
+
+  b) Empty your 200, or at least the bank in which you will create
+     XMDPW5.CO.  You will need almost a whole bank to proceed. Do CLEAR
+     256,MAXRAM in Basic to recover any RAM reserved by machine language
+     programs.
+
+  c) With the tape rewound, and the recorder in play, go to Basic and type
+     RUN"CAS: <ENTER>.  You should get a message that XMDPW5 has been
+     found.
+
+  d) At the end of the tape run, the program will run.  Hit ENTER in
+     response to the question.
+
+2. Use of Multiple RAM Banks in the 200
+
+I have not tried this, but it should work.
+
+  a) Download XMDPW5 as above.  Then go into Text and break it into two or
+     more roughly equal pieces.
+
+  b) Leave the first chunk in your working bank, and move the rest to
+     another bank.  Clear out memory as above, except for the first chunk
+     of the DO file.
+
+  c) Go to Basic and load the first chunk, and SAVE the resulting BA
+     program.  Kill the first chunk, and go get the second one, and
+     repeat, using the MERGE command in Basic.  Repeat until you have the
+     entire BA program.
+
+  d) Then, with only XMDPW5.BA on the menu, run it.  Hit ENTER in response
+     to the question.
+
+3. To Finish
+
+Either scheme will give you XMDPW5.CO on the menu, with TOP=56870,
+END=61103 and EXE=56870.  Save this program to disk or cassette, before
+proceeding.
+
+If you plan to use only this program in the bank in question, you can
+conserve memory by creating the one-byte program XMDPW<.CO as follows in
+Basic:
+
+   SAVEM"XMDPW<",56870,61103,56870
+
+Then you can kill XMDPW5.CO and use XMDPW<.CO to run it's RAM-resident
+image.
+
+Phil Wheeler
+71266,125
+16 July 1988

@@ -1,0 +1,18 @@
+1 'LSETUP.BA  J.K. Heilman  120685
+2 'For Epson and Gemini Printers
+3 DEFINTA-Z:E$=CHR$(27):R=80:T=2:B=2
+4 IF(INP(187)AND6)<>2THENPRINT" Turn Printer <<ON>>";:GOTO4
+5 CLS:PRINT@13,E$;"p LSETUP.BA v1.0 ";E$+"q":PRINT:PRINT"<E>pson  or  <G>emini ";:P$=INPUT$(1):P$=CHR$(ASC(P$)AND223):GOSUB15
+6 D=R:PRINT:PRINT"Left Margin [ 0 ]";:INPUTL:PRINT"Right Margin [";R;"]";:INPUTR
+7 IFP$="G"THENPRINT"Top Margin [ 2 ]";:INPUTT
+8 PRINT"Bottom Margin [ 2 ]";:INPUTB
+9 IFL<>0THENLPRINTE$+"l"+CHR$(L);
+10 IFR<>DTHENLPRINTE$+"Q"+CHR$(R);
+11 IFP$="E"THEN12ELSEIFT<>0THENLPRINTE$+"r"+CHR$(T);
+12 IFB<>0THENLPRINTE$+"N"+CHR$(B);
+13 MENU
+14 'Font Selection
+15 PRINT:PRINT"<P>ica  <E>lite  <C>ondensed ";:F$=INPUT$(1):F$=CHR$(ASC(F$)AND223)
+16 IFF$="E"THENR=96:LPRINTE$+"M";
+17 IFF$="C"THENR=136:LPRINTCHR$(15);
+18 RETURN

@@ -1,0 +1,475 @@
+
+LOMEM3.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This is one of a series of THD files relating to adapting James Yi's
+LOMEM.200 for use on the Model 100.  They include general comments on the
+use/value of the program, some intitial attempts to adapt it the the Model
+100, and some more refined approaches provided by Michael Nugent.  This
+file discusses James Yi's adaptation to the Model 100, the results and why
+it did not work. The first in this series is LOMEM.THD.
+
+Message range: 158123 to 158811
+Dates: 10/11/87 to 10/20/87
+
+Sb: #LOMEM.100???
+Fm: James Yi 73327,1653
+To: RANDY HESS 73267,552 
+
+Randy, I built this from the addrs Phil gave me.  See if it works.
+The Basic program will create Setlow.Co , and run that from the Menu.
+If the amount of free ram shrinks after running it, it's probably working.
+The space made is at 32769, and upto however much you entered.
+For example if you entered 1, 255 bytes are available at 32769-33023,
+ and notice how free ram shrinks by 256 bytes.
+
+10 FOR L=64704TO64704+86:READD:POKEL,D:NEXT:SAVEM"setlow.co",64704,64704+
+86,64704
+20 NEW
+100 DATA 
+33,165,234,205,162,17,205,62,70,215,200,43,205,236,8,42,192,250,62,160,131,87,1
+48,71,14,0,105,210,234,252,197,124,146,71
+110 DATA
+98,205,159,107,193,195,241,252,205,109,107,218,192,252,9,58,175,251,128,50,175,
+251,124,50,193,250,214,160,50,0,128,201,195
+120 DATA 70,33,76,111,109,101,109,32,115,105,122,101,32,40,120,50,53,54,41,0
+
+
+Fm: Jon Diercks 73327,2353
+To: Randy Hess 73267,552 
+
+Randy/James/Phil...
+  Has anyone managed to come up with a working version of LOMEM for the 100
+yet?  I tried out the basic loader for SETLOW.CO <which appeared in a previous
+message>, and everything seemed to work <the prompt text was screwed up but a
+quick disassembly and 2 pokes fixed that>.  The amount of free memory decreased
+and all my files seemed to be intact, but when I turned off the computer and
+turned it back on again, . . . you guessed it, >The Big Chill< !!
+  Upon comparing my disassembly of SETLOW.CO with James' LOMEM.SRC, I noticed
+that the final RET appeared BEFORE the JMP to $2146 (8518d).  For experimental
+purposes, I created LOMEM.SRC in custom software assembler format, removing the
+RET in question.  When I ran it, the amount of free memory was apparently not
+affected.  No files were corrupted, and there were no cold starts.  It seems
+that the program had no effect at all.  I suppose that if I put that RET back
+in, I'd get the cold start problem again.
+  Any ideas, anyone??  I'd really like to get this to work, because stashing
+things like DSKMGR down in the basement would save me lots of space!
+
+
+Fm: James Yi 73327,1653
+To: Jon Diercks 73327,2353
+
+That RET before JMP 8518d shouldn't be in there.
+Let's see if this can pinpoint the problem..
+With ramdir.100? handy, do the following:
+Peek 64430,1 and see if it agrees with the location of one of DO files, and
+ peek 64192,3 and see if it agrees with the addr of first Basic program minus 1
+
+(a 0 should be at this addr).
+These two addresses were the main cause of cold starts when I was developing
+ Lomem.200.
+Then run the lomem program(with RET removed), and check to see if all files
+ are moved up by the amount lomem increased.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653
+
+James, this is what I get from disassembling the program your SETLOW builds.  
+There is a strange RET near the end.  Also, is the DCX HL correct (you could 
+have gotten it by coming in one byte lower in the subsequent call.  LOMEM.SRC 
+for 200 is really hard to read!  I would have never gotten the RST 2 from it -
+- not the DCX HL.
+ 
+FCC0    LXI     HL,EAA5 ;21A5EA !  
+FCC3    CALL    11A2    ;CDA211   ^Q
+FCC6    CALL    463E    ;CD3E46  >F
+FCC9    RST     2       ;D7      
+FCCA    RZ              ;C8      
+FCCB    DCX     HL      ;2B     +
+FCCC    CALL    08EC    ;CDEC08   ^H
+FCCF    LHLD    FAC0    ;2AC0FA *  
+FCD2    MVI     A,A0    ;3EA0   > 
+FCD4    ADD     E       ;83      
+FCD5    MOV     D,A     ;57     W
+FCD6    SUB     H       ;94
+FCD7    MOV     B,A     ;47     G
+FCD8    MVI     C,00    ;0E00   ^N^@
+FCDA    MOV     L,C     ;69     i
+FCDB    JNC     FCEA    ;D2EAFC    
+FCDE    PUSH    BC      ;C5      
+FCDF    MOV     A,H     ;7C     |
+FCE0    SUB     D       ;92      
+FCE1    MOV     B,A     ;47     G
+FCE2    MOV     H,D     ;62     b
+FCE3    CALL    6B9F    ;CD9F6B   k
+FCE6    POP     BC      ;C1      
+FCE7    JMP     FCF1    ;C3F1FC    
+***
+FCEA    CALL    6B6D    ;CD6D6B  mk
+FCED    JC      FCC0    ;DAC0FC    
+FCF0    DAD     BC      ;09     ^I
+FCF1    LDA     FBAF    ;3AAFFB :  
+FCF4    ADD     B       ;80      
+FCF5    STA     FBAF    ;32AFFB 2  
+FCF8    MOV     A,H     ;7C     |
+FCF9    STA     FAC1    ;32C1FA 2
+FCFC    SUI     A0      ;D6A0     
+FCFE    STA     8000    ;320080 2^@ 
+FD01    RET             ;C9      
+***
+FD02    JMP     2146    ;C34621  F!
+***
+FD05    MOV     C,H     ;4C     L
+FD06    MOV     L,A     ;6F     o
+FD07    MOV     L,L     ;6D     m
+FD08    MOV     H,L     ;65     e
+FD09    MOV     L,L     ;6D     m
+FD0A    RIM             ;20      
+FD0B    MOV     M,E     ;73     s
+FD0C    MOV     L,C     ;69     i
+FD0D    MOV     A,D     ;7A     z
+FD0E    MOV     H,L     ;65     e
+FD0F    RIM             ;20      
+FD10    <?>             ;28     (
+FD11    MOV     A,B     ;78     x
+FD12    STA     3635    ;323536 256
+FD15    DAD     HL      ;29     )
+FD16    NOP             ;00     ^@
+ 
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653 
+
+I'm unable to get it to run.  No variant seems to patch in the new himem to the
+needed address.
+
+I did have to make a couple of changes: 160 --> 128 in /.2 & /.8.  This
+corresponds to the change in the original LOMEM value (A000 on the 200, 8000h
+on the 100).
+
+I've also tried with the DCX HL in and out; Does not work either way.
+
+At the start, 64192 has 8000h in it, the original bottom address; I assume this
+is what you mean by one less than ads of first BA program.
+
+64430 is the location of the paste buffer.  Is this an acceptable result, or is
+another address translation needed?
+
+
+Fm: James Yi 73327,1653
+To: Phil Wheeler 71266,125 
+
+Oh yeah, 160 should be 128 for 100, thanks for catching that.
+
+8000h at 64192(chk for a 0 there) is correct if lomem space is zero, and
+ paste buffer is the right one if there are no other DO files.
+
+So, let's look at the remaining addrs.
+Insert this code at FCCF at see if it
+prints the same number entered for prompt:
+
+XCHG
+JMP print HL (18187d for 200)
+
+And test if 27501d is the correct call addr for inserting, by making a ML
+routine that calls it with HL loaded with addr of any DO file, and BC=3
+You should see that the first 3 chr are duplicated in that DO file.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653 
+
+James, I have not yet run the tests you suggest -- but the addresses
+have all been double checked from my 100 and 200 ROM dumps.
+ 
+I did find one that Jon copied into his sourc from the disassembly with an
+error. And there are the two 160 --> 128 changes.  Following is his ASM
+with those changes.  ALAS -- still does not work!
+ 
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653 
+
+That did it, it seems, James!  Just tested it and it works.
+
+I will make a loader and upload a BA loader for the M100 to DL7, and update
+Jon's source.
+
+
+Fm: Phil Wheeler 71266,125
+To: Jon Diercks 73327,2353 
+
+Jon, here is a version which seems to work, thanks to James (and some small
+things I found).  I will build a loader and put it in DL7.
+ 
+;LOMEM.100?
+; rebuilt by Jon Diercks
+;  using Jamess Yi's LOMEM.SRC and
+;  disassembly of SETLOW.CO
+        org     $fcc0
+start   disp    prompt
+        ent     start
+        call    $463e   ;input
+        rst     2       ;^C?
+        rz        ;was rc        <--------------******
+        dcx     hl
+        call    $08ec   ;de=bin val of ascii <hl>
+        lhld    $fac0   ;current lomem
+        mvi     a,125   ;was 160                     <-------------*****
+        add     e
+        mov     d,a
+        sub     h       ;h=new lomem
+        mov     b,a     ;b=new-current
+        mvi     c,0     ;only 256b blocks
+        mov     l,c
+        jnc     insert  ;if b-,del;+,ins
+delete  push    bc      ;keep neg. len val
+        mov     a,h
+        sub     d       ;len=abs(len)
+        mov     b,a
+        mov     h,d
+        call    $6b9f   ;masdel
+        pop     bc
+        jmp     adjust
+insert  call    $6b6d   ;makhol -- was $686d  <-------------*****
+        jc      start   ;restart if OM
+        dad     bc      ;hl=new lomem
+adjust  lda     $fbaf   ;end of unnamed .BA
+        add     b
+        sta     $fbaf
+        mov     a,h
+        sta     $fac1   ;lomem
+        sui     128     ;was 160                       <-------------*****
+        sta     $8000   ;ram bottom
+        jmp     $2146   ;reset pointers and exit?
+;
+prompt  dm      Lomem size (x256)
+        db      0
+;
+        end
+ 
+
+Fm: Phil Wheeler 71266,125
+To: Phil Wheeler 71266,125 
+
+Well -- maybe it works!  Just got a cold start.  But I am using 0MENU, which
+starts at 8001h (always) and may have some problems with LOMEM.
+
+Will try it some more.
+
+At least it did SOMETHING!
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653 
+
+Oops!  It did block out the memory.  Then on returning to this bank from
+another -- cold start!  This whether or not the bank software was intalled in
+that bank.  May be the pointer reset at the end is doing something bad.
+
+
+Fm: James Yi 73327,1653
+To: Phil Wheeler 71266,125
+
+Not likely, but possible...
+Make sure to reserve space larger than the bank software occupies, else
+part of it will be erased.
+How about DO files, are they all okay just after running it?
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653 
+
+This time I tried it with several DO files resident.  They were not affected.
+Then I ran it and set # = 0.  Tthen I could change banks, copy, come back and
+all was OK.  So then I set # = 7 and changed banks.  On coming back, it was
+wiped clean.
+
+It's possible that there is a pointer here used by PG Designs in the bank
+switch software (bombs even with 0MENU not installed).
+
+Odds are LOMEM.100 will work for people who don't use PG RAM bank.  I will
+upload it later with suitable warnings, and let others test it (since I always
+have 8 banks in my M100).
+
+
+Sb: LOMEM.100/ASM
+Fm: Phil Wheeler 71266,125
+To: Sysops 
+
+I have uploaded LOMEM.100 (BA loader) and LOMEM.ASM to DL7.  Most of the work
+was done by Jon Diercks and James Yi -- and to them goes the credit for all
+cold starts!!
+
+Seems to work in a single bank M100/102.  Also looks to be completely
+incompatible with PG Designs RAM bank switching software (not just 0MENU).
+
+Strictly in the beta-test category until it gets used a bit!
+
+
+Fm: RANDY HESS 73267,552
+To: Phil Wheeler 71266,125 
+
+Phil,James; Is there any way to move up 0MENU and let it provide the "roof"
+while we tuck things underneath: or add many REM lines to it alla Tony's
+MACROS? You've both outdone yourselves on this one. Regards, Randy p.s. And
+Phil, you wanted ME? to be the first to try it?? You, James and Jon lost me
+after the first few lines; but I'm learning, I'm learning...and to think that
+last munth I cudnt evun spel musheen langwage.
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552 
+
+The issue is not with 0MENU, but with the bank switching itself (even if done
+with BANK.BA).  But until someone really uses it in a one-bank machine, there
+could even be problems with THAT configuration.
+
+And 0MENU is not relocatable, even if that would help.
+
+Actually, the utility of LOMEM, when you have multiple banks to work with, is
+not likely to be big.  It is an interesting concept, but 0MENU seems to achieve
+the purpose. But not having used LOMEM, I may not understand its true (total)
+merits.
+
+
+Fm: Jon Diercks 73327,2353
+To: Phil Wheeler 71266,125 
+
+Well, I'm using it with a one-bank <32K> machine and I'm still having
+cold-start problems.  I need info on what ROM code is executed on power-ups
+because that's when the cold starts are occurring. Everything else seems to
+work fine.  Files are moved up properly.  Pointers adjusted, etc. but if I turn
+off and back on again....bye bye!  Back to 1900! Some flag somewhere must be
+getting set wrong  ...???
+
+
+Fm: RANDY HESS 73267,552
+To: Phil Wheeler 71266,125 
+
+Tony; but i'm lurning! Phil; Is 0MENU's "protection" method all that much more
+sophisticated than the concepts we've been working with over the last week, or
+do you think the combination of their method over/ underlaying your work is the
+culprit? As we've discussed, keeping regulary used programs only in one place
+IS a help, but if it's a choice between the benefits of all that 0MENU does,
+particularly with the multiple banks you have,then there's certainly no choice
+at all! (now if we could only move up 0MENU) Thanks for all the interest and
+advice Randy
+
+
+Fm: Phil Wheeler 71266,125
+To: Jon Diercks 73327,2353 
+
+Good feedback, Jon.  Now -- wonder what James has to say?  Is there something
+here that is different from the 200?
+
+
+Fm: James Yi 73327,1653
+To: Jon Diercks 73327,2353 
+
+Jon, is there a program that stores ML routines in rem lines?
+When they are moved up, those ML routines can't be run any more, since now they are at a different addr.  Maybe that's the problem.
+
+If not, try running Lomem without changing the original lomem size.
+  If you still get a cold start, that means we are doing something wrong with
+ the pointers.  If you don't, it could 
+mean that 100 has more pointers than 200 that have to be manipulated.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653 
+
+With my multibannk setup, if I run lomem and then re-run, specing 0, there are
+no later cold starts.  Seems to have to do with the VALUE being non-zero, not
+with runnign the program.
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552 
+
+Problem has nothing to do with 0MENU.  Cold starts occur whether 0menu is in or
+not -- and in a one-bank machine, according to Jon.
+
+
+Fm: James Yi 73327,1653
+To: Phil Wheeler 71266,125 
+
+How about if you entered other than 0?
+Such as (Peek 64193)-128, with 0menu installed.
+Doing that would not change lomem size, but I want to find out if the program 
+is assigning wrong values to pointers.
+
+If doing the above is ok, then maybe 100 has some other pointers that 200 
+doesn't.
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653 
+
+James, I don't understand the test you suggest. Please clarify.
+
+I have looked at the code again, and all translations look solid.
+
+Hmmmm...wonder it, at warm start up (pwr on or from another bank) the M100 goes
+thru a routine to initialize lomem to 8000h.  That would introduce an
+inconsistency.
+
+
+Fm: James Yi 73327,1653
+To: Phil Wheeler 71266,125 
+
+Well, Phil, 200 does the same thing that Mike describes, except that he didn't 
+mention that after returning from 7EE1, A register is added with [8000h], which
+means that we CAN lie to it just by poking 8000h, which is what I did.
+
+[for "that Mike describes" , and other "Mike-isms" see LOMEM4.THD]
+
+Disassembling 100 at 7D61 should look something like this:
+
+lda 62703(FAC1h)
+d=a
+call 39730(7EE1h); hl=actual lowest ram
+a=m  ; A=[8000h]
+add h; <--- here
+h=a
+shl 62702(FAC0h)
+cmp d
+jnz cold start
+
+
+So there isn't any diff there at least.
+Or is there?
+
+
+Fm: Phil Wheeler 71266,125
+To: James Yi 73327,1653 
+
+Well, here is what it looks like:
+ 
+lda    fac1
+mov    d,a
+call   7ee1
+cmp    d
+jnz    7de7
+call   f605
+mvi    a,00
+jnz    7d75
+dcr    a
+.....
+ 
+Not sure if it relates beyond a point or not.  There is no shld fac0 in the
+area.
+ 
+
+Fm: James Yi 73327,1653
+To: Phil Wheeler 71266,125 
+
+Then Mike was right, 100 IS different there and it is the culprit.
+
+I guess then there's not much more to discuss about LOMEM.100.. unless anyone
+ wants to keep pursuing it via hook method Mike suggested.
+
+ [See LOMEM4.THD for the continued "Pursuit of the Hook"]

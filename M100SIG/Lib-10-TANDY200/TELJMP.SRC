@@ -1,0 +1,79 @@
+;TELJMP.200
+;James Yi 73327,1653  June 28, 1988
+;Lets you jump into TERM in an empty bank, for maximum download space.
+;After the connection is made,
+;use DIRACC.200 to exit to Basic,
+;then RUNM"TELJMP" <ENTER>
+;To jump to the previous bank,
+;press <SHIFT> as you hit <ENTER>
+
+cls	equ	20301
+lcdfrm	equ	65196
+termo	equ	638BH
+setbxf	equ	1dddh
+endbxf	equ	1dd5h
+setstt	equ	191DH
+stat	equ	EF3CH
+bnkxfr	equ	2fc5h
+pkbank	equ	9bb0h
+inxh	equ	41A8H
+stkbot	equ	0f650h
+bkgff	equ	64790
+pwrbnk	equ	$eef5
+
+BEGIN:	di
+	call	setbxf
+	in	d8h
+	out	90h	;copy from
+	mov	b,a
+	lda	bkgff
+	rar		;SHIFT=backward
+	mov	a,b
+	jc	back
+	adi	4	;forward
+	ani	0ch
+	cpi	0ch
+	jnz	l3
+	xra	a
+	jmp	l3
+back	sui	4	;backward
+	ani	0ch
+	cpi	0ch
+	jnz	l3
+	mvi	a,8
+l3	out	91h	;to this bank
+	push	psw
+;set bank on power up
+	lxi	h,pwrbnk
+	mvi	b,0	;poke bank #1
+	mov	d,a
+	call	pkbank
+;copy STAT to destination bank
+	lxi	h,stat
+	mov	d,h
+	mov	e,l
+	lxi	b,7
+	call	bnkxfr
+;copy switching routine
+	lxi	h,roubeg
+	mov	d,h
+	mov	e,l
+	lxi	b,rouend-roubeg
+	call	endbxf
+;bank switching routine
+roubeg:	pop	psw
+	lhld	lcdfrm
+	out	0d8h
+	shld	lcdfrm	;adjust LCD frame shift
+	lhld	stkbot
+	sphl		;adjust stack
+	call	cls
+	lxi	h,stat-1
+	rst	2
+	cnc	inxh
+	call	setstt
+;jump into on-line mode:
+	JMP	termo	;jump into term
+
+rouend:
+	END

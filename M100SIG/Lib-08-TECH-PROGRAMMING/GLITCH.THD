@@ -1,0 +1,251 @@
+
+	(c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: LOUIS SELF
+To: All
+
+       My T-200's DataPac got it's memory scrambled.  Out of the original 90
+files only 44 are on the main menu now and about eight of those file names
+have been changed to portions of previous file contents, such as "his op.er".
+Some of the file names are invalid, such as ",177,1.94" (how's that for a file
+name?).  Moving the cursor over one of those causes the 200 to beep endlessly
+until the RESET button is pressed.  Also most of the files are scrambled,
+containing portions of other files.
+
+       Any idea of what caused it?  I had been using the 200 regularly from
+both battery and automobile adaptor, so the DataPac should have been charged.
+I did have it sitting in the car for a few hours at about 100 degrees (not in
+direct sunshine).
+
+		- 0 -
+
+Fm: Paul Globman
+To: LOUIS SELF
+
+Louis - Sorry to hear about your Datapac scramble.  It's hard to say what
+caused it, from here <grin>... could be anything from a corrupt ML program
+sending improper data to an I/O port, to a bad call (improper address) into
+the ROM, which could have the same disasterous results.
+
+I recall a message from you about I/O port access to the unit... were you
+experimenting, or have any programs using those INP's or OUTs?  I believe the
+calls to the Node ROM have been proven safe.... Paul
+
+                - 0 -
+
+Fm: LOUIS SELF
+To: Paul Globman
+
+       No, Paul, I wasn't experimenting with anything other than the standard
+ROM calls provided by Node.  I think I have enough of a handle on the DataPac
+organization to not mess things up that way.
+
+       What can you tell me about how the DataPac keeps track of its files?
+
+       Here's some of what I have found out when I did an ASCII dump to my
+printer.  I found that a file's name is in ASCII as the first 8 chracters of
+the DataPac sector on which the file begins.  The 9th and 10th bytes represent
+the length of the file.  There must be someplace where next-file information
+is kept, in addition to where the next-sector information is kept with a file
+that occupies more than one sector.
+
+                - 0 -
+
+Fm: RANDY HESS
+To: LOUIS SELF
+
+Loius,
+  One other culprit may be the "100' +" temperatures you subjected the
+unit too.  If you examine the "internal leakage(self-discharge)"
+characteristics of NiCad or Lithium batteries you quickly see that the
+life-cycle literally "falls off a cliff" when their internal temps
+exceed 85-90' F.  Since any mass has whats known as "thermal inertia" we
+can sometimes get away with using our machines for a while in hot
+weather because all the parts don't really become INTERNALLY heated to
+dangerous levels but if you really "cooked" your machine, then I
+wouldn't be a bit surprised if the battery levels in the Node or M100
+reached levels too low to function.
+  In the manual for the new Node RAMPAC the "lifetime" lithium battery used to
+keep the unit alive has its life reduced from 9 yrs to 3 years by simply
+increasing the operating temp to 95!
+  Also other on board components begin to exhibit funny characterstics when
+running at high temperatures: and the same thermal inertia which lets us run
+these units occasionally in hotter environments works the other way after you
+heat up all the parts to
+ 100+!  It takes a while for everything to cool down.  Not for nothing are
+many of the new supercomputers cooled with liquid nitrogen!
+ Keep Cool!
+
+                - 0 -
+
+Fm: LOUIS SELF
+To: RANDY HESS
+
+       Heat sounds the  most likely of the ideas here so far.  The Node
+instructions say that the the nicads will last 3 months warm and 8 months
+cold.
+ I wander how warm that means?
+
+       Do nicads give discharge memory problems in memory backup applications?
+
+       Living in Phoenix, as I do and using my 200 on camp outs and trips to
+the lake, guess it is time to get out the ice chest and keep the 200 with
+frozen gell when not in use.
+
+                - 0 -
+
+Fm: Wilson Van Alst
+To: LOUIS SELF
+
+   I wonder about the wisdom of using the auto adapter.  If it's one
+especially designed with filtering for computers, you're probably OK.  But if
+you use a $5 unit that just changes 12v to 6v, it won't do much to keep AC
+"spikes" out of the current -- and they can play havoc with low-power CMOS
+computer chips.
+
+                - 0 -
+
+Fm: LOUIS SELF
+To: Wilson Van Alst
+
+       I have been assuming that the 200 has some sort of voltage regulator
+built in.  Correct?  The little 110v adaptor that Radio Shack sells for the
+102/200's puts out well over 6 volts.
+
+       My auto adaptor is the little $13 Radio Shack cat #273-1650.  Do you
+think it would be a good idea to make my own regulator?  About all it would
+take, I suppose, would be a 7806 to regulate the 12v down to 6v.
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: LOUIS SELF
+
+   The T200 does have a fairly sophisticated voltage regulator -- one that
+converts DC to high-frequency AC, spits it though a transformer, and bridges
+everything back to DC again.  With a little bit of negative feedback, the
+circuit "knows" how much DC current to draw on the input side to maintain a
+constant output voltage.
+   I don't know how good this circuitry is, however, at protecting against AC
+ripples and spikes.  Tandy cared enough about this to include a simple
+bridging capacitor (2200mf @10V electrolytic) to filter its AC adapter for
+these computers -- while it sells unfiltered adapters for most 6v items like
+cassette recorders.  I'd recommend adding at least that much protection to
+your auto adapter.  Actually, I'd recommend substantially more since I'm very
+mistrusting of auto electricity; but that's a personal prejudice.
+   There is one other item: I don't know whether the Node takes any of its
+operating power from the computer.  If it does, you'd have to ask where the
+"tap" is made -- on the input or output side of the computer's voltage
+regulation circuit?  In other words, it's possible that your T200 is getting a
+nice smooth electron stream, while the Node is sailing in rougher waters.
+(This seems unlikely, but you never know till you ask.)
+
+		- 0 -
+
+Fm: LOUIS SELF
+To: Wilson Van Alst
+
+       Thanks for the education on power supplies, Wilson.  You said that you
+would recommend substantially more protection for the 200 operating from the
+cigarette lighter.  Would a 7806 regulator work directly from the 12 volts
+(13.7 with engine operating)?
+
+       Where does the Node get its power from the computer?  From the systems
+bus, of course, but only when the computer is turned on.  The question is,
+does the bus get its power pre or post regulation!  Who knows?
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: LOUIS SELF
+
+   The 7806, to me, would be better than Tandy's simple resistorized auto
+converter (assuming that's what you have).  I would still want to filter the
+output with at least a good-size capacitor, and preferably some inductance as
+well.
+   You won't need this kind of protection if you follow Stan's advice and use
+the computer only when the car =isn't= running.
+
+                - 0 -
+
+Fm: Stan Wong
+To: LOUIS SELF
+
+If your car engine is not running, you can use the 12V power to run the T200
+(with the appropriate 12V-6V converter).  I wouldn't recommend doing it with
+the engine running.
+
+I solved the problem by using my camcorder battery.  It has the standard
+cigar-lighter socket and puts out 12V.  I simply use that battery when I need
+additional power while on the move.
+
+		- 0 -
+
+Fm: LOUIS SELF
+To: Stan Wong
+
+       You have an interesting solution to the power problem, Stan.  You said
+you would not recommend using the cigarette lighter with the engine running.
+Do you know if a 7806 regulator would protect the system?
+
+		- 0 -
+
+Fm: Stan Wong
+To: LOUIS SELF
+
+I'm not familiar with the 7806 regulator (or any other for that matter). Car
+power systems are too glitchy when running that it's not worth the risk for
+me.  The camcorder battery solves my problem although it adds additional space
+and weight.  Since I already own the battery, the incremental cost of using it
+was zero.  Otherwise I would use something like a lantern battery.  One of
+those should power a T200 for a long, long time.
+
+		- 0 -
+
+Fm: Tony Anderson
+To: Stan Wong
+
+One user, some time ago, reported 300 hours use on a 6-volt lantern battery.
+I suspect he probably used the alkaline model, which costs about twice as much
+as a set of AA alkalines, but still, 15 times the use for twice the money
+isn't bad.  A "standard" lantern battery is (or has been) available at K-Mart
+for $2.39, which is less than a set of AA's, and would certainly power the
+portable for at least a hundred hours or so... my estimate.
+
+		- 0 -
+
+Fm: RANDY HESS
+To: Tony Anderson
+
+..and a lantern battery is not really a great deal larger than the AC adapter:
+I've been using them for years.  Good advice!
+ (and with two plugs I can run both the TDD and the 200 from the same "clean"
+power.)
+
+		- 0 -
+
+Fm: RANDY HESS
+To: LOUIS SELF
+
+ In addition to the 50-100 mfd cap/inductance filter Van suggested you should
+probably include a non "electrolytic" .1-1mfd cap.
+ in parallel with the larger cap. because electrolytic caps are notoriously
+poor filters of just the kind of high-freq.
+ energy that you want to be sure to remove.  I would suggest putting filters
+in "front" of any regulating device as well as on the output circuit.  Auto
+electrical systems are famous for some horrendous (30-40 vpp) Radio Frequency
+transients that could well "fry" the 7806 junction if not removed!
+ Good luck (and why not write up the filter/regulator module when done?!)
+
+		- 0 -
+
+Starting message #: 25526   Starting date: 30-May-90  21:15:12
+ Participants:
+LOUIS SELF 74076,1273
+Paul Globman 72227,1661
+RANDY HESS 73267,552
+Wilson Van Alst 76576,2735
+Stan Wong 70346,1267
+Tony Anderson 76703,4062

@@ -1,0 +1,77 @@
+10 cls
+20 dim x(100),y(100)
+30 print tab(10);"Linear Regression"
+40 I=0
+50 print "To end input of X,Y data type -1,-1."
+60 Let I=I+1
+70 print "X,Y of point";I;
+80 input X(I),Y(I)
+90 if X(i)<0 then goto 110
+100 goto 60
+110 I=I-1
+120 gosub 1000
+130 print:input "Do you want to review the data";Q$
+150 if Q$="N" or Q$="n" then 2000
+160 print:print "Data as input (use <pause> to stop"
+165 print "and start the display):"
+170 print " #";tab(10);" X";tab(20);" Y"
+180 for S=1 to i
+190 print s;tab(10);x(s);tab(20);y(s)
+195 next s
+200 input "Any (other) changes";E$
+210 if E$="N" or E$="n" then 120
+220 input "Change which data line";D
+225 if d>i then goto 220
+230 input "New X,Y values";X(d),y(d)
+240 print "Changes accepted"
+250 goto 200
+1000 rem calculation of Linear regression statistics
+1010 J=0:K=0:L=0:M=0:R2=0
+1020 FOR Z=1 TO I
+1030 J=J+X(Z):K=K+Y(Z):L=L+X(Z)^2:M=M+Y(Z)^2
+1040 R2=R2+X(Z)*Y(Z)
+1050 NEXT Z
+1060 B=INT(((I*R2-K*J)/(I*L-J^2))*10000)/10000
+1070 A=INT(((K-B*J)/I)*10000)/10000
+1080 J=B*(R2-J*K/I)
+1090 M=M-K^2/I
+1100 K=M-J
+1110 R2=J/M
+1120 PRINT
+1130 PRINT "Number of points =";I
+1140 print "               r =";INT(sqr(R2)*10000)/10000
+1150 print "             r^2 =";int(R2*10000)/10000
+
+1160 print "S.E. of estimate =";int(sqr(K/(I-2))*10000)/10000
+1170 print "               Y =";A;"+(";B;"*X)":print
+1180 print "Interpolation (or enter):"
+1190 C$="":input "Value of X";C$
+1200 if LEN(C$)=0 then return
+1210 print "Y=";a+b*VAL(C$)
+1220 goto 1190
+2000 rem write data to file.do
+2001 print:input "Add more data";O$
+2002 if O$ = "Y" or O$="y" then 60
+2010 PRINT:print "Save data and analysis";
+2020 print:input Q$
+2030 if Q$="N" or Q$="n" then 3000
+2040 input "Name of data file";A$
+2050 let A$="RAM:"+A$+".DO"
+2060 OPEN A$ FOR OUTPUT AS #1
+2070 PRINT #1,I
+2080 FOR Z=1 TO I
+2090 PRINT #1,X(Z),Y(Z)
+2100 NEXT Z
+2110 PRINT #1,SQR(R2)
+2111 PRINT #1, R2
+2112 PRINT #1, SQR(K/(I-2))
+2113 PRINT #1, A
+2114 PRINT #1, B
+2120 PRINT:PRINT "Data stored in the following format:"
+2130 print "Number of points, XY pairs, r, r^2,"
+2140 print "S.E. of estimate, intercept, and slope."
+3000 PRINT:print "Do you want to do another analysis";
+3010 input Q$
+3020 if Q$="y" or Q$="Y" then CLS
+3025 if Q$="y" or Q$="Y" then 30
+3030 end

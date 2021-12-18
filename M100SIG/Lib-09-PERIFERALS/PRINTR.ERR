@@ -1,0 +1,53 @@
+#: 37500 S1/General/Help
+    16-Sep-91  04:30:13
+Sb: #Print Screen Query
+Fm: Ches Looney 73016,1336
+To: SYSOP and ALL (X)
+
+Please help an ex-100 (I'm sorry, but just had to have compatibility with PCs
+and clones at work) user.  A friend asked me for help in printing a DO file
+from the 100 - seems that pressing the PRINT button printed only the screen
+contents (I know that's normal) and also set the printer to compressed print.
+I pulled my old 100 back into service and duplicated that phenomenon, but have
+no recollection of that from earlier use.  If it is normal, why was the 100
+implemented to send a printer compressed-print code when printing the screen
+content of a DO file?  Thanks for response(s) and Best Regards, Ches.
+
+
+Fm: Paul Globman 72227,1661
+To: Ches Looney 73016,1336
+
+The text that is on your screen when editing a DO file, is also duplicated in
+the LCD buffer area (another portion of RAM).  When you use the PRINT SCREEN
+function, it is this buffer that gets printed, not a portion of the text file.
+
+As this buffer contains what is on the LCD, it has in it the character that is
+used to represent the CRLF.  This character, which appears as a black, left
+pointing-triangle, is a chr$(143) (GRPH-e) and although the chr$(143) is not
+part of your DO file, is part of the data in the LCD buffer.
+
+It gets sent as part of the print screen routine, and this is the character
+that puts your printer into condensed mode. Many printers which take control
+codes as print commands, also accept the command + 128 as well.  So the
+chr$(143) will work like the chr$(15) / (CTRL-O), which puts many printers
+into condensed mode.
+
+
+Fm: Tony Anderson 76703,4062
+To: Ches Looney 73016,1336
+
+In order to print the entire file, the proceedure it to press SHIFT-PRINT,
+that is, hold down the SHIFT key and press the PRINT button at the same time.
+
+Paul has given you an excellent description of what causes the problem, but
+it's not "universal", some printers do it, some don't - it depends on how the
+printer is configured, what command set it works with, etc.  But it __does__
+happen with some printers, notably those that are Epson-compatible.
+
+
+Fm: Alan Rowberg 76703,4421
+To: Ches Looney 73016,1336
+
+The solution is to not print the LCD screen, but download one of the print
+formatter programs from the libraries here and use that program to print
+instead.  It will get around the compressed print problem.

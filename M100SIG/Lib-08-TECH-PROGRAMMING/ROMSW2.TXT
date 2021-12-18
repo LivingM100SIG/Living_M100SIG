@@ -1,0 +1,379 @@
+ROMSW2.TXT
+
+
+         ROM switching, extRAM and the PG Designs SAFE
+                             PART II
+
+
+These two files are a compilation of several threads of correspondence
+on how to prevent cold starts when switching among ROMs (and ROM images
+in the extRAM).  Much of the discussion concerns the additional
+complications introduced by using the PG Designs SAFE ROM bank.  The
+beginning of the discussion is in ROMSW1.TXT
+
+
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Tony Anderson            76703,4062     # -25286, *No Reply*
+X To:  Peter Ross               72027,3653     Date: 4/14/92 23:48:12
+Reply to:# -25288 Next:# -25264
+
+Those particular areas need to be remapped, because those are the addresses
+that are changed by various commercial ROM's.  Apparently, that area is a set
+of machine language instructions that provide access to the option ROM, and
+different manufacturers use different techniques to handle the process.
+Apparently, as each ROM is initialized, it copies it's own handling routine
+into that area.  Remapping the original data from the ROM restores the
+cold-start routine so the next ROM has a "virgin machine" in which to load.
+
+Yes, technically, that routine could be used to remap any area, but it is my
+understanding that there is no single block of ROM which holds all the data
+that goes into the reserved area consecutively.  Some of the addresses in upper
+RAM contain flags, pointers, and other bytes that are computed as the result of
+ROM operations, then poked into their slots, not "copied intact" from ROM.  I
+have no specific data on what goes where, so anyone experimenting is on their
+own.
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Tracy Allen              76670,326      # -25264, *No Reply*
+X To:  Peter Ross               72027,3653     Date: 4/16/92 03:18:18
+Reply to:# -25288 Next:# -25263
+
+Dear Peter,
+
+   The initialization routine (part of cold start, not warm start) maps ROM
+data from 858d through 1001d up to RAM from 62960d through 63103d.
+
+A lot of these locations are hooks that can be grabbed by different ROMs or by
+other m/l.  For example, the background timer hook at 62975 is powerful,
+because by using it a ROM or CO can get a back door view into the operation of
+the system.  But if the routine that the hook points to disappears, or becomes
+unprotected, it's a time bomb.
+
+The bytes mapped up from 880 to 915 include a routine that _automatically_
+moves the ROM name of a properly configured ROM up onto the menu as a ROM
+trigger (file type F0h).  That routine was highly flawed (except for systems
+where you want the process of installing the ROM to wipe out the memory!).
+Most all of the general-market ROMs skipped that _automatic_ feature and had
+the user type in CALL63012 to activate the ROM.  The ROM then would initialize
+all its hooks and install its own trigger file.
+
+The best-designed ROMs provide a way for you to turn them and to restore all
+their hooks.  Like KILL"UR2"  or KILL"WORD+"  for TS ROMs, or the CALL63012,0,1
+for PCSG ROMs.
+
+There is also the famous sequence at 63012, which is the actual ROM trigger
+routine. The image of that in ROM is 911, so ROMs like the ROM2 could be
+activated by a memorable CALL 911, with no danger of corruption of the RAM
+image.  The ROM had to be especially programmed for the program counter to
+suddenly materialize at location 916 in option ROM.
+
+ROMs always need a scratchpad ROM for bankswitching & for handling interrupts.
+(You do have Mo's book, don't you!?)   _All_ ROMs use the space between 62982
+and 63011 for scratchpad.  They usually also modify the code from 63012 to
+63013.  So if it is not set back to its original value, it sometimes can't
+trigger a new ROM you put in when you CALL63012, or worse!
+
+ROMs all in one family (all PCSG, all TS)  use essentially the same scratchpad
+format.  Switching within the family without deactivating one ROM before
+starting another doesn't usually cause a problem.  (There may be minor
+annoyances, like multiple trigger files on the menu)
+
+I don't know if that says anything thay could be useful to you?
+-- Tracy :(eme):
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Tony Anderson            76703,4062     # -25261, 01 Reply
+  To:  Tracy Allen              76670,326      Date: 4/16/92 04:32:13
+Reply to:# -25263 Next:# -25247                Reply at:# -25246
+
+A wealth of information, Tracy.  Thanks.  Looks like we'd better save this
+thread.
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Peter Ross               72027,3653     # -25244, 01 Reply
+X To:  Tracy Allen              76670,326      Date: 4/17/92 20:21:24
+Reply to:# -25263 Last Reply                   Reply at:# -25233
+
+Actually, no, I don't have Mo's book.  BASICally, I'm machine-language
+illiterate.
+
+Anyway, your message suggests to me that perhaps Tony's (revised) REMOVE.BA
+routine should be expanded to remap 62982-63103 (not just 62982-63017) to
+include the scratch pad and the 63012 & 63103 addresses, which you said are
+also critical.
+
+What say you?
+
+Pierre
+
+Subj:  Switch ROMs->Cold Start                 Section: The Soapbox
+From:  Tracy Allen              76670,326      # -25265, 01 Reply
+X To:  Peter Ross               72027,3653     Date: 4/16/92 03:18:31
+Reply to:# -25308 Last Reply                   Reply at:# -25243
+
+Dear Peter,
+
+Which ROMs are giving you problems?  All of them, or just when switching from
+brand X to brand Y?  (Buicks to Beemers--buy yourself metric tools.  Camels to
+Kools--its _your_ problem!)  You definitely have to be more careful when
+switching brands than when going between members of the same family.  But some
+people are switching ROMs between, say UR2 & Super, with no stability problems.
+
+Do the cold starts occur exactly when switching ROMs, or do they occur more
+sporadically, at random moments in time in the multiROM environment?  I guess
+my question is, how do you know specifically that it is ROM switching that
+causes the cold starts?
+
+-- Tracy :(eme):
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Peter Ross               72027,3653     # -25247, 01 Reply
+X To:  Tracy Allen              76670,326      Date: 4/17/92 20:21:29
+Reply to:# -25263 Next:# -25244                Reply at:# -25234
+
+Well, to tell you the truth, it's been a while since I've tried to do too much
+switching around, partly because I've been using my DOS box more and partly
+because the cold starts were making me so nervous I just gave up trying to
+switch very much.  I tried calling 32454, and running Tony's utility
+religiously, but the crashes continued.
+
+So that everyone knows what hardware we're talking about, my current setup
+consists of a 32K M100 with an additional 96K courtesy of a PCSG RAM expansion,
+and a SAFE with TS-RANDOM, Cleuseau/ROM2,   SuperRom, a write protected extRAM
+(used to store often used utilities), and T/WORD+Sardine (4 ROM set).
+
+The biggest cold start generator is Sardine, which seems to be incompatible
+with everything.  Switching back and forth between Cleuseau and the extRAM when
+working on the bank of programs in the extRAM seems to be okay, but throwing SR
+into the picture leads eventually to a crash.  As I recall, the crashes
+generally don't occur immediately.    They're more like a time bomb; I never
+know exactly when they're going to occur.  I guess I know it's the ROM
+switching that does it because I'm not doing anything else that's dangerous.
+
+Perhaps there is some interaction with the PCSG RAM expansion like the one with
+the NODE that Paul discusses in his letter that appeared in the 2/89 issue of
+P100.  There also may be some conflict with the SAFE's ROM switching code.
+
+Does this suggest anything to you?
+
+Pierre
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Tracy Allen              76670,326      # -25234, *No Reply*
+X To:  Peter Ross               72027,3653     Date: 4/18/92 17:02:20
+Reply to:# -25247 Last Reply
+
+Dear Peter,
+  It suggests to me that you are a "power user" and we all know how dangerous
+that can be!
+  -- Tracy
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Peter Ross               72027,3653     # -25245, 01 Reply
+X To:  Paul Globman             72227,1661     Date: 4/17/92 20:21:16
+Reply to:# -25341 Last Reply                   Reply at:# -25240
+
+Paul,
+
+Some time ago, when you were nice enough to create that 26 byte DOS100.CO
+routine that automatically switches to the TS-DOS bank in my SAFE, you said
+that PG Designs's ...
+
+"ROM.BA program can cause problems and I suggest you use the ROMPAK program,
+which should correct the oversights in ROM.BA."
+
+You also said that ...
+
+"ROMPAK ... does not address the unique SuperROM startup,"
+
+and ...
+
+"The ROMPAK program may also offer an occasional problem with a multi-RAM bank
+setup, because the ROM and RAM switching use the same i/o port.  So when you
+switch ROMs there may be some conflict in port configuration."
+
+So, first, what are ROM.BA's oversights?  Second, does ROM.BA address
+SuperRom's trigger files any better than ROMPAK?  And third, does either Tony's
+routince or CALL 32454 solve the i/o port conflict, or is that yet another
+hurdle to overcome?
+
+Pierre
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Paul Globman             72227,1661     # -25240, *No Reply*
+X To:  Peter Ross               72027,3653     Date: 4/18/92 04:30:14
+Reply to:# -25245 Last Reply
+
+Pierre - FIRST, one oversight in ROM.BA is that it does not make the CALL
+32454, which ROMPAK (I believe) does.
+
+SECOND, neither ROM.BA nor ROMPAK properly deal with the unique requirement of
+SuperROM, and I don't believe the problem was of a serious nature.  I seem to
+recall that when switching to the SuperROM, an unwanted filename was imposed
+upon you, but you could back out of Super and re-enter the ROM via a valid
+trigger file.  Nothing serious, but annoying nonetheless (at least it wasn't
+serious in the Tandy 200).
+
+THIRD, neither Tony's routine (which I am not very familiar with) nor the CALL
+32454, deal with bank switching i/o port conflict.
+
+The word "conflict" may not really convey the true nature of the problem.  To
+switch banks, you send a byte to a particular i/o port (E8h).  The
+configuration of that byte determines the RAM or ROM bank the M100 will switch
+to.
+
+The software that switches RAM banks, was not designed to consider that
+multiple ROMs might have been used in different banks, leaving hooks in place
+when switching to another RAM bank, and perhaps a different active option ROM
+when returning (a potential time bomb).
+
+And yes, there are probably other problems to overcome.  I just don't know
+enough about the M100 multi-RAM bank setup to point out these problems, or
+offer complete detailed support..... Paul
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Tracy Allen              76670,326      # -25233, 01 Reply
+X To:  Peter Ross               72027,3653     Date: 4/18/92 17:03:07
+Reply to:# -25244 Last Reply                   Reply at:# -25207
+
+Dear Peter,
+  It would be safe to reset all the stuff between 62960 up to 63103 back to the
+default values brought up from ROM.  However, that is overkill.  It's best to
+reset only the areas that are actually altered by the ROM in question.
+Otherewise, all other CO programs you have that use hooks in that area will
+also have to be reinitialized. Maybe that is not too high a price to pay for
+the security of clean ROM switching.  It shouldn't be hard to write a short
+program in BASIC that compares the default values in ROM to the current value
+in RAM, and prints a report of all the differences.  Then you could initialize
+the system area, install and activate a ROM, and then run the analysis program
+to see what areas were affected.  The nagging suspecion would be that there is
+an additional byte lurking somewhere in the system RAM that the ROM developer
+decided to co-opt and not tell anybody about!
+  -- Tracy
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Peter Ross               72027,3653     # -25207, 01 Reply
+X To:  Tracy Allen              76670,326      Date: 4/19/92 23:16:11
+Reply to:# -25233 Last Reply                   Reply at:# -25165
+
+Hi Tracy,
+
+I tried a variation on the experiment you proposed.  I PEEKed the codes from
+62960-65535 out the serial port into my DOS box after installing each of my
+ROMs.  I then loaded each file into WordPerfect and did a document compare.  It
+turns out that the ROMs change the contents of addresses all over the place in
+the system area, not just between 62960-63103, and not just in the ALT LCD
+buffer, which we know some ROMs use.
+
+It also turns out that using Tony's routine to reset the addresses between
+63018-63103 screws up something or other if you're running a program in BASIC.
+Specifically, I got an unlisted line number error in a line that pointed to a
+valid line number when the routine ended and tried to RETURN control to another
+line.  Oh well.  So you're right,    there are _lots_ of additional bytes
+lurking in system RAM that the ROM developers co-opted.
+
+One more piece of trivia.  Among other areas, some of the ROMs alter 65534 and
+65535.  It turns out that PCSG's RAM expansions use these addresses for bank
+switching - at least in the one liner that you use when you don't have RAM+
+installed.  This and Paul's comment about an i/o port 'conflict' at E8h (232d)
+sound like serious trouble.  Do you have any words of wisdom on this point?  Do
+you think things will be easier with the Jumbo extRAM?
+
+Pierre
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Tracy Allen              76670,326      # -25165, 01 Reply
+X To:  Peter Ross               72027,3653     Date: 4/23/92 04:11:18
+Reply to:# -25207 Last Reply                   Reply at:# -25132
+
+Dear Peter,
+  Some of those changes you saw would be due, _not_ to installing the ROM, but
+to the process of returning to the MENU and running your BASIC scan program.
+There would be changes in the screen buffer and in the altLCD buffer (menu
+selection uses high bytes in altLCD) and also there would be changes due to
+operation of the clock interrupts etc.  Running BASIC would change lots of
+system locations.  A m/l program would change less.  But I guess it's not easy
+to separate out the changes that are due to the ROMs per se.
+
+  You mentioned that resetting the area from 63018-63103 causes your BASIC
+program to lose its place.  The current line number for a running BASIC program
+is stored at 63098, and there are other BASIC pointers in that area of memory.
+Certainly resetting them from a running BASIC program would have the effect you
+noted.  Lots of the locations are documented in Covington and in the model T
+books.
+
+   I don't understand the comment about the conflict at i/o port 232d, re the
+problem with locations 65535, and RAM+??
+
+  What role does the extRAM play in this?  I've kind of lost track of how
+extRAM fits into your system.  You said that most of your cold start problems
+occur when you use the Sardine 4-rom set, which I believe you have in the Safe.
+You have an archive of your own files in the extRAM, not a ROM image.  When you
+use the extRAM, do you switch banks, or do you use the other file and data
+commands?  The XR4 will be about the same in the way it handles data.  It will
+have a write-protect feature in software, but I don't see how that affects what
+you are doing.  hmmm..
+  -- Tracy
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Peter Ross               72027,3653     # -25132, 01 Reply
+X To:  Tracy Allen              76670,326      Date: 4/24/92 23:25:14
+Reply to:# -25165 Last Reply                   Reply at:# -25108
+
+Hi Tracy,
+
+My comment about the i/o port relates to something Paul said in message #40296:
+
+"The word "conflict" may not really convey the true nature of the problem.  To
+switch banks, you send a byte to a particular i/o port (E8h).  The
+configuration of that byte determines the RAM or ROM bank the M100 will switch
+to.
+
+"The software that switches RAM banks, was not designed to consider that
+multiple ROMs might have been used in different banks, leaving hooks in place
+when switching to another RAM bank, and perhaps a different active option ROM
+when returning (a potential time bomb)."
+
+I'm not real hep on stuff at this level, but I read him to be saying that both
+the RAM banks and the ROMs are sending conflicting instructions to the same i/o
+address.  Also, (and independently?)  some of the changes that I discovered in
+system memory that were induced by installing various ROMs are at precisely the
+same addresses that are used to switch between PCSG's RAM banks.
+
+As you said, I have an archive of my own files in the extRAM, not a ROM image.
+My use of the extRAM is mostly confined to the CALL63012'+  command to bring
+programs into RAM.  On the whole, the extRAM has been very troublefree; my cold
+starts seem to originate elsewhere.  Thus my hunch (and hope) is that if I
+scrap the SAFE and go with my bank of files and a couple of ROM images in XR4,
+I may have an easier time than I'm having now _and_ a lighter computer.
+
+Pierre
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Tracy Allen              76670,326      # -25108, 01 Reply
+X To:  Peter Ross               72027,3653     Date: 4/26/92 01:35:25
+Reply to:# -25132 Last Reply                   Reply at:# -25013
+
+Dear Peter,
+
+  I can see that if you install a ROM while a first RAM bank is active, then
+swap to a new RAM bank, then install a different ROM, then swtich back to the
+first RAM bank, there could be trouble.  The first RAM bank thinks the first
+ROM is still installed.  When one of the hooks into that ROM is called, BAM,
+Goldilocks is there, not the little Bear, and her reception is icy.
+  The four ROM Sardine runs _only_ from the booster pak, doesn't it?
+-- Tracy
+
+Subj:  Switch ROMs->Cold Start                 Section: Peripherals
+From:  Peter Ross               72027,3653     # -25013, *No Reply*
+X To:  Tracy Allen              76670,326      Date: 4/30/92 22:23:17
+Reply to:# -25108 Last Reply
+
+There are two versions of the 4-ROM Sardine.  One for the BP and the other for
+the SAFE.
+
+Maybe what I should do is set up an IPL program to clean up my RAM banks each
+time upon entry using Tony's REMOVE.BA routine.  What do you think?
+
+Peter

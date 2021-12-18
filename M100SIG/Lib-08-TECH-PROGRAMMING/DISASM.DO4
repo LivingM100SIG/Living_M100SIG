@@ -1,0 +1,134 @@
+Documentation for DISASM.PW4
+----------------------------
+
+DISASM.PW4 is a menu-file disassembler for the Model 100/102.  It disassembles
+a file on the M100 menu (no need to load in running memory) and produces a
+Custom Software compatible source (well, partly!).  Editing line 450 with T200
+directory info should produce a 200 version.
+
+1. Use
+
+DISASM.PW4 produces an SRC file which is almost assembly ready.  Each line has
+a label and all have tabs where needed.  But work will still be needed:
+
+  1) Most disassemblers will not deal with assembler directives, instead
+     trying to disassemble them into instructions.  This one is no exception.
+     You really must study a listing with the HEX codes for this assessment;
+     you can get such a listing with DISASM.PW2, which produces a "raw"
+     disassembly (no tabs, labels, etc.).
+
+  2) The labels need to be put into the operand column as appropriate.  Where
+     a $XYZT matches an Lxyzt somewhere in the disassembly, you should (almost
+     always!) replace the '$' with an 'L'.
+
+  3) Excess labels can be removed to reduce the ASM size.  These most all
+     labels not used in an operand after step (2).
+
+
+2. Example
+
+Following is a disassembly of DIRACC, with comments for constructing a source.
+Note the (off-line!) use of a raw disassembly listing from DISASM.PW2 to find
+messages and such.  And a menu version of DIRACC.CO  was created by 
+modifying DIRACC.PW2 for the purpose of this exercise.  The following
+listing is from DISASM.PW4, and contains tabs (unless you expanded 
+them on download).
+
+
+LF558#  POP     H       ;
+LF559   CALL    $2C62
+LF55C   CALL    $4231
+LF55F   JMP     $5468   ;no labels to here
+;***
+LF562#  CALL    $F5AC   ;-->LF5AC
+LF565   CALL    $6C7F
+LF568   LXI     H,$0000
+LF56B   SHLD    $F652   ;hi ram (not a label)
+LF56E   JMP     $6C4F
+;***
+LF571#  CALL    $F5AC   ;-->LF5AC (again!)
+LF574   CALL    $4222
+LF577   LXI     H,$F587 ;-->LF587 (looks like it may be a msg, but isn't)
+LF57A   SHLD    $F652   ;hi ram again
+LF57D   LXI     H,$5E22
+LF580   CALL    $5A7C
+LF583   XRA     A
+LF584   STA     $F650   ;another hi ram address
+LF587#  CNZ     $4229
+LF58A   CALL    $5D53
+LF58D   LXI     H,$5E15
+LF590   CALL    $27B1
+LF593   CALL    $463E
+LF596   RST     2
+LF597   JZ      $F558   ;-->LF558
+LF59A   CALL    $2206
+LF59D   PUSH    H
+LF59E   LXI     H,$0000
+LF5A1   SHLD    $F6E7   ;hi ram address
+LF5A4   MVI     A,$01
+LF5A6   LXI     H,$F558 ;-->LF558 (could be msg label, but is not)
+LF5A9   JMP     $5F71
+;***
+LF5AC#  CALL    $4231
+LF5AF   LXI     H,$F5C3 ;-->LF5C3 (could be msg label -- and is!), because:
+LF5B2   CALL    $27B1   ;print msg at HL until null (00)
+LF5B5   MVI     L,$00
+LF5B7   MVI     C,$C0
+LF5B9   CALL    $5970
+LF5BC   CALL    $4222
+LF5BF   CALL    $7EAC
+LF5C2   RET     
+;***
+LF5C3#  DCX     D       ;this is a message. Need hex code to get it
+LF5C4   MOV     M,B;    ;it is ESC"E", followed by "DIRACC 100
+LF5C5   MOV     B,H     ; Copyright 1985 Hugo Ferreyra
+LF5C6   MOV     C,C     ;followed by ESC"F" -- one byte per line
+LF5C7   MOV     D,D     ;in most cases.
+LF5C8   MOV     B,C
+LF5C9   MOV     B,E
+LF5CA   MOV     B,E
+LF5CB   RIM     
+LF5CC   LXI     SP,$3030
+LF5CF   RIM     
+LF5D0   RIM     
+LF5D1   MOV     B,E
+LF5D2   MOV     L,A
+LF5D3   MOV     M,B
+LF5D4   MOV     A,C
+LF5D5   MOV     M,D
+LF5D6   MOV     L,C
+LF5D7   MOV     H,A
+LF5D8   MOV     L,B
+LF5D9   MOV     M,H
+LF5DA   RIM     
+LF5DB   LXI     SP,$3839
+LF5DE   DCR     M
+LF5DF   RIM     
+LF5E0   MOV     C,B
+LF5E1   MOV     M,L
+LF5E2   MOV     H,A
+LF5E3   MOV     L,A
+LF5E4   RIM     
+LF5E5   MOV     B,M
+LF5E6   MOV     H,L
+LF5E7   MOV     M,D
+LF5E8   MOV     M,D
+LF5E9   MOV     H,L
+LF5EA   MOV     A,C
+LF5EB   MOV     M,D
+LF5EC   MOV     H,C
+LF5ED   DCX     D
+LF5EE   MOV     M,C
+LF5EF   NOP             ;this is 00h, and ends the print string.
+
+Keep all leading labels (beginning of program and just after ';***'
+lines as target points.  Keep the others identified above.  All
+not marked by '#' can be deleted to save memory while assembling.
+
+This is a bit oversimplified, but it gives the idea of using DISASM.PW4 &
+DISASM.PW2 to recreate source files.
+
+
+Phil Wheeler
+71266,125
+15 Nov 1987

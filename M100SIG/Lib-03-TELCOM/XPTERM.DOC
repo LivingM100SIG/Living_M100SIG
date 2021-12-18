@@ -1,0 +1,420 @@
+                        XPTERM.CO  (c) 1992, James Yi
+                        -----------------------------
+
+
+                              --- Overview ---
+
+    XPTERM.CO is a full-featured, easy to use, machine language,
+    Telecommunication program for the Tandy M100, M102 and T200
+    computers.  For the first time, all the following capabilities have
+    been integrated into one program!
+
+      -- On-line disk access for transferring data directly to/from
+         PDD1/2 disk files while remaining connected to the host
+         computer: NO external DOS required!  Disk file size is limited
+         only by PDD parameters, NOT by free RAM.  T200 can use either
+         internal or external modem: M100/102 direct disk access with
+         external modem only.
+
+      -- Direct BINARY file transfer of .CO and .BA files to/from RAM or
+         disk.
+
+      -- XMODEM transfer protocol.
+
+      -- On-line TEXT editing with automatic return to last file edit
+         location.
+
+      -- Auto-dialing of phone numbers and log-on strings from ANY  .DO
+         file: not just ADRS.DO.
+
+      -- 'Last number' memory and redial with automatic 30 sec.
+         'time-out'.
+
+      -- Automatic dialer 'stepping' to next file entry: indispensable
+         for calling a list of entries.
+
+
+    XPTERM can be used with both internal and external modems.  There
+    are two system requirements for direct disk access with external
+    modems:
+        1> You'll need a manual 'A/B' switch which selects either the
+           PDD or modem for the computer's serial port.
+        2> The modem must be capable of holding the phone line
+           connection when disconnected from the computer's serial port.
+
+
+    XPTERM is comprehensive and you should read these instructions
+    thoroughly to benefit from all its features.  Initial set-up
+    procedures are detailed in "Initial Setup" at the end of this
+    document.
+
+
+
+                        --- General Instructions ---
+
+    XPTERM operation is simple and intuitive: many of the familiar
+    TELCOM keys have been retained and new features have been added to
+    others.
+
+      Conventions:
+
+        SHIFT/BREAK aborts almost all functions.
+
+        UPPER and lower case letters are interchangable.
+
+        <ENTER> is ONLY used to complete some other typed command, NOT
+        as a command itself.
+        Keys with enhanced features are described below as SHIFT/Fk,
+        CTRL/Fk or SHIFT/CTRL/Fk.  Press the appropriate SHIFT or CTRL
+        keys simultaneously with the function key to invoke the feature.
+
+
+      Modem ops:
+
+        Although the standard, built-in TELCOM routines use a separate
+        key, F4, to select "Term" status, XPTERM automatically enters
+        "Term" status whenever a carrier is detected using the internal
+        modem or whenever an external modem parameter is selected.
+
+        The functions of F1(prev), F4(full/half duplex) and F5(echo) are
+        the same as TELCOM.
+
+        If you're using an external modem and transferring files to/from
+        disk, then the prompts "Select DRIVE, press space bar.." and
+        "Select MODEM, press space bar.." will tell you when to change
+        the serial port device switch: then press SPACEBAR to continue.
+
+        Each time XPTERM is run, your current TELCOM "Stats" will become
+        the system default.  SHIFT/F4 can be used as explained below to
+        change the value of the first digit: BAUD RATE.  Any other
+        changes to communications parameters must be made BEFORE running
+        XPTERM.
+
+        Other program/operational errors are displayed as numeric
+        expressions: a list of their meanings can be found under "Error
+        Codes" near the end of these instructions.
+
+        Any previous 'hooks' set for TELCOM F6 and/or F7 will be cleared
+        by XPTERM use.
+
+
+      Files:
+
+        The complete filename PLUS extension is needed for any filename
+        entry.
+
+        Whenever F2, F3 or F7 is pressed, a directory of RAM files is
+        displayed, followed by the prompt "File?".  A list of the files
+        on the currently loaded disk can then be displayed if a ":"
+        (colon) is entered alone at the "File?" prompt.  Enter a ";"
+        (semi-colon), instead, to display directory "2" on the PDD2.
+
+        Disk file-names for UP or DOWNload are designated with a ":"
+        (colon) prefix: use a ";" (semi-colon) to designate PDD2 Bank 2
+        files.
+
+
+      Xmodem use:
+
+        Xmodem transfer protocol is OPTIONAL for .DO files: Xmodem is
+        MANDATORY and automatically selected for .BA and .CO files.
+
+
+        ONLY "Y" or "N" is accepted at the .DO file "Xmodem? Y/N"
+        prompt.
+
+        During XMODEM operations an "Xfrd: 0     Err: 0" message will
+        display.  This lets you keep track of bytes transferred as well
+        as any data blocks in which a transmission "Err" was detected:
+        XPTERM will try each block up to 10 times and aborts the
+        transfer if a block is not correctly transferred in 10 tries.
+        (This condition is often caused by exceptionally noisy
+        transmission lines or incompatible transfer protocols.)
+
+
+
+
+                       --- Function Key Operation ---
+
+    F1 (Prev)
+      Displays previous screen: same as TELCOM.
+
+    SHIFT/F1 (M100/102 scroll method)
+      Normal screen scroll speed on the M100/102 limits maximum
+      effective transfer rate to about 600 baud: SHIFT/F1 changes the
+      scroll method, wrapping vertically instead of scrolling, increasing
+      the maximum 'screen rate' close to about 2400 baud.
+
+
+    F2 (Down)
+      Make sure your source computer is ready to send data.  Press F2
+      and type the RECEIVING file name with extension and press <ENTER>:
+      remember ":" or ";" prefix for disk files.
+        The complete filename PLUS extension is needed for any filename
+        entry.  The first character of the extension that you give
+        at the prompt determines the file's type:
+        B for Basic, D for text, C for binary data and
+        machine language programs.
+
+      If the same name file exists in the receiving media, the prompt
+      "A)ppend  R)eplace  Q)uit" will appear: make the appropriate
+      choice.  "Append" works only for .DO files.
+
+      If the receiving file is a .DO file, you'll be prompted "Xmodem?
+      Y/N": ONLY a "Y" or "N" is accepted.  If the receiving file is a
+      .BA or .CO binary file, Xmodem protocol is automatically selected
+      and the "Xfrd: 0     Err: 0" message displays.
+
+      Xmodem automatically ends the DOWNload function when both
+      computers agree that the entire file has correctly transferred.
+      Non-Xmodem DOWNloads are ended by you with a second F2 keypress.
+
+      To abort any type DOWNload at any time, press F2.
+      An aborted DOWNload to RAM or disk is retained only if a .DO file.
+
+      The number of bytes received for Xmodem DOWNloads will display in
+      128 byte increments next to the word "Xfrd:".  Errors causing
+      automatic re-sends will show next to "Err:".  Non-Xmodem DOWNloads
+      will display the number of received bytes in 32 byte increments
+      next to the label "Down" in reverse video.
+
+      In addition to XMODEM transmission protocol, XPTERM incorporates
+      File FORMAT-checking routines which 'verify' that .DO, .BA and .CO
+      files are downloaded with the correct extension.  This process
+      ABORTS the download when an illegal character or 'inappropriate'
+      program logic is detected during download of any of the three
+      file-types.  The message: "Verify failed" / "Aborted" will display
+      and the XMODEM transfer will be terminated.  If repeated attempts
+      to download a particular file fail the verification process, the
+      source file-type is probably incorrect, the file is corrupted or
+      it is an irregular file-type.
+
+
+    F3 (Up)
+      Prepare the receiving computer to accept your data.  Press F3 and
+      enter the filename with any required prefixes and extensions.
+
+      If you are UPloading a .DO file, you'll be prompted "Xmodem? Y/N":
+      ONLY a "Y" or "N" is accepted.  If "N" is chosen, then the
+      familiar "Width:" prompt displays.  Press <ENTER> alone to send
+      file as stored or enter any number from 10 to 132.
+
+      NOTE: If you choose "N", and your default communication 'STATS'
+      are 7 data bits, then any characters in your file with an ASCII
+      value above 126 may produce unreliable results.  Any .DO files
+      containing these characters should be UPloaded with Xmodem
+      protocol.
+
+      If the source file is a .BA or .CO binary file, Xmodem protocol is
+      automatically selected, the "Xfrd: 0     Err: 0" message displays
+      and transmission begins.
+
+      Xmodem automatically ends the UPload function when both computers
+      agree that the entire file has correctly transferred.  Non-Xmodem
+      UPloads end when the entire file has been sent.
+
+      To abort any type UPload at any time, press F3.
+
+
+    F4 (Full/Half duplex)
+      Switches between 'Full' or 'Half"-duplex operations.  Although the
+      effect of this key is the same as TELCOM's, the half-duplex mode
+      has been enhanced for non-Xmodem UPloads so that characters are
+      displayed as they're sent.
+
+    SHIFT/F4 (Baud)
+      Press this key combination to change or confirm the current telcom
+      baud-rate.  0 (zero) selects the internal 300 baud modem and 1-9
+      conforms to the various Tandy baud equates.  XPTERM's maximum
+      Xmodem speed is 9600.
+
+
+    F5 (Echo)
+      Functions as in TELCOM to send incoming screen data to a printer.
+
+    SHIFT/F5 (Form-Feed)
+      Sends a CHR$(12) to your printer to force a page/form-feed.
+
+    CTRL/F5 (CR + CR)
+      "Toggles" between LF-on-CR and LF-on-LF to accomodate different
+      printers or enable double-spaced printing.
+
+
+    ALL F6 (Dial) Functions
+      XPTERM waits 30 seconds for a carrier then hangs-up and either
+      waits for further instructions or dials the next number.
+
+      XPTERM supports the 'Hayes' external modem communication protocols
+      and sends the appropriate 'AT' command set to your modem to
+      'dial' and 'disconnect' when external modem stats are
+      selected and dialing sequences are used.  XPTERM expects your
+      external modem to return a "CONNECT.." message upon carrier detect
+      in order to enter the online mode.
+
+      SHIFT/BREAK or any key aborts current number dialing: SHIFT/BREAK
+      or CTRL/C breaks the 'loop' if dialing with SHIFT/CTRL/F6.
+
+    F6 (Dial)
+      Hangs-up the phone line and prompts for a number string to dial.
+      XPTERM enters "Term" status if carrier is detected: F6 is then
+      suppressed.
+
+    SHIFT/F6 (Dial last)
+      Displays and dials the FIRST sequence of digits found after the
+      last cursor position in the last RAM .DO file edited: first
+      character in ADRS.DO is default when XPTERM is first run.
+
+    CTRL/F6 (Dial next)
+      Automatically displays and dials the SECOND sequence of digits
+      found after the last cursor position in the last RAM .DO file
+      edited and advances the file position pointer by one set: the
+      second line in ADRS.DO is default when XPTERM is first run.
+
+    SHIFT/CTRL/F6 (Dial list until connect)
+      Automatically dials a list of numbers in the target file until one
+      of them connects or List End is reached.
+
+      List End is a line that doesn't contain a phone number: blank
+      line, end of file etc.
+
+      If CAPS LOCK is down then XPTERM loops back to the list start and
+      begins again.
+
+    NOTE: ALL F6 functions are suppressed when a carrier is detected.
+    They are restored when the online connection is broken and F8
+    displays "Exit".
+
+
+    F7 (Edit)
+      Use this key to edit a RAM TEXT file while online: your connection
+      to the other computer will be maintained.  When finished with your
+      file, press F8 and you'll return to XPTERM online. "Term: (stats)
+      and "CARRIER" will display to confirm that you've re-entered
+      terminal mode.  While editing the file, you may use any of the
+      normal text functions.
+
+      T200 users may also use SHIFT/PRINT and  F4 "List" routines.  T200
+      users running the internal modem should NOT, however, use "List"'s
+      F8 "Menu" key to exit the file or you'll wind up offline, out of
+      XPTERM and back at the T200 Main Menu.
+
+    SHIFT/F7 (Edit last file)
+      XPTERM 'remembers' the last file you edited and your place in it.
+      Press SHIFT/F7 to return to the last edited file with the cursor
+      positioned at its last location.  (This feature is particularly
+      useful when responding on-line to a lengthy downloaded message.)
+
+
+    F8 (Exit) or (HgUp)
+      When the F8 label reads "Exit", F8 returns to the computer Main
+      Menu.  Once a carrier has been detected, this label changes to
+      "HgUp".
+
+      Pressing F8 (HgUp) while online prompts "Disconnect?" and ONLY a
+      "Y" will disconnect.  If "Y" is entered, then the modem connection
+      is terminated and you return to XPTERM's entry menu: F8 then
+      displays "Exit" and F6 is re-activated for further dialing.
+      When using an external modem, F8 Hgup may fail to hangup properly;
+      use CTRL/F4 to resend hangup command to modem.
+
+    SHIFT/F8 (XPUSR.CO)
+      This function will run any .CO program in RAM named XPUSR.CO
+      without changing online status.  See the section below for its
+      required operating conditions.
+
+
+
+                              --- XPUSR.CO ---
+
+    You can name any .CO program which meets the following conditions as
+    XPUSR.CO, and SHIFT/F8 will run it for you from RAM any time during
+    XPTERM ops.  For successful online operation, XPUSR.CO must conform
+    to these parameters:
+        1) XPUSR.CO must not run in the same memory location used by
+           XPTERM.CO.
+        2) XPUSR.CO should be a well-behaved program, one that
+           balances the stack upon exit and returns to the caller,
+           instead of doing a lazy escape to Menu.
+
+      Here is a simple, 2-step method to confirm these conditions.
+        1) Enter BASIC with XPTERM.CO and your XPUSR.CO program on the
+           menu.  Type LOADM"XPTERM" and make a note of the "Top" and
+           "End" values.  Then type LOADM"USER" and compare its "Top"
+           address to the values noted for XPTERM.  If the "Top" value
+           of XPUSR.CO equals any value between and including the "Top"
+           and "End" values of XPTERM then it will NOT run as XPUSR.CO
+           from XPTERM's SHIFT/F8 key.
+        2) If step 1 is Ok, then run XPUSR.CO using the RUNM"XPUSR.CO"
+           command.  (You may have to clear HIMEM first if needed.)  Now
+           exit XPUSR.CO in its 'usual' manner.  You MUST return to
+           BASIC at the "Ok" prompt in order to use XPUSR.CO with
+           XPTERM.  If XPUSR.CO exits to the Main Menu then it is NOT a
+           candidate for online use.
+
+
+                             --- Error Codes ---
+
+    These error codes may be returned with a Beep during XPTERM
+    operations.  XPTERM will print "ERROR " followed by one of these
+    numbers and return to the program status prior to the prompt or
+    command which caused the error.
+
+      7 - Memory is full
+     18 - I/O error (perhaps PDD not ready)
+     52 - File not found (UPload)
+     55 - Bad file name
+     57 - RAM directory is full
+     96 - PDD disk is full
+
+
+                            --- Initial Setup ---
+
+    1> Download either XPTERM.100 or XPTERM.200
+    2> Convert it to a BASIC file and BACK IT UP!
+    3> Set HIMEM to the value needed by any other .CO programs which
+       will be installed when using XPTERM: use the CLEAR,vvvvv
+       statement.  XPTERM will be created to run just under the HIMEM
+       value you enter.  (Remember that XPTERM does NOT require any
+       other DOS to function correctly).
+    4> With about 7k of free RAM, run the BASIC file to create the
+       program XPTERM.CO.
+    5> BACK-UP the program file XPTERM.CO!
+    6> Kill the BASIC file.
+
+    XPTERM can be run by cursor selection from the main menu as long as
+    the correct HIMEM value for your version has been set.  Determine
+    this value by entering BASIC and typing: LOADM"XPTERM"  press
+    <ENTER>.
+
+    The "Top" value displayed is the HIMEM value to be set whenever
+    XPTERM is run.  You can do this manually for each XPTERM use or you
+    can create a small BASIC loader program to do it for you.  Here is a
+    simple program which clears correct HIMEM and runs XPTERM.CO.  Use
+    the "Top" value of your XPTERM version for "v".
+
+      0 'RUNXPT.BA
+      1 CLEAR0,v:RUNM"XPTERM"
+
+
+
+                            --- Memory Requirements ---
+
+      When transfering files to and from disk, free memory is used as buffer,
+      so particularly if you are using an external modem,
+      you would want to have enough free memory to avoid excessive
+      switching between disk and modem.
+
+
+                          --- Acknowledgements ---
+
+              Randy Hess did extensive Beta testing and made
+              many suggestions for program operation.  He also
+              assisted in the preparation of the DOCs.
+                          ------------------------
+
+
+    James Yi
+    73367,1653
+    April, 1992
+
+

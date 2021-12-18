@@ -1,0 +1,37 @@
+date.do
+START.BA by Ian Ferrier (74730,3726)
+
+This is a short (80 byte) program that will date-stamp your text files for you.
+It allows you to place the following information in a file automatically:
+
+The file name followed by the day, date and time it was created or added to.
+
+For example, this is what it would enter as the first line of a file called
+NEW.DO:
+
+NEW.DO Sat 12/30/89 02:22:58
+
+Run START.BA each time you want to start a new file, or add a date-stamp to an
+old one.  A list of all existing files will appear on your screen.  At the
+"What file?" prompt you can do one of three things.
+
+1)	If you want to start a new file, enter the name of the file, without the
+
+ ".DO" extension.  The file will be created and date-stamped, and you will
+ be returned to the menu, where you can load it.  The date will appear as the
+first line of the file.
+
+2)	If you want to date-stamp a continuation of an old file, enter the
+ name of any .DO file that appears on your display (do not type the .DO
+ extension).  The date will be stamped as the last line of the file, and you
+ will be returned to the menu, where you can load it.
+
+3)	If you want to exit without choosing a file, press Enter. You will
+be returned to the menu.
+
+_______________________________________
+
+10 CALL10794:INPUT"What file";A$
+20 IFA$=""THENMENUELSEOPENA$FORAPPENDAS1:PRINT#1,A$".DO "DAY$" "DATE$" 
+"TIME$:CLOSE1:MENU
+

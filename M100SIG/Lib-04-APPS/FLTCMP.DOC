@@ -1,0 +1,182 @@
+
+
+
+
+
+
+                                   FLTDOC.DO
+
+            FLTCMP.BA was  written using  admittedly inaccurate  assump-
+       tions, as  discussed below.   I  make no  warranties of any kind,
+       including warranties of merchantability and fitness for a partic-
+       ular purpose.  This program was written for my own entertainment.
+       Since I  cannot prevent  its change by some unknown person before
+       it gets  to you,  since I know that it relies upon approximations
+       which are not totally accurate, and since, in fact, I cannot even
+       be sure  that garbage  won't sneak in from the phone lines as you
+       download it,  I cannot know if it will work for you, but would be
+       willing to bet that it won't.
+
+            FLTCMP.BA (checksum  1222469) was  written for the TRS Model
+       100 to  take the  place of the slide rule type flight "computer".
+       I wanted  it do  everything the  slide rule  can do,  plus a  few
+       things a  slide rule  can't, like weight & balance.  I ran out of
+       steam before  I wrote the code to do time and distance to a radio
+       station.   You are welcome to modify FLTCMP to add this function,
+       which is listed in the menus.
+
+            FLTCMP pretty  much runs itself.  You move through the menus
+       using the  up and  down arrow  keys.  The data for ident to ident
+       navigation should  be stored in NAVAID.DO, an example of which is
+       included at  the end  of this documentation.  The data fields are
+       Ident,  Description,  Latitude  North,  Longitude  West,  Compass
+       Variation.  Latitude and longitude data are included in NAVAID.DO
+       as decimal numbers, but the number to the right of the decimal is
+       not fractional  degrees, but  rather  the  minutes  of  latitude.
+       Thus, 35  deg. 30 min. latitude would be included in NAVAID.DO as
+       "35.30", and  not as  "35.50".   Compass variation,  on the other
+       hand, is  in degrees  and fractional  degrees.   Thus, 10 deg. 45
+       min. east  variation would  be stored  as "-10.75",  and  not  as
+       "-10.45", if you want to get that exact with the variations.  The
+       program will  append new idents to your NAVAID.DO, so you can add
+       idents that  way.  I have found it convenient to put the lat. and
+       long. for  enroute checkpoints and other locations for which I do
+       not have  an ident  into NAVAID.DO using an ident of XXXX.  Note,
+       however, that  XXXX is  the only  ident that the program does not
+       expect to  be unique.   For  that reason, for VORs which have the
+       same ident  as an  airport, but which are not located at the same
+       lat. and  long., I  add "V"  at the  end of  the ident (e.g., LAX
+       would be  the airport,  and LAXV  would be the VOR).  The program
+       does not  require you  to use  "V", and  you can develop your own
+       method of dealing with similar idents.  Use the up and down arrow
+       keys to scan through your NAVAID.DO idents.
+
+            The program  is huge  (necessary for all the screen printing
+       and menus),  and therefore  is not  something you  would want  to
+       leave stored  in RAM  on a  permanent basis.   Also,  you  should
+       probably download  it into  something besides  an M100,  and then
+       transfer it  to your  M100.   I have not really tried to optimize
+       the code  to reduce  its size, although I do run a packed version
+
+
+
+
+
+
+       which  I   have  packed   with  TOOLKT.BA  from  the  M100SIG  on
+       Compuserve.   Actually, I have modified TOOLKT to run on my Tandy
+       1000, and  have compiled  it, so  that it runs a lot faster and I
+       don't have any memory problems.  It also makes it much easier for
+       me to  store the program in ASCII on a floppy, and download it to
+       the M100  when I  want to use it.  Being able to run the checksum
+       on both  machines makes it easier to tell if I have gotten a good
+       ASCII download  to the M100.  And being able to renumber and pack
+       M100 programs  on a  PC clone  with much  higher speed  and  much
+       larger memory  is convenient.   I  recommend TOOLKT.BA for anyone
+       who has not downloaded it.
+
+            If you  like this  program, or have suggestions on modifying
+       it, let  me know  by leaving  me a message in either the AVSIG or
+       the M100SIG  on Compuserve.   My  Compuserve ID is 73337,2600.  I
+       may or  may not  acknowledge your message, as I get on Compuserve
+       irregularly.  And, I may or may not make modifications based upon
+       suggestions I  receive.   And, if  I do make the modifications, I
+       may or  may not  upload the  modified version.   In  fact, if you
+       think of  good modifications,  please make  them and upload a new
+       version of  this.   To make  this  easier,  the  version  I  have
+       uploaded is not packed.  Suggestions for improvement:
+
+       1.   Code actual formulas for pressure and density altitude,
+            instead of approximations derived from charts.
+
+       2.   Combine the  navigation and  wind triangle functions to
+            give a screen more like the standard Pilot's Navigation
+            Log/Flight Plan form.
+
+       3.   Rewrite the  weight and balance portion to use data for
+            the plane  you fly,  or even  several planes from which
+            you choose, stored in a .DO file, rather than having to
+            be keyed in each time.
+
+       4.   Rewrite the  entire program  to make  the various func-
+            tions separate  program  modules  called  from  a  menu
+            program.   You could  then load  a particular module or
+            not, depending  upon whether  you will  use  it  for  a
+            particular flight.   Sometimes  you don't  really  need
+            density  altitude,  sometimes  you  don't  really  need
+            weight and balance, and you may not want the calculator
+            function at all.
+
+       5.   Modify the  navigation module  so that  it averages the
+            compass variations  for the  origin  and  destinations,
+            rather than  using the  origin variation for the entire
+            leg.
+
+            As regards  modifications, the  only thing  I can  guarantee
+       from this end is that if you manage to find out my telephone num-
+       ber, I WILL NOT provide "support" for this program.  What you see
+       is what you get.
+
+
+
+
+
+
+
+            The formulas  for the  following quantities  were derived as
+       linear  algebraic  (and  not  differential)  equations  from  the
+       answers to  problems in  either the Private Pilot Test or the E6B
+       instruction manual.   For  that reason,  the answers this program
+       gives for  many of  these values  are only approximate.  At least
+       some of these values are not linear.  For example, pressure alti-
+       tude does not decrease at exactly 1000' (or even 910') per 1" Hg.
+       The decrease changes as the pressure changes, and as a result the
+       difference between  the correction factors for 28.0" Hg and 29.0"
+       Hg is  greater than the difference between the correction factors
+       for 30.0"  Hg and  31.0" Hg.  Note lines 103 - 108 of the program
+       give six  different formulas  for calculating the correction fac-
+       tor, depending upon the altimeter setting.
+
+            The formulas  I have  derived are  those for  the  following
+       unknowns:
+
+       1.   Pressure Altitude-see  lines 103-108.   PA = Altitude +
+            ((29.92 -  Altimeter Setting)  x 910)  + 46.8  + (60  x
+            (28.5 -  Altimeter Setting))  if Altimeter  Setting  is
+            less than 28.5.
+
+       2.   Density Altitude-see  line 114.    Density  Altitude  =
+            (Pressure Altitude  x 0.9075)  + (66 x Outside Tempera-
+            ture - Standard Temperature)) + 256
+
+       3.   Standard Temperature - see line 114.  Standard Tempera-
+            ture = 59 - ((Pressure Altitude x 3.5)/1000).
+
+       If someone  has more  accurate formulas for these values, I would
+       appreciate getting  them.   Please leave them in a message to me,
+       along with where you got them.
+
+            Of course,  any values which depend upon these numbers (such
+       as True  Airspeed which  depends upon  Density Altitude, which in
+       turn depends  upon Pressure  Altitude and  Standard  Temperature)
+       will also  be only  approximations.   And since some of the vari-
+       ables used  to compute  the values in these derived equations are
+       themselves computed using derived equations, the inaccuracies may
+       very well  compound each  other.  What does this all mean?  IF IT
+       IS CRITICAL,  CHECK IT  USING A METHOD OF KNOWN ACCURACY.  If you
+       don't, you will be courting disaster.
+
+            This program  uses code  adapted from NAV Ver. 4.4, by Lance
+       Quinn, which  is available  from the  M100SIG  on  Compuserve  as
+       NAV100.V44.   It  also  uses  code  adapted  from  FCALC.LAP  and
+       FPLAN.LAP,  both  of  which  are  available  from  the  AVSIG  on
+       COMPUSERVE.
+
+                               NAVAID.DO Example
+
+       ABQ,ALBUQUERQUE NM,35.03,106.36,-11.34
+       AUS,AUSTIN TX,30.18,97.42,-7.1
+       FLG,FLAGSTAFF AZ,35.09,111.40,-12.87
+       PHX,PHOENIX SKY HARBOR,33.26,112,-12.41
+       XXXX,DEL RIO TX,29.22,100.55,-8.43
+

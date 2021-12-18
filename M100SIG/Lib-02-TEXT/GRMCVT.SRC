@@ -1,0 +1,76 @@
+;GRMCVT.ASM -- Source Code for M/L version of GRMXLT.BA
+;
+;Phil Wheeler -- 5/4/87
+;
+;
+	SCR
+	org	0	;relocatable
+;ROM Adresses
+;
+chkf	equ	$5aab	;ck file name in directory
+faddr	equ	$5ae3	;get file address
+beep	equ	$7662	;make a beep
+;
+;program starts here
+;
+start	lxi	d,file	;point to file
+	mvi	a,10;	;dummy (Basic ldr modifies this)
+	call	chkf	;hl points to start of directory entry
+	jz	nofile	;beep and rtn if no file
+	call	faddr	;hl points to start of file
+;
+;character processing
+;
+getch	mov	a,m	;file char in a
+	cpi	26	;chk eof
+	jz	fini	;end if if eof
+;
+codau	cpi	177	;code-A
+	jnz	codou	
+	mvi	m,91	;'['
+	jmp	loop
+;
+codou	cpi	178	;code-O
+	jnz	coduu
+	mvi	m,92	;'\'
+	jmp	loop
+;
+coduu	cpi	179	;code-U
+	jnz	codal
+	mvi	m,93	;']'
+	jmp	loop
+;
+codal	cpi	182	;code-a
+	jnz	codol
+	mvi	m,123	;'{'
+	jmp	loop
+;
+codol	cpi	183	;code-o
+	jnz	codul
+	mvi	m,124	;'|'
+	jmp	loop
+;
+codul	cpi	184	;code-u
+	jnz	codsu
+	mvi	m,125	;'}'
+	jmp	loop
+;
+codsu	cpi	185	;code-S
+	jnz	loop	;last one
+	mvi	m,126	;'5'
+;
+loop	inx	h	;move pointer forward a byte
+	jmp	getch	;get the next character
+;
+;ending routines
+;
+nofile	call	beep	;beep if no file found
+;
+fini	ret
+;
+;reserve space for file name (modified by Basic driver)
+;
+file	dm	PHONEY.DO
+	db	0
+;
+	end

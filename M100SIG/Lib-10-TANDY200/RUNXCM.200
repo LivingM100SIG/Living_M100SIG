@@ -1,0 +1,21 @@
+0 ' RUNXCM.BA  Loads XCOMM.CO from Node, kills the ROM image file, then unloads it and clears memory after running.
+1 ' Copyright 1989 Tony B. Anderson, All Rights Reserved
+2 ' 
+3 ' For the Tandy 200 only. Remove remarks to conserve RAM space
+4 '
+5 ' Download and run James Yi's XCOMM.200, which will create XCOMM.CO, a machine language TELCOM emulator module with
+6 ' several up and download protocol capabilities. Store XCOMM.CO in the Node DataPak, and kill it from RAM.
+7 ' Load this program into BASIC, under the name RUNXCM.  When you want to run XCOMM, run this program, which will
+8 ' clear memory, load and run the program, then remove it from memory after use.  Works best with an external modem,
+9 ' because you can disconnect from the modem, run XCOMM, reconnecting, to get the additional protocol capabilities.
+10 ' Use F8 to get out of TELCOM, run this program to get into XCOMM. Press F8 in XCOMM to go back to TELCOM.
+11 '
+12 ' Before use, adjust addresses 56386 in line 60 (two places) to the TOP address in your version of XCOMM.CO.
+13 '
+20 CALL61162,8
+30 S$="XCOMM.CO"
+40 CALL61162,13,VARPTR(S$)
+50 CALL61162,23,VARPTR(S$)
+60 CLEAR256,56386:LOADM"xcomm":KILL"XCOMM.CO":CALL56386
+100 CLEAR256,MAXRAM
+110 CALL25454

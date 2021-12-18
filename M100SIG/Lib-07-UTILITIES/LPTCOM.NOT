@@ -1,0 +1,155 @@
+							 1 December 1987
+
+
+				     LPTCOM
+				     ======
+
+			  Redirect LPT I/O to COM Port
+				Programming Notes
+
+		      Copyright (c)  1987  by Stanley Wong
+
+	Note:  The  LPTCOM  program and associated documentation are  re-
+	leased  for  personal  use by Compuserve  M100SIG  members  only.
+	Contact the author for additional permissions.
+
+
+	LPTCOM  is a program which will send data written to the LPT port
+	of the M100/102 to the COM port.  LPTCOM is useful for people who
+	have serial printers.
+
+
+	Introduction
+	------------
+
+	This  document discusses the programming  rationale,  techniques,
+	and  structures  used  in the LPTCOM  program.   The  program  is
+	contained   in  the  file  LPTCOM.100,   the   documentation   in
+	LPTCOM.DOC.  This file is LPTCOM.NOT.
+
+	LPTCOM  redirects  I/O from the line printer port to  the  serial
+	port.   Actually  true I/O direction in the UNIX/DOS/CPM sense is
+	not  possible  since  the system code that  prints  to  the  line
+	printer port is contained in ROM.
+
+	The  routine  at ROM location 1470H is usually called to  perform
+	printing services,  at least from Basic.   The RAM location FAE4h
+	(64228)   contains  an address of a location called by the  1470H
+	routine  after the character in the A register has been  printed.
+	The variable VA! contains this address.
+
+	Since  the print routine is in ROM and the RAM vector at FAE4h is
+	called  AFTER the character has been printed we can not  redirect
+	I/O  in  the traditional sense.   What we can do is to  send  the
+	printed character to the "bit bucket" and also send it to the COM
+	port.
+
+
+	Printer RAM Vector
+	------------------
+
+	The I/O redirection code is located in the string space allocated
+	for  function key F7.   This idea is borrowed from Phil Wheeler's
+	LFUTL.PW1  program.   Since LPTCOM and LFUTL.PW1 perform  similar
+	functions  the program structures a very similar.   The m/l  code
+	could  be  located in another area of memory such as  the  ALTLCD
+	area.
+
+	The  danger of locating the code at F7 is that some programs  may
+
+
+
+
+
+
+
+
+	LPTCOM						   Page 2
+
+
+	make use of that function key thus destroying the m/l code.
+
+	The  F7  function  key definition area starts  a  location  F86Bh
+	(63595d)  and is limited to 15 bytes.   The LPTCOM  machine  code
+	is exactly 15 bytes.
+
+
+	Machine Code
+	------------
+
+	The heart of LPTCOM is the machine code which is described below:
+
+	On initalization the following code is loaded into F7:
+
+	PUSH      PSW       ; save A register on stack
+	CALL      6E32h     ; print character to COM port
+	POP       PSW       ; restore A register
+	CPI       Dh	; was character a CR?
+	RNZ		 ; return if not
+	MVI       A,Ah      ; if so load a LF character
+	CALL      6E32h     ; print it to COM
+	RET		 ; return
+
+	Notice  that the program assusmes that a linefeed has to be  sent
+	after every carriage return character.  The code at line 48 pokes
+	a RET statement in place of the CPI instruction if a linefeed  is
+	not to be sent.  This is determined by the contents of the memory
+	location F65Ah (63066).  Variable CL! contains this address.
+
+
+	ROM Routines
+	------------
+
+	The following ROM routines are used:
+
+	1470h     -    Print character in A register to printer.
+		       LPTCOM assumes data originates from this routine.
+		       A routine which does an OUT directly to LPT will
+		       not have its I/O redirected.
+
+	6E32h     -    Send character in A register to RS-232 port.
+
+	5310h     -    Pause for about 2 seconds.
+
+
+	Variables
+	---------
+
+	Screen Display
+
+	     R$   -    turn on reverse video
+	     N$   -    turn off reverse video
+
+
+
+
+
+
+
+
+
+
+
+	LPTCOM						   Page 3
+
+
+	Memory References
+
+	     VA!  -    address of LPT vector (called by routine 1470h)
+	     CL!  -    address of system COM LF flag
+	     FK!  -    address of CPI instruction in F7 area
+
+	Miscellaneous
+
+	     AD!  -    address value via PEEKs
+	     F$   -    options ON/OFF flag
+
+		     =======================================
+
+	Acknowledgements:  The  LPTCOM program borrows several ideas from
+	Phil Wheeler's LFUTL.PW1 program.   In particular the idea to use
+	the function key definition area for the m/l code is from LFUTL.
+
+	Please   send  comments  and  bug  reports  to  Stan   Wong   CIS
+	[70346,1267].
+

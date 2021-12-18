@@ -1,0 +1,78 @@
+RS-232 Information
+This is a LONG message.....
+<Pin assignments>
+1   2   3   4   5   6   7
+.   .   .   .   .   .   .
+  .   .   .   .   .   .
+  14  15  16  17  18  19
+etc., looking at connector pins of M100
+  Defintions of pin assignments for RS-232:
+
+	na means "common, or not assigned"
+	DCE means "data communications equipment" ie the modem.
+	DTE means the "terminal"
+
+1.	earth ground		na
+2.	transmit data		to DCE
+3.	receive data		to DTE
+4.	request to send		to DCE
+5.	clear to send		to DTE
+6.	data set ready		to DTE
+7.	logic ground		na
+8.	carrier detect		to DTE
+9.	reserved		na
+10.	reserved		na
+11.	unassigned		na
+12.	second carrier detect	to DTE
+13.	second clear to send	to DTE
+14.	second transmit data	to DCE
+15.	transmit clock		to DTE
+16.	second receive data	to DTE
+17.	receive clock		to DTE
+18.	unassigned		na
+19.	second request to send	to DCE
+20.	data terminal ready	to DCE
+21.	signal qual. detect	to DTE
+22.	ring detect		to DTE
+23.	data rate select	to DCE
+24.	transmit clock		to DCE
+25.	unassigned		na
+	(second means "secondary")
+"BASIC 8"
+Pins 1-7, 20 are used in the M100 connector.  To connect M100 to M100:
+
+	1 & 7: are grounds, and stay as is.
+	2 & 3:  swap these.
+	4 & 6:  swap these.
+	5 & 20: swap these.
+
+	pin(t)	from	to	pin(m)
+	------  ----    ----    ------
+	1	ground	ground	1
+	2	term	modem	3
+	3	modem	term	2
+	4	term	modem	6
+	5	modem	term	20
+	6	modem	term	4
+	7	ground	ground	7
+	20	term	modem	5
+  These are the only pins used by the M100 to communicate.
+(I tried configuring my Northstar to be a "term"inal instead of a "modem",
+and this works with proper handshaking.  UNFORTUNATELY, most printer
+manufacturers use these signals IMPROPERLY! If you have an 8251
+instead of an 8251A USART, then you CANNOT be assured of proper handshaking.
+The 8251 will stop in the middle of a character, while the 8251A does not.
+Thus, you will LOSE part or all of a character if you attempt to tie to an
+8251, if in the middle when DTR or DSR is changed by the M100, which it will
+do.  I found out the hard way, and now have 8251A's in my Northstar, which
+allow 9600 baud operation.)
+  Additional note, this worked with my Northstar, but may not work with
+your particular arrangement.  Be warned!
+  I hope this has been help to SOMEONE out there! If you find that I have
+made a mistake here, please feel free to comment, correct, chastise, or
+whatever is appropriate!
+  I can be reached at ID [74405,1177] or 619-690-3475 or 4545 if you have any
+questions on this. No guarantees on answers, though.....
+			...rowlfe...
+(uploaded 17 AUG 84 @ 2130 PDT)
+

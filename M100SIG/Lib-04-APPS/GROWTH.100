@@ -1,0 +1,33 @@
+0 '3/87 R.W.HESS "GROWTH.100" DL-4
+5 CLS:CLEAR:PRINT@11,"GROWTH CALCULATOR":LINE(63,8)-(169,8)
+10 PRINT:PRINT"'PAST' calculates an investment's past     compound annual growth rate."
+15 PRINT"'FUTURE' calculates a future value using   any interest rate.":LINE(6,55)-(233,55)
+20 CALL17001:PRINT@281,"    PAST     FUTURE               MENU";:CALL17006
+25 ONKEYGOSUB,30,,70,,,,110:KEYON:GOTO25
+30 CLS:PRINT"Years held: (format: 12.65)":PRINT"Need help calculating? If yes enter 0;":INPUT" if no, then how many years held";T
+35 IFT=0THENGOTO115ELSEGOTO40
+40 PRINT:INPUT"Total cost (format: 23987.45)";P
+45 PRINT:INPUT"Net value now (same format)";V
+50 I=((EXP((LOG(V/P))/T))-1)*100
+55 CLS:PRINT@44,"Your investment has grown at a":PRINT@90,"compounded annual rate of:":PRINT:PRINTTAB(15)USING"###.#";I;:PRINT"%"
+60 PRINT@280,"Press spacebar to continue.";:CALL24367
+65 GOTO5
+70 CLS:PRINT:INPUT"Value now (format: 23654.34)";V:PRINT
+75 INPUT"What annual rate (format: 12.45)";I:I=I*.01:PRINT
+80 INPUT"For how many years ";T
+85 F!=(V*(1+I)^T)
+90 CLS:PRINT@52,"Your investment":PRINT@94,"will grow to:"
+95 PRINT:PRINTTAB(15)"$";F!
+100 PRINT@280,"Press spacebar to continue.";:CALL24367
+105 GOTO5
+110 MENU
+115 CLS:CLEAR
+120 PRINT:INPUT"Purchase date: (MM/DD/YY)";B$
+125 MB=VAL(LEFT$(B$,2)):DB=VAL(MID$(B$,4,2)):YB=VAL(RIGHT$(B$,2))
+130 PRINT:PRINT"Sale date: (MM/DD/YY)":INPUT"(<ENTER> uses today's date)";N$
+135 IFN$=""THENN$=DATE$ELSEGOTO140
+140 MN=VAL(LEFT$(N$,2)):DN=VAL(MID$(N$,4,2)):YN=VAL(RIGHT$(N$,2))
+145 T#=(((MN*30.42)+(DN)+(YN*365))-((MB*30.42)+(DB)+(YB*365)))/365
+150 CLS:PRINT"Years held:";:PRINTUSING"###.##";T#:T#=T
+155 INPUT"Does this look OK, Y/N";A$:IFA$="Y"ORA$="y"THENGOTO40ELSEGOTO115
+

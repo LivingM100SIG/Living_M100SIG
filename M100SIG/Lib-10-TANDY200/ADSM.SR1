@@ -1,0 +1,1402 @@
+;ADSM.SR1, source code for ADSM.200
+;Source code is split into two parts, to enable downloading to 200's ram
+;This is the first part. Second part is  ADSM.SR2
+;James Yi 73327,1653 -- 07/27/88
+
+
+m	equ	2	;1 for 100
+
+	if	m=2
+	org	61100-4499
+	endif
+
+	if	m,1
+	org	$f5f0-4357
+	endif
+
+	if	m=2
+;200 equates
+wrlcd	equ	5030h
+inrh	equ	1ach
+null	equ	7
+maxfil	equ	$9be1
+setmax	equ	4c4ah
+open	equ	$5bd1
+readio	equ	$5d36
+writio	equ	$5a05
+close	equ	$5ce6
+closei	equ	$5bf7
+varspc	equ	63077
+varend	equ	63079
+frespc	equ	63081
+FlNm	equ	63302
+coparm	equ	$41A1
+prparm	equ	13072
+Top	equ	62715
+Len	equ	62717
+Exe	equ	62719
+SaveCO	equ	12390
+FindCO	equ	11174
+FindDO	equ	11197
+InpA	equ	$54f0
+InpN	equ	InpA+6
+GetLen	equ	$2D43
+getfNm	equ	$5ACA
+opendo	equ	11635
+dderr	equ	47ah
+nferr	equ	477h
+snerr	equ	471h
+overr	equ	480h
+ulerr	equ	978h
+bserr	equ	57aah
+d0err	equ	474h
+iderr	equ	1119h
+moerr	equ	483h
+ioerr	equ	$15ac
+omerr	equ	$4c3d
+menu	equ	$67a4
+uptdir	equ	$2C62
+restak	equ	$7155
+chrget	equ	4855
+DefFnk	equ	28192
+prnhl	equ	18187
+print	equ	4556
+Caps	equ	$1014
+crlf	equ	$4f3e
+CRLFc	equ	$5a77
+Files	equ	10794
+Setcur	equ	$4F9B
+bell	equ	8271
+Beep	equ	$4f45
+Insert 	equ	33448
+mvhci	equ	15445
+mvhcd	equ	3c5eh
+mvhbi	equ	$32A7
+mvdbi	equ	16826
+mvhbci	equ	33558
+mvhbcd	equ	33569
+zerobc	equ	$7747
+zerob	equ	24001
+InrA	equ	2459h
+InrB	equ	8221
+InrC	equ	28278
+inxH	equ	1b01h
+dcxH	equ	106fh
+InxD	equ	21895
+Bufr	equ	61296
+WkSpc	equ	$f856
+pkgff	equ	64781
+Errtrp	equ	61236
+botrow	equ	$110
+lcdsiz	equ	16
+fferr	equ	5f0eh
+stkval	equ	$f650
+Kill	equ	11052
+PkBnk	equ	$9bb0
+lcd	equ	64048
+setfr	equ	$1ddd
+datfr	equ	$2fc5
+endtfr	equ	$1dd3
+geteof	equ	$8268
+	endif
+
+	if	m=1
+;100 equates
+wrlcd	equ	$4313
+inrh	equ	1ach
+null	equ	7
+maxfil	equ	$7f2b
+setmax	equ	$3f2f
+open	equ	$4d12
+rdbyt	equ	$4e7a
+wrbyt	equ	$4b44
+close	equ	$4e27
+closei	equ	$4d38
+varspc	equ	$fbb2
+varend	equ	$fbb4
+frespc	equ	$fbb6
+FlNm	equ	$fc93
+coparm	equ	$3450
+prparm	equ	$25ab
+Top	equ	$face
+Len	equ	top+2
+Exe	equ	len+2
+FindCO	equ	$2089
+FindDO	equ	$20a0
+InpA	equ	$463e
+InpN	equ	InpA+6
+GetLen	equ	$21fa
+getfNm	equ	$4c0b
+opendo	equ	$2206
+dderr	equ	44fh
+nferr	equ	44ch
+snerr	equ	446h
+overr	equ	455h
+ulerr	equ	94dh
+bserr	equ	48f6h
+d0err	equ	449h
+iderr	equ	10efh
+moerr	equ	458h
+ioerr	equ	$1494
+omerr	equ	$3f22
+menu	equ	$5797
+uptdir	equ	$2146
+restak	equ	$5d5d
+chrget	equ	12cbh
+DefFnk	equ	5a7ch
+prnhl	equ	39d4h
+print	equ	11a2h
+Caps	equ	$fe9
+crlf	equ	$4222
+CRLFc	equ	$4bb8
+Files	equ	1f3ah
+Setcur	equ	$427c
+Beep	equ	$4229
+Insert 	equ	6b6dh
+mvhci	equ	2eddh
+mvhcd	equ	mvhci+9
+mvhbi	equ	$2542
+mvdbi	equ	3469h
+mvhbci	equ	6bdbh
+mvhbcd	equ	6be6h
+zerobc	equ	$6366
+zerob	equ	4f0ah
+InrC	equ	5ad6h
+inxH	equ	199eh
+dcxH	equ	1045h
+InxD	equ	46d2h
+Bufr	equ	$f685
+WkSpc	equ	$fcc0
+pkgff	equ	$ff99
+Errtrp	equ	$f652
+botrow	equ	$108
+lcdsiz	equ	8
+fferr	equ	5057h
+stkval	equ	$fb9d
+	endif
+
+begin	mvi	a,1
+	call	maxfil
+	call	setmax
+	lxi	h,errtn
+	shld	errtrp
+	lxi	h,Fnk
+	CALL	DefFnk
+	lhld	varspc
+k42	mov	a,m
+	ora	a
+	jz	rcsmb
+	mvi	c,3
+	sub	c
+	mov	b,a
+k41	inx	h
+	mov	a,m
+	call	tst2+1
+	jnc	mntr
+	dcr	b
+	jnz	k41
+	dad	b
+	jmp	k42
+
+jot	push	d
+	call	openfl
+	pop	d
+	call	wrln+3
+
+clob	mvi	a,$1a
+	call	wrbyt
+
+	if	m,2
+;close option bank file
+	lhld	num0
+	lxi	b,lcd
+	dsub	b
+	mov	a,l
+	cnz	svlo
+	endif
+
+reent	call	bell
+	call	uptdir
+mntr	call	close
+	call	restak
+	lhld	varend
+rcsmb	call	updvpt
+	lxi	h,ifef
+	mvi	b,6
+	call	zerob
+	dcr	a
+	mvi	b,4
+	call	zerob+1
+	lxi	b,mntr
+	push	b
+	lhld	adrptr
+	call	putadt
+	call	set
+	mvi	a,$FF
+	call	mlbl
+	mvi	m,':'
+	call	put0+1
+	call	crlfc
+	lxi	h,botrow
+	call	setcur
+	call	prnbfr
+	CALL	InpN
+	RST	2
+	xchg
+	JZ	CR
+	sui	'+'
+	jz	reljmp
+	dcr	a
+	jz	list
+	dcr	a
+	jz	reljmp
+	lxi	h,flnmc
+	inx	d
+	sui	15
+	jz	view
+	dcr	a
+	xchg
+	jz	storg
+	xchg
+	dcr	a
+	jz	jot
+	CALL	AsmLin
+	lhld	fp1
+	jmp	updadp
+
+reljmp	call	cnvnum
+	mov	b,h
+	mov	c,l
+	call	incptr+6
+	jmp	updadp
+
+List	xchg
+	call	getlen
+	mvi	d,lcdsiz-1
+k5	push	d
+	call	prladv
+	call	breakp
+	pop	d
+	dcr	d
+	jnz	k5
+	dcr	e
+	jnz	list+3
+	ret
+
+gettrc	ani	15
+	sta	trptr
+	mov	l,a
+	mvi	h,0
+	dad	h
+	lxi	d,trace
+	dad	d
+	xchg
+	lhlx
+	ret
+
+prladv	call	prndsm
+	call	incptr
+putadt	lda	trptr
+	push	h
+	call	gettrc
+	pop	b
+	dsub	b
+	push	b
+	jz	k24
+	inr	a
+	call	gettrc
+k24	pop	h
+	shlx
+updadp	shld	adrptr
+	ret
+
+cr	lxi	h,botrow-1
+	call	setcur
+	lda	pkgff
+	ani	3
+	jz	prladv
+	rar
+	lda	trptr
+	inr	a
+	jnc	stepad
+	sui	2
+stepad	call	gettrc
+	shld	adrptr
+
+Prndsm	lhld	adrptr
+	call	set
+	lxi	b,$ffff
+	CALL	DsmLin
+Prnbfr	lxi	h,Bufr
+printc	call	crlfc
+	jmp	print
+
+view	inr	a
+	call	openfl+2
+vwchr	call	rdbyt
+	cpi	26
+	jz	reent
+	call	wrlcd
+	call	breakp
+	jmp	vwchr
+
+Asmble	LXI	H,soprmt
+	CALL	orgfil
+	lxi	h,obprmt+1
+	lxi	d,flnmb
+	call	secfil
+	LXI	H,Wkspc
+	shld	top
+	shld	exe
+	CALL	Inzlbl
+	STA	Pass
+
+Asmlp	lxi	h,ifef
+	mvi	b,4
+	call	zerob
+	inr	a
+	mov	m,a
+	lxi	h,flnma
+	call	Openfl+2
+	lhld	top
+	shld	mp1
+;Load a line from source
+Load	call	Breakp
+	LXI	D,Bufr
+k2	CALL	Rdln
+	STAX	D
+	INX	D
+	JNZ	k2
+	Call	AsmLin
+	LDA	Eof
+	ora	a
+	JnZ	Load
+
+	lxi	h,Pass
+	cmp	m
+	jnz	reent
+	INR	m
+	mov	d,a
+	mov	e,a
+	call	close
+	lhld	top
+	mov	b,h
+	mov	c,l
+	lhld	mp1
+	dsub	b
+	shld	len
+	call	prparm
+	lxi	h,flnmb-1
+	rst	2
+	jc	reent
+	call	fmtfnm
+	call	FindCO
+	cnz	Kill
+	call	uptdir
+	call	SaveCO
+	call	FindCO
+	lxi	h,6
+	dad	d
+	shld	fp0
+	shld	fp1
+	JMP	Asmlp
+
+orgfil	mvi	a,12
+	rst	4
+	call	files
+	lxi	d,flnma
+secfil	push	d
+	call	inpfnm
+	pop	d
+storg	mvi	b,15
+	jmp	mvhbi
+
+inpfnm	call	printc
+	call	inpa
+	rst	2
+	rnz
+	jmp	mntr
+
+fmtfnm
+	if	m,2
+	mvi	a,$ff
+	sta	bnk1
+	push	h
+	call	caps-1
+	cpi	'R'
+	jnz	k1
+	rst	2
+	sui	49
+	cpi	3
+	jnc	k1
+	mov	c,a
+	inx	h
+	mov	a,m
+	cpi	':'
+	jnz	k1
+	mov	a,c
+	rlc
+	rlc
+	sta	bnk1
+	inx	h
+	xthl
+k1	pop	h
+	endif
+
+getfil	call	getlen
+	jmp	getfnm
+
+Openfl	mvi	a,2
+	push	psw
+	mvi	a,1
+	call	closei
+	call	fmtfnm
+	jnz	devok
+	mvi	d,$f8
+devok	pop	psw
+	mov	e,a
+	dcr	a
+	jz	input
+	mov	a,d
+	cpi	$f9
+	jnc	input
+	mvi	e,8
+input
+	if	m,2
+inzlp	lxi	h,lcd
+	shld	num0
+	db	62
+bnk1	db	0
+	ora	a
+	jp	obfl
+	endif
+
+	lxi	h,null
+	mvi	a,1
+	jmp	open
+
+	if	m,2
+;open file in other bank
+obfl	push	d
+	di
+	call	setfr
+	in	$d8
+	ani	12
+	out	$90
+	push	psw
+	lda	bnk1
+	out	$91
+	push	psw
+	lxi	h,flnm
+	mov	d,h
+	mov	e,l
+	lxi	b,6
+	call	datfr
+	lxi	d,obcall
+	lxi	h,lcd+256
+	call	mvdbi
+	mvi	b,2
+	dsub
+	call	endtfr
+	pop	psw
+	pop	h
+	pop	b
+	call	lcd+256
+	ei
+	jc	omerr
+	rnz
+	jmp	fferr
+
+obcall	out	$d8
+	dmov	d,sp+0
+	cmp	h
+	mov	a,h
+	jz	sameb
+	lhld	stkval
+	sphl
+sameb	push	d
+	push	psw
+	call	obrtn+offset
+	pop	h
+	mov	a,h
+	pop	h
+	out	$d8
+	sphl
+	xchg
+updop	shld	xp1
+	ret
+
+offset	equ	-obcall+lcd+256
+
+obrtn	dcr	c
+	jnz	obsv+offset
+	call	uptdir
+	jmp	finddo
+obsv	jp	obout+offset
+	db	33
+xp1	dw	0
+	db	1
+dlen	dw	0
+	call	insert
+	rc
+	lxi	d,lcd
+	xchg
+	call	mvhci
+	ora	d
+	ret
+
+obout	lhld	frespc
+	desp	0
+	dcr	d
+	rst	3
+	cmc
+	rc
+	xra	a
+	sta	flnm+6
+	lxi	h,flnm
+	call	opendo
+	call	geteof
+	xchg
+	ora	d
+	ret
+	endif
+
+
+Rdln	call	RdByt
+	cpi	10
+	jz	Rdln
+	sui	13
+	rz
+	adi	13
+	cpi	26
+	rnz
+End	xra	a
+	sta	eof
+	ret
+
+	if	m,2
+;Get one byte from source file
+RdByt	lda	bnk1
+	ora	a
+	jm	readio
+	lhld	xp1
+	MOV	B,A
+	di
+	push	d
+	CALL	PkBnk+1
+	ei
+	MOV	A,D
+	pop	d
+	inx	h
+	jmp	updop
+	endif
+
+
+;Assemble one line
+AsmLin	lxi	h,opcd
+	shld	comove
+	call	asmins
+Stout	lda	oplen
+	mov	c,a
+	mvi	b,0
+	inr	a
+	jnz	itn
+	lhld	num0
+	mov	b,h
+	mov	c,l
+itn	LDA	Pass
+	ora	A
+	JZ	IncPtr+6
+	MOV	A,b
+	ORA	c
+	rz
+	call	incptr+6
+	dsub
+	xchg
+	lhld	comove
+	lda	oplen
+	inr	a
+	jnz	mvhbci
+	xchg
+	jmp	zerobc
+
+incptr	lda	oplen
+	mov	c,a
+	mvi	b,0
+	lxi	d,mp1
+	lhlx
+	dad	b
+	shlx
+	inx	d
+	inx	d
+	lhlx
+	dad	b
+	shlx
+	ret
+
+
+asmins	LXI	D,Bufr
+	XRA	A
+	STA	OpLen
+	lda	ifef
+	ora	a
+	jz	noif
+	call	sep
+
+	cpi	'I'
+	jnz	findef
+	inx	d
+	ldax	d
+	ani	$df
+	cpi	'F'
+	jz	incif
+	dcx	d
+findef	lxi	h,eistr
+	mvi	c,5
+cmpe	ldax	d
+	ani	$df	;caps
+	cmp	m
+	rnz
+	inx	d
+	inx	h
+	dcr	c
+	jnz	cmpe
+endif	lxi	h,ifcnt
+	xra	a
+	cmp	m
+	jz	nferr
+	dcr	m
+	rnz
+	dcx	h
+	mov	m,a
+	ret
+
+noif	CALL	Tst1
+	RM
+	JC	LA
+	CALL	Tst2
+	JNC	L7
+	lda	pass
+	ora	a
+	jz	dderr
+	CALL	Cnvnum
+	call	set
+	JMP	L8
+
+LA	PUSH	D
+	CALL	Sep
+	CPI	'E'
+	JNZ	L6
+	INX	D
+	ldax	d
+	ani	$df
+	CPI	'Q'
+	JZ	defequ
+
+L6	LHLD	mp1
+	POP	D
+	CALL	DefLbl
+L7	CALL	Sep
+L8	RM
+
+alpopc	LXI	H,InDat
+LE	MOV	A,M
+	ORA	A
+	JZ	snerr
+	PUSH	D
+	CPI	32
+	JNZ	LB
+	INX	H
+	MOV	C,M
+	INX	H
+	MOV	B,M
+	INX	H
+LB	LDAX	D
+	CALL	Caps
+	CMP	M
+	INX	H
+	INX	D
+	JZ	LB
+	DCX	H
+	CALL	tst2+1
+	JC	LC
+	MOV	A,M
+	CPI	5
+	JC	Lf
+LC	MOV	A,M
+	INX	H
+	CPI	5
+	JNC	LC
+	INX	H
+	MOV	A,M
+	CPI	$20
+	POP	d
+	JC	LD
+	CPI	$60
+	JC	LE
+LD	INX	H
+	JMP	LE
+
+LF	POP	D
+	PUSH	B
+	INX	H
+	MOV	C,M
+	INX	H
+	MOV	B,M
+	MOV	H,A
+	MVI	L,0
+Sep	CALL	Tst1
+	RM
+	JZ	L04
+	INX	D
+	JMP	Sep
+L04	INX	D
+	CALL	Tst1
+	JZ	L04
+	RET
+
+Com	lda	pass
+	ora	a
+	mov	a,h
+	jnz	ok
+	cpi	3
+	jnc	iderr
+ok	rar
+	PUSH	B
+	JC	Cnvnum
+	RET
+
+
+db	call	read
+	dsub
+	shld	comove
+	mov	a,c
+setopl	sta	oplen
+	ret
+
+ds	mvi	a,$ff
+	jmp	setopl
+
+DW	shld	opcd
+	mvi	a,2
+	jmp	setopl
+
+DM	xchg
+	shld	comove
+	CALL	GetLen
+	mov	c,e
+	jmp	setopl-1
+
+ORG	shld	mp1
+	shld	top
+	push	h
+	lhld	fp0
+	shld	fp1
+	lxi	h,ocnt
+	mov	a,m
+	ora	a
+	jnz	bserr
+	inr	m
+	pop	h
+
+ent	shld	exe
+	ret
+
+set	shld	mp1
+	jmp	set2
+
+Dmov	CALL	Sep
+	PUSH	PSW
+	CALL	NxMk
+	inx	d
+	POP	PSW
+	CPI	'H'
+	JZ	opr+3
+	MVI	C,$38
+	JMP	opr+3
+
+RST	SUI	48
+	ani	7
+	push	psw
+	call	sep
+	cp	inrh
+	pop	psw
+	Jmp	opr+2
+
+Mov	CALL	RegInc
+	PUSH	PSW
+	CALL	Sep
+	LXI	B,$100
+	INR	H
+	CALL	RegInc
+	POP	B
+	ADD	B
+	STA	OpCd
+	RET
+
+Lxi	PUSH	PSW
+	CALL	Sep
+	POP	PSW
+Xeg	push	h
+	lxi	h,dbldat-1
+	jmp	L107
+
+Mvi	PUSH	PSW
+	CALL	Sep
+	POP	PSW
+
+RegInc	PUSH	H
+	LXI	H,Regdat-1
+L107	inx	h
+	cmp	m
+	jc	snerr
+	inx	h
+	jnz	L107
+opr	mov	a,m
+	pop	h
+	mov	l,a
+	MOV	A,H
+	STA	OpLen
+	MOV	A,C
+	sub	b
+Lj	add	b
+	DCR	L
+	Jp	Lj
+	STA	OpCd
+	DCR	H
+	RZ
+	LDA	Pass
+	ora	a
+	Rz
+
+CnvNum	CALL	Tst1
+	JM	moerr
+	lxi	h,0
+
+LL	SHLD	Num1
+	CALL	Tst1
+	RM
+	JZ	Sep
+
+	ldax	d
+	cpi	'('
+	jz	k86
+	cpi	')'
+	jnz	k85
+	inx	d
+	push	h
+	lxi	h,prvsgn
+	mov	a,m
+	mvi	m,0
+	lhld	num2
+	shld	num1
+	pop	h
+	jmp	calc
+
+k85	CALL	Tst2+1
+	CNC	InxD
+k86	PUSH	PSW
+	CALL	Val
+	POP	PSW
+	JC	LL
+
+calc	PUSH	D
+	call	on
+	SHLD	Num0
+	POP	D
+	JMP	LL
+
+on	MOV	B,H
+	MOV	C,L
+	xchg
+	LHLD	Num1
+	sui	'!'
+	jz	eor
+	dcr	a
+	jz	or
+	sui	8
+	jz	mult
+	DAD	B
+	dcr	a
+	rz
+	DSUB	B
+	DSUB	B
+	sui	2
+	rz
+	DAD	B
+	dcr	a
+	jz	and
+	dcr	a
+	xchg
+	rnz
+
+div	xchg
+	MOV	A,B
+	ORA	C
+	JZ	d0err
+	LXI	D,$FFFF
+Lv	DSUB	B
+	INX	D
+	JNC	Lv
+	xchg
+	ret
+
+mult	xchg
+	mov	h,a
+	mov	l,a
+Lt	MOV	A,B
+	ORA	C
+	rZ
+	DCX	B
+	DAD	D
+	JMP	Lt
+
+eor	mov	a,l
+	xra	e
+	mov	l,a
+	ret
+
+or	mov	a,l
+	ora	e
+	mov	l,a
+	ret
+
+and	mov	a,l
+	ana	e
+	mov	l,a
+	ret
+
+Val	LXI	H,0
+	SHLD	Num0
+	CALL	Tst1
+	rm
+	cpi	'''
+	jz	k84
+	cpi	'('
+	jnz	lw
+	inx	d
+	pop	h
+	pop	psw
+	stc
+	push	psw
+	push	h
+	sta	prvsgn
+	lhld	num1
+	shld	num2
+	lxi	h,0
+	ret
+
+k84	INX	D
+	ldax	d
+	Mov	l,a
+	SHLD	Num0
+	inx	d
+	JMP	nxmk
+
+Lw	MOV	H,A
+	push	d
+	CALL	Nxmk
+	DCX	D
+	MVI	C,16
+	ldax	d
+	ani	223
+	cpi	'H'
+	jz	lx
+	MOV	A,H
+	CPI	'$'
+	JZ	lx+1
+
+	MVI	C,$A
+	CALL	Tst1
+	JNC	Lx+1
+	LXI	H,NumDat
+Ly	MOV	C,M
+	DCR	C
+	JM	eqlbl+1
+	INX	H
+	CMP	M
+	INX	H
+	JNZ	Ly
+lx	DCX	D
+	MOV	A,C
+	PUSH	PSW
+	sui	16
+	jz	hxb
+	db	62
+	stc
+hxb	sta	ck16
+
+	LXI	B,1
+Lz	LHLD	Num0
+	CALL	Tst2
+	DCX	D
+	JNC	Done
+	cpi	'$'
+	jz	done
+	sui	48
+	cpi	10
+	JC	L02
+ck16	db	0
+	jc	eqlbl
+	SUI	7
+	cpi	10
+	jc	eqlbl
+	cpi	16
+	jnc	eqlbl
+L02	DAD	B
+	DCR	A
+	JP	L02
+	DSUB	B
+	SHLD	Num0
+	LXI	H,0
+	POP	PSW
+	PUSH	PSW
+L03	DAD	B
+	DCR	A
+	JNZ	L03
+	MOV	B,H
+	MOV	C,L
+	JMP	Lz
+
+EqLbl	pop	psw
+	pop	d
+	CALL	GetLbl
+	jc	lbld
+	lda	ifnum
+	mov	h,a
+	LDA	Pass
+	ora	h
+	ldax	d
+	Jnz	ulerr
+lbld	lhld	num0
+	db	1
+Done	pop	psw
+	pop	d
+NxMk	INX	D
+	CALL	Tst2
+	JC	NxMk
+	RET
+
+errtn	push	d
+	mov	l,e
+	call	close
+	mov	a,l
+	cpi	52
+	jnz	notff
+	lxi	h,flnma
+	call	printc
+notff	Cnz	PrnBfr
+	call	Beep
+	lxi	h,ermsg
+	call	printc
+	pop	h
+	mvi	h,0
+	call	prnhl
+	jmp	mntr
+
+defequ	CALL	Sep
+	CALL	Cnvnum
+	POP	D
+
+DefLbl	PUSH	H
+	CALL	Getlbl
+	pop	b
+	JNC	L06
+	LDA	pass
+	ORA	A
+	JZ	bserr
+	mov	m,c
+	inx	h
+	mov	m,b
+	RET
+L06	push	d
+	push	h
+	push	b
+	push	d
+	dmov	d,sp+0
+	dcr	d
+	rst	3
+	jnc	OMerr
+	pop	d
+	mvi	c,3
+	inx	h
+l08	CALL	tst2
+	JNC	L07
+	mov	m,a
+	INX	h
+	INX	D
+	inr	c
+	JMP	L08
+L07	pop	d
+	mov	m,e
+	inx	h
+	mov	m,d
+	inx	h
+	call	updvpt
+	pop	h
+	mov	m,c
+	pop	d
+	ret
+
+del	ldax	d
+	cpi	'*'
+	jz	inzlbl
+	call	getlbl
+	jz	ulerr
+	inx	h
+	inx	h
+	mov	d,b
+	mov	e,c
+	mov	b,h
+	mov	c,l
+	push	h
+	lhld	frespc
+	dsub	b
+	mov	b,h
+	mov	c,l
+	pop	h
+	inx	b
+	call	mvhbci
+	xchg
+	dcx	h
+	jmp	updvpt
+
+;Clear label space
+InzLbl	LHLD	Varspc
+updvpt	shld	varend
+	xra	a
+	mov	m,a
+	inx	h
+	shld	frespc
+	ret
+
+getlbl	lhld	varspc
+cmpnxt	mov	a,m
+	ora	a
+	rz
+	push	d
+	push	h
+	mov	c,m
+	mov	b,c
+	inx	h
+k40	ldax	d
+	call	caps
+	cmp	m
+	inx	d
+	inx	h
+	jnz	nextlb
+	dcr	b
+	mov	a,b
+	cpi	4
+	jnc	k40
+	call	tst2
+	jc	nextlb
+	xchg
+	lhlx
+	shld	num0
+	xchg
+	pop	b
+	pop	d
+	stc
+	ret
+nextlb	pop	h
+	mvi	b,0
+	dad	b
+	pop	d
+	jmp	cmpnxt
+
+Tst1	LDAX	D
+	ORA	A
+	JZ	L13
+	CPI	';'
+	JNZ	L14
+L13	ORI	$80
+	RET
+L14	CPI	9
+	RZ
+	CPI	','
+	RZ
+	CPI	' '
+	RZ
+	cpi	'='
+	rz
+L15	cpi	'a'
+	jc	k80
+	cpi	'z'+1
+	jnc	k80
+	ani	223
+k80	CPI	'?'
+	cmc
+	Jnc	L16
+	CPI	'_'+1
+L16	INR	A
+	DCR	A
+	RET
+
+Tst2	LDAX	D
+	CALL	L15
+	RC
+	CPI	'$'
+	STC
+	RZ
+	CPI	'''
+	STC
+	RZ
+	CPI	'0'
+	CMC
+	RNC
+	CPI	'9'+1
+	RET
+
+	call	respp
+GetMnc	MOV	B,A
+	CPI	$76
+	JZ	Getopc+1
+	ANI	$C7
+	CPI	6
+	JNZ	L17
+GetHIC	CALL	GetOHR
+InsC	MVI	M,','
+	JMP	Put0+1
+L17	CPI	$C7
+	JNZ	L18
+	CALL	Getopc+1
+	MOV	A,B
+	RRC
+	RRC
+	RRC
+	ANI	7
+	adi	48
+	mov	m,a
+	inx	h
+	lxi	b,rfix-48
+	add	c
+	mov	c,a
+	cc	inrb
+	ldax	b
+	sta	oplen
+	dcr	a
+	jz	put0+2
+	mvi	m,','
+	jmp	put0+1
+
+L18	CPI	5
+	JZ	GetOHR
+	CPI	4
+	JNZ	L19
+GetOHR	CALL	Getopc+1
+	MOV	A,B
+GetHR	RRC
+	RRC
+	RRC
+	JMP	GetLR+1
+L19	MOV	A,B
+	ANI	$CF
+	CPI	$C1
+	JZ	L20
+	CPI	$C5
+	JNZ	L21
+L20	CALL	GetOXR
+	MVI	M,'P'
+	INX	H
+	MVI	M,'S'
+	INX	H
+	MVI	M,'W'
+	JMP	Put0+1
+L21	CPI	$A
+	JZ	L22
+	CPI	2
+	JNZ	L23
+L22	MOV	C,A
+	MOV	A,B
+	ANI	32
+	JNZ	Getopc
+	MOV	A,C
+	CALL	Getopc+1
+	MOV	A,B
+	ANI	16
+	JMP	GetHR
+
+	if	m,2
+	LINK	R2:adsm2
+	endif
+
+	if	m,1
+
+SAVECO	CALL	$2089
+	CNZ	$1FD9
+	CALL	$20E4
+	PUSH	H
+	LHLD	$FBB0
+	PUSH	H
+	LHLD	$FAD0
+	MOV	A,H
+	ORA	L
+	JZ	$3F17
+	PUSH	H
+	LXI	B,6
+	DAD	B
+	MOV	B,H
+	MOV	C,L
+	LHLD	$FBB2
+	SHLD	$FB99
+	CNC	$6B6D
+	JC	$3F17
+	XCHG
+	LXI	H,$FACE
+	CALL	$2540
+	LHLD	$FACE
+	POP	B
+	CALL	$6BDB
+	POP	H
+	SHLD	$FBB0
+	POP	H
+	MVI	A,$A0
+	XCHG
+	LHLD	$FB99
+	XCHG
+	CALL	$2239
+	CALL	$2146
+	LHLD	$FB8E
+	RET
+
+TICK	EQU	7676h
+BELL:	DI
+	MVI	D,0
+S2	MVI	E,$28
+S1	DCR	E
+	JNZ	S1
+	CALL	TICK
+	DCR	D
+	JNZ	S2
+	EI
+	RET
+
+InrB	inr	b
+	ret
+
+InrA	inr	a
+	ret
+
+exit	jmp	menu
+
+Killc0	equ	$1FBF
+Kill80	equ	$2017
+Kill00	equ	$1FD9
+
+Kill	mov	a,m
+	inx	h
+	mov	e,m
+	inx	h
+	mov	d,m
+	dcx	h
+	dcx	h
+	cpi	$c0
+	jz	killc0
+	cpi	$80
+	jz	kill80
+	jmp	kill00
+
+	endif
+
+	link	r2:adsm2

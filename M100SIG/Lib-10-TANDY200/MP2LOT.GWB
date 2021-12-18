@@ -1,0 +1,167 @@
+10 REM  ******************** PROGRAM MP2LOT.BAS ******************************
+20 REM  by Kent Nickerson  71061,01650  August 13/90
+30 REM
+40 REM  This program takes in a TANDY 200 MSPLAN spreadsheet file in "SYLK"
+50 REM   format and creates an ASCII file which can imported and parsed
+60 REM   into LOTUS or QUATTRO.
+70 REM  
+80 REM  SYLK file records significant to this program start in "B;", "C;",
+90 REM   or "F;".  The "B;" record, occuring once,  is followed by the 
+100 REM   spreadsheet size.  "F;" records contain cell formatting data, but
+110 REM   are read only for its occasional cell position data - this program
+120 REM   does not attempt presevation of cell format.  The most important
+130 REM   record is the cell data "C;" type, which begins "C;Yrr;Xcc; ...",
+140 REM   "C;Yrr; ...", or "C;Xcc; ...", where "rr" is the row number and 
+150 REM   cc the column.  Next follows one of four cases:
+160 REM		1) "...;Kvv;...", where vv is a cell value, and where
+170 REM		   the characters following may or may not be present.
+180 REM		2) "...;K"ll" ";...", as in case 1), except ll is a cell
+190 REM		   alphabetical, distinguished by quotes.
+200 REM		3) "...;Eformula;...;Kvv", which denotes a cell formula.
+210 REM		   The formula expression follows the "E", and the 
+220 REM		   (calculated) cell value is vv.
+230 REM		4) "...;S;Kvv", which denotes a cell formula referenced
+240 REM 		   to another cell, with the actual value following "K".
+250 REM		   If the position data in the first part of the record
+260 REM                    starts with a new column (i.e. "X") number, reference
+270 REM		   formula lies to the left.  Otherwise, it is above.
+280 REM
+290 REM   The "B" record is "B;Y<no. of rows>;X<no. of columns>".  "F"
+300 REM   records with significant data begin as in the case of "C".
+310 REM
+320 REM   To begin, open the requested SYLK file.  Deciphered results are
+330 REM    stored in array SPR$.  Arrays NOCOL and MAXWIDTH respectively will
+340 REM    store the maximum column used in each row, and the maximum width
+350 REM	  of each used column.
+360 REM    Variable "SAVEVAL" is set "true" (-1) if values are to be preserved.
+370 REM
+380        DIM SPR$(100,64), NOCOL(99), MAXWIDTH(64)
+390        INPUT "Enter SYLK file to be converted>", SF$
+395        INPUT "Enter output file name>", ofn$
+400       INPUT "Preserve values or formulas? (V for values)>", V$
+410       IF V$="v" OR V$="V" THEN SAVEVAL=-1 ELSE SAVEVAL=0
+420       OPEN SF$ FOR INPUT AS #1
+430       CLS
+440 REM
+450 REM  Read SYLK file records, and if not a "B" type, truncate prefix. 
+460 REM  Any records not starting with "C", "F", or "B" do not have a format
+470 REM   which will pass.  The "B" record occurs once near the beginning, so
+480 REM   is sought first.  If not found, it can be ignored.  
+490 REM
+500       INPUT#1, A$
+510	       LASTCHR$=""
+520       IF EOF(1) OR A$="E" GOTO 1340
+530 REM
+540       IF LEFT$(A$,1)<>"B" GOTO 620
+550            A$=RIGHT$(A$,LEN(A$)-INSTR(A$,";")-1)
+560            YSIZ=VAL(LEFT$(A$,INSTR(A$,";")-1))
+570            XSIZ=VAL(RIGHT$(A$,LEN(A$)-INSTR(A$,";")-1))
+580            LOCATE 2,10
+590            PRINT "Spreadsheet is ";YSIZ;" rows by ";XSIZ;" columns"
+600            GOTO 500
+610 REM
+620            A$=RIGHT$(A$,LEN(A$)-INSTR(A$,";"))
+630 REM
+640 REM
+650 REM  ------- EXTRACT POSITION DATA -------
+660 REM 
+670 REM  "ARRLEN" detects the maximum row number (in case the size record 
+680 REM   provision above fails).  The record is then stripped.  LASTCHR$
+690 REM   decides reference formula direction in case of an "S".
+700 REM
+710       IF LEFT$(A$,1)<>"Y" GOTO 780
+720            ROW=VAL(MID$(A$,2,(INSTR(A$,";")-2)))
+730       IF ROW>ARRLEN THEN ARRLEN=ROW
+740            LOCATE 4,10: PRINT "Processing Row ";ROW
+750            A$=RIGHT$(A$,LEN(A$)-INSTR(A$,";"))
+760            LASTCHR$="Y"
+770 REM
+780       IF LEFT$(A$,1)<>"X" GOTO 860
+790            COL= VAL(MID$(A$,2,(INSTR(A$,";")-2)))
+800            A$= RIGHT$(A$,LEN(A$)-INSTR(A$,";"))
+810           IF LASTCHR$<>"Y" THEN LASTCHR$="X"
+820 REM
+830 REM The cell column, given by an "X" code or unchanged if no "X" code
+840 REM  exists, is compared to derive a maximum for the row.
+850 REM
+860       IF COL>NOCOL(ROW) THEN NOCOL(ROW)=COL
+870 REM
+880 REM
+890 REM  ------- EXTRACT DATA -------
+900 REM
+910 REM  Cases 1) and 2).  
+920 REM  34 is ASCII for a quote.  If quotes exist, extract data between them.
+930 REM  Otherwise, a value follows either to record end or to next semicolon.
+940 REM  (Statement defining "IND" returns zero if no semicolon exists).
+950 REM
+960       IF LEFT$(A$,1)<>"K" GOTO 1090
+970            IF ASC(MID$(A$,2,1))<>34 GOTO 1000
+980                 SPR$(ROW,COL)=MID$(A$,3,INSTR(3,A$,CHR$(34))-3)
+990                 GOTO 1310
+1000                 IND=INSTR(A$,";")
+1010               IF IND=0 THEN SEGLEN=LEN(A$)-1 ELSE SEGLEN=IND-2
+1020                 SPR$(ROW,COL)=MID$(A$,2,SEGLEN)
+1030                 GOTO 1310
+1040 REM
+1050 REM  Case 3).
+1060 REM  If formulas are desired, extract between "E" and following semicolon.
+1070 REM  If values are to be preserved, extract from "K" to end.
+1080 REM
+1090       IF LEFT$(A$,1)<>"E" THEN GOTO 1220
+1100	       IF SAVEVAL  GOTO 1130
+1110	            SPR$(ROW,COL)=MID$(A$,2,INSTR(A$,";")-2)
+1120                 GOTO 1310
+1130		    SPR$(ROW,COL)=RIGHT$(A$,LEN(A$)-INSTR(A$,"K"))
+1140                 GOTO 1310
+1150 REM 
+1160 REM  Case 4).
+1170 REM  If formulas are to be saved, the cell is loaded with a pointer to
+1180 REM  the original formula.  A LASTCHR$="Y" indicates the reference formula
+1190 REM  lies above, and up-arrows are used.  Otherwise, side pointing arrows.
+1200 REM  If values are to be saved, extract from "K" to end.
+1210 REM
+1220       IF LEFT$(A$,1)<>"S" THEN GOTO 500
+1230            IF SAVEVAL GOTO 1270
+1240               IF LASTCHR$="Y" THEN ARW$="  ^^" ELSE ARW$="  <--"
+1250                 SPR$(ROW,COL)=ARW$
+1260                 GOTO 1310
+1270                 SPR$(ROW,COL)=RIGHT$(A$,LEN(A$)-INSTR(A$,"K"))
+1280 REM
+1290 REM Array COLWIDTH (+ margin) is longest entry for a particular column.
+1300 REM
+1310             COLWIDTH = LEN(SPR$(ROW, COL))+1
+1320             IF COLWIDTH>MAXWIDTH(COL) THEN MAXWIDTH(COL)=COLWIDTH
+1330       GOTO 500
+1340	  CLOSE
+1350 REM
+1360 REM An ASCII file of the extracted spreadsheet array is now made,
+1370 REM making columns two characters wider than the maximum width needed
+1380 REM for each column.
+1390 REM
+1400       OPEN ofo$ FOR OUTPUT AS #1
+1410 REM
+1420 REM Form file parse line for Quattro, then create ASCII file spreadsheet
+1430 REM
+1440   	       MAXCOL=0
+1450       FOR I=1 TO ARRLEN
+1460            IF NOCOL(I)>MAXCOL THEN MAXCOL=NOCOL(I)
+1470       NEXT I
+1480 REM
+1490       FOR I=1 TO MAXCOL
+1500            PRINT#1,"L";STRING$(MAXWIDTH(I)-1,ASC(">"));"**";
+1510	  NEXT I
+1520            PRINT#1, " "
+1530	       PRINT#1, "To parse file in Quattro using above line, edit line";
+1540            PRINT#1, " in Quattro, replacing leading apostrophe with a | ."
+1550 REM
+1560       FOR I=1 TO ARRLEN
+1570	       TPOS=1
+1580          FOR J=1 TO NOCOL(I)-1
+1590	       TPOS=TPOS+MAXWIDTH(J)+2
+1600           PRINT#1, SPR$(I,J);TAB(TPOS)
+1610	     NEXT J
+1620           PRINT#1, SPR$(I,NOCOL(I))
+1630	  NEXT I
+1640      CLOSE
+1650      END
+

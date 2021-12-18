@@ -1,0 +1,292 @@
+;LOCK.SRC
+; this file contains sources for both
+; LOCK and LOCKC.
+; <you must split them to reassemble>
+;
+;LOCK.100 v3.0
+;c1987 Jon Diercks [73327,2353]
+;
+; password protection program
+;  locks up computer, keeps count
+;  of unsuccessful attempts and stores
+;  last bad try.
+; so far as I know, nothing short of
+;  >The Big Chill< can crack it!
+; variable length password, max 15
+; use LOCKC.CO to change pw.
+;
+; Idea and some code borrowed from a
+; similar program which appeared in
+; Creative Computing many years ago.
+;
+;
+	org	$fcc0	;alt lcd buf
+;
+;
+pwlen	db	8	;length of password
+pw	dm	password
+	ds	7	;extra space for longer pw's
+fails	db	0
+filnm	dm	"LOCK.CO
+	db	0
+;1st prompt
+hello	dm	keyword>
+	db	0
+;2nd prompt
+;put something different here if desired
+razz	equ	hello
+fails!	dm	 bad tries.
+	db	7	;beep
+	db	0
+lasttr	db	10	;lf
+	dm	last try = 
+	db	0
+;
+;
+;	program starts here
+;
+;
+start	lxi	hl,filnm
+	ent	start
+;
+	call	ipl
+dump	call	cls
+	call	$143f	;poweroff
+	lxi	hl,top
+	call	posit
+	disp	hello	;print 1st prompt
+	call	input	;get 1st try
+	jz	good	;correct?
+	lxi	hl,top	;no,
+	call	posit
+	call	$4269	;inverse
+	disp	razz	;print 2nd prompt
+	call	$426e	;cancel inverse
+	call	input	;2nd try
+	jz	good	;right?
+	lda	fails	;wrong again
+	inr	a	;increment bad try counter
+	sta	fails	;save it
+	lxi	hl,buffer	;then
+	lxi	de,buf2	; copy bad try
+	lxi	bc,31	; to 2nd half
+	ldir		; of inpbuf
+;
+	mvi	b,5
+bloop	call	$4229	;beep
+	dcr	b
+	jnz	bloop
+	jmp	dump
+good	call	$424e	;correct - turn off cursor
+	call	$1a96	;cancel ipl
+	lda	fails	;check if there
+	ana	a	; were any bad tries
+	jz	menu	;no, all done
+	call	cls	;yes, say so
+	lxi	hl,top
+	call	posit
+	lda	fails
+	mov	l,a
+	mvi	h,0
+	call	$39d4	;print value of hl
+	disp	fails!
+	lxi	hl,top
+	call	posit
+	disp	lasttr
+	disp	buf2
+	call	$5310	;pause
+	jmp	menu
+;
+input	lxi	hl,buffer
+	push	hl
+	mvi	b,31	;zero out 31 bytes of buffer
+	call	$4f0a	;zero b bytes at hl
+	call	$4249	;cursor on
+key	call	$7242	;get key
+	jz	key	;no key yet
+	pop	hl	;get bufptr back
+	cpi	13	;cr?
+	jz	check	;yes, go compare
+	mov	m,a	;no, char to buffer
+	mov	a,l
+	cpi	$64	;30 chars?
+	jnz	key2	;more
+	inr	a	;give up
+	ret
+;
+key2	mvi	a,32	;space
+	rst	4	;send space(don't echo passw)
+	inx	hl	;next buffer place
+	push	hl	;save it
+	jmp	key	;another key
+;
+check	lxi	hl,buffer
+	lxi	de,pw
+	lda	pwlen
+	mov	b,a
+cloop	ldax	de	;verify buffer
+	cmp	m	; against pw
+	rnz		;no good?
+	inx	hl	;good, keep checking
+	inx	de
+	dcr	b	;loop done?
+	jnz	cloop
+	mov	a,m
+	ora	a	;clear carry - good
+	ret
+;
+;
+;
+top	equ	$0804	;default cursor position (c,r)
+buffer	equ	$ff46	;store input
+buf2	equ	$ff66	;store bad try
+ipl	equ	$1a78
+move	equ	$65c3	;move <hl> to <de> till null
+menu	equ	$5797	;warm start
+cls	equ	$4231
+posit	equ	$427c	;position cursor row h, col l
+;
+;
+	end
+;
+;
+;
+;
+;LOCKC.100 v3.0
+;c1987 Jon Diercks [73327,2353]
+;
+; for use with LOCK.CO
+;   to change password
+;
+; <a bit 'hacky' but it works>
+;
+	org	$fcc0	;alt lcd buf
+;
+;
+;
+;	string data/variable space
+;
+;
+filnm	dm	LOCK.CO
+	db	0
+old!	db	12	;cls
+	db	10	;lf
+	dm	old
+key?	dm	 keyword>
+	db	0
+new?	db	13	;cr
+	db	10	;lf
+	dm	new
+	db	0
+again?	db	13
+	db	10
+	dm	     verify>
+	db	0
+oldpw	ds	2
+;store hl - file pointer
+;
+;
+;	program starts here
+;
+;
+start	disp	old!
+	ent	start
+;
+	lxi	de,filnm
+	call	chkf	;file in dir?
+	jz	beep	;no, error
+;
+	call	faddr	;hl=file start
+	lxi	de,7
+	dad	de	;now hl=pwlen
+	shld	oldpw
+;
+	call	$5a58	;disp oldpw
+	disp	new?
+	disp	key?
+	call	input
+	lxi	hl,buffer
+	lxi	de,buf2	;put 1st newkey
+	call	move	;in 2nd buf
+	disp	again?
+	call	input
+;
+; now compare <hl> w/ <de>
+;  both buffers must end w/null
+;
+check	lxi	hl,buffer
+	lxi	de,buf2
+cloop	ldax	de	;verify buffer
+	cmp	m	; against pw
+	jz	cloop1	;no good?
+	call	beep	;no match
+	jmp	start	;try again
+;
+cloop1	ana	a
+	jz	good	;done?
+	inx	hl	;keep checking
+	inx	de
+	jmp	cloop
+;
+good	lhld	oldpw
+	xchg		;de=<oldpw>
+	lxi	hl,buffer
+	call	move	;change pw
+	lxi	hl,buffer
+	call	count
+	mov	a,e
+	lhld	oldpw
+	dcx	hl
+	mov	m,a	;change pwlen
+	jmp	menu	;all done!
+;
+;
+;
+; input routine
+;  no special keys
+;  15 char max
+;  ^C or null jumps to menu
+input	lxi	hl,buffer
+	push	hl
+	mvi	b,16
+	call	$4f0a	;zero b bytes at hl
+	call	$4249	;cursor on
+key	call	$7242	;get key
+	jz	key	;no key yet
+	jc	key	;special key
+	pop	hl	;get bufptr back
+	cpi	13	;cr?
+	jnz	key0	;no, continue
+	lxi	hl,buffer
+	sub	a
+	add	m
+	jz	menu	;null input
+	ret		;else good
+;
+key0	cpi	3	;^C?
+	jz	menu
+;
+	mov	m,a	;no, char to buffer
+	mov	a,l
+	cpi	$54	;15 chars?
+	rz		; max
+	mvi	a,32	;space
+	rst	4	;send space(don't echo passw)
+	inx	hl	;next buffer place
+	push	hl	;save it
+	jmp	key	;another key
+;
+;
+;	rom/ram addresses
+;
+;
+chkf	equ	$5aa9	;ck file name in directory
+faddr	equ	$5ae3	;get file address
+beep	equ	$7662	;make a beep
+buffer	equ	$ff46	;store input
+buf2	equ	$ff66	;store 1st key
+move	equ	$65c3	;move <hl> to <de> till null
+count	equ	$21fa	;count <hl> til null - result in e
+menu	equ	$5797	;warm start
+;
+	end

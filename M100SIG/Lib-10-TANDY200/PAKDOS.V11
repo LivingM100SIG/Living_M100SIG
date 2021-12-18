@@ -1,0 +1,50 @@
+This file describes the revisions done to PakDOS v1.0, reflected in v1.1.
+
+1) Addition of Type command, that prints disk file on screen.
+2) Addition of Read command, that prints Ram file on screen.
+3) Addition of -X switch that makes a file Loaded or Unpacked to execute.
+4) Improved Basic's CALL handling - retention of variables, resume ability.
+5) Fix of a bug that made Telcom hang during auto logon.
+
+
+The following are parts from PakDOS.DOC v1.1 that explain the new features.
+
+  -X (execute) executes DO, BA, or CO file after it is created in Ram, by
+ Load or Unpack command.  DO and BA files load as files, but CO file does
+ not, i.e., it won't be on the Menu when you exit the CO file.  If the load
+ address of CO file conflicts with that of PakDOS, you can still execute it,
+ but PakDOS will be overwritten.
+
+
+  Making a Ram file invisible makes it inaccessable by PakDOS.
+
+
+  You can make CALLs to PakDOS to execute a single command and return.
+  The following example demonstrates this.  It lists the disk files
+ directory in long format.
+
+10 LOADM"PakDOS"
+20 PD=XXXXX:'"Top" address of PakDOS
+30 C$="d -l"+CHR$(0):'Command string
+40 C=VARPTR(C$):C=PEEK(C+1)+PEEK(C+2)*256
+50 CALL PD+3,,C
+60 END
+
+Replace XXXXX in line 20 with the address of PakDOS's Top.  When you CALL
+ PakDOS at Top, to run the program, or at Top+3, to execute a single command,
+ like the example above, all Basic variables are retained and you will be
+ returned to resume running the Basic program.  The only case where a
+ variable might not be retained is when a string variable is assigned a single
+ constant literal string, like this:
+
+10 A$="hello"
+
+However this can be corrected by changing it to:
+
+10 A$=""+"hello"
+  or
+10 A$="h"+"ello"
+
+The + forces the data of A$ to be located in a seperate variable storage
+ area, instead of being imbedded in the program line.
+

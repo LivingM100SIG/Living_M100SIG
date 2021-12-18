@@ -1,0 +1,58 @@
+0 ' Copyright 1989 Joe Wasserman
+10 CLS:CLEAR0:CLEARFRE(0)-1000:DEFINTA-Z
+20 CALL41179:X$="3:XBASIC.CO":CALL63600,8,VARPTR(X$):IFPEEK(61302)<>0THENSTOP
+30 FORZ=1TO3
+40 PRINT"Bank";Z:CALL63600,6,Z:PRINT:PRINT
+50 NEXT:PRINT:PRINT
+60 INPUT"File to Sort,in Bank #:";F$,BK
+70 IFBK<1ORBK>3THEN60
+80 IF(INSTR(F$,"."))>0THENF$=LEFT$(F$,INSTR(F$,".")-1)
+90 FI$=CHR$(48+BK)+":"+F$
+100 CALL63600,1,VARPTR(FI$)
+110 CLS
+120 X$="":CALL63600,3,VARPTR(X$):Z$=X$
+130 PRINT@40,"----.----1----.----2----.----3----.----4"LEFT$(Z$,40)
+140 PRINT@120,"----.----5----.----6----.----7----.----8"MID$(Z$,41,40)
+150 A$="First Sort Field (start,end)":GOSUB490
+160 INPUTA,B
+170 IFA=0ORB<ATHEN150
+180 A$="Second Sort Field (start,end)":GOSUB490
+190 INPUTC,D:IFC=0ANDD=0THENC=A:D=B
+200 A$="HIGH first/LOW first (H,L)":GOSUB490
+210 INPUTB$:IFINSTR("LlHh",B$)=0THEN200
+220 A$="Scanning":GOSUB490:N=0
+230 N=N+1:X$="":CALL63600,3,VARPTR(X$):IFPEEK(63605)<>17THEN230
+240 CALL63600,0
+250 IFINSTR("Ll",B$)>0THENF=1:G=N:H=1:ELSEF=N:G=1:H=-1
+260 DIMD$(N):PRINT@240,N"Items to sort"
+270 A$="Loading":GOSUB490
+280 CALL63600,1,VARPTR(FI$)
+290 FORI=1TON:X$="":CALL63600,3,VARPTR(X$):D$(I)=X$:NEXT:CALL63600,0
+300 A$="Sorting":GOSUB490:K=B-A+1:L=D-C+1
+310 V=N
+320 V=V/2:PRINT@260,USING"###<finished at 0";V
+330 IFV=0THENA$="Finished. Saving to File":GOSUB490:GOTO450
+340 W=1:X=N-V
+350 Y=W
+360 Z=Y+V
+370 IFMID$(D$(Y),A,K)+MID$(D$(Y),C,L)<MID$(D$(Z),A,K)+MID$(D$(Z),C,L)THEN420
+380 X$=D$(Y):D$(Y)=D$(Z):D$(Z)=X$
+390 Y=Y-V
+400 IFY<1THEN420
+410 GOTO360
+420 W=W+1
+430 IFW>XTHEN320
+440 GOTO350
+450 CALL41179:FI$=FI$+".DO":CALL63600,7,VARPTR(FI$):X$="3:XBASIC.CO":CALL63600,8,VARPTR(X$):IFPEEK(61302)<>0THENSTOP
+460 CALL63600,2,VARPTR(FI$)
+470 FORI=FTOGSTEPH:D$(I)=D$(I)+CHR$(13)+CHR$(10):CALL63600,4,VARPTR(D$(I)):NEXT:CALL63600,0
+480 MENU
+490 PRINT@320,CHR$(27)"K"A$;:RETURN
+999 'XBKSRT should be in a bank with enough FRE space to load file to be sorted into array D$(N). N=# of items to sort.
+1000 'File to be sorted can be in any other bank that will hold it.
+1001 'For file name and bank prompt, enter name without .DO <comma> and then bank number.
+1002 'If there is no second field to sort press <CR>.
+1003 'LOW to HIGH sort is default setting. For HIGH to LOW sort enter 'H'.
+1004 'Sorting files up to 16K in size should be possible under ideal conditions.
+1005 'Fields higher than the 80th position can be sorted but are not shown on screen.
+

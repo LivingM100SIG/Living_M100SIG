@@ -1,0 +1,83 @@
+          Revised BASIC trace routine 
+
+          Jay Holovacs, 74756,413 
+          2/23/87 
+
+          TRON v3.0 is the latest in a series of sporadic refinements to 
+          the TRON trace routine.  As with earlier versions, it provides a 
+          running line number trace of a BASIC program while running, a 
+          useful programming aid. 
+
+          TRON is now easier to use and allows you to turn on and off the 
+          trace feature from the keyboard during program execution.  To 
+          use TRON, store it memory as a .CO file and lower HIMEM with the 
+          BASIC command: 
+
+          CLEAR 256,62615 
+
+          Activate TRON from the menu by selecting it with the wide 
+          cursor; after a few seconds the main menu will return, TRON is 
+          now active (if you hear a beep, you forgot to clear HIMEM).  
+          Enter BASIC or run your program as normal.  At any point during 
+          program execution hit control-T to turn on the trace and 
+          control-U to turn it back off.  This can be repeated an 
+          unlimited number of times.  When finished, or before loading or 
+          running other machine language programs (you can have m-l 
+          programs in ram as .CO files with no conflict) it is IMPORTANT 
+          to 'unhook' TRON with control-X (computer will beep and a 
+          printed message will confirm de-activation.)  After this is 
+          done, TRON is completely inactive and must be invoked from the 
+          menu to be used again.  In testing, I have not had any problems 
+          leaving TRON active when using TELCOM or TEXT but it is strongly 
+          recommended as a precaution to deactivate it as soon as you are 
+          done working in BASIC.  If you are not sure, no harm is done by 
+          pressing cntrl-X again. 
+
+          TRON is stored on CIS in HEX format, and should be downloaded 
+          with XMODEM if at all possible.  It will then be necessary to 
+          convert the file into the binary file TRON.CO using CHANGE.BA 
+          from DL7. 
+
+
+          SAVING AND RELOADING TRON: 
+
+          If you are using the portable disk drive it can be saved 
+          directly as a .CO file.  If you are using cassette, save it to 
+          tape as follows: (with TRON DEACTIVATED) 
+
+          CLEAR 256,62515 
+          LOADM"TRON.CO" 
+          CSAVEM"TRON.CO",62616,62958,62634 
+
+          Loading from tape is done from BASIC with the following commands: 
+
+          CLEAR 256,62515 
+          CLOADM"TRON.CO" 
+         SAVEM"TRON.CO",62616,62958,62634
+          (this loading procedure does not in itself activate TRON) 
+
+          NOTES: 
+
+          TRON is relatively simple and foolproof if you observe the 
+          following: 
+
+          Remember that a BASIC program that loads a Machine Language 
+          routine through a  
+          series of POKES can also conflict with TRON (if active). 
+
+          ROM based programs like TEXT or TELCOM have not caused me a 
+          problem, but I  
+          advise being sure TRON is deactivated before using these as well. 
+
+          Occasionally, if your program has a great deal of PRINTing 
+          activity, printed strings may 'step on' some of the line numbers 
+          being printed.  This does no harm. 
+
+          Because TRON samples the program every 4 milliseconds, it is 
+          possible for an occasional very fast line to slip thru, but the 
+          lines on either side will be caught. 
+
+          I have no tried it with a #102, but it should work (always save 
+          your files before trying it the first time however).  If someone 
+          does try it, please tell me your results via Easyplex. 
+

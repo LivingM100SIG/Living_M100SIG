@@ -1,0 +1,124 @@
+This article will appear in PCM magazine and documents a bug in Microsoft BASIC
+for the Tandy 200.
+
+IF X EQUALS ZERO THEN X ALSO EQUALS TEN TRILLION?
+ (A bug in Microsoft BASIC!)
+by Dr. Laurence D. Preble
+
+     I write software, both in BASIC and Assembler.  And I make mistakes.  
+Usually, I end up spending more time debugging my programs than I spend 
+writing the programs in the first place.  Most programmers would tell you
+the same thing.  The people who developed Microsoft BASIC for the Tandy
+200 would probably concur.
+
+     I tell you this because Microsoft writes some really great software and 
+does, for the most part, a thorough job of debugging the software.  When 
+writing a BASIC program, I encounter many of my own mistakes. It is rare 
+that I encounter a mistake in the BASIC Interpreter itself, "The Dreaded System
+BUG!"
+
+     Typos are my most common error mode.  A misplaced comma here or there 
+does the trick just fine.  For example:
+
+
+ F,OR X=1 TO 100
+
+(Note that the comma does not belong here!)
+
+Typos usually are detected by the BASIC Interpreter and generate the 
+infamous ?SN Error (Syntax Error).  I make lots of Syntax Errors!
+
+     Grammatical errors occur when properly spelled words are just used
+incorrectly.  An example in English could be, "For years I could not spell 
+PROGRAMMER.  Now I ARE one."  A BASIC example:
+
+  NEXT X:FOR X=1 TO 100
+
+(Should read: FOR X=1 TO 100:NEXT X)
+
+The BASIC Interpreter will detect most grammatical errors as well as errors in
+syntax.
+
+     Logical errors are more trouble to detect.  Logical errors occur when you
+give the computer a grammatically correct statement which unfortunately 
+does not convey the right message.  Have you ever spoken with someone who 
+just happened to be talking while sound asleep?  I have.  You might get 
+something like, "Larry, don't forget to wind up the refrigerator!"  Now, that 
+is a grammactically correct command-- but it just does not make any sense!  
+In Computer Lingo, you might have said something like "FOR X=1 TO 100" when 
+you really meant to say "FOR X=1 to 200".  Both statements are 
+grammatically correct.  Only one will do the right job.
+
+     A truly rare bird is "The Dreaded System BUG!".  Unfortunately, I just 
+stumbled accross exactly that sort of error in Microsoft BASIC for the Tandy 
+200.
+
+     The bug is easy to miss because it only pops up when all of the conditions
+are just right.  The bug involves a  combination of two unrelated 
+statements, "INT" and "PRINTUSING."  To illustrate the bug, type in the 
+following simple program:
+
+ 10 X=INT(.1)
+ 20 PRINT X
+ 30 PRINTUSING"##############";X
+
+     In line 10, X should be assigned the integer portion of (.1).  Since
+the integer portion of (.1) is 0, X should be equal to Zero!
+
+     In line 20, the value of X is printed out.  Sure enough, the answer 
+is 0.
+
+     In line 30, X should again be printed out but should be printed with 
+13 leading blanks because of the rules of formatting used with the 
+"PRINTUSING" statement.
+
+     Now lets look at what really happens.  RUN the program.  The Radio 
+Shack Model 100 executes this program correctly; the Tandy 200 does not.  The
+correct output would be:
+
+ 0
+             0
+
+Notice the thirteen spaces before the second zero.  The "PRINTUSING" 
+statement correctly inserts the extra spaces according to BASIC's rules of 
+formatting.
+
+     The output on the Tandy 200 is:
+
+ 0
+10000000000000
+
+     The ordinary "PRINT" statement correctly shows X to be equal to zero. 
+A "PRINTUSING" statement claims that X is equal to Ten Trillion.  (One thing 
+you can say about computers is that when they make mistakes, they make them
+big!)  By the way, you may substitute the word "FIX" for the word "INT" and 
+the same problem occurs.
+
+     Now substitute the following line for line 20:
+
+ 20 PRINTUSING"#";X
+
+     Run the program again.  The new output on the Tandy 200 is:
+
+ 0
+%10000000000000
+
+     The % sign just means that the number printed was too huge to fit in 
+the assigned format.
+
+     In general terms, Microsoft BASIC for the Tandy 200 makes an error any 
+time you take the integer portion of any number less than one but greater 
+than zero and then print the result with a "PRINTUSING" statement.  The 
+problem also occurs for numbers greater than negative one but less than zero.
+
+     It may be a while before a corrected version of Microsoft BASIC is
+available for the Tandy 200.  Until then, you may compensate for the bug by
+rewriting the program as shown below:
+
+ 10 X=INT(.1)
+ 15 IF X=0 THEN X=0 :REM (This line is the fixup!)
+ 20 PRINT X
+ 30 PRINTUSING"##############";X
+
+In line 15, X is being reassigned to zero.  This seems to fix the problem 
+with the "PRINTUSING" statement.

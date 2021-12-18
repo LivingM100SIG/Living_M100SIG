@@ -1,0 +1,127 @@
+		   Documentation for DBLDR.100
+
+	    Source version DB6.2 of October 13, 1984
+
+			     Credits
+
+First, for starting this thing off I would like to thank Don Corbitt
+[75655,1516] for writing PSEUDO.MAC and releasing it to the SIG for
+personal use.  Thanks also go to Rick Perry [75665,1045] for the
+excellent SORT.CO package.
+
+			   Commentary
+
+With Don's PSEUDO we got the ability to use any .DO file as a database,
+lifting the restrictions of ADDRSS and SCHEDL to their respective ADRS
+and NOTE files.  We also gained the ADD function which let us put more
+data into a file without having to drop back to the text editor.  This
+was fine, but to delete anything we still had to go to the text editor. 
+Sorting required use of a seperate program (more stuff to fill memory). 
+And, if we wanted to use a file other than ADRS for phone number
+storage, well, that was still more software.
+
+I took a look at this state of affairs and decided that I wanted the
+whole shooting match in one package in order to less fill the memory in
+Herman, my M100.  My original goal was to use 512 bytes or less, but in
+the 800 and some odd bytes I ended up with I managed to squeeze in:
+
+	- Don's Pseudo with ADD
+	- Rick's SORT.CO
+	- record deletion
+	- auto-dial and logon
+	- the ability to switch to different files
+
+It turns out that, when a record is formatted for a phone number with a
+logon sequence attached, the built-in auto-dial routine will drop right
+through and do the log-on function.  Since I wanted to use this program
+with my ADRS file, I didn't add the carrier-detect/busy detect/no answer
+detect code (I did try).
+
+			   Setting Up
+
+You have all you need to start with DBLDR.100.  DOWnload DBLDR.100 as
+DBLDR.DO.  LOAD DBLDR.DO and SAVE it as DBLDR.BA. RUN DBLDR and it
+will create the two files DB.BA and DB.CO that form the database
+handler.
+
+To run the program, just select DB.BA from the menu or RUN"DB" from
+BASIC.
+			    Operation
+
+When you start DB you are shown the directory of files in your machine
+and asked to select a ".DO" file.  If the file exists in memory, it is
+opened and you can continue with DB.  When the file is non-existant you
+are given the option to open it as a new file. A "No" response puts you
+back to the startup display. A "Yes" response tells the program to
+create a new file.  Should there be no more room in the directory, you
+are informed of this and the program exits to the MENU to allow you to
+clear out old/unwanted files.
+
+The main operating display is the prompt "DB:". Here you can use any of
+the options provided by the function keys.
+
+			  Function Keys
+
+F1 - FIND
+
+This key works in a manner similar to the Find key in TELCOM.  Enter the
+search string and  <ENTER> after hitting F1 or typing in FIND.  The line
+containing the search string is displayed if any is found and the
+function keys active under FIND are displayed.
+
+
+F2 - MORE
+
+Hitting this key, the space bar, M or m prompts DB to look for the next
+occurrence of the search string.
+
+F3 - DELE
+
+Hitting F2, D, or d tells DB to delete the displayed data.  Before doing
+the actual delete, however you are asked "OK to DELETE?".  A yes
+response causes the data to be deleted, any other respopnse aborts the
+deletion and takes you back to the DB: prompt. 
+
+F4 - CALL
+
+If there is a phone number in the displayed data (formatted as in the
+ADRS file) DB will dial it.  Should the number also have an auto logon
+sequence appended DB logs you onto the system it called and drops into
+TELCOM.
+
+F8 - QUIT
+
+Handy exit key takes you back to the main DB display.
+
+
+F2 - ADD
+
+Hit F2 and type a string of data up to 240 characters long. When you hit
+<ENTER> the string is added to the top of the file. The bell sounds and
+the M100 stops accepting data when the input line hits 254 characters so
+you can't overrun the input string buffer.
+
+F3 - SORT
+
+This is Rick Perry's SORT.CO shoe-horned into DB. It sorts the lines in
+the file based on the first characters of each entry.
+
+F5 - LFND
+
+This key is identical to LFND in ADDRSS and SCHEDL
+
+F6 - FILE
+
+The name of this function may be a bit misleading. It allows you the
+option of switching to another file in memory.  Hitting F6 takes you
+back to the startup display of DB.
+
+F8 - MENU 
+
+Clean up and go home
+
+
+L
+
+If there is a phone number in the displayed data (formatted as in the
+ADRS file) DB will dial it.  S

@@ -1,0 +1,54 @@
+NDEXE.DOC -- documentation for
+NDEXE.100 and NDEXE.200
+
+NDEXE loads and runs machine language programs that are stored on Node Ram
+ disk.  The program run is not created as a file in memory, but directly
+ loaded into its load address and executed.
+
+NDEXE.100/200 is a Basic loader that creates NDEXE.CO for Model 100/200.
+Run it to create NDEXE.CO.
+
+If the ML program runs in HIMEM, HIMEM must be properly set before running.
+If it runs in AltLCD buffer, it can still be ran, even though NDEXE itself
+runs in AltLCD.
+
+When you run NDEXE, it prompts with
+"NDexe: "
+Then enter the name of the ML program on the Node disk; if the name of the file
+ends with ".CO", you can omit the ".CO"
+If the file exists, the name of the file, Top addr, Length, and Exe
+ addr prints on the screen and is executed, else you are prompted again
+ until you enter the right file name or press <CR> to exit.
+
+NDEXE must exist as NDEXE.CO in memory.  It must not be renamed.
+
+NDEXE can be called from BASIC with the calling parameter specifying the
+ file name.
+Because screen output can erase NDEXE after it's LOADMed, it must be called
+ before any screen output is done.
+The call address is 64707 for Model 100, 63411 for Tandy 200.
+Here's a small program that lets you choose a program to run from a menu
+instead of typing it each time.
+You can add your own file names at DATA lines 300-.  The last DATA item must be
+ "0", indicating end of list.
+
+Note: This is for 200 only.  It will not work on a 100 because the LOADM statement causes all variables
+ to be cleared on a 100.
+
+100 XE=64707:IF PEEK(1)=171 THEN XE=63411
+110 PRINT:MD=0:GOSUB 200:'List them
+120 F$="":PRINT:INPUT "File # to run (CR to exit)";F$:IF F$="" THEN MENU
+130 N=VAL(F$):MD=1:GOSUB 200:'Get name string
+140 IF SP>0 THEN LOADM"ndexe":CALL XE,,SP
+150 GOTO 100:'do again if it returns
+200 'search data lines for file name
+210 RESTORE 300:I=1
+220 READ F$:IF F$="0" THEN SP=0:RETURN
+225 IF MD=0 THEN PRINT STR$(I);"> ";F$
+230 IF ((MD=1)AND(I=N)) THEN S$=F$+CHR$(0):SP=VARPTR(S$):SP=PEEK(SP+1)+PEEK(SP+2)*256:RETURN
+240 I=I+1:GOTO 220
+300 'file name list
+310 DATA Pakdos
+320 DATA Hxfer
+330 DATA Pbdump
+390 DATA 0

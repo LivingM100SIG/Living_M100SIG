@@ -1,0 +1,206 @@
+RIP100.THD
+        (c)1988 Golden Triangle, Inc.
+        (c)1989 Wilson Van Alst
+
+
+Fm: Christopher Zach
+To: ALL
+
+        About 6 months ago, my old M100 finally committed computer suicide. The
+screen comes up when I turn it on, but the clock doesn't work, and the first 3
+characters on the screen are junk chars (always changing). Any ideas what could
+be wrong? I really miss the thing (TMPC is so nice), and want to either fix or
+replace it.
+
+    =+=+=+=+=+=
+
+Fm: Tony Anderson
+To: Christopher Zach
+
+It's possible the clock chip died.  If that's the case, the computer may be
+fully usable without it, since the "clock" part is separate from the "compute"
+part.  -  The first three characters should be the month indication, Jan, Feb,
+etc.  Is that what you're saying is constantly changing?  If that's the case,
+it might indicate a problem with the clock chip, since the data from the clock
+is loaded into a holding buffer every so often by a ROM routine.  If the data
+is "changing" that would indicate the clock is changing.  Maybe.
+
+    =+=+=+=+=+=
+
+Fm: Christopher Zach
+To: Tony Anderson
+
+Tony:
+        Interesting thought. The problem is the clock never 'ticks', but the
+first 3 chars change about twice a second. The chars that the M100 displays,
+however, are always "garbage chars (looks like something you see with the code
+key pressed). Meanwhile, the computer is 99% locked up. I say 99% because every
+once in a while, striking a key causes the computer to actually do something
+(like go into basic).
+
+    =+=+=+=+=+=
+
+Fm: Tony Anderson
+To: Christopher Zach
+
+Sounds like a repair call, to me.  But maybe some of the others can come up
+with something useful.
+
+    =+=+=+=+=+=
+
+Fm: Christopher Zach
+To: Tony Anderson
+
+        If I were to send this thing to Radio shack, they would probably laugh
+till their socks fell off (it has a LOT of miles on it). Besides, I can
+probably pick another one up for less money...
+
+    =+=+=+=+=+=
+
+Fm: Tony Anderson
+To: Christopher Zach
+
+That is often the case... it's cheaper to get a used replacement, than it is to
+fix a problem machine.  Especially since they seem to have the "replacement"
+mentality.  (They don't "fix it", the replace whole boards.)
+
+    =+=+=+=+=+=
+
+Fm: Gene Nestro
+To: Christopher Zach
+
+Did you COLD START it? Did you turn the MEMORY switch to off (on bottom of
+M100) and let it sleep for 24 hor 24 hours? Are the batteries fresh?
+
+    =+=+=+=+=+=
+
+Fm: Christopher Zach
+To: Gene Nestro
+
+     Yes, I did cold start, and I left the memory off switch off for 3 months.
+I use the power adapter, and I tried a spare one. No luck. It is one really
+wierd problem because when I cold start, it DOES check memory, and brings up
+the main screen. Also, if I press a key many times, it moves the bar or puts
+the key value in the display. I am totally stumped on this one. Pardon me if my
+message is a format disaster, but I am typing on a silent 700 at work (Ug).
+
+    =+=+=+=+=+=
+
+Fm: Gene Nestro
+To: Christopher Zach
+
+Chris, my next step(s) would be: 1. replace AA batteries 2. completly discharge
+Nicads
+     a. if you can enter Basic type   POWER CONT
+     b. stop rite there - leave 100 ON
+     c. go to bed
+     d. next AM enter Basic
+     e. type POWER 100
+
+    =+=+=+=+=+=
+
+Fm: Christopher Zach
+To: Gene Nestro
+
+        No dice. The 100's nicads were completely dead when I took it out of
+hiding yesterday. The problem seems to be something in the hardware. God, I
+miss lights and switches....
+
+    =+=+=+=+=+=
+
+Fm: Wilson Van Alst
+To: Christopher Zach
+
+   Unfortunately the symptoms you describe could be the result of several
+ailments.  Can you get into BASIC?  Try turning the computer on -- and before
+anything else, press <ENTER>.  Then type "BEEP" (without the quotes) and press
+<ENTER> again.  If you hear a BEEP, it would seem to indicate the computer's
+system software is doing OK and the problem is probably in the LCD and/or its
+driving circuits.
+   No beep?  Things are screwed up at a more fundamental level.  If you have a
+decent volt-ohm meter, you might try a "gross" diagnostic on the power supply.
+With the computer on, you should be able to measure a steady, accurate 5 volts
+between pins 7 (gnd) and 9 (+) at the Bar Code Reader socket:
+
+                    1  2  3  4  5
+                     6  7  8  9
+
+   If this measurement is not very close to 5v, or if it fluctuates, the
+computer's power supply circuitry would be suspect.
+   Incidentally, if you haven't done so already, you should strip the computer
+to its barest essentials before trying the above: take out any option ROM or
+RAM chips that are not soldered in place.  And while you have the computer case
+open, take a close look for signs of cracking on the main printed circuit
+board, give the plugs on those ribbon connectors a healthy back-and-forth
+wiggle (or even pull them free and re-seat them), and use a hair-dryer, set on
+cold, to blow away any accumulated dust and debris.
+   Let us know what you learn!
+
+    =+=+=+=+=+=
+
+Fm: Bill Brandon [DPTRAIN]
+To: Christopher Zach
+
+By any chance, do you have an option ROM of some variety installed? If so,
+check to make sure it's still seated correctly. If you aren't afraid to open up
+the case of your machine (and I can't imagine a man who will go on line,
+publicly, on a Silent 700, being afraid of *any*thing), you might check to be
+sure your add-on RAM chips are secure, too. I have the tech manual for the 100,
+but you didn't give me enough to use the rinky-tink trouble-shooting chart in
+the book. Well, maybe not ...
+
+The book sez that IF the machine works at all, AND IF the LCD functions at all,
+THEN the next thing to check is the keys. The chart asks "Keys don't
+function?". That sounds to me like it's worth checking out: 1) Check if
+keyboard connector is correctly connected; 2) Check the key scan signal (Is
+scan signal present at M25 PA0 - PA7 and PB1? IF NOT, check if pulses are
+emitted from the TP terminal (pin 10) of M18 and M25 at 4 msec intervals.); 3)
+Check diodes on keyboard; 4) Check the return signal; 5) Check M15, M13, M16,
+and pull-up resistor MR4; 6) Check the key switching no-input keys.
+
+There is also a common step on many of the charts: Check the RESET signal. 1)
+Check the RESET circuit (Check T11, T10, T9, T25, D20, D22, and C78); 2) Check
+all ICs which have RESET and RESETbar signals (Check M19, M25, M22, M14, M27,
+M36, and M31, and also check LCD unit and RAM).
+
+    =+=+=+=+=+=
+
+Fm: Christopher Zach
+To: Bill Brandon [DPTRAIN]
+
+        I will give that a try. Being the kind of person who gleefully takes
+everything apart (and is able to put it together), I have no prob with hauling
+the cover off. I don't have any option roms, have checked the memory, and
+(once) ran the machine without the kbd. Didn't change a thing. I will try to
+check the reset line, maybe that might be the problem...
+
+    =+=+=+=+=+=
+
+Fm: Bill Brandon [DPTRAIN]
+To: Christopher Zach
+
+OK - I reckon that means you have also checked all those little ribbon
+connectors and found them tight. The next item on the checklist (after one
+which has you check the buzzer) is "Clock doesn't function": 1) Check the power
+supply voltage - when power ON: +5V    - when power OFF: 2.0-4.0V (if not
+normal, check power supply circuit) (Note: I think you have been given the Q&D
+way to do this at the BCR port, so I won't repeat)  2) Check oscillation
+frequency (f=32.768 kHz) (If not normal, check X1, C17, C18 and M18)  3) Check
+that a 250-Hz pulse is output from TP signal  4) Check clock-setting IC's (M14
+and M25) and RESET signal.
+
+The next item on the checklist is "Reset doesn't function", which I sent to you
+in the previous message. After that the checklist gets into things which don't
+seem at all related to your problem.
+
+    =+=+=+=+=+=
+
+
+Starting message #: 188763  Starting date: 15-Oct-89  06:28:33
+ Participants:
+Christopher Zach 72735,1140
+Gene Nestro 73727,1015
+Tony Anderson 76703,4062
+Bill Brandon [DPTRAIN] 76701,256
+Wilson Van Alst 76576,2735
+Stan Wong 70346,1267

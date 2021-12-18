@@ -1,0 +1,94 @@
+1 ' CITY.100
+2 '   by Ted Eselgroth 72376,2245.
+3 ' Hardly elegant programming...
+4 '   but it was part of
+5 '     the learning process.
+6 ' (If I had to do it again,
+7 '   it would be different...
+8 '     but it's still fun to watch!)
+9 ' It'll go forever - or 'til a BREAK.
+10 CLS
+12 PRINT@42,"Build a City!"
+14 PRINT@ 162,"Press any Key"
+16 PRINT@ 242,"To Begin the Construction Process..."
+18 A$=INKEY$
+20 R=RND(1)
+22 IF A$="" THEN 18
+30 A=0
+32 B=52
+34 D=63
+40 'Horizon
+42 CLS
+44 LINE (A,B)-(A,D),1
+46 A=A+1
+50 'Woods
+52 PRINT@41,"Woods:"
+54 N=RND(1)*2
+56 IF N=<1.4 THEN N=-N
+58 B=B+N
+60 IF B<0 THEN B=1
+62 IF B>62 THEN B=60
+64 IF A>239 THEN 70 ELSE 44
+70 'Hills
+72 PRINT@41,"Hills:"
+74 A=0
+76 B=40
+78 C=36+RND(1)*10
+80 D=17+RND(1)*20
+82 IF D>60 THEN 80
+84 LINE (A,B)-(C,D),1
+86 IF C=239 THEN 110
+88 A=C:B=D
+90 C=A+2+RND(1)*40
+92 IF C=>239 THEN C=239
+94 D=B+(RND(1)-.4)*20
+96 IF D=<0 THEN 94
+98 IF D>60 THEN 94
+100 FOR N=1 TO 100:NEXT
+102 GOTO 84
+110 'Buildings
+112 PRINT@41,"      "
+114 H=44
+116 A=4+(RND(1)*224)
+118 C=A+4+(RND(1)*32)
+120 IF C>235 THEN 118
+122 B=H+RND(1)*56
+124 IF B>56 THEN 122
+126 H=H-2
+128 IF H<4 THEN H=4
+130 D=63
+132 S=S-10
+134 LINE (A,B)-(C,D),1,B
+136 S=RND(1)*16383
+138 SOUND S,1
+140 S=S-1600
+142 IF S<0 THEN 152 ELSE 138
+150 'Shadow
+152 LINE (A+1,B-1)-(C,B-1),1
+154 N=RND(1):IF N<.6 THEN 168
+156 IF B<20 THEN 168
+158 FOR M=1 TO 10
+160 LINE (A+1+M,B-1-M)-(C+1-M,B-1-M),1
+162 IF A+1+M=>C-1-M THEN 168
+164 IF A+M>C-M THEN 168
+166 NEXT M
+168 LINE (C+1,B-1)-(C+1,D)
+170 LINE (C+2,B)-(C+2,D),1
+180 'Fill-in
+182 LINE (C-1,D-1)-(A+1,B+1),0,BF
+190 'Windows
+192 E=RND(1)*(C-A)+A+2
+194 IF E>C-2 THEN 192
+196 F=RND(1)*(D-B)+B+2
+198 IF F>61 THEN 116
+200 LINE (E,F)-(E,F+1),1
+202 SOUND E*10,1
+210 J=4+(RND(1)*224)
+212 K=RND(1)*5
+214 LINE (J,54+K)-(J,63)
+216 PSET (J-1,(54+K+1))
+218 PSET (J-2,(54+K+2))
+220 PSET (J-1,(54+K+3))
+222 LINE (J+1,(54+K+1))-(J+1,(54+K+3))
+224 PSET (J+2,(54+K+2))
+230 GOTO 192

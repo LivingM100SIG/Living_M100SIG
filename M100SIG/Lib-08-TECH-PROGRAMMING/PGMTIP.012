@@ -1,0 +1,48 @@
+
+PGMTIP.012
+
+
+Some of the BASIC commands cannot be executed to a device with PRINT# statement.
+One of them is FILES command, which displays the RAM directory on the LCD.
+
+When accessing my host M100 by phone, I need to see what's on my Chipmunk disk 
+from the remote M100, but If I just issue LFILES command on the host 
+computer, the disk directory is printed only on the host's LCD, and if I do 
+PRINT#2,LFILES, I get a syntax error, but using the following technique, the 
+host can send it to any devices I open with OPEN statement.
+
+For example, I use #1 and #2 for input and output devices and want to send the
+disk directory to the modem line.
+
+
+     10 MAXFILES=2
+     20 OPEN "MDM:7I1E" FOR INPUT AS 1
+     30 OPEN "MDM:7I1E" FOR OUTPUT AS 2
+     40 A=64652
+     50 B=VARPTR(#1)+65536
+     60 C=INT(B/256)
+     70 D=B-C*256
+     80 POKE A,D: POKE A+1,C
+     90 LFILES
+    100 POKE A,0: POKE A+1,0
+    110 LFILES
+
+
+Note that #1 in VARPTR statement in line 50 indicates the device number, and 
+substituting #2 also works.  Pokes in line 80 enable LFILES command in line
+90 to be sent to the MDM, pokes in line 100 disable this function, and LFILES
+in line 110 will appear on the host's LCD.  You can also use this routine for
+COM: or any other devices the M100 lets you open.
+
+This routine also works for RAM files by substituting FILES command instead of 
+LFILES.
+
+To output the RAM directory to a .DO file in RAM, change line 20 to
+OPEN "RAM:FILE.DO" FOR OUTPUT AS 1 and delete line 30.  Running it will create
+"FILE.DO" which contains the disk directory.
+
+This routine was tested on the M100 only.
+
+Eiji Miura
+71216,1564
+

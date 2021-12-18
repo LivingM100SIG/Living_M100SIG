@@ -1,0 +1,20 @@
+1 'CMerge - Chipmunk Mail Merge Program
+2 'Written by and (C) Copyright 1985
+3 'Don Corbitt, 32K Ideas
+4 'For personal use of SIG members only
+5 'All commercial rights reserved.
+6 'Not to be modified nor uploaded without express consent of author.
+10 MAXFILES=3:CLEAR 2000:DIM S$(20),R$(20)
+20 ON ERROR GOTO 900:OPEN"0:adrs.do"FOR INPUT AS 1
+30 ON ERROR GOTO 920:LINEINPUT#1,S$(S):IF S$(S)<>"" THEN S=S+1:GOTO 30
+40 IF EOF(1) THEN CLOSE:PRINT"Done":END ELSE FOR R=0 TO S-1:LINEINPUT#1,R$(R):NEXT:LINEINPUT#1,R$:IF R$<>"" THEN 920
+50 ON ERROR GOTO 910:CLOSE 2:OPEN"0:LETTER.DO"FOR INPUT AS 2
+60 C=C+1:ON ERROR GOTO 930:CLOSE 3:OPEN"0:LETTR"+CHR$(C+64)+".DO" FOR OUTPUT AS 3
+70 IF EOF(2)THEN 40 ELSE L$=INPUT$(1,2):IF L$<>"<" THEN PRINT#3,L$;:GOTO 70
+80 L$=L$+INPUT$(1,2):IF RIGHT$(L$,1)<>">" THEN 80 ELSE FOR X=0 TO S-1:IF L$=S$(X) THEN PRINT#3,R$(X);:X=30
+90 NEXT X:IF X=31 THEN 70 ELSE BEEP:PRINT"Bad search string: "L$:STOP
+900 BEEP:PRINT"ADRS.DO not found in current folder":STOP
+910 BEEP:PRINT"LETTER.DO not found in current folder":STOP
+920 BEEP:PRINT"Bad format in ADRS.DO":STOP
+930 BEEP:PRINT"Unable to open LETTER"CHR$(C+64)".DO":STOP
+1000 BEEP:PRINT"Error"ERR"in line"ERL:STOP

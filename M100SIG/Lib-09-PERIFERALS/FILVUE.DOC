@@ -1,0 +1,82 @@
+Documentation for FilVue.TDD/v1.0
+=================================
+joel dinda
+[75725,1134]
+
+
+FilVue lets you peek at TDD files; I use it to help me identify files whose
+purpose I've forgot.  (It makes a nice companion program to NDX100/200, or any
+other indexer.)  FilVue displays the first 280 bytes in the file, which usually
+includes some indentification information.  FilVue's designed to reduce the
+number of times that it's necessary to load the entire file into RAM just to
+check its identity.  When it succeeds, FilVue is much quicker.
+
+This program works with:
+      M100/T102 and Powr-DOS for TDD1.
+      M100/T102/T200 and FLOPPY for TDD2.
+Unfortunately, there's no available tool for the T200/TDD1 combination.
+
+FilVue converts non-printing and control characters to reversed-diamonds; no
+other characters are converted.  With .BA and .CO files, this results in
+improved but still very limited readability; identification clues, if any, will
+be in text strings located near the start of the file.  While I've usually
+found such clues, this program is sometimes no help whatever.  (MultiPlan files
+*do* make an interesting display, though....)
+
+For .DO files, FilVue's display is *far* preferable to "print-to-screen"
+utilities.
+
+One Preliminary Matter
+----------------------
+This program which writes names to diskette directories.  If you'd rather not
+have the diskette named, the feature can be avoided by write protecting the
+diskette or by just declining to name the diskette when the program asks.
+
+Using FilVue
+------------
+Except at the "File to View" prompt, <Esc>ape always escapes to some more
+useful place.  "File to View" can be escaped with <Return>.
+
+After setup, FilVue asks you to insert a diskette.  It checks the diskette for
+a disk name and reads the directory.
+
+If no diskette name was located, the program checks whether the diskette is
+write-protected; if it's not, you'll be prompted for a diskette name.  If you
+fill in a name, you'll be asked to verify it; it will be written to the
+diskette.  If you'd rather not name the diskette, just press <Return> at the
+"Diskette name?" prompt.
+
+After the diskette name has been settled, FilVue asks which file you wish to
+view.  Type in the name and press <Return>; FilVue will check for the name and
+either display the start of the file or report failure.  Some concerns:
+      Extensions are not required for document files, as the program adds a .DO
+      extension to any file without an extension.
+      
+      Extensions *are* required for .CO and .BA files.
+      
+      Directory prefixes are required *only* if the same name is on both TDD2
+      directories and you wish to view the file on 1:.  For any other case,
+      FilVue will locate & display the file if it is on the diskette.
+      
+      Full filespecs [0:RENAME.BA] are permitted but not usually required.
+      
+      Some obviously incorrect "file names" are trapped to return to the "File
+      to View" prompt.
+      
+When you're through checking files on the diskette, press <Return> at "File to
+View".  <Return> takes you to:
+      <F>ile/<D>iskette/<Q>uit
+<F> returns you to "File to View"; <D> returns you to "Insert Diskette"; <Q>
+exits to the computer's menu.
+
+Programmer's Note
+-----------------
+While this program is an obvious followup to NDX100/NDX200, it's designed as a
+test program for a couple other projects.  I mention this in case someone
+decides to look at the code; there are a couple peculiar touches which make
+sense only if I intend extensions to the code.
+
+Hope you find it useful.  If there are any problems, feel free to leave
+complaints or suggestions.
+joel dinda
+27jul88

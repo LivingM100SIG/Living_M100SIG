@@ -1,0 +1,160 @@
+1 'Programme made by Stephane Burgoyne
+2 ' [72747,1205]
+3 '
+4 'Montreal M100 BBS  tel: 514-457-2917
+5 '
+6 '6.7K bytes. Takes about 12K free 
+7 '     space to run
+8 '
+9 'You will have to wait 3 minutes for
+10 '  the program to load music
+11 '
+12 'The variable LN controls the speed
+13 '
+14 'The program can also be used to
+15 'convert music written for an IBM PC
+16 'to play on a Model-100
+17 '
+20 CLS:LN=28:DIMS%(6,14),PF%(1473),PD%(1473),PS%(1473)
+22 FORI=1TO14:READA
+24 FORY=0TO6:S%(Y,I)=A:A=A/2:NEXTY:NEXTI
+26 FOR I=1 TO 100
+28  READ M$
+30  FORJ=1TOLEN(M$)
+32   N$=MID$(M$,J,1)
+34   A=INSTR(1,"cdefgabpolm",N$)
+36    ONAGOSUB100,100,100,100,100,100,100,100,140,150,160
+38  NEXTJ:NEXTI
+40 CLS:PRINT:PRINT"      ***    Guillaume Tell    ***"
+42 FORI=0TO1472:SOUND(PF%(I)),(LN/PD%(I)*PS%(I)/8):FORJ=1TO((8-PS%(I))*3):NEXT:NEXT
+44 PRINT:PRINT"Another time ";:INPUTF$:IFF$="Y"ORF$="y"THEN40
+46 END
+100 IFJ>=LEN(M$)THENLM=16:GOTO108
+101 N$=MID$(M$,J+1,1)
+102 IFN$="#"THENA=A+8:J=J+1:IFJ<LEN(M$)THEN100
+103 LM=16
+104 B=INSTR(1,"123456789.",N$)
+106 ONBGOSUB114,114,114,114,114,114,114,114,114,130
+108 PD%(WA)=(LM/2):PF%(WA)=(S%(O,A)):PS%(WA)=M:PRINT@138,1472-WA;:WA=WA+1
+110 LM=16:RETURN
+114 J=J+1:IFJ>=LEN(M$)THENLM=B:RETURN
+115 N$=MID$(M$,J+1,1)
+116 LM=B
+118 C=INSTR(1,"123456789.",N$)
+120 ONCGOSUB122,122,122,122,122,122,122,122,122,130
+121 RETURN
+122 LM=((B*10)+C):J=J+1
+123 IFJ>=LEN(M$)THENRETURN
+124 N$=MID$(M$,J+1,1)
+126 IFN$="."THEN130
+128 RETURN
+130 J=J+1:LM=LM*1.5:RETURN
+140 J=J+1:N$=MID$(M$,J,1)
+142 O=VAL(N$):RETURN
+150 J=J+1:N$=MID$(M$,J,1)
+152 LM=16/VAL(N$):RETURN
+160 J=J+1:N$=MID$(M$,J,1)
+162 IFN$="n"THENM=7ELSEIFN$="l"THENM=8ELSEM=6
+164 RETURN
+180 DATA 18768,16736,14912,14064,12538,11172,9952,0,17732,15800,14064,13284,11836,10544
+190 DATA "o2mnb4p8msbbmnb4p8msbbb8g#8
+200 DATA "e8g#8b8g#8b8o3e8o2b8g#8e8g#8
+210 DATA "b8g#8b8o3e8o2mnb4p8msbbmnb4
+220 DATA "p8msbbmnb4p8msbbmnb4p8msbb
+230 DATA "b8bbb8b8b8bbb8b8b8bb
+240 DATA "b8b8b8bbb8b8mlb2
+250 DATA "b2b8p8p4p4
+260 DATA "p8mso1bbb8bbb8bbo2e8f#8g#8o1bb
+270 DATA "b8bbo2e8g#g#f#8d#8o1b8bbb8bb
+280 DATA "b8bbo2e8f#8g#8eg#mlb4bmsag#f#
+290 DATA "e8g#8e8o3bbb8bbb8bbo4e8f#8
+300 DATA "g#8o3bbb8bbo4e8g#g#f#8d#8o3b8bb
+310 DATA "b8bbb8bbo4e8f#8g#8mleg#b4
+320 DATA "bag#f#mse8g#8e8o3g#g#g#8g#g#g#8g#g#
+330 DATA "g#8o4c#8o3g#8o4c#8o3g#8o4c#8o3g#8f#8e8d#8
+340 DATA "c#8g#g#g#8g#g#g#8g#g#g#8o4c#8o3g#8o4c#8
+350 DATA "o3g#8o4c#8o3b8a#8b8a#8b8g#g#g#8g#g#
+360 DATA "g#8g#g#g#8o4c#8o3g#8o4c#8o3g#8o4c#8o3g#8f#8
+370 DATA "e8d#8c#8g#g#g#8g#g#g#8g#g#g#8o4c#8
+380 DATA "o3g#8o4c#8o3g#8o4c#8o3b8a#8b8o2bbb8f#f#
+390 DATA "f#8f#f#f#8g#8a8f#4mna8msg#8mne4
+400 DATA "msg#8f#8f#8f#8o3f#f#f#8f#f#f#8g#8
+410 DATA "a8mnf#4msa8g#8mne4msg#8f#8o2bb
+420 DATA "b8o1bbb8bbb8bbo2mne8f#8g#8o1bb
+430 DATA "b8bbo2e8g#g#f#8d#8o1b8bbb8bb
+440 DATA "b8bbo2e8f#8g#8eg#mlb4mnbag#f#
+450 DATA "e8g#8e8o3bbb8bbb8bbo4e8f#8
+460 DATA "g#8o3bbb8bbo4e8g#g#f#8d#8o3b8bb
+470 DATA "b8bbb8bbo4e8f#8g#8mleg#mlb4
+480 DATA "mnbag#f#mne8g#8e8o3mle56f56g56a56b56o4c56d56mne8eee8e8g#4.
+490 DATA "f#8e8d#8e8c#8mso3bo4c#o3bo4c#o3b
+500 DATA "o4c#d#eo3abababo4c#d#o3g#ag#ag#abo4c#o3f#
+510 DATA "g#f#g#f#g#f#g#f#g#f#d#o2bo3mlbo4c#d#e8d#8e8
+520 DATA "c#8o3msbo4c#o3bo4c#o3bo4c#d#eo3abababo4c#d#o3g#
+530 DATA "ag#ag#abo4c#o3f#g#f#g#f#af#emne8p8mlc#4
+540 DATA "mnc#o2cmso3c#o2co3d#c#o2baag#ec#c#c#c#c#e
+550 DATA "d#o1cg#g#g#g#g#g#o2c#eg#o3c#c#c#c#c#o2co3c#o2co3d#
+560 DATA "c#o2baag#ec#c#c#c#c#ed#o1cg#g#g#g#g#mng#
+570 DATA "o2c#eg#o3msc#ed#c#d#o2cg#g#g#o3g#ec#d#o2cg#g#g#
+580 DATA "o3g#ec#d#o2bg#g#a#gd#d#g#gg#gg#ag#f#e
+590 DATA "o1ba#bo2eo1bo2f#o1bo2g#ed#eg#eaf#bo3g#f#ed#
+600 DATA "f#ec#o2bo3c#o2bo3c#d#ef#g#o2ababo3c#d#ef#o2g#
+610 DATA "ag#aco3c#d#eo2f#g#f#g#f#g#f#g#f#g#f#d#o1b
+620 DATA "co2c#d#eo1ba#bo2eo1bo2f#o1bo2g#ed#eg#eaf#b
+630 DATA "o3g#f#ed#f#ec#o2bo3c#o2bo3c#d#ef#g#o2ababo3c#
+640 DATA "d#ef#o2g#ag#abo3c#d#eo2f#o3c#o2co3c#d#c#o2af#mne
+650 DATA "o3mlef#g#abo4c#d#mne8mseee8e8g#4.
+660 DATA "msf8mse8d#8e8c#8o3bo4c#o3bo4c#o3bo4c#d#eo3a
+670 DATA "bababo4c#d#o3g#ag#ag#abo4c#o3f#g#f#g#f#
+680 DATA "g#f#g#f#g#f#d#o2bo3mlbo4c#d#mne8eee8e8g#4.
+690 DATA "msf#8e8d#8e8c#8o3bo4c#o3bo4c#o3b
+700 DATA "o4c#d#eo3abababo4c#d#o3g#ag#ag#abo4c#o3f#
+710 DATA "g#f#g#f#ag#f#e8o2b8o3e8g#g#g#8mng#g#g#8
+720 DATA "g#g#g#8o4c#8o3g#8o4c#8o3g#8o4c#8o3g#8f#8e8
+730 DATA "d#8c#8g#g#g#8g#g#g#8g#g#g#8o4c#8o3g#8
+740 DATA "o4c#8o3g#8o4c#8o3b8a#8b8a#8b8g#g#g#8
+750 DATA "g#g#g#8g#g#g#8o4c#8o3g#8o4c#8o3g#8o4c#8o3g#8
+760 DATA "f#8e8d#8c#8g#g#g#8g#g#g#8g#g#g#8
+770 DATA "o4c#8o3g#8o4c#8o3g#8o4c#8o3b8a#8b8a#8b8
+780 DATA "o2f#f#f#8f#f#f#8g#8a8f#4a8g#8
+790 DATA "e4g#8f#8o0b8o1b8o2f#f#f#8f#f#f#8
+800 DATA "g#8a8f#4a8g#8e4g#8f#8
+810 DATA "bbb8o1bbb8bbb8bbo2e8f#8g#8
+820 DATA "o1bbb8bbo2e8g#g#f#8d#8o1b8bbb8
+830 DATA "bbb8bbo2e8f#8g#8eg#mlb4mnb
+840 DATA "ag#f#e8o1b8o2e8o3bbb8bbb8bbo4e8
+850 DATA "f#8g#8o3bbb8bbo4e8g#g#f#8d#8o3b8
+860 DATA "bbb8bbb8bbo4e8f#8g#8o3eg#mlb4
+870 DATA "mnbag#f#mlef#g#mnamlg#abo4mnc#mlo3bo4c#d#mnemld#
+880 DATA "ef#mng#ao3bo4ao3bo4ao3bo4ao3bo4ao3bo4ao3bo4ao3bo4ao3bmle
+890 DATA "f#g#mnamlg#abmno4c#mlo3bo4c#d#mnemld#ef#mng#ao3bo4ao3bo4a
+900 DATA "o3bo4ao3bo4ao3bo4ao3bo4ao3bo4ao3bp16mlg#o4g#o3mng#p16mld#o4d#o3mnd#p16
+910 DATA "mleo4eo3mnep16mlao4ao3mnap16mlg#o4g#o3mng#p16mld#o4d#o3mnd#p16mleo4eo3mnep16
+920 DATA "mlao4ao3mnao4go3go4go3go4go3go4go3go4msg8e8c8e8o4mng#
+930 DATA "o3g#o4g#o3g#o4g#o3g#o4g#o3g#o4msg#8e8o3b8o4e8mng#o3g#o4g#o3g#o4g#
+940 DATA "o3g#o4g#o3g#o4msg#8f8c#8f8mna#o3a#o4a#o3a#o4a#o3a#o4a#o3a#o4msa#8
+950 DATA "g8e8g8b8p16mna#p16ap16g#p16f#p16ep16
+960 DATA "d#p16c#p16o3bp16a#p16ap16g#p16f#p16ep16d#p16f#mle
+970 DATA "f#g#mnamlg#abmno4c#o3mlbo4c#d#mnemld#ef#mng#ao3bo4ao3bo4a
+980 DATA "o3bo4ao3bo4ao3bo4ao3bo4ao3bo4ao3bmlef#g#mnamlg#abmno4c#o3mlb
+990 DATA "o4c#d#mnemld#ef#mng#ao3bo4ao3bo4ao3bo4ao3bo4ao3bo4ao3bo4a
+1000 DATA "o3bo4ao3bp16mlg#o4g#o3mng#p16mld#o4d#o3mnd#p16mleo4eo3mnep16mlao4ao3mnap16
+1010 DATA "mlg#o4g#o3mng#p16mld#o4d#o3mnd#p16mleo4eo3mnep16mlao4ao3mnao4go3go4go3go4g
+1020 DATA "o3go4go3go4g8e8c8e8g#o3g#o4g#o3g#o4g#o3g#o4g#o3g#o4g#8
+1030 DATA "e8o3b8o4e8g#o3g#o4g#o3g#o4g#o3g#o4g#o3g#o4msg#8mnf8c#8
+1040 DATA "f8a#o3a#o4a#o3a#o4a#o3a#o4a#o3a#o4a#8g8e8g8b8
+1050 DATA "p16a#p16ap16g#p16f#p16ep16d#p16c#p16o3bp16a#p16
+1060 DATA "ap16g#p16f#p16ep16d#p16fmled#ed#mne8bbb8
+1070 DATA "bbb8bbo4e8f#8g#8o3bbb8bbb8
+1080 DATA "bbo4g#8a8b8p8e8f#8g#8p8o3g#8
+1090 DATA "a8b8p8p2o2bco3c#dd#
+1100 DATA "eff#gg#aa#bco4c#d#ed#f#d#ed#f#d#e
+1110 DATA "d#f#d#ed#f#d#ed#f#d#ed#f#d#ed#f#d#e
+1120 DATA "d#f#d#e8eo3eo4eo3eo4eo3eo4e8o3bo2bo3bo2bo3bo2bo3b8
+1130 DATA "g#o2g#o3g#o2g#o3g#o2g#o3g8eo2eo3eo2eo3eo2eo3e8eee8
+1140 DATA "e8e8o2bbb8b8b8g#g#g#8g#8g#8
+1150 DATA "eee8e8e8o1b8o2e8o1b8o2g#8e8b8
+1160 DATA "g#8o3e8o2b8o3e8o2b8o3g#8e8b8g#8o4e4
+1170 DATA "p8eee8e8e8e8e4p8.
+1180 DATA "ee4p8.o2ee2
+1190 '** DONE **

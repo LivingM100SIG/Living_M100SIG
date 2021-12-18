@@ -1,0 +1,50 @@
+1 REM Barcode Reader for NEC PC-8201
+2 REM This program reads 3-of-9 barcode
+3 REM In addition to this program, you         will need "COD.CO" from your NEC        cassette tape
+4 REM Follow the loading instructions          in the red NEC book when loading        "COD.CO
+5 REM This program was adapted from "BAR       EAD" in the April 1984 issue of         PCM Magazine, page 18
+6 REM Adapted by Robinson Markel (72456,       3604). Checksum 100,956
+10 MAXFILES=2:SCREEN,0:CLS
+20 CLEAR256,60111!
+30 BLOAD"COD":EXEC60112!
+40 LOCATE0,0:PRINTSTRING$(40,"-");
+50 LOCATE0,1:PRINT"     PC-8201 3-of-9 Bar Code Decoder
+60 LOCATE0,2:PRINTSTRING$(40,"-")
+70 LOCATE0,4:PRINT"Name of storage file: ";
+80 LOCATE22,4:PRINTSTRING$(6,"_"):LOCATE22,4:PRINT;
+90 LINEINPUTFS$
+100 LOCATE0,4:PRINTSTRING$(80,32);
+110 OPEN"WAND:"FORINPUTAS1
+120 OPENFS$FOROUTPUTAS2
+130 LOCATE16,4:PRINT"Proceed"
+140 N=1:GOTO320
+150 REM *** DECODE STRING ***
+160 D$=""
+170 FORI=1TOLEN(S$)
+180 SS$=MID$(S$,I,1)
+190 IFSS$<>"$"THEN240
+200 SS$=MID$(S$,I+1,1)
+210 SS$=CHR$(ASC(SS$)+32)
+220 I=I+1
+230 GOTO280
+240 IFSS$<>"%"THEN280
+250 SS$=MID$(S$,I+1,2)
+260 SS$=CHR$(VAL(SS$))
+270 I=I+2
+280 D$=D$+SS$
+290 SOUND700,2:NEXTI:LOCATE16,4:PRINTCHR$(27)+"p"+"  >OK<  "+CHR$(27)+"q":FORT=1TO100:NEXTT
+300 N=N+1:LOCATE16,4:PRINT"Proceed-Line";N;"is next":RETURN
+310 RETURN
+320  REM *** READ BAR CODE ***
+330 PL$=""
+340 INPUT#1,S$
+350 IFS$="?"THEN340
+360 GOSUB150
+370 FORI=1TOLEN(D$)
+380 C$=MID$(D$,I,1)
+390 IFC$=CHR$(13)ANDRIGHT$(PL$,5)="DONE"THEN440
+400 IFC$=CHR$(13)THENPRINT#2,PL$:PL$="":GOTO420
+410 PL$=PL$+C$
+420 NEXTI
+430 GOTO340
+440 CLOSE:MENU

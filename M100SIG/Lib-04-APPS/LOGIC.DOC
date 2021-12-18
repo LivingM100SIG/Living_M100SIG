@@ -1,0 +1,198 @@
+
+
+                        BASIC Program Emulates Logic Circuits 
+                              (Jay Holovacs 74756,413) 
+
+
+              When designing logical control circuits (consisting of ANDs 
+          ORs etc.), it is frequently inconvenient to evaluate the logical 
+          operation of the circuit entirely 'by hand', even on  circuits 
+          with just a few dozen elements.  This M100/M200 Basic program 
+          can be used to develop a truth table for such a circuit.  
+          Additionally, the effects of changing a circuit element or 
+          circuit connection can be evaluated quickly. 
+              As set up, it can model any circuit composed of AND, OR, 
+          XOR, NOR, NAND and NOT (inverter) elements connected in normal 
+          manners.  Truth tables for each element are maintained in DATA 
+          statements, other types of elements could be added.  In addition 
+          to the normal T/F inputs, circuit links may be specified as 
+          undetermined.  In evaluating an undetermined input into a node, 
+          the program attempts to ascertain the output of the node 
+          according to predetermined rules (an exmple of a condition which 
+          can be determined despite an undetermined input: False AND 
+          [undefined] --> False as output).  This can help when modelling 
+          sections of circuitry which are in unpredictable states at 
+          power-up. 
+
+          USING THE PROGRAM: 
+              On a paper drawing of your schematic, number each logical 
+          element (Starting from 1) in an arbitrary sequence.  Number the 
+          links (interconnections between nodes) starting from 1 also.  
+          Sequence is again arbitrary.  A link is defined as any 
+          electrically continuous connection; for example, a signal line 
+          that splits and feeds several elements would carry the same link 
+          number for all its branches.  Include at this time any 
+          questionable elements and links that you may not use; they can 
+          be removed from and added to the circuit during the program run. 
+              When prompted, enter the appropriate counts for nodes and 
+          links, then answer the prompts for each of the nodes.  This 
+          process can be redone at any time by selecting option 1 from the 
+          main menu. 
+              Using option 2 on the menu, set up the status of the links 
+          with any initial logical values you wish to specify: 
+
+               T--true 
+               F--false 
+               U--undefined 
+               [enter/return]--status unchanged 
+               [esc]--exit option 2 leaving the remainder of the links 
+               unchanged 
+              Option 3 will display status of all links for review. 
+              Option 4 will execute the iterative evaluation procedure, in 
+          which the program attempts to set all the links to achieve an 
+          internally consistent (stable) state. 
+              Option 5 allows changing the hookup or type of a single node 
+          without going through the entire list. 
+
+
+
+
+
+
+
+
+
+
+
+                        Logic Circuit Emulator         Pg  2  
+
+          ALGORITHM AND PROGRAM MODIFICATION INFORMATION: 
+              Execution of option 4 automatically steps the program 
+          repeatedly through all nodes.  The sequence finally halts when 
+          either 1) an apparent equilibrium condition is reached in which 
+          each iteration generates no new information or 2) an instability 
+          condition is implied by the fact that total quantity of state 
+          changes indicates nodes are changing repeatedly.  This does not, 
+          however, constitute a mathematical guarantee of instability.  If 
+          there is some suspicion that the circuit may yet 'settle down' 
+          option 4 can be repeatedly called without changing the state of 
+          any links between calls. 
+              As currently configured, the program expects 2 inputs per 
+          logical element (node); consequently multiple-input ORs or ANDs 
+          must be represented by cascaded elements.  If you use these 
+          frequently, they can be added as special cases.  An inverter can 
+          be represented as a NAND with both inputs tied together. 
+
+          TO CHANGE OR ADD NEW LOGIC COMPONENT DEFINITIONS: 
+
+          (Only necessary if you want to modify the program for special 
+          purposes) 
+
+          Data statements defining the performance of each logic element 
+          are stored in lines 990-999.  Truth tables for all elements are 
+          contained in the 3 dimensional integer array TT(element 
+          type-1,input #1-1,input #2-1).  Each specific function consists 
+          of a truth table in the following format: 
+
+                F  T  U 
+              F x  x  x 
+              T x  x  x 
+              U x  x  x 
+              Where the numeric value of x (1=False; 2=True; 
+          3=Undetermined) represents the state of the output for the 
+          element when the two inputs (horizontal and vertical rows) are 
+          present. 
+
+          EXAMPLE: 
+              Because there is no easy way to upload a realistic circuit 
+          in ascii, a very useless circuit illustrates how nodes and links 
+          are numbered for LOGIC.BA 
+
+
+
+                              ____   
+               ______________|    \  N1 
+                L1           |AND  \____________ 
+               ______________|     /      L4 
+                L2    |   L2 |____/ 
+                      |       ____ 
+                      |______|    \ N2 
+                         L2  | OR  \_____________ 
+                _____________|     /      L5 
+                 L3          |____/                     
+
+
+
+
+
+
+
+
+
+
+                        Logic Circuit Emulator         Pg  3  
+
+               The text below represents the prompting you will get and the 
+                appropriate answers for our useless circuit 
+
+
+               NODE 1     TYPE:UNDEF 
+               0=UNDEF 1=AND 2=OR 3=XOR 4=NAND 5=NOR 
+                 TYPE:?1 
+                 INPUTS A,B [ 0 0 ]? 1,2 
+                 OUTPUT [ 0 ]? 4 
+
+               NODE 2     TYPE:UNDEF 
+               0=UNDEF 1=AND 2=OR 3=XOR 4=NAND 5=NOR 
+                 TYPE:?2 
+                 INPUTS A,B [ 0 0 ]? 2,3 
+                 OUTPUT [ 0 ]? 5 
+              The values in [square brackets] are the current values, when 
+          you look at these later in the program run they will reflect the 
+          current values established.  At any of the prompts, hitting 
+          'enter' leaves the values unchanged. 
+              Note that it is helpful to assign the lowest numbers to 
+          input links, using the [esc] key to avoid stepping through all 
+          the links for each evaluation. 
+              To remove a node from the circuit, change its type to 0 
+          (undefined).  To effectively remove a link from the circuit, 
+          simply remove it as an input from any node to which it was 
+          connected. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

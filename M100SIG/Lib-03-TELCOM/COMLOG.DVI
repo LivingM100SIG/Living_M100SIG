@@ -1,0 +1,80 @@
+10 CLS:CLEAR500:DEFSNGA-Z:J$=SPACE$(80)
+25 CLEAR500:ONERRORGOTO1000
+26 OPEN"0:cumlog"FORINPUTAS1:CLOSE
+27 CLEAR500:ONERRORGOTO2000
+28 OPEN"0:coslog"FORINPUTAS1:CLOSE
+30 CLEAR500:ONERRORGOTO900
+32 OPEN"0:timlog"FORINPUTAS1
+40 PRINT"COMLOG: TRACKS, TOTALS & EXTRACTS DATABASE COSTS - FOR M-100, DVI AND MONITOR":PRINT
+42 PRINT"       Ver.1.4 copyright 1984, Madeline P. Durholz; All rights reserved":C$=STRING$(80,"_"):PRINTC$:PRINTJ$
+50 PRINT     "ENTER DATABASE [up to 3 characters] & MINUTES; USE COMMA BETWEEN EACH";
+51 PRINT"  (Program adds date, day of week, session cost, and cumulated cost total):  "
+60 E$=DATE$:D$=DAY$:E=VAL(RIGHT$(E$,2))*10000+VAL(LEFT$(E$,2))*100+VAL(MID$(E$,4,2))
+65 PRINT:INPUTF$,G:IFF$=""THENCLS:CLOSE1:GOTO180ELSECLOSE1:PRINT:PRINT TAB(45);"Standby...":GOTO67
+67 IF F$="cis"ORF$="CIS"ORF$="sig"ORF$="SIG"ORF$="vet"ORF$="VET"THENW=6.25:GOTO80ELSE69
+69 IF F$="ki"ORF$="KI"THENW=24.00ELSE2050
+80 H=INT(G*W*100/60+.5)/100
+81 OPEN"0:coslog"FORAPPENDAS1:PRINT#1,E$;",";E;F$;",";G;H:CLOSE
+83 OPEN"0:cumlog"FORAPPENDAS1:PRINT#1,H:CLOSE
+87 OPEN"0:cumlog"FORINPUTAS1
+90 IFEOF(1)THEN93
+91 R=R+1:INPUT#1,H(R):GOTO90
+93 CLOSE
+94 FORX=1TOR:N=H(X)+N:NEXT
+98 OPEN"0:cumlog"FOROUTPUTAS1:PRINT#1,N:CLOSE
+100 OPEN"0:cumlog"FORINPUTAS1:INPUT#1,N:CLOSE
+115 OPEN"0:timlog"FORAPPENDAS1:PRINT
+120 PRINT#1,USING "\      \          \ \            \ \          ###        $$###.##     $$####.##";E$,D$,F$,G;H;N:CLOSE:CLS
+140 OPEN"0:timlog"FORINPUTAS1:INPUT#1,A$,B$:PRINTA$:PRINTB$:PRINTC$
+160 PRINT USING "\      \        \ \        \ \          ###           $$###.##";E$,D$,F$,G;H:PRINT
+163 Z$="TIMLOG cumulated cost entries total = "
+164 PRINT USING "\                                   \ $$####.##";Z$,N:CLOSE:PRINT
+180 INPUT"Do you wish to total costs incurred for 1 or all database(s) between 2 specified dates (Enter Y or N)";L$
+190 IFL$="N"ORL$="n"THENMENU
+200 IFL$="Y"ORL$="y"THEN201ELSE180
+201 PRINT:LINEINPUT "Database? (Enter the symbol or Enter: ALL)  ";F1$
+205 PRINT:INPUT"Enter Beginning Date (mm/dd/yy): ";E1$:PRINT:INPUT"Ending Date = ";E2$:CLS:PRINT
+210 PRINT"Requested Dates, Minutes, and Costs are: ":PRINT
+212 E1=VAL(RIGHT$(E1$,2))*10000+VAL(LEFT$(E1$,2))*100+VAL(MID$(E1$,4,2))
+220 E2=VAL(RIGHT$(E2$,2))*10000+VAL(LEFT$(E2$,2))*100+VAL(MID$(E2$,4,2))
+226 K=0:P=0:OPEN"0:coslog"FORINPUTAS1
+227 INPUT#1,E$,E,F$,G,H
+228 IF(E<E1ORE>E2)OR(F$<>F1$ANDF1$<>"all"ANDF1$<>"ALL")THEN237
+230 K=K+H:P=P+G:PRINT USING"\      \     ###    $$###.##";E$;G;H
+237 IFEOF(1)THEN239ELSE227
+239 CLOSE:GOTO300
+300 PRINT:PRINT"Total costs of { ";F1$;" } incurred between ";E1$;" and ";E2$;" =";:PRINT USING"$$#####.##";K
+315 PRINT USING"Total minutes =######";P:END
+900 IFERR=52THENOPEN"0:timlog"FOROUTPUTAS1ELSEPRINT"error ";ERR;" at ";ERL:END
+922 A$="                             COMLOG-TIMLOG                               ":PRINTA$:PRINT#1,A$
+924 B$="                         An Online Time Tracker                          ":PRINTB$:PRINT#1,B$
+926 C$=STRING$(80,"_"):PRINT#1,C$:PRINTC$
+928 PRINTJ$:PRINT#1,J$
+930 M$="  DATE            DAY         DATABASE      MINUTES         COST          TOTAL ":PRINT#1,M$
+960 PRINTJ$:PRINT#1,J$:CLOSE:GOTO32
+1000 IFERR=52THENOPEN"0:cumlog"FOROUTPUTAS1:CLOSE:ELSEPRINT"error ";ERR;" at ";ERL:END
+1040 GOTO27
+2000 IFERR=52THENOPEN"0:coslog"FOROUTPUTAS1:CLOSE:ELSEPRINT"error ";ERR;" at ";ERL:END
+2040 GOTO30
+2050 PRINT"Typo in entry; please reenter":FORD=1TO750:NEXT:CLS:GOTO50
+3000 REM COMLOG.DVI Ver.1.4 creates 3 data files, TIMLOG, CUMLOG & COSLOG, on disk; MENU files & precious RAM are not used.
+3011 REM Customize program lines 67 & 69 by substituting your SIG symbol. You may add to or delete others; 6.25=CIS's rate/hr.
+3012 REM Line 69 is for another system ($24hr). You may delete this line but replace the 69 at end of line 67 with 2050.
+3014 REM RUN COMLOG.DVI & enter requested data; An entry typo causes an error report & another prompt-just reenter data.
+3015 REM Type 05(min) as 5; round secs up to next min.
+3016 REM COMLOG.DVI then verifies newly entered data & cost on monitor along with cumulated total.
+3017 REM Next you may request 1 or ALL database entries between 2 specified dates, or for one date (same start/end dates).
+3018 REM COMLOG.DVI will then scroll a columnar table of the specified entries and display their total costs and minutes;
+3019 REM screens up to 19 brief entries before scroll-off; PAUSE softkey stops  scroll, PRINT softkey hardcopys & PAUSE restarts.
+3020 REM To use this feature without adding to TIMLOG, hit ENTER at data entry-you'll be prompted.
+3027 REM TIMLOG sets up data in columnar form & includes feature which displays a cumulated cost total with each entry.
+3029 REM To view TIMLOG, enter TEXT & load it from disk. CONTROL/DWN ARROW scrolls. SHIFT/PRINT for hardcopy.
+3030 REM CUMLOG holds cumulated cost data; COSLOG stores date/time/cost data; normally you should not need to access them.
+3035 REM MENUD.DVI (c)Joel Orr, will also load the data files & COMLOG.
+3040 REM You may correct data files with cursor after loading from TEXT or MENUD.DVI; be sure to reSAVE them to disk.
+3080 REM COMLOG.DVI is user modifiable, e.g. to track TIME instead of DAY, change lines 51, 60, and 930 as appropriate.
+3090 REM SMARTY's using SMART.DVI ver. 2.2 (c)Howard Benner: to grab time.cis totals anytime & reset to 0, do the following:
+3100 REM LINE 10 IF V=4 THEN 92 ELSE B="RM": [etc.] LINE 14 [etc.] ,Reset-time.cis/Menu
+3105 REM LINE 92 KILL "0:time.cis":CLOSE:CLEAR:MAXFILES=1:CLS:MENU
+3110 REM "REM's" may be deleted if desired. Please direct questions & report glitches to Maddi Durholz 70466,1511.
+

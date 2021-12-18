@@ -1,0 +1,36 @@
+     This is a utility to switch both the DVI driver and POWR-DISK from 
+Acroatix. It doesn't have any bells or whistles, but it hasn't cold started the
+machine yet, whereas I got one every other day or so using any other method I 
+tried. As written, it is also for use with PG Designs 64K bank-switch 
+program,"MENU*" (MENU1, MENU2, or MENU3). I save the MENU* in each bank simply 
+as "MENU", and rename Acroatix's MENU as "POWR". If you do not have PGD's bank,
+change RUN"MENU" in lines 130 and 220 to simply MENU. If you are not using 
+SUPER-ROM, you can aslo delete CALL MAXRAM in line 200.
+     In operation, the program will first print the present value of MAXRAM (
+58363 for the DVI, 60850 for the TDD, and 62960 for no drive), then will prompt
+you for your choice. Calling the TDD driver when it is already present will 
+reset the hooks after using SUPER-ROM. Switching off the DVI will reset to the 
+LCD. Input will default to "No Drive".
+
+10 A=1:CLS:PRINTMAXRAM
+20 PRINT"1-No":PRINT"2-TDD":PRINT"3-DVI"
+30 INPUT"Which";A
+40 ONAGOTO100,200,300:RUN
+100 IFMAXRAM=62960THENMENU
+110 IFMAXRAM=60850THENLFILESOFF:GOTO130
+120 WIDTH40:SCREEN0:CALL32454:POKE62966,201
+130 CLEAR0,MAXRAM:RUN"MENU
+200 IFMAXRAM=60850THENCALLMAXRAM:MENU
+210 IFMAXRAM=58263THENWIDTH40:SCREEN0:CALL32454:POKE62966,201
+220 CLEAR0,60850:RUNM"POWR-D":RUN"MENU
+300 IFMAXRAM=58263THENMENU
+310 IFMAXRAM=60850THENLFILESOFF
+320 CALL27862
+
+
+     The information needed to develop this program came from a number of 
+sources all of which I can't exactly remember, so Thank You All, SIG members 
+and vendors alike.
+     Michael Crapser.
+     75735,176
+

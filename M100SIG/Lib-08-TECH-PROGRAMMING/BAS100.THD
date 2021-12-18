@@ -1,0 +1,83 @@
+BAS100.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This thread starts with a question which may never have been properly
+interpretted by the answerers (including myself).  But one the last message
+gives some interesting information on the structure of tokenized Basic (BA)
+files in Model 100 (etal) memory.
+
+Message range: 151419 to 151594
+Dates: 7/1/87 to 7/3/87
+
+
+Sb: #m100 basic compressed
+Fm: Dick Monahan 73240,1535
+To: all
+
+Is there a DL file explaining the extra bytes between statements in a .BA file?
+I want to edit programs on my AT and download them to m100.  I know all the
+keywords, but the extras don't make sense.
+
+
+Fm: Tony Anderson 76703,4062
+To: Dick Monahan 73240,1535
+
+No, there is no file explaining that.  The Model 100 family's BASIC will work
+with no extra spaces in the statements.  There is, in fact, several programs
+that are designed to remove them, and all non-executing statements, such as
+REMarks. You can remove the spaces at any time, or put more in, it makes no
+difference. Well, very little, anyway.
+
+If that's not the thrust of your question, could you clarify what you mean by
+"extra bytes"?  What extra bytes?
+
+
+#: 151425 S8/Tech/Programming
+    01-Jul-87  20:33:33
+Sb: #151419-m100 basic compressed
+Fm: Phil Wheeler 71266,125
+To: Dick Monahan 73240,1535
+
+It is fairly easy to write programs for PC/GW BAsic which will run on the M100
+with only minor syntax changes.  And you can write ASCII format Basic programs
+on ANY machine with an ASCII text editor and upload them to the Model 100. I've
+done both -- and even written M100 Basic programs that will run with minor (or
+no) changes on a PC.
+
+But -- don't understand the "extra bytes" reference.  Please clarify, with an
+example if possible.
+
+
+#: 151594 S8/Tech/Programming
+    03-Jul-87  20:37:19
+Sb: #151419-m100 basic compressed
+Fm: Scott Hibbard 70536,674
+To: Dick Monahan 73240,1535
+
+     I think your talking about the pointers in a .BA file.  Picture worth
+thousand words:
+
+
+ | A2L | A2H | LNL | LNH | Line contents ..... | 00 | A3L | A3H ...
+ | <---------- 1st line --------------------------> | <- 2nd line -
+
+Each line starts with a 2 byte word that is the address for the beginning of
+the NEXT line.  In this example, A2L & A2H will contain the address (point to)
+A3L.  This is used by BASIC to quickly find a line.  The next two bytes (LNL &
+LNH) contain THIS line's number (in good old bass ackwards Intel format of
+course).  The tokenized line contents follow, ended by a null byte (00h).
+After the last line in the program will be 2 null bytes.
+
+An example of a 2 line program that is the FIRST BASIC program in memory (&
+therefore starts at 8001h):
+        10 PRINT "Hello
+        20 END
+
+
+ Line 10: (8001h) |0D|80|0A|00|A3|22|68|65|6C|6C|6F|00|
+ Line 20: (800Dh) |13|80|14|00|80|00|
+ Ending:  (8013h) |00|00|
+
+

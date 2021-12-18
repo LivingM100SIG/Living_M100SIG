@@ -1,0 +1,102 @@
+Documentation for MAXRAM.BA 1/2/85 by Rick Perry [75665,1045]
+
+   This program allows you to set the value of MAXRAM below its normal
+value (62960) and also intercepts BASIC CLEAR commands to prevent HIMEM
+from being set above the new MAXRAM value.  It can therefore be used to
+protect M/L code permanently loaded above HIMEM.
+
+   At the prompts for "New MAXRAM" & "New HIMEM", just press ENTER to
+leave the values unchanged and exit to Menu.  The program won't allow
+you to set MAXRAM above 62960 nor to set HIMEM above MAXRAM.
+
+   The program operates via machine code stored after the REM in the
+first line.  MAXRAM.BA must be the first BASIC file saved in RAM.  That
+is, before loading the program from text or cassette into BASIC, there
+must be no other .BA files in RAM.  This insures that it will occupy the
+lowest user RAM address and will not be moved around when other files
+are created or deleted.
+
+   In a fresh copy of this program, the first line will read:
+
+62960 REM.........1.........2.........3.........4.........5.....
+
+Upon running the program, it replaces the 55 comment bytes with machine
+language code that will appear as mostly graphics characters if listed.
+The line number, 62960, will also change automatically, depending on the
+value of MAXRAM you select.  DO NOT ATTEMPT TO "EDIT" OR OTHERWISE ALTER
+THE FIRST LINE OF THIS PROGRAM.
+
+   After using the program, DO NOT DELETE IT UNLESS YOU HAVE SET MAXRAM
+TO 62960.  However, after setting MAXRAM to your desired value, if you
+don't need the facilities provided by lines 63000 - 63010 (to reset
+MAXRAM or HIMEM), you can save RAM space by deleting these lines (just
+"EDIT 63000-", and "Cut" out these lines).  If you do this and later
+want to change MAXRAM again, you must either MERGE a copy of lines 63000
+- 63010 from a .DO file into the program, or just use the following
+pokes to set MAXRAM back to 62960:
+
+POKE64218,243:POKE64219,127:POKE64220,243:POKE64221,127
+
+   Note that the Model 100 prevents LOADMing .CO's with Top address
+below HIMEM, but does allow the End address to exceed MAXRAM.  Since
+there doesn't seem to be any way of intercepting this, you should be
+careful when loading .CO's.
+
+
+Technical information:
+
+   Since MAXRAM.BA resides as the first .BA saved in RAM, its start
+address is one byte above the beginning of user RAM (value @ FAC0). 
+After the program pokes the M/L code into the comment of its first line,
+we have:
+
+address		value or opcode
+-------		---------------
+0$=start RAM	0 byte
+
+0$ + 1		two byte pointer to second line of program.
+
+0$ + 3		two byte line number of first line of program,
+		used for storage of new MAXRAM value.
+
+0$ + 5		142. = token for REM
+
+0$ + 6		pop	h	;MAXRAM intercept
+		lhld	0$+3
+		jmp	1DAD
+
+0$ + 13.	xthl		;CLEAR intercept
+		pop	h
+		...37. bytes of code copied from ROM 4105-4129
+		xchg
+		lhld	0$+3
+		inx	h
+		xchg
+		jmp	412D
+
+
+   Address of entry point 0$+6 is placed into FADC (the RST 7-2 vector
+for MAXRAM, called @ 1DA8), and address 0$+13. is placed into FADA (RST
+7-0 vector for CLEAR, called @ 4103).
+
+   I think it's an incredibly interesting concept to store M/L code in a
+BASIC REMark.  The only real restriction is that the code can not
+contain any zero bytes (because of the way BASIC line pointers are
+built, see ROM 05F0-0607).  And since start RAM address depends on
+amount of user RAM installed, code must be relocatably loaded there.
+
+   However, if this technique catches on, M100 M/L programmers will then
+be contending for the low RAM locations (instead of the HIMEM-MAXRAM
+area!).  There already is a product advertised, SUPERA from Micro Demon,
+which sounds like it uses this technique.  I must point out that I have
+not seen SUPERA and arrived at this idea on my own.
+
+   My first attempt at implementing the MAXRAM program was by storing
+the necessary code as an invisible .CO file whose directory entry was
+placed at a fixed location at the end of Dir space.  In place of a file
+name, I put 8 bytes of code that jumped to the start of the .CO.  In
+this way, the code could be called by a fixed address (in dir space)
+regardless of where the .CO ended up being stored in RAM.  I still
+believe that this technique can be used for certain programs - but it
+doesn't work properly for the CLEAR intercept, since as the Paste buffer
+is cleared, the code being executed moves down in RAM.

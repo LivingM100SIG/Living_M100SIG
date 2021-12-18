@@ -1,0 +1,22 @@
+0 'FDTODO.MPC 11/14/88 09:00               adapted from PTODO.BA by Acroatix
+1 'by Jean-Luc Crevier CIS [73720,2456]    see TMPCUT.DOC for documentation
+2 CLEAR 500:MAXFILES=2:DEFSTR X,Y:X=CHR$(27)+"p":Y=CHR$(27)+"q"
+3 CLS:F$="":INPUT"Task file name";F$:IFF$=""THENMENU
+4 PRINT:PRINT" (ENTER) for search string ends program":PRINT"ALL selects all TO-DOs except daily list"
+5 OPENF$FORINPUTAS1
+6 A$="":PRINTX;" Output dev:file (ENTER=lcd:)";Y;:LINEINPUTA$:IFA$=""THENA$="LCD:"
+7 OPENA$FOROUTPUTAS2
+8 CLS:S$="":PRINTX;" TMPC To-do Search:";Y;:LINEINPUTS$:IFS$=""THENCLOSE1,2:MENU
+9 IFEOF(1)THEN21
+10 A$=INPUT$(4,1)
+11 IFA$<>"tMpC"THENBEEP:PRINT"Not in Task File format - Abort!":END
+12 A$=INPUT$(3,1)
+13 IFEOF(1)THEN21
+14 J=ASC(INPUT$(1,1))-32
+15 IFJ=0THEN21
+16 I=(J AND 12)/4:K=J AND3
+17 I=ASC(INPUT$(1,1))-32
+18 A$=INPUT$(I,1)
+19 IFS$="ALL"THENPRINT#2,A$:GOTO13
+20 IFINSTR(A$,S$)>0THENPRINT#2,A$:GOTO13 ELSE 13
+21 CLOSE1,2:GOTO5

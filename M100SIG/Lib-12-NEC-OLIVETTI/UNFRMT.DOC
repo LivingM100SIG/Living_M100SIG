@@ -1,0 +1,73 @@
+                                   UNFORM.NEC
+
+    Model 100 version by Don Zeikel   [CIS 75775,1430  DELPHI "ZEIKEL"]
+Converted to NEC format by Philip Frank    [CIS 70117,2336  Genei P.FRANK]
+
+                                  INTRODUCTION
+
+     When text material is downloaded from a computer system, it is usually
+formatted to a specific line width.  If you attempt to print it out using a
+different width, you can get some strange-looking short lines and other
+awkward blocking.  This is unfortunate, as it would often be nice to be able to
+print out the text using a formatter, with page numbering, headers, footers,
+etc. Most text formatting programs require a carriage-return only at end
+of paragraphs.
+     Unless you have access to a program which will Search and Replace
+carriage returns, the alternative has been to go through the file and
+manually delete the carriage returns. UNFORM.NEC was created to eliminate
+this tedious chore.
+     UNFORM.NEC makes the decisions, on a line-by-line basis, whether to leave
+or remove a carriage return, and, if the carriage return is dropped, whether
+to insert 0, 1, or 2 spaces in its place.  It will delete returns within a
+paragraph, and leave them at the end of a paragraph, on blank lines, and on
+formatted lists.
+
+                                  INSTRUCTIONS
+
+     Delete any garbage material from the beginning and end of the file.
+     Run the program.  Press any key to move from the program title page.  You
+will be asked for the name of the file you wish to unformat.  Just type in the
+name of the file and [ENTER].  Do not enter the ".DO" extension.  For this
+example, we will say the name of the file is "TESTER.DO".
+     The screen will now read "Measuring TESTER.DO".  This message
+will remain on the screen for as much as a minute or more, depending upon the
+length of the file.  You need not stay at the computer; it will BEEP at any
+point in the program where you must take an action.
+     You will then be told the width of the file.  This is the greatest length
+of any line in the file.  On pressing any key, you will be shown a sample
+line and asked "Is this a typical length line?"  This will help to catch
+any garbage before, after, or within the body of the file.  It is critical,
+because the program will make many of its decisions based on the line length.
+If you answer "Y" the program will continue.  If you answer "N" then it
+will start measuring again, looking for a SHORTER line.
+     Assuming you have answered "Y", you will now see "Unformatting
+TESTER.DO".  On completion the screen will read  that the unformatting is
+complete, and you will be asked if you want to retain the original file.  If
+you answer "N" then you will exit to the menu, where the revised TESTER.DO
+will be waiting for you.  If you answer "Y" then you will be told the new name
+of the OLD file, which will be OLD followed by the first three letters of
+the file name (in this case, OLDTES.DO).
+
+                                  PRECAUTIONS
+
+     UNFORM.100 is intended for use only on previously formatted text
+files.  It is not recommended for program listings, or any other type of
+file in which carriage returns are CRITICAL to the meaning of the file.
+It should, however, be able to handle formatted lists within a text file.
+     Note that the program will not format an unformatted file and also
+that any file with a line of over 200 characters will be rejected.  It will
+also reject a file with control characters, so do not imbed printer
+characters until AFTER running UNFORM.NEC.
+     The program creates a second, unformatted file, while retaining the
+original, which may be kept if desired. This means that you must have adequate
+free RAM.  If you do not have enough, the program will tell you so.
+     Finally, the program is not perfect.  It is looking for clues as to
+whether or not to leave in a carriage return, based on spaces, punctuation,
+and line length.  If a line is formatted oddly, the program may err.
+On the whole, however, it should give satisfactory results.  I have hit very
+few snags after running several versions of it for several weeks.
+     Addendum:
+In converting the program I have simply replaced any Model 100 PRINT@
+statements with NEC's LOCATE format and rectified a few other incompatible
+BASIC statements.  Questions regarding the program's logic should be directed
+to Don Zeikel, the program's author.

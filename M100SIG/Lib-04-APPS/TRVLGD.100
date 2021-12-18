@@ -1,0 +1,79 @@
+5 'TRAVELERS GUIDE
+10 ' BY Byron Myhre-72135,744
+20 ' Saved as TRVLGD for Mod 100
+30 'Version 1.0 as of 02/02/84
+100 CLEAR 100
+110 DEFSNG A-Z
+210 READCN$, FM$,CM
+220 CLS
+230 M$="":E$="":C=0
+240 PRINT"  Traveler's Guide"
+250 PRINT"1=Met->Eng          2=Eng->Met"
+260 PRINT"3=US$->For          4=For->US$"
+265 PRINT"5=F->C              6=C->F"
+270 PRINT"7=QUIT"
+280 INPUT"Select one";J
+290 IFJ<1ORJ>7THEN280
+300 ONJGOTO400,400,600,650,800,850,350
+310 GOSUB320:GOTO220
+320 INPUT"Press <ENTER> to Continue";E:RETURN
+350 CLS:PRINT"that's it":BEEP:END
+400 CLS
+410 PRINT"1=in/cm       2=meter/ft  3=miles/Km"
+420 PRINT"4=cu in/L     5=qt/L      6=Gal/L"
+430 PRINT"7=lb/Kg       8=acre/hectare"
+440 INPUT"Select one";A
+450 IFA<1ORA>9THEN440
+460 ONAGOSUB700,780,710,720,740,730,750,770
+470 ONJGOTO500,550
+500 CLS:PRINT"Enter ";M$;" as a decimal number":INPUTM
+510 E=M/C
+520 PRINTM;" ";M$;"'s = ";E;" ";;E$;"'s"
+530 GOSUB320:'delay
+540 GOTO 220
+550 CLS: PRINT"Enter ";E$;" as a decimal number":INPUTE
+560 M=E*C
+570 PRINTE;" ";E$;"'s = ";M;" ";M$;"'s"
+580 GOSUB320
+590 GOTO540
+600 CLS:PRINT"Money conversion for ";CN$
+605 PRINT"Enter amount of American money in $US":INPUTE
+610 FM=E*CM
+615 BEEP
+620 PRINT"$";E;" = ";FM;FM$;"'s"
+630 GOSUB320:GOTO220
+650 CLS:PRINT"Money conversion for ";CN$
+655 PRINT"Enter amount of ";FM$:INPUTFM
+660 E=FM/CM
+665 BEEP
+670 PRINTFM;FM$;" = $";E
+680 GOSUB320:GOTO220
+698 'conversion table-metric term,englishterm
+699 'coversion factor of english to metric
+700 E$="in":M$="cm":C=2.54:RETURN
+710 E$="miles":M$="Km":C=1.60935:RETURN
+720 E$="cu.in.":M$="L":C=0.016387:RETURN
+730 E$="gal":M$="L":C=3.785:RETURN
+740 E$="qt":M$="L":C=0.9463:RETURN
+750 E$="lb":M$="Kg":C=0.45359:RETURN
+760 E$="acre":M$="M2":C=4046.86:RETURN
+770 E$="acre":M$="hectare":C=0.4047:RETURN
+780 E$="feet":M$="meters":C=0.3048:RETURN
+800 CLS:INPUT"Enter Farenheit Temp";F
+810 C=(F-32)*5/9:C=INT((C*10)/10)
+820 PRINT F;" deg F. = ";C;" deg C."
+830 GOSUB 320:GOTO 220
+850 CLS:INPUT"Enter Celsius Temp";C
+860 F=(C*9/5)+32:F=INT((F*10)/10)
+870 PRINTC;" deg C. = ";F;" deg F.
+880 GOSUB 320:GOTO 220
+888 REM to change money, enter the name and 
+889 REM the amount equivalent to one American dollar.
+900 DATAGermany, DM,2.8
+1000 REM This program was written for someone 
+1010 REM traveling in a Foreign country who needs
+1020 REM to convert Metric, Celsius, or Foreign money.
+1030 REM As you change countries, change the data statement
+1040 REM in line 900. Everything else 
+1050 REM stays the same. Good luck!!
+

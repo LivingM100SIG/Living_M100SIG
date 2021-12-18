@@ -1,0 +1,60 @@
+MINMAC.DOC
+			07/04/87
+
+   MINMAC.100 is a one-liner sheepishly dubbed a "mini-MACRO" -- because it 
+allows you to send a customized command string from the M100 to a host 
+computer, with a single keystroke in TELCOM.
+   The program loads your command (mine is "DISPLAY<CR>", as listed) into 
+M100's paste buffer, re-sets com status, then takes you into TELCOM.
+   I have expanded the listing and added remarks for clarity in the MINMAC.100 
+file.  If you take out the REM lines and combine the intent of lines 50 and 70,
+the one-line program looks like this:
+
+1 FORN!=1TO9:POKE-1626+N!,ASC(MID$("PASTA DO"+CHR$(0),N!))
+:NEXT:CLEAR:OPEN"PASTA"FORAPPENDAS1:PRINT#1,"DISPLAY"+CHR$(13)
+:CLOSE:FORN!=1TO5:POKE63066+N!,ASC(MID$("M7I1E",N!)):NEXT:CALL20806
+
+   I wrote this because my host computer at work needs a "DISPLAY <CR>" to send
+a screenful of information to the M100.  I got tired of typing that.  Now I 
+just hit the PASTE key, sip a beer, and let the machines do the work.
+   For use on Compuserve, you could change the string to "GO PCS154 <CR>" to 
+get into the M100 SIG, for example.
+   Or CHR$(16)+CHR$(13) would send <CTRL><P>+<CR>, allowing you to quit reading
+a SIG message in mid-stream and call up the next message.
+   Putting CHR$(17) -- a <CTRL><Q> -- into the command string would let you 
+toggle between the PAUSE and PASTE keys to turn the input stream off and on.  (
+A bonus for us slow readers at 300 baud; untested at higher speeds.)
+   Note that the program re-names the paste buffer as PASTA.DO.  You should 
+make up another name (lines 20 and 60) if you keep lots of Italian recipes in 
+the M100.  Accidentally KILLing or OPENing the buffer for OUTPUT, under any 
+name, is probably going to take your machine to the ice-cream parlor.
+   Starting at line 90, MINMAC borrows a tip from Tony Anderson's POKES.100 
+file in DL8 and (re-)sets TELCOM's status to "M7I1E".  That's in deference to 
+my disc system, which likes to change things when I'm not looking.  People 
+without this problem can eliminate lines 90 to 110.
+   On the other hand, if you have frequent cold starts and want to be sure your
+dialing rate is set to 20 pps, you can change line 90 to FORN!+1TO8 and stick 
+"M7I1E,20",N! between the parens in line 100.
+   For the really brave, the final CALL in the program can be changed to 21067 
+-- which will not only put you in TELCOM, but also find and display the first 
+item in the ADRS.DO file.  Then you can start the calling sequence with a mere 
+<CR>.    (I haven't seen this CALL documented anywhere, but so far it hasn't 
+crashed my 32K few-frills machine.
+   And for those who use program XXXXX.BA instead of TELCOM, you can ask MINMAC
+to create your command string and automatically enter your com program by 
+replacing the CALL in line 120 with a RUN"XXXXX.BA".  (Note: if your com 
+program uses a CLEAR statement of any kind, it will void the paste buffer.  You
+may be able to move the CLEAR instruction into MINMAC, delete it from the com 
+program, and run the two sequentially.)
+   A final note on how I use this program.  With Rick Perry's CHANGE.BA in DL7,
+I un-crowd the menu by making  TELCOM invisible.  (Ditto for ADRS.DO and some 
+other stuff.)  Then, using CHANGE.BA's re-name feature, I name MINMAC.BA as T. 
+And when prompted for an extension, I hit the space-bar twice and <CR> once.  
+Suddenly MINMAC has become, simply, T -- which I also make invisible.  At the 
+menu, I type T,<CR>, and I'm in TELCOM with MINMAC's command string loaded and 
+ready to go.
+
+
+   Wilson Van Alst - 76576,2735
+
+

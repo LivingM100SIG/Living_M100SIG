@@ -1,0 +1,57 @@
+How the Linefeed Utilities Work
+-------------------------------
+
+This is how the print linefeed patch in FIXLF/LFUTL (and LFEED.200
+) works.  The string poked into the F8 key memory location in high
+RAM installs a machine language program into the definition for 
+this key:
+
+  dec   hex      code
+  ---   ---   -----------
+  254    FE
+   13    0D   CPI  0Ah   ;is it a CR?
+
+  245    F5   PUSH AF    ;save accum on stack
+
+   62    3E
+   10    0A   MOV  A,0Ah ;put LF in accum
+
+  204    CC
+   63    3F
+  109    6D   CZ   6D3Fh ;ROM call to print LF if CR was found
+
+  241    F1   POP  AF    ;restore the accum char at entry
+
+  201    C9   RET        ;return to normal print routine
+
+
+This program is entered from the print routine in high RAM, if the
+patch defined by A (in FIXLF/LFUTL) is poked in to cause the jump;
+the pokes make the print routine jump to the F8 area where this 
+program resides.
+
+All M100 print LF patches appear to work in this manner.  It's all
+a matter of where the code is installed.  In a print processor 
+such as LAPWRD it can be installed within the program.  In 
+LPTLF.100 it is placed just under MAXRAM, a disaster if other m/l 
+programs want that space.  It is also possible (recent DL4 file) 
+to put it into the bottom of RAM (first Basic program); but there 
+it can conflict with SUPERA and/or the PG Designs MENU utility.
+
+The function key location is surprisingly safe.  However, it will 
+be zapped by any Basic program which has the following code (M100 
+manual, p.149):
+
+  CALL 23164,0,23366
+  CALL 27795
+
+or M/L programs with equivalent code.  A common offender is the 
+original WRITE+.BA from PCSG (aka SCRIPTSIT, more or less) -- 
+which reset the keys (without ever having changed them, so this 
+superfluous code can be removed).  Hugo Ferreya wrote FIXLF.HF1 (I
+think in response to a message of mine) and uploaded it here.  
+I've used it for about two years with no problems.
+
+Phil Wheeler -- 71266,125
+
+

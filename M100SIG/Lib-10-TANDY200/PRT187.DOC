@@ -1,0 +1,50 @@
+PRT187.DOC
+
+Tandy 200 Port 187
+
+The Tandy 200 uses three input lines that are easily accessed.  The printer
+port BUSY (pin 21), the printer port NOT BUSY (pin 25), and the bar code
+port RX DATA (pin 2) can be tested easily by the BASIC INP(X) function for
+a HIGH or LOW condition (all are normally HIGH).  By using all of the
+possible combinations of these data lines, eight discrete combinations are
+found.  These combinations are in the following table with the results of
+the  function:
+
+  V=INP(187).
+
+BAR RXD  BUSY  NOT BUSY = VALUE
+   0      X      X      =  241
+   0      X      0      =  243
+   0      0      X      =  245
+   0      0      0      =  247
+   X      X      X      =  249
+   X      X      0      =  251
+   X      0      X      =  253
+   X      0      0      =  255
+
+    0=OPEN   X=GROUNDED
+
+
+The BASIC program PRT187.200 will run on the T200 and display the status of
+the lines.  I do not know if the data lines are exactly the same on the
+Model 100/102 as I do not currently have access to one for testing.  This
+program shows the branching that is possible with the different combinations
+of lines pulled LOW.  This is a simple way to use the T200 for external
+event driven programming.  Hook it up to something imaginative and useful
+like a wind direction indicator or a burglar alarm with three zones.
+
+
+The pins on the Centronics (printer) end of the printer cable that
+correspond to the T200 pins are as follows:
+
+   T200           =    Centronics 36 Pin
+---------------------------------------
+BUSY (pin 21)     =    BUSY (pin 11)
+NOT BUSY (pin 25) =  NOT BUSY (pin 13)
+
+
+Have fun with this and good luck.
+
+Paul R. Jorgenson  KE7HR
+70416,460
+28 November 1992

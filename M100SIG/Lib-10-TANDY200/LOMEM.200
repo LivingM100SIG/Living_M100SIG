@@ -1,0 +1,64 @@
+
+
+
+  LOMEM.200 -- Sept. 25, 1987
+  James Yi  73327,1653  Copyright 1987
+
+This file describes how to set LOMEM on Tandy 200 for alternate method of 
+storing machine language programs.
+
+
+LOMEM, as opposed to HIMEM, is the area of ram just below where files are 
+stored, and it is normally not accessed by the operating system.
+Initially, when Cold start has been performed, the Basic system doesn't set 
+aside any area for LOMEM to exist.
+
+Nevertheless, it can be created and binary files can be stored there safely.
+
+The advantage of LOMEM is that using it will save memory, because it eliminates
+the need for a backup .CO file, which is loaded at certain address above HIMEM,
+thus taking up double the space of its actual length.  It also is convenient if
+ you have several ML programs competing for the same space in HIMEM.  By 
+relocating each program into LOMEM, they don't have to interfere with each 
+other.
+
+Its disadvantage is that files in LOMEM cannot be readily deleted, as you can 
+with a .CO file by KILLing it.
+
+
+
+To set LOMEM on T200, first create LOMEM.CO by runnig the following BASIC
+program.
+
+Chksum = 20,485
+
+
+10 FORM=65400TO65482:READD:POKEM,D:NEXT:SAVEM"LOMEM",65400,65482,65400:NEW
+100 DATA 33,185,255,205,204,17,205,240,84,205,23,9,42,238,244,62,160,131,87,148,71,14,0,105,210,159,255,197,124,146,71,98,205,218
+110 DATA 130,193,195,166,255,205,168,130,218,120,255,9,58,98,246,128,50,98,246,124,50,239,244,214,160,50,0,160,195,98,44,76,111,109
+120 DATA 101,109,32,115,105,122,101,32,40,120,50,53,54,41,0
+
+
+
+Then decide how many bytes in LOMEM you want to reserve and RUNM"LOMEM.CO".
+
+The size of LOMEM will be the number entered*256.
+
+The resulting LOMEM space available starts at 40961, and ends at 40961 + (the
+number entered*256)-1.
+
+Relocate ML programs to this area and CALL to run them, or you can write a 
+short file manager program.
+
+
+Saving the LOMEM to cassette is just like you would with a .CO file. But
+loading is a bit tricky, as you will get ?OM error if you try to load it the
+usual way.
+
+So first type:  X=PEEK(61109):POKE 61109,0
+
+This lowers the HIMEM value.  Then load it in as you would normally. When it's
+loaded in, don't forget to restore HIMEM value by  POKE 61109,X.
+
+
+Feedback about problems or suggestions on improvements are welcomed.

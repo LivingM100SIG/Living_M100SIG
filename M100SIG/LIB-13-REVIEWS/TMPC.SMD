@@ -1,0 +1,94 @@
+          TMPC Free Sample
+--------
+How to get it
+--------
+The TMPC free sample is available through a basic program, stored in
+TMPC.SMP.  It is a long program, mostly data statements, that POKEs the sample
+(which is in machine language) into your machine.  Take care that:
+  - You only use a model 100 to run TMPC.SMP.
+  - You use a download procedure that will not cause an error in the
+    many, long, data statements.
+  - You allow for the 9700+ bytes that TMPC.SMP takes up.
+  - You have no 'fences' (e.g. CDOS or DVI) or other programs in high memory.
+    The sample needs 60134-62960 to run.  You can have the BASIC program in
+    memory with these, but don't try RUNning it.
+The Sample itself in final form requires 2.7k.  The sample loader
+program will make a copy of the reserved memory into SAMPLE.CO; this
+means that you need 5.4k to run the sample.  You may know some tricks to
+run it with 2.7k; this file doesn't explain any tricks because all of them
+carry the danger of coldstarts.  If TMPC.SMP runs to completion, and you
+use SAMPLE.CO, no coldstarts should occur.
+Detailed Instructions:
+1.  Download TMPC.SMP.  You need 9800 bytes (!).
+2.  With ANOTHER 9.7k available, type: LOAD"<file>" in BASIC, where <file>
+    is the name of your downloaded TMPC.SMP.  BASIC will flash WAIT
+    about 20 times.  Then, you can KILL <file> (the .DO version).
+3.  RUN the program you loaded. Respond to its question with a "Y".  Get
+    rid of CDOS, etc., first!
+4.  The rest is automatic.  If a check- sum error occurs, your only
+    recourse is to download TMPC.SMD again.  DON'T bypass this check, or
+    your coldstart will be your own fault.
+NOTE:  There may be insufficient memory to save SAMPLE.CO.  If you get an OM
+error, you can remove the BASIC loader program and type:
+   SAVEM"SAMPLE",60134,62810,60134
+---------
+Purpose of the Sample
+---------
+The TMPC sample shows you the 3-month calendar and an idea of the floor-plan
+interface.  That's it.  We may be dumb, but we're not crazy!  TMPC is much
+more functional, smoother, and even faster than the sample.  Some of the
+features NOT in the sample:  deadlines, to-dos, automatic file maintenance,
+repeating items, automatic TEXT i'face, and more.  See TMPC.PRD for more info.
+-------
+Using the Sample
+-------
+The when you enter the sample, you find yourself in a room with four corridors.
+Press the arrow keys to move through them.  Two of the corridors connect to
+rooms that provide fixed information, one corridor is the exit, and one leads
+to the sample calendar.
+   The calendar screen has a corridor that extends one space to the right.
+Press the right arrow, and the stick figure moves into that space.  Then,
+the arrow keys move around in the calendar.  Shift-right and -left move
+by months; Control-right and -left move by years.  The ENTER key returns the
+stick figure to its original position, allowing you to exit the screen to
+the left or down.  (You will notice  the "current date" flash when you are
+changing the date.  In TMPC, the cursor flashes whenever in the calendar
+screen.)
+   The only purpose of moving the "current date" is to examine the
+entries for that date.  ENTRIES?  Yes, to make entries, add lines to NOTE.DO
+that start with the date in DATE$ format, followed by a space, followed
+by up to 63 characters of description.
+For example:
+01/11/86 Anniversary
+01/12/86 Report Due
+01/12/86 *Office party
+  There are no limits on number of entries for a date; the dates need not
+be in order.  Due to a quirk in the software, the first line of NOTE.DO
+will always be ignored.  (TMPC allows you to use any file name and has a more
+efficient way of storing dates).
+   When there is an entry for a date, the calendar will display the date in
+inverse video.  Further, you can inspect the entries in the screen below
+the calendar, by moving the cursor to the date, pressing ENTER and down
+arrow.  If there are more than one  entry per date, F1 will cycle between
+them.
+   If an entry begins with an asterisk (*) -- see "office party" above -- 
+that entry will show up in the opening screen when DATE$ matches the
+entry date.
+   There really isn't much to the sample.  Try experimenting, and you'll
+get a feel for the speed of assembly- languange calendars.  TMPC is in a
+league by itself.
+-------
+Saving the Sample
+-------
+The .CO file can be saved to disk using any of the popular mass-storage
+devices.  To save to cassette tape, type:
+CSAVEM"SAMPLE",60134,62810,60134
+  To clear the himem copy, use the command:
+CLEAR 0,MAXRAM
+  When you want to restore the sample from tape, you must first use:
+CLEAR 0,60134
+  Then, use the CLOADM command.  Before using the sample as discussed above,
+you must then use the SAVEM command:
+SAVEM"SAMPLE",60134,62810,60134
+  For other mass storage devices, consult your manual or the helpful
+members of this SIG.

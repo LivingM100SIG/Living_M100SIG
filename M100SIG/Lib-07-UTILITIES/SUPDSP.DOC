@@ -1,0 +1,85 @@
+SUPDSP.100 is a flexible BASIC program that displays (or prints, etc.) the 
+current values of Supera's macro function keys. It should work with any version
+of Supera. To use:
+
+1) Supera must be in your machine, although it doesn't matter whether Supera is
+on or off.
+
+2) Run SUPDSP. If you get an "OV" error, don't panic: see "more magic" below.
+
+3) You'll be prompted for the "output file" (anything BASIC can "OPEN"). The 
+default is "LCD:" (your screen); other useful values are "LPT:" (to send the 
+output to your printer), and "some-name" (to create RAM file "some-name.DO").
+
+4) You'll be prompted for the kind of output you want. SUPDSP can produce full 
+Supera graphics, or "printer" graphics (see "Notes" below). Supera graphics are
+the default if the output device is "LCD:"; printer graphics are the default 
+for all other devices.
+
+5) If you've asked for printer graphics, you'll also be prompted for the output
+device's line width. The default is 39; if you enter a value less than 20, 20 
+will be used.
+
+
+I find it useful to define a macro key as:
+
+RUN"SUPDSP SHIFT-ENTER SHIFT-ENTER SHIFT-ENTER
+
+From BASIC, such a key will cause the current definitions to be displayed on 
+the screen, using Supera's graphic conventions.
+
+
+Notes
+-----
+Supera graphics: the graphics used are identical to the ones Supera uses when 
+you're entering a definition. GRPH-e (the little TEXT triangle) is the only 
+exception: in definitions, Supera stores GRPH-e internally as CTRL-M.
+
+Printer graphics: some gimmicks are used to unambiguously represent the M100's 
+256 characters using just the printable subset:
+
+  "Regular" ASCII characters (32-126): these are printable - no problem.
+
+  "Control" characters (0-31): represented as "<CTRL-letter>"; e.g., ASCII 1 
+yields "<CTRL-A>".
+
+  "Graphics" characters (128-255): represented as "<GRPH-nnn>", where "nnn" is 
+the ASCII code; e.g., the airplane (GRPH-a) yields "<GRPH-133>".
+
+The following exceptions make the printer graphics easier to read:
+
+  ASCII     Key       Output
+  -----     ---       ------
+      8    BKSP       <BKSP>
+      9     TAB        <TAB>
+     13   ENTER      <ENTER>
+     27     ESC        <ESC>
+     28  cursor      <RIGHT>
+     29  cursor       <LEFT>
+     30  cursor         <UP>
+     31  cursor       <DOWN>
+     32   space      <SPACE>
+     60       <       <LESS>
+     62       >    <GREATER>
+    127     DEL        <DEL>
+
+Magic: the program starts by deviously figuring out where your version of 
+Supera stores its key definitions. Don't change this section unless you know 
+EXACTLY what you're doing!
+
+More magic: SUPDSP will die with an "OV" error UNLESS you've created KEY.CO at 
+least once since Supera itself was last loaded. It doesn't matter whether 
+KEY.CO (or any keyset .CO file) exists WHEN you run SUPDSP - it only matters 
+that it DID exist ONCE (Supera changes itself the first time it creates KEY.CO,
+and SUPDSP depends on that change).
+
+
+Very special thanks to: Dennis Thomas, for not settling for the first attempt; 
+Paul Sumi, for infinite patience, common sense, and good ideas; and, to David 
+Sumner of MicroDemon, Inc., for testing this with many versions of Supera, for 
+discovering the need for "more magic", and, especially, for writing Supera to 
+begin with!.
+
+
+Tim Peters  CIS 72227,2416
+

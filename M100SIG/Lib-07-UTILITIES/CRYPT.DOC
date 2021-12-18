@@ -1,0 +1,75 @@
+
+CRYPT.100     Documentation
+===========================
+
+c1987 by Jon Diercks [73327,2353]
+
+CRYPT.100 is a machine language text file encoder/decoder for the Model 100.
+
+* It scrambles 7-bit ASCII text based on a keyword of any length.
+
+* It modifies the text file in place in the M100 menu, without creating a
+second file.  This theoretically allows for coding of RAM files of up to
+almost 32K!
+
+* It ignores all spaces, carriage returns, control characters and 8-bit
+data, including any spaces or CR's added after encryption.  <This facilitates
+EasyPlex transmission of encrypted files.>
+
+* Best of all, it's FAST.  No more waiting for a slow BASIC coder to putz
+along and crank out the correct file.  For most small files, you won't know
+what hit you - coding seems almost instantaneous.
+
+
+INSTRUCTIONS:
+
+Loading:  Download CRYPT.LDR from this DL and load it into BASIC.  CRYPT.LDR
+is a relocating loader <created with BASBLD.PW3 in DL8> so if you want to
+put CRYPT under another ML program, figure out where you want it.
+Otherwise, CLEAR 256,MAXRAM and run CRYPT.LDR.  Just hit <enter> for the
+end address prompt and CRYPT will be loaded just below maxram.  CRYPT.CO
+will appear in the menu.
+
+Running:  As long as memory is clear, CRYPT.CO can be executed from the menu
+or RUNMed.  The files will be listed, and you will be prompted for the file
+to work on.  You must include the .DO extension.  Next, type the keyword you
+wish to use to scramble or unscramble your text.  The keyword must all be
+alpha characters - CRYPT ignores whether they are upper or lower case.
+Finally, you must select <E>ncrypt or <D>ecrypt mode.  As soon as CRYPT is
+done, you are returned to the M100 Menu <or BASIC, if that's where CRYPT was
+called from>.  Simplicity itself!
+
+Tips:  For total security, here's a few practices to follow.
+
+* Don't use special "cute" things in your file, like lines of dashes or
+equal signs or an asterisk at the beginning of each paragraph - they make
+it easy to find a pattern.  Keep the amount of text to a minimum.  Long
+files are easier to crack than short ones.
+
+* Spaces make it easier to decipher a coded file, soifyouwantyoucantakeallthe
+spacesoutlikethis, orjust takeso meofthe spaces outandmove themaround.
+
+* If you want to get really complicated, encode the file *twice* with two
+keywords of _different_ lengths.  It doesn't matter what order, i.e. if you
+encode first with 'abc' then with 'wxyz', you can decode with either
+'abc' or 'wxyz' first, as long as you do both.  The effect is as if you encoded
+with a very long keyword, making it hard to detect a pattern.
+
+* _DON'T_ use keywords like 'abc' or anything less than three letters.
+
+* _DON'T_ insert or delete any *codeable* characters to the file after it's
+been coded.  CRYPT will ignore spaces, CR's and control characters, but any
+letters or numbers will screw up the code.
+
+One final note:  There is a bug somewhere in one of the ROM routines
+that causes an error with certain filenames <Seems to happen most when
+filename is part of another filename in the menu, i.e., CRYPT may not accept
+FILEA.DO if there is another file called FILE.DO in the menu at the same time>.
+If CRYPT rejects a filename, rename the file and try again.  If anyone figures
+out what causes this bug, please let me know.
+
+I hope you make good use of all this.
+
+EasyPlex any questions, comments, suggestions, etc. etc. to:
+
+Jon Diercks [73327,2353]

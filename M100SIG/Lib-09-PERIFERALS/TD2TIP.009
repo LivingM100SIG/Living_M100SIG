@@ -1,0 +1,225 @@
+TD2TIP.009/Direct Sector Access using FLOPPY (FLOPY2)
+=====================================================
+joel dinda
+[75725,1134]
+
+While FLOPY2 isn't my favorite program, it provides TDD2 users the capability
+to bypass the TDD file structure and access disk sectors directly.  The most
+obvious applications for this capability are utility programs (there are
+several such in this Library) and (random access?) database programs (aside:
+database programmers will have to write their own file-management routines, a
+matter this discussion ignores).  This file lists all-in-one-place those things
+someone writing such a program will need to know.
+
+First I'll talk about syntax, then I'll discuss some necessary concerns,
+finally I'll discuss some background matters.
+
+**WARNING:  This is an advanced and fairly specialized programming tip.  Only
+fairly experienced M100(etc) programmers will understand some of this
+discussion.  Lots of it is pretty opaque.  While it's not intended to
+intimidate, you've got to be writing a pretty sophisticated program to want to
+know these things.
+
+Powr-DOS/TDD1 users/programmers will want to read DOSTIP.009.
+
+Syntax
+======
+The necessary command is a conventional BASIC CALL:
+      CALL Z,Y,X
+Where:
+      Z is the start of FLOPPY's file transfer routine (depends upon which
+      computer you're using)
+      
+      Y is the code for the activity you wish to provoke (details follow).
+      
+      X is the RAM address of some further instructions necessary for execution
+      of the routine.
+      
+Z options:
+----------
+      In M100/T102, Z is 62297 (-3239 integer).
+      In T200, Z is 58980 (-6556).
+      
+Y options:
+-----------
+      1 attempts to format the diskette.
+      3 attempts to read the diskette.
+      4 attempts to write to the diskette.
+      5 checks (reports) the status of the drive (so do the other options).
+      
+      --TD2TIP.005 says, incorrectly, the Y=2 writes to the diskette (*easy*
+      mistake).  If someone figures out what Y=2 actually *does* do, I'd like
+      to hear about it.  Thanks.
+      
+X options:
+----------
+      Any legal RAM address--but some are far better than others.  I'll return
+      to this momentarily.
+
+Further information at location X:
+----------------------------------
+The routine beginning at Z checks at X for two pieces of information:
+      X and X+1 store the address, in RAM, reserved (by you) for the file
+      transfer.  (Call it a buffer [BF]; this is its lowest address [possibly
+      HIMEM].  I discuss this further below.)  Like most M100 two-byte
+      addresses, these are stored LSB+MSB.  (I suggest a simple solution in
+      the discussion below.)
+      
+      X+2 is the diskette sector being transferred.
+      
+      It may help to think of the information at X this way:  You're
+      transferring data [content and direction unspecified] between a buffer
+      which is indicated at X & X+1 and a diskette sector which is indicated at
+      X+2.
+      
+Necessary Concerns:
+===================
+M100 or T200?
+-------------
+By this time there's no excuse for donating a computer- specific program to
+this SIG without good reason.  PEEK(1) returns 51 in M100/T102; it returns 171
+in T200.  Once you know this, you can assign the appropriate value to Z and any
+other computer-related POKEs, PEEKs, or CALLs you'll be using.  (I like to
+work over the keyboard buffer, for instance.)
+
+Is FLOPPY there?
+----------------
+Next, check to see if FLOPPY's actually installed.  Tandy's BACKUP does this by
+checking four RAM locations; the following line is a slightly more compact
+version of theirs:
+      IF PEEK(Z)=229 AND PEEK(Z+1)=94 AND PEEK(Z+239)=4 AND PEEK(Z+240)=195
+      THEN continue ELSE error: "No System"
+      
+Buffers
+-------
+Next create one or more buffers for your program's use.
+
+You'll need one buffer for each sector you intend to duplicate in RAM at any
+one time; the exact number will depend either upon the nature of your
+application or the amount of RAM available.  Each buffer will be 1284 bytes
+long; it should be locked in with some variation of the following instruction:
+      CLEAR256,HIMEM-(1284*(number of buffers))
+
+It is *always* good practice to restore HIMEM to its previous value when the
+program finishes; there are at least two workable schemes.  Folks who use
+MAXRAM instead of HIMEM in programs which overwrite high memory are despicable
+creatures; they should, at least, warn users that they're destroying files.
+
+Variable X:
+-----------
+The third CALL argument points to a RAM address containing address information
+for the CALL's use.  I know of two ways to do this, but suggest that everyone
+use this one:
+
+If BF is the first (lowest) address in the buffer, and S is the sector number:
+      
+      0 ... :DEFINT T:DIM T(1): ...
+      16 ... :T(0)=BF:T(1)=S:CALL Z,Y,VARPTR(T(0)): ...
+
+      This is a "cute trick"; it works because M100 stores T(0) and T(1)
+      together in RAM; VARPTR(T(0)) tells that location.  [Please notice the
+      DEFINT!  It matters!]
+      
+Some of the SIG's utilities use POKEs to accomplish this, but there's no
+advantage (and the coding's more difficult).
+
+Detecting Errors
+----------------
+While this CALL does not directly return error messages, it *does* return error
+information.  This information is stored at address X; if you've used
+VARPTR(T(0)), you only need to determine the value of T(0).  Good practice (and
+common sense) dictate that you check this value *immediately* after attempting
+any file transfer.
+
+These are the documented errors:
+      T(0)=0 or 1	no error
+      T(0)=3		RS232 Not Ready (Powr-DOS Error 59/NR)
+      T(0)=5		Communications Error (61/CM)
+      T(0)=6		Write Protected (63/WP)
+      T(0)=8		No Disk in Drive (65/ND)
+      T(0)=9		Hard Trouble (66/HT)
+      T(0)=12		Drive Not Responding (60/DN) [not previously documented]
+Presumably the "empty" numbers can be generated, but I haven't figured out how.
+If you discover one, please pass it along.  Thanks.
+
+I've been using the following approach.  Obviously there are others, but I'm
+happy with this one:
+      0 ON ERROR GOTO 99: ...
+            ...
+      16 ... :CALL Z,X,VARPTR(T(0)):GOSUB98: ...
+            ...
+      97 MENU
+      98 IF T(0)<2 THEN RETURN ELSE IF T(0)=6 OR T(0)=8 THEN ERROR 63 ELSE IF
+      T(0)=3 OR T(0)=5 OR T(0)=9 OR T(0)=12 THEN ERROR 60 ELSE ERROR 99
+      99 IF ERR=63 THEN PRINT "Disk Error" ELSE IF ERR=60 THEN PRINT "Drive
+      Error" ELSE PRINT "Error" ERR "in line" ERL:END
+I've used ERROR 99 as a clue that we've found a new error code.  The other
+codes simplify conversion between Powr-DOS & FLOPY2.
+
+You can modify this to RESUME or quit, as appropriate.  For instance, knowledge
+that T(0)=6 means the diskette is write protected can be used with CALL Z,5,X
+force the user to protect a diskette's files.
+
+Background
+==========
+Much of the technical information was obtained by studying Tandy's BACKUP.BA,
+which is supplied with the TDD2 drive, and by systematic experimentation.  Some
+of the other discussion follows from Powr-DOS experience.
+
+Buffer Format:
+--------------
+The first byte in the sector (more exactly, in the buffer) (let's call it BF+0)
+indicates the diskette format in use.  0 means it's a TDD1 diskette; 22 means
+it's a TDD2 diskette.  This is evidently provided for our information, as
+changing it has no effect--if you "save" a sector with this byte changed, then
+retrieve it again, it's been restored to its original value.
+
+The second byte in the sector (well, buffer) (BF+1) is the file vector:
+      0 means the sector's empty;
+      255 is an EOF marker; and
+      any other number indicates "file continues here".
+Since file deletions do *not* modify these vectors, these may be misleading.
+
+Two bytes of unknown consequence follow at BF+2 & BF+3.  They appear to always
+be zero; presumably they could contain information with meaning to the drive.
+
+The next 1280 bytes (starting at BF+4) duplicate the sector's contents.  If the
+sector is not 0 or 1, this could be anything (TDD2 doesn't inflict any format).
+Unless modified, Sectors 0 and 1 conform, with three significant modifications,
+to the information in SECTR0.TDD, available from this Library.  Discussion
+follows immediately....
+
+Directory Structure:
+--------------------
+TDD directory structure is discussed at some length in my file SECTR0.TDD. 
+Since FLOPPY delivers a somewhat different copy of the sector to RAM, a few
+adjustments must be made; some of these adjustments result from differences
+between the drives, while others seem to be idiosyncratic programming
+decisions.
+
+Perhaps the most important difference between sector buffers created by
+Powr-DOS and FLOPPY is that FLOPPY's sectors come with four leading bytes (two
+of which contain information), while P-DOS's come with 12 trailing bytes (one
+of which contains information).  When reading SECTR0.TDD, you must therefore
+add an offset of 4 to most counts, while the file vector check must be adjusted
+from BF+1281 to BF+1.
+
+Since TDD2 diskettes contain two directories (Sectors 0 and 1), certain
+allowances must be made for this.  Except for the allocation table, the
+structure of the directory sector(s) is unchanged from that described in
+SECTR0.
+
+The allocation table *is* changed.  Where TDD1 stores allocation information
+for 80 sectors on half of 160 bits, TDD2 (naturally) uses all 160 bits to store
+twice as much information.  The allocation table is duplicated on both
+directories, effectively describing the entire diskette for either. 
+*Important related matter:*  FLOPPY (and any other DOS, near as I can tell)
+updates *both* allocation tables when you add or subtract a file.  One side
+effect of this is that Sector 1 should be considered unavailable under all
+circumstances--unless you're writing your own file control routines and *never*
+use the TDD2's built-in routines for file transfers.
+
+
+Enough.  That should point you in the right direction....
+joel
+4july88

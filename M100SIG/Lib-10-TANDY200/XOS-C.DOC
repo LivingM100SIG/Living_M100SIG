@@ -1,0 +1,313 @@
+XOS-C.DOC  by Paul Globman (C) 1989
+               [72227,1661]
+
+
+     XOS - X-bank Operating System
+             (cross-bank)
+
+XOS is a system of three programs that is designed to run in LOMEM of each of
+the T200's 3 RAM banks.  These three programs load/install as one program 
+interact with one another in such a way that you can have the software of all 3
+banks available in any bank.  XOS uses the first 768 bytes in each bank.
+
+XOS runs in the location used by Disk Power 200.  With XOS installed, Disk 
+Power cannot be used and any attempt to use it could have disastrous results.
+
+Installing XOS is simply a matter of 1) loading XOSLDR.CO and XOSDAT.CO into
+the same RAM bank, 2) HAVE AT LEAST 1K FREE RAM IN EACH BANK TO INSTALL XOS, 
+3) run XOSLDR.CO, and 4) run XOSLDR.CO again (the second execution of
+XOSLDR.CO is sometimes needed in a cold started system... run it twice at all 
+times to insure proper installation).
+
+NOTE: XOSLDR.CO and XOSDAT.CO Are available as XOS-C.200, and you will
+need HXFER.200 to convert the ASCII files into XOSDAT.CO and XOSLDR.CO.
+
+
+XOS was designed to offer cross-bank abilities (as well as other 
+enhancements) to the Tandy 200 at the MENU, with BASIC, TEXT, and TELCOM.
+
+  ==================================
+MENU and TEXT enhancements:
+
+XOS will enhance the operation of Menu functions, also offering several TEXT 
+utilities like background printing and cross-bank cut/paste.
+
+At the Menu, ADRESS and SCHEDL have been made invisible, and the LABEL line
+will display up to 7 new functions in addition to the original 3.  The new 
+LABEL line will look like this:
+
+          Cmd>           Name File     
+Bank Back Roms Copy Kill Pste Prnt Menu
+ [1]  [2]  [3]  [4]  [5]  [6]  [7]  [8]
+
+F2 - REVERSE BANK SWITCHING - press F2 to go to menu of previous bank.
+
+F3 - ROMS - press F3 for ROM selection menu.  Modify the use of F3(Roms) with
+XOSUTL.BA (provided).
+
+F3 - CMD> - press F3 with cursor over BASIC to run a BASIC program.  If the 
+cursor is NOT over BASIC, then F3 will run a .CO file.
+
+If CAPS LOCK is on, then the file to be executed will default to 3:CMD>.BA or
+3:CMD>.CO, depending upon where the cursor was.
+
+If CAPS LOCK is off, then you will be prompted "Cmd>".  Just type in a 
+filename (no extension) and press enter.  "3:" is the default bank and needs 
+no prefix.  Filename may begin with "1:" or "2:" to indicate file location, if 
+not in bank #3.
+
+F6 - PASTE BUFFER TRANSFER - move the paste buffer to another bank for 
+cross-bank CUT and PASTE operation.
+
+F6 - RENAME - rename program or file under cursor.  Allows illegal 
+characters and filenames, so use caution.
+
+F7 - BACKGROUND PRINTING - press F7 with cursor over DO file.  This duplicates 
+SAVE TO LPT: from text.  Once begun, press F7 to abort.  Beep announces 
+start and stop of print task.  Printing will be suspended if you switch banks,
+switch LOMEM code (F8), or edit a file that is in lower RAM than the file that
+is printing.  Backgroung printing will resume when the conditions are restored
+to normal.
+
+F7 - FILES DISPLAY - press F7 to view the remaining two banks, displayed in 
+circular order (1,2,3,1,2), with current bank active for various MENU 
+functions.  Shift-F7(File) will restore the normal Menu display.
+
+F8 - ADDITIONAL MENU OPTIONS - this will offer the additional options listed 
+for F3, F6, and F7.
+
+  ===================================
+BASIC enhancements:
+
+In BASIC, F8 has been re-defined to CALL 40961, which will re-install all XOS 
+hooks, should they become dis-engaged.  This can also be accomplished from 
+BASIC with the following command...
+
+KEY8,"Menu"+chr$(24)+"CALL40961"+chr$(13)
+
+XOS will enhance BASIC and M/L capabilities by allowing programmers to
+write programs that access other RAM banks.  The BASIC enhancements will 
+allow a running program to RUN a BASIC program, LOADM a .CO file, or KILL a 
+TEXT.DO file in another bank.
+
+The instruction, CALL 41179, will load XBAS-2 into the ALT LCD buffer of the 
+current bank.  Once CALLed, 
+
+XBAS-2 is used by the BASIC programmer to access files in other banks.  Data 
+files (.DO files) in other banks can be KILLed, and BASIC and M/L programs can 
+be brought in from other banks and executed in the current bank.
+
+Once the BASIC program has executed the "CALL 41179" command, the routines can 
+be accessed with the following call:
+
+    CALL 63600,CMD,VARPTR(X$)
+
+The commands are 7 - KILL FILE.DO
+                 8 - LOADM FILE.CO
+                 9 - RUN FILE.BA
+
+XBAS-2 does internal error checking and will beep if there is a problem.  
+XBAS-2 will not execute the wrong instruction and offers the BASIC 
+programmer a result descriptor byte so the BASIC program can trap and handle 
+problems.  The result descriptor (RD) byte is at 61302, and can be PEEKED 
+either before or after a CALL to XBAS-2.
+
+KILL FILE
+This command is: F$="2:FILE.DO"
+                :CALL63600,7,VARPTR(F$)
+
+The RD byte is 0 if the file is found and killed.  The RD byte will retain 
+the CMD if the CALL is not sucessful, and a beep will sound.  During program
+debugging, a non zero RD means the file was not specified as .DO, the CMD was 
+not a seven (7), or the file to be killed, was not found.
+
+
+LOADM FILE.CO
+This command is: 
+
+ F$="2:FILE.CO":CALL 63600,8,VARPTR(F$)
+
+If RD=0 then the .CO file was loaded into place and the execution address is
+stored at 61303/61304.
+
+The load address is stored at 61300/61301.  If these two bytes are both 0 
+then the file was not found.  Otherwise 61300/61301 has the load address of the
+file and HIMEM has to be cleared for this file to LOADM.
+
+
+RUN FILE.BA
+This command is: 
+
+ F$="2:FILE.BA":CALL 63600,9,VARPTR(F$)
+
+Your program will load and run the BASIC program F$, so if the program making 
+the call continues, then F$ wasn't found.  The RD would reflect the command 9.
+
+For all XBAS-2 commands, the user must check RD and pointer addresses, 
+IMMEDIATELY after the CALL 63600.
+
+The original XOS offered XBASIC.  To retain the features of XBASIC you must 
+store XBASIC.CO in bank #3.  Now the following code is the equivalent of 
+LOADM"XBASIC".
+
+10 CALL 41179             'LOADM XBAS-2
+20 X$="3:XBASIC.CO"       'SPECIFY FILE
+30 CALL63600,8,VARPTR(X$) 'LOADM XBASIC
+40 IFPEEK(61302)<>0THEN99 'TEST LOAD
+
+Now XBASIC is loaded and CALL 63600 is available with commands 1 thru 6.  A 
+simple CALL 41179 will reload XBAS-2 for commands 7,8, and 9.
+
+BASIC programs are brought into the unsaved program buffer, and executed by
+IPL of the unsaved buffer progradisastIC programs called in by the CMD> 
+key should begin with the IPL"" statement to prevent it from unwanted 
+execution.
+
+Attempts to alter the POWER time setting must be followed by POKE 40962.  Ex:
+
+ 10  POWER 100:POKE40962,100
+ 20  POWER CONT:POKE40962,0
+
+  =================================
+TELCOM enhancements:
+
+XOS adds the following to TELCOM's TERM mode...
+
+  F6 = display files and bytes
+  F6+SHIFT = direct access to TEXT
+  F7 = jump to TELCOM in next bank
+  F7+SHIFT = jmp TELCOM in prev. bank
+
+XOS will allow you to jump from bank to bank while on-line with either
+an external or internal modem.  And whichever bank you jump to, the hooks
+are active to allow you to switch banks again.
+
+The TELCOM hook code runs in the last 15 file slots of the directory of each 
+bank.  This means that you can have a maximum of 31 files per bank, instead 
+of 46.  From the T200 users I have spoken to, this is not a problem.
+
+In return for the 15 file sacrifice you get several excellent TELCOM 
+enhancements.
+
+NOTE: The first time you enter TELCOM in another bank, you will enter the TERM
+mode by pressing F4(Term).  Should you exit this bank, and re-enter it, you 
+will have to type TERM<ENTER> if F4(Term) doesn't work.
+
+Each time you press F3(Cmd>) at the Menu, the TELCOM hooks will be reset in
+all three banks so the XOS features are active, in the same way F8 from BASIC 
+restores the XOS menu hook.  Programs that alter the TELCOM hooks can now be 
+used without concern.
+
+  =================================
+YOUR CUSTOM 200
+
+I have given XOS the ability to be customized.  F3 comes with "Roms" and 
+"Cmd>" as its default utilities.  The "Roms" function key can be made to 
+offer direct access to your OPTION ROM(s).
+
+The "Cmd>" function key can be made to load and run default programs that are 
+named CMD>.BA and CMD>.CO in Bank #3 by maintaining CAPS LOCKed.  Unlocking 
+CAPS will allow user input to determine file to run.
+
+The following XOSUTL.BA will allow the redefining of F3(Roms) for your 
+individual use.  Note... UR-2 may disengage the XOS hook.  BASIC F8 will
+restore the XOS hook as it returns to the Menu.  Use this to access the NODE 
+ROM and keep XOS engaged.
+
+If you run XOSSAV.CO (with XOSDAT.CO in RAM), the current modified F3(Roms) 
+will be saved to XOSDAT so future loads of XOSDAT will not require any further
+modification.
+
+ =====================================
+Acknowledgements:
+
+James Yi [73327,1653] for part of the LOMEM adjustment code.
+
+Randy Hess [73267,552] for beta testing and feedback.
+ =====================================
+ USE HXFER.CO TO CREATE XOSSAV.CO
+
+With XOSDAT.CO on the menu, run XOSSAV.CO to modify XOSDAT so it 
+reflects CURRENT status.
+
+70F8480070F811AEF83E0ACD4F6ECAD232CD8C6E2806F3AFCD91F83E04CD91F83E08CD91F8FBC9329CF80100032100A0C50600D5CDB19B7AD112C123130B79B0
+C29AF8C9584F534441542E434F00
+
+=======================================
+0 REM XOSUTL.BA   Copyright (c) 1989
+5 REM              by Paul Globman
+10 REM Utility Module
+20 M=INSTR("n",CHR$(PEEK(41024)))
+30 IF M<>1 THEN BEEP:MENU
+40 CLS:PRINT:PRINT"You are about to ";
+50 PRINT"modify XOS module #"M:PRINT
+60 PRINT"The label above [F3] is...  ";
+70 FORI=1TO4:P$=P$+CHR$(PEEK(41001+I))
+80 NEXT:PRINTP$:PRINT:PRINT
+90 GOTO 1000
+100 REM -------------------- MAKE F3=X$
+105 FOR I=1 TO 4
+110 POKE 41001+I,ASC(MID$(X$,I,1)):NEXT
+115 RETURN
+1000 REM ------------------------ XOS-1
+1005 RESTORE 1010:X$="Roms":GOSUB100
+1006 FORI=0TO76:READA:POKE41563+I,A
+1007 NEXT:GOTO1020
+1010 DATA 205,150,79,33,56,162,205,204
+1011 DATA 17,42,63,245,34,116,162,42,65
+1012 DATA 245,34,122,162,205,23,155,33
+1013 DATA 11,244,34,63,245,33,79,244,34
+1014 DATA 65,245,33,1,160,34,61,245,175
+1015 DATA 50,30,253,50,72,248,33,140
+1016 DATA 162,229,205,3,139,208,254,5
+1017 DATA 208,245,62,240,33,181,242,1
+1018 DATA 11,0,22,46,190,194,168,162,54
+1019 DATA 0
+1020 PRINT" 1 - TS-DOS
+1030 PRINT" 2 - ANY OTHER ROM
+1040 PRINT" 3 - 8 ROM PACK
+1050 PRINT" 4 - 8 ROM PACK / ROMDISK
+1060 PRINT
+1070 PRINT" 5 - NO ROM
+1080 PRINTSTRING$(30,"-"):PRINT
+1090 PRINT" Option => ";
+1093 O$=INPUT$(1):IFO$=""THEN1095
+1095 O=VAL(O$):IFO<1ORO>5THEN1095
+1098 ON O GOTO 1100,1200,1300,1400,1500
+1100 REM ----------------------- TS-DOS
+1105 RESTORE 1190:POKE41528,0
+1110 FORI=1TO13:READA:POKE41562+I,A
+1120 NEXT:X$="Disk":GOSUB100:MENU
+1190 DATA 175,50,30,253,219,216,230
+1195 DATA 12,246,2,205,239,238
+1200 REM -------------------- OTHER ROM
+1210 REM use for UR-2, SuperRom, ROM2
+1220 POKE41528,0
+1230 FORI=0TO3:POKE41605+I,0:NEXT
+1240 PRINT"Enter 4 character "
+1250 PRINT"         F3 label :";
+1251 LINEINPUTX$
+1260 IF LEN(X$)<>4THEN1250
+1270 GOSUB100:MENU
+1300 REM ----------------------- ROMPAK
+1310 POKE41621,5:GOTO1450
+1400 REM ---------------------- POMPAK+
+1410 POKE41621,6
+1450 REM --------------------- ROM line
+1455 R$="Rom2 UR-2 Super Disk TWrd Romdsk":CLS:PRINT:PRINT:PRINT
+1457 IFO=3THENR$=LEFT$(R$,25)
+1460 PRINT"Create your own ROMs option"
+1461 PRINT"      line below...":PRINT
+1462 PRINT:PRINT"Press <enter> to use sample line...
+1465 PRINT@560,R$:LINEINPUTR2$
+1466 IF R2$=""THEN R2$=R$
+1470 R2$=LEFT$(R2$+SPACE$(32),32)
+1475 FORI=1TO32
+1480 POKE41527+I,ASC(MID$(R2$,I,1))
+1485 NEXT:MENU
+1500 REM ----------------------- NO ROM
+1505 RESTORE 1530
+1510 FORI=1TO3:READA:POKE41562+I,A
+1520 NEXT:X$="    ":GOSUB100:MENU
+1530 DATA 195,129,160
+

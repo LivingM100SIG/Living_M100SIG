@@ -1,0 +1,234 @@
+LUCID DATA Tax Recordkeeper                                          page 1
+
+
+
+
+                         MAKE YOUR OWN LUCID DATA
+                           1987 TAX RECORDKEEPER
+
+
+
+                           Mark Lutton, 3/28/87
+
+
+        The best way to handle tax time is by preparing for it all year 
+long.  This is not as dismal as it sounds.  The most important things you 
+will have to remember in April are all your income and all your deductible 
+expenses.  If you can keep all of those in one place you will save a great 
+deal of time filling out your tax forms.
+
+        SUPER ROM's Lucid Data is a handy, easy-to-use database system, 
+and you can very easily set up a tax expense recordkeeper.  (You can also 
+make a separate income recordkeeper; it is very similar.)  Here is how to 
+set one up for 1987.
+
+        The data will be held in a Lucid spreadsheet with 6 fields:  Date, 
+Payee, Amount, Tax Category, and two Memo fields.  These fields will be 
+identified as columns A through F.  We will use a View file to do data 
+entry.
+
+        Our Lucid spreadsheet is TAXREC.CA and our view file is TAXREC.DO. 
+The first "viewpoint" is for data entry; the second (separated from the 
+first by <code-0>, which looks like a "paragraph sign" on the Model 100 
+screen) is for printing.  Hold the Code key and hit the zero key to get a 
+<code-0>.
+
+                              File TAXREC.DO:
+                   
+                     LUCID 1987 Tax Record-Keeper   #[#  ]
+                   
+                                          Date:[A# ]/87
+                   Pay to:[B#             ] Amt:[C#      ]
+                   Tax Category:[D#    ]
+                   Memo:[E#                              ]
+                   Memo:[F#                              ]
+                   <code-0>
+                           PRINT TAX REPORT
+                   
+                      Sort on D1 (Key), A1 (Key 2).
+                      Put cursor here:[DR1           ]
+                      and press PRINT
+                   
+                          <End of file TAXREC.DO>
+
+        In the Lucid spreadsheet, format Column C as dollars-and-cents.  
+To do this, go to C250, enter 0, hit F7 (Sel), Enter, F1 (Disp), F5 
+
+LUCID DATA Tax Recordkeeper                                          page 2
+
+
+($###), F8 (Exit).  This will make all amounts display with a dollar sign.
+
+        Here are a few sample records as they appear on the screen.  When 
+putting in the date, put in two digits for month and day, separated by a 
+slash.  Note that year is already in the format.  This way, when you sort 
+the records, they will come out in chronological order.  For "Tax 
+Category", always spell each category the same way so that they will come 
+out grouped together when you sort the records.
+
+                                          Date:01/27/87
+                   Pay to:BCS               Amt:    $75.00
+                   Tax Category:Contrib 
+                   Memo:For the Laptop Group              
+                   Memo:because they saved me taxes       
+                   
+                                          Date:02/15/87
+                   Pay to:Doctor Payne      Amt:   $150.00
+                   Tax Category:Med     
+                   Memo:Year's supply of Valium           
+                   Memo:(enough for two months)           
+                   
+                                          Date:03/20/87
+                   Pay to:Doctor Payne      Amt:    $25.00
+                   Tax Category:Med     
+                   Memo:Hangover treatments               
+                   Memo:                                  
+
+
+
+                                  REPORTS
+
+        The main report you want from this is a report for the year of all 
+your expenditures, sorted by tax category and by date within category, and 
+with subtotals for tax category and a grand total of all expenditures.  
+You need to add two blocks of information into the spreadsheet TAXREC.CA.  
+One of them, at AA1 and AA2, is for subtotals and totals:
+
+                           AA 
+                   001  +TL1(C#)
+                   002  +TLG(C#)
+
+        Format these two cells for dollars and cents.
+
+        The other is a "Report Specifier Block" at DR1 through DR10.  
+Notice how I put little labels in column DQ to help me remember what's 
+what.
+
+
+LUCID DATA Tax Recordkeeper                                          page 3
+
+
+                           DQ         DR
+                   001  rpt fil    TAXRPT.DO
+                   002  sel crit   +NOT(NUL(C#))
+                   003  brk1       +CHG(D#)
+                   004  brk2
+                   005  cols       +1
+                   006  bk1 ct
+                   007  bk2 ct
+                   008  pg ct
+                   009  lpp        +9999
+                   010  lm         +1
+
+
+        You will also need to have the report template file TAXRPT.DO in 
+memory.  Here it is:
+
+                              FILE TAXRPT.DO
+[A# ]/87 [D#       ] [B#                 ] [C#      ] [E#                  
+]
+<code-0>
+
+
+
+        Grand Total of payments: [AA2              ]
+<code-0>
+                     TAX CATEGORY REPORT
+<code-0>
+<code-0>
+
+
+  Date   Category    Paid to               Amount     Memo
+
+<code-0>
+
+       Total for category [D#                 ] [AA1        ]
+<code-0>
+<code-0>
+<code-0>
+
+
+                          <end of file TAXRPT.DO>
+
+        The templates in the file, separated by <code-0>, are:  Line item, 
+grand total, page header, page footer (empty in this case), break 1 
+header, break 1 footer, break 2 header (empty), and break 2 footer 
+(empty).
+
+        To print the report you must first sort the data.  Go into the 
+spreadsheet and select the entire block from columns A through F, rows 1 
+to the last row with data.  Press F7 (Sort).  Use F5 (Key) to set D1 as 
+the major key, and use F7 (Ky2) to set A1 as the minor key.  (You need to 
+do this only the first time you sort.  Lucid remembers from then on.)  
+
+LUCID DATA Tax Recordkeeper                                          page 4
+
+
+Press F6 (Go).
+
+        Now go back to the data view and hit F5 (Vwpt) to see the other 
+viewpoint, the one labeled "PRINT TAX REPORT".  Press PRINT to start 
+printing.  Here is what I got when I printed the report:
+
+                      TAX CATEGORY REPORT
+
+
+   Date   Category    Paid to               Amount     Memo
+ 02/15/87 Alimony     Mrs. Kramer             $250.00  @#$%!!
+
+        Total for category Alimony                    $250.00
+
+   Date   Category    Paid to               Amount     Memo
+ 03/19/87 Business    Pussy Cat Cafe          $125.00  Entertaining a 
+client
+
+        Total for category Business                   $125.00
+
+   Date   Category    Paid to               Amount     Memo
+ 01/27/87 Contrib     Computer Museum         $750.00
+ 02/18/87 Contrib     BCS                      $75.00  For the Laptop 
+Group
+ 03/07/87 Contrib     WGBH                     $75.00  Public Radio 
+Contribution
+
+        Total for category Contrib                    $900.00
+
+   Date   Category    Paid to               Amount     Memo
+ 02/15/87 Med         Doctor Payne            $150.00  Valium
+ 03/20/87 Med         Doctor Payne             $25.00  Hangover treatment
+
+        Total for category Med                        $175.00
+
+   Date   Category    Paid to               Amount     Memo
+ 01/28/87 Misc Ded    MECA                     $35.00  Tax software update
+ 01/31/87 Misc Ded    E.F. Hutton              $45.00  IRA Management Fee
+ 03/01/87 Misc Ded    J.K. Lasser               $7.95  Tax book
+
+        Total for category Misc Ded                    $87.95
+
+   Date   Category    Paid to               Amount     Memo
+ 01/15/87 Mortgage    Friendly Mortgage       $357.22  Interest portion of 
+mortg
+ 02/15/87 Mortgage    Friendly Mortgage       $348.27  Interest portion of 
+mortg
+
+        Total for category Mortgage                   $705.49
+
+   Date   Category    Paid to               Amount     Memo
+ 01/15/87 RE Tax      Friendly Mortgage       $120.00  Real Estate Tax 
+
+LUCID DATA Tax Recordkeeper                                          page 5
+
+
+portion
+ 02/15/87 RE Tax      Friendly Mortgage       $120.00  Real Estate Tax 
+portion
+
+        Total for category RE Tax                     $240.00
+
+        Grand Total of payments:          $2,483.44
+
+
+
+
+                                  THE END

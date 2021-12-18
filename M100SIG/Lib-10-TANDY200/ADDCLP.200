@@ -1,0 +1,64 @@
+ADDCLP.200
+(c)1989 by James Yi 73327,1653
+
+ADDCLP.CO is 239 bytes and runs in AltLCD, at $F856.  The source code is
+ in ADDCLP.SRC, not needed to run ADDCLP.
+
+It's a text utility that lets clips of text cut(F5) or copied(F6) accumulate
+ in the paste buffer, instead of replacing its previous content.
+
+It can be used as F3 Util of XOS-3A.200, which can simplify text access by
+ letting you choose a text file by just placing the cursor over a file and
+ pressing F3, instead of running ADDCLP by itself and typing the file name.
+  See XOS200.DOC on how to install an XOS-3A utility.
+
+ADDCLP can by itself run from Menu, without XOS-3A.
+When it's run from the Menu, it prompts for a file name.  Type the name, and as
+ you press ENTER, hold down SHIFT if you want the word wrap feature intact,
+ else just ENTER to disable word wrapping.
+
+Cut and copy as you would normally, and
+ the new text will be added to what is already in the paste buffer.  To clear
+ the paste buffer, press F6 right after pressing F7, without moving the cursor.
+
+The program turns itself off when you exit the text, or when the function key
+ labels change.  That means if you press F4(List), ADDCLP feature will not be
+ there as you re-enter text with F4(Edit).
+
+If typing the file name each time you access a text file becomes too
+ inconvenient, you may want to try the following solution.
+
+Create the Basic program listed below for each text file that you access
+ frequently, and then whenever you want to edit one, run the Basic program for
+ that file.
+
+In line 1, replace "NOTE" with another name, and change W=0 to W=1, if you
+ want the word wrapping feature enabled.
+
+1 F$="NOTE":W=0
+2 F$=F$+CHR$(0):V=VARPTR(F$)
+3 LOADM"ADDCLP":CALL63574,W,PEEK(V+1)+PEEK(V+2)*256
+
+
+To create ADDCLP.CO, run this loader:
+
+10 REM ADDCLP.200
+15 REM Lets paste buffer append
+20 REM (C)1989 by James Yi 73327,1653
+30 REM This is a BASIC loader that creates ADDCLP.CO, which runs in AltLCD.
+40 REM ADDCLP.CO can be run from the Menu or called from BASIC, but it will exit to Menu and not return to BASIC.
+50 REM It can also be used as XOS-3A utility.  See XOS200.DOC on how to do this.
+80 READS:IFS>MAXRAMTHENCLEAR200ELSECLEAR256,S
+85 RESTORE:READS,E,F$:PRINT"Loading  "F$:PRINT"Please Wait.. ";
+90 FORA=STOE:READB:POKEA,B:NEXT:SAVEMF$,S,E,S+3
+95 PRINT"Done!":PRINT"Read LINES 10-70 for explanations."
+100 DATA 63574,63812,ADDCLP.CO,195,166,248,58,21,253,230,4,202,126,248,58,72,248,111,38,0,41,17,201,247,25,235,237,235,26,230
+110 DATA 240,254,192,19,237,62,0,202,171,248,205,69,79,204,42,42,33,142,248,34,52,239,33,212,113,205,32,110,175,196,69,79,205
+120 DATA 75,113,33,197,113,205,158,103,205,240,84,215,202,164,103,58,22,253,230,1,245,205,115,45,241,229,17,11,245,237,34,229
+130 DATA 248,33,192,248,217,33,0,0,34,210,239,195,36,115,229,42,229,248,227,229,213,197,245,33,4,22,229,56,28,237,1,169,115
+140 DATA 8,33,122,240,194,225,248,54,255,33,235,248,217,201,126,60,200,33,0,0,34,11,245,201,50,202,239,245,205,212,121,241
+150 DATA 245,254,15,202,18,249,254,21,202,31,249,254,27,194,176,115,58,203,239,254,27,194,176,115,241,205,228,248,195,21,116
+160 DATA 241,205,207,118,205,100,119,205,50,249,195,27,120,241,205,207,118,205,100,119,205,137,120,202,44,120,205,50,249,195
+170 DATA 47,120,205,98,44,17,160,242,237,62,26,190,35,194,59,249,43,217,195,154,120
+
+		END

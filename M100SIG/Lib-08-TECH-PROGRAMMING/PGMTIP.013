@@ -1,0 +1,36 @@
+I wrote a pair of programs for the M100 that are designed to work together: the
+first asks a lot of questions and stores the variables to a text file stored in
+RAM using a series of [ PRINT# ] statements.  The second program picks up the 
+information from this RAM file using a series of [ INPUT# ] statements.  Both 
+programs are fairly long--in BASIC they take up 22,000 bytes--and there are
+some 149 variables involved, both numeric and alpha, and in mixed order.
+The second program is designed to print a hardcopy report, using the variables.
+
+The problem I found was that the [ INPUT# ] statements preserve the trailing 
+blank spaces that the [ PRINT# ] statements created, and when using an 
+IF...THEN statement in the second program, the M100 would not recognize the
+variable as originally stored.  For example, if R2$ was actually [are not], it
+was stored as [are not           ], and faithful M100 couldn't see this as
+[are not] (and the IF...THEN statement wouldn't work).  This applies to all 
+[$] strings, but [!] and [%] strings seem to be unaffected by the trailing
+spaces.
+
+There are two good ways to solve this.  One is to tell M100 to only look at the
+part of the varible that is significant, and give it a "pen-name" as in:
+
+100 M$=LEFT$(R2$,7)
+
+If you do this, then you must use its pen-name [ M$ ] (or whatever you chose)
+whenever you want to use [ R2$ ].  The better way by far is to use a loop that
+allows you to get rid of the unwanted spaces, and retain the original variable
+name, and get the original variable, regardless of the number of characters in
+the string.Like so:
+
+100 IF RIGHT$(R2$,1)=" "THEN R2$=LEFT$(R2$,LEN(R2$)-1):GOTO 100
+
+Now, whenever you tell M100 to look at R2$, it will see what you want it to
+see, and you can both live happily together forever...
+
+If you have other or better answers to this situation, please let me know via
+easyplex.
+			Phil Chesonis 73127,3225

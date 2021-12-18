@@ -1,0 +1,301 @@
+RAM2PC.DOC  by Kent Nickerson  71061,01650  August 13/90
+
+This file distills most of what I've learned about file transfer between
+an IBM-type PC and the TANDY 200.  There are two main sections:
+1) Transfer of single files to and from a PC.
+2) Single-step transfer of all .DO and .BA files in a RAM bank.
+
+======================================================
+
+TRANFERRING SINGLE FILES TO/FROM A PC (requires no program):
+ (Note: Only 7 bit ASCII text files may be transferred)
+
+To a PC:
+1) Connect the TANDY RS232 port and IBM serial port (say, COM1:) with a 
+   NULL MODEM cable.  Construction of this cable is described below.
+2) Set the PC COM port by typing "mode com1: 1200,e,7,1" (for COM1:).
+3) On the PC, type "copy com1: file", where 'file' is any valid PC file name.
+4) To transfer a .DO file, go into TELCOM, press 'Stat' and type "57e1enn"
+   to set correct communications paramenters.  Press 'Term', then 'Up'.
+   You will be prompted for a (.DO) file name, and a width.  The width value
+   entered, which may be up to 132, determines how long a transmitted line may 
+   be before a return is automatically inserted.  This is useful for sending
+   text files to be viewed or printed (a good choice of width for 80 column 
+   screen viewing is 78), but not desireable for sending BASIC files which 
+   will not work if a line is broken.  Leaving the width unspecified
+   by entering nothing will leave carraige returns in the file as is,
+   but the file transfer will be unsuccesful if there are any lines longer than
+   255 characters in the file.  When the transfer is finished (the 'Up' key 
+   label returns to normal video), press CTRL-Z (press CTRL, hold it down, and
+   press 'Z') and ENTER.  The PC should return with a screen prompt.
+5) To transfer .BA files (without having to convert to .DO format), go into
+   BASIC, load the file, and type:
+					save"com:57e1enn"
+
+FROM a PC:
+   Perform steps 1) and 2) above.
+3) If transferring to a TANDY .DO file, go to TELCOM, set the communication
+   parameters using 'Stat' and press 'Term', as described in step 4) above.
+   Press 'Down', and answer the TANDY's prompt with a name you want to give
+   to the transferred file.
+4) If transferring an ASCII BASIC file directly to TANDY BASIC, go into
+   BASIC on the TANDY and type:
+				load"com:57e1enn"
+
+5) On the PC, type "copy file com1:", where 'file' is the DOS file to be sent.
+
+Note: A communication rate of 1200 baud is described.  Rates of 2400, 4800, and
+9600 baud (among others) may be supported by modifying the PC "mode" command
+of step 2) appropriately and changing the TANDY's TELCOM parameters 
+respectively to  67e1enn, 77e1enn, and 87e1enn.  I've chosen a rate of 1200
+because the TANDY has no error checking protocol, and it is the highest rate
+at which I've never experienced an error.
+
+Possible Problems:
+
+	The files received by the PC may contain "garbage" characters at
+	the beginning and the end.  These may be edited out.  If the lines
+	of the file overwrite each other (e.g. only one line is seen), or
+	new lines start in the column following the end of the last line,
+	perform step 6) below, and try again.
+
+	In the case of transferring files to the PC, if the PC does not 
+	return with a screen prompt after file transfer,
+	and will not respond to the PC keyboard, it may be waiting for an 
+	end-of-file character (e.g. CTRL-Z), or may not be connected properly
+	to the TANDY.  If nothing is received in transfers to the TANDY, an
+	improper connection is the most likely cause.
+
+   Improper Connection:
+	- check that the TANDY's and the PC's communication parameters match.
+	- make sure the correct PC connector is being used.  If the serial
+	  connector has logical name COM2:, modify the PC commands given above
+	  to reflect this (e.g. copy com2: file).
+	- make sure a proper NULL MODEM cable is being used (not a normal
+	  RS232 cable!), or a normal cable with a NULL MODEM adapter.
+	- make sure the connectors are seated properly.
+
+   End-of-File Character not received:
+		If a .DO file was transferred, make sure you have 
+	sent a CTRL-Z as described in step 4).  If you've exited TELCOM by
+	this time, you may always return to do this.  If this fails, perform
+	step 6) below, reboot the PC if necessary, and try again.
+		If a .BA file was transferred, go into TELCOM (the proper
+	'Stat' should already have been set by the transfer) and type CTRL-Z.
+	If this fails, try 6) below.
+   
+6) Go into BASIC and type "poke 61243,1" (model 200) or "poke 63066,1"
+   (models 100, 102).  The original value for this location is 0.
+   
+   WARNING: This is not tested for models 100/102.  
+   Test this procedure first on a RAM bank with files which can be damaged.
+
+Null Modem Cable:
+	These cables may be purchased or made at home.  The TANDY requires
+a DB25 male connector, while the PC will need a DB25 female or DB9 female
+(check your PC serial port to see if it has 25 pins or 9).  The 
+pins will be numbered (in very tiny figures).  The pins named below will
+be for a DB25 (25-pin) connector.  Numbers following in brackets will
+be for DB9 (9 pin) connectors.  There are 7 conductors between the connectors.
+For neatness, one should use a ribbon cable or jacketed cable with 7 or more
+wires.
+ - for each connector, short pins 4 (7) and 5 (8) together.
+ - connect pin 7 of the TANDY connector to pin 7 (5) of the PC connector.
+ - as above, connect pin 2 to PC pin 3 (2), 3 to 2(3), 5 to 8(1), 8 to 5(8),
+   6 to 20(4), and 20 to 6(6).
+
+================================================
+
+TRANSFER OF ENTIRE RAM BANK TO PC:
+
+BK.BA will allow one to transfer all .DO and .BA files in a TANDY 200 RAM
+bank to a PC.  This program is a modified form of BACKUP.200 by James Yi
+(73327,1653), which saves all .BA and .DO files to cassette tape.  The
+program is minimally documented internally to reduce its size.  Use of this
+program requires subsequent use of program UNPACK.BAS (included here).
+Checksums for BK (in .DO format) and UNPACK, obtained by DOWNCK.WM3, 
+are 77,076 and 233,309, respectively.
+
+WARNING: This program not tested on models 100 or 102.  Test on a RAM bank
+which contains only files which can be lost.  If the program fails on such
+models, it may be because a variable assigned in line 45 is wrong.
+
+USE:
+      BK.BA transfers a single composite text file consisting of a 
+concatenation of all TANDY files to a PC through the RS232 port
+to an IBM type PC.  The individual TANDY files may be restored by running the 
+GWBASIC program UNPACK.BAS (provided in this document below) on the PC, or
+left as is as a single RAM bank backup file.
+
+ 1)   Connect the TANDY RS232 port to a PC serial RS232 port with a 
+      NULL MODEM cable.
+ 2)   Set the PC serial port's communication parameters to match line 50
+      of BK.BA (e.g. 1200 baud, 7 bits, 1 stop bit, even parity).  This
+      is done on the PC for COM1: by typing: "mode com1: 1200,e,7,1".
+ 3)   Type "copy com1: filename" on the PC (assuming you are using com1:),
+      where "filename" is any DOS file name of your choice.
+ 4)   Run BK on the TANDY.  When finished, the PC should have written a
+      file to disk.
+ 5)   Run UNPACK in GWBASIC on the PC, specifying the received PC file at
+      the prompt to restore the TANDY files.
+
+BK will not transfer files with the extension ".CO".  MSPLAN ".CO" files
+must first be changed to SYLK format in MSPLAN, and transferred as such.
+
+BK.BA must not be renamed without changing the name at the end of line 180, and
+this name cannot exceed two characters, since the TANDY keyboard buffer
+will accomodate no more characters than defined in line 180.
+
+
+DESCRIPTION of PROGRAM:
+
+45 - Location 1 identifies a Model 100 or 200 (PEEK(1)=171 for a 200).
+File directory, keyboard buffer, line feed enable locations assigned. 
+50 - The line feed patch is enabled.  Normally, the TANDY does not issue LF
+characters on file transfers.  This patch is useful for most computers,
+but some PCs' (HP150) will terminate receiving at the first carraige return
+if it is invoked. In such a case, change the
+first statement of this line to POKE lf,0.  The RS-232 port is set as an
+output device at 1200 baud.  Edit this segment if you want 
+comm parameters changed.  
+60 - Location Q serves to count the number of files transferred, and to
+supply an index to byte RD, which contains a file type code (128=BASIC
+file, 192=text file).  Since there is a maximum of 48 files, any greater
+number implies this program has not been run, and the file number is reset.  
+Q is not an internal because all such variables are lost when the program 
+calls itself in line 180-210.  
+70 - Head of program loop. 
+75 - Code = 255 indicates no more files.  CTRL-Z sent to terminate PC receive.
+80 - Provision for empty entry.
+90 - Q is file name pointer.
+100 - This program handles transfer of text and BASIC files only.  Some 
+PC's will stop receiving data from this program at the end of transmission of a
+BASIC file.  If this is the case, change line 140 to:
+
+140 IFS=128THEN70:' BASIC file        (e.g. jump to 70 instead of 180)
+
+(Lines 180 to 210 inclusive can be removed in this case, but will do no harm otherwise).
+If transfer of BASIC files are desired in this event, they must first be saved in ASCII
+format before invoking this program.
+110 - Prevents transmission of the program file itself (save in .DO format if 
+file copy desired).
+120 - Escape (chr$(27)) sequences cause file name display in reverse video.
+130 - Print file separation header to the PC file.  If sequence changed, 
+modify program UNPACK as well.
+180-210: Load keyboard buffer with instructions to load .BA file, and
+save in ASCII form to RS232 port, and invoke BK again.  Marker set in 60,70
+gives restart point.
+
+
+PROGRAM BK.BA - Checksum (using program DOWNCK.WM3) = 77,076
+
+10 ' Saves all .BA and .DO type files in the current ram bank to RS232. 
+20 ' If program stopped, running again will save next file, but POKE Q,0 
+30 ' will cause it to start over.  WARNING: Run program from .BA format.
+40 MAXFILES=2:CLEAR600
+45 IFPEEK(1)=171THENSL=62122:KB=64798:LF=61243 ELSESL=63919:KB=65450:LF=63066
+50 POKE LF,1:OPEN "COM:57e1enn" FOR OUTPUT AS 2
+60 Q=SL+3:F=PEEK(Q):IFF>48THENF=0
+70 F=F+1:POKEQ,F:RD=F*11+SL:S=PEEK(RD)
+75 IFS=255THENPOKE Q,0: PRINT #2,CHR$(26):PRINT"Done.":BEEP:END 
+80 IFS=0THEN70
+90 F$="":FORM=RD+3TORD+10:F$=F$+CHR$(PEEK(M)):NEXT:FP$=LEFT$(F$,6):F$=FP$+"."+RIGHT$(F$,2) 
+100 IFS<>192ANDS<>128THENPRINT"File is binary or not recognized -- ";S;F$:GOTO70
+110 IFF$="BK    .BA"THEN 70
+120 PRINT"Saving:";CHR$(27)+"p"+F$+CHR$(27)+"q"
+130 PRINT #2," ":PRINT #2,"!@#$!@#$":PRINT #2,F$:PRINT #2," " 
+140 IFS=128THEN180:' BASIC file
+150 OPEN F$ FOR INPUT AS 1
+160 A$=INPUT$(1,1):PRINT #2,A$;
+170 IF NOT EOF(1) THEN 160 ELSE CLOSE 1:GOTO 70
+180 Q$=CHR$(34):K$=CHR$(127)+"Loadf$"+CHR$(13)+"Save"+Q$+"com:57e1enn"+CHR$(13)+"Run"+Q$+"BK"+CHR$(13) 
+190 ' Activate Keyboard Buffer
+200 FORL=1TOLEN(K$):POKEKB+L*2-1,ASC(MID$(K$,L,1)):NEXT
+210 POKE KB,L-1
+220 END
+
+
+The following program, UNPACK.BAS, is used with PC GWBASIC to parse the 
+composite file transfered by BK.BA into component files on the PC.  Its
+checksum (using DOWNCK.WM3) is 233,309.
+
+10 REM ********************  PROGRAM "UNPACK"  *****************************
+20 REM
+30 REM This program unpacks a composite text file composed of a number of 
+40 REM  files delimited by a three line header.  The first header line is
+50 REM  the string:
+60 REM             !@#$!@#$      (e.g. a distinct marker)
+70 REM  followed by the file name and a blank line.  These headers are 
+80 REM  stripped and the separate files reconstituted.
+90 REM
+100	DIM BUFFER$(1001)  	'A buffer is used to reduce disk file writes.
+110 REM
+120	ON ERROR GOTO 800
+130     INPUT "Enter name of composite file >",C$
+140     OPEN C$ FOR INPUT AS #1
+150	EOFFL=0: ERRFL=0
+160 REM
+170 REM If a drive is specified (second character = ":"), set the drive
+180 REM  as a filename prefix.  Unpacked files will go to this drive as well.
+190 REM
+200             PREFIX$=""
+210     IF MID$(C$,2,1)=":" THEN PREFIX$=LEFT$(C$,2)
+220 REM
+230 REM Go through the file line by line until the first file header is found.
+240 REM The first header usually is right at the file beginning, but "junk"
+250 REM characters may precede it - hence the initial search using INSTR.
+260 REM
+270		LINE INPUT #1, A$
+280	IF INSTR(A$,"!@#$!@#$")<>0 THEN 560
+290	IF NOT EOF(1) THEN 270
+300		PRINT "End of file reached - No file bounds found":END
+310 REM
+320 REM Read lines of the composite file until:
+330 REM  1) 1000 lines are read
+340 REM  2) the "!@#$!@#$" delimiter line is found, or
+350 REM  3) end of file is reached.
+360 REM In case 2), the counter is reduced by 1 to omit the delimiter line
+370 REM
+380	FOR I=1 TO 1000
+390             LINE INPUT #1, BUFFER$(I)
+400        IF NOT EOF(1) GOTO 430
+410		EOFFL=1			'End of file flag
+420		GOTO 540
+430        IF LEFT$(BUFFER$(I),8)="!@#$!@#$" THEN I=I-1: GOTO 540
+440	NEXT I
+450 REM
+460 REM If 1000 lines read, write them to the output file, and resume reading
+470 REM
+480        FOR J=1 TO 1000: PRINT #2, BUFFER$(J): NEXT J
+490     GOTO 380
+500 REM
+510 REM Case of delimiter encoutered.  Variable FIRST prevents "close #2"
+520 REM  statement on first pass, since no output file is open then.
+530 REM
+540     FOR J=1 TO I: PRINT #2, BUFFER$(J): NEXT J	'Write final data
+550		CLOSE #2				'Close file
+560	IF EOFFL<>0 GOTO 770		'End program if input file exhausted
+570             LINE INPUT #1,F$	'Read file name
+580             F$ = PREFIX$+F$		'Add directory
+590		OPEN F$ FOR INPUT AS #2	'Attempt to open file
+600 REM
+610          IF ERRFL<>0 THEN 720	'File does not exist if no error
+620             BEEP			'Case of file already existing
+630		PRINT "File ";F$;" exists.  Overwrite? (Y,y=yes) >";
+640		INPUT ANS$
+650	     IF ANS$="y" OR ANS$="Y" THEN 720
+660		INPUT "Enter alternative file name (No entry will skip file) >",F$
+670 REM
+680 REM A null file name will initiate search for the next file header.
+690 REM Otherwise, an existence check is performed on the new file name.
+700 REM
+710	     IF F$="" THEN 150 ELSE GOTO 580
+720             ERRFL=0:CLOSE #2
+730		OPEN F$ FOR OUTPUT AS #2	'Open new output file
+740             PRINT "Restoring file ";F$
+750             LINE INPUT #1, A$		'Ignore blank header line
+760     GOTO 380
+770     CLOSE
+780     END
+790 REM  Error Handler.  Primarily used to detect an error condition in 520.
+800	ERRFL=ERR:RESUME NEXT	'Set error flag in case of error (ERR <> 0)

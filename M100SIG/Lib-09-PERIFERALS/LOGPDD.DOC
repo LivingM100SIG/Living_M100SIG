@@ -1,0 +1,139 @@
+
+
+
+
+     DSKLOG.BA for the Tandy PDD and POWR-DOS by Acroatix
+     
+     Since I received my copy of POWR-DOS I have been busy converting some
+     former RAM based programs to use the expanded capabilities offered by
+     POWR-DOS. One of the most useful conversions is to alter the fine disk
+     log program on the SIG to operate from the disk rather than from RAM.
+     With this modification there is no need to load the DIRLST file to RAM
+     or to save it out to disk after running the program and updating it.
+     These functions are performed automatically and make the program much
+     more useful.
+     
+     The changes to the program execution are listed as follows:
+     
+     - An LFILES V command is issued at the start of the program to insure
+     the that the POWR-DOS hooks are active. If POWR-DOS is not installed
+     the program will break with an error. I have not trapped the program
+     at this point to an error routine but this would be easy to modify
+     yourself.
+     
+     - The program will pause and prompt for the insertion of the data
+     disk. Put the disk with the DIRLST.DO file that you wish to update in
+     the drive and hit ENTER. The file will be loaded automatically.
+       If the DIRLST.DO file is not on the disk the program will proceed
+     with an empty file listing.
+     
+     - The default for autowrite has been set to off since this slows the
+     program too much after each update and is not necessary. You can
+     change it by going to (O)PTS if you wish.
+       The (W)RITE command can be used manually to write the DIRLST.DO file
+     to the disk in the drive when you wish.
+     
+     - There is a new (R)EAD command in the menu that can be used to load
+     new DIRLST files from other disks for updating. This is a convenient
+     feature since you will probably have more than one DIRLST file. It can
+     also be neat to have a separate DIRLST.DO on each disk. This is a
+     handy way to create a note file on each individual disk about the disk
+     contents. The file can then simply be read directly from text or from
+     the disk itself using the D-MENU program.
+     
+     - You will be prompted at appropriate times to insert the correct disk
+     in the drive. This is done to prevent writing DIRLST.DO files to disks
+     that you are simply logging, as I did numerous times after the initial
+     modification I made to the program.
+       When you exit the program the DIRLST file will be written out and
+     you will be returned to DMENU.BA if it is present in RAM or to the
+     M100 main menu.
+     
+     - A big bonus is the increase of file size to 8K max from the original
+     4K. This is possible because the program is now disk based and the
+     data is not stored twice in memory.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     >>IMPORTANT<<
+     
+     There is one bug that is not caused by the modifications and causes
+     problems with any version of this program. If you log a disk with no
+     files you will get an error 5 when trying to write the file. The zero
+     parameter in the file length seems to give the program real problems.
+     The simplest solution is not to log empty disks. If you aren't sure
+     just check the disk with the (D)IR function before logging it.
+     
+     If you make the mistake of logging an empty disk immediately write the
+     DIRLST file. The file will be written even though the error will break
+     the program. The new disk listing will be at the end of the file and
+     you can then go to TEXT and edit the empty disk listing out. The
+     program will then load and work fine again with the edited file.
+     
+     I have not altered the program to trap out this problem since it
+     hasn't bothered me much. One solution would be to do a directory check
+     before accepting a disk name when using the (L)OG command. Trap back
+     out to the program menu if no files are present. This will slow you
+     down a bit but some may find it useful.
+     
+     SUMMARY
+     =======
+     
+     POWR-DOS is a terrific utility and turns the M100/PDD into a far more
+     useful combination. Since using the programs that I have modified I
+     find it hard to beleive that I ever used those RAM based files,
+     especially with a cassette recorder! The disk access is a bit slow but
+     a small price to pay for the tremendous increase in convenience. I
+     find the speed to be about the same as an unmodified ATARI drive and
+     far faster than any COMMODORE drive, both of which also use serial
+     access and sequential files. I also notice that my M100 seems to keep
+     a lot more free memory around all of the tim.e now. Quite a difference
+     from before.
+     
+     I am currently working on modifying SXM.BA and a couple of others. I
+     encourage everyone to modify any programs they Euse and post them up to
+     the SIG if possible.
+     
+     There are a lot of old TANDY programs for the M100 that are being
+     virtually given away at some of the stores. I obtained three packages
+     for $10.00 the other day. Some of these programs were real kludges as
+     RAM based files but are remarkably useful when run from the disk. Two
+     of these that I have already converted are PERSONAL FINANCE and
+     EXECUTIVE CALENDAR. I found them useless and cumbersome in their old
+     format but fine and useful programs when modified. I cannot post these
+     to the SIG due to the [C] but if you send me a proof of purchase (like
+     the cassette) with a disk and a mailer I will be happy to send you a
+     copy.
+     
+     For more information on these and other modifications leave a message
+     to:
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+     RONNIE RICHE
+     70337,3727
+                                                                           

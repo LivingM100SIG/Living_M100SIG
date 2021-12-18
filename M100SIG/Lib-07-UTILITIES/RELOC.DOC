@@ -1,0 +1,52 @@
+   RELOC.DOC  by James Yi/73327,1653
+
+
+RELOC.BA is a program that will move a machine language routine to a different
+address.
+  First, LOADM the file to be moved( or the file may be in memory unsaved) to 
+display its TOP,END,EXE addresses.  Then run the program.  Enter the file name,
+
+and its TOP,END,EXE.  If there is a data table that is not to be interpreted as
+  codes, then press 'y' to data table 
+prompt and enter its starting and end addresses.  The program will skip this 
+data table and not check it to see if it needs to be adjusted.  If you don't 
+know if there is a data table, then just go with 'n'.  You have, perhaps, about
+80% chance of success.Then enter the 
+address to which it is to be moved.
+    Choose Auto mode if you don't have a disassembly along with you and won't 
+know what to answer to each prompt in Manual mode.  If run in Auto mode,it 
+checks to see if any three-bytes-long-instruction points to an address within 
+the range of the routine.  If it does, then the program pokes in a new value to
+
+ adjust it to the new location.
+    If auto mode didn't move the routine and adjust all addresses successfully,
+
+you can try the Manual mode.  It will pause at each instruction that is 3 
+bytes long.  Then a space bar will adjust its content, or any other key 
+will leave it unchanged and pause at the next one.  One would probably need a 
+source code to do this.  In most cases, auto mode will work.
+    If neither mode has any success in relocating a machine language routine,
+then it's probably one of the following:
+  1) There's an indirect addressing scheme, where an HL pair is loaded in 
+from a data table(the program skips data table), and the resulting HL content 
+is
+ pointing to a new address within the range of routine's Top and End 
+addresses.
+  2) A register pair such as HL is loaded seperately, therefore is not 
+recognized as a three byte instruction by the program.
+  3) The content of a three byte instruction such as JMP xx is poked in 
+by the routine.  So when the program sees it, it might be JMP 0, and goes 
+undetected, but after the routine is executed, its content may be changed to 
+JMP 61000.
+
+
+    As the program goes through and checks the routine, it displays at each 
+line in order the following: the code's original location, new location in 
+parenthesis, mnemonic or a number, if it is not a code but a data, its content 
+
+if any, and the changed content in parenthesis, if it was changed.
+
+After it's done, press 'y' to save the result, or any other key to cancel it.
+Be sure that HIMEM is adjusted also.
+
+

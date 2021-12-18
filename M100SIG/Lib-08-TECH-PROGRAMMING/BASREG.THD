@@ -1,0 +1,83 @@
+BASREG.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Employing M/L subroutines in Basic programs is straight-forward -- as long
+as you need only pass parameters to the A and HL registers.  Sometimes more
+is needed, however.  This is a technical discussion of some alternate ways
+to do this -- short of writing a machine language program!!
+
+Message range: 157880 to 157993
+Dates: 10/8/87 to 10/9/87
+
+
+Sb: #registers
+Fm: ron gumina 76246,600
+To: sysop
+
+I am developing a BASIC program fo the Model 102.  There are several standard
+ROM routines I'd like to use that return data in the CPU registers (A,HL,FLAG,
+etc.).  Is there a way to access these registers directly from BASIC ??
+
+Thanks for any help you might be able to offer !!!
+
+
+Fm: Tony Anderson 76703,4062
+To: ron gumina 76246,600
+
+Not generally.  The registers are part of the CPU, and there aren't any peeks
+that can access them.  You might try taking a look at the Model 100 ROM map,
+which will generally apply to the 102 as well.  It's in 8 files in DL8,
+starting with 100ROM.RC0 through 100ROM.RC6 and finishing with 100RAM.RDC.
+
+
+Fm: Stan Wong 70346,1267
+To: ron gumina 76246,600
+
+Ron, I've had the same desire to access the registers from Basic.  Can't be
+done easily but it can be done (I think).  The general procedure goes
+ something like this:
+
+     1.  Create three arrays, two for
+         code, the other for data,
+     2.  Poke M/L code into first array
+         which will get registers you
+         want and push them onto the
+         stack,
+     3.  CALL the m/l code in the first
+         array without any A or H
+         parameters,
+     4.  The code in the second array
+         will move the data on the
+         stack to the third array,
+     5.  Call the second array m/l code
+         with the address of the third
+         array in HL.
+
+Sounds complex (and it is) but I think it should work. Fortunetly once set
+up it should be easy to use.  I hope someone has a simpler solution
+(assuming this works).
+
+
+Fm: Tony Anderson 76703,4062
+To: Stan Wong 70346,1267
+
+Stan, since this question has come up more than once, I'd like to see any code
+you've developed that will do it.  There is a ROM routine that will convert the
+binary into ASCII figures, and presumably, you could then move that into the
+accumulator and print it.  Have you looked at that approach, or done anything
+other than running it around the old brain cells?
+
+
+Fm: Denny Thomas 76701,40
+To: Stan Wong 70346,1267
+
+ Your system will work, but as you say, it's quite complex. There is another
+method that is used in QIKCHK (DL7) that is slightly easier. You set aside an
+integer variable that will be the the transfer vehicle. Store the value you
+wish to pass to ML there and then do a VARPTR call to your routine. That part
+isn't really very impressive, but if you save the HL address of the variable
+for later use, you can then pass values *back* to basic via that variable. It
+works pretty efficiently if you stick to integer variables; single and double
+precision variables are another mattter altogether.

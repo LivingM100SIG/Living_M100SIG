@@ -1,0 +1,119 @@
+MORSE.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Learning Morse code is always interests a segmnent of of the Model 100 Forum
+membership.  Until now, the programs to support this have not worked on the
+Tandy 200.  This THD file deals with this topic, and includes a detaied
+conversion prescription to make MORSE.BA (DL3) run on the Tandy 200.
+
+Message range: 159003 to 159158
+Dates: 10/24/87 to 10/25/87
+
+
+Sb: #MISSING MORSE.BA
+Fm: LOUIS SELF 74076,1273
+To: SYSOP
+
+I have been searching for MORSE.BA and other porgrams in the various DL with no
+success.  Is there a special place one can find these goodies?
+        Thanks for your help
+
+
+Fm: Eiji Miura 76703,4311
+To: LOUIS SELF 74076,1273
+
+MORSE.BA, MORSE.100, MORSE.RK, MORSE2.BA and MORSE2.DOC are all in DL 3.
+
+
+Fm: LOUIS SELF 74076,1273
+To: Eiji Miura 76703,4311
+
+Thanks sooooooooo much.  Hopy you are enjoying your T-200!   >>>Lou Self<<<
+
+
+Sb: #MORSE on T-200?
+Fm: LOUIS SELF 74076,1273
+To: Mile Aiello 71066,155
+
+Do these MORSE... programs operate on the Tandy 200?
+
+
+Fm: Tony Anderson 76703,4062
+To: LOUIS SELF 74076,1273
+
+There was a MORSE.BA in DL3 for some time, and a new one was uploaded in the
+recent contest.  When it was moved into DL3 with the other communications
+files, the name was changed to MORSE2.BA, to differentiate it from the first
+file with the same name.
+
+
+Fm: LOUIS SELF 74076,1273
+To: All
+
+What supurb programing (found in DL3)!  I tested and tweeked these jewels for
+use on the Model 200.  Here are my notes:
+
+>>> MORSE.BA runs unchanged on the Tandy 200.  These are lines as changed by
+me, along with comments:
+
+130 Z$=M$:PRINT"Messege...":LINEINPUTM$:IFM$=""THENM$=Z$
+
+  Added Z$ to enable repeating same message with <ENTER>
+
+1000 FORC=0TO60:NEXTC
+
+  Adjusted the speed by changing the 47 to 60
+
+1070 IFB>0THENSOUND2000,8 ELSE SOUND2000,2
+
+  Adjusted the speed by changing the 6 to 8 and the 1 to 2 respectively
+
+>>> MORSE.RK runs on the T-200 if the CALL statements are removed in lines 1 &
+13.  I wonder what they did, anyway.
+
+>>> MORSE2.BA runs on the T-200 if the CALL statements are removed in lines 6 &
+11.  Don't have any idea what THEY did, either.  In addition, I made changes in
+the following lines:
+
+6 SCREEN 0,0:KEY OFF
+
+  Deleted the CALL
+
+11 CLS:KEY OFF:CLOSE:C$=CHR$(13):KEY1,"Files"+C$:KEY2,"Load"+CHR$(34)
+:KEY3,"Save "+CHR$(34):KEY4,"Run"+C$:KEY5,"EDIT."+C$:KEY6,"CLS"+C$+"LIST-."+
+C$:KEY7,"Cls"+C$:KEY7,"LLIST."+C$:KEY8,"Menu"+C$:MAXFILES=1:MENU
+
+  Deleted the CALL.  Added code to leave the function keys to my liking
+
+106 FQ=2500:NL=2:TF#=50:BM=1:CM=3:WM=5:WP=10:RETURN
+
+  Changing the 6000 to 2500 makes the default pitch higher
+
+112 KP=600+(KX-1)*5:PRINT@KP, KY$(KX);:KEY KX,"":KEY (KX) ON:KA(KX)=0:RETURN
+
+  KP=600 rather than 280, puts the lables at the bottom of the screen
+
+     Now maybe I'll finally learn the code that Mr. Samuel Morris came up with
+so long ago...
+
+
+#: 159158 S10/Tandy 200
+    25-Oct-87  22:55:02
+Sb: MORSE.BA on Tandy 200
+Fm: Tony Anderson 76703,4062
+To: LOUIS SELF 74076,1273
+
+In MORSE.RK, the CALL in Line 1 locks out screen scroll.  The two calls in line
+13 turn on, then off, the reverse video function, and are functionally
+equivalent to (ESC)"p"/(ESC)"q".
+
+In MORSE2.BA, the CALL in line 6 clears the function key definition table, and
+the two calls in line 11 restore the table to it's brand-new, default
+condition.
+
+While MORSE2.BA works fine, it's a brute-force programming method.  Seems like
+it would have been easier to setup most of the SOUND statements as subroutines,
+and call them as needed, rather than line after line of the necessary SOUND
+statements that sound out the letters.

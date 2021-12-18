@@ -1,0 +1,64 @@
+
+Documentation for TODO.200
+
+Modified for the T200 by Curtis Karnow [73047,3120] from TODO.PJP by Phil 
+Pearsall
+
+	The M100 program has been modified for the M200 as follows. (1) some
+routines have been eliminated because I don't use them; (2) taking advantage of
+the 200's larger screen, there's more room for notes and appointments, and one
+may have all such notes on the screen simulataneously with the calandar; and
+(3) I added a short program to give the local time in two other cities.
+
+	You must read the orginal documentation, TODO.DOC in DL7; I don't repeat
+that here. The function keys still do the same thing, except that (a) certain
+keys are disabled if I excised the function, (b) I added a function, as
+described below, and (c) I enabled a few more function keys to assist in
+getting around the program.
+
+
+Routines Eliminated.
+
+	You can get the eliminated routines from the original TODO.PJP and merge
+them in with this program. The Calculator adds about 1298 bytes, and the Phon
+routine adds about 342 bytes. Make backup copies of everything before you begin
+to fool around!
+
+	(1) The addrs/phone routine at lines 300-315 of TODO is eliminated. 
+Reasons: m~b adrs.do is too big to work in the same RAM bank as TODO; my adrs 
+isn't set up in a form that TODO recognizes, and TODO doesn't search for
+partial internal strings, i.e. it needs the exact full name as entered in ADRS,
+which is too much to ask of me! If you add the routine back in, edit Line 15 by
+inserting between "Entr" and "Alrm" the word "Phon", and editing Line 16 by
+inserting "300" instead of "800". If you do this, my time zone routine (see
+below) will have to be either erased or moved to another function key: erasing
+in line 15 the last PRINT@ statement is the simplest way to handle this.
+
+	(2) The Calculator routine at lines 500-554 is gone. It's a good 
+program: If you have the room, merge it in. If you do, edit Line 15 to insert 
+the word "Calc" between "Alrm" and "Cal"(as always, ensure the total number of
+[letters + spaces] within quotes in line 15 remains exactly the same).
+
+
+Routine added.
+
+	Other time zones. Function key 3 now calls a little routine at line 800
+et seq: New York and London time are provided. Set your own cities and times by
+changing lines 810 and 850: change 3 or 8 to the figure representing the # to 
+add to local time to get the time you wish. Change lines 815 and 855 to three
+letters of the cities you refer to. If you don't want this routine, (a) erase
+lines 800 and following, (b) erase "800" from Line 16 (but leave in all commas)
+and you'll save about 470 bytes.
+
+	Option. Line 16-- put in what you want instead of "Nota Bene"-- just
+keep the same # of total [spaces +characters] between the quote marks.
+
+	Option. Put in your own initials, or just erase mine (CEAK) in line 17.
+	Hint. When inserting notes and appointments, remember that the GRAPH and
+CODE keys work. E.g. GRAPH P puts a little phone on your screen to remind you
+to call someone. And you can replace (in the program's printing of function key
+lines) the "CHR$__" print commands with the GRAPH or CODE equivalent directly
+inside quotes. That uses up less RAM.
+
+	EMAIL me if you have any questions or comments.  Curtis Karnow 
+73047,3120.

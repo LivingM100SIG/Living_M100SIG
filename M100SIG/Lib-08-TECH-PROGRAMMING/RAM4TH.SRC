@@ -1,0 +1,5073 @@
+;  Copyright 1990 Bill Boyd;  All rights reserved
+;
+;  I am uploading this file to CompuServe so that others may learn from
+;  it and modify it for their own use.  I am not granting permission for
+;  sale of this program or derivative programs for profit.
+;
+;  This program is adapted from the CompuServe source uploaded by Michael
+;  Weiblen,  CIS 72506,2072.  He, in turn, had adapted the FIG-Forth model
+;  to the Model 100.
+;
+;  The current status of this file:  can load from file!
+;  Contains words OPENF, CLOSEF, GETC, GETLINE, and LOADF for interpreting
+;  from mass storage.  Also examine ERROR to see if it does the
+;  "right" things.  Can we remove abort to BASIC on file not found or I/O
+;  error?  Think more about how KEY works (cannot handle softkeys, etc.,
+;  and doesn't receive ^S or ^C for use as cursor keys).
+;
+;  Revision details:
+;    4 Oct 87   Loading from file works!
+;    6 Oct 87   Move change of IN from GETLINE to NULL and LOADF
+;   11 Oct 87   Add some floating-point; NUMBER doesn't handle E notation
+;   21 Oct 87   NUMBER handles E notation; have FLIT for fvars in definitions
+;    8 Nov 87   Add F$CODE, PICK; change 1+ and 2+ to code
+;   23 Mar 88   Add DEPTH; modify OPENF, GETC, and CLOSEF to use buffer 0
+;    1 Apr 88	Add BPLOT (copies up to 240 bytes of graphics to LCD)
+;   30 Apr 88   Add (NEXT); makes address of NEXT available
+;   20 May 88	Add MSGARRAY; change MESSAGE to take message from there
+;
+;  Words affected by modifications:
+;	EMIT	removed LF filter for printer echo (think about more!)
+;	KEY	moved code into word, rather than jumping to it
+;	B/BUF	removed altogether
+;	B/SCR	removed altogether
+;	BLK	use as a flag to indicate loading from mass storage
+;	^@	(null character) if loading, try to read another line
+;	(LINE)	removed (applied to disk system)
+;	.LINE	removed (applied to disk system)
+;	SEC	removed
+;	TRACK	removed
+;	USE	removed
+;	PREV	removed
+;	SEC/BLK	removed
+;	NUMBUF	removed
+;	DISK-ERROR removed
+;	+BUF	removed
+;	UPDATE	removed
+;	EMPTYBUFFERS removed
+;	BUFFER	removed
+;	BLOCK	removed
+;	T&SCALC	removed
+;	SEC-READ removed
+;	SEC-WRITE removed
+;	R/W	removed
+;	LOAD	removed
+;	-->	removed
+;	MENU	used call documented in Tech Ref Manual
+;	LIST	removed
+;	INDEX	removed
+;	TRIAD	removed
+;	"	new; puts addr and byte count of string on stack
+;	(")	new; run-time procedure for the new word "
+;	EOF	new variable; tells whether open file has reached end
+;	OPENF	new; opens file (using buffer #0) whose name has addr
+;		  and count on stack; use as  " <filename>" OPENF
+;	GETC	new; gets character from opened file, returns on stack
+;	CLOSEF	new; closes file opened by OPENF
+;	GETLINE	new; gets line from file into (single) buffer starting at
+;		  FIRST; also sets IN to 0
+;	LOADF	new; redirects interpretation to file specified; usage:
+;		  " <filename>" LOADF
+;	FLIT	new; used in definition when NUMBER detects floating number
+;	(FNUMBER) new; used in interpret to handle floating-point
+;	NUMBER	modified to interpret floating-point
+;	INTERPRET modified for floating point
+;	DEPTH	new; gives number of items on stack
+;	BPLOT	new; sends bytes to LCD (for graphics)
+;	(NEXT)	new; returns address of NEXT in interpreter
+;	MESSAGE	modified to obtain message from memory, not disc
+;	MSGARRAY new; contains error messages
+;
+;  Other changes:
+;	Initialize RP in startup code
+;	Changed origin to 50176
+;	Allowed space for user dictionary, pad, and stack to MAXRAM
+;	Have only one buffer, which holds line from mass storage (255 chars)
+;
+	ORG	50176
+Accum1	equ	0FC18H	;address ROM routines use for current X
+Accum2	equ	0FC69H	;address ROM routines use for current Y
+BrkChk	equ	729FH	;returns with carry set if Shift-Break
+CHGET	equ	12CBH	;ROM routine to await keyboard char
+CloseFile	equ	4D38H	;ROM routine to close file
+CursorOff	equ	44BAH	;ROM routine to turn off cursor
+DisableTimeInt	equ	765CH	;ROM routine to disable timer interrupt
+EnableTimeInt	equ	743CH	;ROM routine to enable timer interrupt
+false	equ	0	;logic false
+FileBufPtr	equ	0FC8CH	;pointer to current file buffer
+Ftemp	equ	0FC58h	;used for temporary math operations
+L0000	equ	0	;restart addr of 8085
+LCD	equ	4B44H	;routine to send char in A to LCD
+LCDDriverTable0	equ	7643H	;address of ROM table of LCD selects
+LCDDriverTable1	equ	764DH	;LCD selects for rows 4-7 of screen
+MENUaddr	equ	5797H	;routine to display file menu
+ParseName	equ	4C21H	;routine to parse file name
+PRINTR	equ	6D3FH	;routine to send char in A to printer
+ROMDIV	equ	2DC7H	;ROM routine to divide two floating point
+ROMMINUS	equ	2B69H	;ROM routine to subtract two floatings
+ROMMULT	equ	2CFFH	;ROM routine to subtract two floating point
+ROMPLUS	equ	2B78H	;ROM routine to add two floating point
+SelectLCD	equ	753BH	;ROM routine to select an LCD driver (via table)
+true	equ	1	;logic true
+VarLength	equ	0FB65H	;loc used by ROM routines
+WriteLCDBytes	equ	74F6H	;ROM routine to send E bytes to LCD
+
+START
+	NOP
+	JMP	ColdStart
+
+	NOP
+	JMP	WarmStart
+
+	dw	0101H	;CPU parameter
+	dw	0E04H	;revision parameter
+LA00C
+	dw	TASKnfa
+BSaddr
+	dw	8	;backspace character
+	dw	RInit	;initial user area
+;
+;  Initialization constants; do not change order, delete, or insert any!!!
+LA012
+	dw	TOSInit	;initial top of stack (S0)
+	dw	RInit	;initial top of return stack (R0)
+	dw	TOSInit	;terminal input buffer (TIB)
+	dw	31	;name field width (WIDTH)
+	dw	0	;initial WARNING value (WARNING)
+	dw	FENCEInit	;initial FENCE (FENCE)
+	dw	FENCEInit	;cold-start value for DP (DP)
+	dw	VOCLINKInit	;(VOC-LINK)
+	dw	5	;believe it or not, 5B320H is 8080 when printed
+	dw	0B320H	;  in base 36!
+USERSpace
+	DW	RInit
+RP
+	DW	RInit
+;----------------------------------
+;  The main code of the interpreter follows
+PUSHDEHL		;put DE, then HL, on stack, then NEXT
+	PUSH	D
+PUSHHL			;put HL on stack, then NEXT
+	PUSH	H
+NEXT
+	LDAX	B	;get number pointed to by IP
+	INX	B
+	MOV	L,A
+	LDAX	B
+	INX	B	;move IP to next word
+	MOV	H,A	;HL has value that IP pointed to (W) (this is cfa)
+GetCodeAddr
+	MOV	E,M	;get value pointed to by W
+	INX	H
+	MOV	D,M
+	XCHG		;put value pointed to by W in HL (DE = W + 1)
+	PCHL		;start execution there
+;----------------------------------
+LITnfa
+	DB	80H+LITlfa-LITnfa-1
+	DB	'LI'
+	DB	'T'+80H
+LITlfa			; ( -- n )  Put next number from def onto stack
+	DW	0	;last word
+LIT
+	DW	LITpfa	;code
+LITpfa
+	LDAX	B	;get number pointed to by IP
+	INX	B
+	MOV	L,A
+	LDAX	B
+	INX	B	;bump IP by 2
+	MOV	H,A
+	JMP	PUSHHL	;push number retrieved
+;----------------------------------
+EXECUTEnfa
+	DB	80H+EXECUTElfa-EXECUTEnfa-1
+	DB	'EXECUT'
+	DB	'E'+80H
+EXECUTElfa
+	DW	LITnfa
+EXECUTE			; ( cfa -- )  Execute definition at cfa
+	DW	EXECUTEpfa	;code
+EXECUTEpfa
+	POP	H	;get number on stack
+	JMP	GetCodeAddr
+;----------------------------------
+BRANCHnfa
+	DB	80H+BRANCH-BRANCHnfa-3
+	DB	'BRANC'
+	DB	'H'+80H
+	DW	EXECUTEnfa
+BRANCH			; ( -- )  Branch number of bytes given by next word
+	DW	BRANCHpfa	;code
+BRANCHpfa
+	MOV	H,B	;get IP into HL
+	MOV	L,C
+	MOV	E,M	;get offset there into DE
+	INX	H
+	MOV	D,M
+	DCX	H
+	DAD	D	;add offset to IP
+	MOV	C,L	;make that new IP
+	MOV	B,H
+	JMP	NEXT
+;----------------------------------
+ZBRANCHnfa
+	DB	87H
+	DB	'0BRANC'
+	DB	'H'+80H
+	DW	BRANCHnfa
+ZBRANCH			; ( f -- )  Branch if f is 0, offset in next word
+	DW	ZBRANCHpfa	;code
+ZBRANCHpfa
+	POP	H	;get top of stack
+	MOV	A,L
+	ORA	H	;if it is 0, branch
+	JZ	BRANCHpfa
+BUMP			;else bump IP by 2
+	INX	B
+	INX	B
+	JMP	NEXT
+;----------------------------------
+XLOOPnfa
+	DB	86H
+	DB	'(LOOP'
+	DB	')'+80H
+	DW	ZBRANCHnfa
+XLOOP			; ( -- )  Run-time code for LOOP.
+	DW	XLOOPpfa	;code
+XLOOPpfa
+	LXI	D,1	;increment by 1
+XLOOPAddDE
+	LHLD	RP	;HL points to R stack
+	MOV	A,M	;add increment to index
+	ADD	E
+	MOV	M,A
+	MOV	E,A
+	INX	H
+	MOV	A,M
+	ADC	D
+	MOV	M,A
+	INX	H
+	INR	D
+	DCR	D
+	MOV	D,A	;index also in DE
+	JM	DownTo	;if increment >= 0 then
+	MOV	A,E	;..subtract final from index
+	SUB	M
+	MOV	A,D
+	INX	H
+	SBB	M
+	JMP	TestFinal
+
+DownTo			;else (increment<0)
+	MOV	A,M	;..subtract index from final
+	SUB	E
+	INX	H
+	MOV	A,M
+	SBB	D
+TestFinal
+	JM	BRANCHpfa	;if result<0 then do loop again
+	INX	H	;else
+	SHLD	RP	;..drop two values from stack
+	INX	B	;..skip over offset value
+	INX	B
+	JMP	NEXT
+;----------------------------------
+XPLOOPnfa
+	DB	87H
+	DB	'(+LOOP'
+	DB	')'+80H
+	DW	XLOOPnfa
+XPLOOP			; ( n -- )  Run-time code for +LOOP
+	DW	XPLOOPpfa	;code
+XPLOOPpfa
+	POP	D	;get increment into DE
+	JMP	XLOOPAddDE
+;----------------------------------
+XDOnfa
+	DB	84H
+	DB	'(DO'
+	DB	')'+80H
+	DW	XPLOOPnfa
+XDO			; ( limit i0 -- )  Run-time procedure for DO
+	DW	XDOpfa
+XDOpfa
+	LHLD	RP	;reserve room for two words on R stack
+	DCX	H
+	DCX	H
+	DCX	H
+	DCX	H
+	SHLD	RP
+	POP	D	;transfer top of stack to top of R stack
+	MOV	M,E
+	INX	H
+	MOV	M,D
+	POP	D	;transfer top of stack to one below on R stack
+	INX	H
+	MOV	M,E
+	INX	H
+	MOV	M,D
+	JMP	NEXT
+;----------------------------------
+Infa
+	DB	81H
+	DB	'I'+80H
+	DW	XDOnfa
+I			; ( -- n )  Copy top of R stack to data stack
+	DW	Ipfa
+Ipfa
+	LHLD	RP	;copy value on top of R stack
+	MOV	E,M
+	INX	H
+	MOV	D,M
+	PUSH	D
+	JMP	NEXT
+;----------------------------------
+DIGITnfa
+	DB	85H
+	DB	'DIGI'
+	DB	'T'+80H
+	DW	Infa
+DIGIT			; ( c n1 -- n2 tf | ff )  Converts base-n char to value
+	DW	DIGITpfa	;code
+DIGITpfa
+	POP	H	;get base
+	POP	D	;get character
+	MOV	A,E
+	SUI	'0'
+	JM	DIGITBad	;bad if char too small
+	CPI	10
+	JM	DIGITHaveVal	;if result >= 10 then
+	SUI	07		;..subtract offset from '9' to 'A'
+	CPI	10		;..bad if char too small
+	JM	DIGITBad
+DIGITHaveVal
+	CMP	L
+	JP	DIGITBad	;bad if value larger than base
+	MOV	E,A		;result in DE
+	LXI	H,true		;true flag in HL
+	JMP	PUSHDEHL
+
+DIGITBad
+	MOV	L,H	;false flag in HL (bad input)
+	JMP	PUSHHL
+;----------------------------------
+XFINDnfa
+	DB	86H
+	DB	'(FIND'
+	DB	')'+80H
+	DW	DIGITnfa
+XFIND			; ( addr1 addr2 -- pfa b tf | ff )  Search dictionary,
+			; for counted word at addr1, starting at addr2.
+	DW	XFINDpfa
+XFINDpfa
+	POP	D	;DE has first nfa to check
+XFINDCheck
+	POP	H	;HL has addr of name to match
+	PUSH	H
+	LDAX	D	;compare character counts
+	XRA	M
+	ANI	3FH	;  (only last 6 bits count)
+	JNZ	XFINDFindLastCh
+XFINDNextChar		;repeat (until mismatch or last char)
+	INX	H	;..move to next char
+	INX	D
+	LDAX	D	;..compare chars
+	XRA	M
+	ADD	A
+	JNZ	XFINDBadChar
+	JNC	XFINDNextChar	;until high bit indicates last char
+	LXI	H,5	;advance to PFA
+	DAD	D
+	XTHL		;put onto stack, removing addr of name to match
+XFINDBackUp		;back up until DE has NFA
+	DCX	D
+	LDAX	D
+	ORA	A
+	JP	XFINDBackUp
+	MOV	E,A	;DE has character count
+	MVI	D,00H
+	LXI	H,true	;HL has TRUE
+	JMP	PUSHDEHL
+
+XFINDBadChar
+	JC	XFINDGetLFA	;if not on last char of name then
+XFINDFindLastCh		;repeat (until char has bit 7 set)
+	INX	D	;..get next char
+	LDAX	D
+	ORA	A
+	JP	XFINDFindLastCh	;until char has bit 7 set
+XFINDGetLFA		;on last char of name here
+	INX	D	;DE = LFA
+	XCHG
+	MOV	E,M	;get address there into DE
+	INX	H
+	MOV	D,M
+	MOV	A,D	;if address not zero then
+	ORA	E
+	JNZ	XFINDCheck	;..check next word in dictionary
+	POP	H	;else (last word) remove top of stack
+	LXI	H,0	;..return false flag
+	JMP	PUSHHL
+;----------------------------------
+ENCLOSEnfa
+	DB	87H
+	DB	'ENCLOS'
+	DB	'E'+80H
+	DW	XFINDnfa
+ENCLOSE			; ( addr c -- addr n1 n2 n3 )  Determine byte offsets
+			; to first non-c char, first following c char, and next
+	DW	ENCLOSEpfa
+ENCLOSEpfa
+	POP	D	;DE has enclosing char
+	POP	H	;HL ptr to string begin
+	PUSH	H	;return start addr to stack
+	MOV	A,E
+	LXI	D,-1	;char count := -1
+	DCX	H	;point one before begin
+ENCLOSE2		;repeat (until non-"blank" or end)
+	INX	H	;..ptr to next char
+	INX	D	;..count := count + 1
+	CMP	M	;until reach non-"blank"
+	JZ	ENCLOSE2
+	PUSH	D	;put count onto stack
+	PUSH	PSW	;save enclosing char
+	MOV	A,M
+	ANA	A	;if (premature) end of line
+	JNZ	ENCLOSE3
+	POP	PSW	;..retrieve enclosing char
+	INX	D
+	PUSH	D	;..n2 := n1 + 1
+	DCX	D
+	PUSH	D	;..n3 := n1
+	JMP	NEXT	;..end of word
+
+ENCLOSE3		;else (not end of line) repeat
+	POP	PSW	;..retrieve enclosing char in A
+	INX	H	;..move to next char
+	INX	D	;..count it
+	CMP	M	;exit if enclosing char
+	JZ	ENCLOSE4
+	PUSH	PSW	;..save enclosing char
+	MOV	A,M
+	ANA	A	;..if end of line
+	JNZ	ENCLOSE3
+	POP	PSW
+	PUSH	D	;....n2 := loc of end of line
+	PUSH	D	;....n3 := n2
+	JMP	NEXT	;....done with word
+
+ENCLOSE4		;here if trailing enclosing char found
+	PUSH	D	;n2 := pointer to trailing char
+	INX	D
+	PUSH	D	;n3 := n2 + 1 (may be a new word)
+	JMP	NEXT
+;----------------------------------
+EMITnfa
+	DB	84H
+	DB	'EMI'
+	DB	'T'+80H
+	DW	ENCLOSEnfa
+EMIT			; ( c -- )  Send char c to display
+	DW	DOCOL
+	DW	EMITSUB
+	DW	ONE	;(This doesn't really look correct; I think system
+	DW	OUT	; memory should be read and result copied)
+	DW	PLSTORE
+	DW	SEMIS
+;----------------------------------
+EMITSUB			;this (unnamed) codeword does work of EMIT
+	DW	EMITSUBpfa
+EMITSUBpfa
+	POP	H	;get char to emit into HL
+	PUSH	B	;save IP on stack
+	MOV	A,L
+	CALL	EMITA	;display char in A
+	POP	B	;retrieve IP from stack
+	JMP	NEXT
+
+PrintFlag
+	dw	0
+
+EMITA
+	call	LCD	;send char in A to LCD
+	mov	e,a
+	lda	PrintFlag
+	ora	a
+	rz		;if PrintFlag<>0 then
+	mov	a,e
+	jmp	printr	;..send to line printer also
+
+;----------------------------------
+KEYnfa
+	DB	83H
+	DB	'KE'
+	DB	'Y'+80H
+	DW	EMITnfa
+KEY			; ( -- c )  Waits, then returns char of key pressed
+	DW	KEYpfa
+KEYpfa
+	CALL	CHGET	;repeat get char from keyboard
+	CPI	03H
+	JZ	KEYpfa	;until (char<>^C) and
+	CPI	'P'-40H	;(control-P toggles echoing to printer)
+	JNZ	LB468	;   (char<>^P)
+	LXI	H,PrintFlag
+	MOV	A,M
+	XRI	01H
+	MOV	M,A
+	JMP	KEYpfa
+
+LB468
+	MOV	L,A	;return key on stack
+	MVI	H,00H
+	JMP	PUSHHL
+;----------------------------------
+QTERMINALnfa
+	DB	89H
+	DB	'?TERMINA'
+	DB	'L'+80H
+	DW	KEYnfa
+QTERMINAL		; ( -- f )  If break key held, f is TRUE, else FALSE
+	DW	QTERMINALpfa
+QTERMINALpfa
+	CALL	BrkChk	;return with C flag if Shift-Break
+	LXI	H,false	;result is false
+	JNC	LB44E
+	INR	L	;unless Shift-Break
+LB44E
+	JMP	PUSHHL
+;----------------------------------
+CRnfa
+	DB	82H
+	DB	'C'
+	DB	'R'+80H
+	DW	QTERMINALnfa
+CR			; ( -- )  Transmit CR/LF to display
+	dw	DOCOL
+	dw	LIT
+	dw	0DH
+	dw	EMIT	;send CR to display
+	dw	LIT
+	dw	0AH
+	dw	EMIT
+	dw	SEMIS	;send LF to display
+;----------------------------------
+CMOVEnfa
+	DB	85H
+	DB	'CMOV'
+	DB	'E'+80H
+	DW	CRnfa
+CMOVE			; ( from to count -- )  Copy (unsigned) count bytes.
+	DW	CMOVEpfa
+CMOVEpfa
+	MOV	L,C	;save IP in HL
+	MOV	H,B
+	POP	B	;count in BC
+	POP	D	;destination in DE
+	XTHL		;IP to top of stack
+	JMP	CMOVE3
+CMOVE2
+	MOV	A,M	;..transfer a byte
+	INX	H	;.. and update pointers
+	STAX	D
+	INX	D
+	DCX	B
+CMOVE3
+	MOV	A,B	;while count<>0
+	ORA	C
+	JNZ	CMOVE2
+	POP	B	;get IP back
+	JMP	NEXT
+;----------------------------------
+USTARnfa
+	DB	82H
+	DB	'U'
+	DB	0AAH	;'*'+80H
+	DW	CMOVEnfa
+USTAR			; ( u1 u2 -- ud )  Unsigned multiply
+	DW	USTARpfa
+USTARpfa
+	POP	D	;get operands into DE
+	POP	H	;  and HL
+	PUSH	B	;save IP on stack
+	MOV	B,H	;save high byte in B
+	MOV	A,L	;mult low byte by DE
+	CALL	ATimesDE
+	PUSH	H	;save low word of result
+	MOV	H,A	;mult high byte by DE,
+	MOV	A,B
+	MOV	B,H	; saving high byte of result in B
+	CALL	ATimesDE
+	POP	D	;get low word of 1st result
+	MOV	C,D	;put middle byte in C
+	DAD	B	;add BC to A and HL
+	ACI	00H
+	MOV	D,L	;low word in DE,
+	MOV	L,H	; high word in HL
+	MOV	H,A
+	POP	B	;retrieve IP
+	JMP	PUSHDEHL
+ATimesDE		;mult A * DE
+	LXI	H,0	;HL := low word of result
+	MVI	C,08H	;count := 8
+ATimesDE2		;repeat (until C = 0)
+	DAD	H	;..shift A and HL left
+	RAL
+	JNC	ATimesDE3	;..if high bit of A then
+	DAD	D	;....A and HL := A and HL + DE
+	ACI	00H
+ATimesDE3
+	DCR	C	;..count := count - 1
+	JNZ	ATimesDE2	;..until count=0
+	RET
+;----------------------------------
+USLASHnfa
+	DB	82H
+	DB	'U'
+	DB	'/'+80H
+	DW	USTARnfa
+USLASH			; ( ud u1 -- uremainder uquotient )  Unsigned divide
+	DW	USLASHpfa
+USLASHpfa
+	LXI	H,4
+	DAD	SP	;HL := SP + 4
+	MOV	E,M	;DE := [SP+4] (low word of dividend)
+	MOV	M,C	;[SP+4] := IP
+	INX	H
+	MOV	D,M
+	MOV	M,B
+	POP	B	;BC := TOS (divisor)
+	POP	H	;HL := next on stack (high word)
+	MOV	A,L	;set flags on HL-BC
+	SUB	C
+	MOV	A,H
+	SBB	B
+	JC	USLASH2	;if no carry then
+	LXI	H,0FFFFH	;..leave FFFF,FFFF on stack (overflow)
+	LXI	D,0FFFFH
+	JMP	USLASH7
+USLASH2
+	MVI	A,10H	;count := 16
+USLASH3			;shift dividend left one bit
+	DAD	H
+	RAL		;..store carry in A, bit 0
+	XCHG
+	DAD	H
+	JNC	USLASH4
+	INX	D
+	ANA	A	;..clear carry
+USLASH4
+	XCHG		;..HL high word, DE low word
+	RAR		;..restore A, carry from shift back
+	PUSH	PSW	;..save count
+	JNC	USLASH5	;..if carry from shift, then
+	MOV	A,L	;....HL := HL - BC
+	SUB	C
+	MOV	L,A
+	MOV	A,H
+	SBB	B
+	MOV	H,A
+	JMP	USLASH6
+USLASH5			;..else (no carry from shift)
+	MOV	A,L	;....HL := HL - BC
+	SUB	C
+	MOV	L,A
+	MOV	A,H
+	SBB	B
+	MOV	H,A
+	JNC	USLASH6	;....if carry resulted then
+	DAD	B	;......undo subtraction
+	DCX	D	;......subtract 1 from result (undone next)
+USLASH6
+	INX	D	;..add 1 to result
+	POP	PSW
+	DCR	A	;..count := count - 1
+	JNZ	USLASH3	;until count=0
+USLASH7
+	POP	B	;pop IP back into BC
+	xchg
+	jmp	PUSHDEHL	;push remainder, then result
+;----------------------------------
+ANDnfa
+	DB	83H
+	DB	'AN'
+	DB	'D'+80H
+	DW	USLASHnfa
+AND			;( n1 n2 -- n3 )  Bitwise AND
+	DW	ANDpfa
+ANDpfa
+	POP	D
+	POP	H
+	MOV	A,E
+	ANA	L
+	MOV	L,A
+	MOV	A,D
+	ANA	H
+	MOV	H,A
+	JMP	PUSHHL
+;----------------------------------
+ORnfa
+	DB	82H
+	DB	'O'
+	DB	'R'+80H
+	DW	ANDnfa
+OR			; ( n1 n2 -- n3 )  Bitwise OR
+	DW	ORpfa
+ORpfa
+	POP	D
+	POP	H
+	MOV	A,E
+	ORA	L
+	MOV	L,A
+	MOV	A,D
+	ORA	H
+	MOV	H,A
+	JMP	PUSHHL
+;----------------------------------
+XORnfa
+	DB	83H
+	DB	'XO'
+	DB	'R'+80H
+	DW	ORnfa
+XOR			; ( n1 n2 -- n3 )  Bitwise exclusive-OR
+	DW	XORpfa
+XORpfa
+	POP	D
+	POP	H
+	MOV	A,E
+	XRA	L
+	MOV	L,A
+	MOV	A,D
+	XRA	H
+	MOV	H,A
+	JMP	PUSHHL
+;----------------------------------
+SHLnfa
+	db	83H
+	db	'SH'
+	db	'L'+80h
+	dw	XORnfa
+SHL			; ( n1 n2 -- n3 )  n1 is shifted left n2 positions
+			;  n2 ranges from 0 to 15
+	dw	SHLpfa
+SHLpfa
+	pop	d	;get byte count into DE
+	mov	a,e	;convert count to number from 0 to 15
+	ani	0fh
+	mov	e,a
+	pop	h	;get number to shift
+	inr	e
+SHL2			;while count>0
+	dcr	e	;..count := count - 1
+	jz	SHL3
+	dad	h	;..shift number left
+	jmp	SHL2
+SHL3
+	jmp	PUSHHL
+;----------------------------------
+SHRnfa
+	db	83h
+	db	'SH'
+	db	'R'+80h
+	dw	SHLnfa
+SHR			; ( n1 n2 -- n3 )  Shifts n1 right by (n2 mod 16) bits
+	dw	SHRpfa
+SHRpfa
+	pop	d	;get n2 into DE
+	mov	a,e
+	ani	0fh	;get count = (n2 mod 16) into E
+	mov	e,a
+	pop	h	;get n1 into HL
+	inr	e
+SHR2
+	dcr	e
+	jz	SHR3
+	xra	a	;clear carry
+	mov	a,h	;shift 16-bit number right 1 bit
+	rar
+	mov	h,a
+	mov	a,l
+	rar
+	mov	l,a
+	jmp	SHR2
+SHR3
+	jmp	PUSHHL
+;----------------------------------
+SPATnfa
+	DB	83H
+	DB	'SP'
+	DB	'@'+80H
+	DW	SHRnfa
+SPAT			;( -- n )  Return value of stack pointer (before)
+	DW	SPATpfa
+SPATpfa
+	LXI	H,0
+	DAD	SP
+	JMP	PUSHHL
+;----------------------------------
+SPSTOREnfa
+	DB	83H
+	DB	'SP'
+	DB	'!'+80H
+	DW	SPATnfa
+SPSTORE			; ( -- ) Initialize stack pointer from S0
+	DW	SPSTOREpfa
+SPSTOREpfa
+	LHLD	USERSpace
+	LXI	D,6
+	DAD	D
+	MOV	E,M
+	INX	H
+	MOV	D,M
+	XCHG
+	SPHL
+	JMP	NEXT
+;----------------------------------
+RPATnfa
+	DB	83H
+	DB	'RP'
+	DB	'@'+80H
+	DW	SPSTOREnfa
+			; ( -- n ) Current value of RP
+	DW	RPATpfa
+RPATpfa
+	LHLD	RP
+	JMP	PUSHHL
+;----------------------------------
+RPSTOREnfa
+	DB	83H
+	DB	'RP'
+	DB	'!'+80H
+	DW	RPATnfa
+RPSTORE			; ( -- )  Initialize RP from R0
+	DW	RPSTOREpfa
+RPSTOREpfa
+	LHLD	USERSpace
+	LXI	D,8
+	DAD	D
+	MOV	E,M
+	INX	H
+	MOV	D,M
+	XCHG
+	SHLD	RP
+	JMP	NEXT
+;----------------------------------
+SEMISnfa
+	DB	82H
+	DB	';'
+	DB	'S'+80H
+	DW	RPSTOREnfa
+SEMIS			; ( -- )  End of word definition
+	DW	SEMISpfa
+SEMISpfa
+	LHLD	RP
+	MOV	C,M	;load IP from RP stack
+	INX	H
+	MOV	B,M
+	INX	H
+	SHLD	RP	;decrement RP by two
+	JMP	NEXT
+;----------------------------------
+LEAVEnfa
+	DB	85H
+	DB	'LEAV'
+	DB	'E'+80H
+	DW	SEMISnfa
+LEAVE
+	DW	LEAVEpfa
+LEAVEpfa		; ( -- )  Set loop limit to I to terminate loop
+	LHLD	RP
+	MOV	E,M
+	INX	H
+	MOV	D,M
+	INX	H
+	MOV	M,E
+	INX	H
+	MOV	M,D
+	JMP	NEXT
+;----------------------------------
+TORnfa
+	DB	82H
+	DB	'>'
+	DB	'R'+80H
+	DW	LEAVEnfa
+TOR			; ( n -- )  Move word to R stack
+	DW	TORpfa
+TORpfa
+	POP	D
+	LHLD	RP	;reserve space on R stack
+	DCX	H
+	DCX	H
+	SHLD	RP
+	MOV	M,E	;put number there
+	INX	H
+	MOV	M,D
+	JMP	NEXT
+;----------------------------------
+FROMRnfa
+	DB	82H
+	DB	'R'
+	DB	'>'+80H
+	DW	TORnfa
+FROMR			; ( -- n )  Retrieve number from R stack
+	DW	FROMRpfa
+FROMRpfa
+	LHLD	RP
+	MOV	E,M
+	INX	H
+	MOV	D,M
+	INX	H
+	SHLD	RP
+	PUSH	D
+	JMP	NEXT
+;----------------------------------
+Rnfa
+	DB	81H
+	DB	'R'+80H
+	DW	FROMRnfa
+R			; ( -- n )  Copy word from R stack
+	DW	Ipfa	;same as I
+;----------------------------------
+ZEQUnfa
+	DB	82H
+	DB	'0'
+	DB	'='+80H
+	DW	Rnfa
+ZEQU			;  ( n -- f )  Returns f TRUE if n=0
+	DW	ZEQUpfa
+ZEQUpfa
+	POP	H
+	MOV	A,L
+	ORA	H
+	LXI	H,false
+	JNZ	ZEQU2
+	INX	H
+ZEQU2
+	JMP	PUSHHL
+;----------------------------------
+ZLESSnfa
+	DB	82H
+	DB	'0'
+	DB	'<'+80H
+	DW	ZEQUnfa
+ZLESS			; ( n -- f )  Returns f true if n has sign bit set
+	DW	ZLESSpfa
+ZLESSpfa
+	POP	H
+	DAD	H
+	LXI	H,false
+	JNC	ZLESS2
+	INX	H
+ZLESS2
+	JMP	PUSHHL
+;----------------------------------
+PLUSnfa
+	DB	81H
+	DB	'+'+80H
+	DW	ZLESSnfa
+PLUS			; ( n1 n2 -- n3 )  Add two numbers
+	DW	PLUSpfa
+PLUSpfa
+	POP	D
+	POP	H
+	DAD	D
+	JMP	PUSHHL
+;----------------------------------
+DPLUSnfa
+	DB	82H
+	DB	'D'
+	DB	'+'+80H
+	DW	PLUSnfa
+DPLUS			; ( d1 d2 -- d3 )  Add two double numbers
+	DW	DPLUSpfa
+DPLUSpfa
+	LXI	H,6
+	DAD	SP
+	MOV	E,M	;DE := low word of d1
+	MOV	M,C	;IP saved on stack there
+	INX	H
+	MOV	D,M
+	MOV	M,B
+	POP	B	;BC := high word of d2
+	POP	H	;HL := low word of d2
+	DAD	D	;add the two low words
+	XCHG		;put result in DE
+	POP	H	;HL := high word of d1
+	jnc	DPLUS2	;if carry set then
+	inx	b	;..increment number in BC
+DPLUS2
+	dad	b	;add two high words
+	POP	B	;pop IP into BC again
+	JMP	PUSHDEHL	;push result; interpret next
+;----------------------------------
+CHSnfa
+	DB	85H
+	DB	'MINU'
+	DB	'S'+80H
+	DW	DPLUSnfa
+CHS			; ( n1 -- -n1 )  Forth calls it "MINUS" (changes sign)
+	DW	CHSpfa
+CHSpfa
+	POP	H	;get n1 from stack
+	MOV	A,L	;complement by complementing low byte, ...
+	CMA
+	MOV	L,A
+	MOV	A,H	;...then high byte
+	CMA
+	MOV	H,A
+	INX	H	;add 1 to get negative
+	JMP	PUSHHL
+;----------------------------------
+DCHSnfa
+	DB	86H
+	DB	'DMINU'
+	DB	'S'+80H
+	DW	CHSnfa
+DCHS			; ( d -- -d )  Forth calls it "DMINUS"
+	DW	DCHSpfa
+DCHSpfa
+	POP	H	;get high word into HL
+	POP	D	;get low word into DE
+	SUB	A
+	SUB	E	;subtract lowest byte from 0
+	MOV	E,A
+	MVI	A,00H	;subtract successive bytes from 0 with borrow
+	SBB	D
+	MOV	D,A
+	MVI	A,00H
+	SBB	L
+	MOV	L,A
+	MVI	A,00H
+	SBB	H
+	MOV	H,A
+	JMP	PUSHDEHL
+;----------------------------------
+OVERnfa
+	DB	84H
+	DB	'OVE'
+	DB	'R'+80H
+	DW	DCHSnfa
+OVER			; ( n1 n2 -- n1 n2 n1 )  Copy number below TOS
+	DW	OVERpfa
+OVERpfa
+	POP	D
+	POP	H
+	PUSH	H
+	JMP	PUSHDEHL
+;----------------------------------
+DROPnfa
+	DB	84H
+	DB	'DRO'
+	DB	'P'+80H
+	DW	OVERnfa
+DROP			; ( n -- )  Remove word from stack
+	DW	DROPpfa
+DROPpfa
+	POP	H
+	JMP	NEXT
+;----------------------------------
+SWAPnfa
+	DB	84H
+	DB	'SWA'
+	DB	'P'+80H
+	DW	DROPnfa
+SWAP			; ( n1 n2 -- n2 n1 )
+	DW	SWAPpfa
+SWAPpfa
+	POP	H
+	XTHL
+	JMP	PUSHHL
+;----------------------------------
+DUPnfa
+	DB	83H
+	DB	'DU'
+	DB	'P'+80H
+	DW	SWAPnfa
+DUP			; ( n -- n n )
+	DW	DUPpfa
+DUPpfa
+	POP	H
+	PUSH	H
+	JMP	PUSHHL
+;----------------------------------
+TWODUPnfa
+	DB	84H
+	DB	'2DU'
+	DB	'P'+80H
+	DW	DUPnfa
+TWODUP			; ( d -- d d )  Duplicate 32-bit number
+	DW	TWODUPpfa
+TWODUPpfa
+	POP	H
+	POP	D
+	PUSH	D
+	PUSH	H
+	JMP	PUSHDEHL
+;----------------------------------
+PLSTOREnfa
+	DB	82H
+	DB	'+'
+	DB	'!'+80H
+	DW	TWODUPnfa
+PLSTORE			; ( n addr -- )  Add n to number at addr
+	DW	PLSTOREpfa
+PLSTOREpfa
+	POP	H	;HL has address
+	POP	D	;DE has number to add
+	MOV	A,M	;add low byte
+	ADD	E
+	MOV	M,A
+	INX	H
+	MOV	A,M	;add high byte with carry
+	ADC	D
+	MOV	M,A
+	JMP	NEXT
+;----------------------------------
+TOGGLEnfa
+	DB	86H
+	DB	'TOGGL'
+	DB	'E'+80H
+	DW	PLSTOREnfa
+TOGGLE			; ( addr n -- )  Byte at addr XOR'ed with n (byte)
+	DW	TOGGLEpfa
+TOGGLEpfa
+	POP	D
+	POP	H
+	MOV	A,M
+	XRA	E
+	MOV	M,A
+	JMP	NEXT
+;----------------------------------
+ATnfa
+	DB	81H
+	DB	'@'+80H
+	DW	TOGGLEnfa
+AT			; ( addr -- n )  Retrieve word at addr
+	DW	ATpfa
+ATpfa
+	POP	H
+	MOV	E,M
+	INX	H
+	MOV	D,M
+	PUSH	D
+	JMP	NEXT
+;----------------------------------
+CATnfa
+	DB	82H
+	DB	'C'
+	DB	'@'+80H
+	DW	ATnfa
+CAT			; ( addr -- b )  Returns byte at addr
+	DW	CATpfa
+CATpfa
+	POP	H
+	MOV	L,M
+	MVI	H,00H
+	JMP	PUSHHL
+;----------------------------------
+TWOATnfa
+	DB	82H
+	DB	'2'
+	DB	'@'+80H
+	DW	CATnfa
+TWOAT			; ( addr -- d )  Get double at addr
+	DW	TWOATpfa
+TWOATpfa
+	POP	H	;get address into HL
+	inx	h
+	inx	h
+	MOV	E,M	;notice low word from higher address!
+	INX	H
+	MOV	D,M
+	PUSH	D
+	dcx	h
+	dcx	h
+	dcx	h
+	MOV	E,M
+	INX	H
+	MOV	D,M
+	PUSH	D
+	JMP	NEXT
+;----------------------------------
+STOREnfa
+	DB	81H
+	DB	'!'+80H
+	DW	TWOATnfa
+STORE			;( n addr -- )  Store n at addr
+	DW	STOREpfa
+STOREpfa
+	POP	H
+	POP	D
+	MOV	M,E
+	INX	H
+	MOV	M,D
+	JMP	NEXT
+;----------------------------------
+CSTOREnfa
+	DB	82H
+	DB	'C'
+	DB	'!'+80H
+	DW	STOREnfa
+CSTORE			; ( b addr -- )  Store byte at addr
+	DW	CSTOREpfa
+CSTOREpfa
+	POP	H
+	POP	D
+	MOV	M,E
+	JMP	NEXT
+;----------------------------------
+TWOSTOREnfa
+	DB	82H
+	DB	'2'
+	DB	'!'+80H
+	DW	CSTOREnfa
+			; ( d addr -- )  Store double at addr
+	DW	TWOSTORE
+TWOSTORE
+	POP	H	;HL gets address
+	POP	D	;store low word at address
+	MOV	M,E
+	INX	H
+	MOV	M,D
+	INX	H
+	POP	D	;store high word at addr+2
+	MOV	M,E
+	INX	H
+	MOV	M,D
+	JMP	NEXT
+;----------------------------------
+COLONnfa
+	DB	0C1H	;notice:  IMMEDIATE
+	DB	':'+80H
+	DW	TWOSTOREnfa
+			; ( -- ) Begin word definition
+	DW	DOCOL
+	DW	QEXEC	;Issue error if already compiling
+	DW	STORECSP	;Save SP for later error check
+	DW	CURRENT	;Make CONTEXT vocabulary same as CURRENT
+	DW	AT
+	DW	CONTEXT
+	DW	STORE
+	DW	CREATE	;Save word in definition
+	DW	RBRACKET	;Change to compilation state
+	DW	DOSEMICODE
+DOCOL			;run-time code executed for colon-definition
+	LHLD	RP	;put IP on R stack
+	DCX	H
+	MOV	M,B
+	DCX	H
+	MOV	M,C
+	SHLD	RP
+	INX	D	;set IP to point to next word in definition
+	MOV	C,E
+	MOV	B,D
+	JMP	NEXT	;start interpreting there
+;----------------------------------
+SEMInfa
+	DB	0C1H	;note:  IMMEDIATE
+	DB	0BBH	;';'+80H
+	DW	COLONnfa
+			; ( -- ) End word definition
+	DW	DOCOL
+	DW	QCSP	;Make sure stack depth hasn't changed since ':'
+	DW	COMPILE	;Place cfa for ;S at end of definition
+	DW	SEMIS
+	DW	SMUDGE	;Change state of smudge bit to activate
+	DW	LBRACKET	;Change state to not compiling
+	DW	SEMIS
+;----------------------------------
+NOOPnfa
+	DB	84H
+	DB	'NOO'
+	DB	'P'+80H
+	DW	SEMInfa
+NOOP			; ( -- )  Why do we need a NOOP?
+	DW	DOCOL
+	DW	SEMIS
+;----------------------------------
+CONSTANTnfa
+	DB	88H
+	DB	'CONSTAN'
+	DB	'T'+80H
+	DW	NOOPnfa
+CONSTANT		; ( n -- )  Place a constant definition in dictionary
+	DW	DOCOL
+	DW	CREATE	;Place name in dictionary
+	DW	SMUDGE	;Make it visible
+	DW	COMMA	;Store value in dictionary
+	DW	DOSEMICODE
+
+DOCONST			;run-time code for ','
+	INX	D	;point to next word in definition
+	XCHG
+	MOV	E,M	;get word there
+	INX	H
+	MOV	D,M
+	PUSH	D	;push it onto stack
+	JMP	NEXT
+;----------------------------------
+VARIABLEnfa
+	DB	88H
+	DB	'VARIABL'
+	DB	'E'+80H
+	DW	CONSTANTnfa
+			; ( n -- )  Set up a variable in dictionary
+	DW	DOCOL	;Storage for constant and variable are identical
+	DW	CONSTANT
+	DW	DOSEMICODE
+
+DOVARIABLE		;Run-time code for variable returns addr, not value
+	INX	D
+	PUSH	D
+	JMP	NEXT
+;----------------------------------
+USERnfa
+	DB	84H
+	DB	'USE'
+	DB	'R'+80H
+	DW	VARIABLEnfa
+			;( n -- )  Storage for user and constant are identical
+	DW	DOCOL
+	DW	CONSTANT
+	DW	DOSEMICODE
+
+DOUSER			;run-time code for USER
+	INX	D	;DE points to next word in definition
+	XCHG
+	MOV	E,M	;get BYTE there (this is offset into USER space)
+	MVI	D,00H
+	LHLD	USERSpace
+	DAD	D	;return address within user space
+	JMP	PUSHHL
+;----------------------------------
+ZEROnfa
+	DB	81H
+	DB	'0'+80H
+	DW	USERnfa
+ZERO			; ( -- n )  Returns n, which is 0
+	DW	DOCONST
+	DW	0
+;----------------------------------
+ONEnfa
+	DB	81H
+	DB	'1'+80H
+	DW	ZEROnfa
+ONE			; ( -- n )  Returns n, which is 1
+	DW	DOCONST
+	DW	1
+;----------------------------------
+TWOnfa
+	DB	81H
+	DB	'2'+80H
+	DW	ONEnfa
+TWO			; ( -- n )  Returns n, which is 2
+	DW	DOCONST
+	DW	2
+;----------------------------------
+THREEnfa
+	DB	81H
+	DB	'3'+80H
+	DW	TWOnfa
+THREE			; ( -- n )  Returns n, which is 3
+	DW	DOCONST
+	DW	3
+;----------------------------------
+DONEXTnfa
+	DB	86H
+	DB	'(NEXT',')'+80H
+	DW	THREEnfa
+DONEXT			; ( -- adr )  Returns address of NEXT, for assembler
+	DW	DOCONST
+	DW	NEXT
+;----------------------------------
+BLnfa
+	DB	82H
+	DB	'B'
+	DB	'L'+80H
+	DW	DONEXTnfa
+BL			; ( -- c )  Returns c, which represents space char
+	DW	DOCONST
+	DW	' '
+;----------------------------------
+CPERLnfa
+	DB	83H
+	DB	'C/'
+	DB	'L'+80H
+	DW	BLnfa
+CPERL			; ( -- n )  Returns n, the number of chars per line
+	DW	DOCONST
+	DW	64	;!!!Shouldn't this be 40 for Model 100?!!!
+;----------------------------------
+FIRSTnfa
+	DB	85H
+	DB	'FIRS'
+	DB	'T'+80H
+	DW	CPERLnfa
+FIRST			;  ( -- n )  Returns the addr of first byte of file buf
+	dw	DOCONST
+	dw	FIRSTstart
+;----------------------------------
+LIMITnfa
+	DB	85H
+	DB	'LIMI'
+	DB	'T'+80H
+	DW	FIRSTnfa
+LIMIT			;  ( -- n )  Returns first addr not reserved by Forth
+	DW	DOCONST
+	DW	LIMITaddr
+;----------------------------------
+PLORIGINnfa
+	DB	87H
+	DB	'+ORIGI'
+	DB	'N'+80H
+	DW	LIMITnfa
+PLORIGIN		; ( n1 -- addr )  Adds n1 to origin parameter address
+	DW	DOCOL
+	DW	LIT
+	DW	START
+	dw	plus
+	dw	semis
+;----------------------------------
+S0nfa
+	DB	82H
+	DB	'S'
+	DB	'0'+80H
+	DW	PLORIGINnfa
+S0			; ( -- addr )  User var with init stack pointer value
+	DW	DOUSER
+	DB	06H
+;----------------------------------
+R0nfa
+	DB	82H
+	DB	'R'
+	DB	'0'+80H
+	DW	S0nfa
+			; ( -- addr )  User var with init return pointer value
+	DW	DOUSER
+	DB	08H
+;----------------------------------
+TIBnfa
+	DB	83H
+	DB	'TI'
+	DB	'B'+80H
+	DW	R0nfa
+TIB			; ( -- addr )  User var for terminal input buffer addr
+	DW	DOUSER
+	DB	0AH
+;----------------------------------
+WIDTHnfa
+	DB	85H
+	DB	'WIDT'
+	DB	'H'+80H
+	DW	TIBnfa
+WIDTH			; ( -- addr )  User var for maximum word width
+	DW	DOUSER
+	DB	0CH
+;----------------------------------
+WARNINGnfa		;!!!Think about for RAM4TH!!!
+	DB	87H
+	DB	'WARNIN'
+	DB	'G'+80H
+	DW	WIDTHnfa
+WARNING			; ( -- addr )  User var for action on error (0=no disk)
+	DW	DOUSER
+	DB	0EH
+;----------------------------------
+FENCEnfa
+	DB	85H
+	DB	'FENC'
+	DB	'E'+80H
+	DW	WARNINGnfa
+FENCE			; ( -- addr )  User var with lowest addr FORGETting OK
+	DW	DOUSER
+	DB	10H
+;----------------------------------
+DPnfa
+	DB	82H
+	DB	'D'
+	DB	'P'+80H
+	DW	FENCEnfa
+DP			; ( -- addr )  User var, ptr to next free loc in dict
+	DW	DOUSER
+	DB	12H
+;----------------------------------
+VOCLINKnfa
+	DB	88H
+	DB	'VOC-LIN'
+	DB	'K'+80H
+	DW	DPnfa
+VOCLINK			; ( -- addr )  User var, addr of a field in the
+			; definition of the most recently created vocabulary.
+	DW	DOUSER
+	DB	14H
+;----------------------------------
+BLKnfa		;!!!Probably changes for RAM4TH!!!
+	DB	83H
+	DB	'BL'
+	DB	'K'+80H
+	DW	VOCLINKnfa
+BLK			; ( -- addr )  User var for block number interpreted
+	DW	DOUSER
+	DB	16H
+;----------------------------------
+INnfa
+	DB	82H
+	DB	'I'
+	DB	'N'+80H
+	DW	BLKnfa
+IN			; ( -- addr )  User var, byte offset within text stream
+	DW	DOUSER
+	DB	18H
+;----------------------------------
+OUTnfa			;!!!Needs work for usefulness (copy system loc)!!!
+	DB	83H
+	DB	'OU'
+	DB	'T'+80H
+	DW	INnfa
+OUT			; ( -- addr )  User var for cursor position
+	DW	DOUSER
+	DB	1AH
+;----------------------------------
+SCRnfa		;!!!Probably changes for RAM4TH!!!
+	DB	83H
+	DB	'SC'
+	DB	'R'+80H
+	DW	OUTnfa
+SCR			; ( -- addr )  User var, screen referenced by LIST
+	DW	DOUSER
+	DB	1CH
+;----------------------------------
+OFFSETnfa		;!!!Probably changes for RAM4TH!!!
+	DB	86H
+	DB	'OFFSE'
+	DB	'T'+80H
+	DW	SCRnfa
+OFFSET			; ( -- addr )  User var for block offset to disk drives
+	DW	DOUSER
+	DB	1EH
+;----------------------------------
+CONTEXTnfa
+	DB	87H
+	DB	'CONTEX'
+	DB	'T'+80H
+	DW	OFFSETnfa
+CONTEXT			; ( -- addr )  User var, ptr to search vocabulary
+	DW	DOUSER
+	DB	20H
+;----------------------------------
+CURRENTnfa
+	DB	87H
+	DB	'CURREN'
+	DB	'T'+80H
+	DW	CONTEXTnfa
+CURRENT			; ( -- addr )  User var, ptr to install vocabulary
+	DW	DOUSER
+	DB	22H
+;----------------------------------
+STATEnfa
+	DB	85H
+	DB	'STAT'
+	DB	'E'+80H
+	DW	CURRENTnfa
+STATE			; ( -- addr )  User var for state, 0=executing
+	DW	DOUSER
+	DB	24H
+;----------------------------------
+BASEnfa
+	DB	84H
+	DB	'BAS'
+	DB	'E'+80H
+	DW	STATEnfa
+BASE			; ( -- addr )  User var for current number base
+	DW	DOUSER
+	DB	26H
+;----------------------------------
+DPLnfa
+	DB	83H
+	DB	'DP'
+	DB	'L'+80H
+	DW	BASEnfa
+DPL			; ( -- addr )  User var, # of digits right of decimal
+	DW	DOUSER
+	DB	28H
+;----------------------------------
+FLDnfa
+	DB	83H
+	DB	'FL'
+	DB	'D'+80H
+	DW	DPLnfa
+			; ( -- addr )  User var for control of field width
+	DW	DOUSER
+	DB	2AH
+;----------------------------------
+CSPnfa
+	DB	83H
+	DB	'CS'
+	DB	'P'+80H
+	DW	FLDnfa
+CSP			; ( -- addr )  User var for compilation stack pointer
+	DW	DOUSER
+	DB	2CH
+;----------------------------------
+RNUMBERnfa
+	DB	82H
+	DB	'R'
+	DB	'#'+80H
+	DW	CSPnfa
+			; ( -- addr )  User var for editing cursor (unused)
+	DW	DOUSER
+	DB	2EH
+;----------------------------------
+HLDnfa
+	DB	83H
+	DB	'HL'
+	DB	'D'+80H
+	DW	RNUMBERnfa
+HLD			; ( -- addr )  User var, used in numeric conversion
+	DW	DOUSER
+	DB	30H	;'0'
+;----------------------------------
+ONEPLnfa
+	DB	82H
+	DB	'1'
+	DB	'+'+80H
+	DW	HLDnfa
+ONEPL			; ( n1 -- n1+1 )  Add 1 to number on stack
+	DW	ONEPLpfa
+ONEPLpfa
+	pop	h
+	inx	h
+	jmp	PUSHHL
+;----------------------------------
+TWOPLnfa
+	DB	82H
+	DB	'2'
+	DB	'+'+80H
+	DW	ONEPLnfa
+TWOPL			; ( n1 -- n1+2 )  Add 2 to number on stack
+	DW	TWOPLpfa
+TWOPLpfa
+	pop	h
+	inx	h
+	inx	h
+	jmp	PUSHHL
+;----------------------------------
+HEREnfa
+	DB	84H
+	DB	'HER'
+	DB	'E'+80H
+	DW	TWOPLnfa
+HERE			; ( -- addr )  Return next available addr in dict
+	DW	DOCOL
+	DW	DP
+	DW	AT
+	DW	SEMIS
+;----------------------------------
+ALLOTnfa
+	DB	85H
+	DB	'ALLO'
+	DB	'T'+80H
+	DW	HEREnfa
+ALLOT			; ( n -- )  Allocate (reserve) n bytes in dictionary
+	DW	DOCOL
+	DW	DP
+	DW	PLSTORE
+	DW	SEMIS
+;----------------------------------
+COMMAnfa
+	DB	81H
+	DB	','+80H
+	DW	ALLOTnfa
+COMMA			; ( n -- )  Store n in dictionary, allocate 2 bytes
+	DW	DOCOL
+	DW	HERE
+	DW	STORE
+	DW	TWO
+	DW	ALLOT
+	DW	SEMIS
+;----------------------------------
+CCOMMAnfa
+	DB	82H
+	DB	'C'
+	DB	','+80H
+	DW	COMMAnfa
+			; ( b -- )  Store byte b in dictionary, allocate byte
+	DW	DOCOL
+	DW	HERE
+	DW	CSTORE
+	DW	ONE
+	DW	ALLOT
+	DW	SEMIS
+;----------------------------------
+HLMinusDE		;subroutine to subtract DE from HL
+	MOV	A,L
+	SUB	E
+	MOV	L,A
+	MOV	A,H
+	SBB	D
+	MOV	H,A
+	RET
+;----------------------------------
+MINUSnfa
+	DB	81H
+	DB	'-'+80H
+	DW	CCOMMAnfa
+MINUS			; ( n1 n2 -- n1-n2 )  Subtract two numbers on stack
+	DW	MINUSpfa
+MINUSpfa
+	POP	D
+	POP	H
+	CALL	HLMinusDE
+	JMP	PUSHHL
+;----------------------------------
+EQUnfa
+	DB	81H
+	DB	'='+80H
+	DW	MINUSnfa
+EQU			; ( n1 n2 -- f )  Flag f TRUE if n1=n2, else f FALSE
+	DW	DOCOL
+	DW	MINUS
+	DW	ZEQU
+	DW	SEMIS
+;----------------------------------
+LESSnfa
+	DB	81H
+	DB	'<'+80H
+	DW	EQUnfa
+LESS			; ( n1 n2 -- f )  Flag f TRUE if n1<n2, else FALSE
+	DW	LESSpfa
+LESSpfa
+	POP	D	;get n1 into DE
+	POP	H	;get n2 into HL
+	MOV	A,D	;if they have the same sign, then
+	XRA	H
+	JM	LESS2
+	CALL	HLMinusDE	;..subtract n2 from n1
+LESS2
+	INR	H	;if number in HL is >= 0, then
+	DCR	H
+	JM	LESS3
+	LXI	H,false	;..return a false flag
+	JMP	PUSHHL
+LESS3			;else (number in HL is < 0)
+	LXI	H,true	;..return a true flag
+	JMP	PUSHHL
+;----------------------------------
+ULESSnfa
+	DB	82H
+	DB	'U'
+	DB	'<'+80H
+	DW	LESSnfa
+ULESS			; ( u1 u2 -- f )  Flag f TRUE if u1<u2, else FALSE
+	DW	DOCOL
+	DW	TWODUP
+	DW	XOR
+	DW	ZLESS	;if they have different high bits, then
+	DW	ZBRANCH
+	DW	ULESS2-$
+	DW	DROP
+	DW	ZLESS	;..result is true if u1 has bit15 clear
+	DW	ZEQU
+	DW	BRANCH
+	DW	ULESS3-$
+ULESS2			;else (high bits are same)
+	DW	MINUS	;..result is true if u1-u2<0
+	DW	ZLESS
+ULESS3
+	DW	SEMIS
+;----------------------------------
+GREATERnfa
+	DB	81H
+	DB	'>'+80H
+	DW	ULESSnfa
+GREATER			; ( n1 n2 -- f )  Flag f TRUE if u1>u2, else FALSE
+	DW	DOCOL
+	DW	SWAP
+	DW	LESS
+	DW	SEMIS
+;----------------------------------
+ROTnfa
+	DB	83H
+	DB	'RO'
+	DB	'T'+80H
+	DW	GREATERnfa
+ROT			; ( n1 n2 n3 -- n2 n3 n1 )  Rearrange stack as shown
+	DW	ROTpfa
+ROTpfa
+	POP	D
+	POP	H
+	XTHL
+	JMP	PUSHDEHL
+;----------------------------------
+SPACEnfa
+	DB	85H
+	DB	'SPAC'
+	DB	'E'+80H
+	DW	ROTnfa
+SPACE			; ( -- )  Send blank character to display
+	DW	DOCOL
+	DW	BL
+	DW	EMIT
+	DW	SEMIS
+;----------------------------------
+NZDUPnfa
+	DB	84H
+	DB	'-DU'
+	DB	'P'+80H
+	DW	SPACEnfa
+NZDUP			; ( n1 -- n1 | n1 n1 )  Duplicate if n1<>0
+	DW	DOCOL
+	DW	DUP
+	DW	ZBRANCH
+	DW	NZDUP2-$
+	DW	DUP
+NZDUP2
+	DW	SEMIS
+;----------------------------------
+TRAVERSEnfa
+	DB	88H
+	DB	'TRAVERS'
+	DB	'E'+80H
+	DW	NZDUPnfa
+TRAVERSE		; ( addr1 +1 -- addr2 ) Scan + for byte w/bit7
+			; ( addr1 -1 -- addr2 ) Scan - for byte w/bit7
+	DW	DOCOL
+	DW	SWAP
+TRAVERSE2
+	DW	OVER
+	DW	PLUS	;Compute addr of next byte ( +/-1 nextaddr )
+	DW	LIT
+	DW	7FH
+	DW	OVER
+	DW	CAT	; ( +/-1 nextaddr 07FH b )
+	DW	LESS
+	DW	ZBRANCH	;repeat until b>07FH
+	DW	TRAVERSE2-$
+	DW	SWAP	; ( nextaddr +/-1 )
+	DW	DROP
+	DW	SEMIS
+;----------------------------------
+LATESTnfa
+	DB	86H
+	DB	'LATES'
+	DB	'T'+80H
+	DW	TRAVERSEnfa
+LATEST			; ( -- nfa )  Leave nfa of topmost word in CURRENT voc
+	DW	DOCOL
+	DW	CURRENT
+	DW	AT	;get pointer to vocabulary
+	DW	AT
+	DW	SEMIS
+;----------------------------------
+LFAnfa
+	DB	83H
+	DB	'LF'
+	DB	'A'+80H
+	DW	LATESTnfa
+LFA			; ( pfa -- lfa )  Convert pfa to lfa
+	DW	DOCOL
+	DW	LIT
+	DW	4
+	DW	MINUS
+	DW	SEMIS
+;----------------------------------
+CFAnfa
+	DB	83H
+	DB	'CF'
+	DB	'A'+80H
+	DW	LFAnfa
+CFA			; ( pfa -- cfa )  Convert pfa to cfa
+	DW	DOCOL
+	DW	TWO
+	DW	MINUS
+	DW	SEMIS
+;----------------------------------
+NFAnfa
+	DB	83H
+	DB	'NF'
+	DB	'A'+80H
+	DW	CFAnfa
+NFA			; ( pfa -- nfa )  Convert parameter addr to name addr
+	DW	DOCOL
+	DW	LIT
+	DW	5
+	DW	MINUS
+	DW	LIT
+	DW	-1
+	DW	TRAVERSE
+	DW	SEMIS
+;----------------------------------
+PFAnfa
+	DB	83H
+	DB	'PF'
+	DB	'A'+80H
+	DW	NFAnfa
+PFA			; ( nfa -- pfa )  Convert name addr to parameter addr
+	DW	DOCOL
+	DW	ONE
+	DW	TRAVERSE
+	DW	LIT
+	DW	5
+	DW	PLUS
+	DW	SEMIS
+;----------------------------------
+STORECSPnfa
+	DB	84H
+	DB	'!CS'
+	DB	'P'+80H
+	DW	PFAnfa
+STORECSP		; ( -- )  Store current stack pointer in CSP
+	DW	DOCOL
+	DW	SPAT
+	DW	CSP
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+QERRORnfa
+	DB	86H
+	DB	'?ERRO'
+	DB	'R'+80H
+	DW	STORECSPnfa
+QERROR			; ( f n -- )  If f TRUE, issue error message #n
+	DW	DOCOL
+	DW	SWAP
+	DW	ZBRANCH
+	DW	QERROR2-$
+	DW	ERROR
+	DW	BRANCH
+	DW	QERROR3-$
+QERROR2
+	DW	DROP
+QERROR3
+	DW	SEMIS
+;----------------------------------
+QCOMPnfa
+	DB	85H
+	DB	'?COM'
+	DB	'P'+80H
+	DW	QERRORnfa
+QCOMP			; ( -- )  If not compiling, issue error #17
+	DW	DOCOL
+	DW	STATE
+	DW	AT
+	DW	ZEQU
+	DW	LIT
+	DW	17
+	DW	QERROR
+	DW	SEMIS
+;----------------------------------
+QEXECnfa
+	DB	85H
+	DB	'?EXE'
+	DB	'C'+80H
+	DW	QCOMPnfa
+QEXEC			; ( -- )  If compiling, issue error message #18
+	DW	DOCOL
+	DW	STATE
+	DW	AT
+	DW	LIT
+	DW	18
+	DW	QERROR
+	DW	SEMIS
+;----------------------------------
+QPAIRnfa
+	DB	86H
+	DB	'?PAIR'
+	DB	'S'+80H
+	DW	QEXECnfa
+QPAIR			; ( n1 n2 -- )  If n1<>n2, issue error message #19
+	DW	DOCOL
+	DW	MINUS
+	DW	LIT
+	DW	19
+	DW	QERROR
+	DW	SEMIS
+;----------------------------------
+QCSPnfa
+	DB	84H
+	DB	'?CS'
+	DB	'P'+80H
+	DW	QPAIRnfa
+QCSP			; ( -- )  If stack pointer <> one in CSP, error #20
+	DW	DOCOL
+	DW	SPAT
+	DW	CSP
+	DW	AT
+	DW	MINUS
+	DW	LIT
+	DW	20
+	DW	QERROR
+	DW	SEMIS
+;----------------------------------
+QLOADINGnfa
+	DB	88H
+	DB	'?LOADIN'
+	DB	'G'+80H
+	DW	QCSPnfa
+QLOADING			; ( -- )  If not loading from disk, error #22
+	DW	DOCOL
+	DW	BLK
+	DW	AT
+	DW	ZEQU
+	DW	LIT
+	DW	22
+	DW	QERROR
+	DW	SEMIS
+;----------------------------------
+COMPILEnfa		; (Used in immediate word in defining part)
+	DB	87H
+	DB	'COMPIL'
+	DB	'E'+80H
+	DW	QLOADINGnfa
+COMPILE			; ( -- )  Cfa of next definition word put into dict
+	DW	DOCOL
+	DW	QCOMP	;check that compiling
+	DW	FROMR	;get address of	next word in definition
+	DW	DUP
+	DW	TWOPL
+	DW	TOR	;skip next word in definition
+	DW	AT
+	DW	COMMA	;store next word in definition in new definition
+	DW	SEMIS
+;----------------------------------
+LBRACKETnfa		;note...IMMEDIATE
+	DB	0C1H
+	DB	'['+80H
+	DW	COMPILEnfa
+LBRACKET		; ( -- )  Changes STATE to execution state
+	DW	DOCOL
+	DW	ZERO
+	DW	STATE
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+RBRACKETnfa
+	DB	81H
+	DB	']'+80H
+	DW	LBRACKETnfa
+RBRACKET		; ( -- )  Changes STATE to compiling state
+	DW	DOCOL
+	DW	LIT
+	DW	0C0H	;0C0H used so immediate words are executed
+	DW	STATE
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+SMUDGEnfa
+	DB	86H
+	DB	'SMUDG'
+	DB	'E'+80H
+	DW	RBRACKETnfa
+SMUDGE			; ( -- )  Toggle SMUDGE bit of latest definition
+	DW	DOCOL
+	DW	LATEST
+	DW	LIT
+	DW	020H
+	DW	TOGGLE
+	DW	SEMIS
+;----------------------------------
+HEXnfa
+	DB	83H
+	DB	'HE'
+	DB	'X'+80H
+	DW	SMUDGEnfa
+			; ( -- )  Change base to hexadecimal
+	DW	DOCOL
+	DW	LIT
+	DW	16
+	DW	BASE
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+DECIMALnfa
+	DB	87H
+	DB	'DECIMA'
+	DB	'L'+80H
+	DW	HEXnfa
+DECIMAL			; ( -- )  Change base to decimal
+	DW	DOCOL
+	DW	LIT
+	DW	10
+	DW	BASE
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+DOSEMICODEnfa
+	DB	87H
+	DB	'(;CODE'
+	DB	')'+80H
+	DW	DECIMALnfa
+DOSEMICODE		; ( -- )  Runtime procedure for ;CODE
+	DW	DOCOL
+	DW	FROMR	;get address of calling word (abort its interpreting)
+	DW	LATEST
+	DW	PFA
+	DW	CFA
+	DW	STORE	;store addr in its code addr
+	DW	SEMIS
+;----------------------------------
+SEMICODEnfa
+	DB	0C5H	;IMMEDIATE
+	DB	';COD'
+	DB	'E'+80H
+	DW	DOSEMICODEnfa
+			; ( -- )  Compile (;CODE), and start assembling
+	DW	DOCOL
+	DW	QCSP	;check that stack is clean
+	DW	COMPILE	;(;CODE) goes into definition
+	DW	DOSEMICODE
+	DW	LBRACKET	;change STATE to execution state
+	DW	NOOP
+	DW	SEMIS
+;----------------------------------
+LESSBUILDSnfa
+	DB	87H
+	DB	'<BUILD'
+	DB	'S'+80H
+	DW	SEMICODEnfa
+LESSBUILDS		; ( -- )  Create following word as constant=0
+	DW	DOCOL
+	DW	ZERO
+	DW	CONSTANT
+	DW	SEMIS
+;----------------------------------
+DOESGREATnfa
+	DB	85H
+	DB	'DOES'
+	DB	'>'+80H
+	DW	LESSBUILDSnfa
+DOESGREAT		; ( -- )  Define execution action of word
+	DW	DOCOL
+	DW	FROMR	;get pointer to cfa of next word in definition
+	DW	LATEST
+	DW	PFA
+	DW	STORE	;store that pointer at pfa of latest definition
+	DW	DOSEMICODE
+DODOESGREAT		;run-time action for DOES>
+	LHLD	RP	;put current IP on R stack
+	DCX	H
+	MOV	M,B
+	DCX	H
+	MOV	M,C
+	SHLD	RP
+	INX	D	;move DE to pfa
+	XCHG
+	MOV	C,M	;get IP from that address
+	INX	H
+	MOV	B,M
+	INX	H	;put next addr onto stack
+	JMP	PUSHHL
+;----------------------------------
+COUNTnfa
+	DB	85H
+	DB	'COUN'
+	DB	'T'+80H
+	DW	DOESGREATnfa
+COUNT			; ( addr1 -- addr1+1 b )
+	DW	DOCOL
+	DW	DUP
+	DW	ONEPL
+	DW	SWAP
+	DW	CAT
+	DW	SEMIS
+;----------------------------------
+TYPEnfa
+	DB	84H
+	DB	'TYP'
+	DB	'E'+80H
+	DW	COUNTnfa
+TYPE			; ( addr u -- )  Emit u chars, starting at addr
+	DW	DOCOL
+	DW	NZDUP	;if count<>0 then
+	DW	ZBRANCH
+	DW	TYPE3-$
+	DW	OVER	;..compute termination address
+	DW	PLUS
+	DW	SWAP	;..for I := addr to (termination addr - 1)
+	DW	XDO
+TYPE2
+	DW	I
+	DW	CAT	;....get char at addr I
+	DW	LIT
+	DW	07FH
+	DW	AND
+	DW	EMIT	;....emit it
+	DW	XLOOP	;..end for
+	DW	TYPE2-$
+	DW	BRANCH
+	DW	TYPE4-$
+TYPE3			;else (count was 0)
+	DW	DROP	;..drop count
+TYPE4
+	DW	SEMIS
+;----------------------------------
+MINUSTRAILINGnfa
+	DB	89H
+	DB	'-TRAILIN'
+	DB	'G'+80H
+	DW	TYPEnfa
+MINUSTRAILING		; ( addr n1 -- addr n2 )  Deletes trailing spaces
+	DW	DOCOL
+	DW	DUP
+	DW	ZERO
+	DW	XDO	;for I:=0 to n1-1 do ( addr n )
+MINUSTRAILING2
+	DW	TWODUP
+	DW	PLUS
+	DW	ONE
+	DW	MINUS
+	DW	CAT	;..get char at addr+i-1 ( addr n b )
+	DW	BL
+	DW	MINUS	;..if char<>blank, then
+	DW	ZBRANCH
+	DW	MINUSTRAILING3-$
+	DW	LEAVE	;....leave loop
+	DW	BRANCH
+	DW	MINUSTRAILING4-$
+MINUSTRAILING3		;..else (char=blank)
+	DW	ONE
+	DW	MINUS	;..decrement n ( addr n )
+MINUSTRAILING4
+	DW	XLOOP	;next I
+	DW	MINUSTRAILING2-$
+	DW	SEMIS
+;----------------------------------
+DODOTQUOTEnfa
+	DB	84H
+	DB	'(."'
+	DB	')'+80H
+	DW	MINUSTRAILINGnfa
+DODOTQUOTE		; ( -- )  Run-time procedure for ."
+	DW	DOCOL
+	DW	R	;get pointer to next loc in definition
+	DW	COUNT	; ( addr u )
+	DW	DUP
+	DW	ONEPL	; ( addr u u+1 )
+	DW	FROMR
+	DW	PLUS
+	DW	TOR	;adjust number of top of R stack ( addr u )
+	DW	TYPE	;display string from definition
+	DW	SEMIS
+;----------------------------------
+DOTQUOTEnfa
+	DB	0C2H	;IMMEDIATE
+	DB	'.'
+	DB	'"'+80H
+	DW	DODOTQUOTEnfa
+			; ( -- )  Type string following, terminated by "
+	DW	DOCOL
+	DW	LIT
+	DW	34	;Quote character
+	DW	STATE
+	DW	AT	;if compiling, then ( c )
+	DW	ZBRANCH
+	DW	DOTQUOTE2-$
+	DW	COMPILE	;..put (.") into definition
+	DW	DODOTQUOTE
+	DW	WORD	;..copy into dictionary until "
+	DW	HERE
+	DW	CAT
+	DW	ONEPL
+	DW	ALLOT	;..allot number of bytes needed
+	DW	BRANCH
+	DW	DOTQUOTE3-$
+DOTQUOTE2		;else (executing)
+	DW	WORD	;..copy into dictionary until "
+	DW	HERE
+	DW	COUNT
+	DW	TYPE	;..copy it to display (dictionary space NOT allotted)
+DOTQUOTE3
+	DW	SEMIS
+;----------------------------------
+EXPECTnfa
+	DB	86H
+	DB	'EXPEC'
+	DB	'T'+80H
+	DW	DOTQUOTEnfa
+EXPECT			; ( addr count -- )  Copy keys to addr until eoln
+	DW	DOCOL
+	DW	OVER
+	DW	PLUS	; ( addr addr+count )
+	DW	OVER	; ( addr addr+count addr )
+	DW	XDO	;for I:=addr to addr+count-1 do ( addr )
+EXPECT2
+	DW	KEY
+	DW	DUP
+	DW	LIT
+	DW	BSaddr-START
+	DW	PLORIGIN
+	DW	AT
+	DW	EQU	;.. ( addr key f )
+	DW	ZBRANCH	;..if key=backspace then
+	DW	EXPECT5-$
+	DW	DROP	;.... ( addr )
+	DW	DUP
+	DW	I
+	DW	EQU	;....True if addr=R value ( addr f )
+	DW	DUP	;.... ( addr f f )
+	DW	FROMR	;.... ( addr f f i )
+	DW	TWO
+	DW	MINUS
+	DW	PLUS	;.... ( addr f f+i-2 )
+	DW	TOR	;.... ( addr f )
+	DW	ZBRANCH	;....if addr=R value then
+	DW	EXPECT3-$
+	DW	LIT	;...... ( addr 7 )
+	DW	7
+	DW	BRANCH
+	DW	EXPECT4-$
+EXPECT3			;....else (addr<>R value)
+	DW	LIT
+	DW	8	;...... ( addr 8 )
+EXPECT4
+	DW	BRANCH
+	DW	40
+EXPECT5			;..else (not backspace) ( addr key )
+	DW	DUP
+	DW	LIT
+	DW	13
+	DW	EQU	;..flag true if CR  ( addr key f )
+	DW	ZBRANCH	;..if CR then
+	DW	EXPECT6-$
+	DW	LEAVE	;....leave loop
+	DW	DROP
+	DW	BL
+	DW	ZERO	;....( addr bl 0 )
+	DW	BRANCH
+	DW	EXPECT7-$
+EXPECT6			;..else (not BS or CR)
+	DW	DUP	;.... ( addr key key )
+EXPECT7			;..endif
+	DW	I
+	DW	CSTORE	;..store at I address ( addr key )
+	DW	ZERO
+	DW	I	;.. ( addr key 0 i )
+	DW	ONEPL
+	DW	STORE	;..put 0 at next addr ( addr key )
+	DW	EMIT	;..display character ( addr )
+	DW	XLOOP	;next I
+	DW	EXPECT2-$
+	DW	DROP	;drop address
+	DW	SEMIS
+;----------------------------------
+QUERYnfa
+	DB	85H
+	DB	'QUER'
+	DB	'Y'+80H
+	DW	EXPECTnfa
+QUERY			; ( -- )  Take in up to 80 chars from keyboard to TIB
+	DW	DOCOL
+	DW	TIB
+	DW	AT
+	DW	LIT
+	DW	80
+	DW	EXPECT
+	DW	ZERO
+	DW	IN
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+NULLnfa			;Changed for RAM4TH
+	DB	0C1H	;IMMEDIATE ( 1 char long )
+	DB	80H	;char is null char ( chr(0) )
+	DW	QUERYnfa
+			; ( -- )  Word which terminates interpret at eoln
+	DW	DOCOL
+	dw	BLK
+	dw	AT
+	dw	ZBRANCH	;if loading from mass storage then
+	dw	NULL3-$
+	dw	EOF
+	dw	AT
+	dw	ZBRANCH	;..if at eof then
+	dw	NULL2-$
+	dw	CLOSEF	;....close file
+	dw	FROMR	;....drop return addr (; will lead to its caller)
+	dw	DROP
+	dw	BRANCH
+	dw	NULL4-$
+NULL2			;..else (not at eof)
+	dw	GETLINE	;....get a new line from mass storage
+	dw	ZERO	;....reset pointer IN to beginning of buffer
+	dw	IN
+	dw	STORE
+	dw	BRANCH
+	dw	NULL4-$
+NULL3			;else (interpreting from keyboard)
+	DW	FROMR	;drop return addr (; will lead to its caller)
+	DW	DROP
+NULL4			;endif
+	DW	SEMIS
+;----------------------------------
+FILLnfa
+	DB	84H
+	DB	'FIL'
+	DB	'L'+80H
+	DW	NULLnfa
+FILL			; ( addr count b -- )  Fill count bytes at addr with b
+	DW	FILLpfa
+FILLpfa
+	MOV	L,C	;move IP into HL
+	MOV	H,B
+	POP	D	;get byte into DE
+	POP	B	;get count into BC
+	XTHL		;!!!why not leave addr in HL, so can MOV M,E?!!!
+	XCHG		;get addr into DE, byte into L, IP on stack
+FILL2			;while count<>0 do
+	MOV	A,B
+	ORA	C
+	JZ	FILL3
+	MOV	A,L
+	STAX	D	;..store byte at address
+	INX	D	;..increment address
+	DCX	B	;..decrement count
+	JMP	FILL2
+FILL3			;endwhile
+	POP	B	;retrieve IP into BC
+	JMP	NEXT
+;----------------------------------
+ERASEnfa
+	DB	85H
+	DB	'ERAS'
+	DB	'E'+80H
+	DW	FILLnfa
+ERASE			; ( addr count -- )  Fill count bytes at addr with 0
+	DW	DOCOL
+	DW	ZERO
+	DW	FILL
+	DW	SEMIS
+;----------------------------------
+BLANKSnfa
+	DB	86H
+	DB	'BLANK'
+	DB	'S'+80H
+	DW	ERASEnfa
+BLANKS			; ( addr count -- )  Fill count bytes @ addr with space
+	DW	DOCOL
+	DW	BL
+	DW	FILL
+	DW	SEMIS
+;----------------------------------
+HOLDnfa
+	DB	84H
+	DB	'HOL'
+	DB	'D'+80H
+	DW	BLANKSnfa
+HOLD			; ( c -- )  Used after <# to place c in numeric string
+	DW	DOCOL
+	DW	LIT
+	DW	-1
+	DW	HLD
+	DW	PLSTORE	;decrement HLD address
+	DW	HLD
+	DW	AT
+	DW	CSTORE	;store character c there
+	DW	SEMIS
+;----------------------------------
+PADnfa
+	DB	83H
+	DB	'PA'
+	DB	'D'+80H
+	DW	HOLDnfa
+PAD			; ( -- addr )  Address of text output buffer
+	DW	DOCOL
+	DW	HERE
+	DW	LIT
+	DW	68
+	DW	PLUS
+	DW	SEMIS
+;----------------------------------
+WORDnfa
+	DB	84H
+	DB	'WOR'
+	DB	'D'+80H
+	DW	PADnfa
+WORD			; ( c -- )  Temporarily accumulate into dict until c
+	DW	DOCOL
+	dw	BLK
+	dw	AT
+	dw	ZBRANCH
+	dw	WORD2-$
+	dw	FIRST
+	dw	BRANCH
+	dw	WORD3-$
+WORD2
+	DW	TIB	;leave addr of TIB ( c addr )
+	DW	AT
+WORD3
+	DW	IN
+	DW	AT
+	DW	PLUS	;add value of IN to addr ( c addr )
+	DW	SWAP
+	DW	ENCLOSE	;find limits of word ( addr n1 n2 n3 )
+	DW	HERE
+	DW	LIT
+	DW	34
+	DW	BLANKS	;fill dictionary with 34 spaces (1 for count, 31 name)
+	DW	IN
+	DW	PLSTORE	;update IN for next word ( addr n1 n2 )
+	DW	OVER
+	DW	MINUS	;compute length of word ( addr n1 n2-n1 )
+	DW	TOR	;make a temporary copy on R stack
+	DW	R
+	DW	HERE
+	DW	CSTORE	;put count into dictionary ( addr n1 )
+	DW	PLUS	;compute addr of first char after left trim ( addr )
+	DW	HERE
+	DW	ONEPL	;compute dest addr ( from dest )
+	DW	FROMR	;retrieve number of bytes to copy
+	DW	CMOVE	;copy them
+	DW	SEMIS
+;----------------------------------
+FLITnfa
+	db	84H
+	db	'FLI'
+	db	'T'+80H
+	dw	WORDnfa
+FLIT			; ( -- )  Lift float stack, copy num in def into X
+	dw	DOCOL
+	dw	FENTER	;lift floating point stack
+	dw	FROMR
+	dw	DUP	;copy number from def into X
+	dw	X
+	dw	FMOVE
+	dw	LIT	;adjust number on top of floating point stack
+	dw	8
+	dw	PLUS
+	dw	TOR
+	dw	SEMIS
+;----------------------------------
+FLITERALnfa
+	db	0C8H	;IMMEDIATE
+	db	'FLITERA'
+	db	'L'+80H
+	dw	FLITnfa
+FLITERAL		; ( -- )  If compiling, put floating point into def
+			;         If exec, put floating point into X
+	dw	DOCOL
+	dw	STATE
+	dw	AT
+	dw	ZBRANCH	;if compiling (STATE<>0) then
+	dw	FLITERAL2-$
+	dw	COMPILE	;..put FLIT into definition
+	dw	FLIT
+	dw	HERE
+	dw	LIT	;..make room for 8 bytes (floating number) in def
+	dw	8
+	dw	ALLOT
+	dw	XU	;..copy number from XU to definition
+	dw	SWAP
+	dw	FMOVE
+	dw	BRANCH
+	dw	FLITERAL3-$
+FLITERAL2		;else (executing)
+	dw	FENTER	;..lift floating point stack
+	dw	XU
+	dw	X
+	dw	FMOVE	;..copy number from XU to X
+FLITERAL3
+	dw	SEMIS
+;----------------------------------
+DONUMBERnfa
+	DB	88H
+	DB	'(NUMBER'
+	DB	')'+80H
+	DW	WORDnfa
+DONUMBER		; ( d1 addr1 -- d2 addr2 )  Convert text at addr1+1 to
+			; number d2; addr2 is addr of first unconvertible
+	DW	DOCOL
+DONUMBER2
+	DW	ONEPL
+	DW	DUP
+	DW	TOR	;put copy of address on R stack
+	DW	CAT
+	DW	BASE
+	DW	AT
+	DW	DIGIT	;convert to digit ( d1 n f )
+	DW	ZBRANCH	;if no error then
+	DW	DONUMBER4-$
+	DW	SWAP	;..get high word of d1 on top of stack ( d1l n d1h )
+	DW	BASE
+	DW	AT
+	DW	USTAR	;..multiply it by the current base
+	DW	DROP	;..drop the high word of the result ( d1l n d2l )
+	DW	ROT	;..get low word of d1 to top of stack ( n d2l d1l )
+	DW	BASE
+	DW	AT
+	DW	USTAR	;..multiply it by current base	( n d2l d3 )
+	DW	DPLUS	;..combine to get result ( d )
+	DW	DPL
+	DW	AT
+	DW	ONEPL
+	DW	ZBRANCH	;..if [DPL]<>-1 then
+	DW	DONUMBER3-$
+	DW	ONE
+	DW	DPL
+	DW	PLSTORE	;....increment value of DPL (# of digits after dot)
+DONUMBER3
+	DW	FROMR	;..get addr back from R stack ( d addr )
+	DW	BRANCH
+	DW	DONUMBER2-$
+DONUMBER4		;endif
+	DW	FROMR
+	DW	SEMIS
+;----------------------------------
+LEAD0nfa
+	db	85H
+	db	'LEAD'
+	db	'0'+80H
+	dw	DONUMBERnfa
+LEAD0			; ( addr -- addr count )  Skip leading '0's, while
+			; counting them
+	dw	DOCOL
+	dw	ZERO	;initialize count to 0
+LEAD02			;begin
+	dw	OVER
+	dw	CAT	;..get byte there ( addr count b )
+	dw	LIT
+	dw	'0'
+	dw	EQU
+	dw	ZBRANCH	;while byte=0 ( addr count )
+	dw	LEAD03-$
+	dw	ONEPL	;..increment count
+	dw	SWAP
+	dw	ONEPL	;..increment addr
+	dw	SWAP
+	dw	BRANCH	;repeat
+	dw	LEAD02-$
+LEAD03
+	dw	SEMIS
+;----------------------------------
+FCHARSnfa
+	db	86H
+	db	'FCHAR'
+	db	'S'+80H
+	dw	LEAD0nfa
+FCHARS			; ( addr1 count -- addr2 count )
+			; puts characters into floating point, if count<14
+	dw	DOCOL
+FCHARS2			;begin
+	dw	OVER
+	dw	CAT
+	dw	LIT
+	dw	10	;.. ( addr count char 10 )
+	dw	DIGIT
+	dw	ZBRANCH	;while valid digit
+	dw	FCHARS7-$
+	dw	OVER	;.. ( addr count digit count )
+	dw	LIT
+	dw	14
+	dw	LESS
+	dw	ZBRANCH	;..if count<14 then
+	dw	FCHARS5-$
+	dw	OVER	;.... ( addr count digit count )
+	dw	ONE
+	dw	AND
+	dw	ZEQU
+	dw	ZBRANCH	;....if count even then
+	dw	FCHARS3-$
+	dw	LIT
+	dw	4
+	dw	SHL	;......shift digit left 4 bits
+FCHARS3			;....endif ( addr count digit )
+	dw	OVER	;....compute storage addr
+	dw	ONE
+	dw	SHR
+	dw	XU
+	dw	PLUS
+	dw	ONEPL
+	dw	SWAP
+	dw	TOGGLE	;....and update number at location
+	dw	BRANCH	;.... ( addr count )
+	dw	FCHARS6-$
+FCHARS5			;..else (count>=14)
+	dw	DROP	;....drop digit ( addr count )
+FCHARS6			;..endif (count<14)
+	dw	ONEPL	;..increment count
+	dw	SWAP
+	dw	ONEPL	;..increment reading addr
+	dw	SWAP
+	dw	BRANCH	;repeat ( addr count )
+	dw	FCHARS2-$
+FCHARS7
+	dw	SEMIS
+;----------------------------------
+NUMBERnfa
+	DB	86H
+	DB	'NUMBE'
+	DB	'R'+80H
+	DW	FCHARSnfa
+NUMBER			; ( addr - d )  Convert counted string to signed double
+			; ( addr -- )  If number has decimal, put into XU fvar
+	DW	DOCOL
+	dw	ZERO
+	dw	FFLAG
+	dw	STORE	;clear FFLAG (assume is not floating)
+	dw	DUP	; ( addr addr )
+	dw	COUNT	; ( addr addr+1 count )
+	dw	ZERO
+	dw	XDO
+NUMBER1a
+	dw	DUP	;.. ( addr addr2 addr2 )
+	dw	CAT
+	dw	LIT
+	dw	'.'
+	dw	EQU
+	dw	ZBRANCH	;..if char at addr2 is '.', then ( addr addr2 )
+	dw	NUMBER1b-$
+	dw	ONE	;....set FFLAG and
+	dw	FFLAG
+	dw	STORE
+	dw	LEAVE	;....leave loop
+NUMBER1b
+	dw	ONEPL	;..increment addr2 ( addr addr2 )
+	dw	XLOOP	;until find decimal or check all characters
+	dw	NUMBER1a-$
+	dw	DROP	;drop addr2 ( addr )
+	dw	FFLAG	;if found floating point then
+	dw	AT
+	dw	ZBRANCH
+	dw	NUMBER1c-$
+	dw	XU
+	dw	LIT
+	dw	8
+	dw	ERASE	;..clear XU ( addr )
+	dw	ONEPL	;..move to first number (prev was count)
+	dw	DUP
+	dw	CAT	;.. ( addr b )
+	dw	LIT
+	dw	'-'
+	dw	EQU
+	dw	ZBRANCH	;..if first char is '-' then
+	dw	NUMBER1d-$
+	dw	LIT	;....set sign bit in XU
+	dw	80H
+	dw	XU
+	dw	CSTORE
+	dw	ONEPL	;....advance to next char
+	dw	BRANCH
+	dw	NUMBER1e-$
+NUMBER1d		;..else (first char<>'-')
+	dw	DUP
+	dw	CAT
+	dw	LIT
+	dw	'+'
+	dw	EQU
+	dw	ZBRANCH	;..if first char='+' then
+	dw	NUMBER1e-$
+	dw	ONEPL	;....advance address ( addr )
+NUMBER1e		;..have taken care of leading sign
+	dw	LEAD0	;..skip leading '0's
+	dw	DROP	;..drop count (don't care how many) ( addr )
+	dw	ZERO
+	dw	FCHARS	;..put digits in, until non-digit ( addr count )
+	dw	OVER
+	dw	CAT
+	dw	LIT
+	dw	'.'
+	dw	MINUS
+	dw	ZERO
+	dw	QERROR	;..msg #0 if not decimal point ( addr count )
+	dw	SWAP	;.. ( count addr )
+	dw	ONEPL	;..move to next character
+	dw	OVER	;.. ( count addr count )
+	dw	ZEQU
+	dw	ZBRANCH	;..if count is zero then
+	dw	NUMBER1m-$
+	dw	LEAD0	;....skip leading zeros
+	dw	CHS	;....exponent is neg of # of zeros skipped
+	dw	BRANCH
+	dw	NUMBER1n-$
+NUMBER1m		;..else (non-zeros already found)
+	dw	OVER	;....exponent is # of digits processed
+NUMBER1n		;..endif ( count addr exponent )
+	dw	LIT
+	dw	40H	;..put bias into exponent
+	dw	PLUS
+	dw	XU
+	dw	CAT
+	dw	PLUS	;..include negative, if any
+	dw	XU
+	dw	CSTORE	;..exponent now set ( count addr )
+	dw	SWAP	;.. ( addr count )
+	dw	FCHARS	;..process chars right of decimal ( addr count )
+	dw	DROP	;..drop count
+	dw	DUP
+	dw	CAT	;.. ( addr byte )
+	dw	LIT
+	dw	0DFH
+	dw	AND	;..zero bit 5 (distinguishes lower from upper case)
+	dw	LIT
+	dw	'E'
+	dw	EQU
+	dw	ZBRANCH	;..if 'e' or 'E' follows, then
+	dw	NUMBER1f-$
+	dw	LIT
+	dw	-1
+	dw	DPL
+	dw	STORE	;....set DPL to -1 (for use by (NUMBER) )
+	dw	ONEPL	;....increment address ( addr )
+	dw	DUP
+	dw	CAT
+	dw	LIT
+	dw	'-'
+	dw	EQU	;.... ( addr f )
+	dw	SWAP
+	dw	OVER	;.... ( f addr f )
+	dw	ZEQU
+	dw	ZBRANCH	;....if character<>'-' then
+	dw	NUMBER1g-$
+	dw	DUP
+	dw	CAT
+	dw	LIT
+	dw	'+'
+	dw	MINUS
+	dw	ZBRANCH	;......if character<>'+' then
+	dw	NUMBER1g-$
+	dw	ONE
+	dw	MINUS	;........back up one address (for (NUMBER) ( f addr )
+NUMBER1g		;....endif (neither '-' nor '+' in exponent)
+	dw	BASE	;....store current base
+	dw	AT
+	dw	TOR
+	dw	DECIMAL	;....set decimal base for (NUMBER)
+	dw	ZERO
+	dw	ZERO	;.... ( f addr 0,0 )
+	dw	ROT	;.... ( f 0,0 addr )
+	dw	DONUMBER
+	dw	SWAP
+	dw	DROP	;....drop high word of exponent ( f n addr )
+	dw	SWAP	;.... ( f addr n )
+	dw	FROMR
+	dw	BASE
+	dw	STORE	;....restore previous base
+	dw	ROT	;.... ( addr n f )
+	dw	ZBRANCH	;....if there was minus sign then
+	dw	NUMBER1h-$
+	dw	CHS	;......change sign of exponent
+NUMBER1h		;.... ( addr n )
+	dw	XU
+	dw	CAT
+	dw	LIT
+	dw	7FH	;....get exponent previously saved (strip sign bit)
+	dw	AND
+	dw	PLUS	;.... ( addr n )
+	dw	DUP
+	dw	LIT
+	dw	7FH
+	dw	GREATER
+	dw	OVER
+	dw	ONE
+	dw	LESS
+	dw	OR
+	dw	ZERO
+	dw	QERROR	;....error if exponent out of range
+	dw	XU
+	dw	CAT
+	dw	LIT
+	dw	80H
+	dw	AND
+	dw	PLUS
+	dw	XU
+	dw	CSTORE	;.... ( addr )
+NUMBER1f		;..reached end of number
+	dw	CAT
+	dw	BL
+	dw	MINUS
+	dw	ZERO
+	dw	QERROR	;..if this char<>' ', msg #0
+	dw	XU	;..if first four digits are 0000 then
+	dw	ONEPL
+	dw	AT
+	dw	ZEQU
+	dw	ZBRANCH
+	dw	NUMBER1v-$
+	dw	ZERO	;....replace exponent with 00
+	dw	XU
+	dw	CSTORE
+NUMBER1v
+	dw	BRANCH	;..done with floating point number ( )
+	dw	NUMBER4-$
+NUMBER1c		;else (not floating point, do as double integer)
+	DW	ZERO
+	DW	ZERO
+	DW	ROT	; ( 0,0 addr )
+	DW	DUP
+	DW	ONEPL
+	DW	CAT	; ( 0,0 addr b )
+	DW	LIT
+	DW	'-'
+	DW	EQU	;Check whether minus sign precedes ( 0,0 addr f )
+	DW	DUP
+	DW	TOR
+	DW	PLUS	;if was a minus sign, increment addr
+	DW	LIT
+	DW	-1	; ( 0,0 addr -1 )
+NUMBER2
+	DW	DPL
+	DW	STORE	;set value of DPL to number on stack ( 0,0 addr )
+	DW	DONUMBER	;do number conversion ( d addr2 )
+	DW	DUP
+	DW	CAT	; ( d addr2 b )
+	DW	BL
+	DW	MINUS	;check whether next char is blank ( d addr2 f )
+	DW	ZBRANCH	;if next char not blank, then
+	DW	NUMBER3-$
+	DW	DUP
+	DW	CAT
+	DW	LIT
+	DW	','
+	DW	MINUS	;..set flag if next char not comma ( d addr2 f )
+	DW	ZERO
+	DW	QERROR	;..abort if not with message #0
+	DW	ZERO	;.. ( d addr2 0 )
+	DW	BRANCH
+	DW	NUMBER2-$
+NUMBER3			;endif (next char not blank)
+	DW	DROP
+	DW	FROMR	;retrieve flag from R stack ( d f )
+	DW	ZBRANCH	;if minus sign preceded
+	DW	NUMBER4-$
+	DW	DCHS	;..change sign of result
+NUMBER4
+	DW	SEMIS	; ( d )
+;----------------------------------
+MINUSFINDnfa
+	DB	85H
+	DB	'-FIN'
+	DB	'D'+80H
+	DW	NUMBERnfa
+MINUSFIND		; ( -- pfa b tf | ff )  Search for next text word
+	DW	DOCOL
+	DW	BL
+	DW	WORD	;copy word into dictionary (not smudged)
+	DW	HERE	;return addr of count byte
+	DW	CONTEXT
+	DW	AT
+	DW	AT	;get address of last in context
+	DW	XFIND	; ( pfa b tf | ff )
+	DW	DUP
+	DW	ZEQU	;if not found, set flag
+	DW	ZBRANCH	;if not found, then
+	DW	10
+	DW	DROP	; ( )
+	DW	HERE	;..search CURRENT vocabulary
+	DW	LATEST
+	DW	XFIND
+	DW	SEMIS
+;----------------------------------
+DOABORTnfa
+	DB	87H
+	DB	'(ABORT'
+	DB	')'+80H
+	DW	MINUSFINDnfa
+DOABORT			; ( anything -- )  Same as ABORT
+	DW	DOCOL
+	DW	ABORT
+	DW	SEMIS
+;----------------------------------
+ERRORnfa		;!!!Deviates from fig-FORTH model for diskless!!!
+			;!!!May change in RAM4TH!!!
+	DB	85H
+	DB	'ERRO'
+	DB	'R'+80H
+	DW	DOABORTnfa
+ERROR			; ( line -- in blk | )  Respond to error with message
+	DW	DOCOL
+	DW	WARNING
+	DW	AT
+	DW	ZLESS
+	DW	ZBRANCH	;if WARNING<0, then execute (ABORT)
+	DW	ERROR2-$
+	DW	DOABORT
+ERROR2			;else (WARNING>=0) ( line )
+	DW	HERE
+	DW	COUNT
+	DW	TYPE	;..type word being interpreted by WORD
+	DW	DODOTQUOTE
+	DB	02H
+	DB	'? '	;..followed by '? '
+	DW	MESSAGE
+	DW	SPSTORE	;..clear stack
+	DW	BLK
+	DW	AT	;..check whether loading from disk
+	DW	NZDUP
+	DW	ZBRANCH	;..if loading from disk
+	DW	ERROR3-$
+	DW	IN	;....return interpretation pointer
+	DW	AT
+	DW	SWAP	;.... ( in blk )
+ERROR3			;..endif
+	DW	QUIT
+;----------------------------------
+IDDOTnfa		;!!!Seems unnecessarily complicated!!!
+	DB	83H
+	DB	'ID'
+	DB	'.'+80H
+	DW	ERRORnfa
+IDDOT			; ( nfa -- )  Print definition's name from nfa
+	DW	DOCOL
+	DW	PAD
+	DW	LIT
+	DW	32
+	DW	LIT
+	DW	'_'
+	DW	FILL	;fill 32 bytes, starting at PAD, with underscore!
+	DW	DUP
+	DW	PFA
+	DW	LFA	; ( nfa lfa )
+	DW	OVER	; ( nfa lfa nfa )
+	DW	MINUS	; ( nfa count )
+	DW	PAD	; ( nfa count pad )
+	DW	SWAP	; ( nfa pad count )
+	DW	CMOVE	;copy name field (including count) to PAD
+	DW	PAD
+	DW	COUNT
+	DW	LIT
+	DW	1FH
+	DW	AND
+	DW	TYPE	;send characters to display (TYPE strips bit 7)
+	DW	SPACE
+	DW	SEMIS
+;----------------------------------
+CREATEnfa
+	DB	86H
+	DB	'CREAT'
+	DB	'E'+80H
+	DW	IDDOTnfa
+CREATE			; ( -- )  Defining word; puts into dictionary
+	DW	DOCOL
+	DW	MINUSFIND	; ( pfa b tf | ff )
+	DW	ZBRANCH	;if found
+	DW	CREATE2-$
+	DW	DROP
+	DW	NFA
+	DW	IDDOT	;..print word's name
+	DW	LIT
+	DW	4
+	DW	MESSAGE	;..print message #4
+	DW	SPACE
+CREATE2			;end (if word already exists)
+	DW	HERE	; ( here )
+	DW	DUP
+	DW	CAT	; ( here count )
+	DW	WIDTH
+	DW	AT
+	DW	MIN	;Allowed count is <= width ( here n )
+	DW	ONEPL
+	DW	ALLOT	;reserve dictionary space ( here )
+	DW	DUP
+	DW	LIT
+	DW	0A0H
+	DW	TOGGLE	;smudge and set high bit ( here )
+	DW	HERE	;new HERE (with bytes allotted) ( here here2 )
+	DW	ONE
+	DW	MINUS
+	DW	LIT
+	DW	80H
+	DW	TOGGLE	;set bit7 of last char ( here )
+	DW	LATEST	; ( here latest )
+	DW	COMMA	;put value into lfa
+	DW	CURRENT
+	DW	AT
+	DW	STORE	;put nfa into current vocabulary
+	DW	HERE	;return current value
+	DW	TWOPL	;set cfa to point to pfa
+	DW	COMMA	;here now points to pfa also
+	DW	SEMIS
+;----------------------------------
+BRAKCOMPILEnfa
+	DB	0C9H
+	DB	'[COMPILE'
+	DB	']'+80H
+	DW	CREATEnfa
+			; ( )  Force compilation of next word in stream
+	DW	DOCOL
+	DW	MINUSFIND	; ( pfa b tf | ff )
+	DW	ZEQU
+	DW	ZERO
+	DW	QERROR	;if not found, error message #0
+	DW	DROP	; ( pfa )
+	DW	CFA
+	DW	COMMA
+	DW	SEMIS
+;----------------------------------
+LITERALnfa
+	DB	0C7H	;IMMEDIATE
+	DB	'LITERA'
+	DB	'L'+80H
+	DW	BRAKCOMPILEnfa
+LITERAL			; ( n -- )  Compiles n into definition as literal
+	DW	DOCOL
+	DW	STATE
+	DW	AT
+	DW	ZBRANCH	;if compiling, then
+	DW	LITERAL2-$
+	DW	COMPILE	;..put LIT into definition
+	DW	LIT
+	DW	COMMA	;..followed by the number on top of stack
+LITERAL2
+	DW	SEMIS
+;----------------------------------
+DLITERALnfa
+	DB	0C8H	;IMMEDIATE
+	DB	'DLITERA'
+	DB	'L'+80H
+	DW	LITERALnfa
+DLITERAL		; ( d -- )  If compiling, put double literal in def
+	DW	DOCOL
+	DW	STATE
+	DW	AT
+	DW	ZBRANCH	;if compiling, then
+	DW	DLITERAL2-$
+	DW	SWAP	;..swap halves of double number on stack
+	DW	LITERAL	;..perform LITERAL twice
+	DW	LITERAL
+DLITERAL2
+	DW	SEMIS
+;----------------------------------
+QSTACKnfa
+	DB	86H
+	DB	'?STAC'
+	DB	'K'+80H
+	DW	DLITERALnfa
+QSTACK			; ( -- ) Error if stack underflow or no room
+	DW	DOCOL
+	DW	SPAT
+	DW	S0
+	DW	AT
+	DW	SWAP
+	DW	ULESS	;flag true if S0 less than current stack pointer
+	DW	ONE
+	DW	QERROR
+	DW	SPAT
+	DW	HERE
+	DW	LIT
+	DW	384	;allow room for bytes at PAD and stack growth
+	DW	PLUS
+	DW	ULESS	;set flag if SP@ less than HERE+384
+	DW	LIT
+	DW	7
+	DW	QERROR	;if flag set, issue error #7
+	DW	SEMIS
+;----------------------------------
+INTERPRETnfa
+	DB	89H
+	DB	'INTERPRE'
+	DB	'T'+80H
+	DW	QSTACKnfa
+INTERPRET		; ( -- )  Interpreter for input stream
+	DW	DOCOL
+INTERPRET2
+	DW	MINUSFIND	;seek in CONTEXT and CURRENT vocabularies
+	DW	ZBRANCH	;if found in vocabulary then
+	DW	INTERPRET5-$
+	DW	STATE
+	DW	AT	;.. ( pfa b state )
+	DW	LESS
+	DW	ZBRANCH	;..if the number found is less than STATE then
+	DW	INTERPRET3-$
+	DW	CFA	;....convert pfa to cfa ( cfa )
+	DW	COMMA	;....store it in dictionary
+	DW	BRANCH
+	DW	INTERPRET4-$
+INTERPRET3		;..else (b>=STATE)
+	DW	CFA	;....convert pfa to cfa ( cfa )
+	DW	EXECUTE	;....execute it
+INTERPRET4
+	DW	QSTACK	;..check for stack underflow and stack full
+	DW	BRANCH
+	DW	INTERPRET8-$
+INTERPRET5		;else (not found in vocabulary) ( )
+	DW	HERE	;..word is stored at HERE
+	DW	NUMBER	;..attempt to convert it to double number
+	dw	FFLAG	;..if floating point number then
+	dw	AT
+	dw	ZBRANCH
+	dw	INTERPRET9-$
+	dw	FLITERAL	;....handle floating point literal
+	dw	BRANCH
+	dw	INTERPRET7-$
+INTERPRET9
+	DW	DPL	;..else (not floating point)
+	DW	AT
+	DW	ONEPL
+	DW	ZBRANCH	;..if DPL<>-1 then (double number found)
+	DW	INTERPRET6-$
+	DW	DLITERAL	;....if compiling, compile double number
+	DW	BRANCH
+	DW	INTERPRET7-$
+INTERPRET6		;..else (DPL=-1)
+	DW	DROP
+	DW	LITERAL	;....if compiling, compile single number
+INTERPRET7
+	DW	QSTACK	;check for stack underflow and stack full
+INTERPRET8
+	DW	BRANCH
+	DW	INTERPRET2-$
+;----------------------------------
+IMMEDIATEnfa
+	DB	89H
+	DB	'IMMEDIAT'
+	DB	'E'+80H
+	DW	INTERPRETnfa
+			; ( -- )  Toggle immediate bit of latest word
+	DW	DOCOL
+	DW	LATEST
+	DW	LIT
+	DW	40H
+	DW	TOGGLE
+	DW	SEMIS
+;----------------------------------
+VOCABULARYnfa
+	DB	8AH
+	DB	'VOCABULAR'
+	DB	'Y'+80H
+	DW	IMMEDIATEnfa
+			; ( -- )  Builds a vocabulary
+	DW	DOCOL
+	DW	LESSBUILDS	;start definition of action on compilation
+	DW	LIT	;put the cfa of BUMP into the definition
+	DW	BUMP
+	DW	COMMA
+	DW	CURRENT	;put the cfa of the CURRENT vocabulary in the def
+	DW	AT
+	DW	CFA
+	DW	COMMA
+	DW	HERE
+	DW	VOCLINK
+	DW	AT
+	DW	COMMA
+	DW	VOCLINK
+	DW	STORE
+	DW	DOESGREAT
+LAEC3			;define run-time action of a vocabulary
+	DW	TWOPL	;store the pfa+2+2 at CONTEXT
+	DW	CONTEXT
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+FORTHnfa
+	DB	0C5H
+	DB	'FORT'
+	DB	'H'+80H
+	DW	VOCABULARYnfa
+FORTH			; ( -- )  Make FORTH the CONTEXT vocabulary
+	DW	DODOESGREAT
+	DW	LAEC3
+	DW	BUMP	;???
+LAED9
+	DW	TASKnfa
+VOCLINKInit
+	dw	0
+;----------------------------------
+DEFINITIONSnfa
+	DB	8BH
+	DB	'DEFINITION'
+	DB	'S'+80H
+	DW	FORTHnfa
+DEFINITIONS		; ( -- )  Set the CURRENT vocabulary to the CONTEXT
+	DW	DOCOL
+	DW	CONTEXT
+	DW	AT
+	DW	CURRENT
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+LPARENnfa		;IMMEDIATE
+	DB	0C1H
+	DB	'('+80H
+	DW	DEFINITIONSnfa
+			; ( -- )  Skip over a comment until closing paren
+	DW	DOCOL
+	DW	LIT
+	DW	41
+	DW	WORD
+	DW	SEMIS
+;----------------------------------
+QUITnfa
+	DB	84H
+	DB	'QUI'
+	DB	'T'+80H
+	DW	LPARENnfa
+QUIT			; ( -- )  Clear return stack, stop compile
+	DW	DOCOL
+	DW	ZERO
+	DW	BLK
+	DW	STORE	;return interpretation to keyboard
+	DW	LBRACKET	;stop compilation
+QUIT2
+	DW	RPSTORE	;clear return stack
+	DW	CR	;new line
+	DW	QUERY	;get a line from keyboard
+	DW	INTERPRET	;interpret it
+	DW	STATE
+	DW	AT
+	DW	ZEQU
+	DW	ZBRANCH	;if state=0 then
+	DW	QUIT3-$
+	DW	DODOTQUOTE
+	DB	05H	;..display "Ok {"
+	DB	'Ok { '
+	dw	DEPTH
+	dw	DOT
+	dw	DODOTQUOTE
+	db	02H
+	db	'} '
+QUIT3
+	DW	BRANCH
+	DW	QUIT2-$
+;----------------------------------
+ABORTnfa
+	DB	85H
+	DB	'ABOR'
+	DB	'T'+80H
+	DW	QUITnfa
+ABORT			; ( anything -- )  Return to 0 state, clear stacks
+	DW	DOCOL
+	DW	SPSTORE	;clear stack
+	DW	DECIMAL	;set base to decimal
+	DW	QSTACK	;make sure dictionary not full
+	DW	CR
+	DW	DOTCPU	;identify CPU type
+	DW	DODOTQUOTE
+	DB	0EH	;print revision number
+	DB	'fig-FORTH 1'
+	DB	'.1D'
+	DW	FORTH	;set CONTEXT and CURRENT vocabularies to FORTH
+	DW	DEFINITIONS
+	DW	QUIT
+;----------------------------------
+WarmStart
+	LXI	B,LAF62
+	JMP	NEXT
+
+LAF62
+	dw	WARM
+;----------------------------------
+WARMnfa
+	DB	84H
+	DB	'WAR'
+	DB	'M'+80H
+	DW	ABORTnfa
+WARM			;returns to command interpreter
+	DW	DOCOL
+	DW	ABORT
+;----------------------------------
+ColdStart
+	mvi	a,8
+	sta	VarLength	;floating point math is double precision
+	LXI	B,LAF7B	;initialize IP to point to COLD
+	lxi	h,RInit
+	shld	RP	;initialize RP
+	LHLD	LA012	;initialize SP
+	SPHL
+	JMP	NEXT
+
+LAF7B
+	DW	COLD
+;----------------------------------
+COLDnfa
+	DB	84H
+	DB	'COL'
+	DB	'D'+80H
+	DW	WARMnfa
+COLD			; ( -- )  Routine for cold start
+			;!!!Needs to change for RAM4TH!!!
+	DW	DOCOL
+	DW	ZERO	;no echo to printer at first
+	DW	LIT
+	DW	PrintFlag
+	DW	STORE
+	DW	LIT	;initialize first 8 user variables
+	DW	LA012
+	DW	LIT
+	DW	USERSpace
+	DW	AT
+	DW	LIT
+	DW	6
+	DW	PLUS
+	DW	LIT
+	DW	16
+	DW	CMOVE
+	DW	LIT
+	DW	LA00C
+	DW	AT
+	DW	LIT
+	DW	LAED9	;initialize FORTH vocabulary pointer
+	DW	STORE
+	DW	ABORT
+;----------------------------------
+S2Dnfa
+	DB	84H
+	DB	'S->'
+	DB	'D'+80H
+	DW	COLDnfa
+S2D			; ( n -- d )  Convert n to double, preserving sign
+	DW	S2Dpfa
+S2Dpfa
+	POP	D	;get n into DE
+	LXI	H,0	;HL := 0
+	MOV	A,D	;if bit15 of DE set, then
+	ANI	80H
+	JZ	S2D2
+	DCX	H	;..HL: = -1
+S2D2
+	JMP	PUSHDEHL	;put double number results on stack
+;----------------------------------
+PLMINUSnfa
+	DB	82H
+	DB	'+'
+	DB	'-'+80H
+	DW	S2Dnfa
+PLMINUS			; ( n1 n2 -- n3 )  If n2<0, n3:=-n1, else n3:=n1
+	DW	DOCOL
+	DW	ZLESS
+	DW	ZBRANCH	;if n2<0, then
+	DW	PLMINUS2-$
+	DW	CHS	;..change sign of n1
+PLMINUS2
+	DW	SEMIS
+;----------------------------------
+DPLMINUSnfa
+	DB	83H
+	DB	'D+'
+	DB	'-'+80H
+	DW	PLMINUSnfa
+DPLMINUS		; ( d1 n -- d2 )  If n<0, d2 := -d1, else d2 := d1
+	DW	DOCOL
+	DW	ZLESS
+	DW	ZBRANCH
+	DW	DPLMINUS2-$
+	DW	DCHS
+DPLMINUS2
+	DW	SEMIS
+;----------------------------------
+ABSnfa
+	DB	83H
+	DB	'AB'
+	DB	'S'+80H
+	DW	DPLMINUSnfa
+ABS			; ( n1 -- n2 )  n2 is absolute value of n1
+	DW	DOCOL
+	DW	DUP
+	DW	PLMINUS
+	DW	SEMIS
+;----------------------------------
+DABSnfa
+	DB	84H
+	DB	'DAB'
+	DB	'S'+80H
+	DW	ABSnfa
+DABS			; ( d1 -- d2 )  d2 is absolute value of d1
+	DW	DOCOL
+	DW	DUP
+	DW	DPLMINUS
+	DW	SEMIS
+;----------------------------------
+MINnfa
+	DB	83H
+	DB	'MI'
+	DB	'N'+80H
+	DW	DABSnfa
+MIN			; ( n1 n2 -- n3 )  n3 is smaller of n1 and n2
+	DW	DOCOL
+	DW	TWODUP	; ( n1 n2 n1 n2 )
+	DW	GREATER	; ( n1 n2 f )
+	DW	ZBRANCH	;if n1>n2 then
+	DW	MIN2-$
+	DW	SWAP	;..put larger number on top ( n2 n1 )
+MIN2
+	DW	DROP	;drop larger number
+	DW	SEMIS
+;----------------------------------
+MAXnfa
+	DB	83H
+	DB	'MA'
+	DB	'X'+80H
+	DW	MINnfa
+MAX			; ( n1 n2 -- n3 )  n3 is larger of n1 and n2
+	DW	DOCOL
+	DW	TWODUP	; ( n1 n2 n1 n2 )
+	DW	LESS	; ( n1 n2 f )
+	DW	ZBRANCH	;if n1<n2 then
+	DW	MAX2-$
+	DW	SWAP	;..put smaller number on top
+MAX2
+	DW	DROP	;drop smaller number
+	DW	SEMIS
+;----------------------------------
+MSTARnfa
+	DB	82H
+	DB	'M'
+	DB	'*'+80H
+	DW	MAXnfa
+MSTAR			; ( n1 n2 -- d )  Return double product of n1 and n2
+	DW	DOCOL
+	DW	TWODUP	; ( n1 n2 n1 n2 )
+	DW	XOR	; ( n1 n2 xor )
+	DW	TOR	;save result flag on R stack
+	DW	ABS	;take absolute values of both numbers
+	DW	SWAP
+	DW	ABS
+	DW	USTAR	;compute unsigned product
+	DW	FROMR	;return result flag ( d f )
+	DW	DPLMINUS	;if result is negative, change sign
+	DW	SEMIS
+;----------------------------------
+MSLASHnfa
+	DB	82H
+	DB	'M'
+	DB	'/'+80H
+	DW	MSTARnfa
+MSLASH			; ( d n1 -- n2 n3 )  n2 signed remainder, n3 quotient
+	DW	DOCOL
+	DW	OVER	; ( d n1 dh )
+	DW	TOR
+	DW	TOR	; ( d )
+	DW	DABS	;get absolute value of d
+	DW	R
+	DW	ABS	;get absolute value of n ( d1 n4 )
+	DW	USLASH	;perform unsigned division ( rem quot )
+	DW	FROMR	;return n1 ( rem quot n1 )
+	DW	R	;return dh
+	DW	XOR	;determine sign of result ( rem quot sign )
+	DW	PLMINUS	;adjust sign of quotient ( rem quot )
+	DW	SWAP	; ( quot rem )
+	DW	FROMR	;return dh ( quot rem dh )
+	DW	PLMINUS	;adjust sign of remainder to same as dh ( quot rem )
+	DW	SWAP
+	DW	SEMIS	; ( rem quot )
+;----------------------------------
+STARnfa
+	DB	81H
+	DB	'*'+80H
+	DW	MSLASHnfa
+STAR			; ( n1 n2 -- n3 )  n3 is product of n1 and n2
+	DW	DOCOL
+	DW	MSTAR
+	DW	DROP
+	DW	SEMIS
+;----------------------------------
+SLASHMODnfa
+	DB	84H
+	DB	'/MO'
+	DB	'D'+80H
+	DW	STARnfa
+SLASHMOD		; ( n1 n2 -- rem quot )
+	DW	DOCOL
+	DW	TOR	; ( n1 )
+	DW	S2D	; ( d )
+	DW	FROMR	; ( d n2 )
+	DW	MSLASH
+	DW	SEMIS	; ( rem quot )
+;----------------------------------
+SLASHnfa
+	DB	81H
+	DB	'/'+80H
+	DW	SLASHMODnfa
+SLASH			; ( n1 n2 -- quot )  Return n1/n2
+	DW	DOCOL
+	DW	SLASHMOD	; ( rem quot )
+	DW	SWAP
+	DW	DROP
+	DW	SEMIS	; ( quot )
+;----------------------------------
+MODnfa
+	DB	83H
+	DB	'MO'
+	DB	'D'+80H
+	DW	SLASHnfa
+MOD			; ( n1 n2 -- rem )  Return remainder of n1/n2
+	DW	DOCOL
+	DW	SLASHMOD	; ( rem quot )
+	DW	DROP	; ( rem )
+	DW	SEMIS
+;----------------------------------
+STARSLMODnfa
+	DB	85H
+	DB	'*/MO'
+	DB	'D'+80H
+	DW	MODnfa
+STARSLMOD		; ( n1 n2 n3 -- rem result )  (n1*n2)/n3
+	DW	DOCOL
+	DW	TOR	; ( n1 n2 )
+	DW	MSTAR	; ( d )
+	DW	FROMR	; ( d n3 )
+	DW	MSLASH	; ( rem result )
+	DW	SEMIS
+;----------------------------------
+STARSLASHnfa
+	DB	82H
+	DB	'*'
+	DB	'/'+80H
+	DW	STARSLMODnfa
+			; ( n1 n2 n3 -- result )  (n1*n2)/n3
+	DW	DOCOL
+	DW	STARSLMOD	; ( rem result )
+	DW	SWAP
+	DW	DROP	; ( result )
+	DW	SEMIS
+;----------------------------------
+MSLASHMODnfa
+	DB	85H
+	DB	'M/MO'
+	DB	'D'+80H
+	DW	STARSLASHnfa
+MSLASHMOD		; ( ud1 u2 -- urem uquotd )  Return results of ud1/u2
+	DW	DOCOL
+	DW	TOR	; ( ud1 )
+	DW	ZERO	; ( ud1 0 )
+	DW	R	; ( ud1 0 u2 )
+	DW	USLASH	; ( ud1l uremh uquoth )
+	DW	FROMR	; ( ud1l uremh uquoth u2 )
+	DW	SWAP	; ( ud1l uremh u2 uquoth )
+	DW	TOR	; ( ud1l uremh u2 )
+	DW	USLASH	; ( urem uquotl )
+	DW	FROMR	; ( urem uquotl uquoth )
+	DW	SEMIS
+;----------------------------------
+MESSAGEnfa
+	DB	87H
+	DB	'MESSAG'
+	DB	'E'+80H
+	DW	MSLASHMODnfa
+MESSAGE			; ( n -- )  Print message #n
+	DW	DOCOL
+	dw	DUP	;double message number
+	dw	PLUS
+	dw	MSGARRAY ;add to address of first msg pointer
+	dw	PLUS
+	dw	AT	;get pointer value
+	dw	COUNT	;convert to (adr count)
+	dw	TYPE	;type message
+	DW	SEMIS
+;----------------------------------
+MSGARRAYnfa
+	DB	88H
+	DB	'MSGARRA','Y'+80H
+	dw	MESSAGEnfa
+MSGARRAY
+	dw	DOVARIABLE
+MSGARRAYpfa
+	dw	Msg0
+	dw	Msg1
+	dw	Msg2
+	dw	Msg3
+	dw	Msg4
+	dw	Msg0
+	dw	Msg0
+	dw	Msg7
+	dw	Msg0
+	dw	Msg0
+	dw	Msg0
+	dw	Msg0
+	dw	Msg0
+	dw	Msg0
+	dw	Msg0
+	dw	Msg0
+	dw	Msg0
+	dw	Msg17
+	dw	Msg18
+	dw	Msg19
+	dw	Msg20
+	dw	Msg21
+	dw	Msg22
+	dw	Msg23
+	dw	Msg24
+Msg0
+	db	0
+Msg1
+	db	Msg2-Msg1-1
+	db	'EMPTY STACK'
+Msg2
+	db	Msg3-Msg2-1
+	db	'DICTIONARY FULL'
+Msg3
+	db	Msg4-Msg3-1
+	db	'HAS INCORRECT ADDRESS MODE'
+Msg4
+	db	12
+	db	'ISN',39,'T UNIQUE'
+Msg7
+	db	10
+	db	'FULL STACK'
+Msg17
+	db	Msg18-Msg17-1
+	db	'COMPILATION ONLY, USE IN DEFINITION'
+Msg18
+	db	Msg19-Msg18-1
+	db	'EXECUTION ONLY'
+Msg19
+	db	Msg20-Msg19-1
+	db	'CONDITIONALS NOT PAIRED'
+Msg20
+	db	Msg21-Msg20-1
+	db	'DEFINITION NOT FINISHED'
+Msg21
+	db	Msg22-Msg21-1
+	db	'IN PROTECTED DICTIONARY'
+Msg22
+	db	Msg23-Msg22-1
+	db	'USE ONLY WHEN LOADING'
+Msg23
+	db	Msg24-Msg23-1
+	db	'OFF CURRENT EDITING SCREEN'
+Msg24
+	db	18
+	db	'DECLARE VOCABULARY'
+;----------------------------------
+PATnfa
+	DB	82H
+	DB	'P'
+	DB	'@'+80H
+	DW	MSGARRAYnfa
+			; ( n -- b )  Get value from I/O port n
+	DW	PATpfa
+PATpfa
+	POP	D	;get n into DE
+	LXI	H,LB17D
+	MOV	M,E	;put port number into instruction
+	IN	00H	;read value from port
+LB17D	EQU	$-1
+	MOV	L,A	;put value read onto stack
+	MVI	H,00H
+	JMP	PUSHHL
+;----------------------------------
+PSTOREnfa
+	DB	82H
+	DB	'P'
+	DB	'!'+80H
+	DW	PATnfa
+			; ( b n -- )  Output b to I/O port n
+	DW	PSTOREpfa
+PSTOREpfa
+	POP	D	;get port number into DE
+	LXI	H,LB193
+	MOV	M,E	;put port number into instruction
+	POP	H	;get value to send to port
+	MOV	A,L
+	OUT	00H	;send value
+LB193	EQU	$-1
+	JMP	NEXT
+;----------------------------------
+TICKnfa
+	DB	0C1H
+	DB	0A7H	;''''+80H
+	DW	PSTOREnfa
+TICK			; ( -- pfa )  Leave pfa of word in input stream
+	DW	DOCOL
+	DW	MINUSFIND	; ( pfa b tf | ff )
+	DW	ZEQU	;abort with error message #0 if not found
+	DW	ZERO
+	DW	QERROR
+	DW	DROP	; ( pfa )
+	DW	LITERAL	;compile value into definition if compiling
+	DW	SEMIS
+;----------------------------------
+FORGETnfa
+	DB	86H
+	DB	'FORGE'
+	DB	'T'+80H
+	DW	TICKnfa
+			; ( -- )  Delete definition and following def's
+	DW	DOCOL
+	DW	CURRENT
+	DW	AT
+	DW	CONTEXT
+	DW	AT
+	DW	MINUS
+	DW	LIT
+	DW	24
+	DW	QERROR	;if CURRENT and CONTEXT differ, abort with error#24
+	DW	TICK	;get pfa of word to forget
+	DW	DUP	; ( pfa pfa )
+	DW	FENCE
+	DW	AT	; ( pfa pfa fence )
+	DW	LESS
+	DW	LIT
+	DW	21
+	DW	QERROR	;if pfa<fence, abort with error#21 ( pfa )
+	DW	DUP
+	DW	NFA	; ( pfa nfa )
+	DW	DP
+	DW	STORE	;store value of nfa into DP
+	DW	LFA	; ( lfa )
+	DW	AT	;get value of nfa of previous word
+	DW	CONTEXT
+	DW	AT	;get pointer to proper vocabulary
+	DW	STORE	;store nfa of last word remembered in vocabulary
+	DW	SEMIS
+;----------------------------------
+BACKnfa
+	DB	84H
+	DB	'BAC'
+	DB	'K'+80H
+	DW	FORGETnfa
+BACK			; ( addr -- )  Compile branch offset to addr
+	DW	DOCOL
+	DW	HERE
+	DW	MINUS
+	DW	COMMA
+	DW	SEMIS
+;----------------------------------
+BEGINnfa
+	DB	0C5H	;IMMEDIATE
+	DB	'BEGI'
+	DB	'N'+80H
+	DW	BACKnfa
+			; ( -- here 1 )  (compile only)
+	DW	DOCOL
+	DW	QCOMP	;abort if not compiling
+	DW	HERE
+	DW	ONE
+	DW	SEMIS
+;----------------------------------
+ENDIFnfa
+	DB	0C5H	;IMMEDIATE
+	DB	'ENDI'
+	DB	'F'+80H
+	DW	BEGINnfa
+ENDIF			; ( addr 2 -- )  Compile branch offset back at IF
+	DW	DOCOL
+	DW	QCOMP	;abort if not compiling
+	DW	TWO
+	DW	QPAIR	;abort if stack top<>2
+	DW	HERE	; ( addr here )
+	DW	OVER	; ( addr here addr )
+	DW	MINUS	; ( addr here-addr )
+	DW	SWAP	; ( here-addr addr )
+	DW	STORE	;store offset at addr (of IF)
+	DW	SEMIS
+;----------------------------------
+THENnfa
+	DB	0C4H	;IMMEDIATE
+	DB	'THE'
+	DB	'N'+80H
+	DW	ENDIFnfa
+			; ( addr 2 -- )  Same as ENDIF
+	DW	DOCOL
+	DW	ENDIF
+	DW	SEMIS
+;----------------------------------
+DOnfa
+	DB	0C2H	;IMMEDIATE
+	DB	'D'
+	DB	'O'+80H
+	DW	THENnfa
+			; ( -- addr 3 )  Compile required stuff for DO loop
+	DW	DOCOL
+	DW	COMPILE	;Run-time procedure is (DO)
+	DW	XDO
+	DW	HERE
+	DW	THREE
+	DW	SEMIS	; ( here 3 )
+;----------------------------------
+LOOPnfa
+	DB	0C4H	;IMMEDIATE
+	DB	'LOO'
+	DB	'P'+80H
+	DW	DOnfa
+			; ( addr 3 -- )  Compile loop back to DO statement
+	DW	DOCOL
+	DW	THREE
+	DW	QPAIR	;abort with error if top of stack <> 3
+	DW	COMPILE
+	DW	XLOOP	;put (LOOP) into definition
+	DW	BACK	;put backwards offset into definition
+	DW	SEMIS
+;----------------------------------
+PLLOOPnfa
+	DB	0C5H	;IMMEDIATE
+	DB	'+LOO'
+	DB	'P'+80H
+	DW	LOOPnfa
+			; ( addr 3 -- )  Compile code for +LOOP
+	DW	DOCOL
+	DW	THREE
+	DW	QPAIR	;abort with error message if top<>3
+	DW	COMPILE
+	DW	XPLOOP	;put (+LOOP) into definition
+	DW	BACK	;put reverse offset into definition
+	DW	SEMIS
+;----------------------------------
+UNTILnfa
+	DB	0C5H	;IMMEDIATE
+	DB	'UNTI'
+	DB	'L'+80H
+	DW	PLLOOPnfa
+UNTIL			; ( addr 1 -- )  Compile code for UNTIL
+	DW	DOCOL
+	DW	ONE
+	DW	QPAIR	;abort if top<>1
+	DW	COMPILE
+	DW	ZBRANCH	;put 0BRANCH into definition
+	DW	BACK	;put reverse offset into definition
+	DW	SEMIS
+;----------------------------------
+ENDnfa
+	DB	0C3H	;IMMEDIATE
+	DB	'EN'
+	DB	'D'+80H
+	DW	UNTILnfa
+			; ( addr 1 -- )  Same as UNTIL
+	DW	DOCOL
+	DW	UNTIL
+	DW	SEMIS
+;----------------------------------
+AGAINnfa
+	DB	0C5H	;IMMEDIATE
+	DB	'AGAI'
+	DB	'N'+80H
+	DW	ENDnfa
+AGAIN			; ( addr 1 -- )  Branch forever!
+	DW	DOCOL
+	DW	ONE
+	DW	QPAIR	;error if top<>1
+	DW	COMPILE
+	DW	BRANCH	;put BRANCH into definition
+	DW	BACK	;put reverse offset into definition
+	DW	SEMIS
+;----------------------------------
+REPEATnfa
+	DB	0C6H	;IMMEDIATE
+	DB	'REPEA'
+	DB	'T'+80H
+	DW	AGAINnfa
+			; ( addr1 1 addr2 4 -- )
+	DW	DOCOL
+	DW	TOR
+	DW	TOR	; ( addr1 1 )
+	DW	AGAIN	;put branch back to BEGIN location
+	DW	FROMR
+	DW	FROMR	; ( addr2 4 )
+	DW	TWO
+	DW	MINUS	; ( addr2 2 )
+	DW	ENDIF	;put branch from WHILE to here
+	DW	SEMIS
+;----------------------------------
+IFnfa
+	DB	0C2H	;IMMEDIATE
+	DB	'I'
+	DB	'F'+80H
+	DW	REPEATnfa
+IF			; ( -- addr 2 )  Begin IF statement
+	DW	DOCOL
+	DW	COMPILE	;put ZBRANCH in definition
+	DW	ZBRANCH
+	DW	HERE	;put HERE on stack for offset computation
+	DW	ZERO	;put 0 into definition for now
+	DW	COMMA
+	DW	TWO
+	DW	SEMIS	; ( here 2 )
+;----------------------------------
+ELSEnfa
+	DB	0C4H	;IMMEDIATE
+	DB	'ELS'
+	DB	'E'+80H
+	DW	IFnfa
+			; ( addr1 2 -- addr2 2 )
+	DW	DOCOL
+	DW	TWO	;abort with error if top <> 2
+	DW	QPAIR
+	DW	COMPILE	;put BRANCH into dictionary
+	DW	BRANCH
+	DW	HERE	;put current addr onto stack ( addr1 addr2 )
+	DW	ZERO	;reserve place for branch offset
+	DW	COMMA
+	DW	SWAP	; ( addr2 addr1 )
+	DW	TWO	; ( addr2 addr1 2 )
+	DW	ENDIF	;put offset to here in previous 0BRANCH ( addr2 )
+	DW	TWO
+	DW	SEMIS	; ( addr2 2 )
+;----------------------------------
+WHILEnfa
+	DB	0C5H	;IMMEDIATE
+	DB	'WHIL'
+	DB	'E'+80H
+	DW	ELSEnfa
+			; ( -- addr 4 )
+	DW	DOCOL
+	DW	IF	;same as if except
+	DW	TWOPL	;put 4 on top of stack
+	DW	SEMIS
+;----------------------------------
+SPACESnfa
+	DB	86H
+	DB	'SPACE'
+	DB	'S'+80H
+	DW	WHILEnfa
+SPACES			; ( n -- )  Emit n spaces to display
+	DW	DOCOL
+	DW	ZERO	; ( n 0 )
+	DW	MAX	;Make sure number not negative
+	DW	NZDUP
+	DW	ZBRANCH	;if n>0 then
+	DW	SPACES3-$
+	DW	ZERO	; ( n 0 )
+	DW	XDO	;..for I:=0 to n-1 do
+SPACES2
+	DW	SPACE	;....send space to display
+	DW	XLOOP	;..next I
+	DW	SPACES2-$
+SPACES3
+	DW	SEMIS	;endif
+;----------------------------------
+LESSSHARPnfa
+	DB	82H
+	DB	'<'
+	DB	'#'+80H
+	DW	SPACESnfa
+LESSSHARP		; ( -- )  Set up for pictured number conversion
+	DW	DOCOL
+	DW	PAD	;get address of PAD
+	DW	HLD	;store it in user variable HLD
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+SHARPGREATnfa
+	DB	82H
+	DB	'#'
+	DB	'>'+80H
+	DW	LESSSHARPnfa
+SHARPGREAT		; ( d -- addr count )  Terminate pictured conversion
+	DW	DOCOL
+	DW	DROP	;drop d
+	DW	DROP
+	DW	HLD	;get addr of first char
+	DW	AT
+	DW	PAD
+	DW	OVER	; ( hld@ pad hld@ )
+	DW	MINUS	; ( addr count )
+	DW	SEMIS
+;----------------------------------
+SIGNnfa
+	DB	84H
+	DB	'SIG'
+	DB	'N'+80H
+	DW	SHARPGREATnfa
+SIGN			; ( n d -- d )  Puts ASCII '-' before number if n<0
+	DW	DOCOL
+	DW	ROT	; ( d n )
+	DW	ZLESS	; ( d f )
+	DW	ZBRANCH	;if n<0 then
+	DW	SIGN2-$
+	DW	LIT
+	DW	'-'	;..put '-' on stack
+	DW	HOLD	;..put it in front of pictured conversion
+SIGN2
+	DW	SEMIS
+;----------------------------------
+SHARPnfa
+	DB	81H
+	DB	'#'+80H
+	DW	SIGNnfa
+SHARP			; ( d1 -- d2 )  Convert digit from number
+	DW	DOCOL
+	DW	BASE
+	DW	AT
+	DW	MSLASHMOD	; ( urem uquotd )
+	DW	ROT	; ( uquotd urem )
+	DW	LIT
+	DW	9
+	DW	OVER	; ( uquotd urem 9 urem )
+	DW	LESS
+	DW	ZBRANCH	;if 9<urem then
+	DW	SHARP2-$
+	DW	LIT	;..add 7 to result ( uquotd urem2 )
+	DW	7
+	DW	PLUS
+SHARP2			;endif (9<urem)
+	DW	LIT	;add ASCII code for '0'
+	dw	'0'
+	dw	PLUS
+	dw	HOLD	;put at beginning of pictured output
+	dw	SEMIS
+;----------------------------------
+SHARPSnfa
+	db	82H
+	DB	'#'
+	DB	'S'+80H
+	DW	SHARPnfa
+SHARPS			; ( d1 -- 0.0 )  Generates ASCII rep of double number
+	DW	DOCOL	;repeat
+SHARPS2
+	DW	SHARP	;..convert this digit
+	DW	TWODUP	; ( d2 d2 )
+	DW	OR	;.. ( d2 f )
+	DW	ZEQU
+	DW	ZBRANCH	;until remainder is zero
+	DW	SHARPS2-$
+	DW	SEMIS
+;----------------------------------
+DDOTRnfa
+	DB	83H
+	DB	'D.'
+	DB	'R'+80H
+	DW	SHARPSnfa
+DDOTR			; ( d n -- )  Print a signed double in field of n chars
+	DW	DOCOL
+	DW	TOR	; ( d )
+	DW	SWAP	; ( dh dl )
+	DW	OVER	; ( dh dl dh )
+	DW	DABS	;get abs of d, with lower copy of high word ( dh d2 )
+	DW	LESSSHARP
+	DW	SHARPS
+	DW	SIGN
+	DW	SHARPGREAT	;convert with pictured output ( addr n2 )
+	DW	FROMR	;get back field width ( addr n2 n )
+	DW	OVER
+	DW	MINUS	;get count of # of chars not used
+	DW	SPACES	;display that many spaces...
+	DW	TYPE	;followed by number
+	DW	SEMIS
+;----------------------------------
+DOTRnfa
+	DB	82H
+	DB	'.'
+	DB	'R'+80H
+	DW	DDOTRnfa
+DOTR			; ( n1 n2 -- )  Print n1 in a field n2 chars wide
+	DW	DOCOL
+	DW	TOR	;put n2 on R stack
+	DW	S2D	;convert n1 to a double ( d )
+	DW	FROMR	;retrieve n2 from R stack ( d n2 )
+	DW	DDOTR	;print number in field n2 chars wide
+	DW	SEMIS
+;----------------------------------
+DDOTnfa
+	DB	82H
+	DB	'D'
+	DB	'.'+80H
+	DW	DOTRnfa
+DDOT			; ( d -- )  Print value of d, followed by space
+	DW	DOCOL
+	DW	ZERO	;use minimum space required
+	DW	DDOTR
+	DW	SPACE	;print trailing space
+	DW	SEMIS
+;----------------------------------
+DOTnfa
+	DB	81H
+	DB	'.'+80H
+	DW	DDOTnfa
+DOT			; ( n -- )  Print signed n to display, then space
+	DW	DOCOL
+	DW	S2D
+	DW	DDOT
+	DW	SEMIS
+;----------------------------------
+Qnfa
+	DB	81H
+	DB	'?'+80H
+	DW	DOTnfa
+			; ( addr -- )  Print value at addr
+	DW	DOCOL
+	DW	AT
+	DW	DOT
+	DW	SEMIS
+;----------------------------------
+UDOTnfa
+	DB	82H
+	DB	'U'
+	DB	'.'+80H
+	DW	Qnfa
+			; ( un -- )  Print value of unsigned un
+	DW	DOCOL
+	DW	ZERO
+	DW	DDOT
+	DW	SEMIS
+;----------------------------------
+VLISTnfa
+	DB	85H
+	DB	'VLIS'
+	DB	'T'+80H
+	DW	UDOTnfa
+			; ( -- )  Display words in dictionary
+	DW	DOCOL
+	DW	LIT
+	DW	080H
+	DW	OUT
+	DW	STORE	;OUT := 80H
+	DW	CONTEXT
+	DW	AT
+	DW	AT	;get nfa of most-recent word in CONTEXT vocab
+VLIST2			;repeat
+	DW	OUT
+	DW	AT	;.. ( nfa out@ )
+	DW	CPERL	;.. ( nfa out@ c/l )
+	DW	GREATER
+	DW	ZBRANCH	;..if out@>c/l then
+	DW	VLIST3-$
+	DW	CR	;....send CR
+	DW	ZERO	;....OUT := 0
+	DW	OUT
+	DW	STORE
+VLIST3			;..endif
+	DW	DUP	;.. ( nfa nfa )
+	DW	IDDOT	;..print word's name
+	DW	SPACE	;..print two spaces ( nfa )
+	DW	SPACE
+	DW	PFA
+	DW	LFA	;.. ( lfa )
+	DW	AT	;..get nfa of preceding word ( nfa )
+	DW	DUP
+	DW	ZEQU	;.. ( nfa f1 )
+	DW	QTERMINAL	;.. ( nfa f1 f2 )
+	DW	OR	;.. ( nfa f3 )
+	DW	ZBRANCH	;until last word or ShiftBreak keys
+	DW	VLIST2-$
+	DW	DROP	;drop nfa
+	DW	SEMIS
+;----------------------------------
+MENUnfa
+	DB	84H
+	DB	'MEN'
+	DB	'U'+80H
+	DW	VLISTnfa
+MENU
+	dw	MENUaddr
+;----------------------------------
+DOTCPUnfa
+	DB	84H
+	DB	'.CP'
+	DB	'U'+80H
+	DW	MENUnfa
+DOTCPU			; ( -- )  Print CPU type
+	DW	DOCOL
+	DW	BASE
+	DW	AT	;get current base ( base@ )
+	DW	LIT
+	DW	36
+	DW	BASE
+	DW	STORE	;BASE := 36
+	DW	LIT
+	DW	34
+	DW	PLORIGIN
+	DW	TWOAT	;get double number at origin+34 ( base@ d )
+	DW	DDOT	;print it (in base 36!)  ( base@ )
+	DW	BASE	;BASE := original base
+	DW	STORE
+	DW	SEMIS
+;----------------------------------
+CALLnfa
+	DB	84H
+	DB	'CAL'
+	DB	'L'+80H
+	DW	DOTCPUnfa
+			; ( psw1 bc1 de1 hl1 addr -- psw2 bc2 de2 hl2 )
+			; Call routine at addr
+	DW	CALLpfa
+CALLpfa
+	MOV	L,C
+	MOV	H,B
+	SHLD	LB870	;save current IP in memory
+	POP	H	;get addr from top of stack
+	SHLD	LB862	;put address into instruction
+	POP	H	;load registers
+	POP	D
+	POP	B
+	POP	PSW
+	CALL	0000
+LB862	EQU	$-2
+	PUSH	PSW	;put registers onto stack
+	PUSH	B
+	PUSH	D
+	PUSH	H
+	LHLD	LB870	;get IP back from memory
+	MOV	C,L
+	MOV	B,H
+	JMP	NEXT
+LB870
+	dw	0
+;----------------------------------
+DoQuoteNfa
+	db	83h
+	db	'("'
+	db	')'+80h
+	dw	CALLnfa
+DOQUOTE			; ( -- addr n )  Move string from definition to PAD
+	dw	DOCOL
+	dw	PAD	;get current address of PAD
+	dw	LIT
+	dw	255
+	dw	OVER
+	dw	CSTORE	;store 255 at address of PAD
+	dw	ONEPL	;move one address higher
+	dw	R	;get address of next word in definition
+	dw	TWODUP	;  ( pad+1 r pad+1 r )
+	dw	CAT	;get byte there ( pad+1 r pad+1 count )
+	dw	ONEPL
+	dw	CMOVE	;copy string to pad+1 from definition ( pad+1 )
+	dw	COUNT	;  ( addr n )
+	dw	FROMR	;adjust top of R stack to point past these bytes
+	dw	OVER
+	dw	ONEPL
+	dw	PLUS
+	dw	TOR
+	dw	SEMIS	;  ( addr n )
+;----------------------------------
+QuoteNfa
+	DB	0c1h	;IMMEDIATE
+	db	'"'+80h
+	dw	DoQuoteNfa
+QUOTE			; ( -- addr n )  copy string to PAD (if executing)
+			; ( -- )  copy string to definition (if compiling)
+	dw	DOCOL
+	dw	LIT
+	dw	'"'	;Put quote character on stack (for WORD)
+	dw	STATE
+	dw	AT
+	dw	ZBRANCH
+	dw	Quote3-$
+Quote2			;if compiling (as opposed to immediate execution)
+	dw	COMPILE	;..put (") into definition
+	dw	DOQUOTE
+	dw	WORD	;..put string itself into definition (not yet reserved)
+	dw	HERE
+	dw	CAT	;..get number of bytes in string ( n )
+	dw	ONEPL
+	dw	ALLOT	;..allot bytes for count and for each byte in string
+	dw	BRANCH
+	dw	Quote4-$
+Quote3			;else (immediate execution)
+	dw	WORD	;..put string into dictionary (temporary)
+	dw	PAD
+	dw	LIT
+	dw	255
+	dw	OVER	;  ( pad 255 pad )
+	dw	CSTORE	;store 255 (max bytes) at pad
+	dw	ONEPL
+	dw	HERE
+	dw	TWODUP	;  ( pad+1 here pad+1 here )
+	dw	CAT	;get num bytes in string ( pad+1 here pad+1 count )
+	dw	ONEPL
+	dw	CMOVE	;copy count and string to pad+1
+	dw	COUNT	;  ( addr n )
+Quote4
+	dw	SEMIS
+;----------------------------------
+EofNfa
+	db	83h
+	db	'EO'
+	db	'F'+80h
+	dw	QuoteNfa
+EOF			;  ( -- addr )  Variable holding EOF flag
+	dw	DOVARIABLE
+EofPfa
+	dw	0
+;----------------------------------
+OpenfNfa
+	db	85h
+	db	'OPEN'
+	db	'F'+80H
+	dw	EofNfa
+OPENF			; ( addr n -- )
+	dw	OpenfPfa
+OpenfPfa
+	lxi	h,false	;set EOF to 0 (false)
+	shld	EofPfa
+	pop	d	;get number of bytes into DE
+	pop	h	;get start addr of filename into HL
+	push	b	;save interpret pointer
+	call	OpenfSub1	;parse filename, copy to 0FC93H
+	mov	a,d	;if device type unspecified then
+	ora	a
+	jnz	Openf2
+	mvi	d,0f8h	;..default device type = RAM:
+Openf2
+	mvi	a,0	;file buffer number = 0
+	mov	h,d	;put device type into H
+	mvi	l,1	;operation 1 = open file
+	call	OpenfSub2	;open file
+	pop	b	;restore interpret pointer
+	jmp	NEXT
+;----------------------------------
+OpenfSub1
+	push	h
+	jmp	ParseName
+;----------------------------------
+OpenfSub2
+	push	h
+	lxi	h,0c39h
+	xthl
+	push	h
+	jmp	4d1bh
+;----------------------------------
+GetCNfa
+	db	84h
+	db	'GET'
+	db	'C'+80H
+	dw	OpenfNfa
+GETC			;  ( -- c )  Get character c from Forth file
+	dw	GetCPfa
+GetCPfa
+	lhld	FileBufPtr
+	push	h	;save current pointer to file buffer
+	push	b	;save interpret pointer
+	mvi	a,0	;read from file number 0
+	call	4cbfh
+	call	4e7ah
+	pop	b	;retrieve interpret pointer
+	pop	h	;restore original pointer to file buffer
+	shld	FileBufPtr
+	mvi	h,0	;get character returned into HL
+	mov	l,a
+	jmp	PUSHHL
+;----------------------------------
+ClosefNfa
+	db	86h
+	db	'CLOSE'
+	db	'F'+80h
+	dw	GetCNfa
+CLOSEF			;  ( -- )  Close file used by Forth
+	dw	ClosefPfa
+ClosefPfa
+	push	b	;save interpret pointer
+	mvi	a,0	;file number = 0
+	call	CloseFile
+	pop	b	;restore interpret pointer
+	jmp	NEXT
+;----------------------------------
+GetLineNfa
+	db	87h
+	db	'GETLIN'
+	db	'E'+80h
+	dw	ClosefNfa
+GETLINE			;  ( -- )  Read line from file until eoln or eof
+	dw	DOCOL
+	dw	FIRST	;destination address
+	dw	GETC	;get character from file
+	dw	DUP
+	dw	LIT
+	dw	0ah
+	dw	EQU
+	dw	ZBRANCH	;if character is a linefeed then
+	dw	GETLINE2-$
+	dw	DROP	;..forget it and
+	dw	GETC	;..get another character
+GETLINE2		;begin
+	dw	DUP
+	dw	LIT
+	dw	1ah
+	dw	EQU	;..set flag if char is eof
+	dw	DUP
+	dw	EOF
+	dw	STORE	;..store flag at EOF variable
+	dw	OVER
+	dw	LIT
+	dw	0dh
+	dw	EQU
+	dw	OR
+	dw	ZEQU
+	dw	ZBRANCH	;..if char not eof or CR then
+	dw	GETLINE3-$
+	dw	OVER
+	dw	CSTORE	;....store at current dest addr
+	dw	ONEPL	;....increment dest addr
+	dw	GETC	;....get char from file
+	dw	BRANCH	;until eof or CR encountered
+	dw	GETLINE2-$
+GETLINE3
+	dw	DROP	;drop EOF char returned
+	dw	ZERO	;store two bytes of 0's at next dest addr
+	dw	SWAP
+	dw	STORE
+	dw	SEMIS
+;----------------------------------
+LoadfNfa		;!!!May want to error if BLK<>0!!!
+	db	85H
+	db	'LOAD'
+	db	'F'+80H
+	dw	GetLineNfa
+LOADF			;  ( addr n -- )  Load from mass storage
+	dw	DOCOL
+	dw	ONE
+	dw	BLK
+	dw	STORE	;set flag to indicate loading from mass storage
+	dw	IN
+	dw	AT
+	dw	TOR	;save current value of IN on R stack
+	dw	OPENF	;open file requested
+	dw	GETLINE	;get first line (if any) from file requested
+	dw	ZERO
+	dw	IN
+	dw	STORE	;reset interpret pointer to beginning of line
+	dw	INTERPRET	;interpret from file
+	dw	ZERO	;return to interpreting from keyboard
+	dw	BLK
+	dw	STORE
+	dw	FROMR	;restore old value of IN
+	dw	IN
+	dw	STORE
+	dw	SEMIS
+;----------------------------------
+FVARIABLEnfa
+	db	89H
+	db	'FVARIABL'
+	db	'E'+80H
+	dw	LoadfNfa
+			; ( -- )  Creates storage for 8 bytes of floating var
+	dw	DOCOL
+	dw	CREATE	;place name in dictionary
+	dw	SMUDGE	;make it visible
+	dw	LIT	;allot 8 bytes for its data
+	dw	8
+	dw	ALLOT
+	dw	DOSEMICODE
+DOFVARIABLE
+	inx	d	;point to next word in definition
+	push	d	;put its address on stack
+	jmp	NEXT
+;----------------------------------
+Xnfa
+	db	81H
+	db	'X'+80H
+	dw	FVARIABLEnfa
+X			;  ( -- addr )  Returns Xpfa (storage for fvar X)
+	dw	DOFVARIABLE
+Xpfa
+	dw	0,0,0,0	;save room for it
+;----------------------------------
+Ynfa
+	db	81H
+	db	'Y'+80H
+	dw	Xnfa
+Y			; ( -- addr )  Returns Ypfa (storage for fvar Y)
+	dw	DOFVARIABLE
+Ypfa
+	dw	0,0,0,0
+;----------------------------------
+Znfa
+	db	81H
+	db	'Z'+80H
+	dw	Ynfa
+Z			; ( -- addr )  Returns Zpfa (storage for fvar Z)
+	dw	DOFVARIABLE
+Zpfa
+	dw	0,0,0,0
+;----------------------------------
+Tnfa
+	db	81H
+	db	'T'+80H
+	dw	Znfa
+T			; ( -- addr )  Returns Tpfa (storage for fvar T)
+	dw	DOFVARIABLE
+Tpfa
+	dw	0,0,0,0
+;----------------------------------
+XUnfa
+	db	82H
+	db	'X'
+	db	'U'+80H
+	dw	Tnfa
+XU			; ( -- addr )  Returns XUpfa (storage for fvar XU)
+			;(used for temporary, system storage ONLY)
+	dw	DOFVARIABLE
+XUpfa
+	dw	0,0,0,0
+;----------------------------------
+FFLAGnfa
+	db	85h
+	db	'FFLA'
+	db	'G'+80H
+	dw	XUnfa
+FFLAG			; ( -- addr )  Holds variable telling whether number
+			;encountered a decimal point or not
+	dw	DOVARIABLE
+FFLAGpfa
+	dw	0
+;----------------------------------
+FMOVEnfa
+	db	85H
+	db	'FMOV'
+	db	'E'+80H
+	dw	FFLAGnfa
+FMOVE			; ( from to -- )  Copies floating num from from to to
+	dw	DOCOL
+	dw	LIT
+	dw	8
+	dw	CMOVE
+	dw	SEMIS
+;----------------------------------
+FENTERnfa
+	db	86H
+	db	'FENTE'
+	db	'R'+80H
+	dw	FMOVEnfa
+FENTER			; ( -- )  Raises floating-point stack
+	dw	DOCOL
+	dw	Z
+	dw	T
+	dw	FMOVE	;copy value from Z to T (T is lost)
+	dw	Y
+	dw	Z
+	dw	FMOVE	;copy value from Y to Z (Z is now in T)
+	dw	X
+	dw	Y
+	dw	FMOVE	;copy value from X to Y (Y is now in Z)
+	dw	SEMIS
+;----------------------------------
+CALLXnfa
+	db	85h
+	db	'CALL'
+	db	'X'+80H
+	dw	FENTERnfa
+CALLX			; ( addr -- )  Call with no parameters
+	dw	CALLXpfa
+CALLXpfa
+	pop	h	;get address to call into HL
+	push	b	;put IP onto stack
+	lxi	d,CALLXret
+	push	d	;put return address on stack (as CALL would)
+	pchl		;jump to addr
+CALLXret
+	pop	b
+	jmp	NEXT
+;----------------------------------
+PICKnfa
+	db	84h
+	db	'PIC'
+	db	'K'+80h
+	dw	CALLXnfa
+PICK			; ( n1 -- n2 )  Copy n1th number from stack
+			; 1 PICK = DUP; 2 PICK = OVER
+	dw	PICKpfa
+PICKpfa
+	pop	h	;get n1 into HL
+	dcx	h	;adjust for pulling n1 from stack
+	dad	h	;each stack item is two bytes long
+	dad	sp	;compute addr of n1th item on stack
+	mov	a,m	;get number there
+	inx	h
+	mov	h,m
+	mov	l,a
+	jmp	PUSHHL	;put it onto stack
+;----------------------------------
+FSTRCODEnfa
+	db	86h
+	db	'F$COD'
+	db	'E'+80h
+	dw	PICKnfa
+FSTRCODE		; ( fmode numdig pad -- adr n )  Does main work of
+			; formatting floating point number into string
+	dw	FSTRCODEpfa
+FSTRCODEpfa
+	push	b	;save instruction pointer onto stack
+	lxi	h,Accum1+7 ;last byte of Floating Point accumulator
+	lxi	d,Ftemp+15 ;destination of expand
+	mvi	c,7	;seven bytes have packed BCD digits
+FSTRCODE2		;repeat (expand packed digits)
+	mov	b,m	;..get digits
+	mvi	a,0Fh	;..separate out low digit
+	ana	b
+	stax	d	;..store low digit
+	dcx	d
+	mvi	a,0F0h
+	ana	b	;..separate out high digit
+	rrc
+	rrc
+	rrc
+	rrc
+	stax	d	;..store high digit
+	dcx	d
+	dcx	h
+	dcr	c	;..byte count := byte count - 1
+	jnz	FSTRCODE2 ;until byte count = 0
+	mov	a,m	;get exponent and sign
+	ani	7Fh	;separate out exponent
+	stax	d
+	dcx	d
+	mvi	a,80h
+	ana	m	;separate out sign
+	stax	d
+	inx	d
+	ldax	d
+	ora	a	;if number is zero then
+	jnz	FSTRCODE2a
+	mvi	a,41h	;..set exponent to 1 (simplifies handling of 0.0)
+	stax	d
+
+			;Number is expanded; at Ftemp
+FSTRCODE2a		;Stack contents:  ( fmode numdig pad IP )
+	pop	h	;HL=IP
+	pop	b	;BC=pad
+	pop	d	;DE=numdig
+	xthl		;HL=fmode; TopOfStack=IP
+	mov	h,b
+	mov	a,c
+	mov	c,l
+	mvi	b,0	;BC=fmode
+	mov	l,a	;HL=pad
+	push	h	;save pointer to PAD on top of stack
+	push	d	;save numdig on top of stack ( IP pad numdig )
+	mvi	a,3	;convert fmode to a number from 0 to 3
+	ana	c
+	mov	c,a
+	jnz	FSTRCODE3 ;if FIX notation
+	lda	Ftemp+1
+	cpi	4Fh	;   and 15 or more digits to left of decimal then
+	jc	FSTRCODE3
+	mvi	c,1	;..display in scientific notation
+
+FSTRCODE3		;number is expanded; mode is correct (unless rounding)
+	mov	a,c
+	ora	a	;if FIX notation then
+	jnz	FSTRCODE6
+	lda	Ftemp+1	;..compute number of digits to left of decimal
+	add	e	;..add number of digits to right of decimal
+	sui	40h	;..subtract bias
+	jnc	FSTRCODE4 ;..if number<0 then
+	mvi	a,14	;....replace it with 14
+FSTRCODE4
+	mov	e,a	;..E has number of digits for fixed notation (min 0)
+	jmp	FSTRCODE9
+FSTRCODE6		;else (not FIX notation)
+	inr	e	;..total number of digits = # specified + 1
+FSTRCODE9		;E has total number of digits
+			;HL points to PAD, C has fmode
+	mov	a,e
+	cpi	14	;if character count<14 then (round)
+	jnc	FSTRCODE9z
+	push	d	;..save character count (total in E)
+	mvi	d,0
+	lxi	h,Ftemp+2
+	dad	d	;..HL points to last character for rounding
+	push	h	;..save pointer to last char for rounding
+	mov	a,m	;..if >= 5 then (round up)
+	cpi	5
+	jc	FSTRCODE9t
+FSTRCODE9a		;....repeat (until no carry or out of digits)
+	dcx	h	;......move back one digit
+	inr	m	;......increment that digit
+	dcr	e	;......decrement char count
+	jm	FSTRCODE9c ;......if not out of chars then
+	mov	a,m	;........get digit we just did
+	sbi	10	;........if that digit is 10
+	jnz	FSTRCODE9t
+	mov	m,a	;..........replace digit with 0
+	jmp	FSTRCODE9a ;....until out of digits or no carry out
+FSTRCODE9c		;....if out of digits (just did exponent) then
+	inx	h
+	mvi	m,1	;......replace first digit with 1
+	pop	d	;......discard pointer to first digit to zero
+	pop	d	;......retrieve number of chars not zeroed (in E)
+	mvi	e,1	;......number of chars not zeroed is 1
+	push	d
+	inx	h	;......start zeroing one address higher
+	push	h
+	dcr	c	;......if FIX notation
+	inr	c
+	jnz	FSTRCODE9t
+	lda	Ftemp+1	;......   and 15 or more digits left of decimal then
+	cpi	4Fh
+	jc	FSTRCODE9t
+	mvi	c,1	;........change to SCI notation
+FSTRCODE9t		;..digits on left are rounded
+	pop	h	;..recall pointer to first digit to zero
+	pop	d	;..retrieve number of chars not zeroed (in E)
+	mvi	a,14	;..compute number of chars to zero
+	sub	e
+	mov	e,a
+	sub	a
+FSTRCODE9v		;..repeat
+	mov	m,a	;....zero digit
+	inx	h	;....advance pointer
+	dcr	e	;....decrement digit count
+	jnz	FSTRCODE9v ;..until digit count is zero
+FSTRCODE9z		;endif (rounding is needed)
+	pop	d	;retrieve numdig
+	dcr	c
+	inr	c	;if fmode is 0 (FIX notation) then
+	jnz	FSTRCODE10g
+	lda	FTEMP+1	;..num digits on left = exponent + 1
+	sui	40h	;..if exponent < -1 then
+	jnc	FSTRCODE10a
+	sub	a	;....num digits on left = 0
+FSTRCODE10a
+	mov	d,a	;..D has number of digits on left of decimal
+	add	e	;..E has number of digits to right of decimal
+	cpi	15	;..if total is greater than 14 then
+	jc	FSTRCODE10z
+	mvi	a,14	;....number on right is 14 - (number on left)
+	sub	d
+	mov	e,a
+	jmp	FSTRCODE10z
+FSTRCODE10g		;else fmode <> 0 (SCI or ENG notation)
+	mvi	d,1	;..default:  1 digit before decimal
+	mov	a,c
+	dcr	a	;..if ENG mode (not SCI)
+	jz	FSTRCODE10z
+	mvi	b,60h	;....get highest possible multiple of 3 into B
+	lda	Ftemp+1	;....get exponent into A
+	inr	a
+FSTRCODE10h		;....repeat (do mod 3)
+	sub	b	;......subtract current divisor
+	jnc	FSTRCODE10k ;......if borrow then
+	add	b	;........add it back
+FSTRCODE10k
+	mov	d,a	;......save latest result in D
+	mov	a,b
+	rrc		;......divide divisor by 2
+	mov	b,a
+	mov	a,d
+	jnc	FSTRCODE10h ;....until a carry is generated
+	inr	d	;....D has number of digits left of decimal
+	mov	a,e	;....number of digits on right is total - left
+	inr	a
+	sub	d	;....if result is negative
+	jnc	FSTRCODE10m
+	sub	a	;......then number on right is 0
+FSTRCODE10m
+	mov	e,a	;....E has number of digits on right of decimal
+FSTRCODE10z		;endif (test of fmode)
+	pop	h	;retrieve pointer to pad
+	mvi	m,0FFh	;allow 255 chars in string
+	inx	h
+	push	h	;save pointer to byte count
+	inx	h	;points to output position for first char
+	push	d	;save number of digits left, right
+	lxi	d,Ftemp
+	ldax	d
+	inx	d
+	inx	d	;D points to source
+	ora	a	;if sign bit set then
+	jp	FSTRCODE10
+	mvi	m,'-'	;..put '-' into output string
+	inx	h
+FSTRCODE10
+	mov	a,c
+	pop	b	;B has number on left, C has number on right
+	ora	a	;if FIX notation then
+	jnz	FSTRCODE19
+	dcr	b	;..if B=0 then
+	jp	FSTRCODE11
+	mvi	m,'0'	;....put leading 0
+	inx	h
+	jmp	FSTRCODE12
+FSTRCODE11		;..else B>0; repeat (copy B chars)
+	ldax	d	;....copy byte to output
+	adi	'0'	;....changing number to char
+	mov	m,a
+	inx	d
+	inx	h
+	dcr	b	;....decrement count
+	jp	FSTRCODE11 ;..until B goes negative
+FSTRCODE12
+	mvi	m,'.'	;..put decimal point into output
+	inx	h
+	lda	Ftemp+1
+	sui	40h	;..compute -(number of leading zeros)
+	mov	b,a	;..put count into B
+	jnc	FSTRCODE16 ;..if leading zeros then
+	add	c	;....if more than number right of decimal then
+	jc	FSTRCODE13
+	sub	a	;......replace with -(total count)
+	sub	c
+	mov	b,a
+FSTRCODE13
+	dcr	b
+	jmp	FSTRCODE15
+FSTRCODE14		;....while number of leading zeros>0 do
+	mvi	m,'0'	;......put '0' into output
+	inx	h
+	dcr	c
+FSTRCODE15
+	inr	b
+	jm	FSTRCODE14
+FSTRCODE16		;..endif (leading zeros)
+	inr	c
+	jmp	FSTRCODE18
+FSTRCODE17		;..while digits left to transfer do
+	ldax	d	;....transfer them, changing to ASCII
+	adi	'0'
+	mov	m,a
+	inx	d
+	inx	h
+FSTRCODE18
+	dcr	c
+	jnz	FSTRCODE17
+	jmp	FSTRCODE26
+FSTRCODE19		;else (ENG or SCI notation)
+	push	b	;..B has number on left, C has number on right
+FSTRCODE20		;..repeat (once per digit)
+	ldax	d
+	adi	'0'	;....convert digit to char
+	mov	m,a	;....and put it in output
+	inx	d
+	inx	h
+	dcr	b	;..until digits on left are done
+	jnz	FSTRCODE20
+	mvi	m,'.'	;..put decimal point into output
+	inx	h
+	jmp	FSTRCODE22
+FSTRCODE21		;..while right count>0 do
+	ldax	d
+	adi	'0'	;....convert digit to char
+	mov	m,a	;....and put into output
+	inx	d
+	inx	h
+FSTRCODE22
+	dcr	c	;....decrement right count
+	jp	FSTRCODE21
+	mvi	m,'E'	;..put 'E' into output
+	inx	h
+	lda	Ftemp+1	;..get exponent
+	sui	40h	;..subtract bias
+	pop	b	;..get left count back (in B)
+	sub	b	;..subtract it also
+	jp	FSTRCODE23 ;..if result negative then
+	mvi	m,'-'	;....put '-' into output
+	cma
+	inr	a	;....and get absolute value of exponent
+	jmp	FSTRCODE24
+FSTRCODE23		;..else exponent positive
+	mvi	m,'+'	;....put '+' into output
+FSTRCODE24
+	inx	h
+	mvi	b,'0'-1
+	mvi	c,10
+FSTRCODE25		;..repeat
+	inr	b	;....output char ++
+	sub	c	;....exponent -= 10
+	jnc	FSTRCODE25 ;..until exponent < 0
+	mov	m,b	;..put output char into string
+	inx	h
+	add	c	;..undo last subtraction
+	adi	'0'	;..convert to ASCII
+	mov	m,a	;..write to output
+	inx	h
+FSTRCODE26		;HL points to (last loc. used + 1)
+	pop	d	;DE has pointer to count byte
+	dcx	h
+	call	HLMinusDE
+	mov	a,l
+	stax	d	;store byte count
+	inx	d	;desired address = address of first char
+	pop	b	;get IP back
+	jmp	PUSHDEHL
+;----------------------------------
+DEPTHnfa
+	DB	85H
+	DB	'DEPT'
+	DB	'H'+80H
+	dw	FSTRCODEnfa
+			; ( -- n )  Returns number of (2-byte) items on stack
+DEPTH
+	dw	DOCOL
+	dw	SPAT	;get current stack pointer
+	dw	S0,AT	;get address of stack top
+	dw	SWAP	;want (top - current)
+	dw	MINUS
+	dw	ONE,SHR	;divide by 2
+	dw	SEMIS
+;----------------------------------
+BPLOTnfa
+	DB	85H	;length of 'BPLOT'
+	db	'BPLO','T'+80H
+	dw	DEPTHnfa
+BPLOT			; ( addr count row col -- )  Sends count (0 to 240-col)
+			;	bytes, starting at addr, to LCD row (0-7) and
+			;	column (0-239)
+	dw	BPLOTpfa ;this one is machine code
+BPLOTpfa
+	call	CursorOff
+	lhld	RP	;first, put IP onto R stack
+	dcx	h
+	dcx	h
+	shld	RP	;reserve space on R stack
+	mov	m,c
+	inx	h
+	mov	m,b	;now, can use all registers safely
+	mvi	c,-1	;set driver count to -1
+	pop	d	;get ColNumber into E
+	mov	a,e
+BPLOT2			;repeat (until ColNumber goes negative)
+	inr	c	;..increment driver count
+	mov	e,a	;..save non-negative ColNumber
+	sbi	50	;..ColNumber := ColNumber - 50
+	jnc	BPLOT2	;until ColNumber<0
+	mov	l,e	;ColNumber mod 50 temporarily in L
+	pop	d	;E has RowNumber
+	mov	d,l	;D has ColNumber mod 50
+	mov	a,c	;index into table = offset + (2 * ( col div 50 ))
+	add	c
+	mov	c,a
+	mvi	b,0
+	lxi	h,LCDDriverTable0
+	mov	a,e	;get row number
+	rar		;shift into upper two bits and carry
+	rar
+	rar
+	jnc	BPLOT3	;if lower half of display (RowNumber>=4) then
+	lxi	h,LCDDriverTable1 ;..use table for upper half
+BPLOT3
+	dad	b	;HL has pointer to bytes in table
+	shld	TablePointer
+	pop	b	;get number of bytes to send (becomes ColsToGo) in BC
+	pop	h	;retrieve memory pointer into HL
+	mov	b,a	;two high bits determine row
+	mov	a,c	;if ColsToGo = 0 then
+	ora	a
+	jz	BPLOT4	;..abort operation (no dots to write)
+BPLOT5			;repeat (do group of bytes until ColsToGo<=0)
+	call	DisableTimeInt
+	call	SelectDriver
+	mov	a,b	;..get row in LCD half (in bits 6 and 7)
+	ani	0C0h	;..make sure only two high bits active
+	ora	d	;..include starting column
+	mov	b,a	;..B has select code for LCD
+	mvi	a,50	;..BytesToSend := 50 - FirstCol
+	sub	d
+	cmp	c	;..if BytesToSend >= ColsToGo then
+	jc	BPLOT6
+	mov	a,c	;....BytesToSend := ColsToGo
+BPLOT6
+	mov	e,a	;..BytesToSend (this time) in E
+	call	WriteLCDBytes
+	call	EnableTimeInt	;..timer interrupts OK now
+	mvi	d,0	;..StartCol := 0 for any subsequent drivers
+	mov	a,c	;..ColsToGo := ColsToGo - BytesToSend
+	sub	e
+	mov	c,a
+	jz	BPLOT4	;until ColsToGo <= 0
+	jnc	BPLOT5
+BPLOT4
+	lhld	RP	;retrieve IP from R stack
+	mov	c,m
+	inx	h
+	mov	b,m
+	inx	h
+	shld	RP	;release bytes on R stack
+	jmp	NEXT
+
+SelectDriver		;subroutine to select the proper LCD driver.
+	push	h	;save memory pointer
+	lhld	TablePointer	;get pointer into select-code table
+	call	SelectLCD	;use ROM routine to select driver
+	shld	TablePointer	;save new pointer into select-code table
+	pop	h	;retrieve memory pointer
+	ret
+
+TablePointer	dw	0	;actually, variable storage
+;----------------------------------
+TASKnfa
+	DB	84H
+	DB	'TAS'
+	DB	'K'+80H
+	dw	BPLOTnfa
+			; ( -- )  Do-nothing word; last before user words
+	dw	DOCOL
+	dw	SEMIS
+FENCEInit
+	dw	0
+
+MAXRAM	equ	0F5F0h
+TOSInit	equ	MAXRAM-482	;allow from FENCEInit to here for dictionary
+				;160 bytes (80 entries) allotted for R stack
+RInit	equ	MAXRAM-322	;user area has 64 bytes (32 variables) allotted
+FIRSTstart	equ	MAXRAM-258 ;allow 257 bytes for buffer
+LIMITaddr	equ	MAXRAM-1
+ZROOM	equ	TOSInit-FENCEInit-384 ;compute for interest's sake
+	END	START

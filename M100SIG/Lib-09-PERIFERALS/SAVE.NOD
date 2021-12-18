@@ -1,0 +1,16 @@
+        SAVE.NOD by Paul Globman
+           Copyright (c) 1990
+
+Save Model 100 files to the Node Datapac/RAMPAC directly from the M100 menu.
+Simply select the file to be saved with the M100 widebar cursor, and type...
+
+     SAVE.BA<cr>
+
+SAVE.BA and RAMDSK.CO must be in Model 100 RAM.  SAVE.BA can be converted to 
+SAVE with the CMD.BA utiltiy (DL8).
+
+0 REM SAVE.NOD (c) 1990 by Paul Globman
+1 A=64929+2*PEEK(65006):A=PEEK(A)+256*PEEK(A+1):FORX=3TO10:F$=F$+CHR$(PEEK(A+X)):NEXT:F$=F$+CHR$(13)+CHR$(13)+"Y"
+2 A=65450:POKEA,11:FORX=1TO11:POKEA+2*X,0:POKEA+2*X-1,ASC(MID$(F$,X)):NEXT:CLEAR99,61681:LOADM"RAMDSK":CALL61896
+3 CALL62061:CLEAR0,MAXRAM:X$=INKEY$:MENU
+

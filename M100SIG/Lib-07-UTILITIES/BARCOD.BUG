@@ -1,0 +1,56 @@
+
+It has been reported that there is a bug in early versions of the 'B3OF9.CO'
+BCR program that is on the tape that comes with the wand, and which holds the
+machine language decoder programs.
+
+Apparently the software interprets a period (.) as an exclamation point (!).
+ -- Makes it difficult when dealing with decimal numbers.
+
+Bill Templeton tracked down an early message exchange on the message board,
+and provides the following information:
+
+
+
+Sb: #153379-Barcode problem...
+Fm: Bill Templeton 75655,1056
+
+Tony,
+
+Here's what my notes say about fixing the bug in the early version of Tandy's
+`B3OF9.CO' BCR program.
+
+I still have a copy of Bill Walters reply on this SIG dated 26-Feb-84:
+
+"Bill, Yes, there is an error with the decoding, believe that it decodes a
+period (46) as an exclamation point (33), or something like that.  I'm on
+vacation this week and don't have the info here at home.  Call your local
+store or Computer Customer Services, as a 'patch' has been issued in a
+'merchandising update' memo that comes out every two weeks."
+
+I also remember that I called the above Tandy locations and they didn't know
+anything about the `B3OF9.CO' patch... but someone on this SIG did and gave
+me this patch...
+
+
+ CLEAR110,61788
+ CLOADM"B3OF9.CO"
+ ?PEEK(62608)
+
+This should be 46. (in the early version it was 33) If it's not 46 then correct
+the code and resave it as follows.
+
+ POKE62608,46
+ SAVEM"B3OF9",61788,62611,61824
+
+If you need to save to tape, then...
+
+CSAVEM"B3OF9",61788,62611,61824
+
+
+We have several members who use a Tandy wand to read BCR listings in PCM
+Magazine.  Tandy has just reduced the price of their BCR from $99 to $39 (on
+a "Summer Sale", 1987 - ed.), so interest is picking up on how to print
+programs in 'Tandycode' to exchange at our meetings.  My TCODE file in DL13
+will hopefully tell folks how to do it...
+
+Hope this helps... Bill

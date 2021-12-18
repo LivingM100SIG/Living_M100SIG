@@ -1,0 +1,27 @@
+2 ES$=CHR$(27):WB$=ES$+"p":BW$=ES$+"q"
+4 CS$=ES$+"E":BL$=CHR$(7)
+6 GOSUB52
+8 I$=INKEY$:IFI$=""THEN8ELSEIFI$=ES$THENMENU
+10 CLS:PRINT@52,WB$" Turn printer ON "BW$:PRINT:PRINT"   Resting Pulse Rate = pulse when you
+12 PRINT"      first awaken in the morning
+14 PRINT@250,WB$" Any key to continue "BW$;A$
+16 A$=INKEY$:IFA$=""THEN16
+18 CLS:PRINT@43,"To get the maximum benefit from your aerobic exersises you must work out at  the right intensity.
+20 PRINT"   Your target intensity range is based on your age and resting heart rate.
+22 PRINT" Your goal is to attain, but not exceed this  range in your aerobic activities.
+24 A$=INKEY$:IFA$=""THEN24
+26 CLS:PRINT@42,WB$" What is your name"BW$;:INPUTP$
+28 LPRINT"NAME:  ";P$
+30 'LPRINT:LPRINT"AGE:"
+32 LPRINT:'for print-out of age if desired
+34 PRINT@122,WB$" What is your age"BW$;:INPUTA$
+36 PRINT@202,WB$" What is your resting pulse rate"BW$;:INPUTRR
+38 X=220:Y=X-AG:Z=.60:W=.75:TI=((Y-RR)*Z)+RR
+40 LPRINT"Your 60 second workout pulse rate is:";INT(TI):PI=((Y-RR)*W)+RR
+42 LPRINT"Your 60 second workout peak pulse is:";INT(PI):SZ=TI/6:SW=PI/6
+44 LPRINT:LPRINT"Your 10 second workout pulse rate is: ";INT(SZ)
+46 LPRINT"Your 10 second workout peak pulse is: ";INT(SW):LPRINT:LPRINTSTRING$(41,"*")
+48 LPRINT:LPRINT
+50 CLS:PRINT@100,"":BEEP:INPUT"        ANOTHER (Y/N)";Y$:IFY$="Y"ORY$="y"THEN26ELSEMENU
+52 SCREEN0,0:PRINTCS$;WB$;TAB(47);"AEROBIC WORKOUT PULSE RATES";TAB(80);DATE$;"       ej services    <ESC>=QUIT";BW$;BL$
+54 PRINT@250,"<ENTER> to continue...":RETURN

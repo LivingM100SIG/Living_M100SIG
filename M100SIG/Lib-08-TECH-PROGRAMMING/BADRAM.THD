@@ -1,0 +1,289 @@
+BADRAM.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+One hazard of the Model 100 family is the "cold start" -- loss of everything
+in the machine due to some ill-natured fairy.  These are recent messages on
+this subject: Possible causes, symptoms and recovery approaches (to get back
+DO files)
+
+Message range: 177294 to 177552
+Dates: 12/1/88 to 12/8/88
+
+
+Sb: #M100 bad RAM?
+Fm: Dan Fandrich 723306
+To: ALL
+
+I hope someone can help with this one.  My Dad bought a stock 24k M100 about
+two years ago so he could do some writing at the lake, in the mountains, etc.
+After about a month and 20k of writing later (with the machine always plugged
+into the wall between uses, so it's not the battery), he turned the machine on
+to an  empty screen, the date showing January 1, 1900, the time 00:00:00.
+Needless  to say, he now takes a large pad of paper and a pencil to the
+mountains.
+
+In the meantime I used it n without any problem for a while, then
+built an 8k memory expansion (with a 6264LP RAM and 74HC147 priority encoder,
+which lost bits over a period of days but that's another story) and it
+eventually happened again.  Then a few days ago when I was trying to run the
+BASIC loader for DSKMGR (maybe XMD100, but it's probably not important) which
+had worked flawlessly for a couple of days, I got an 'FC' error.  The LIST
+showed the 1 line program looked OK, so my assumption is that there was some
+kind of memory cn.  Anyway, after a minute or two of trying to get it
+to work, ZAP -- my model 100 time machine took me and my RAM back to January 1,
+1900.
+
+One final problem (make that nuisance).  Once in a while I turn the machine on
+and the date is one year later, but the RAM is (seems?) intact.
+Well, there you have it.  The tragic story of "My life with the M100". Luckily
+I can still end it on a happy note.  If anyone's heard of this problem before,
+please let me know, because actually using the machine in its present state is
+like playing Russian Roulette.
+
+
+Fm: Tony Anderson 76703,4062
+To: Dan Fandrich 72365,306
+
+If your dad experienced a date and time change, but all files were still on the
+menu, all he had to do was go into BASIC and reset the calendar and clock with
+DATE$ and TIME$ commands.
+
+If the files were gone, and he had a clean menu, he experienced what is called
+a "cold start", whersystem pointers are reset indicating it's an
+empty machine.  The files were still in place, but the system directory had
+been cleared.  You could still have retrieved the files, had you known how.
+
+Cold starts are one of the random events in all "partitioned computers", where
+both programs and files are stored in RAM at the same time, and move around,
+depending on what else is happening.
+
+You experienced it too, but your's was more dramatic, since it happened while
+you were actually using the comp..  Same diagnosis; the files were still
+there, but the directory had been cleared.  You could have recovered them.
+
+The date changing is a well-documented bug in the ROM code; a clash between the
+system interrupts, and usually happens when the clock routine is being updated
+while you are also trying to send data out the RS-232 port at higher baud
+rates.
+
+Would you be interested in selling your Model 100? That will make the problems
+"go away".
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Dan Fandrich 72365,306
+
+   I have two M100's and a T200, and what you're describing -- the way you're
+describing it -- has never happened to me.
+   The 100s are known to have a bug in their calendar routine, resulting in an
+occasional problem with the year-component of DATE$.  The quirk has been traced
+to the Modem/RS232 interrupt, and it occurs when you're engaged in high-speed
+communication with another computer, a disk drive, or an external modem.  I
+have never a cold-start resulting from this bug.
+   I respectfully disagree with Tony Anderson's opinion that crashes are random
+and apparently inevitable events.  When they happen, they happen for a reason,
+and 99 percent of the time the problem is a software conflict.  The designers
+of the M100 ROM very generously provided a number of "hooks" that other machine
+-language programmers could attach special routines to.  But when one program
+tries to grab another one's "hook" -- or a program is removed from its runninbefore its "hooks" are disabled -- the computer will follow an
+unpredictable path that often ends at the North Pole.
+   When you got that FC error from an apparently uncorrupted BASIC loader, it's
+an almost certain sign that the m/l program was grabbing for a hook that wasn't
+there.
+   You should re-check the program document to be _sure_ your loading
+procedures were as specified.  And if you had another m/l program running
+previously, you should double-check its instructions to be sure the hooks, if
+any, were neutalized before the program was deleted.  (Some software ignores
+this process.  Shame!)
+   But none of this accounts for the way you describe your dad's mishap at the
+lake.  It sound as if there was nothing in the machine except the factory
+firmware and his musings.  If that's true, you _may_ have a defective computer.
+  There have to be some of those lurking around in the world; but if yours
+turns out to be one, it would be mighty rare.
+   Wish I had more specific help to offer, but I'm afraid you're just gonna
+have to live with the machine until you determine, once and for all, whether
+it's a lemon, or one of the very reilable and rugged M100's that thousands of
+people put to work without problems every day.
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+Well, I would agree with the general principle that cold starts are not always
+random events.  Sometimes they can be traced to machine language conflicts or
+other causes.  But lacking such background information from the original
+problem description, sometimes it's easier to give a general answer, than to
+try to elicit exact details, and try to determine the true cause.
+
+But the fact that they occur in other partitioned comps, indicates they are
+not a unique problem to the Model 100 family.
+
+Did I use the word "inevitable"?  Perhaps "inevitable" is a poor word in this
+context.  Cold starts could only be "inevitable" in the sense that they can
+occur despite the most careful operation, most stringent attention to detail,
+and to the most knowledgable of users.  The possibility is certainly lurking in
+all such machines, and we have found other causes, in addition to software hook
+conflicts.  But as you know, it's often impossiboint an exact cause,
+after the fact.  Particularly MUCH after the fact, where exact details are not
+known, and where users were not sufficiently aware of the problems to know what
+they had actually done that might have contributed to, or created the problem.
+
+
+Fm: Bill Brandon [DPTRAIN] 76701,256
+To: Dan Fandrich 72365,306
+
+Dan, could it be that there is a loose connection on the 100's PCB? A chip
+which had backed part-way out of its connector could give an intermittent cold
+start. Since I infer from your having built a memory expansion yourself that
+you are handy with this sort of thing, why not pop the case open and have a
+look? It couldn't hurt. . .
+
+You will probably have more than one cold start, though they get less common as
+you get more familiar with the machine. (I once cold-started mine because of
+the way I was holding it - with left index finger inadvertently pressing reset
+button - when I turned the mn. Embarassing!) Also, using various
+programs (even straight BASIC ones), especially m/l, will sooner or later lead
+to the dreaded January 1, 1900. I keep this little goodie taped to the top of
+my PDD for those occasions:
+
+10 OPEN "TEMP" FOR OUTPUT AS 1 : FOR X = 32768 TO MAXRAM :
+   PRINT #1, CHR$(PEEK(X)); : NEXT
+
+Even after an arctic start, you can type this into BASIC, run it, and recover a
+good bit of what was in RAM - you should get _all_ of your .DO files back.
+There will be lots and lots of garbagett out, but it shore beats having
+to redo all that golden prose.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Tony Anderson 76703,4062
+
+   I don't think you used the word "inevitable" -- but that's the sense I got
+from your message: that cold-starts are something to be taken for granted --
+sorta like occasional irregularity -- and there's not much you can do about
+them.  The inference, to me, was that the M100 and similar computers are
+entally unreliable.
+   I just don't believe that.  As far as I'm concerned, the firmware operating
+system in these computers has proved itself to be as rugged as the mechanical
+frame that supports it -- which is plenty.  Certainly the computer is
+vulnerable.  Slippery and gooey software will do to the OS what a milkshake or
+a can of glue will do to your keyboard.
+   But where you say cold starts "are not always random events", I say "are
+never random events."  In a system as well-proved as the M100'I believe
+there's a preventable cause for each and every crash.  Some may be too subtle
+for diagnosis at a general user's level of expertise (eg., speed differences
+among varous 3rd-party RAM chips); but none, in my opinion, is just a random
+occurrence.
+   What you and I fully agree on -- there is _no_ way to know what happened to
+that computer at the lakeside cabin last year.  Maybe the butler did it.  <grin
+>
+
+
+Fm: Tony Anderson 76703,4062
+To: Wilson Van Alst 76576,2735
+
+Boy, that's the most ridiculous thing I've ever heard!  The butler wasn't even
+NEAR the cabin.  (grin)
+
+Howsomever... there have been reports of spontaneous cold starts, happening all
+by themselves, while the machines involved sat unattended and unused. (Maybe it
+was an automatic 30-day purge that we don't know about.... sort of a delayed
+laxative effect.) (grin)  It was even suggested once that such might be
+attibuted to stray cosmic particles bombarding the CMOS chips.  (hows THAT for
+esoteric?)
+
+Then there are a couple of cases of it happening during battery replacement,
+and/or because batteries were not making a good contact with the springs in the
+battery compartment.  And I believe there was one case reported of it happening
+after the machine was passed through an airport X-ray machine.  Hard to
+substantiate any cause for such reports that would be something within the
+geeral users control.  Or perhaps within his realm of awareness about the
+machine itself.  The original message in this thread seemed to say the user was
+a "buy it and use it" type of fellow, who was quite surprised that the machine
+was so unreliable that it would spontaneously cold-start, and who had not taken
+the time to develop a background in the machine, which would lead to
+precautionary use, which might have avoided the occurrence.
+
+
+Fm: RANDY HESS 73267,552
+To: Tony Anderson 76703,4062
+
+Leaving a machine plugged in to a "cabin"'s electric supply may have been the
+simple cause of the original problem since an interuption to the 120VAC for
+longer than a FEW minutes with the converter connected will nicely clean out
+even the most coddled RAM! These machines are so user friendly that we take for
+granted a lot of conveniences that the so-called "big-boys" dream about! The
+very fact that VERY unsophisticated userdo so much with these computers
+with hardly ANY training speaks volumes for the ruggedness of their design and
+quality of the programming.
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552
+
+Ah, but it shouldn't.  In the event of an AC power outage, the internal nicads
+are supposed to keep the contents of the CMOS RAM intact.  And theoretically,
+for eight days or more.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: RANDY HESS 73267,552
+
+   Aha!  So the butler didn't have to be near the cabin: he just cut the power
+lines.  Fiendish folk, those butlers.
+   Your analysis of the cabin crash is interesting.  I've never had that
+specific problem, but can't rightly say whether it's because my wall sockets
+are dependable, or because I've got a NiCad charging circuit installed -- which
+may keep battery power flowing even when the wall-juice is ed.
+
+
+Fm: Dan Fandrich 72365,306
+To: Dan Fandrich 72365,306
+
+Thanks for all the input!  I'm glad to hear that mine isn't the only M100 with
+that date bug at least.  As far as the cold starting goes, it could very well
+be a loose connection somewhere -- I'll have to go in and take a look around.
+The first time the "cold start" happened, I wrote a one-liner that did very
+much what Bill Brandon's did, namely take a PEEK through all the RAM to display
+the contents, but I got nothing intelligable (all 0's and 0ffh's if I remember
+correctly).  I have doubts as to whether or not this was a software cold start,
+but rather a loose power connection.  The other times I didn't even bother
+checking because I figured the whole RAM was gone again. Had I realized that
+software cold starts aren't all that unusual, I wouldn't have be so hasty the
+next few times and overlooked that one-liner (the last time especially, after
+the FC errors).
+
+I've had more thanhare of problems with m/l hooks and nonstandard software
+and the like.  I think I've quite easily _recovered_ more data from my CP/M
+machine's hard disk than I've created on it.  (My thanks to Peachtree Software
+for their Magic Wand word processor that writes to group 01F8h on the hard disk
+whether something's there or not...)
+
+With my luck, the M100 probably is that one-in-a-million lemon.  What else
+could you say to a person who bought a Timex-Sinclair 1000 that overheats after
+10 minutes of use, and an IBcompatible whose real time clock speeds up by
+a factor of 3 when it's warm?  At least it took 5 years before my Commodore 64
+broke down.  Oh, that's right.  That one was the third warranty replacement.
+
+
+Fm: Bill Brandon [DPTRAIN] 76701,256
+To: Dan Fandrich 72365,306
+
+Dan, have you considered the possibility that you may be telekinetic? Or
+afflicted by poltergeists? <grin>
+
+
+Fm: RANDY HESS 73267,552
+To: Tony Anderson 76703,4062
+
+I'm glad to hear that but it's happened to me morethan once and, although I've
+never studied a schematic, used "empirical" evidence to assume the worst. I'll
+try to find a schematic.
+
+
+Fm: Dan Fandrich 72365,306
+To: Bill Brandon [DPTRAIN] 76701,256
+
+I knew you'd say that!  :->

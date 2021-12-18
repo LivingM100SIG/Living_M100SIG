@@ -1,0 +1,529 @@
+
+
+
+
+        SEQUENTIAL FILE HANDLING
+
+            Filling a sequential file with records is the easy part.
+        But how often (and how useful) is a file that always stays the
+        same?  Sooner or later records will have to be added, changed,
+        or deleted.  Now the fun starts!
+
+
+        ADDING RECORDS
+
+            Our birthday file has been filled with all the birthdays
+        and anniversaries we care to remember, and then somebody gets
+        married or has a baby.  We'll add the new data to the file
+        with the OPEN for APPEND statement.  Since this is a
+        sequential file, the only place we can add a new record is at
+        the end.  Here's how we initiate the append operation:
+
+            10 OPEN "0:BDAY.DO" FOR APPEND AS 1
+
+            Then just input the data and print the records to the file
+        as before.  Each new record is added to the end of the file.
+        Don't forget to close the file, or the last record(s) may not
+        get written out to the disk.  It would be possible to insert a
+        record in the middle of the file if the file was small enough
+        to be loaded into arrays in RAM.  The new record could be
+        added to the end of the file in RAM, the arrays sorted, and
+        the RAM file written back out to disk.  However, that imposes
+        a size limitation on the file which negates the storage
+        capacity of the Chipmunk (and is also beyond the scope of this
+        section.)  Another possibility is the technique explained in
+        the section on changing, deleting and inserting records.
+
+
+        READING AND SEARCHING FOR RECORDS
+
+            The birthday file doesn't do much good if we don't have a
+        program to read it and look for the data stored in it.
+        Providing we don't consider loading the file into RAM and
+        sorting and searching it there (which again, imposes the
+        limitation on size), the only way we can look for a particular
+        record or field within a record is sequentially: start at the
+        beginning and read each record in order until the desired
+        record in found.  First,OPEN the file for INPUT:
+
+            10 OPEN "0:BDAY.DO" FOR INPUT AS 1
+
+            Let's to look for all the birthdays and anniversaries in a
+        certain month.  First prompt the user for which month, then
+        read the records and look for a match in the Date field.  Of
+        course, there are a number of different ways to specify date,
+        so looking for a match is useless unless the user enters the
+
+
+
+                                    - 12 -
+
+
+
+
+
+
+
+
+
+
+
+        date in the same format as that used in the file.  Since we've
+        decided to use mm/dd/yr, a search for all the birthdays in
+        September would require an entry of "09".  Here's the
+        program:
+
+            10 OPEN "0:BDAY.DO FOR INPUT AS 1
+            20 INPUT "Month to look for";MN$  ' prompt for month
+               desired
+            30 IF EOF(1) THEN GOTO 70  ' test for end-of-file
+            40 LINE INPUT #1,RC$  ' read one record
+            50 IF MID$(RC$,23,2)=MN$ THEN PRINT RC$  ' look at first
+               two characters of date field
+            60 GO TO 30  ' do it again
+            70 CLOSE #1  ' finished
+            80 END
+
+            Line 40 reads one complete record from the file and
+        assigns it to the variable RC$.  Line 50 does all the work.
+        We know that the last name starts on the first character in
+        the record and is ten characters in length.  Thus the first
+        name starts on the 10 + 1 or eleventh character in the record.
+        It is also ten characters in length.  So the
+        birthday/anniversary key starts on the 21st character and it
+        is two characters in length.  Therefore the date starts on the
+        23rd character and we want to compare the first two characters
+        in the date field to the input and print the entire record if
+        there's a match.  The sequential search is rather slow, but
+        it's easy to understand and it works.
+
+            An alternative form of line 40 is:
+
+            40 RC$ = INPUT$(40,1)
+
+            This reads 40 characters from the file opened as number
+        one and assigns it to the variable RC$.  Our records are 38
+        characters long, and each record has a carriage return
+        character and a form feed character at the end of each line.
+        (These two characters together are represented by the left
+        triangle in TEXT.)  It's wise to make sure that the length of
+        the string specified in the INPUT$ statement matches the
+        length of the record plus two.  Otherwise problems arise,
+        particularly if it's shorter than the record length.  The next
+        INPUT$ will begin reading in the middle of a record.  Also,
+        the EOF test does not work if the last two characters aren't
+        picked up.  The carriage return and form feed characters are
+        superfluous as data and cause complications in printing
+        variables so make sure they are trimmed through appropriate
+        assignment statements.  (LINE INPUT handles that
+        automatically.)
+
+
+
+
+
+                                    - 13 -
+
+
+
+
+
+
+
+
+
+
+
+        CHANGING, DELETING AND INSERTING RECORDS
+
+            A technique used to change a particular record in a
+        sequential file (or remove it from the file) involves creating
+        a second file and moving the data from the original file to
+        the new file.  Read a record from the first file.   If the
+        record read is not the one to change, print it to the second
+        file.  If it is, make the changes and then print it.  To
+        delete it, skip printing that record to the new file.
+        Finally, kill the first file and rename the new file to the
+        same name as the original file.  Here's a program to change or
+        delete a record in the birthday file:
+
+            9 ' set up:
+            10 MAXFILES=2  ' two files
+            20 F$="\        \\        \\\\      \\      \"  ' format
+               string
+            30 OPEN "0:BDAY.DO" FOR INPUT AS 1  ' input from
+               original file
+            40 OPEN "0:TEMP.DO" FOR OUTPUT AS 2  ' output to
+               new file
+
+            99 ' main program:
+            100 INPUT "Last name to find";NM$  ' record to look for
+            110 GOSUB 300:IF EF THEN 200  ' look for a match or
+                end-of-file
+            120 IF MF=0 THEN 110  ' no match, do it again
+            130 PRINT RC$  ' match found, display for confirmation
+            140 INPUT "Correct (Y/N)";A$
+            150 IF A$="N" THEN PRINT #2,RC$:GOTO 110  ' not the
+                right match, put it in the new file and look again
+            160 INPUT "Change or delete (C/D)";OP$  ' which
+                operation?
+            170 IF OP$="D" THEN 110  ' skip transfer of this record,
+                go do the rest
+            180 GOSUB 400  ' change this record, get the new data
+            190 GOTO 110  ' keep going to finish transferring rest
+
+            199 ' finished:
+            200 CLOSE:MAXFILES=1  ' close files and reset file
+                buffers
+            210 KILL "0:BDAY.DO":NAME "0:TEMP.DO" AS "0:BDAY.DO"
+                ' kill original, rename new
+            220 PRINT "Finished"
+            230 END
+
+            299 ' read a record and look for a match or transfer
+                  to new file:
+            300 MF=0  ' reset match flag
+            310 IF EOF(1) THEN EF=1:RETURN  ' end of file, set flag
+            320 LINE INPUT #1,RC$  ' read a record from original
+                file
+
+
+
+                                    - 14 -
+
+
+
+
+
+
+
+
+
+
+            330 LN$=LEFT$(RC$,10)  ' separate last name field
+            340 IF INSTR(1,LN$,NM$) THEN MF=1:RETURN  ' look for a
+                match
+            350 PRINT #2,RC$  ' no match, transfer the record to
+                new file
+            360 RETURN
+
+            399 ' get the new data and put it in the new file:
+            400 PRINT "Enter new data:"
+            410 INPUT "Last Name";LN$
+            420 INPUT "First Name";FN$
+            430 INPUT "Birthday/Anniversary Key";KY$
+            440 INPUT "Date mm/dd/yy";DT$
+            450 INPUT "Color";CL$
+            460 PRINT #2, USING F$;LN$,FN$,KY$,DT$,CL$  ' put it in
+            new file
+            470 RETURN
+
+            With a similar technique, a new record can be inserted
+        into the middle of a file.  If a file is maintained with one
+        of the fields in alphabetical order, new records can't be
+        added just anywhere.  Here's the procedure:
+
+            1. Open original file for input.
+            2. Open new file for output.
+            3. Input new record to insert.
+            4. Reached end of original file yet? If yes, then go to
+               step 10.
+            5. Read a record from original file.
+            6. Has the inserted flag been set? If yes, then skip to
+               step 8.
+            7. Is new record key field < key field of record just
+               read?
+               If yes, print the new record to the new file, set the
+               inserted flag.
+            8. Print the record just read to the new file.
+            9. Go to step 4.
+           10. Close files.
+           11. Kill original file. Rename new file to original file
+               name.
+           12. End.
+
+            All operations are spelled out in plain English in the
+        order in which they are to be performed.  This program should
+        be very easy to code.  A key field is a field that has special
+        significance.  It's the field on which the records are sorted
+        and/or it's the field used to search for a record.  We read
+        records from the original file and print them to the new file
+        until we come across a record in which the key field of the
+        new record to insert is less than the key field of the record
+
+
+
+
+                                    - 15 -
+
+
+
+
+
+
+
+
+
+
+
+        just read.  This is determined with a string comparison: IF
+        A$<B$ THEN....  If this condition is true, then we've reached
+        the correct place to insert the new record, and we do so by
+        printing the new record to the new file.  Then we print the
+        record just read and continue the sequence of reading the
+        remaining records from the original file and printing then to
+        the new file.  The concept of a flag is introduced here.  If
+        each time after the insertion we do step seven, the comparison
+        will be true, since the new record is now less than all
+        remaining records.  That step has to be skipped or the new
+        record will continue to be printed each time through the loop.
+        So when it's been accomplished, we assign a value to a
+        variable, and when each time through the loop the comparison
+        in step six detects that variable has that value, then step
+        seven is skipped.  Usually a value of zero represents "false"
+        (or not accomplished) and any positive value represents "true"
+        or (accomplished).
+
+            Pretty slow and limited to handling one record per
+        session.  But it's simple and it works.  For multiple changes
+        it would be much faster to read the fields into arrays in RAM,
+        use the above techniques on them, or sort and search them in
+        RAM using advanced sort and search techniques.  (Assuming the
+        file is small enough to fit and the user is patient).
+        However, we may never again have to use tedious sequential
+        file manipulation, because CDOS gives us the capability to
+        immediately access any given record in a file with one read
+        operation through its Random File Access capabilities.
+
+
+        VARIABLE-LENGTH FIELDS
+
+            We're not limited to a fixed field length in sequential
+        data files.  Variable-length fields are also easy to use.  But
+        there has to be an efficient way of figuring out where one
+        field ends and another begins, since we don't know how long
+        each field is.  Some programs do this by placing a delimiter
+        between fields.  A delimiter is simply a character that has
+        been defined as a field separater, so that when the program
+        sees this character it knows that's where one field ends and
+        another begins.  (Be sure not to use a character that could
+        appear as data).  Delimiters are easy to insert on the print
+        operation, but it's going to take quite a bit of string
+        manipulation on the read operation to look for the delimiter
+        and separate the fields.  Is there an easier way?  You bet!
+        We know that a Basic INPUT statement with multiple variables
+        looks for as many values as there are variables following it
+        and assigns each value to its respective variable name in the
+        order in which it is read.  These input values must be
+        separated by commas.  For example: INPUT AA,BB$,CC looks for
+        three values: a number, a string, and another number,
+
+
+
+                                    - 16 -
+
+
+
+
+
+
+
+
+
+
+
+        separated by commas.  We can read data from a file this way,
+        too, so we just have to figure out how to insert commas
+        between the fields when we print a record to the file.  Here's
+        a way to do it if all the variables are strings:
+
+            100 C$=CHR$(44)  ' ASCII code for comma
+            110 RC$=A1$+C$+A2$+C$+A3$+C$+A4$  ' concatenate with
+            commas
+            120 PRINT #1,RC$  ' print to the file
+
+            We can even mix strings and numbers when printing if the
+        variables and "commas" are separated by semicolons in the
+        print statement:
+
+            100 PRINT #1,A1$;C$;B1;C$;A2$;C$;B2
+
+            To read records, use an INPUT statement with the correct
+        number of variables separated by commas.  Although numbers are
+        converted to strings when printed to a sequential file, the
+        INPUT statement can use either a string variable or a numeric
+        variable to read them.  Use the most convenient form.  Both of
+        these work with the record created by the preceding PRINT
+        statement:
+
+            100 INPUT #1,A1$,B1$,A2$,B2$
+            100 INPUT #1,A1$,B1,A2$,B2
+
+            The file handling techniques used for fixed-length fields
+        apply equally to variable-length fields, except for how the
+        fields are separated and assigned to variables.  Variable-
+        length fields require more coding to print to a file, but less
+        coding to read from a file, since the fields are already
+        separated by the INPUT statement.  Just be sure to use the
+        correct number of variables.
+
+            Here's a short program that uses both methods described
+        above to put variable-length fields into a file.  It creates
+        and loads a data file on stocks.  We enter the company, the
+        broker, (both strings), number of shares (an integer), and
+        price (a single precision number):
+
+            10 C$=CHR$(44)
+            20 OPEN "0:STOCKS.DO" FOR OUTPUT AS 1
+            30 PRINT "Enter data:"
+            40 PRINT
+            50 NM$="":INPUT "Company Name";NM$:IF NM$="" THEN 110
+            60 INPUT "Broker";BR$
+            70 INPUT "Shares";SH%
+            80 INPUT "Price";PR!
+            90 PRINT #1,NM$+C$+BR$+C$;SH%;C$;PR!
+            100 GOTO 50
+
+
+
+                                    - 17 -
+
+
+
+
+
+
+
+
+
+
+
+            110 CLOSE
+            120 END
+
+            Now enter this data:
+
+            Company Name: Infernal Big Machines
+            Broker: E and E Huffin
+            Shares: 50
+            Price: 75.2  (no dollar sign -- this is a number)
+
+            Company Name: Nectarine Computer
+            Broker: Baker Baker Smith Wesson and Smith Jr
+            Shares: 100
+            Price: 13.0
+
+            Company Name: Dandy Corp
+            Broker: Smith Jr
+            Shares: 11
+            Price: 54.6
+
+            Don't use commas between the names of Baker, Baker, and
+        etc.  Commas are being used as a delimiter in our file, so if
+        there are extra commas in this record, the INPUT statement
+        will think each name is another variable.  (This is a good
+        place to do some error checking: IF INSTR(1,BK$,",") THEN
+        etc.)  Now load STOCKS.DO into TEXT and take a look at the
+        file.  Each record is still contained within one line, but
+        they are unequal in length, using just enough for the data in
+        each field plus the commas that separate fields.  Numbers are
+        printed with an extra space, since they are printed as
+        strings.  (To eliminate these spaces, convert numbers to
+        strings and trim the spaces.)  Here's how to read the file:
+
+            10 OPEN "0:STOCKS.DO" FOR INPUT AS 1
+            20 IF EOF(1) THEN CLOSE:END
+            30 INPUT #1,CO$,BK$,SH$,PR$
+            40 PRINT:PRINT "Company: ";CO$
+            50 PRINT "Broker: ";BK$
+            60 PRINT "Shares:";SH$
+            70 PRINT "Price:";PR$
+            80 GOTO 20
+
+            There's no reason we must use the same variable names when
+        reading, but it helps to avoid confusion.  To do some
+        arithmetic with the "numbers" in the file, read them as
+        variables or convert them after reading with the VAL
+        statement: PR! = VAL(PR$).  Since this example uses commas as
+        delimiters, commas cannot be used within fields unless the
+        field is enclosed in quotes.  If the data requires embedded
+        commas, it's easier just to use a different delimiter.  Fields
+        can be separated after reading with the INSTR and MID$
+
+
+
+                                    - 18 -
+
+
+
+
+
+
+
+
+
+
+
+        statements.  For example, using "@" as a delimiter:
+
+            30 LINE INPUT #1,RC$  ' read a record
+            40 ST=1  ' start looking here
+            50 PO=INSTR(ST,RC$,"@")  ' look for the @
+            60 NM$=MID$(RC$,ST,PO-ST)  ' break out the field
+            70 ST=PO+1  ' now start looking here
+            80 ' and so on ...
+
+            This technique assumes a "@" following each field, so be
+        sure to put a "@" at the end of the record, too.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    - 19 -
+
+
+
+
+
+
+

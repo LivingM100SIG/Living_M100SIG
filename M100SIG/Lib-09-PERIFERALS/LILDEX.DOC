@@ -1,0 +1,79 @@
+ Instructions for LILDEX.TDD
+by Don Zeikel [75775,1430]
+
+     LILDEX.TDD, when used with POWR-DISK by Acroatix, creates an alphabetical 
+index of your Tandy Disk Drive disk file names.  Since it uses a machine 
+language routine, it only works on the Model 100 (or 102, I assume).  It does 
+not have a lot of whistles and bells, as it was intended to be little, allowing
+the most possible available RAM for the index (hence the name LILDEX).  It also
+does not have a print routine in it; there are plenty of fine text processors 
+in the DL's, as well as excellent commercial programs, and different people 
+will want to print out their indexes in different formats (for example, you may
+wish to double or triple space it to write in new files between re-printings of
+the index).
+     Each time you run the program, you MUST re-enter all the disks you want 
+listed.
+     The trade-off of these limitations is, you can have a very long index, 
+since it sorts in place.  An index of over 20K is not impossible.  To give you 
+a feel for this, a 27-disk index with 545 files was 12.5K.  This was using 
+three digit names for each disk.
+
+DIRECTIONS FOR USE
+
+     If you have run PDFDIR.TDD by Woods Martin [70235,232] from DL5, you have 
+created a more pleasing LFILES screen display, but killed the file lengths.  
+You may wish to use an un-modified version of POWR-DISK for indexing.  However,
+if you have a lot of disks, using a version without the file lengths can save 
+you a lot of RAM.  The program will work either way.
+     To begin, since LILDEX uses a machine language subroutine, save all files,
+as there is always the possiblity of a cold start.
+     You must have POWR-DISK by Acroatix loaded and operating at its highest 
+possible location (which puts MAXRAM at 60850).  If it isn't, the program will 
+end.  You also should not have any other machine language programs loaded in 
+high memory.  If you do, the program will ask you if you want to [C]ontinue or 
+[A]bort.  If you press "C" it will overwrite whatever you have loaded below 
+POWR-DISK.  Have the Disk Drive attached and on.
+     You will be asked if you want to save INDEX.DO already in RAM.  Unless you
+have interrupted the program as described below, answer "N".  If INDEX.DO is 
+present, it will be killed.  If it isn't, it doesn't matter.
+     The program will then ask you for a disk name.  I recommend that you use 
+numerical names, for easy filing, but any name will work.
+     After you enter the name, it will prompt you to load a disk and press 
+ENTER again.  This prompt also gives you a second chance to write the disk 
+name, in case you made a mistake.
+     You will then see the files being entered into INDEX.DO, with the disk 
+name tagged onto them.  After you have entered all your disks, enter * at the 
+prompt, and it will load the sort routine and sort the file.  This sorting may 
+take several minutes.  DO NOT RESET THE COMPUTER WHILE IT IS SORTING!  A 12.5K 
+files took about 5 minutes.  When it is finished, it will beep and return to 
+MENU.
+     You will now have an INDEX.DO file with all of your disk files 
+alphabetized, followed by the disk name.  This can be printed with any text 
+processor, or directly with the PRINT function of TEXT.
+
+ERRORS
+
+     There should be enough error trapping in the program to cover most 
+contingencies.  If you have to break out of the program midway through, which 
+could happen if you run out of memory, for instance, simply enter INDEX.DO and 
+delete any of the file names, from the end of the file, that are from the disk 
+you will be starting with.  When you re-start the program, answer "Y" for 
+saving INDEX.DO and you can pick up where you left off.
+     CAUTION:  If you plan to re-run the program with ALL your disks, answer 
+"N" when it asks you if you want to save INDEX.DO.  Otherwise, you will have 
+some duplications of files previously entered.
+
+     It's really easy, as long as you follow the prompts.
+
+CREDITS
+
+     The sort routine was created by SORT.LDR in DL4 by Rick Perry [75665,1045]
+, and LILDEX would have been impossible without it.  I have no idea how it 
+works, but it does!
+     The portion of the program that loads the sort was created with BASBLD.BA 
+in DL4 by Richard Haw [71706,334].
+     As you can see, the least of it was done by me.  Any comments would be 
+appreciated.
+
+Don Zeikel [75775,1430]
+

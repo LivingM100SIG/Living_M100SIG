@@ -1,0 +1,237 @@
+M200 Memory Map  MAXRAM=EEB0
+
+EEB4+	Holds HIMEM value
+-------
+EEB9++	RST 5.5 vector (bar code)
+-------
+EEBF++	RST 6.5 vector
+EEC2++	RST 7.5 vector
+-------
+EEF4	Dialing method 0=tone,1,14
+EEF5	Active bank stored (in bank 1)
+-------
+EEFD	KEY ON/OFF FLAGS 8 bytes to...
+EF04	
+EF05	Current screen in use
+EF06	Current cursor row position
+EF07	Current cursor column position
+EF08	Max number of lines on screen
+EF09	Max screen width
+EF0A	LABEL LINE FLAG 0/off 255/on
+EF0B	Screen lock flag
+-------
+EF0D	Current LCD Y position
+EF0E	Current LCD X position
+-------
+EF32	0=BREAK 128=NO_BREAK
+-------
+EF34+	Error trap - 0/basic or use adr
+-------
+EF38	Power setting 0=cont.
+EF39	Full/Half Duplex (255=full)
+EF3A	Echo to Lpt:
+EF3B	Ignore LF
+-------
+EF3C	TELCOM parameters to...
+EF42
+
+EF44	Orig/Ans mode 0=Orig  non-0=Ans
+-------
+EF49+	CALL target address
+-------
+EF52++	Code for OUT command
+EF55++	Code for INP commpnd
+-------
+EF60	Output flag  1=Lpt 0=Lcd
+-------
+EF65+	Holds line # being executed
+EF67+	Holds start adrs of BASIC pgm
+-------
+EF6B	End of BASIC stmt marker
+EF6C	Holds tokenized BASIC line
+-------
+EF70	Holds line from CALL 54F6
+-------
+F074	F1 - Table 1
+F084	F2 - Table 1
+F094	F3 - Table 1
+F0A4	F4 - Table 1
+F0B4	F5 - Table 1
+F0C4	F6 - Table 1
+F0D4	F7 - Table 1
+F0E4	F8 - Table 1
+F0F4
+F0F5	F1 - Table 2
+F105	F2 - Table 2
+F115	F3 - Table 2
+F125	F4 - Table 2
+F135	F5 - Table 2
+F145	F6 - Table 2
+F155	F7 - Table 2
+F165	F8 - Table 2
+-------
+F218	Day of week
+F219	Day of month - low digit
+F21A	Day of month - high digit
+F21B	Month - low digit
+F21C	Month - high digit
+F21D	Year - low digit
+F21E	Year - high digit
+F21F	Counter - Decrements 150 to 1
+F220	Counter - Decrements 12 to 1
+F221	Counter - Power Down
+-------
+F234	ON COM GOSUB status
+F235+	Adr of line# to GOSUB for COM
+F237	ON TIME$ GOSUB status
+F238+	Adr of line# to GOSUB for TIME$
+F23A	ON KEY 1 GOSUB status
+F23B+	Adr of line# to GOSUB for KEY 1
+F23D	ON KEY 2 GOSUB status
+F23E+	Adr of line# to GOSUB for KEY 2
+F240	ON KEY 3 GOSUB status
+F241+	Adr of line# to GOSUB for KEY 3
+F243	ON KEY 4 GOSUB status
+F244+	Adr of line# to GOSUB for KEY 4
+F246	ON KEY 5 GOSUB status
+F247+	Adr of line# to GOSUB for KEY 5
+F249	ON KEY 6 GOSUB status
+F24A+	Adr of line# to GOSUB for KEY 6
+F24C	ON KEY 7 GOSUB status
+F24D+	Adr of line# to GOSUB for KEY 7
+F24F	ON KEY 8 GOSUB status
+F250+	Adr of line# to GOSUB for KEY 8
+
+F252	DIRECTORY OF FILE ENTRIES
+	Each enrty = 11 bytes. First byte is file attribute byte
+	Bit 7=1 if valid entry
+	Bit 6=1 if .DO file
+	Bit 5=1 if .CO file
+	Bit 4=1 if ROM file
+	Bit 3=1 if invisible
+	The next 2 bytes point to RAM storage area.
+	Last 8 bytes =filename no (.)
+F252	BASIC's file slot
+F25D	TEXT's file slot
+F268	TELCOM's file slot
+F273	ADDRSS's file slot
+F27E	SCHEDL's file slot
+F289	MSPLAN's file slot
+F294	UNSAVED BASIC PGRM's file slot
+F29F	PASTE BUFFER's file slot
+F2AA	BASIC EDITOR's file slot
+F2B5	user slot 1
+F2C0	user slot 2
+F2CB	user slot 3
+F2D6	user slot 4
+  |            |
+F4A4	user slot 46
+F4AF	End of directory flag
+--------
+F4BB+	Holds dir adrs of current BASIC program
+--------
+F4DD	IPL string to...
+F4E7
+--------
+F4EC+	Holds SP when power off occurs
+F4EE+	LOMEM - Adrs of 1st RAM byte
+--------
+F4F7	Holds offset into RST 7 jmp tbl
+--------
+F507	Branch table for RST 7
+F507  1	CLEAR vector
+F509  2	CLEAR x,HIMEM vector
+F50B  3	Keypress vector
+F50D  4	Keyscan vector
+F50F  5	LCD
+
+F53D 28	To/From Menu
+F53F 29	F6 TELCOM (Term) vector
+F541 30	F7 TELCOM (Term) vector
+
+F545 32	F8 TEXT (and Basic Editor)
+        --------------
+F547  1	Width a,b
+F549  2	Screen 1,x(0)
+F54B  3	Open/Save"crt:"(1)
+F54D  4	
+F54F  5	Open/Save"crt:"(2)
+F551  6	Open/Load"wand:"(1)
+F553  7	Open/Load"wand:"(2)
+F555  8	Open/Load"wand:"(3)
+F557  9	Open/Load"wand:"(4)
+F559 10	
+F55B 11	
+F55D 12	Lfiles(1)
+F55F 13	Lfiles(3)/dsko$=a$(2)/a$=dski$(0)
+F561 14	Lfiles(2)/dsko$=a$(1)
+F563 15	
+F565 16	
+-------
+F652+	line # where error occurred
+F654+	line # of last entered/listed
+F656+	mem adrs where error occurred
+F658+	address of "ON ERROR GOTO" line
+--------
+F65D+	line # where BREAK occurred
+--------
+F661+	points to 1st byte
+--------
+F665+	points to start of variable storage
+F667+	points to adrs for next variable data
+F669+	Holds location of first free byte in RAM
+--------
+F735	Holds MAXFILES value
+--------
+F745	File name #1
+F74F	File name #2
+--------
+F7B0	Holds day/date/time for menu display to...
+F7C8
+F7C9	Visible file adrs table to ...
+F830
+F831+	Pointer into VisFilTbl for next address
+F833	Holds Filename being searched for by 6E4F routine...to ...
+F83C
+--------
+F848	Holds # of file under cursor
+F849	Holds # of visible entries -1
+--------
+F854	Holds screen in use before returning to menu
+FA30	LCD screen image 640 bytes to..
+FCAF
+--------
+FCF4	SOUND ON/OFF flag. ON=0 OFF=175
+--------
+FD03	TIC for kbd scan
+FD05	KBD matrix buf a/b (18 bytes)
+
+Buf1   7   6   5   4   3   2   1   0    Buf2
+============================================
+FD05   L   M   N   B   V   C   X   Z    FD0E
+--------------------------------------------
+FD06   K   J   H   G   F   D   S   A    FD0F
+--------------------------------------------
+FD07   I   U   Y   T   R   E   W   Q    FD10
+--------------------------------------------
+       ?   >   <   "   :   ]
+FD08   /   .   ,   '   ;   [   P   O    FD11
+--------------------------------------------
+       *   &   ^   %   $   #   @   !
+FD09   8   7   6   5   4   3   2   2    FD12
+--------------------------------------------
+                       +   _   )   (
+FD0A  dwn up rght lft  =   -   0   9    FD13
+--------------------------------------------
+FD0B <cr> prt lbl pas esc tab del space FD14
+--------------------------------------------
+FD0C   F8  F7  F6  F5  F4  F3  F2  F1   FD15
+--------------------------------------------
+FD0D  brk     cap num cod grh ctl shf   FD16
+--------------------------------------------
+FD1E	# of keystrokes pending
+FD1F	Keyboard queue (64 bytes)
+-------
+FEA4+	Holds adrs of 8 byte pixel map
+FEAC+	Holds offset into map
+-------

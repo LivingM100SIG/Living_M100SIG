@@ -1,0 +1,83 @@
+;
+; FIND.100   v1.00
+; c1987 by Jon Diercks [73327,2353]
+;
+; Find text string in RAM/ROM
+;
+; <This source code for ASMBLR.CO
+;  by Custom Software>
+;
+	org	$fcc0	;alternate LCD RAM
+;
+;
+;	ROM calls, etc.
+;
+input	equ	$4644
+inpbuf	equ	$f685
+menu	equ	$5797
+tab	equ	$4480
+dspvhl	equ	$39d4	;print value of hl in ascii
+break?	equ	$729f	;set z & c if shift-break
+;
+;
+;	text constants
+;
+prompt	db	12	;cls
+	db	10	;lf
+	dm	Search string:
+	db	0
+;
+;
+;	*** PROGRAM STARTS HERE ***
+;
+;
+start	disp	prompt
+	ent	start
+;
+	call	input	;get search string
+	rc		;quit if ^C
+	lxi	hl,inpbuf
+	sub	a
+	cmp	m
+	rz		;quit if null input
+	lxi	hl,0	;set to start search
+floop	push	hl
+	call	break?
+	pop	hl
+	rz		;quit if break
+	mov	b,m
+	lxi	de,inpbuf
+	ldax	de
+	cmp	b
+	jnz	fnext
+	push	hl
+fmore	inx	hl
+	inx	de
+	mov	b,m
+	ldax	de
+	cpi	0
+	jz	found
+	cmp	b
+	jz	fmore
+	pop	hl
+;
+fnext	inx	hl
+	mov	a,h
+	ora	l	;hl=0?
+	jnz	floop
+;
+	lxi	hl,$5f4b	;'Press space for '
+	call	$5791	;print <hl> on new line
+	disp	$03	;'MENU'
+	call	$5f2f	;wait for space
+	jmp	menu	;quit
+;
+found	pop	hl
+	push	hl
+	call	dspvhl	;print location
+	call	tab
+	pop	hl
+	jmp	fnext
+;
+;
+	end

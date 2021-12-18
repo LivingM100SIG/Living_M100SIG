@@ -1,0 +1,111 @@
+EXTRA.100: A helping hand for writers by Carmen Paone [72677,42]
+
+         As a writer who faces deadlines, I always wanted certain features at my fingertips in my Model 100
+
+        Features such as
+
+        * Search and replace
+
+        * Story length
+
+        * Rename function
+
+        Before EXTRA.100, I had to exit my story and enter one of the programs that would do the things I wanted to do.
+        Now, when I exit my stories, I have those three functions at my fingertips in the form of EXTRA.100
+        EXTRA.100 takes a different twist on Mo Budlong's program, which was designed to enable the user to call TEXT from BASIC.
+        Now, the user can call BASIC from TEXT.
+        When you hit the F1 key for the first time, you might think there is something wrong with EXTRA.100 because all you will see is a blank screen.
+        There's nothing wrong and you didn't waste your connect time.
+        You are sitting in a TEXT file called STORY.DO. Start writing your article.
+        When you want to use one of the features of EXTRA.100, just hit the F8 key and you will back at the program's menu.
+        All of the features of EXTRA.100 will only work on STORY.DO.
+        When you select S&R, you will see a "?" on the screen, strike enter and a message of A)uto or Q)uerry will pop up.
+
+        The Auto mode will automatically search for the string you are seeking and replace it with the corrected string.
+        In the "Q" mode, you will see the string appear on the screen and be asked if you want to
+
+        R)eplace the string
+
+        S)kip the string
+
+        Q)uit the S&R function.
+
+        On "Quit" the lines of the article will be counted and you will be returned to the EXTRA.100 menu.
+
+        In the Length of story mode, if you get an EF error, that means that you are trying to measure an empty file.
+
+        Cut and paste the program below the dotted line, place it in another .DO file and run that file through BASIC to make EXTRA.100 come alive.
+
+        WARNING: EXTRA.100 clears space for the TXTCAL.100 routine; as a result it will knock out some ML programs that don't protect HIMEM, such as HXFER.100. String space for programs like HXFER  or XMDPW5 can be restored by changing line 380 to read ClearXXXX
+XX, (starting address of program) MAXRAM:MENU
+
+
+FLOPPY, however, won't allow the editing functon of DATADO to work. I abandoned FLOPPY a year ago and went to POWR-DOS, which can be found in DL9 of this forum.
+
+        I modfified Steve French's very fine global search program for EXTRA.100
+.......................................
+
+
+0 REM EXTRA.100 (REVISED VERSION) A HELPING HAND FOR WRITERS BY CARMEN PAONE [72677,42]
+10 F$="story.do":OPENF$FORAPPENDAS1:CLOSE
+20 CLS:PRINT@42,"  EXTRA!100":PRINT@88,"EXTRA!100":PRINT@132,"EXTRA!100":PRINT@176,"EXTRA!100":PRINT@220,"EXTRA!100";
+30 KEYON:PRINT@280,"Story S&R  Len  Name MENU";:ONKEYGOSUB400,50,210,350,380
+35 GOTO35
+50 GOTO160;'Search & Replace  S A French  72275,1622  01/01/85
+60 IFEOF(1)THENCLOSE:KILL"Story.do":NAME"TEMP$$.DO"AS"story.do":GOTO10 ELSEP=1:OS$="":LINEINPUT#1,IS$
+70 M=INSTR(P,IS$,SS$):IFM=0THENOS$=OS$+MID$(IS$,P):GOTO100
+80 M=M-P:OS$=OS$+MID$(IS$,P,M):IFQ=0THENOS$=OS$+RS$ ELSEGOSUB110:IFI<3THEN OS$=OS$+SS$ ELSEIFI<5THENOS$=OS$+RS$ ELSE130
+90 P=P+LEN(SS$)+M:IFP<LEN(IS$)THEN70
+100 PRINT#2,OS$:PRINT@135,"Line";L:L=L+1:GOTO60
+110 CLS:PRINTOS$;CHR$(27)"p";SS$;CHR$(27);"q";MID$(IS$,M+P+LEN(SS$)):PRINT@285,"(R)eplace, (S)kip or (Q)uit ? ";
+120 GOSUB150:I=INSTR(1,"SsRrQq",I$):CLS:RETURN
+130 PRINT#2,OS$+SS$+MID$(IS$,M+P+LEN(SS$))
+140 IFEOF(1)THEN60 ELSELINEINPUT#1,IS$:PRINT#2,IS$:PRINT@137,"Line";L:L=L+1:GOTO140
+150 I$=INKEY$:IFI$=""THEN150 ELSERETURN
+160 CLEAR1000:DEFINTA-Z:CLS:INPUTSTORY;DF$:IFINSTR(1,DF$,".DO")=0THENDF$=DF$+".DO"
+170 PRINT"(A)uto or (Q)uery ? ";:GOSUB150:I=INSTR(1,"AaQq",I$):IFI=0THENPRINT:GOTO170 ELSEIFI>2THENQ=1 ELSEQ=0
+180 CLS:LINEINPUT"SEARCH STRING ";SS$:IFLEN(SS$)=0THENMENU
+190 LINEINPUT"REPLACE STRING ";RS$:OPEN"story.do"FORINPUTAS1:OPEN"TEMP$$.DO"FOROUTPUTAS2:CLS:GOTO60
+200 REM PICAS.BA by Carmen Paone [72677,42]
+210 CLS:F$="story.do":OPENF$FORAPPENDAS1:CLOSE
+220 OPENF$FORINPUTAS1
+230 N=0
+240 CLS:PRINT@132,"WORKING ...."
+250 A$=INPUT$(9,1)
+260 ONERRORGOTO280
+270 N=N+9:GOTO250
+280 IFERR<>54THENRESUME
+290 CLS:PRINT@166,"LENGTH  ":PRINT@179,"INCHES
+300 N=N+16:PRINT@173,(INT(10*(N/29*10.25/72)))/10
+310 CLOSE1
+320 PRINT@281, "Spacebar for EXTRA! Menu"
+330 B$=INPUT$(1)
+340 IFB$=" "THEN20
+350 CLS: PRINT@121,"TYPE FILENAMES IN CAPS AND ADD .DO":A$="STORY.DO":INPUT"Old name";A$:INPUT"New name";B$:NAMEA$ASB$:GOTO20
+380 CLEAR0,MAXRAM:MENU
+400 REM
+410 GOSUB415
+415 rem
+420 CLEAR 100,62750
+430 GOSUB 500 'Load the routine
+440 FN$="Story.DO"
+450 OPEN FN$ FOR APPEND AS 1
+460 CLOSE 1
+470 CALL TX,,VARPTR(FN$)
+480 run20
+490 END
+500 REM *Set TX as entry address and
+510 REM *load routine at TX for 65 bytes
+520 TX = 62750
+530 FOR A = TX TO TX+65
+540 READ N:POKE A,N:NEXT A
+550 D=INT((TX+48)/256):C=(TX+47)-(256*D):POKE TX+42,C: POKE TX+43,D
+560 RETURN
+570 DATA 229,213,197,245,126, 35, 94, 35, 86,235
+580 DATA  95,205, 11, 76,205,175, 32,202,237, 20
+590 DATA  35, 94, 35, 86, 42,157,251,229, 33,  0
+600 DATA   0, 34,231,246, 57, 34,157,251,213, 62
+610 DATA   1, 33, 77,245,195,113, 95,225,225, 34
+620 DATA 157,251,205,156,108,175, 50, 80,246, 61
+630 DATA  50,173,250,195,237, 20
+640 rem end of data

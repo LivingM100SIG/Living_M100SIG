@@ -1,0 +1,83 @@
+     NIM.BA  by Paul Globman
+       Copyright (c) 1991
+     -----------------------
+ 
+In the game of nim, two players take turns removing stones from several
+piles of stones. At each turn, a player may remove as many stones as he or she
+likes, but all from the same pile. The player to remove the last stone wins.
+ 
+In NIM.BA, the piles of stones are represented by numbers, and the Model
+100/200 is your opponent.  When you run NIM.BA, you begin at LEVEL 5 (5 piles
+of stones).  The number of stones in each pile is randomly selected, between
+1 and 7 stones per pile.
+ 
+Use the left/right ARROW KEY to select a pile, then press a number (1-7) to
+indicate how many stones to remove from the selected pile.  You will always
+have the first move, and the play will alternate between you and the computer.
+The program will ignore any attempt to remove more stones than the selected
+pile contains.
+ 
+When all stones are removed, the program will beep and indicate who won.  The
+following keys (commands) are available at any time during the game...
+ 
+ESC - press ESC to abort the game and return to the Menu.
+ 
+NEW - press "N" to abort the game and play a new game.
+ 
+REPEAT - press "R" to abort the game and restart with the same piles of stones.
+ 
+SKILL - press "S" to abort the game and start a new game at the next highest
+skill level.  Increasing the skill level just increases the number of piles of
+stones.  Ten (10 piles) is the highest skill level and the most difficult
+level to beat the computer.
+ 
+NOTE: These commands respond to uppercase characters only, so press the
+CAPS LOCK key.
+ 
+Have fun.... Paul Globman [72227,1661]
+-----------------------------------------------------------------------------
+0 REM NIM.BA (c) 1991 by Paul Globman
+1 DEFINTA-Z:P$="   "+CHR$(152)+"   ":FORI=27TO29:B$=B$+CHR$(I):NEXT:L=5
+2 B$=B$+"NRS":X=VAL(RIGHT$(TIME$,2)):X=RND(-VAL(MID$(TIME$,4,2))*60+X)
+3 TT=0:FORI=1TOL:R(I)=INT(RND(1)*7)+1:TT=TT+R(I):B(I)=R(I):NEXT:P=1
+4 X$="NIM.BA (c) 1991 by Paul Globman":CLS:T=TT:FORI=0TO4STEP2
+5 LINE(0+I,0+I)-(239-I,63-I),1,B:NEXT:PRINT@45,X$
+6 GOSUB22
+7 X$=INKEY$:IFX$=""THEN7
+8 X=INSTR(1,B$,X$):IFX=0THEN14
+9 ONXGOTO18,11,12,3,13,10
+10 L=L+1:L=L+(L>10):GOTO3
+11 P=P+1:P=P+(P>L):GOSUB23:GOTO7
+12 P=P-1:P=P-(P=0):GOSUB23:GOTO7
+13 FORI=1TOL:R(I)=B(I):NEXT:GOTO4
+14 X=VAL(X$):IFX<1ORX>R(P)THEN6
+15 R(P)=R(P)-X:T=T-X:IFT<>0THEN19
+16 BEEP:BEEP:PRINT@248,"You ";
+17 PRINT"win... Please try again":GOTO7
+18 MENU
+19 GOSUB22:GOSUB24:Y=S(J):P=I:PRINT@208,"I'll take"Y"from pile"I
+20 R(I)=R(I)-Y:T=T-Y:FORI=1TO1500:NEXT:PRINT@205,SPACE$(30):IFT<>0THEN6
+21 BEEP:BEEP:PRINT@248,"I ";:GOTO17
+22 FORI=1TOL:PRINT@162+I*3,R(I):NEXT
+23 PRINT@203+(P-1)*3,P$:RETURN
+24 B4=0:B2=0:B1=0:FORI=1TOL:R=R(I):B1=B1+RMOD2:B2=B2-(R=2ORR=3ORR>5)
+25 B4=B4-(R>3):NEXT:F=4*(B4MOD2)+2*(B2MOD2)+B1MOD2:IFF>0THEN28
+26 I=RND(1)*(L+1):IFR(I)=0THEN26
+27 S(J)=RND(1)*R(I)+1:RETURN
+28 ONFGOTO29,30,31,32,33,34,35
+29 RESTORE38:GOTO36
+30 RESTORE39:GOTO36
+31 RESTORE40:GOTO36
+32 RESTORE41:GOTO36
+33 RESTORE42:GOTO36
+34 RESTORE43:GOTO36
+35 RESTORE44
+36 FORI=1TO4:READQ(I),S(I):NEXT:FORI=1TOL:FORJ=1TO4:IFR(I)=Q(J)THENRETURN
+37 NEXTJ:NEXTI
+38 DATA 7,1,5,1,3,1,1,1
+39 DATA 7,2,6,2,3,2,2,2
+40 DATA 7,3,6,1,3,3,2,1
+41 DATA 7,4,6,4,5,4,4,4
+42 DATA 7,5,6,3,5,5,4,3
+43 DATA 7,6,6,6,5,2,4,2
+44 DATA 7,7,6,5,5,3,4,1

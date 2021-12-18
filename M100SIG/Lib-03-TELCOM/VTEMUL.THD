@@ -1,0 +1,140 @@
+VTEMUL.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+VTEMUL.RLC (DL 3) is one of the more ambitious and impressive contributions
+to our data libraries in recent months.  It is a relocatable machine-
+language Model 100/200 program for DEC VT teminal emulation.  These messages
+discuss the technical aspects of adapting it to the DVI -- and have some
+information which may be of use in other such translations to the DVI
+
+Message range: 152823 to 153218
+Dates: 7/18/87 to 7/23/87
+
+Sb: #VTEMUL
+Fm: SCOTT MILLS 71316,720
+To: Terry Luke 73126,1775
+
+I wonder if you have given any thought to writing a version of VTEMUL to use
+with the DVI.  I realize that the fraction of Model 100 owners that have the
+DVI is small but it would be great if we could display the full screen on a
+monitor.  I'll be interested to see what you think.
+
+
+Fm: TERRY LUKE 73126,1775
+To: SCOTT MILLS 71316,720
+
+I have had other requests to adapt VTEMUL for the DVI, but I must admit that I
+don't know much about how the DVI works.  If someone could give me a little
+information I might be able to do it, but then testing it would be a problem. I
+have already written a version which works with Ultrasoft's Ultrascreen in 60
+column mode.  It switches back and forth inside the program with the Screen 0
+and Screen 1 call and adjusts to 40 column or 60 column.  I suspect if I just
+made the 60 column mode 80 columns instead it would probably work on the DVI,
+then it is my understanding that the DVI also uses the SCREEN command to switch
+back and forth. Let me think about it.  I may try changing the 60 to 80 and see
+if it runs.  If I send it to you, would you be willing to do a little testing?
+Also, any other information you could give me about the DVI would be helpful.
+
+
+Fm: SCOTT MILLS 71316,720
+To: TERRY LUKE 73126,1775
+
+Terry, I would be very glad to test whatever you might have available.
+Unfortunately, I only have the Owner's Manual which doesn't give much technical
+information.  I did find the following item regarding the use of the "PRINT@
+Command": -'When you write data into the RAM or diskette using the "PRINT@"
+etc., DiskBASIC recognizes the numeric expression of the first parameter in
+this command as "ESC" code, line number and column number according to the
+condition of the console width. So, if the console is in the 80 characters
+mode, the parameter of "PRINT@" command will be written on the RAM or diskette
+as the following form: -"PRINT@75;"ABC" >> PRINT + ESC + "Y" + line #0 + column
+#75 + "ABC"" -The first character of the string is displayed on the last columm
+in the first line instead of the 75th column from the home position. -Note: The
+"PSET" and "PRESET" commands on your computer function only on the LCD: they do
+not function on the CRT or TV screen. -Before you switch the display device
+from the video display to the LCD by "SCREEN" command, you must terminate the
+last print line with a carriage return. -You should not switch the display
+device if the last "PRINT" command ended with a semi-colon.' -Hope this will
+help in some way, --
+
+
+Fm: TERRY LUKE 73126,1775
+To: SCOTT MILLS 71316,720
+
+Let me do some thinking on that and get back to you.  Where does the software
+for DVI reside?  Is it relocatable at all? I'm not sure I can do much for the
+DVI without having one to develop on, but maybe I'll try with what I have.
+
+
+Fm: SCOTT MILLS 71316,720
+To: TERRY LUKE 73126,1775
+
+Terry, the software for the DVI resides above 58262 ie, I use CLEARxx,58263 to
+load it.  As far as I know it is NOT relo cateable.  I had no problems
+relocating your program below it though.  The problem I had in running it on
+the monitor was that your scrolling commands were breaking it up all over the
+screen rather than filling it in in sequence. Hope you can figure something
+out.
+
+
+Fm: Leonard Erickson 70465,203
+To: TERRY LUKE 73126,1775
+
+        As (so I've been told) one of the resident DVI "gurus", may I be of
+assistance?
+        The DVI relocates MAXRAM down to 58263. It also redirects a lot of
+system "hooks".
+        Lemme know what else you need.
+
+
+Sb: #153049-#VTEMUL
+Fm: TERRY LUKE 73126,1775
+To: Leonard Erickson 70465,203
+
+I guess my main question has to do with cursor positioning. VTEMUL uses a ROM
+routine at 17020 which places the cursor at the column in H register and row in
+L register.  In other words, if I call 17020,,257, the cursor is placed at row
+1 (256*1) and column 1.  You might try a few call 17020s with different values
+for row and column past 8 and 40 and see where the DVI puts it. From what Scott
+told me, this call isn't working proproperly on the DVI then the lines were
+broken up.  If I can figure out how to properly position the cursor, the
+program would more than likely convert very easily.
+
+
+Fm: Leonard Erickson 70465,203
+To: TERRY LUKE 73126,1775
+
+        The easiest way to do it (until I check that ROM call) is to use the
+PRINT CHR$(27);"Y";CHR$(row+32);CHR$(col+32); where row goes from 0-24 and col
+goes from 0-79. If you go past the screen limits, it truncates the value to
+fit.
+        That truncation was what he was talking about with reference to the
+PRINT @, apparently the 100 is using the ESC Y r c and calculating the R &C as
+if on an 80 col screen, even on a 40 col video display!
+        I doubt this will be too much of a problem, as I have yet to hear of a
+DVI user who uses a TV instead of a monitor.
+
+
+Fm: Leonard Erickson 70465,203
+To: TERRY LUKE 73126,1775
+
+        Well, this worked fine.
+
+        0 CLS
+        10 PRINTCHR$(27);"P";
+        20 FOR R=1TO25
+        30 FOR C=1TO80
+        40 CALL17020,,C*256+R
+        50 NEXTC,R
+
+        The cursor crawled across the screen line by line.
+
+
+Fm: TERRY LUKE 73126,1775
+To: Leonard Erickson 70465,203
+
+With the CALL 17020 working like you said, it should be a cinch to get VTEMUL
+working on the DVI.  Give me a few days and I'll get you a test copy to try
+out.

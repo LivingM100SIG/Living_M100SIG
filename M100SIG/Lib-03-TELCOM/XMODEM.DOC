@@ -1,0 +1,392 @@
+Documentation for XMODEM, for TRS-80 Model 100
+
+Version of 1/23/85  by  Rick Perry
+
+
+   This program performs auto-dial-redial, auto-logon, terminal
+emulation, and buffered text file transfers (.DO) using either regular
+ASCII Xon/Xoff protocol or the Xmodem Christensen checksum protocol.
+Communication parameters are 8N1D during Xmodem file transfers and 7I1E
+for terminal emulation and Xon/Xoff transfers. The program will operate
+using the 300 baud internal modem or an external modem (Novation
+Smart-Cat or equivalent) at 300 or 1200 baud. Files may be Up/Down
+loaded directly from/to RAM, disk or cassette.
+
+
+AUTO-DIAL/LOGON:
+
+   The program starts with a "Find:" prompt and will attempt to retrieve
+a phone number and auto-logon sequence from the ADRS.DO file and logon
+to a host computer.
+
+   When using the internal modem, if no carrier is detected within 20
+seconds after dialing, or if you press any key, the program will hang up
+the phone. After waiting 20 seconds more, it will retry the number
+unless you press any key.
+
+   If the carrier is detected, it will BEEP and proceed through the
+auto-logon sequence as specified in the ADRS line, then jump to the
+terminal emulation mode of the program.
+
+   At the "Find:" prompt, enter a string to search for in the ADRS file
+or press F8 (or enter "Menu") to return to the Menu. When the string is
+found press "M" to begin auto-dial using the internal modem, or press
+"S" to dial through an external Novation Smart-Cat modem at 1200 baud,
+or press "3" to use Novation at 300 baud, or press ESC to return to the
+"Find:" prompt, or press any other key (like ENTER) to continue
+searching.
+
+   If you wish to manually dial a telephone number, enter "Dial" at the
+"Find:" prompt. After dialing and hearing the carrier tone, press "M",
+"S", or "3" to allow the program to Connect, or press any other key to
+return to the "Find:" prompt.
+
+   For a Novation Smart-Cat modem, "3" actually sets the modem baud rate
+to 300, "S" sets it to 1200, and the modem command character is set to
+CTRL/V in both cases.  The modem is also set for 8-bit data format and
+"unlisten" mode to allow Xmodem transfers.  Note: modem baud rates, cmd
+char, etc. are not affected when using "DIAL" option at Find: prompt.
+
+   The control sequences used with the Novation modem appear around the
+last twelve lines of the program. This code may be modified to work
+properly with other smart modems. When dialing through an external
+modem, code around the last eight lines of the program allow you to
+directly enter commands to the modem and optionally press CTRL/R to
+restart the program or CTRL/E to exit to the Menu.
+
+
+TERMINAL EMULATION:
+
+   Once in terminal emulation mode, the program is transparent to all
+control characters entered from the keyboard (except CTRL/G as noted
+below) and these characters (like CTRL/C/S/Q) will be sent to the host.
+But Function key F5 (Brk) may be used to STOP the program if needed.
+
+   F4 (Term) is used to jump directly to TELCOM's Term mode while
+remaining connected to the host. Once in TELCOM you cannot return to the
+program without logging off and disconnecting from the host unless you
+are connected through an external modem.
+
+   F6 (Free) provides a display of how many bytes of RAM are currently
+available.
+
+   F7 (Dir) lists the RAM file directory in the same way as the BASIC
+FILES command.
+
+   F8 (Bye) is used to exit the program and return to the Model 100's
+Main Menu.
+
+   F2 (Down) will initiate a file download transfer and F3 (Up) will
+initiate uploading.
+
+   F1 (Prev) will display the previous screen, same as in TELCOM.
+
+
+FILE TRANSFERS:
+
+   After pressing F2 or F3 and entering file name, program prompts
+"Append?" if downloading.  Then it prompts "Use XMODEM protocol?" --
+press "Y" or "N".  Responding with "N" means that buffered Xon/Xoff
+protocol will be used.
+
+   For uploading using Xon/Xoff protocol answer "Width?" prompt by
+pressing ENTER if no wrapping is desired, otherwise enter desired width
+for word wrapping.
+
+   During Xon/Xoff download, F3 is blanked and F2=@@@@.  Press F2 to end
+download.  During upload, use F8 to abort.
+
+
+DOWNLOADING WITH XMODEM PROTOCOL:
+
+   The host should be ready to send the file before entering this mode.
+While downloading, the received file is not displayed on the screen.
+When a NAK (negative acknowledge) is sent, the program prints an "X".
+When ACK (acknowledge) is sent, the program prints ".".
+
+   You can abort the download at any time by pressing F8 (Abrt). The
+program itself will automatically abort the download only if one of the
+following circumstances occur:
+
+ - The host sends a CANcel.
+
+ - The received block number is neither the current block number nor the
+previous block number.
+
+ - An error trap occurs in the program (this could be caused by an "Out
+of Memory" condition on the Model 100).
+
+
+UPLOADING WITH XMODEM PROTOCOL:
+
+   The host should be ready to receive the file before entering this
+mode. While uploading, the transmitted file is not displayed on the
+screen. When a NAK is received, the program prints an "X". When ACK is
+received, the program prints ".". If nothing is received after waiting
+10 seconds, or if anything other than NAK, ACK or CAN is received, the
+program prints a "?".
+
+   You can abort the upload at any time by pressing F8 (Abrt). The
+program itself will automatically abort the upload only if the host
+sends a CANcel or if an error trap occurs (e.g. due to an IO Error when
+uploading from cassette).
+
+
+ALTERNATE CHARACTER SET:
+
+   When in terminal mode, press CTRL/G to switch between the regular
+character set and an alternate set (pseudo APL). This character
+translation is defined in an array, T(*), which is loaded from the last
+data statement.  This only affects characters printing on the screen,
+not file transfers.
+
+
+PROGRAM NOTES:
+
+   The program itself does not count the number of NAK's sent or
+received per block and will not automatically abort if an excessive
+number of NAK's occur. It is up to you to use F8 (Abrt) to cancel the
+file transfer if you feel that too many NAK's are occuring.
+
+   When aborting a file transfer the program sends a single CANcel
+character (CTRL/X) to the host and returns to its terminal emulation
+mode. If you then notice that the host has not responded to the CANcel,
+you may send additional CAN's by pressing CTRL/X. Some hosts expect to
+receive three CTRL/C chars in a row to signal an abort; that's dumb, but
+anyway, if CTRL/X doesn't work, try that.  Most hosts will automatically
+abort an Xmodem transfer if no chars are received for 1 or 2 minutes.
+
+   MAXFILES is set to 3 at the beginning and reset to 2 upon normal exit
+to the Menu.
+
+   Function key definitions are restored to their previous user-defined
+values upon exit from the program to the Menu.
+
+
+The following ROM calls and POKEs are used:
+
+ 6118 - set serial interface parameters and activate modem.
+16969 - turn cursor on.
+17061 - set and display temporary function key strings.
+17875 - fill previous screen with blanks.
+21172 - keep phone off hook.
+21179 - hang up phone.
+21264 - 2 second delay.
+21274 - 1/2 second delay.
+21293 - dial a phone number.
+21392 - execute auto-logon sequence.
+21608 - jump to TELCOM's Term mode.
+21795 - display previous screen.
+27804 - restore function key definitions.
+
+POKE 63056,64 - enable scrolling into previous screen area and also
+disables Break and ON KEY and makes F1...F8 return chars 248...255.
+
+POKE -86,0 - purge keyboard buffer.
+
+
+PERSONAL NOTE:
+
+   This program is customized for my own use, so some of its features
+may not be useful to you.  In particular, note that it performs CLEAR
+500, MAXRAM and leaves MAXFILES=2.  Feel free to revise the program to
+your own liking and share it here and/or elsewhere.
+
+
+MACHINE LANGUAGE SUBROUTINES:
+
+   The integer array M(0)..M(60) is used to hold six position
+independent machine language subroutines. Entry points are at M(0),
+M(3), M(16), M(21), M(24) & M(59). The assembly source listing follows:
+
+
+; ENTRY M(0) - check MDM: for carrier detect.
+;  calling sequence: CALL VARPTR(M(0)),0,VARPTR(X)
+;  where X is an integer variable.
+
+M(0)	call	6EEF	; check for carrier detect
+	mov	m,a	; X=0 if carrier detected,
+	ret		; FF if no carrier
+	nop
+
+
+; ENTRY M(3) - convert string to uppercase.
+;  calling sequence: CALL VARPTR(M(3)),0,VARPTR(A$)
+;  where A$ is a string variable.
+
+M(3)	mov	a,m	; check length of string
+	ora	a	; if zero
+	rz		;  then return
+
+	mov	c,a	; save length in counter C
+	inx	h	; get string address
+	mov	a,m	; that's the low byte
+	inx	h
+	mov	h,m	; that's the high byte
+	mov	l,a	; HL --> string
+
+	lxi	d,2	; here comes the tricky part
+	call	31E9	; in ROM there is XTHL, PCHL
+$PC1	dad	d	; now HL = loop
+	pop	d	; and DE --> string
+
+loop	ldax	d	; A = char from string
+	call	0FE9	; let ROM convert to uppercase
+	stax	d	; restore converted char
+	inx	d	; point to next char
+	dcr	c	; decrement counter
+	rz		; done when counter = 0
+	pchl		; otherwise jump to loop
+
+
+; ENTRY M(16) - check MDM: or COM: queue for received chars.
+;  calling sequence: CALL VARPTR(M(16)),0,VARPTR(X(0))
+;  where X(0)..X(1) is an integer array.
+
+M(16)	mvi	m,0	; set flag, X(0)=0, for no char
+	call	6D6D	; check queue for chars
+	rz		; return if no chars available
+
+	inr	m	; set flag, X(0)=1, for char received
+	inx	h
+	inx	h	; HL --> received char buffer, X(1)
+	nop
+
+
+; ENTRY M(21) - retrieve char from MDM: or COM: queue.
+;  if entry was made at M(16) and the queue contained a char
+;  then the code will fall through to this point and the
+;  received char will be placed in X(1).
+;  M(21) may also be called independently of M(16) to receive
+;  a char if it's already known that one is there (due to an
+;  ON MDM GOSUB.. interrupt for example).
+;  calling sequence: CALL VARPTR(M(21)),0,VARPTR(X)
+;  where X is an integer variable.
+
+M(21)	call	6D7E	; get char from queue
+	mov	m,a	; store it
+	ret
+	nop
+
+
+; ENTRY M(24) - timed read of 131 chars from MDM: or COM: queue.
+;  calling sequence: CALL VARPTR(M(24)),0,VARPTR(Z(0))
+;  where Z(0)..Z(131) is an integer array.
+;  Z(0) is used as a flag.
+;  Upon return, if Z(0)=0 then a timeout occurred.
+;  Z(0)=1 implies successful return and in this case
+;  Z(1)..Z(131) will contain the 131 received characters.
+
+x1	equ	39.	; get_ch - $PC2
+x2	equ	7.	; ck_que - $PC2
+x3	equ	4.	;  init  - $PC2
+
+M(24)	mvi	m,0	; set flag for failure
+	mov	d,h
+	mov	e,l	; DE = HL --> flag
+
+	call	31E9	; xthl, pchl
+$PC2	mvi	b,131.	; char counter
+	push	b
+	push	h
+
+; stack now contains:
+;
+;		address of flag
+;		char counter
+;    sp  -->	$PC2
+
+init	lxi	h,7282.	; HL = 1 second timeout counter
+
+ck_que	call	6D6D	; check queue
+
+	pop	b
+	push	b
+	push	b	; extra $PC2 on stack
+	xthl		; counter on stack, HL = $PC2
+
+	lxi	b,x1	; offset to get_ch
+	dad	b
+	xthl
+	rnz		; jnz	get_ch
+
+	pop	b	; clear stack
+	dcx	h	; decrement timeout counter
+	mov	a,h
+	ora	l
+
+	pop	b
+	push	b
+	push	b	; extra $PC2 on stack
+	xthl		; counter on stack, HL = $PC2
+
+	lxi	b,x2	; offset to ck_que
+	dad	b
+	xthl
+	rnz		; jnz	ck_que
+
+	pop	b
+	pop	b
+	pop	b
+	pop	b
+	ret		; timeout exit
+
+get_ch	call	6D7E	; get char from queue
+	inx	d
+	inx	d
+	stax	d	; store it in buffer
+
+	pop	h
+	pop	b
+	dcr	b	; decrement char counter
+	push	b
+	push	h	; HL = $PC2
+
+	lxi	b,x3	; offset to init
+	dad	b
+	push	h
+	rnz		; jnz	init
+
+	pop	h
+	pop	h
+	pop	h
+	pop	h
+	inr	m	; set flag for success !
+	ret
+
+
+; ENTRY M(59) - delay A*2 milliseconds
+;  calling sequence:  CALL VARPTR(M(59),A
+;  where A is an integer from 0 to 127.
+
+M(59)	mov	c,a
+	jmp	531C
+
+
+TIMING COMPARISONS:
+
+   Up/down-loading tests were performed using a 3422 byte text file and
+a VAX-11/780 host.  The following table shows the relative time required
+for the file transfers normalized to the TELCOM download time at 300
+baud (which was 114 secs.).  Alternate character set was not used, nor
+was word wrapping, and CAS: times include overhead of opening the file:
+
+			  -------XMODEM PROGRAM-------
+			    Xon/Xoff	    Xmodem
+baud  direction  TELCOM	   RAM	  CAS:	  RAM	 CAS:
+300	down	  1.00	   1.25	  1.89	  1.02	 2.16
+300	 up	  1.25	   2.28	  2.98	  1.52	 2.14
+1200	down	  0.46	   1.27	  1.89	  0.76	 1.38
+1200	 up	  0.58	   2.25	  2.93	  0.75	 1.41
+
+
+CONCLUSIONS:
+
+ - In TELCOM, uploads take about 25% longer than downloads.
+
+ - 1200 baud transfers take at best only half as long as 300 baud,
+partly due to the slow speed of LCD scrolling.  Using Xmodem program
+Xon/Xoff protocol, transfer times are independent of baud rate.
+
+ - Transfer times for Xmodem protocol using RAM file are slightly longer
+than TELCOM times.  Using CAS: file doubles the time in some cases.

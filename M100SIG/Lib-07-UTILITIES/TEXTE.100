@@ -1,0 +1,51 @@
+1 'TEXTE.100  [6/27/89]  {Text enhancement program}
+2 'Copyright (c) 1989 by James Yi [73327,1653]
+3 'Creates TEXTE.CO and TXEINS.CO.  Run TXEINS.CO to install TEXTE.
+5 'ESC-<?>  sequence switches:
+6 '<W> to toggle word wrapping.
+7 '<O> to toggle Overwrite/Insert mode
+8 'SHIFT-F5/F6 to temporarily reverse the Append/Replace mode.
+9 'See TEXTE.DOC for more explanation.
+10 CLEAR99:GOSUB20
+15 F$="TXEINS.CO":F=0:GOSUB30
+16 A=0:GOSUB40
+19 END
+20 PRINT"12 seconds..":FORN=64710TO64994:P=P+2:IFP>LEN(D$)THENREADD$:P=1
+24 D=(ASC(MID$(D$,P,1))-65)*16+ASC(MID$(D$,P+1,1))-65:POKEN,D:C=C+D:NEXT:IFC=41383THENRETURN
+28 GOSUB45:PRINT"loader.  Can't continue.":END
+30 PRINT"End address for ";F$;:A=-1:INPUT" (Press ENTER for just below HIMEM)";A
+40 CALL64710,F,A:F=F+1:E=PEEK(64704):IFETHENPRINT"Warning - ";:GOSUB45ELSEPRINT"Loaded ";
+44 CALL4514,,64659:PRINT".CO":RETURN
+45 PRINT"Bad checksum on ";:BEEP:RETURN
+50 DATA MGDADCMAPMDCMBPMOFCKHMPGOLONCLCCMEPMCBJDPMFHMNDMPNCBMOPKMNDMPNOBNFAIMKBFPNCDAIMCPDPMCKPEPFOFCKNAPKEEENOBAIOFBBMOPKONEEEN
+55 DATA OBNJAICCMCPMOLCKNCPKHMLFMKBFPNBJCCNCPKMNEGCBMNIJCAMENJBPMNEGCBMNLJPNMNIJCAOLMNFADECDCDNBMNDPPNDCJJPMMNGBPNJCDCMAPMMJABAG
+60 DATA AAMFOFMNGBPNOBHHEHHKNKFFPNCLEOOLCKMCPMAJNJOLCDIAAPFHCDMBALHILBMCDPPNMJNFFEMNHOPNPOCKNCHJPNNGCFFHAPAPOGMAFPMNHOPNNGDALDNG
+65 DATA GLBINBMJCKMEPMHOLHMKJBPNHOPOCJCDCCMEPMMADODKMJABAFAAAJHONGIDMCKNPNCDLOMKJEPNABMAPMAKLHMKKNPNDKMBPMJGACCDHOMKICPNLHMCKNPN
+70 DATA MDJBPNMNOMCAOFCKNAPKABAGAAAJEEENCKLCPLNEGNGLNKCCDPOLCKLAPLAICCLAPLDOKAOBMNDJCCCBMOPKMDEACF
+100 DATA0#o$3#`#d#i#n$SQ!Jp$SQ#U!=jQm-c&C#SkV#=#0&G|#maX#=#4&G#<$G&DD#<B&F8!4&D5I&AP@@8_p,#>sPtV#E!5dJ,L5!Q&AL#<r&G.$>&D0P#>#>
+101 DATA $Yi$Z5!T&A8#T&DL,08!)$F,|!IfXsDL#Qk#Y#;#M$Od#<$U&F.8&C8#g#=#<R&FP8!4&DL5$>&DV8#k#O#>#>#=<&FP$;$Dlsks#=>&F#_#hV#=9et#F
+102 DATA #=;eLt|#)&Gqs8#]#@#<!Udqk$Y#W5#a&B#XQ[i$[-#Z&BPys#>#>#>$YR$Tin#Y#I7#;kx-#F&B#Y#;RLo|vk#4.#4&B$S!R5$I&B8!S#f#<#R&E8!=|
+103 DATA 86}8Tzi#i5$I&Bi$4-#o&BR#<$n&E8$l$2.6}#<E&E8!=|qk#<oz#=#Ta#U$@&F8Z&B#<pz#=#Ta#U$A&F8Z&B#<qz#=#Ta#U$B&FQl8Z&B#E#8&GP$X1
+104 DATA o$J#Az#=#TaL86}i#65d&Bix5d&Bl!7&B0A#95J&B#X5R&B,#X-!E&B$X!R|$@&F5C&B#H~5C&B#H~#5Yl}.$O&B$X!R3#H#=#8&G4$Xim3#G.N&Brr#j
+105 DATA #<$8&Ft.!=|i#6#<s#C#=#Ta#<$C&F5M&C8W#;#=@&F#Yl#M#2&G#E!5d#>!J#>`P#E9e#_#hLPs#=)&F#E<&FV#E#@&G#4#F8!B&DLE#U&C\#W-#2&C\
+106 DATA #jqk#E>&FP`typt#_#h#E!5d8$H$FE$;&DP|!IfXtD|<&FXtD8#g#=#Y$c<#E@&F0#68#T#=~,V#=#6&G$P#>$O\#>!R5$]&C#X#Q$Z.$R&CV,#E<&F@8
+107 DATA F$FVqn8v#j<!J#M#2&G@#E#@&G#4#F8!B&D#E)&FV#E#>&G#4#U$@&F$R#E#<&G#4#U$A&F$R#E#)&G#4#U$B&F$RL8q&D#E#6&G8^p#Y$@#M$Od#<$K&
+108 DATA F^#1#;#9#;#8-=&C8$Q$Q#0-;&CP8$Y&DL8$l$2#E#4&G#=#ma#E#0&GdV#SkXl$K#@s+#<0&F/$l$2/$Y&D#Ym.#1#n|Ie8z&D|#3f#>PXVNV#G#Hy$Z
+109 DATA -#)&Dy#G#H#?#@q$Z-#D&Dq#?#@D~~$D$;D#<rk#4<D#>#>#>4|Ie8#]&D|#3f@#_#h#>VX~~#5i#G-#l&D#G~#5i#?-$4&D#?<D#<xkt4#<!L$;8$l$2
+110 DATA 8#D#].P&C$Vi#T#<c&F5$>&D#E#4&G#=#ma.$8o#U!=jzCP#<J&F8$m&D#<R&F8$m&DL48!4&D3.D#)|$ngqs8#]#@8#a#<.!J#;P#5@8X&D<~inEJ&DX
+111 DATA #_#h#E9e#Fs=I&D#E;esEI&D#E)&Ft#b$W!R5V&D$X!R5V&D#U#2&G!R$S-I&DD~imEP&D~LJ=!B&D4L4i#[Eg&DA+=e&D#Yl41#[$)Qn#b$V!C#)#)#<
+112 DATA #2&E$)#1k#4$Yrrzzp]y&EQn4$8$@$0$@$8$@$0$@$X$@$Q$@$X$@$Q$@`$B$P!J!P$B!P$J$P$B$P$B$P$B$P!Ju#o$C$@$M$@#;$<$M$@#;#]$<$N$D
+113 DATA $>#;$A$D$G$@$N#;$D$I#;$H$@$H$J$M$T#Ixu$2$D$G$G#;$<$I$T#;$J$A#;$O$C$@$N$@#;$=$@#;$?$@$G$@$O$@$?#;$J$M#;$@$?$D$O$@$?#;#
+114 DATA ;$G$<$O$@$M#;$J$I#Z#;#C$4#J#i#D#;k#k$G$@$<$N$@#;$M$@$H$J$Q$@#;$O$C$@$H#;$O$@$H$K$J$M$<$M$D$G$T#;$<$I$?#;$O$M$T#;#;$<$
+115 DATA B$<$D$I#I#;#;#k$M$@$N$N#;$<$I$T#;$F$@$T#;$O$J#;$@$S$D$O#Ikw$0$N$@#;$>$P$M$N$J$M#;$F$@$T$N#;$<$I$?#;$N$K$<$>$@#;$=$<$M
+116 DATA #;$O$J#;$>$J$I$A$D$B$P$M$@#I#;#k$M$@$N$N#;#`#i#o#`#m#;$R$C$@$I#;$J$F#G#;$J$M#;#`#n#^#;$O$J#;$L$P$D$O#Iu$2$J$M$?#;$R$M
+117 DATA $<$K#;#;#;#U#;xu#j$Q$@$M$R$M$D$O$@#;#;#;#U#;xu#\$K$K$@$I$?#;#k$<$N$O$@#U#;xuk#i$J#;k$4$@$Nkkkm#\$=$J$M$O$@$?k#d$I$N$O
+118 DATA $<$G$G$@$?k#m$@$H$J$Q$@$?k#^$<$I$I$J$O#;$M$@$H$J$Q$@#I#;#;#_$@$G$@$O$@#;#]$<$N$D$>#;$A$D$G$@$N#;$>$M$@$<$O$@$?#;$<$A$
+119 DATA O$@$M#;$H$@#;$<$I$?#;$O$M$T#;$<$B$<$D$I#Ik#^$<$I$>$@$G$G$@$?kkkkkkkkk#o#`$3#o$@#;#I#I#o$3#`#d#i#n#^#j#o#`$3#o#`#;#^#j
+120 DATA #;$H$D$N$N$D$I$Bk#_$D$M$@$>$O$J$M$T#;$A$P$G$Gk#^$<$I$I$J$O#;$M$@$H$J$Q$@kkkkkkkkkkkkkkkkkkk$4
+200 DATA1#o#`$3#o#`#;#k.!Nl#k.#<kk$Z$Z\,<N4.D.#<kk$Z$Z\,<N4P@0`#SwXl#I$4s-$8.#<$W.D.$8.!2#M3e$J$@#=#ma#X#M!HeL$Y8N$5i+55.i!K-#
+201 DATA ^$4lY$8PsL-#^$4#<!O.#=#ma#<#=$98$W$58#U#)#YuR!J/#D#]8#n$8#<#0$98$l$28#Y#aB5!2$28q#=P!J$B$J#=Ra#Ue/Ql.$I$)P@0`#<#k.P#S
+202 DATA #5Xl[$)s+#EWbl#;ws+#<a.D4#MJa`8W$@\El$@i$Z5#3$<#bi#;#UKa=#Y/i#6-#;/$k-#;/#W#M#<d!J.$7$;#U!=j#<`/!I#)$S=#Q/iz5$>/i#05$
+203 DATA J/it5$i/.p$;i#6-$i/$S8Tz#<d/i#j5$9/i$2-$i/#<e/8$9/#M#<d4$YYl$R48Y$=8$^$>8$V/.#U$?8Y$=8$^$>8$V/.#i$?8#a#<|!@dX#Y#5!Y#>
+204 DATA -$_/#FD.!W$?$Si#;-!G/#U!=j#)=!G/#Y~#M!Fj!J#M!Gj#W#M!Ej$S.$e$;#Ud/#)$S=$e$;08$j$=8!6$E8d$E,80/.!3$;V#<!2$>P#E$=fJ$S3#5
+205 DATA ix-H/~#5#6iu$S3V#Yt!S5Z/!Y5Z/$S$RR\\!R408#3$<\4mkjjkk`/d/e/!@l$1

@@ -1,0 +1,258 @@
+I was reading all of the old messages
+the other day.  One of the messages was
+requesting data on routines contained
+in the ROM.  Section 8 of the Model 100
+Technical Reference Manual has a list
+of many of the ROM routines that can be
+called by the user.  This file contains
+that list.
+
+ NAME  ADDR  ENTRY PARAMS !EXIT CONDTNS
+***************************************
+LCD FUNCTION              !
+                          !
+LCD    4B44  A=CHR TO DISP!    NONE
+PLOT   744C  D=X COORD    !    NONE
+             E=Y COOR     !
+UNPLOT 744D  D=X COORD    !    NONE
+             E=Y COOR     !
+POSIT  427C  NONE         !H=CUR COL #
+                          !L=CUR ROW #
+ESCA   4270  A=ESC CODE   !    NONE
+CRLF   4222  NONE         !    NONE
+HOME   422D  NONE         !    NONE
+CLS    4231  NONE         !    NONE
+SETSYS 4235  NONE         !    NONE
+RSTSYS 423A  NONE         !    NONE
+LOCK   423F  NONE         !    NONE
+UNLOCK 4244  NONE         !    NONE
+CURSON 4249  NONE         !    NONE
+CUROFF 424E  NONE         !    NONE
+DELLIN 4253  NONE         !    NONE
+INSLIN 4258  NONE         !    NONE
+ERAEOL 425D  NONE         !    NONE
+ENTREV 4269  NONE         !    NONE
+EXTREV 426E  NONE         !    NONE
+                          !
+KEYBOARD FUNCTION         !
+                          !
+KYREAD 7242  NONE         !A=CHR IF ANY
+                          !Z FLG=1 NOKY
+                          !Z FLG=0 KEY
+                          !C FLG WHEN
+                          !  F1 A=0
+                          !  F2 A=1
+                          !  F3 A=2
+                          !  F4 A=3
+                          !  F5 A=4
+                          !  F6 A=5
+                          !  F7 A=6
+                          !  F8 A=7
+                          !  LBL A=8
+                          !  PRT A=9
+                          !  SFPRT A=A
+                          !  PAST A=B
+CHGET  12CB  NONE         !A=CHR CODE
+                          !C FLG(SAME 
+                          ! AS ABOVE)
+CHSNS  13DB  NONE         !Z FLG=1 QUE
+                          !     EMPTY
+                          !  =0 KEY FND
+KEYX   7270  NONE         !Z FLG(SAME 
+                          ! AS ABOVE)
+                          !C FLG=1 BRK
+                          ! =0 ANY OTHR
+BRKCHK 7283  NONE         !C FLG(SAME
+                          !  AS ABOVE)
+INLIN  4644  NONE         !F685=DATA 
+STFNK  5A7C  HL=FUNC TAB  !   NONE
+CLRFNK 5A79  NONE         !   NONE
+DSPFNK 42A8  NONE         !   NONE
+STDSPF 42A5  HL=FUNC TAB  !   NONE
+ERAFNK 428A  NONE         !   NONE
+FNKSB  5A9E  NONE         !   NONE
+                          !
+PRINTING ROUTINES         !
+                          !
+PRINTR 6D3F  A=CHR        !C FLG=1 BRK
+                          !     =0 NORM
+PNOTAB 1470  A=CHR        !UNKNOWN
+PRTTAB 4B55  A=CHR        !UNKNOWN
+PRTLCD 1E5E  NONE         !   NONE
+                          !
+RS232 AND MODEM ROUTINE   !
+                          !
+DISC   52BB  NONE         !   NONE
+CONN   52D0  NONE         !   NONE
+DIAL   532D  HL=ADDR PH#  !   NONE
+RCVX   6D6D  NONE         !A=#CHR IN Q
+                          !Z FLG=1 NO
+                          !       DATA
+RV232C 6D7E  NONE         !A=CHR RCVD
+                          !Z FLG=0 OK
+                          !     =1 ERR
+                          !C FLG=1 BRK
+SENDCQ 6E0B  NONE         !   NONE
+SD232C 6E32  A=CHR SND    !UNKNOWN
+CARDET 6EEF  NONE         !A=0 IF
+                          !    CARRIER
+                          !Z=1 IF 
+                          !    CARRIER
+BAUDST 6E75  H=BAUD RATE  !   NONE
+INZCOM 6EA6  H=BAUD RATE  !    NONE
+             L=UART CONFIG
+             C FLG=1 RS232
+                  =0 MODEM
+             UART CONFIG
+             BIT0 STOP BITS 0=1 1=2
+             BIT1 PARITY    0=ODD 1=EVN
+             BIT2 PARITY EN 0=ENB 1=DIS
+             BIT3-4 WORD LEN 01=6
+                         !   10=7 11=8
+SETSER 17E6  HL=ADDR OF  !     NONE
+                STR      !
+CLSCOM 6ECB  NONE        !     NONE
+                         !
+CASSETTE RECORDER ROUTINES
+                         !
+DATAR  702A  NONE        !D=CHR FM CASS
+CTON   14A8  NONE        !     NONE
+CTOFF  14AA  NONE        !     NONE
+CASIN  14B0  C=CUR CKSUM !A=CHR C=CKSUM
+CSOUT  14C1  A=CHR TO SND!C=UPD CKSUM
+             C=CUR CKSUM !
+SYNCW  6F46  NONE        !     NONE
+SYNCR  6F85  NONE        !     NONE
+DATAW  6F5B  A=CHR TO SND!     NONE
+MAKTXT 220F  FC93=FIL NME!HL=TOP ADDR
+                         !DE=ADD DIRFLG
+                         !C FLG=1 DUPLI
+CHKDC  5AA9  DE=ADDR OF  !HL=TOP ADDR
+             NAME TO FIND!Z FLG=0 FOUND
+                         !     =1 NT FN
+GTXTTB 5AE3  HL=ADDR OF  !HL=TOP ADDR
+                DIR ENT  !
+KILASC 1FBE  DE=TOP ADDR !    NONE
+             HL=DIR ENT  !
+                ADDR     !
+INSCHR 6B61  A=CHR TO INS!HL=HL+1
+             HL=ADD      !
+MAKHOL 6B6D  BC=# SPACES !C FLG=1 OM
+             HL=ADDR TO  !
+                INS      !
+OTHER ROUTINES           !
+                         !
+INITIO 6CD6  NONE        !   NONE
+IOINIT 6CE0  NONE        !   NONE
+MENU   5797  NONE        !   NONE
+MUSIC  72C5  DE=FREQ     !   NONE
+             B=DURATIO   !
+TIME   190F  HL=ADDR TIME!TIME TO (HL)
+DATE   192F  HL=ADDR DATE!DATE TO (HL)
+DAY    1962  HL=ADDR DAY !DAY TO (HL)
+
+DEFINITIONS
+
+LCD    Displays a character on the LCD
+       at the current cursor position.
+PLOT   Turns on pixel at specified
+       location.
+UNPLOT Turns off pixel at specified
+       location.
+POSIT  Gets current cursor position.
+ESCA   Sends specified escape code seq.
+CRLF   Generates a carriage return and
+       line feed.
+HOME   Moves cursor to Home position.
+CLS    Clears display.
+SETSYS Sets system line (line lock 8).
+RSTSYS Resets system line.
+LOCK   Locks display (no scrolling).
+UNLOCk Unlocks display.
+CURSON Turns on cursor.
+CUROFF Turns off cursor.
+DELLIN Deletes line at current cursor
+       position.
+INSLIN Inserts a blank line at cursor
+       position.
+ERAEOL Erases from cursor to end of
+       line.
+ENTREV Sets reverse character mode.
+EXTREV Turns off reverse character
+       mode.
+KYREAD Scans keyboard for a key and
+       returns with or without one.
+CHGET  Waits and gets a character from
+       keyboard.
+CHSNS  Checks keyboard queue for
+       characters.
+KEYX   Checks keyboard queue for
+       characters or break.
+BRKCHK Checks for BREAK characters only
+       (ctrl c or ctrl s).
+INLIN  Gets line from keyboard. 
+       Terminated by ENTER.
+STFNK  Sets function key definitions.
+CLRFLK Clears function key definition
+       table.
+DSPFNK Displays function keys.
+STDSPF Sets and displays function keys.
+ERAFNK Erases function key display.
+FNKSB  Displays function table (if
+       enabled).
+PRINTR Sends a character to the line
+       printer.
+PNOTAB Prints character without expand-
+       ing tab characters.
+PRTTAB Prints a character expanding tab
+       to spaces.
+PRTLCD Prints contents of LCD.
+DISC   Disconnects phone line.
+CONN   Connects phone line.
+DIAL   Dials a specified phone number.
+RCVX   Checks RS232 queue for 
+       characters.
+RV232C Gets a character from RS232
+       receive queue.
+SENDCQ Send an XON resume character.
+SENDCS Send an XOFF pause character.
+SD232C Sends a character to the RS232
+       or Modem.
+CARDET Detects carrier(for modem only).
+BAUDST Sets baud rate for RS232.
+INZCOM Initialization RS232 and Modem.
+SETSER Sets serial interface. Activates
+       RS232/Modem.
+CLSCOM Deactivates RS232/Modem.
+DATAR  Reads character from cassette
+       (no Checksum).
+CTON   Turns on motor.
+CTOFF  Turns off motor.
+CASIN  Reads a character from cassette
+       and updates checksum.
+CSOUT  Sends a character to cassette
+       and updates checksum.
+SYNCW  Writes cassette header and sync
+       byte only.
+SYNCR  Reads cassette header and sync
+       byte only.
+DATAW  Writes a character to cassette
+       (no checksum).
+MAKTXT Creates a text file.
+CHKDC  Searches for file in directory.
+GTXTTB Gets top address of file.
+KILASC Kills a text (DO) file.
+INSCHR Inserts a character in a file.
+MAKHOL Inserts a specified number of
+       spaces in a file.
+MASDEL Deletes specified number of
+       characters.
+INITIO Cold start reset.
+IOINIT Warm start reset.
+MENU   Goes to Main Menu.
+MUSIC  Makes tone.
+TIME   Reads system time.
+DATE   Reads system date.
+DAY    Reads system day of the week.
+
+

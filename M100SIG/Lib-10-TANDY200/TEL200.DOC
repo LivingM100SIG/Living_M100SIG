@@ -1,0 +1,171 @@
+
+---Instructions for using TEL200---
+
+
+TEL200 is a TELCOM emulator with the "Split Screen" function.
+
+It operates just like the built-in TELCOM program, except that it doesn't 
+transmit the characters as they are typed, but holds them at a buffer, 
+displays them at the bottom label line, and sends them when <ENTER> is pressed.
+
+
+
+
+INSTALLING TEL200.LDR:
+
+The file TEL200.LDR must be downloaded/uploaded in ASCII format. On the
+Model 200 it will appear as TEL200.DO, which is an ASCII text file.
+
+With TEL200.DO in RAM,
+ 1) Goto BASIC
+ 2) Type LOAD "TEL200.DO" and <ENTER>.
+ 3) Type CLEAR 200, 59555(*) and <ENTER>.
+ 4) Type RUN and <ENTER>
+ 5) At the first prompt 'Load Address?', type 59555(*) and <ENTER>
+* You may set it other than 59555, but it must be less than or equal to 59555.
+ 6) At the prompt, 'Okay?', press Y.
+ 7) After loading and beeping, at the prompt 'Save as?', type TEL200 and <ENTER
+>.
+
+Now if you enter TEL200.CO instead of TELCOM, you have Split Screen function.
+
+
+
+There are couple of additional modifications besides SS:
+
+First, if you hold down SHIFT as you enter TERM(F4) mode, the phone line is 
+not picked up, and carrier detecting is disabled.
+
+It's useful for on line simulation with prerecorded communication -- See 
+RECAP.TXT in DL3.
+
+Also, it conserves battery if you are using acoustic cups.
+
+
+Second, BRK(F7) function is omitted.
+
+
+
+The SS(Split-Screen) comes on when you enter TERM mode, but it can be toggled
+on/off with SHIFT-F1.
+The label must be on, in order to turn SS on.
+When you turn SS off with SHIFT-F1, all characters held in the buffer will be 
+lost.
+
+But just turning the label off will temporarily disable it, while the data 
+in the buffer is retained, and turning it back on will let you continue with 
+the line you were typing.
+
+
+The following commands are available:
+
+----------------------------------------
+BKSP:  Backspace and delete
+
+DEL(SHIFT-BKSP): Delete the character at the cursor
+
+CTRL-U:  Clear the buffer.
+
+CTRL-N:  Delete all characters after and including the cursor.
+
+CTRL-B:  Delete everything before the cursor.
+
+LEFT ARROW:  Backspace the cursor
+
+RIGHT ARROW:  Advance the cursor
+
+SHIFT-LEFT ARROW:  Move the cursor to the previous word.
+
+SHIFT-RIGHT ARROW:  Move the cursor to the next word.
+
+ENTER:  Send the current line, including a Carriage Return.
+
+UP ARROW:  Send the current line, but omit the Carriage Return.
+
+ESC or DOWN ARROW:  Enter a macro string - a single key stroke following this 
+control code loads the corresponding macro from the macro file into the buffer.
+
+
+----------------------------------------
+
+About the macro:
+
+The macro file should be named "MACROS.DO".
+
+Each line in the macro file contains the macro string, with its single 
+character name being the first character in the line.
+
+For example, if the following data are in the macro file:
+
+HHello
+bBye
+u73327,1653^MPassword^M
+m^OGO M100SIG^M
+
+
+
+Pressing 'H' after the control code loads the macro string "Hello" into the
+SS buffer, or pressing 'm' loads this sequence of macro characters:
+  CTRL-O, "GO M100SIG", and CR.
+CR does not terminate the macro string, so if you have a word following the CR,
+
+the word proceeding it will be sent first, then the nextword after the CR 
+will be loaded.  As an example, if you press 'u', "73327,1653" is sent, and 
+you'll see it scroll off and disappear, then the Password is loaded, and sent.
+
+When you enter a macro, it is added to what is already in the buffer, so you 
+can use it to save repetive keystrokes.
+
+Logging-on is simpler with macro, but be careful about putting your password in
+
+the macro file!
+
+
+The maximum that the SS buffer holds is 132 characters.  It beeps when it 
+becomes full.
+
+When you reach 79 characters, it also will "beep".
+
+
+The CTRL keys that are not SS commands are immediately transmitted, or if the 
+CTRL key has no effect, i.e., pressing CTRL-U while the buffer is already 
+cleared, will send CTRL-U immediately.
+
+
+
+How to enter TEL200 by entering built-in TELCOM from the Menu:
+
+
+You can make the TEL200 appear in place of built-in TELCOM, and
+access it as you would a built-in rom program.
+
+Just poke the address 62057 and 62058 with the entry address of TEL200, and 
+from then on, you'll go into TEL200 when you choose TELCOM from the Menu.
+
+Caution:
+
+If you loaded the program in HIMEM, make sure that it's loaded there everytime 
+
+you use it.  It's safer not to use this method unless it's loaded in LoMem
+(See LOMEM.200 in DL10).
+
+
+
+Using DIRACC.200 with TEL200:
+
+
+A simple modification is needed in order to use DIRACC.200 with this program.
+
+Line 50 of DIRACC.200 program has the sequence of hex characters "8B63".
+"8B63" is the entry to TERM mode of the built-in TELCOM.  It has to be replaced
+
+with the address of TERM mode of TEL200, which is equal to TEL200 entry + 430
+For example, if TEL200 is loaded at 59555, the correct address is 59985,
+and converted to hexadecimal, A3E8.  Then replace "8B63" with "A3E8".
+Notice that least significant byte comes first.
+
+
+If you have any problems, contact:
+ James Yi  73327,1653
+
+

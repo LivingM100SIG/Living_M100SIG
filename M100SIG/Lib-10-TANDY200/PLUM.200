@@ -1,0 +1,35 @@
+5 DEFINTA-Z:DEFSTRX
+10 HR=VAL(LEFT$(TIME$,2)):YN=VAL(RIGHT$(DATE$,2))-83
+20 YN=YN MOD12:IFYN=0THENYN=12
+30 DN=VAL(MID$(DATE$,4,2))
+40 MN=VAL(LEFT$(DATE$,2))-1:IFMN=0THENMN=12
+50 Q=YN+MN+DN:GOSUB700:UT=Q
+70 HR=INT((HR+3)/2):IFHR=13THENHR=1
+80 Q=MN+DN+YN+HR:GOSUB700:LT=Q
+90 FORI=1TOUT:READUT$:NEXT
+95 RESTORE:FORI=1TOLT:READLT$:NEXT
+100 DATA 111,011,101,001,110,010,100,000
+105 MV=MN+DN+YN+HR:MV=MVMOD6:IFMV=0THENMV=6
+110 MV=7-MV
+200 H$=UT$+LT$:M$=H$:MID$(M$,MV,1)=RIGHT$(STR$(VAL(MID$(M$,MV,1))XOR1),1):CLS:PRINT:PRINT:PRINT:FORI=1TO6:PRINT TAB(8);:X=H$:GOSUB600:PRINTTAB(23);:X=M$:GOSUB600:PRINT:NEXT
+300 HN=1:RESTORE1000:FORI=1TO6:IFMID$(H$,I,1)="0"THENHN=HN+2^(I-1)
+310 NEXT:FORI=1TOHN:READN,N$:NEXT
+330 MN=1:RESTORE1000:FORI=1TO6:IFMID$(M$,I,1)="0"THENMN=MN+2^(I-1)
+340 NEXT:FORI=1TOMN:READO,O$:NEXT
+400 PRINT@411,N;TAB(26);O:MT=447:X=N$:GOSUB450:MT=463:X=O$:GOSUB450:PRINT@530,"Moving Line ";7-MV:END
+450 PRINT@MT,"";:IFLEN(X)>14THEN500ELSEIFLEN(X)<14THENPRINTSPACE$((14-LEN(X))/2-1);:GOTO550'CENTER NAME
+500 'PRINT LONG NAMES ON TWO LINES
+520 SP=LEN(X)/2:S=INSTR(SP,X," "):IFS=0THENS=INSTR(X," ")
+540 V$=LEFT$(X,S-1):W$=RIGHT$(X,LEN(X)-S):X=V$+CHR$(27)+"Y"+CHR$(CSRLIN+33)+CHR$((MTMOD40)+32)+W$'DOWN 1 LINE
+550 PRINTX
+570 RETURN
+600 IFVAL(MID$(X,I,1))=1THENPRINTSTRING$(9,232);ELSEPRINTSTRING$(3,232);SPACE$(3);STRING$(3,232);
+610 RETURN
+700 Q=QMOD8:IFQ=0THENQ=8
+705 RETURN
+1000 DATA 1,The Creative,43,Breakthrough,14,Great Posession,34,Power of the Great,9,Power of the Small,5,Waiting,26,Taming Power of the Great,11,Peace,10,Treading Carefully,58,Joy,38,Estrangement
+1010 DATA 54,The Marrying Maiden,61,Inner Truth,60,Limitatation,41,Decrease,19,Approach,13,Fellowship,49,Molting,30,Clinging,55,Abundance,37,The Family,63,After Completion,22,Elegance
+1020 DATA 36,Darkening,25,Integrity,17,Following,21,Biting Through,51,The Arousing,42,Increase,3,Initial Difficulty,27,Nourishment,24,Return,44,Coming to Meet,28,Preponderance of the Great,50,The Cauldron
+1030 DATA 32,Duration,57,Gentle Penetration,48,The Well,18,Arresting Decay,46,Rising Upward,6,Conflict,47,Exhaustion,64,Before Completion,40,Release,59,Dispersion,29,The Deep,4,Young Folly
+1040 DATA 7,The Army,33,Withdrawal,31,Influence,56,The Traveller,62,Preponderance of the Small,53,Gradual Progress,39,Obstruction,52,Keeping Still,15,Modesty,12,Stagnation,45,Assembling,35,Progress
+1050 DATA 16,Enthusiasm,20,Contemplation,8,Holding Together,23,Splitting Apart,2,The Receptive

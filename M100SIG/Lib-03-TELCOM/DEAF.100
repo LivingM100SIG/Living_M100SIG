@@ -1,0 +1,143 @@
+1 '
+2 M$="TDD V1.6 (18aug86)":'logon msg
+3 'modified version of:
+4 ' RTTY terminal emulator 09/24/85
+5 ' by Steve Alverson WB8HRV 75236,341
+6 'added features (by jlj):
+7 ' auto talk/listen & bksp/del
+8 ' structured/commented
+9 '
+10 'bgn main prgm
+11 GOSUB900:'initialize
+12 GOSUB100:'listen
+13 GOSUB200:'talk
+14 GOTO12:
+19 END
+99 '
+100 'SUB-listen
+101 'setup
+103 OUT186,INP(186)AND127:'rs232
+105 IFPTHENLPRINT:'prntr echo
+108 '
+109 'begin listen loop
+110 S$=INKEY$:IF S$<>"" THEN RETURN:'exit if kybd active
+111 CALL VARPTR(ML(0)),0,VARPTR(X(0)):'check for rcvd chrs
+119 'test rcvd chrs
+120 IF(X(0)=0)OR(X(1)>31)THENGOTO110:'no/invalid chr
+121 IFXTHENX=0:PRINT:'rcv&newline if 1st rcv chr
+124 IFX(1)=0THENGOSUB810:GOTO110:'blnk;lcd bs/del
+125 IFX(1)=27THENFR=-1:GOTO110:'figs
+130 IFX(1)=31THENFR=0:GOTO110:'ltrs
+135 IFX(1)=4THENFR=0:'all spcs sent as ltrs
+137 'get ascii chr;fig/ltr
+140 IFFRTHENR$=MID$(F$,X(1)+2,1)ELSER$=MID$(L$,X(1)+2,1)
+141 R%=ASC(R$):'ascii code
+142 CALL19268,R%:'prnt lcd
+146 IFPTHENCALL27967,R%:'echo prnt
+148 GOTO110
+150 'SUB-end
+199 '
+200 'SUB-talk
+201 'setup
+203 T=K:'set tlk/lstn dly
+205 OUT186,INP(186)OR128:'rs232 port
+206 IFNOT(X)THENX=-1:V=0:PRINT:'xmt/newline if new chrs rcvd
+207 IFPTHENLPRINT:'echo prnt
+208 CALL28210,31:FX=0:'rs232/FX=ltrs
+210 GOTO221:'use kybd chr fr lstn mode
+218 '
+219 'begin talk loop
+220 IF T=0 THEN RETURN ELSE S$=INKEY$:'exit if kybd inactive
+221 IFS$=""THEN T=T-1:GOTO220:'decr dly timer if no kybd input
+222 T=K:'restart dly timer
+223 CALLVARPTR(ML(9)),ASC(S$),VARPTR(S):'conv to all caps
+224 'conv chr to baudot & test
+225 'ltrs test
+226 S=INSTR(2,L$,CHR$(S)):'ltrs codes
+227 IF S=0 THEN GOTO240:'not ltrs
+228 IF FX THEN CALL28210,31:FX=0:'rs232/FX=ltrs if in figs mode 
+229 GOTO250:'output chr
+239 'figs test
+240 S=INSTR(2,F$,S$):'figs codes
+241 IFS=0THENBEEP:GOTO220:'invalid chr
+242 IFNOT(FX)THENCALL28210,27:FX=-1:'rs232/FX=figs if in ltrs mode
+249 'output chr
+250 S=S-2:'baudot code
+251 IFS=0THENGOSUB800:GOTO220:'rs232/lcd=bksp/del
+252 V=V+1:'incr chr cntr
+253 IFV>UTHENGOSUB820:'cr+lf
+255 CALL28210,S:PRINTS$;:'prt rs232/lcd
+257 GOTO220:'next chr
+259 'SUB-end
+799 '
+800 'SUB-xmt bksp
+801 V=V-1:'decr chr cntr
+802 IFV<0THENBEEP:V=0:RETURN:'no chrs
+803 CALL28210,0:'rs232=bksp
+805 GOSUB810:'lcd bs/del
+806 RETURN
+809 '
+810 'SUB-lcd bksp/del
+811 CALL19268,8:CALL19268,32:CALL19268,8:CALL19268,0:'lcd=bs+spc+bs+nul
+812 RETURN
+819 '
+820 'SUB-cr+lf
+821 CALL28210,8:CALL28210,2:'rs232=cr+lf
+822 PRINT:'lcd=cr+lf
+823 V=1:'set chr cntr
+824 RETURN
+899 '
+900 'SUB-initialize
+901 CLS:PRINT:PRINT M$:PRINT:'logon msg
+902 'allocate memory
+903 DEFINT A-Z
+904 DIM L$(31),F$(31),ML%(11),X(1)
+905 'code-conv arrays;L=ltrs;F=figs
+906 'char=ascii;position=baudot
+907 L$=" "+CHR$(8)+"E"+CHR$(10)+"A SIU"+CHR$(13)+"DRJNFCKTZLWHYPQOBG MXV"
+908 F$=" "+CHR$(127)+"3"+CHR$(10)+"_ "+CHR$(7)+"87"+CHR$(13)+"$4',!:(5"+CHR$(34)+")2#6019?8 ./;"
+910 'mach-lang subrtn
+911 :FORI=0TO11:READML(I):NEXTI
+912 DATA 54,28109,-14227,9012,35,32461,30573,13859,-14080,-13056,4073,-13961
+915 'consts/flags
+916 K=80:'dly tlk-lstn
+917 U=64:'max chrs/xmtline
+918 A=0:'not used?
+919 S=0:'xmt chr code
+920 FR=0:'rcv:0=ltrs;-1=figs;
+921 FX=0:'xmt:0=ltrs;-1=figs;
+922 T=0:'0=lstn;>0=tlk
+923 X=0:'0=rcv;-1=xmt
+924 V=0:'rst chr cntr
+925 'dsply
+926 CALL 16969:'cursor on
+930 'rs-232
+931 OPEN "COM:28N1D" FOR INPUT AS 1
+932 OUT186,37:OUT216,5:OUT188,52:OUT189,77:OUT184,195:'60wpm default
+933 POKE65421,31
+934 'F-keys
+935 ON KEY GOSUB 940,942,944,946,950,960,970,980
+936 KEY ON
+937 RETURN
+938 '
+939 'SUBs-keys:f1-f4(60,66,75,100wpm)
+940 OUT188,52:OUT189,77:OUT184,195
+941 PRINT:PRINT"60 wpm":RETURN
+942 OUT188,0:OUT189,76:OUT184,195
+943 PRINT:PRINT"66 wpm":RETURN
+944 OUT188,139:OUT189,74:OUT184,195
+945 PRINT:PRINT"75 wpm":RETURN
+946 OUT188,22:OUT189,72:OUT184,195
+947 PRINT:PRINT"100 wpm":RETURN
+948 '
+949 'SUBs-keys:f5-f8
+950 RETURN:'f5-not used
+960 F=0:'ltrs mode
+961 PRINT:IFPTHENLPRINT:'f6-new line
+962 RETURN
+970 'f7-toggle prntr
+971 IFPTHENP=0ELSEIF(INP(187)AND6)<>2THENPRINT"LST not ready!":ELSEP=1
+972 IFPTHENPRINT"Echo on"ELSEPRINT"Echo off"
+973 RETURN
+980 MENU:'f8-exit prgm
+

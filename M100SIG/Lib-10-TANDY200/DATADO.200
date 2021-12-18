@@ -1,0 +1,81 @@
+DATADO.200 BY CARMEN PAONE [72677,42]
+
+
+	I am indebted to champion bytefigher Gene Nestro for his suggestions on how to make the program better. Among the suggestions Gene gave me was: ""Don't pack the lines of your program; leave space between the lines to let the other guy have room to improve on your program.''
+	I also would like to thank Will Linden for his excellent TXTJMP.200 program which made DATADO.200 an even handier program
+
+---------------------------------------
+
+	Need a simple little database program to keep track of your clients' telephone numbers, addresses, etc.? 
+DATADO.BA will help you quickly retrieve that and other kinds of information from customized DO files on your Model 100/102
+	When the menu of DATADO appears on your screen, you will see the following:
+	1) Enter
+
+	2) Find data
+
+	3) Edit
+
+	4) Delete
+
+	5) Filename
+
+	6) MENU
+
+
+	The first selection will enable you to enter data into a DO file. Be careful here because a string over 39 characters will prompt an error message of "Too long." Each time you enter data, strike enter and you will be return to the DATADO menu.
+	By pressing No. 2 on your keyboard, you will be able to ask DATADO to seek a string of information from a DO file. It is only necessary to enter a partial string. Once the screen clears, hit the spacebar until the desired data appears. Another strike of the spacebar at the end of the process will return you to the DATADO menu.
+	Selection No. 3 will take you right to the DO file for some quick editing. When you press F8, you will be sent back to the DATADO menu
+	Strings of information can be deleted from a DO file by hitting No. 4 on your keyboard. The different strings will flash on the screen and you can delete them by typing "Y" or "y" or save them by typing "N" or "n"
+	Filenames can be changed with the No. 5 option. Type in the name of the new file. Then press the F8 key and then the F7 key, which will be programmed by DATADO, and you will be back in DATADO.
+	No. 6 puts you back on the 100 menu.
+
+---------------------------------------
+	Send comments to me via the M100SIG message center or EasyPlex.
+
+---------------------------------------
+	Use the select, cut, and paste features of your computer to place the program in a separate DO file and run the file through BASIC.
+
+--------------------------------------
+0 REM DATADO.200 BY CARMEN PAONE [72677,42] COPYRIGHT, AUG. 10, 1989
+10 F$="TASK.DO":OPENF$FORAPPENDAS1:CLOSE1:DIMD$(100)
+20 ONERRORGOTO40
+30 CLS:PRINT@125,"D":PRINT@131,"A":PRINT@137,"T":PRINT@143,"A":PRINT@149,"D":PRINT@155,"O":PRINT@214,"1) Enter":PRINT@254,"2) Find":PRINT@294,"3) Edit":PRINT@334,"4) Delete":PRINT@374,"5) Filename":PRINT@414,"6) MENU"
+40 IFERR=10THENOTO3
+50 I$=INPUT$(1):F=INSTR(1,"123456",I$):IFF=0THEN50
+60 ONFGOTO240,70,400,160,290,300
+70 CLS:PRINT@211," Find: ????":PRINT@280,STRING$(39,95):PRINT@280,"";
+80 LINEINPUTS$:IFLEN(S$)>39THENPRINT,"TOO LONG":FORT=1TO500:NEXT:CLS:GOTO70
+90 IFS$=""THENRUN
+100 FORG=1TOLEN(S$):P=ASC(MID$(S$,G,1)):IFP>96ANDP<123THENMID$(S$,G,1)=CHR$(P-32)
+110 NEXT:OPENF$FORINPUTAS1:CLS:PRINT
+120 IFEOF(1)THEN150
+130 LINEINPUT#1,T$:IFINSTR(1,T$,S$)<>0THENPRINTT$
+140 PRINT@171,"Spacebar"CHR$(32):I$=INPUT$(1):GOTO120
+150 CLOSE1:PRINT@211,"Spacebar for menu":I$=INPUT$(1):GOTO30
+160 CLS:D=0:OPENF$FORINPUTAS1
+170 IFEOF(1)THENCLOSE1:GOTO210
+180 D=D+1:LINEINPUT#1,D$(D):PRINT@200,LEFT$(D$(D),39);SPACE$(39-LEN(D$(D))):PRINT@292,"Kill? _"CHR$(8)
+190 I$=INPUT$(1):IFI$="Y"ORI$="y"THEND$(D)=""ELSEIFI$="N"ORI$="n"THEN200ELSE190
+200 GOTO170
+210 CLS:PRINT@131,"Redoing file ":KILLF$:OPENF$FOROUTPUTAS1:FORT=1TOD:IFD$(T)=""THEN230
+220 PRINT#1,D$(T)
+230 NEXT:CLOSE1:GOTO30
+240 CLS:PRINT@201,"Enter data on line":PRINT@280,STRING$(39,95)CHR$(13);:LINEINPUTA$
+250 CLS:PRINT@120,"";:IFLEN(A$)>39THENPRINT"Too long.":FORT=1TO500:NEXT:CLS:GOTO240
+260 IFA$=""THENGOTO30
+270 FORY=1TOLEN(A$):IFASC(MID$(A$,Y,1))>96ANDASC(MID$(A$,Y,1))<123THENMID$(A$,Y,1)=CHR$(ASC(MID$(A$,Y,1))-32)
+280 NEXT:OPENF$FORAPPENDAS1:PRINT#1,A$:CLOSE1:GOTO30
+290 KEY7,"RUN"+CHR$(34)+"Datado.BA"+CHR$(13):EDIT10
+300 MENU
+400 CLS:INPUT"File name";F$
+410 OPENF$FORAPPENDAS1
+415 VP=VARPTR(#1)
+420 CLOSE1
+425 DI=PEEK(VP+2)+256*PEEK(VP+3)
+430 AD=PEEK(DI)+256*PEEK(DI+1)
+440 FORI=63574TO63620:READ X:POKE I,X:NEXTI
+450 DATA 229,213,197,245,235,42,80,246,229,33,0,0,34,210,239,57,34,80,246,213,62,1
+455 DATA 33,114,248,195,39,115,225,225,34,80,246,205,226,131,175,50,50,239,61,50
+460 DATA 10,239,195,4,22
+470 CALL 63574,,AD
+490 CLS:RUN30

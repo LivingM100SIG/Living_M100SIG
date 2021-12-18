@@ -1,0 +1,45 @@
+0 'QZ-100.BA (v3.3)        3-Aug-87        Copyright 1987
+1 'by: Bill Templeton - Danville Tigers
+2 're: True or False Quiz
+3 ' 4 files req'd to run this program:
+4 '  DISNEY.DO
+5 '  ARTS.DO
+6 '  HORSES.DO
+7 '  BOXING.DO
+8 'Honor Code: 15 lashes to anyone who looks at answers before taking quiz!
+9 '
+10 CLS:ONERRORGOTO44:E$=CHR$(27)
+11 PRINT"      QQQ
+12 PRINT"     Q   Q  u  u  i  zzzz
+13 PRINT"     Q   Q  u  u  i    z
+14 PRINT"     Q Q Q  u  u  i   z
+15 PRINT"      QQQ    uu   i  zzzz
+16 PRINT"         Q":PRINT@256,E$"p 24 Questions/Quiz "E$"q":Q$=INPUT$(1)
+17 CLS:CALL17001:PRINT@41," Choose one: ":CALL17006:PRINT:PRINT"   1: Disney Movies
+18 PRINT"   2: Arts & Entertainment":PRINT"   3: Boxing History":PRINT"   4: Horse Racing":B$="":Q$="
+19 A$=INPUT$(1):A=VAL(A$)
+20 IFA=1THENF$="Disney
+21 IFA=2THENF$="Arts
+22 IFA=3THENF$="Boxing
+23 IFA=4THENF$="Horses
+24 IFA<1ORA>4THEN19ELSECLS:CALL17001:PRINT@81," "F$" ":CALL17006
+25 PRINT@165,"[E]xpert  [A]verage  [N]ovice ?  ":Z=20
+26 B$=INPUT$(1):IFINSTR("eE",B$)THENB$="Expert":Z=5ELSEIFINSTR("aA",B$)THENB$="Average":Z=10ELSEB$="Novice
+27 CALL17001:PRINT@255," "B$" ":CALL17006:FORX=1TO1000:NEXT
+28 S=0:N=0:CLOSE:OPENF$FORINPUTAS1
+29 A$="":LINEINPUT#1,A$
+30 CLS:PRINT"TRUE or FALSE":PRINT:PRINTA$
+31 C$="":LINEINPUT#1,C$:D$=LEFT$(C$,1):IFINSTR("tT",D$)THEND$="T"ELSED$="F
+32 TM$=TIME$:Q$=INPUT$(1):IFINSTR(CHR$(13)+"tT",Q$)THENQ$="T"ELSEIFINSTR(CHR$(32)+"fF",Q$)THENQ$="F
+33 IFVAL(RIGHT$(TIME$,2))>VAL(RIGHT$(TM$,2))+ZTHEN36
+34 IFQ$=D$THENS=S+1ELSEIFQ$=E$THEN17ELSEIFQ$=CHR$(127)THEN38
+35 PRINT:PRINTE$"p "C$" "E$"q":FORX=1TOZ*100:NEXT:GOTO37
+36 PRINT:PRINTE$"p Timed out... no points scored "E$"q":FORX=1TOZ*100:NEXT
+37 N=N+1:IFEOF(1)THEN38ELSE29
+38 CLS:CALL17001:PRINT@120," Your score was"S"correct out of 24... ":CALL17006:PRINT@253,"Press Enter...":Q$=INPUT$(1)
+39 CLS:PRINT@82," Do you want to go again ?  ":Q$=INPUT$(1):IFINSTR("yY",Q$)THENPRINT:GOTO25
+40 PRINT"  ";:CALL17001:PRINT" Do you want another quiz ?  ":CALL17006:Q$=INPUT$(1):IFINSTR("yY",Q$)THEN17
+41 PRINT"   Run another program ?":Q$=INPUT$(1):IFASC(Q$)=27THENMENUELSEIFINSTR("yY",Q$)THEN42ELSEMENU
+42 PRINT"   Program name: ";:P$="":INPUTP$:ONERRORGOTO43:RUNP$
+43 IFERR=52ORERR=55THENPRINT"  "E$"p Bad filename "E$"q":FORT=1TO500:NEXT:RESUME42ELSE42
+44 IFERR=52ORERR=55THENPRINT"  "E$"p Bad filename "E$"q":FORT=1TO500:NEXT:RESUME17ELSE17

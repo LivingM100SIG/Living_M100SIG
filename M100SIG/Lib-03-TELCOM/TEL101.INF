@@ -1,0 +1,43 @@
+TEL101.INF -- User's Data On TEL101.LDR
+---------------------------------------
+
+TEL101.LDR is a Basic loader for the 100/102 which creates TEL101.CO, a 
+machine language terminal emulator which works like TELCOM.
+
+But this program includes online access to Basic and Text with Hugo Ferreyra's
+DIRACC (see DIRACC.DOC) integrated with this program.  Access to Text is
+by hitting F7 and F6 takes you to Basic.  To return from Text, use F8.  
+To return from Basic, do CALL HIMEM -- assuming that TEL101.CO
+is the lowest (or only) CO program loaded in memory.  This can be
+ facilitated by defining a function key in Basic as follows:
+
+        KEY6,"Term"+CHR$(24)+"CallHIMEM"+CHR$(13)
+
+This program also includes James Yi's original split screen code developed
+for the Tandy 200.  It is very nice in CIS COnferences.  To toggle it, hit
+SHIFT-F1 and send the CIS command /NOECHO while in the COnference.
+But to toggle on the splitscreen mode, the label line MUST be on. To use
+a label line function, first do SHIFT-F1 to toggle SS to off, then do your
+thing, then use SHIFT-F1 to get SS back.  Other approaches work, but confuse.
+
+Finally, this program includes a macro routine by Jon Diercks.  To use it,
+go to TEXT and create a macro file named XMDMAC.DO.  Start each macro with a
+GRPH or CODE character.  The macro will continue until another such
+character is reached (i.e., macros can be multiple lines, as in Tony's macro
+program). To send a macro, just hit the CODE or GRPH key (e.g., GRPH held 
+while hitting the selected key) while on line.  Using DIRACC TEXT access, you
+can even edit your XMDMAC file while on line!
+
+If you have a Hayes compatible modem (e.g., WorldPort 1200), the
+companion program TELHZ1.100 provides autodial and logon with a conventional
+ADRS.DO file.  I have included the above Key 6 definition in TELHZ1.100, a
+Basic program.
+
+One caution: If you use a function key to return to Term from Basic, make
+sure you zero the definition if TEL101.CO is removed from use.  Otherwise,
+hitting this key could be unfriendly!!
+
+
+Phil Wheeler
+71266,125
+27 Nov 1987

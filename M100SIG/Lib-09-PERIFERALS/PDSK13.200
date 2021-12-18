@@ -1,0 +1,32 @@
+
+PDSK13.200
+
+Converted, transcribed and tweaked as necessary by Tony Anderson, 76703,4062.
+September 1988
+
+      (C) 1985 Acroatix Inc.
+Released for exclusive distribution on CompuServe's Model 100 Forum.  All other
+rights reserved.
+
+
+This program restores the "normal" Power-Disk program by reloading and running
+it from POWR-D.CO on disk.
+
+Since it access the disk, it assumes that you already have a version of the
+DOS loaded, presumably a relocated version at another address.
+
+So essentially, what this program does, is to kill a relocated version of
+Power-Disk, and reloads a "normal" version at the default address just below
+system maxram.
+
+
+5 'RESTOR.BA  Restores default POWR-DISK.
+6 '(C) 1985 Acroatix Inc.
+10 IFMAXRAM=58960THENLFILESMENU
+20 ONERRORGOTO60:LOADM":powr-d.co",F
+30 LFILESOFF
+35 CLEAR100,58960
+40 RUNM"powr-d":KILL"powr-d.co"
+50 LFILES MENU
+60 IFERR=67THENRESUME30
+70 IFERR=5THENRESUME40

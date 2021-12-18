@@ -1,0 +1,45 @@
+Linefeed Toggle for PG RAM Menu Program
+---------------------------------------
+
+I use the linefeed toggle in the PG RAM MENU/0MENU utility to send
+linefeeds to my printer.  But when setting up the printer from a
+Basic program, an annoying extra linefeed will result at exit --
+unless the LF patch is disabled while setting up the printer.
+
+Of course, it is possible to disable the patch and reinstall it by
+hitting F7 before entering the printer set-up program and then
+hitting F7 at exit from the program.
+
+It is better to do it from software.  And here's how.
+
+1) At the beginning of your printer set-up program use the
+   following line of code:
+
+   IF PEEK(34177)=110 AND PEEK(32816)=50 THEN CALL 34106
+
+   This code checks to see if the LF patch is on (and tests
+   whether 0MENU vers 2.0+ is installed), and toggles the patch
+   OFF if it is ON.
+
+2) Just before leaving the program, add the following code:
+
+      IF PEEK(34177)=102 THEN CALL 34106
+
+   This code will toggle the LF patch to ON if it was OFF.
+
+The following information from Peter Van Heusden of PG Designs
+(plus some disassembly) led to the above:
+
+     o LF patch annunciator ("n" or "f") stored at 8581h (34177d)
+
+     o Program byte toggled for LF patch is at  8554h (34132d).
+       It is C9h (201d) when the LF patch is OFF and C0h
+       (192d)when ON.
+
+     o From this information, a direct patch approach would be to
+       POKE both bytes to the desired state.  The CALL approach
+       gets both bytes and assures that they are always
+       consistent.
+
+Phil Wheeler [71266,125]
+Torrance, CA -- 11/1/86

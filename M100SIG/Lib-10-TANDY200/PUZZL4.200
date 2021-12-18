@@ -1,0 +1,159 @@
+  PUZZLE-4  by Paul Globman 
+               Copyright (c) 1990
+---------------------------------------
+Puzzle #4 is not your ordinary puzzle.  It is a MAZE and the object is to get
+to the final room marked "FINISH".
+
+But this is not an ordinary MAZE.  Puzzle #4 is a four dimensional maze that
+is based on the principle that two things can occupy the same space at the
+same time.
+
+It is easy to imagine a two dimensional grid, such as a bordered tic-tac-toe
+board.  And it is easy to imagine a three dimensional grid, such as a Rubiks
+cube.  Now imagine three rubiks cubes overlaying each other in the same
+physical space. This would be 3 by 3 by 3 by 3 grid, representing 4 dimensional
+space.
+
+Imagine a Rubiks cube as a building with 27 rooms (3 floors with 9 rooms per
+floor).  These rooms have doors so you may pass from room to room on the same
+floor.  These rooms have cutouts in the floor and ceiling, so you may travel
+from floor to floor.  And these rooms have a "space portal" that allow you to
+pass into an entirely different cube!
+
+With 3 cubes, the maze has 81 different rooms.  You will begin in room #1 and
+finish in room #81.  You will not pass through every room, but will pass
+through each floor of each cube, at least once.
+
+The VIEW
+========
+
+When you run the PUZZL4.BA program you will first see room #0.  This room is
+not part of the puzzle, but is provided to demonstrate the EIGHT possible moves
+(directions) you may select from.
+
+The view is always the same, that is, you are looking DOWN into the room,
+through a "glass" ceiling.
+
+DOORS - the 4 doors shown in room #0 will allow a move to an adjacent room on
+the same floor of the same cube.  This is done with one of the 4 ARROW keys.
+
+CUTOUTS - there are two possible cutouts, both shown in room #0.  The small
+square in the center of the room represents a hole in the floor, which allow
+you to move to the room directly below the room shown.  The large square
+represents a hole in the ceiling (thru which you are looking) and this allows
+you to move to the room directly above the room shown.  These moves are made
+by pressing SHIFT UP/DOWN ARROW, to move up or down one level.
+
+SPACE PORTALS - When looking at room #0, you will notice that the left and
+right walls are not a solid black border, as the top and bottom walls.  When
+you enter a room whose wall is not SOLID, you are in a room that will permit
+the overlaying of the entire structure (cube).  SHIFT LEFT/RIGHT ARROW will
+allow the shifting of space so a new cube exists in the space of the old cube,
+and your position within the new cube remains the same as the position you
+were in, in the old cube.
+
+SUGGESTIONS
+===========
+
+There are quite a few possible paths to take, and only one will take you
+through the maze.  If you accept the challenge and wish to find the correct
+path, you should work with a note pad and document your movement through the
+maze.  Keep track of the rooms you pass through and make a note of where they
+lead.  Use your imagination and try to draw each of the three floor plans for
+each of the three cubes.
+
+With a total of 81 rooms, you may think this maze is equivalent to a two
+dimensional maze that is 9 by 9.  Don't let over-simplification limit your
+approach.  Just try to draw the 81 rooms with their inter-connections and you
+will see this is much more involved than a simple 9 by 9 grid.
+
+GOAL
+====
+
+Your goal is to find the sequence of rooms that lead to the FINISH (room #81).
+
+ESCAPE
+======
+
+When you first run PUZZLE-4 you will see room #0.  ANY KEY begins the game and
+puts you in room #1.  There is one exception... the ESC key.  ESC from room #0
+will abort the game and return you to the Tandy 200 menu.  Once the game has
+begun, ESC will restart the program and show you room #0.
+
+
+GOOD LUCK AND HAVE FUN... Paul Globman [72227,1661]
+
+=======================================
+0 REM PUZZL4.BA by Paul Globman (c)1990
+1 DIMS(81):E$=CHR$(27):GOSUB63:GOTO14
+2 K$=INKEY$:IFK$=""THEN2ELSEK=ASC(K$)
+3 IFK=27THENIFS=0THENMENUELSERUN
+4 IFS=0THENS=1:GOTO14
+5 IFK=28THENA=1:M=1:GOTO13
+6 IFK=29THENA=-1:M=2:GOTO13
+7 IFK=30THENA=-3:M=4:GOTO13
+8 IFK=31THENA=3:M=8:GOTO13
+9 IFK=2THENA=9:M=128:GOTO13
+10 IFK=20THENA=-9:M=64:GOTO13
+11 IFK=1THENA=-27:M=32:GOTO13
+12 IFK<>6THEN2ELSEA=27:M=16
+13 IF(S(S)ANDM)=0THEN2ELSES=S+A
+14 GOSUB23:IF(S(S)AND1)=1THENGOSUB35
+15 IF(S(S)AND2)=2THENGOSUB39
+16 IF(S(S)AND4)=4THENGOSUB43
+17 IF(S(S)AND8)=8THENGOSUB47
+18 IF(S(S)AND16)=16THENGOSUB62
+19 IF(S(S)AND32)=32THENGOSUB61
+20 IF(S(S)AND64)=64THENGOSUB51
+21 IF(S(S)AND128)=128THENGOSUB57
+22 GOTO2
+23 CLS:PRINT@77,S:FORI=0TO2
+24 LINE(8+I,8+I)-(222-I,122-I),1,B
+25 NEXT:LINE(30,30)-(200,100),1,B
+26 LINE(10,10)-(30,30)
+27 LINE(10,120)-(30,100)
+28 LINE(220,10)-(200,30)
+29 LINE(220,120)-(200,100)
+30 IFS=1THENPRINT@297,"START
+31 IFS<>81THENRETURN
+32 PRINT@296,"FINISH
+33 PRINT@372,"MAZE COMPLETED
+34 K$=INKEY$:IFK$<>E$THEN34ELSERUN
+35 FORI=0TO2:LINE(200,55-I)-(215,45-I)
+36 LINE(200,75+I)-(215,85+I):NEXT
+37 LINE(215,45)-(215,85)
+38 LINE(200,55)-(200,75),0:RETURN
+39 FORI=0TO2:LINE(30,55-I)-(15,45-I)
+40 LINE(30,75+I)-(15,85+I):NEXT
+41 LINE(15,45)-(15,85)
+42 LINE(30,55)-(30,75),0:RETURN
+43 FORI=0TO2:LINE(105-I,30)-(95-I,15)
+44 LINE(125+I,30)-(135+I,15):NEXT
+45 LINE(95,15)-(135,15)
+46 LINE(105,30)-(125,30),0:RETURN
+47 FORI=0TO2:LINE(105-I,100)-(95-I,115)
+48 LINE(125+I,100)-(135+I,115):NEXT
+49 LINE(95,115)-(135,115)
+50 LINE(105,100)-(125,100),0:RETURN
+51 FORI=0TO4
+52 LINE(70+I,20+I)-(160-I,110-I),1,B
+53 NEXT:LINE(71,21)-(74,24),0
+54 LINE(159,21)-(156,24),0
+55 LINE(71,109)-(74,106),0
+56 LINE(159,109)-(156,106),0:RETURN
+57 FORI=0TO2
+58 LINE(103+I,53+I)-(128-I,78-I),1,B
+59 NEXT:LINE(104,54)-(127,77),0
+60 LINE(127,54)-(104,77),0:RETURN
+61 LINE(9,11)-(9,119),0:RETURN
+62 LINE(221,11)-(221,119),0:RETURN
+63 FORI=0TO81:READS(I):NEXT:RETURN
+64 DATA 255,9,3,146,140,9,18,20,132,144
+65 DATA 136,129,66,84,129,10,128,82,196
+66 DATA 64,65,2,9,66,16,68,17,66
+67 DATA 136,145,34,5,3,34,48,16,48
+68 DATA 65,67,10,32,16,140,17,34,20
+69 DATA 17,3,18,24,17,98,20,33,2
+70 DATA 137,34,136,4,128,12,33,162,36
+71 DATA 65,130,192,128,97,130,32,64,32
+72 DATA 40,64,96,100,32,72,33,3,6

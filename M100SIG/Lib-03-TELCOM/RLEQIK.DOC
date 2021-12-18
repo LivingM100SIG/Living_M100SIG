@@ -1,0 +1,176 @@
+RLE Quick Print version 1.0
+
+	Well folks, here it is: the first version of my compiled RLE printer 
+program!  You can finally use your fast dot matrix printer to its full 
+potential.  I'd almost be willing to bet you've never seen your printer print 
+graphics faster than it does with this program.  On Panasonic and Roland 
+printers (160 cps draft), it printed single-sized images in about 20 seconds; 
+double-sized in about 80.  You'll get faster printouts in double size if your 
+printer has a large buffer.  Radio Shack/Tandy printer codes should print a 
+little slower.
+
+History:
+	I'd have had a tough time getting started in this without Alex Trevor's
+GRAPHER program.  I noticed that some files didn't look quite right with his 
+program, and when I noticed the same program had spread to the Florida SIG, I 
+set to work correcting these bugs.  It turned out that major modifications were
+necessary, but I ended up putting the new version only in the Florida forum.  
+Shortly after that I rewrote the program to output directly to a printer.  This
+speeded things up a bit and allowed the entire width of hi-res pictures to be 
+shown.  I managed to compile the critical portions of this some time ago, but 
+being a perfectionist, I wanted the program to be more versatile, all of which 
+leads us to the present version which offers the following features:
+
+- Super-fast output
+- Epson/IBM codes or Tandy/Radio Shack codes
+- Single or double size printouts
+- Use of any selected portion when printout would be too wide for 8" paper
+- Simple cursor-controlled selection of file and features to be used
+- Works properly with linefeed patches
+
+Loading:
+	There are two programs you will want.  RLEQIK.RLC is a relocatable 
+machine language module which contains the main part of the program.  
+RLEQIK.100 is a basic program which is used to specify which file to print and 
+how it is to be printed.
+	To load the machine language portion, use RLCLDR from DL3.  You will 
+need to CLEAR256,HIMEM-2500 before running RLCLDR, then PRINTHIMEM and use the 
+result as the loading address (see RLCLDR.DOC for more details.  If you have 
+enough memory, RLEQIK.CO will be created.  You may want to kill this to save 
+memory (see next section.)
+
+Usage:
+	You can actually run the program by pressing <Enter> on RLEQIK.CO from 
+the menu.  The program as originally loaded looks for a file called RLEFIL.DO 
+and prints single-size, positive, using Tandy printer codes.
+	The RLEQIK.100 program allows you to change these parameters.  When you
+start the program, you get a title screen.  This will end by itself if you 
+leave it alone, but you can end it at any time by pressing any key.  When the 
+title screen ends, the program checks 6 bytes to make sure the machine language
+is loaded in memory.  This way you do not waste memory re-loading a CO file 
+every time you use it.  The entry address of the machine language is specified 
+in line 10 (ML=HIMEM).  You can change ML to wherever your machine language 
+starts if it's higher than HIMEM.  The rest of the program adjusts everything 
+relative to "ML".
+	The next screen contains a list of all .DO files in RAM.  Choose a file
+here just as you would at the main menu and press <Enter>.  You will notice 
+"Files" and "Menu" prompts in the bottom corners.  At any time from now until 
+the printing starts, F1 will start you back at this file selection screen and 
+F8 will take you out of the program.
+	The next screen offers 4 choices.  The current selections are shown in 
+reverse and a ">" points at the selected option in the first column.  The left 
+and right arrow keys will move this pointer to another column and the up and 
+down keys will select the alternate option in the current column.
+	The first choice is Reverse/Normal.  The reverse option is usually used
+for radar maps, but most other files should use normal.  (Actually you can ask 
+for the map the other way around, but you have to specify it every time you 
+request a map.)
+	Next is Single/Double.  Single prints each pixel as one dot, whereas 
+double prints 2 dots high and 2 dots wide for each pixel.  I think double size 
+pictures look very blocky and I'm working on a program to print these 
+"smoothed", but there's still a lot of work to do on this.
+	Next is Tandy/Epson.  Tandy should work for most Tandy printers which 
+are capable of printing dot graphics.  With newer printers make sure the DIP 
+switch is set for Tandy rather than IBM codes when using this option.  Epson 
+mode should work with printers using Epson or IBM graphics codes.  You do need 
+one small patch to the Basic program for IBM line spacing to take effect.  Add 
+the following line to RLEQIK.BA:
+405 LPRINTCHR$(27)"A"CHR$(8)CHR$(27)"2";
+
+	The last column is 72 dpi/60 dpi.  This is the horizontal printing 
+resolution in dots per inch.  Since almost all printers print 72 dpi 
+vertically, 72 dpi horzontally gives the best printout; 60 is slightly 
+distorted.  In Tandy mode, the higher density is achieved by putting the 
+printer in 12 characters per inch mode.  In Tandy printers which don't have 12-
+pitch, this code is ignored by the printer and the result is printed 60 dpi 
+anyway.  See 60 dpi below for more info.  In Epson mode 72 dpi is achieved by a
+special code at the beginning of every line of graphics.  On printers where 
+this mode is not available (such as the IBM Proprinter), selection of 72 dpi 
+will just print garbage.
+
+60 dpi:
+	In "60 dpi double size", it's not possible to show the entire width of 
+hi-resolution files on 8-inch paper.  When these two options are selected 
+together, you will get an additional prompt, "Starting column (0-16)".  0 will 
+give you the left edge of the picture and chop off the last 16 pixels of each 
+line, 16 will chop off the left edge, and any number inbetween will chop some 
+off both edges.  If you're printing a medium-res file, always specify 0 because
+there none of the picture is beyond column 127.
+	I know of one printer, the Panasonic KX-P1090 which gives you 72 dpi if
+you send the 60 dpi graphics code while in elite (12 pitch) mode.  The RLEQIK 
+program sends the elite instruction for this printer, so the 1090 will always 
+print 72 dpi, but it will want to chop double-sized pictures.  To avoid this 
+put an ' at the beginning of line 310 or delete the line.  You must specify 60 
+dpi for this printer even though it will actually print at 72.
+
+Printing:
+	Okay, now that you have everything specified, press <Enter> again and 
+the picture should start printing.  If there is no printer connected or it's 
+offline, etc., a warning message will appear.  Connect a printer and the 
+program should continue or press F8 to end the program.
+
+Error messages:
+	It's possible to get a "File not found message", but not if you're 
+using the Basic RLEQIK program, because it only lets you select files in RAM.
+	The program should skip over any garbage you'd expect at the beginning 
+of a file.  If it gets to the end without finding a ^[GH or ^[GM, you'll get a 
+"Not an RLE file" message.
+	The program keeps printing until it comes to the end of the file (even 
+if the whole file wasn't downloaded) or a ^G (beep) which usually terminates an
+RLE file (or any other control code for that matter).
+
+	All of the selected printing options are stored in high memory where 
+the machine language is.  When you run the RLEQIK.BA, these parameters are 
+reloaded, so you don't have to change anything if you want to print the same 
+way again.  You only need to pick the file and press <Enter> 2 or 3 times.  If 
+you Savem the machine language section after printing, you will have your own 
+default parameters set the next time you Loadm the program.  (You don't need to
+use the RLC file again unless you want to relocate it to another memory 
+address.)
+
+Printing modes:
+	Several printing modes are invoked by the program:  character pitch is 
+changed to 12 characters per inch, line spacing is changed (to 1/9" in Epson/
+IBM mode, 1/12" in Tandy mode).  You probably don't want it left this way, but 
+I don't know how you want it left, so the program doesn't do anything.  You'll 
+probably want to add something to line 500 to change the line spacing and 
+character pitch back to normal before exiting the program.
+
+Future enhancements:
+	The main thing I would like to do to change all of this is to write all
+or part of it in pure machine language rather than the present compiled 
+version.  I don't think it will be much faster (though I'm not sure), but it 
+would be nice if the size could be compressed somewhat.
+	Although the program supports a lot of different printers as is, there 
+are a few odd ones that are not quite as versatile with graphics densities, 
+where the program could be improved slightly.
+	I'm developing a special option to print a miniature rendering of the 
+RLE picture on the LCD.  This could be helpful in deciding which section of the
+the picture is most important when part of it has to be chopped.
+	Another project is to decode an entire RLE file into memory, so that 
+you could scroll around and examine any part of it.  It could also be possible 
+to do minor editing.  These touch-ups would be important for the long-range 
+project for printing RLEs using Enhanced Definition (stair-stepping is 
+eliminated).  I've done quite a bit of work on this already, but there's still 
+much to be done.
+	Of course we still don't have a good machine language program to make 
+an RLE file from an M100 graphics screen.  I've tried it reading directly off 
+the LCD, but some ML routines conflict.  Using a RAM bit-map as discussed in 
+the previous paragraph would probably be a better way to do this.
+	I would like to be able to read RLE files from other devices such as 0:
+or even CAS: rather than only from RAM as in the present program.
+	Some RLE files (mainly those converted from Commodore 64 files) contain
+CHR$(127)'s (DELete character).  The M100 does not allow these in .DO files, so
+the files become corrupted.  This is easily patched while downloading, but we 
+need a modified communications program to do this.
+	If you like this program and would like to see more, send me $5. I 
+promise it will encourage me and I'll be sure to Easyplex you a notice when new
+programs are available.  Send to:
+	Neil Wick,
+	Box 47,
+	Brooklin, Ont., CANADA
+	L0B 1C0
+
+	Hope you enjoy the program and let me know [71056,613] if you like it, 
+don't like it or are having problems with it.  Have fun!
+

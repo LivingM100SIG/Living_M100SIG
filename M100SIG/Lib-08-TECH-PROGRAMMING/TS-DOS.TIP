@@ -1,0 +1,36 @@
+   Thanks to a trouble report from Tony Anderson, I've done some research on
+major conflicts between AltLCD routines for the M100/102 and the ROM version
+of Traveling Software's TS-DOS program.
+
+   The first incompatibility is blatant: TS-DOS ROM uses a chunk of the AltLCD
+area as an input-output buffer for communication with the TDD.  So, an
+m/l routine stored in the AltLCD won't survive any operations that access the
+drive.
+
+   The second conflict is more subtle, and it can arise even when there is no
+attempt at TDD access.
+   It is standard practice to ORG AltLCD routines at 64704.  But, when you set
+"DOS ON" with the TS-DOS ROM, at least one BASIC command (OPENing a .DO file
+for any read/write operation) pokes new values into addresses 64706 and 64707.
+   It also seems that "DOS ON" installs hooks in other BASIC keywords, and
+routines at the new vectors make reference to the bytes at 64706 and
+64707.
+   So you've got a nasty situation if the "DOS ON" switch is set at the
+same time you're running a BASIC program with two elements:
+
+	a) any OPEN statement, and
+	b) an AltLCD routine ORG'd at
+	   64704
+
+   If you poke or LOADM your m/l code =before= the OPEN, TS-DOS overwrites at
+least two bytes of your program.  If you open the file first, and =then=
+install your AltLCD code, you've screwed up the reference bytes that other DOS
+hooks are trying to read.
+   The sure-fire solution is to turn TS-DOS's switch "OFF" before running code
+in the AltLCD.
+   Beyond that, you could ORG your Altbuf code to an address above
+64707.  I have not found any other Altbuf locations that TS-DOS routinely
+changes (although it's always possible I've missed something).
+   If anyone has related information that should be included in this file,
+please pass it along.  Thanks.
+	Wilson Van Alst [76576,2735]

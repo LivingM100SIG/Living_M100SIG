@@ -1,0 +1,115 @@
+
+LDPDSK.NOD  (Load Power-Disk from Node)
+
+Power-Disk Loader from files in the Node RAMdisk
+
+
+Copyright 1989 Tony B. Anderson
+All Rights Reserved
+
+
+This program is specific to use in the Tandy 200, equipped with a Node Datapak
+RAMdisk storage device, and Power-Disk, an alternate DOS for the Tandy Portable
+Disk Drive.  It may be adaptable to other DOS's, but since I don't support any
+other DOS's, I wouldn't know what changes might be required.  The general
+principles should be the same.
+
+Power-Disk is a copyrighted program by Acroatix, Inc., which has been released
+for public use through this forum, and which is also available from other
+sources.
+
+The DOS file POWR-D.CO must be stored in the Node storage device under that
+name, and the below loading program should also be stored in the Node, as
+LDPDSK.BA. The POWR-D.CO file is available on the original distribution disk as
+POWR-D.CO, or in Library 9, in the file PDSK05.200. If you download the latter,
+you will also need the HXFER.200 program (from Library 10) operational in your
+computer in order to convert the hex file into operational code as POWR-D.CO.
+
+The operational concept is to be able to load Power-Disk easily from the image
+file in the Node, whenever you experience a cold start, or when you have
+deliberately removed Power-Disk from RAM.  It is only necessary to enter the
+Node Datapak through the RAMDSK program (CALL 61167,2 to load it after a cold
+start), and run the LDPDSK.BA program directly from the Node menu by moving the
+cursor over the name and pressing the ENTER key.  It will automatically load
+LDPDSK.BA into RAM, run it, load and setup Power-Disk, and return you to the
+computer's main menu.
+
+Obviously, you need to store both POWR-D.CO and LDPDSK.BA in the Node storage
+device, to have them readily available after a cold-start.  Running LDPDSK
+directly from the Node makes it an easy way to reload your DOS at a moment's
+notice.
+
+
+0 ' LDPDSK.BA (Supports the 200, Power-Disk and Node DataPak)
+1 ' Loads and Initializes POWR-DISK under MAXRAM from POWR-D.CO file in the
+2 ' Node DataPak, then deletes itself from RAM. (Loads Power-Disk at 58960)
+3 ' Copyright 1989 Tony B. Anderson, All Rights Reserved
+4 ' Uses initialization code described in the Node manual in lines 10-13
+5 '
+10 CALL61162,8
+11 S$="POWR-D.CO"
+12 CALL61162,13,VARPTR(S$)
+13 CALL61162,23,VARPTR(S$)
+20 CLEAR 100,58960:LOADM"POWR-D":KILL"POWR-D.CO"
+30 CALL58960
+40 CLS:PRINT@124,"POWER-DISK is now operational..."
+50 CALL25102
+60 K=64798:POKEK,1:POKEK+1,0:POKEK+2,255
+70 {MENU
+
+
+Note that the curly bracket in front of "MENU" in line 70 is correct.  It is
+used by the Node RAMdisk software.
+
+
+You may also copy the LDPDSK.BA program into RAM, exit the Node back to the
+computer's main menu, and run LDPDSK from there, if you prefer.  In that case,
+it will load and setup the system hooks for Power-Disk to operate, then delete
+itself from RAM and return you to the computer's main menu.  In order to use
+the program in this manner, you must substitute the following lines in the
+program.  You can load the above program, then cut these lines out of this file
+and "paste" them into the loaded program.  This version will not run cleanly
+FROM THE NODE MENU.  It will run, but wil increase the size of the RAMDSK file
+on the computer's main menu by an amount equal to the size of the program,
+needlessly assigning 500 or so unused bytes to that program.  RAMDSK will
+still be usable, but will just use up an extra 500 or so bytes of RAM space.
+
+60 A$="NEW"+CHR$(13)+"KILL"+CHR$(34)+"LDPDSK.BA"+CHR$(13)+"MENU"+CHR$(13)
+70 FORI=1TOLEN(A$):POKE64797+2*I,ASC(MID$(A$,I,1)):POKE64798+2*I,0:NEXT:POKE64798,I-1
+
+
+Optionally the program can be used to reload other cold-start reconfigurations.
+The below listed lines will install the 200's linefeed patch, which will add
+linefeeds to printer carriage returns.  Similar configuration routines can be
+added as required.
+
+51 DATA254,13,192,205,201,132,62,10,201,255
+52 AD=61803:FORA=0TO8:READX:POKEA+AD,X:NEXT
+53 POKE 62740,INT(AD/256):POKE62739,AD-PEEK(62740)*256:POKE 61243,1
+
+
+The below line will add the TELCOM F7 printer form feed patch, hiding it in the
+unused area behind the F4 function key definition in BASIC, leaving key 4 as
+"Run" (a loaded program).
+
+54 KEY4,"Run"+CHR$(13)+CHR$(1)+CHR$(62)+CHR$(12)+CHR$(205)+CHR$(20)+CHR$(90)+CHR$(195)+CHR$(110)+CHR$(99):POKE61737,0:POKE62785,41:POKE62786,241
+
+
+Other patches or configuration commands may be added in a similar manner.
+
+55 POWER OFF        will disable the automatic power down feature
+
+56 POKE 62067,184   will remove ADDRSS from the main menu.
+
+57 POKE 62078,184   will remove SCHEDL from the main menu.
+
+58 POKE 62089,248   will remove MSPLAN from the main menu.
+
+You may also add lines which will allow you to reset the computer's calendar
+or clock, if you like.  Personally, I don't find that too useful, since it
+would appear each time you wanted to reload Power-Disk, whether or not the
+computer had actually been cold-started.  Perhaps it would be useful if you
+checked to see if the year was "00" first (IF RIGHT$(DATE$,2)="00" THEN...),
+and skipped that part of the program if it was not.  Assuming that a cold-start
+will reset the internal calendar to "1900", but that may be a problem in 2000.
+But then, the whole calendar will be a problem after 1999.

@@ -1,0 +1,89 @@
+
+	(c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Jim DeCota
+To: TONY ANDERSON
+
+Tony, I have been working with your RECALL.BA from calls.mnu and RAMDIR.BA BUT
+the location for MSPLAN given by RAMDIR (65535) produces an SN error. All the
+rest work great.  Is there a trick to calling MSPLAN rom?  65535 being the
+limit of ram would, I guess, cause a problem.  Hope you have a ready answer.
+Looking forward to your talented solution to this one. THXS.
+
+		- 0 -
+
+Fm: Tony Anderson
+To: Jim DeCota
+
+Yes.  The number listed in the RAM directory for MSPLAN is not really where
+MSPLAN is located.  As a matter of fact, 65535 is 2^16-1, or the absolute last
+byte in RAM space. Since no file can be located at that location, the
+operating system takes that as a flag to set the ROM selection switch and
+enter the ROM. But because it's a flag, you can't ENTER the option ROM there,
+you have to do a CALL, as documented by the company that produced the ROM, to
+get into it.
+
+Your mention of using RECALL indicates you are playing around with making
+various program names invisible or visible on the menu.  I don't know what
+version of RECALL you have, but it may be that you're trying to work with the
+version for the 100/102 in a 200. Anyway, if you're attempting to make MSPLAN
+invisible, you have to change the value of the attribute byte, which is stored
+at the address indicated in the first column - at 62089.  Poking 248 to that
+address makes MSPLAN invisible, and you won't be able to enter MSPLAN from the
+menu in that bank.  Poking 240 to 62089 makes the name visible on the menu
+again, and restores access from the menu.
+
+Does that answer your question?  If not, can you be more specific about what
+you're trying to do?
+
+                - 0 -
+
+Fm: Jim DeCota
+To: TONY ANDERSON
+
+Tony, it was a M100 version that I changed by revising the pokes to those of
+the M200.  RAMDIR.BA gave me the locations of the ROM programs.  Making TEXT,
+ADDRS,SCHEDL,MSPLAN invisible, they are then called by RECALL.BA EXCEPT
+MSPLAN.  That call produces SN error in line(the line referring to MSPLAN). As
+you know theM200 has MSPLAN built in.  Is there a version of RECALL for the
+M200 that overcomes this problem?  I'm hoping you have a workaround for this
+or you can relay a method of accessing builtin MSPLAN rom from RECALL.BA.
+Thanks for your continued support of the portables and M100SIG. /EXIT
+
+		- 0 -
+
+Fm: Paul Globman
+To: Jim DeCota
+
+Jim - You can get into MSPLAN from BASIC with...
+
+      CALL27801,1+(INP(216)AND12)
+
+		- 0 -
+
+Fm: RANDY HESS
+To: Paul Globman
+
+Paul,
+ Why is the ",1+(inp(216)and12)" necessary for the MSPLAN call? On occasion
+I've just made the CALL27801 and it seemed to work all right.
+
+		- 0 -
+
+Fm: Paul Globman
+To: RANDY HESS
+
+Randy - I was just a bit overly cautious.  I just disassembled the ROM at
+27801 and I see that the ROM code does that, so a simple CALL 27801 should
+suffice.
+
+		- 0 -
+
+Starting message #: 190607  Starting date: 24-Nov-89  21:40:05
+ Participants:
+Jim DeCota 72300,567
+TONY ANDERSON 76703,4062
+Wilson Van Alst 76576,2735
+Paul Globman 72227,1661

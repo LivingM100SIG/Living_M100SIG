@@ -1,0 +1,44 @@
+OVAL.DOC
+James Yi 73327,1653
+Oct. 24, 1988
+
+OVAL.100 and OVAL.200 are hexadecimal files, and needs HXFER.100 or HXFER.200
+to convert it to a .CO file.
+The 200 version of OVAL loads at 63576(in altLCD area), but the 100 version 
+loads at 62582(in HIMEM area).  If this is conflicting with other machine 
+language programs, you can relocate it to run it at a different address, by 
+specifying that address while converting it with HXFER.
+
+OVAL will let you draw elipses, as well as circles, by specifying different 
+radius for each axis.
+You can even fill the ovals, in black or white.
+
+To use it,
+CALL it with the following parameters:
+(Be sure it's LOADMed first)
+
+1. Mode in the A register:
+	0 = black, unfilled
+	1 = black, filled
+	2 = white, unfilled
+	3 = white, filled
+
+2. Center point in the HL register:
+	H=X coordinate
+	L=Y coordinate
+
+3. Y radius in altLCD, X radius in altLCD+1.
+For 100, altLCD = 64704
+For 200, altLCD = 63574
+
+As an example, to draw a filled black oval, 41 pixels wide by 31 pixels tall,
+ its center at (120,32), do the following:
+
+POKE altLCD,15		'Y radius
+POKE altLCD+1,20	'X radius
+CALL TOP,1,(120*256)+32  'at (120,32)
+
+TOP is the address where OVAL.CO is LOADMed.
+
+Enjoy!
+

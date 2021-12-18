@@ -1,0 +1,396 @@
+
+
+
+                              DOCS FOR "OPTEST.CO"
+                           ==========================
+
+                           Dave Newman  [76656,2526]
+                             DaMN Software, Uninc.
+                               946 South 12th St.
+                               Lincoln, NE  68508
+                                 (402) 477-0347
+                           --------------------------
+
+
+    OPTEST.CO is a machine language program written for the purpose of
+    testing your Model 100's execution of the 80C85's "illegal"
+    instructions.  The mnemonics I have used are very similar to the ones
+    suggested by Ken Barbier ("The secret life of the 8085",
+    Microcomputing, Sept. 1980), with some minor changes to conform to my
+    assembler's format.  If you would like more information on these
+    "illegal" instructions, read that article or the file called
+    "OPCODE.DOC" from DL8.  However, you need not know how they work to run
+    this program.
+
+    I am interested in the results that you get, as I am trying to decide
+    whether or not to "market" several programs written using these
+    undocumented instructions.  Please let me know by MAIL or message how
+    they worked for you.
+
+
+    LOADING AND SAVING "OPTEST.CO"
+
+    The code resides at 54000 to 54988 decimal (D2F0 to D6CC hex) to allow
+    for any other ML program you may have in memory.  If everything works,
+    nothing higher than that will be affected.  If your machine chokes on
+    these instructions, then nothing will save your files!  Be sure you
+    have anything that you might want to save backed up somehow....
+
+    The program is saved as an ASCII/hex file using Gord MacSwain's DOCO.BA
+    program from DL7, so you will need that program to convert it to
+    machine code.
+    To create "OPTEST.CO" from the hex DOcument file, simply load the .DO
+    file, go to BASIC and type 'CLEAR 256,54000.'  Then run DOCO.BA,
+    specifying "OPTEST.DO" (or whatever you called it) as the input .DO
+    file, and "OPTEST" as the .CO output file.  DOCO.BA creates the ML
+    program and saves it as a .CO file, acessible from MENU.
+
+    At this point, I highly recommend that you save the .CO file to disk or
+    cassette by typing 'SAVEM"x:OPTEST",54000,54988,54000', where "x" is
+    the device designation (CAS:, 0:, 1:, etc).  Once you have the .CO file
+    saved you can KILL the hex file that it was created from.
+
+
+
+
+
+
+
+
+
+
+                                        1
+
+
+
+
+
+
+
+
+    RUNNING "OPTEST.CO"
+
+    To run OPTEST.CO either go to BASIC and type 'CALL 54000' or run it
+    from MENU if you have it saved as a .CO file.  When you start the
+    program you will see a screen that looks like Fig. 1.  You can exit to
+    MENU at any time by pressing <ESC>.
+
+                    ------------------------------------------
+                    [                                        ]
+                    [ 1) 08    DSUB B     6) D9      SHLX    ]
+                    [ 2) 10    RHR        7) DD yyxx JND     ]
+                    [ 3) 18    RDL        8) ED      LHLX    ]
+                    [ 4) 28 xx DMOV D,H   9) FD yyxx JD      ]
+                    [ 5) 38 xx DMOV D,SP                     ]
+                    [                                        ]
+                    [Press 1 thru 9 to test, <ESC> to quit._ ]
+                    ------------------------------------------
+                     Fig. 1.  Entry menu of OPTEST.CO
+
+
+    By pressing a number (1 through 9) you call a routine that initiates
+    the registers for whichever instruction you selected.  Then a routine
+    is called that displays the contents of all the registers and the
+    instruction that is being tested.  For example, the screen for number
+    1, the DSUB B instruction, should look like Fig. 2.
+
+                    ------------------------------------------
+                    [                                        ]
+                    [     SZDA-PVC  AC       BC      DE      ]
+                    [     00000000  00      0001    0000     ]
+                    [                                        ]
+                    [        HL      SP      PC              ]
+                    [       0000    CEBC     D3E0            ]
+                    [                                        ]
+                    [ DSUB B         Hit any key to test.._  ]
+                    ------------------------------------------
+                     Fig. 2.  Registers before execution.
+
+
+    The SP (stack pointer) register may be slightly different, but all
+    other registers should look like the example shown.  When you press any
+    key other than the <ESC> key, the program will restore the registers
+    and return to the selected test routine.  There it will attempt to
+    execute one instruction, usually the instruction being tested, and call
+    the register display routine again.  In the case of the DSUB B
+    instruction the screen should look like Fig. 3.
+
+    Now simply compare your results with the results I got, which are
+    listed in Fig. 4.  For some instructions, the next keystroke will
+    return you to the entry menu; others require two keystrokes to test. 
+    As always, the <ESC> key is used to exit to MENU.
+
+
+
+
+
+
+                                        2
+
+
+
+
+
+
+
+
+                    ------------------------------------------
+                    [                                        ]
+                    [     SZDA-PVC  AC       BC      DE      ]
+                    [     10100101  00      0001    0000     ]
+                    [                                        ]
+                    [        HL      SP      PC              ]
+                    [       FFFF    CEBC     D3E4            ]
+                    [                                        ]
+                    [ DSUB B         Please verify results._ ]
+                    ------------------------------------------
+                     Fig. 3.  Registers after execution.
+
+
+    If your results are radically different than those listed, then your
+    80C85 probably doesn't work like the one in my machine.  Of course,
+    your machine may decide to take off on its own; if your micro does
+    something different, a cold start is usually inevitable.  In the words
+    of Richard Adams, DON'T PANIC!!  If you saved all your files, etc., the
+    worst that can happen is that you'll have to reload the program to try
+    the next instruction.
+
+    Since the purpose of running this program is solely to compare your
+    micro's execution of these instructions with the results obtained by
+    several other people, please try all the instructions before throwing
+    up your hands in despair, even if they all bomb.  Negative results are
+    just as important as positive results, if not more.
+
+
+    EXPECTED RESULTS
+
+    Here is a listing of the results I obtained, which are consistent with
+    the results obtained by other researchers.  The JD and JND instructions
+    require one extra keystroke, since those routines will increment or
+    decrement the DE register pair before returning to the display routine
+    the first time.  Pay particular attention to the D flag (the
+    dual-register carry flag, bit 5 of the flag byte); this bit should have
+    toggled from the state it was in beforehand.  Assuming that this
+    happened, your next keystroke should affect nothing but the PC (program
+    counter) register pair.  RHR and RDL also require two keystrokes to
+    verify that the respective bit is shifted into the Carry flag.
+
+    In the interest of conserving space and connection time, only the
+    results are listed here.  To help you identify the results, an asterisk
+    (*) is placed beside the register that should have a different value
+    from the original.
+
+
+    1) 08    DSUB B
+       PSW    AC   BC    DE    HL    SP    PC
+    *10100101 00  0001  0000 *FFFF  CEBC *D3E4
+
+    The contents of BC are subtracted from the contents of HL, results
+    stored in HL.  ALL flags are affected.
+
+
+
+
+                                        3
+
+
+
+
+
+
+
+
+
+    2) 10    RHR
+       PSW    AC   BC    DE    HL    SP    PC
+    *00000001 00  0000  0000 *C000  CEBC *D407
+
+    *00000000 00  0000  0000 *E000  CEBC *D40B
+
+    Each time, the contents of HL are rotated right one bit.  Lo bit goes
+    into the Carry flag, the Hi bit remains the same.
+
+
+    3) 18    RDL
+       PSW    AC   BC    DE    HL    SP    PC
+    *00000010 00  0000 *8801  0000  CEBC *D42F
+
+    *00000011 00  0000 *1002  0000  CEBC *D433
+
+    Each time, the contents of DE are rotated left one bit.  The Hi bit is
+    copied into the Carry flag, while the old Carry is copied to the Lo bit
+    of DE.  Why did the V flag (bit 1) change?  Who knows??
+
+
+    4) 28 xx DMOV D,H
+       PSW    AC   BC    DE    HL    SP    PC
+     00000000 00  0000 *1200  11FF  CEBC *D457
+
+    The sum of the contents of HL plus the byte following the instruction
+    are copied into DE.  No flags are affected.
+
+
+    5) 38 xx DMOV D,SP
+       PSW    AC   BC    DE    HL    SP    PC
+     00000000 00  0000 *CEC6  0000  CEBC *D47B
+
+    The sum of the contents of SP plus the byte following the instruction
+    are copied into DE.  No flags affected.
+
+
+    6) D9      SHLX
+
+    No change (except PC, of course).  The message "Ok" (without the
+    quotes) should be displayed on the screen to the immediate right of the
+    PC value.  This represents the 2 ASCII character values in HL being
+    stored in the location pointed to by DE, which is the end of the
+    message displayed to the LCD.
+
+
+    7) DD yyxx JND
+       PSW    AC   BC    DE    HL    SP    PC
+    *00000000 00  0000 *0100  0000  CEBC *D4C6
+
+    After one keystroke, DE is incremented by one.  Since this does not
+    result in a dual-register carry, the D flag is cleared.  No other
+    registers affected.
+
+
+
+                                        4
+
+
+
+
+
+
+
+
+
+     00000000 00  0000  0100  0000  CBEC *D4EE
+
+    After two keystrokes, program execution branches to D4EB due to the JND
+    instruction.
+
+
+    8) ED      LHLX
+       PSW    AC   BC    DE    HL    SP    PC
+     00000000 00  0000  0000 *33C3  CBEC *D4EE
+
+    The first two bytes of ROM at location 0000, as pointed to by DE, are
+    loaded into HL.  If you get a different value, check the first two
+    bytes in your ROM against your results.
+
+
+    9) FD yyxx JD
+       PSW    AC   BC    DE    HL    SP    PC
+    *00100000 00  0000 *FFFF  0000  CBEC *D511
+
+    After one keystroke, DE is decremented by one.  This does result in a
+    dual-register carry, so the D flag is set.
+
+     00100000 00  0000  FFFF  0000  CBEC *D4EE
+
+    After two keystrokes, program execution branches to D4E3 due to the JD
+    instruction.
+
+
+    The only unspecified instruction left is RST V (CB), a software
+    interrupt which causes program execution to branch to location 0040 if
+    the V flag (two's complement overflow, bit 1) is set.  Since location
+    0040 is in ROM, and the only thing there is a BASIC lookup table, this
+    is a particularly useless instruction for Model 100 users.  Try it if
+    you like, but even proper execution will only send your Model 100 into
+    never-never land.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        5
+
+
+
+
+
+
+
+
+    NOTES FOR PROGRAMMERS AND TINKERERS
+
+    Here is a listing of the important subroutines, ROM calls, etc. for
+    those of you who are interested in such stuff.  If you would like to
+    try some different things with these instructions, I have left 8 bytes
+    empty (NOP's) after each instruction's subroutine.  This allows
+    additional code to be added if you want to try something else with
+    these "illegal" instructions.
+
+
+    Program Subroutines, Etc.
+
+    D2F0 to D327:  Entry and main menu routine.
+    D328 to D339:  Address table for test subroutines,
+                   in numerical order.
+    D33A to D3C9:  Register display and number conversion routines.
+    D3CA to D51F:  Test subroutines.
+    D520        :  Message pointer stash.
+    D522        :  SP value stash.
+    D524 to D6CC:  Messages and screen displays.
+
+    ROM Calls, Etc.
+
+    12CB:  Wait for a character from keyboard.
+    423F:  Lock display (no scrolling).
+    5797:  MENU routine.
+    5A58:  Print message at HL until a 0 is found.
+    5A79:  Clear function key definitions.
+    F638:  Device flag; 00 = LCD output.
+    F67A:  Current BASIC line number.  Anything but FFFF here
+           temporarily disables the Auto-off feature.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        6
+
+
+
+

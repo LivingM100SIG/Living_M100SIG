@@ -1,0 +1,264 @@
+
+
+
+
+        RANDOM ACCESS FILE HANDLING
+
+            Random access files provide increased flexibility,
+        utility, versatility, capacity, and speed.  All these
+        desirable features have a price.  The price is more complex
+        program code.  But it's worth it!  Once you learn random
+        access file handling, you'll seldom go back to sequential file
+        handling except for the simplest tasks.
+
+
+        READING AND WRITING RECORDS
+
+            Let's create a short random file.  How about an employee
+        file?  We'll have fields with the employee's last and first
+        names, age, salary, and job classification.  The names and job
+        classification will be string data, age will be an integer
+        number, and salary will be a single-precision number.  If we
+        decide to allow 10 characters for each name and 20 characters
+        for the job, then the FIELD statement will look like this:
+        FIELD#1,LN$:10,FN$:10,AG:2,SA:4,JB$:20.  We can omit the type
+        specifiers % and ! with the appropriate DEF statements.
+        Here's the program to add records:
+
+            10 DEFINT A:DEFSNG S  ' define the numeric variable
+               types
+            20 OPEN "0:EMPLOY.DO" FOR RANDOM AS 1  ' open the file
+            30 FIELD #1, LN$:10, FN$:10, AG:2, SA:4, JB$:20  ' field
+               specification
+            40 CLS:PRINT:PRINT "Enter employee data:"
+            50 LN$=""  ' kill the residual value
+            60 INPUT "Last Name:     "; LN$  ' enter data
+            70 IF LN$="" THEN 150  ' terminating condition
+            80 INPUT "First Name:    "; FN$
+            90 INPUT "Age:           "; AG
+            100 INPUT "Salary:        "; SA
+            110 INPUT "Classification:"; JB$
+            120 INPUT "Record number: "; RN  ' record number
+            130 PUT #1, RN  ' write the record to the file
+            140 GOTO 40  ' do it again
+            150 CLOSE #1  ' close the file
+            160 END
+
+            Let's enter some data into this file and see what it looks
+        like:
+
+            Last Name:      Harry
+            First Name:     Crazy
+            Age:            59
+            Salary:         32000  (no commas!)
+            Classification: Mad Bomber
+            Record Number:  2
+
+
+
+                                    - 27 -
+
+
+
+
+
+
+
+
+
+
+
+
+            Last Name:      The Frog
+            First Name:     Kermit
+            Age:            35
+            Salary:         150000
+            Classification: Emcee
+            Record Number:  3
+
+            Last Name:      Piggy
+            First Name:     Miss
+            Age:            29
+            Salary:         250000
+            Classification: Star
+            Record Number:  1
+
+            Last Name:      The Bear
+            First Name:     Fozzy
+            Age:            40
+            Salary:         25000
+            Classification: Bad Comedian
+            Record Number:  5
+
+            Press ENTER on the Last Name prompt to end data entry and
+        close the file.
+
+            Notice that the drive spins when the program starts.  CDOS
+        is looking at the disk to see if EMPLOY.DO exists, and if not,
+        to create it.  Also notice that the drive does not necessarily
+        spin after every PUT.  Records are written to the disk only
+        when the file buffer is full.  This depends on record length.
+        Therefore, if the program is interrupted for some reason prior
+        to a normal close, some records may not get put in the file.
+        Always close the file.  See how the drive spins when the close
+        is executed?
+
+            Load EMPLOY.DO into TEXT and take a look at it.  Even
+        though we didn't enter the records in order in the program,
+        they are in order in the file.  Also notice that since we
+        entered record five but not record four, space has been
+        provided in the file for record four.  CDOS fills this empty
+        record position with the ASCII value zero, which shows up on
+        the LCD screen as "^@", so the screen actually shows twice as
+        many characters as have been alloted for record four.  Now
+        what's this where the numbers for age and salary should be?
+        Remember that numbers in a random file are stored in the same
+        format as they're stored in memory, NOT as strings, so the
+        characters displayed are the LCD screen's representation of
+        the ASCII values of those data bytes.  For example, the
+        integer value for the number 29 (Miss Piggy's claimed age) is
+        stored on disk as two bytes, a value of 29 in the first byte,
+        and a value of 0 in the second byte.  The ASCII characters for
+
+
+
+                                    - 28 -
+
+
+
+
+
+
+
+
+
+
+
+        the integer value 29 display on the screen as the two
+        characters "^]^@".
+
+            Take another look at how CDOS allots space for unused
+        records.  At the CDOS disk menu, put the widebar cursor over
+        the EMPLOY.DO filename and press F4 to find out how big the
+        file is.  Now go back to BASIC and run the program.  Enter
+        some data with a high record number.  Exit, go to the CDOS
+        menu, and check the file size again.  The size will increase
+        in direct proportion to the high record number entered and the
+        record size specified in the FIELD statement.
+
+            Now let's change a record.  Run the program again and
+        enter some different data for record number one.  Again load
+        the file into TEXT - kill the previous copy - and notice that
+        the original data has been replaced by the new data, but the
+        other records are undisturbed.  Sure beats all that file
+        manipulation we had to go through to change records in a
+        sequential file!
+
+            Deletions in a random file work differently than deletions
+        in a sequential file.  It's not possible (with the PUT
+        statement, at any rate) to actually physically delete a record
+        location and shrink the size of the file accordingly.  It's
+        not really necessary, as long as a search operation recognizes
+        the difference between a valid record and a deleted record or
+        empty record location.  More on deleting records is covered in
+        the section on deleting records.
+
+            Reading any record from a random file is easy.  Just
+        specify the record number desired in a GET statement.  Here's
+        an example:
+
+            10 CLS
+            20 DEFINT A:DEFSNG S
+            30 OPEN "0:EMPLOY.DO" FOR RANDOM AS 1
+            40 FIELD #1, LN$:10, FN$:10, AG:2, SA:4, JB$:20  ' use
+               same field length
+            50 RN=0:PRINT:INPUT "Which record number";RN  ' enter
+               desired record #
+            60 IF RN=0 THEN 170  ' finished?
+            70 IF RN>LOF(1) THEN PRINT "No such record":GOTO 50
+               ' record # exceeds highest record in file
+            80 GET #1, RN  ' get it
+            90 IF ASC(LEFT$(LN$,1))=0 THEN PRINT "No data in that
+               record":GOTO 50  ' check for valid record
+            100 SP=INSTR(1,FN$," ")  ' find the end of the first
+                name
+            120 NA$=LEFT$(FN$,SP)+LN$  ' concatenate first and
+                last name
+            130 PRINT NA$  ' print name
+
+
+
+                                    - 29 -
+
+
+
+
+
+
+
+
+
+
+
+            140 PRINT USING "\   \### \       \$$######.##";
+                "Age =",AG,"Salary =",SA  ' print age and salary
+            150 PRINT "Job Classification = ";JB$  ' print job
+            160 GOTO 50  ' do it again
+            170 CLOSE:END  ' finished
+
+            In line 50, RN is initialized to zero, therefore pressing
+        ENTER on that prompt causes the program to terminate with the
+        test in line 60.  Line 70 checks to make sure the record
+        number entered doesn't exceed the record number of the last
+        record in the file.  And line 90 checks for valid data in the
+        first field so empty records aren't printed.
+
+            Here we used two different programs for reading and
+        writing records.  Demonstration programs like this are
+        purposely kept ridiculously simple so as not to over-extend
+        the capabilities of the author.  However, there's absolutely
+        no reason why we can't read and write to the same file within
+        the same program.  Remember, with random files, only one OPEN
+        statement and one FIELD statement per file are needed to both
+        read AND write.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                    - 30 -
+
+
+
+
+
+
+

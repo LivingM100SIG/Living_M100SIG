@@ -1,0 +1,220 @@
+	The execution speed of machine code compared to the execution speed of a
+BASIC interpreter is to compare the difference between night and day.  Machine 
+code executes much faster because each byte means something to the hardware and 
+does not have to be interpreted by software into hardware terms.  Therefore 
+machine code is a desirable tool on any personal computer.  The primary drawback
+to using machine code is having to generate all of the numeric values for the 
+code manually because most PC's only come equipped with BASIC.  The first 
+computer languages were called assemblers.  The purpose of an assembler is to 
+eliminate the work of generating numeric values representing machine code.  The 
+assembler input is a set of machine code mnemonics which mean more to the 
+programmer than a series of 1's and 0's.  Through the use of labels, data and 
+mnemonics, the programmer can generate a program which will run in direct code 
+and perform a specific function.
+	This article describes the 8085 assembler enclosed in Listing 1.  This 
+is a two pass assembler written in BASIC for use on the TRS-80 Model 100.  
+Because of the necessity to conserve memory and the I/O limitations of the Model
+100, a quasi dual pass assembly and only basic error checking are two of the 
+characteristics of this program.
+	Dual pass assembly means that each source statement is analysed twice.  
+This is a quasi dual pass assembler because the first pass is only used to 
+generate the label table and there is no intermediate code generated.  
+Consequently, the input code is actually assembled twice.  This takes longer to 
+run than a single pass assembler but it allows forward referencing during 
+assembly.
+	The mnemonic language used for the 8085 is the same as the 8080 with the
+addition of the SIM/RIM instructions.  There are three different types of 
+instructions which for the purposes of this article we will call FORMAT I, II, 
+and III.
+	FORMAT I instructions are those which are defined in a single byte.  An 
+example of a FORMAT I instruction would be a PUSH B.  This instruction is 
+totally defined by the operation code C5 hex.  It means push the contents of the
+BC register pair onto the stack.  Another example of a FORMAT I instruction is 
+MOV A,B.  This instruction would be represented by the hex code 78.  This is a 
+one byte instruction but it has two fields that contain operand data.  In this 
+case bits 3 to 5 represent A (7) and bits 0 to 2 represent B (0).  All FORMAT I 
+instructions are one byte and may or may not have operands associated with them.
+
+	FORMAT II instructions are those which occupy two bytes.  These 
+instructions use immediate operands.  An example of a FORMAT II instruction is 
+MVI A,177O.  This instruction moves 177 octal to the A register.  The second 
+byte in the FORMAT II instructions is always the immediate operand.
+	The final class of instruction is the FORMAT III.  In like manner, 
+FORMAT III instructions use three bytes.  These instructions are the direct 
+instructions of load/store and program branching instructions, jumps/calls.  An 
+example of a FORMAT III instruction is CALL FF00H.  The execution of this 
+instruction would cause the program to call the routine at FF00 hexidecimal and 
+put the current program counter on the stack.
+	The instruction repertoire is available in many different places and if 
+you do not already have one you should own a book on the 8085 and machine 
+language programming.  Table 1 gives a list of instruction mnemonics and the 
+operands expected by the assembler.
+	The input to this assembler program is somewhat free form.  Labels must 
+begin in column 1.  All operators must be separated by at least one space, a 
+comma, a tab or a +/- sign.  Comments may be added to the input line following a
+period and for the sake of pretty output should be limited to 20 characters.  
+The following is an example of an input line.
+         1         2         3         4
+1234567890123456789012345678901234567890
+LABEL	JMP LABEL+10 . EXAMPLE
+
+	The only restriction on a label is that it cannot be named REM.  REM is 
+used to denote a remark and will cause all data up to the next carriage return 
+to be output. No attempt is made to find any valid statements in a remark. REM 
+must begin in column 1 just like a label. The program allows any size label but 
+the output will only use a maximum of eight characters.  My personnel preference
+for labels is no more than 7 characters, that way I can use tabs to separate 
+lables and mnemonics.  Another restriction of labels is that only 256 are 
+allowed.  This is to save memory and can be expanded by changing the program at 
+lines 5, 40, and 1350.  Labels are optional on all statements with the exception
+of EQU and in that case a label is required.
+	Two arithmetic operators are allowed on operands. Any label or numeric 
+operand, can be modified with a + or - and a decimal number.  Therefore in the 
+example line, the jump would be to the address of LABEL+10 decimal.
+	Numeric operands must designate whether they are binary, octal, decimal,
+or hexidecimal.  These different number bases are shown by B, O, D, or H 
+respectively in the last digit of the field.  Therefore, 177O represents 177 
+octal.  If the number base is left off, the assembler treats the number as a 
+label.  The exception to this rule is arithmetic modification, described in the 
+previous paragraph, which is always a decimal number and cannot have a number 
+base identifier.  In addition to numeric values, the $ signifies the current 
+contents of the address counter.  If a operand such as $+2 is used, the 
+generation is the current address of the instruction being assembled + 2.
+	In addition to the full 8085 mnemonic table, the assembler uses the 
+following special mnemonics:
+	ENTRY - This is used to note the entry point of the program.  The format
+is [Label] ENTRY [Numeric Value].  It has no significance for the program and 
+serves only as a programmer reminder.
+	DATA - This mnemonic is used to designate input data.  The format is [
+Label] DATA operand.  The generation for the data statement will be either one 
+or two bytes.  If the operand which can be a numeric expression or label is in 
+the range 0-255 one byte will be allocated.  If the value is 256-65535 then two 
+bytes will be allocated.
+	EQU - EQU allows the programmer to equate a value to a label.  The 
+format is [Label] EQU operand.  The operand can be a numeric expression or a 
+label.  The EQU operator must have a label.
+	ORG - ORG allows the programmer to set up the address counter.  ORG will
+normally be the first mnemonic encountered and will contain the start address of
+the assembly in the format [Label] ORG numeric value.  In addition, ORG's can be
+placed anywhere the address counter needs to be changed.
+	RES - RES is used to reserve a number of bytes of data.  The format is [
+Label] RES number of bytes.  This instruction increment the address counter to 
+reserve a specified number of bytes for dynamic storage.
+	STR - This operator allows the programmer to enter ASCII string data.  
+The format is [Label] STR xxxxxxxx where xxxxxxxx is string data.
+	END - This is the final statement in the assembly.  The format is [Label
+] END. The label is optional but the statement must be included or a fatal 
+assembly error will occur.
+	The program contains a limited amount of error checking, and the 
+following errors may appear on the output listing:
+	*I* - Instruction error, this occurs when a mnemonic is not recognized 
+or there are improper fields in the statement.
+	*U* - Undefined error, this error occurs when a label used as an operand
+can not be found in the label table.
+	*D* - Duplicate definition, this occurs when a label being used has been
+previously defined.
+	*W* - Warning, occurs when the data in an operand overflows the maximum 
+possible value.
+	In addition, the assembler will get a fatal error if there are operands 
+that it does not understand.  The assembly will stop and all files will be 
+closed.  As mentioned previously, if there is no end statement in the program a 
+fatal error will also occur.
+	The program allows the programmer to specify the name and device for the
+input file and the print file.  The operator also specifies whether an object 
+file is desired.  The object file is a Text file which contains hexidecimal 
+address and generated code data.  The program in Listing 2 will take the object 
+file and load it into memory.  The loader program will set HIRAM to the first 
+address encountered in the object file and load the program into memory.  At 
+completion the first and last adresses and the number of bytes are displayed.  
+The loader program requires no operator intervention.
+	The printed output of the program is set up for an Epson RX80.  The 
+format is in eighty columns and includes headers.  If this needs to be changed 
+for your printer, the control codes are contained in statements 1520 and 1600.
+	My objective in writing this program was to provide a versitile 
+assembler that could use all of the capabilities of the Model 100 but not use 
+all of it's memory.  Because the device for the files can be designated, larger 
+input files can be read from tape, the output can be directed to the printer, 
+and what memory that is left over can be used for the object file and an 
+expanded label table.  For those readers who have access to COMPUSERVE, the 
+following files are in the XA4 data base of the Model 100 users group (PCS-154):
+
+	ASM.BA		Assembler program
+	LDASM.BA	Loader program
+	ASM.DOC		Assembler documentation
+	ASMEX.TXT	Sample assembly
+Since a picture is worth a thousand words, I have included in Table 2 a sample 
+input file for an assemble and in Table 3 the assembled output.
+
+
+				   FORMAT I
+
+MOV r1,r2  Move register to register	STAX d     Store A indirect
+LDAX d     Load A indirect		XCHG	   Exchange HL and DE registers
+PUSH s	   Put register pair on stack	POP s	   Get register pair from stack
+XTHL	   Exchange top of stack and HL	SPHL	   HL pair to stack pointer
+INX t	   Increment 16 bit register	DCX t	   Decrement 16 bit register
+PCHL       HL to program counter	RET	   Unconditional return
+RC	   Return on carry		RNC	   Return on no carry
+RZ	   Return on zero		RNZ	   Return on not zero
+RP	   Return on positive		RM	   Return on negative
+RPE	   Return on parity even	RPO	   Return on parity odd
+RST u	   Restart at address u		INR r	   Increment register
+DCR r	   Decrement register		ADD r	   Add A + r
+ADC r	   Add A + r with carry		DAD t      Add HL + t
+SUB r	   Subtract A - r		SBB r	   Subtract A - r with borrow
+ANA r	   And A with r			XRA r	   Exclusive or A with r
+ORA r	   Or A with r			CMP r	   Compare A with r
+RLC	   Rotate A left		RRC	   Rotate A right
+RAL	   Rotate A left through carry	RAR	   Rotate A right through carry
+CMA	   Complement A			STC	   Set carry flag
+CMC	   Complement carry flag	DAA	   Decimal adjust A
+EI	   Enable interrupts		DI	   Disable interrupts
+NOP	   No operation			HLT	   Halt
+RIM	   Read interrupt mask		SIM	   Set interrupt mask
+
+				   FORMAT II
+
+MVI r,op1  Move immediate to r		ADI op1	   Add A + op1
+ACI op1	   Add A + op1 with carry	SUI op1	   Subtract A - op1
+SBI op1	   Subtract A - op1 with borrow	ANI op1	   And A with op1
+XRI op1	   Exclusive or A with op1	ORI op1	   Or A with op1
+CPI op1	   Compare A with op1		IN  op1    Input A from chan op1
+OUT op1	   Output A on chan op1
+
+				  FORMAT III
+
+LXI t	   Load immediate register pair	STA op2	   Store A direct
+LDA op2	   Load A direct		SHLD op2   Store HL direct
+LHLD op2   Load HL direct		JMP op2	   Unconditional jump
+JC op2	   Jump on carry		JNC op2	   Jump on no carry
+JZ op2	   Jump on zero			JNZ op2	   Jump on not zero
+JP op2	   Jump on positive		JM op2	   Jump on negative
+JPE op2	   Jump on parity even		JPO op2	   Jump on parity odd
+CALL op2   Unconditional call		CC op2	   Call on carry
+CNC op2	   Call on no carry		CZ op2	   Call on zero
+CNZ op2	   Call on not zero		CP op2	   Call on positive
+CM op2	   Call on negative		CPE op2	   Call on parity even
+CPO op2    Call on parity odd
+
+			SPECIAL ASSEMBLER CODES
+
+	DATA  op1 or	Data for use by assembled code. 1 byte allocated for
+	      op2	op1, 2 bytes allocated when op2 > 255.
+	END		Required at the end of the program.
+	ENTRY op2	Entrance address to the assembled code.
+[LABEL]	EQU op1 or op2	Equates value to label.
+	ORG op2		Sets address counter to value of op2.
+REM			Remark, must start in column 1.
+	RES op1 or op2	Reserves number of bytes specified in operand.
+	STR [string]	Allocates 1 byte to every string character
+	$		Operand designating current value of address counter.
+
+r = B,C,D,E,H,L,M(contents of HL),A	d = B,D
+s = B,D,H,PSW				t = B,D,H,SP
+u = 0,8,10,18,20,28,30,38		op1 = numeric or label operand 0-255
+op2 = numeric or label operand 0-65535
+
+
+
+				   TABLE 1
+

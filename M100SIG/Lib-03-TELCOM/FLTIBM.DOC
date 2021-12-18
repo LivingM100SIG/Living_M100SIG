@@ -1,0 +1,239 @@
+          DOCUMENTATION FOR FLTIBM.ASM/CO1/CO2/HX1/HX2
+
+                  by Phil Wheeler -- 71266,125
+
+
+
+1. Introduction
+
+FLTIBM is a program for the IBM-PC, and compatibles, which 
+facilitates file transfers to and from the Model 100; it should 
+do the same for any computer, including the Model 200 and the NEC 
+lap computers. It has been evolved from FLTKP.UPD in DL1 and 
+works the in a similar manner.  The final machine language 
+program is about 1.2K byte in length, making for fast loading and 
+operation.  I find it more convenient than working my way through 
+all the menus in PC-TALK, Qmodem, et al to do the same thing.  Of 
+course, FLTIBM does only one thing, direct-connect ASCII file 
+transfer at 9600 baud. 
+
+This program has two fundamental applications.  One is for mass 
+storage of Model 100 programs and files, a plus for those of us 
+who have an IBM compatible but do not have a lap computer disk 
+drive.  The second, more general, use is in moving documents from 
+the lap computer to a desktop machine for further editing,
+merging, etc.  For example, a text file can be uploaded from the 
+Model 100 to the IBM and then be refomatted into a standard 
+Wordstar file by doing '^QQ^B. 
+
+
+2. The Files
+
+The FLTIBM files are:
+
+    o FLTIBM.DES -- the beginning of FLTIBM.DOC
+    
+    o FLTIBM.DOC -- full documentation of FLTIBM
+
+    o FLTIBM.ASM -- the source (Version 1.7, for COM1: port)
+
+    o FLTIBM.CO1 -- FLTIBM.COM for the COM1: port
+
+    o FLTIBM.CO2 -- FLTIBM.COM for the COM2: port
+
+    o FLTIBM.HX1 -- FLTIBM.HEX for the COM1: port; convert to 
+                    FLTIBM.COM with hexconverter HC.COM from 
+                    IBMSIG
+
+    o FLTIBM.HX2 -- FLTIBM.HEX for the COM2: port; convert to
+                    FLTIBM.COM with hexconverter HC.COM from
+                    IBMSIG.
+
+These files replace all previous FLTIBM documentation and program
+files.  However, except for the version number message,
+FLTIBM.CO1 and FLTIBM.CO2 are identical to FLTY1.COM and
+FLTY2.COM, respectively.
+
+
+3. Installing FLTIBM on Your IBM-PC or Compatible
+
+FLTIBM must be downloaded into your IBM (or compatible) computer.  
+With xmodem capability in your PC, and 8 bit, no parity 
+Compuserve DEFALT settings, you can download 
+FLTIBM.CO1 or FLTIBM.CO2 directly, where the first is set up for 
+COM1 and the second for COM2; these are machine language programs 
+which can be loaded and used "as-is" in your PC/compatible.
+
+Another approach is to download FLTIBM.ASM (an ASCII file) and 
+assemble it using MASM; before assembly, you must select COM1: or 
+COM2: as the direct-connect serial port as an assembly-time 
+option.  Once you have a copy of FLTIBM.ASM in your "big" 
+computer, you will need MASM and the IBM DOS programs LINK and 
+EXE2BIN.  Create FLTIBM.COM as follows: 
+
+       1) Do 'MASM FLTIBM;<cr>' 
+
+       2) Do 'LINK FLTIBM;<cr>' 
+
+       3) Do 'EXE2BIN FLTIBM<cr>' 
+
+       4) Do 'REN FLTIBM.BIN FLTIBM.COM<cr>'. 
+
+where it is assumed here that all files are on the same disk and 
+<cr> is a carriage return or enter. 
+
+If you have neither xmodem capability nor MASM, you can create 
+the desired FLTIBM.COM from the corresponding FLTIBM.HEX.These 
+can be downloaded with a 7-bit protocaol and converted using 
+HC.COM.  HC can be obtained by downloading MAKEHC.BAS from the 
+IBMSIG and running it under BASICA/GWBASIC. 
+
+Rename whichever version you use as FT.COM for ease of use, and 
+put it in the root directory of your hard disk -- or on the 
+floppy you will use for transfers.
+
+
+4. Operation of FLTIBM
+
+To use FLTIBM, connect the RS-232 port of your lap computer to 
+the COM1: port of the IBM, using a null modem cable or adapter; 
+I recommend the null modem prescription given below, since it 
+fully supports the RS-232 hardware handshaking signals.  In this 
+regard, the Tandy 200 appears more demanding than the Model 100.
+
+Run FLTIBM, by typing FT <CR>, if named as suggested above. You 
+will see a set of four options: receive, send, send a stripped 
+Wordstar file & quit. 
+
+To transfer a file from the lap computer, select R)eceive and 
+give a file name in response to the prompt, followed by a <cr>. 
+On the lap computer, enter the file you wish to transfer and 
+
+(Model 100/102) do 'save to:COM:88N1E<cr>', where the 'save to:' 
+comes from pressing key 3 in TEXT.  Reverse the process for 
+sending from the IBM to the lap computer.  Mainly ALWAYS DO THE 
+FINAL <cr> ON THE RECEIVING END BEFORE THE FINAL <cr> ON THE 
+SENDING END, and if the receiver is the desk-top machine, make 
+sure the drives have openned the file before starting the 
+transfer.  Otherwise you will get only part (or none) of the 
+file. 
+
+The command syntax for using FLTIBM with the Model 200 requires 
+additional data in the "Save to:" and "Load from:" commands. 
+Specifically, replace COM:88N1E by COM:88N1ENI.
+
+FLTIBM can be used to save/load Basic programs, as well. Enter
+Basic and use Save or Load with 'COM:88N1E' as the argument.  
+Programs will be detokenized into ASCII files when saved, and 
+retokenized when loaded.  As a result, the process will be a bit 
+slower than when working with text files. 
+
+
+5. Null Modem Connections for FLTIBM
+
+A good Null Modem prescription is as follows: 
+
+        END A                END B 
+        -----                ----- 
+          1                    1 
+          2                    3 
+          3                    2 
+          4                    5 
+          5                    4 
+          6,20                 8 
+          7                    7 
+          8                    6,20 
+         20,6                  8 
+
+This is what I use.  It is identical to the "store-bought" RS
+null modem adaptor. 
+
+
+6. Stripping of Wordstar Files
+
+FLTIBM optional stripping of Wordstar files as they 
+are sent to the lap computer.  Characters stripped are: soft 
+carriage returns; soft linefeeds; soft hyphens (end-of-line 
+and mid-text); no-break spaces (replaced with normal space); 
+control-B; control-S; control-D; control-T; and control-V. 
+This selection can be alterred or augmented by changing the 
+source code.  Note that this Wordstar stripping option will 
+also convert all high-bit characters to their 7-bit counter- 
+parts (i.e., subtract 80h from them).
+
+After adding this code, I have found it more effective to do the 
+stripping in the PC, using a utility such as TEXTCON or WSCNVN, 
+before sending the file to the Model 100.
+
+
+7.  Simulating an EOF for Some Model 100/102/200 Applications
+
+This version of FLTIBM will interpret an incoming CHR$(206) 
+as an EOF, and convert it to a ^Z in the PC.  This is useful in 
+printing (or saving) to COM:88N1E from programs which do not 
+provide an EOF (^Z) as an end-of-file marker (required by 
+FLTIBM).
+
+One such application for the Model 100 family is THOUGHT, the 
+outline processor in Super ROM.  To embed a CHR$(206) in a 
+THOUGHT .CT file, hit CODE-z for a Model 100 or a Tandy 200, and 
+CODE-v on a 102. 
+
+Embed this at the end of the file (or at the point where you want 
+the output to end), print it to COM:88N1E, and FLTIBM will get 
+it. 
+
+This same tactic may work with other Super ROM elements (e.g., 
+printing a LUCID sheet to COM:88N1E) and for printing to COM: 
+with other Laptop software which does not end output files with a 
+CHR$(26)=^Z. 
+
+
+8. Patching FLTIBM for Fast PC's
+
+FLTIBM has several time-out loops which are sensitive to the 
+speed of your computer.  The versions here are set up for a 
+normal IBM-PC (8080 running at 4.77 MHz).  They also work fine 
+with my Zenith Z-150 with an NEC V20 installed.  However, some 
+users of faster machines reported problems with premature time-
+outs when transferring Basic programs.  So the following speed 
+patch information is provided to permit lengthening the time-out 
+period.
+
+NEVER patch your ONLY copy of FLTIBM.COM!
+
+As uploaded these files have a count of 30000 times CNTSCL, where 
+CNTSCL is 02 hex (2 decimal). You can adjust the timing by 
+patching new values into the address 045F using DEBUG. 
+
+For example, to patch a value of 20 hex (32 decimal) into 
+FLTIBM.COM, do the following: 
+
+    A>debug fltibm.com<cr> 
+    -e045f<cr>             ---->leading '-' from computer 
+    XXXX:045F 02:20<cr>    ---->you type only the 20 and the <cr>
+    -w<cr> 
+    Writing 04A2 bytes     ---->computer does this! 
+    -q<cr> 
+
+which takes you back to DOS.  Do this on a backup copy, in case 
+you mess up! 
+
+
+The time-out times are not linear.  Some of my timings are: 
+
+        CNTSCL            Time-Out 
+        ------            -------- 
+        02h ( 2d)         2.9 sec 
+        04h ( 4d)         3.5 sec 
+        08h ( 8d)         4.3 sec 
+        20h (32d)         9.5 sec 
+
+for a V20 running MS-DOS 2.11 at a clock speed of 4.77 MHz.  
+Faster processors will require larger values of CNTSCL.  Note 
+that the file in question (not a Basic program) took about 10 
+seconds to send in each of the above cases.
+
+
+pcw -- 9/25/86
+

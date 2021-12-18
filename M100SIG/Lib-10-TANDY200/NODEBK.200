@@ -1,0 +1,127 @@
+This file is NODEBK.200.  It automatically installs NODEBK.BA in a few
+seconds.  With about 10k free RAM, simply go to BASIC from your main menu and
+PASTE this entire file in.  Ignore the error messages.  When the job is
+complete, you will hear a beep and be returned to your main menu with
+NODEBK.BA in place.  Before using NODEBK.BA, KILL all other files from the
+main menu and make sure Power DOS is installed.
+
+       NODEBK.BA lets you choose to format disks (option #1), back up your
+entire DataPac to disk (option #2), restore DataPac from disk (option #3), or
+reformat your DataPac (part of option #3).  With NODEBK.BA you can use your
+DataPac as 256k buffer to copy entire disks.  Since Power Disk can access only
+bank #0 of the TDD2, bank #1 is not available with NODEBK.BA
+
+       Occasionally when saving your DataPac to disk (option #2) the program
+will stop with an OK prompt.  If that happens simply backspace to the left
+margin and then type RUN9 and press <ENTER>.
+
+      The code that saves to disk is modified from BARKRD.200 by Tom
+Fitzptrick.
+
+       Option #3 creates FXX.DO which lists the file names found on disk.  You
+can edit this file and delete file names, but don't change the file in any
+other way.  The last line must not be changed.  After editing, simply RUN
+NODEBK.BA, select option three and only the files remaining in FXX.DO will be
+reloaded to DataPac
+
+       To prevent inadvertently losing data, the "Yes" response for
+reformatting the DataPac is case specific and must be typed exactly that way.
+
+       NODEBK.BA equires T-200, Node DataPac (128/256k), Node's option ROM, &
+Power Disk installed.  Program length = 3k including REM statements and 2.4k
+without them.
+
+       Remove the REM statements from NODEBK.BA!  From BASIC, LOAD"NODEBK" and
+then Paste in the next 14 lines.
+1 CLS:RUN5000
+120
+122
+124
+126
+128
+130
+132
+134
+136
+138
+140
+64999
+65000
+
+KILL"NODEBK.BA"
+NEW
+1 CLS:RUN5000:REM NODEBK.BA    2/28/21
+2 CLS:PRINT"This portion adapted by Louis Self from ":PRINT"BACKRD.200 by Tom Fitzpatrick 72237,2656
+9 CALL17001:CLEAR256:MAXFILES=1:DEFINTT-Y:DEFSNGZ:DEFSTRA-C:ONERRORGOTO50
+11 Z=61162:C="":RESTORE:DATA128,136,160,168,192,200,0
+12 OPEN"QFQF"FORINPUTAS1:INPUT#1,V,W:CLOSE
+14 READX:IFX<>VTHEN14
+15 IFX=0THEN30ELSEPOKE-1,X:Y=0
+16 CALLZ,18,VARPTR(C):IFPEEK(-1)=0THENREADX:W=0:GOTO15
+17 Y=Y+1:IFY<WTHEN16
+18 CALLZ,12:CALLZ,13,VARPTR(C):CALLZ,23,VARPTR(C):C=LEFT$(C,6)+"."+RIGHT$(C,2)
+21 OPEN"QFQF"FOROUTPUTAS1:PRINT#1,X","Y+1:CLOSE:B=C:C="0:"+C
+22 IFC="0:RAMDSK.DO"THENPRINT"Skipping RAMDSK.DO"ELSEPRINTC"  ";:SAVEMC
+23 I$="9":GOSUB200:KILLB:END
+30 PRINT,"Finished saving files":BEEP:KILL"qfqf.do":ONERRORGOTO32:I$="5000":GOSUB200:KILLB
+32 RUN5000
+50 U=ERR:RESUME51
+51 IFU=52ANDERL=12THENOPEN"QFQF"FOROUTPUTAS1:PRINT#1,128","1:RUN9
+52 IFU<59ANDU<>55THENPRINT"Error "U" in line "ERL:END
+53 PRINT"DISK ERROR"U;:FORX=1TO20:BEEP:NEXT
+54 IFU>58ANDU<68THENPRINT"?"MID$(" NRDNCNDAWPDFNDHTAE",(U-58)*2,2)
+55 IFU=55THENPRINT"Bad file name or DOS is not installed ";
+56 PRINT"- Retry/Skip/Abort";
+57 ONINSTR("RrSsAa",INPUT$(1))GOTO22,22,23,23,30,30:GOTO57
+120 REM Load from disk  Variables:
+122 REM C       Call address for save to NODE
+124 REM F       File posission
+126 REM F$      File name currently working on
+128 REM FXX.DO  List of files to load from disk
+130 REM FYY.DO  Contains last file # loaded
+132 REM I$      For re-runing after killing .BA
+134 REM P       Poke address for auto run
+136 REM T       Chr. to poke for re-run ??
+138 REM X       Poke counter for rerun
+140 REM Y       Last file# loaded
+160 OPEN"FYY"FORINPUTAS1:INPUT#1,F,Y,F$:CLOSE:Y=F:RETURN
+180 CLOSE:OPEN"FYY"FOROUTPUTAS1:PRINT#1,F","Y","F$:CLOSE
+200 I$="RUN "+I$+CHR$(13):X=LEN(I$):FORT=1TOX:POKE2*T+64797,ASC(MID$(I$,T)):POKE2*T+64798,0:NEXT:POKE64798,X:RETURN
+220 PRINT"...saving";:CALL61162,13,VARPTR(F$):CALL61162,24,VARPTR(F$):IF PEEK(-1)=0 THENBEEP:PRINT"Save failed":BEEP:BEEP:STOPELSERETURN
+230 PRINT"Files on disk are:":CLOSE:LFILESTO"FXX":OPEN"FXX"FORINPUTAS1
+232 INPUT#1,F$:IFRIGHT$(F$,1)<>"e"THENPRINTLEFT$(F$,10);:GOTO232
+234 CLOSE:PRINT:RETURN
+240 MAXFILES=1
+260 ONERRORGOTO3000
+280 OPEN"FXX"FORINPUTAS1
+300 IFYTHENFORF=0TOY-1:INPUT#1,F$:NEXT:Y=0
+340 INPUT#1,F$:F$=LEFT$(F$,9):PRINTF$" ";
+360 IFEOF(1)THENBEEP:BEEP:BEEP:BEEP:PRINT"  Finished loading files":CLOSE:PRINT:KILL"FXX.DO":OPEN"FYY"FOROUTPUTAS1:CLOSE:KILL"FYY.DO":GOTO5000
+400 PRINT"<=-loading";:F=F+1:IFF$="NODELO.BA"THENGOSUB220:PRINT:GOTO340
+420 :IFRIGHT$(F$,3)<>".BA"THENLOADM"0:"+F$,F:GOSUB220:PRINT"...killing":KILLF$:GOTO340
+500 I$="600":GOSUB180
+520 :LOADM"0:"+F$,F
+600 GOSUB160:GOSUB220
+700 I$="800":GOSUB180
+720 :PRINT"...killing":KILLF$
+800 GOSUB160
+900 GOTO280
+1000 PRINT"in 1000:stop
+3000 RESUME 3100:'---Error routines---
+3100 ONERRORGOTO0:CLS:PRINT@15,"NODE LOAD":PRINT@47,"Copyright 1990, Louis Self"
+3120 F$="":A$="Yes":PRINT:PRINT"Press <ENTER>... or type ";CHR$(34);A$;CHR$(34);" to       reformat the DataPac (KILL all files)":INPUTF$:IFF$=A$THENCALL61162,9:PRINT" Reformatted!
+3200 GOSUB230
+3900 F$="":PRINT:PRINT"  <E>xit for editing FXX.DO or...":INPUT"  <ENTER> to load all files from disk";F$
+4000 IF F$<>""THENMENU
+4100 GOTO280
+5000 PRINT:PRINT"NODEBK.BA Backup with Node DataPac":PRINT:PRINT"  by Louis Self [74076,1273]":PRINT:PRINT" (requires Node's ROM & POWR-DISK)"
+5005 PRINT:PRINT"Select: 1) Format Disk":PRINT"        2) Save DataPac to disk":PRINT"        3) Load disk files to DataPac":PRINT"        4) Exit Program
+5010 OUT129,0:F=INP(131):IFF=131THENBEEP:PRINT"Shut off computer and connect DataPac":STOPELSEIFF<>64 THENBEEP:PRINT"DataPac is not formatted":STOP
+5020 CLEAR120:X=VAL(INPUT$(1)):ONXGOTO5040,2,240,5060:GOTO5020
+5040 GOSUB230:KILL"fxx.do":PRINT"Format: Sure?":IFINSTR("Yy",INPUT$(1))THENCALLMAXRAM+15,6:BEEP:GOTO5000ELSEGOTO5000
+5060 CLOSE:MENU
+64999 STOP
+65000 LPRINT,,,TIME$" "DATE$" Verson of NODEBK.BA":LPRINT CHR$(27)"*0";CHR$(27)"[";CHR$(27)"E12"CHR$(27)"L8":LLIST
+Save"NODEBK.BA"
+BEEP
+MENU

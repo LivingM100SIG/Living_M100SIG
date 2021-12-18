@@ -1,0 +1,119 @@
+The following is a list of the addresses of various BASIC functions 
+and commands.  The first column is the name of the command/function, 
+the second is the Model 100 address, and the third is the address in 
+the Kyotronic 85 (Model 100 look-a-like).
+
+I garnered this information from a disassembly of the Ky85 ROM and a 
+partial disassembly of the M100 rom I found on DL8.  Amazingly, the 
+table of BASIC keywords and the table listing the addresses of the 
+machine code are in the same place on the Ky85 as on the M100.
+
+Hopefully, more information will follow as I get further into 
+disassembling the Ky85 ROM.
+
+So far, I owe a great debt to Robert D. Covington, whose disassembly 
+of the M100 ROM is invaluable to me.
+
+Dave Anderson [72637,1710]
+April 6, 1987
+-----------------------------------------------------
+BASIC KEYWORD           !        Addresses          !
+                        !  M100        !            !
+-----------------------------------------------------
+END                     !       409F   !     407B   !
+FOR                     !       0726   !     072D   !
+NEXT                    !       4174   !     4150   !
+DATA                    !       096E   !     09A5   !
+INPUT                   !       0CA3   !     0CAA   !
+DIM                     !       478B   !     4741   !
+READ                    !       0CD9   !     0CE0   !
+LET                     !       09C3   !     09CA   !
+GOTO                    !       0936   !     093D   !
+RUN                     !       09F0   !     0916   !
+IF                      !       0B1A   !     0B21   !
+RESTORE                 !       407F   !     405B   !
+GOSUB                   !       091E   !     0925   !
+RETURN                  !       0966   !     096D   !
+REM                     !       09A0   !     09A7   !
+STOP                    !       409A   !     4076   !
+WIDTH                   !       1DC3   !     1D86   !
+ELSE                    !       09A0   !     09A7   !
+LINE                    !       0C45   !     0C4C   !
+EDIT                    !       5E51   !     5B59   !
+ERROR                   !       0B0F   !     0B16   !
+RESUME                  !       0AB0   !     0AB7   !
+OUT                     !       110C   !     1113   !
+ON                      !       0A2F   !     0A36   !
+DSKO$                   !       5071   !     5020   !
+OPEN                    !       4CCB   !     4C81   !
+CLOSE                   !       4E28   !     4DDE   !
+LOAD                    !       4D70   !     4D26   !
+MERGE                   !       4D71   !     4D27   !
+FILES                   !       1F3A   !     1F05   !
+SAVE                    !       4DCF   !     4D85   !
+LFILES                  !       506F   !     501E   !
+LPRINT                  !       0B4E   !     0B55   !
+DEF                     !       0872   !     0879   !
+POKE                    !       12B8   !     1294   !
+PRINT                   !       0B56   !     0B5D   !
+CONT                    !       40DA   !     40B6   !
+LIST                    !       1140   !     1147   !
+LLIST                   !       113B   !     1142   !
+CLEAR                   !       40F9   !     40D5   !
+CLOAD                   !       2377   !     234F   !
+CSAVE                   !       2280   !     2258   !
+TIME$                   !       19AB   !     1975   !
+DATE$                   !       19BD   !     1987   !
+DAY$                    !       19F1   !     19BD   !
+COM                     !       1A9E   !     1A6A   !
+MDM                     !       1A9E   !     1A6A   !
+KEY                     !       1BB8   !     1B81   !
+CLS                     !       4231   !     420D   !
+BEEP                    !       4229   !     4205   !
+SOUND                   !       1DC5   !     1D8E   !
+LCOPY                   !       1E5E   !     1E29   !
+PSET                    !       1C57   !     1C20   !
+PRESET                  !       1C66   !     1C2F   !
+MOTOR                   !       1DEC   !     1DB5   !
+MAX                     !       7F0B   !     7BBB   !
+POWER                   !       1419   !     1422   !
+CALL                    !       1DFA   !     1DC3   !
+MENU                    !       5797   !     54A4   !
+IPL                     !       1A78   !     1A44   !
+NAME                    !       2037   !     2008   !
+KILL                    !       1F91   !     1F63   !
+SCREEN                  !       1E22   !     1DEB   !
+NEW                     !       20FE   !     20CF   !
+TAB(                    !       7979   !     7979   !
+TO                      !       7C7C   !     7C7C   !
+USING                   !       507F   !     507F   !
+VARPTR                  !       3C46   !     3C46   !
+STRING$                 !       2832   !     2832   !
+INSTR                   !       7B7A   !     7B7A   !
+DSKI$                   !       35BA   !     3593   !
+-----------------------------------------------------
+In case you haven't noticed yet, all of the addresses are given in 
+hexadecimal.
+
+Other misc. notes:
+
+The keyword table, keyword address table and BASIC error messages 
+are at the same locations in ROM.
+
+                Start           Stop
+Keyword table   0080            0261
+Keyword address
+        table   0262            02F2
+Error msgs      031C            035A
+
+------------------------------------------
+BASIC Messages
+                M100            Ky85
+' Error',00h    03EA            03F2
+' in ',00h      03F1            03F9
+'Ok',cr,lf,00h  03F6            03FD
+'Break',00h     03FB            0402
+
+So far, this is all I've found (one night's worth of work, really).  
+Next, the fun stuff begins; comparing M100 BASIC code to Ky85 code.
+Stay tuned!

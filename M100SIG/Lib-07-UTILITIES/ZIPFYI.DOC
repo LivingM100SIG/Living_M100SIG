@@ -1,0 +1,142 @@
+
+
+                            ZIPFYI.DOC
+                     (c)1989 Wilson Van Alst
+                       All rights reserved.
+
+
+   I. GENERAL
+      A. ZIPFYI offers a quick way to grab specific bits of information
+         from large text files.  It is closely related to the FIND and
+         LFIND commands in ADDRSS and SCHEDL (and in the <F4> subset of
+         the T200 TEXT program).   With those built-in applications,
+         you specify a character, word, or phrase to search for -- and
+         the computer looks for records containing that string, then
+         displays them on the LCD or sends them to a printer.  ZIPFYI
+         works the same way, except that it puts the matching records
+         in a RAM file called MATCH.DO.
+      B. ZIPFYI will run as a stand-alone program from the main MENU,
+         or as a callable sub-routine from BASIC.  The next section of
+         this document explains the latter feature.
+  II. USE FROM BASIC
+      A. The code for ZIPFYI must be loaded to the memory location
+         where it will actually run.  BASIC does this with the LOADM
+         command:
+
+                   10 LOADM"ZIPFYI"
+
+         1. ZIPFYI.CO, of course, must be in your computer.
+         2. The LOADM command, unfortunately, clears all of BASIC's
+            variables; so you need to make this one of the first
+            elements in your program.
+      B. When you CALL the address for ZIPFYI as a subroutine, it needs
+         two parameters: 1) the name of a file to search, and 2) the
+         string you want to search for.
+         1. The file name is established with one of two BASIC commands
+            -- OPEN or NAME.  For example, any of the following
+            operations (assuming they are 'legitimate' within the
+            context of your BASIC program) would pass the file name
+            "FINAME.DO" to ZIPFYI:
+
+              20 open"FINAME"foroutputas1
+
+              20 open"FINAME"forappendas3
+
+              20 name"DUMMY.DO"as"FINAME.DO"
+
+              20 open"FINAME"forinputas1
+
+            If you want to name the file while the BASIC program is
+            running, you could use the form:
+
+              20 lineinput"File to search:";f$ : openf$forinputas1
+
+            a. HOWEVER!  You must be sure the name of the file you
+               =want= is not superceded by some file you don't want.
+               Once you have used OPEN or NAME to establish the search
+               file, you should not use the OPEN or NAME commands again
+               until =after= you have called ZIPFYI.
+               1) The following commands will also overwrite an
+                  "established" file name: LOAD, SAVE, LOADM, SAVEM,
+                  CLOAD, CLOAD?, CSAVE, CLOADM, CSAVEM, MERGE, KILL,
+                  RUN"FILE", RUNM.
+               2) The easiest way to avoid confusion on this issue is
+                  just to put your "establishing" command immediately
+                  in front of the call to ZIPFYI.  Then you won't have
+                  to worry about other commands "dis-establishing" what
+                  you've set up.
+         2. The ZIPFYI search string has only one "special"
+            requirement: it must end with a chr$(0).  So, if you want
+            to search for records containing the word "canary", your
+            program would use the following form:
+
+              30 s$="canary"+chr$(0)
+
+            Or, if you wanted to take user input, the code would be:
+
+              30 lineinput"Search for:";s$ : s$=s$+chr$(0)
+
+            a. Once you have the '0-terminated' search string, your
+               program must calculate its address so that ZIPFYI knows
+               where to find it.  This is done with BASIC's VARPTR
+               function:
+
+                 40 v=varptr(s$) 'v = s$ pointer
+                 45 a=peek(v+1)+256*peek(v+2) 'a = string address
+
+      C. Now you're ready to CALL the address that actually runs
+         ZIPFYI:
+         1. This will be 64755 for the M100/102 computers, or 63625 for
+            the T200.
+         2. The CALL takes the form:
+
+              50 call63625,,a  'NOTE: T200 address
+
+                      ...where the variable 'a' is the string address
+            we've just calculated.  (You'll notice that there are =two=
+            commas in the statement above: the call will not work
+            properly if you leave one of them out.)
+      D. Adding just a bit of code to what we've done in the above
+         sections, we'll make a program will search file after file for
+         string after string, and append all those results to the
+         ZIPFYI output file, MATCH.DO:
+
+          5 loadm"ZIPFYI":cls:files
+         10 lineinput"File to search:";f$
+         15 iff$=""thenmenu
+         16 ifinstr(f$,"MATCH")thenprint"Illegal!":beep:end
+         20 openf$forinputas1
+         30 lineinput"Search for:";s$
+         35 iflen(s$)thens$=s$+chr$(0)elserun
+         40 v=varptr(s$)
+         45 a=peek(v+1)+256*peek(v+2)
+         50 call63625,,a 'NOTE: T200 address
+         60 run
+
+ III. TECHNICAL NOTES
+      A. If you look at Line 16 in the above program, you'll see a very
+         important consideration when you're using ZIPFYI within BASIC:
+         the output file, MATCH.DO, cannot be used as a search file.
+         Trying to do that creates a vicious circle that may lead to a
+         cold start.  (When you use ZIPFYI as a stand-alone program
+         from the main MENU, there is built-in protection against this
+         possibility; but in BASIC you need to establish your own
+         safeguard.)
+         1. If for some reason you want to use previous output to
+            MATCH.DO for a new search, you can just re-name MATCH.DO.
+            ZIPFYI will create a =new= file called MATCH.DO to receive
+            the new output.
+      B. Searches you make with ZIPFYI are =not= case-specific.  That
+         is, your search string may be entered in capital letters,
+         lower-case letters, or a combination of the two -- and it will
+         discover "matches" regardless of their upper/lower case
+         mixture.
+  IV. SUPPORT
+      A. You can contact me on CompuServe's M100 Forum if you have
+         questions or suggestions about ZIPFYI.  I'd ask you to use the
+         Forum message board, instead of private mail on EPlex, because
+         the exchange you generate may be useful to other people.
+         Thanks.
+                   Wilson Van Alst [76576,2735]
+
+

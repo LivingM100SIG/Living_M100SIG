@@ -1,0 +1,275 @@
+
+The following is an excerpt, the full text can be found in the OS9 SIG.
+William L. Brady     CIS [70126,267]
+
+     O.K. so now to the "final" solution. My M-100 Mass storage system is a 
+TRS80 Color Computer with two disks, running OS9, and a Novation J-CAT modem! 
+In the words of E.T., whenever I need access to my files I "phone home". With
+the 6809 based CoCo and OS9, I have a true Multi-user system. (for those of
+you who are familiar with UNIX, OS9 is an implementation of that operating
+system on the 6809 microprocessor.) 
+   This means that I can do anything sitting in my office, using my M-100, that
+I can do at home, except for physical operations such as changing disks. There
+are no charges for connect time, and while on business, even the phone call
+is a business expense. 
+     So, having acquired my CoCo, disk drives and OS9, I set about the task of
+getting a Mass Storage system "on-line". The first thing to do was to get the
+CoCo up in the multi-user mode. The OS9 manual gives you the precise key-in:
+<TSMON /T1&> does it. 
+   I also set the /T1 baud rate to 300 by typing <TMODE BAUD=1>. These Commands
+will eventually be placed in the STARTUP file. This is a Command Procedure File
+that OS9 automatically executes each time it boots, similar to the M-100 IPL.
+The startup file I use is illustrated in Listing 3, Startup file. (Note that I
+also do a "dummy" SETIME in this file. This is there to prevent the system from
+"hanging" when it reboots itself after a power glitch with no one home.) 
+ The initial setup did not use the modem but an RS-232 cable and a null modem
+or "direct connection". I won't go into the details of this arrangement because
+I don't use it any more, and I don't advocate that the reader spend $30 for a
+null modem, and $30 for a cable that may not be used; but it was a step in the
+process.  (I now always use the modem, even if I'm at home. More about that
+later.)
+    Downloading is the easiest of all operations, it is done "bare", using only
+OS9 and TELCOM. For example, if the file to download is on the 2nd disk drive
+(D1) in the directory "files" and its name is "radar.100", simply type <list
+/d1/files/radar.100>, and the file comes pouring into the M-100. (Providing
+that the M-100 is set up for a function key 2 download). 
+   Uploading, however, is a horse of a different color. First, let me mention a
+limitation of the CoCo RS-232 port. It operates reliably at 300-baud ,period.
+The CoCo lacks a true serial port which means that an 8 bit byte requires 8 S/W
+I/O operations.  The result is that the S/W loses characters at rates higher
+than 300-baud.  In addition, in order to echo characters the S/W must do
+everything twice. As a result, if the M-100 sends back-to-back characters, as
+when using TELCOM function key 3, the CoCo appears to lose every other one.
+(The OS9UPLOADER solves this problem by turning echo off with a <TMODE -ECHO>.)
+ A second problem with uploading is the fact that both OS9 BUILD and EDIT
+utilities use a rather shortish line length limit. (127 characters per line, I
+think, but I've never counted.) This creates difficulties with M-100 basic
+programs which allow 255 character lines. To solve this problem, I have written
+a 6809 assembly language program called UPLOAD. (see listing 2) When you
+assemble UPLOAD and direct the assembler to place the object code in the CMDS
+directory UPLOAD becomes a system command. This ability to install new commands
+is but one of the many powerful features of OS9. The assembler key-in looks
+like this: <asm #10k /d1/files/upload O=/d0/cmds/upload>. Note that this key-in
+includes a reservation of 10k of memory for the assembler to use. The program
+is not large, but it uses the system definitions file which is huge.  (Without
+the #10k the asm will return a symbol table full error.) Note that the
+character to the left of the equal sign is the capital O, not zero, and stands
+for "Object".  UPLOAD works just like BUILD, except that the terminator is
+<esc> rather than back-to-back cr's. (this way back-to back cr's in the upload
+file are allowable.)
+    At this point I'll talk about the OS9 UPLOADER program. (Listing 1) The
+version included with this article is not the original, but is the stripped
+down version I actually use. When logging on and setting TMODE -ECHO my
+original program used a delay rather than spaces to get around the dropped
+characters, (echo), problem mentioned above. This version, however, has never
+failed to work for me unless I violate some OS9 rule, (see below.) 
+    Before using the OS9 UPLOADER in your M-100, you must edit line 2 to
+include your own phone#, user name and password. The password file that comes
+with OS9 includes USER1, USER2, with no password required. I suggest that you
+stick with this until you get everything working, then edit your password file
+and OS9UPLOADER for the real thing. Don't be tempted to leave out the spaces in
+the user name and the T M O D E - E C H O, if you do, it won't work for the
+reasons stated above. (Note that you don't need spaces in your password, since
+the CoCo doesn't echo those characters.) By the way, you could simply turn off
+echo all the time and put the M-100 in the half duplex mode, but this gets
+confusing at times. 
+    With all of this working, I turned to the modem hook-up. It turns out that
+all you need is the #26-3014 CoCo cable which simply plugs in to the J-Cat
+cable.  That sounds simple, except for one problem. In the RS-232 world there
+are two possible ground pins in the db-25 connector, and, you guessed it, the
+CoCo cable used one and the J-Cat the other. Since it gave me some spare pins
+to use, I modified the J-Cat Cable. I cut off a spare with about 1" of wire
+attached, spliced it into the ground wire, pin 7 (seven) of the J-cat
+connector. I then shoved it into the socket hole corresponding to the CoCo
+ground pin 1 (one) and I was in business. 
+    While using this system at home, I soon became bored with switching
+everything back and forth between the MODEM and the NULL-MODEM and M-100 rs-232
+port. Earlier I mentioned that I always use my M-100 built-in MODEM, even when
+I am working at home. Here's how I accomplish that:
+ In my house, there are phone outlets all over the place. I think a former
+owner worked for Ma Bell (RIP). In all of those outlets, only the center pair
+of contacts were used for actual phone operation, corresponding to the red and
+green wires. The yellow and black pair was unused. I'm speaking in the past
+tense, because that yellow-black pair is now my in-house communications path.
+This was accomplished by installing an extra phone jack near my CoCo into which
+the MODEM is plugged. This jack has a tiny DPDT switch in it which toggles the
+center pair of socket conductors, (and hence the MODEM), back and forth between
+the red-green, and yellow-black pairs. To compliment this, I have a modified
+M-100 MODEM cable, which switches the red-green and yellow-black pairs going to
+the M-100. (by the way, if you try this yourself, do not be tempted to use SPDT
+switches, you must have complete isolation from the phone line!) When at home,
+I simply switch the two switches to the correct positions and plug the M-100 in
+to any jack.  Before I can communicate, however, the MODEM must be brought
+"on-line".  This is normally accomplished when you "phone home" by the ringing
+signal.  Locally you have no ring so the modem will not "answer". To date, the
+only solution I have to this problem is to tap the "Connect" switch on the
+J-cat while the M-100 is waiting in the TELCOM mode. By the way, the J-cat can
+operate in both answer or originate mode, (it automatically "trains" itself,
+depending on what the other end is doing), so you can leave the M-100 switch in
+whatever position you normally use.
+    To recap the steps in implementing the system:
+   1) Install OS9 in a CoCo with one or two disk drives.
+   2) Edit the STARTUP file.(see example STARTUP)
+   3) Install UPLOAD in the CMDS directory of OS9, using ASM.
+   4) Install OS9UPLOADER in your M-100.
+      (not caring for long names I label it UPL)
+   5) Install your modem. (remember the cable fix if you use a J-cat).
+   6) Either buy a NULL-MODEM and RS-232 cable, use the in-house method, or
+simply connect the M-100 modem cable directly to the MODEM using the squareish
+back-to-back modular connector supplied with the M-100 cable. 
+   7) Set your M-100 stat to M8N1D. (By the way, this is the same as used on
+Compuserve when downloading weather service RADAR maps, you can use it all the
+time on CIS if you set your terminal parameters to no parity. It also works on
+a VAX)
+   The first thing to try is operating the M-100 as a terminal to OS9. Bring up
+OS9, activate /T1 (TSMON or STARTUP) and make a local connection by one of the
+three methods in 6 above. When connected, type <cr>. After a short delay, OS9
+should come up and ask you for a user I.D. When you respond according to the
+contents of your password file, the MOTD (message of the day) file will appear
+on your M-100 screen. When you see the prompt OS9: you can do anything from
+your M-100 that you can do from the CoCo keyboard. Try a DIR.
+ The next step is to do a download from the CoCo. Try setting up the M-100 for
+download, and typing LIST SYS/PASSWORD. This is a good way to edit your
+password file, once you can do uploads you can delete or rename the original
+and upload the new one.
+     To use the OS9UPLOADER, you must first have the file to upload in the .DO
+format.  Then start the program, answer the prompts and watch it go. (If you
+happen to be at home, using one of the local methods, just wait 'till you see
+the phone number and place you modem in the connect mode.) Note that the
+Command that you enter on prompt 2 is in the same format as you might enter it
+on the CoCo.  For example <upload /d1/files/radar.100>. (Shortcuts like
+changing the directory to /d1/files prior to uploading are possible. In that
+case the command would be <upload radar.100>, but don't get confused.) If you
+do something wrong, like trying to upload a file that already exists, you won't
+see any error indication, the OS9UPLOADER simply hangs, waiting for the ? from
+UPLOAD.  If this happens, you must break the program <shift-break>, enter
+TELCOM, manually re-call your CoCo and fix the problem. (ie: delete the old
+file). With the J-cat, a short delay in the re-call is necessary (18 seconds)
+to wait for the J-cat to hang up. When you re-establish contact and the CoCo
+doesn't echo your characters, type TMODE ECHO.
+ A final criticism of this system is that up and downloading at 300-baud is too
+slow. Well, not for me! I am perfectly content to start a long file and go get
+a cup of coffee. The operation is similar to working with compuserve databases;
+it's so simple to use that you don't mind the waits. Since I've been using this
+system, and since I started writing this article, RS has announced a disk
+system for the M-100. The price tag is near $800. I think my approach is
+better, but you be the Judge!
+
+         Listing 1 The OS9 UPLOADER
+
+1 CLS
+   :CLEAR1200
+   :MAXFILES=3
+   :S$=CHR$(58)
+   :G$=CHR$(63)
+   :PRINT""
+   :FILES
+   :PRINT""
+2 INPUT"FILE TO UPLOAD";A$
+   :INPUT"COMMAND ";B$
+3 P$="5551212<==^M?UU S E R 1 ^M?P=PASS*WORD^M====>"
+4 M=VARPTR(P$)
+   :AD=PEEK(M+1)+(PEEK(M+2)*256)
+5 CALL21200
+   :CALL21293,0,AD
+6 OPEN"MDM:8N1D"FORINPUTAS1
+   :OPEN"MDM:8N1D"FOROUTPUTAS2
+   :OPENA$FORINPUTAS3
+   :PRINT #2,""
+7 I$=INPUT$(1,1)
+   :IFI$<>S$THEN7
+8 PRINT#2,"T M O D E - E C H O "
+9 I$=INPUT$(1,1)
+   :IFI$<>S$THEN9
+10 PRINT,B$
+   :PRINT#2,B$
+11 I$=INPUT$(1,1)
+   :IFI$<>G$THEN11
+12 C$=INPUT$(1,3)
+13 IFEOF(3)THEN20
+14 IFC$=CHR$(13)THEN16
+15 O$=O$+C$
+   :GOTO12
+16 U$=INPUT$(1,3)
+   :IFEOF(3)THEN20
+17 U$=""
+   :PRINT#2,O$
+   :PRINTO$
+   :O$=""
+18 I$=INPUT$(1,1)
+   :IFI$<>G$THEN18
+19 SOUND11836,5:CR=1
+   :GOTO12
+20 A%=13
+   :CALL28210,A%
+21 I$=INPUT$(1,1)
+   :IFI$<>G$THEN21
+22 SOUND1800,10
+23 A%=27
+   :CALL28210,A%
+24 I$=INPUT$(1,1)
+   :IFI$<>S$THEN24
+25 PRINT"LOGOFF"
+   :PRINT#2,CHR$(27)
+26 CLOSE
+   :SOUND 1567,50
+   :SOUND 879,100
+   :SOUND 1200,50
+   :MENU
+
+         Listing 2 UPLOAD OS9 UTILITY
+
+     NAM    UPLOAD
+     USE    /D0/DEFS/OS9DEFS
+*DATA SECTION
+     ORG    0
+LINLEN  RMB    2
+PRMPTR  RMB    2
+PATH   RMB    2
+INPBUF  RMB   1024
+     RMB    400
+STACK   EQU    .-1
+DATMEM  EQU    .
+*PROGRAM SECTION
+     MOD    ENDPGM,NAME,$11,$81,ENTRY,DATMEM
+NAME   FCS    /UPLOAD/
+ENTRY   EQU    *
+     STX    PRMPTR
+CRFIL   LDX    PRMPTR
+     LDB    #127
+     LDA    #2
+     OS9    I$CREATE
+     BCS    ERROR
+     STA    PATH
+ASK    LEAX    OUTSTR,PCR
+     LDY    #STRLEN
+     LDA    #1
+     OS9    I$WRITLN
+     BCS    ERROR
+     LEAX    INPBUF,U
+     LDY    #255
+     LDA    #0
+     OS9    I$READLN
+     BCS    ERROR
+     STY    LINLEN
+GOGO   LEAX    INPBUF,U
+     LDY    LINLEN
+     LDA    PATH
+     OS9    I$WRITLN
+     BCS    ERROR
+     BRA    ASK
+ERROR   CMPB    #E$EOF
+     BNE    EXIT
+     LDB    #0
+EXIT   OS9    F$EXIT
+OUTSTR  FCC    /?/
+     FCB    $0D
+STRLEN  EQU    *-OUTSTR
+     EMOD
+ENDPGM  EQU    *
+         Listing 3 THE STARTUP FILE
+
+SETIME 83/12/03 07:00:00
+XMODE /P BAUD=3
+XMODE /T1 -PAUSE BAUD=1
+TSMON /T1&

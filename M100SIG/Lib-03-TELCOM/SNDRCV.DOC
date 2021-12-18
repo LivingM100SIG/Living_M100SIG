@@ -1,0 +1,76 @@
+cpmsnd
+
+cpmsnd allows easy transfer of text files between the model 100 and most
+CP/M based systems.  In addition, the
+programs snd100.com and rcv100.com are
+provided for the CP/M system
+
+snd100 and rcv100 must first be
+configured for the CP/M implementation.
+This requires that the iobyte be
+implemented in the BIOS and that it be
+possible to redirect console i/o to the
+rs232 interface.  First determine from
+the system documentation the correct
+value of the iobyte to redirect the
+console to the rs232.  Only the low
+two bits are significant to snd100 and
+rcv100.  Put snd100.com, rcv100.com and
+sndrcv.sub on the B: disk and DDT.COM,
+SUBMIT.COM, and XSUB.COM on the A:
+disk.  Type the command
+
+	submit b:sndrcv <iobyte>
+
+where <iobyte> is the proper value of
+the iobyte for redirection of console
+to the rs232.
+
+To transfer files, first set the rs232
+interface to the proper data rate,
+number of stop bits and parity.  CPMSND
+assumes 1200 baud, 8 bits, no parity.
+Connect the model 100 to the CP/M
+with the proper cable.
+
+To transfer from the model 100 to CP/M,
+first enter the command
+
+	rcv100 <filename> e
+
+on the CP/M system.  The "e" is
+optional.  If present, the file will be
+echoed on the screen.  After the
+message "Ready to receive" is
+displayed, run SNDCPM.BA on the model
+100.  You will be prompted for the file
+to send (must be a text (.DO) file) and
+for the output file (default
+COM:58n1e).
+
+NOTE:	The file must be small enough
+	to fit in memory on the CP/M
+	system.
+
+NOTE:	The file to send may be a
+	cassette file.
+
+To send a file from the CP/M system to
+the model 100, first execute the proper
+command on the model 100 to receive.
+For BASIC programs, you may use a
+comand such as
+
+	load "com:58n1e"
+
+in basic or may use the file load
+function (F) of TEXT.
+
+On the CP/M system enter the
+command
+
+	snd100 <filename> e
+
+where "e" is optional and indicates
+the file is to be echoed to the screen
+as it is sent

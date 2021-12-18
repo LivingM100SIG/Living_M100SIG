@@ -1,0 +1,49 @@
+TD2TIP.008 -- TDD2/TDD1 Compatibility Test Results
+--------------------------------------------------
+
+There is a fair amount of interest in TDD1-TDD2 disk compatibility. This
+note reports some tests, conducted with DSKMGR.REL, and repeated with two
+version of TS-DOS with the same results.
+
+I've done the following tests, all with DSKMGR:
+
+1. Started with disk in the TDD2 and used DSKMGR to format it. After doing
+   List function of DSKMGR shows 202240K free.
+
+2. Used DSKMGR to save a short file to the TDD2 disk in the TDD2 drive.
+   Shows 200K+ free.
+
+3. Moved disk and cable to TDD1. List shows 99K+ here. Loaded file into
+   RAM from TDD2 disk using TDD1 drive. Ooops! I/O error.
+
+4. Tried saving to the TDD2 disk in the TDD1: Worked fine. Put the disk
+   back in the TDD2. Now only half the space is left.
+
+Conclusion from all of this: Cannot load from a TDD2 disk with a TDD1 drive.
+                             Can save to TDD2 disk with a TDD1.
+
+Now try the same with a disk fromatted in the TDD1.
+
+5. Used DSKMGR to format the disk in the TDD1. 101120K bytes free.
+
+6. Saved file to TDD1 with DSKMGR
+
+7. Moved disk and cable to TDD2.  List shows 99K+ free.
+
+8. Loaded file from TDD1 disk in TDD2 -- successfully.
+
+9. Saving file to TDD1 disk in TDD2: Get write protected error, even
+   though is isn't!
+
+So that does not work!
+
+Then I repeated all the above steps using the two version of TS-DOS for
+each drive, vers 2.01 for the TDD1 and vers 3.00 for TDD2.  Same results!
+
+Bottom line is that you cannot:
+
+   1) Load from a TDD2 disk with a TDD1
+   2) Save to a TDD1 disk with a TDD2
+
+Phil Wheeler -- 71266,125
+7/19/87

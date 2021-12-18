@@ -1,0 +1,145 @@
+Documentation file for MM.100  11/29/92
+Copyright (c) 1992 by Peter Ross, CIS ID# 72027,3653
+
+I developed this Memory Management utility for the Model 100 to help
+me manage several banks of RAM, ROM and machine language programs
+stored in PCSG RAM banks, and extRAM or XR4. Switching between so
+many different applications is a surefire route to a cold start
+unless you carefully deinitialize the current program before
+starting up the next one. I created MM.BA to automate this process.
+Besides ROM loading and unloading CALLs, I've added several general
+housekeeping routines like the standard BASIC datefix one-liner and
+simple interfaces for the PCSG RAM banks and extRAM/XR4. Altogether
+the whole tuna weighs in at under 1700 pounds (excuse me, bytes).
+
+There are two 'banks' of function keys. The first bank (which you
+access by holding down the CODE key) is for killing ROMs, clear
+MAXRAM etc. The second bank is for loading ROMs and programs, and
+for switching between (PCSG) RAM banks. I put them in this order for
+two main reasons. First, in order to avoid cold starts, you should
+always un-install the current ROM or machine language program
+_before_ installing a new one. Second, the way I've set up the
+program, the PCSG RAM bank switching function performed in the
+second bank can be accessed more quickly using re-programmed
+function keys in BASIC.
+
+Although the program as you have downloaded is configured for my
+environment, altering specific function key assignments to suit your
+operating environment should be relatively straightforward.
+
+Bank 1 Screen:
+-----------------------------------------
+           Memory Management
+
+* HIMEM IS 62960  **  27977 BYTES FREE *
+
+         3       Kill       1
+
+CODE POKE MxRm Lucd Fkey Cleu SpRm Menu
+-----------------------------------------
+
+Bank 1's keys:
+
+F1 kill CDOS (the Chipmunk's operating system)
+F2 reset vectors and restore a critical segment of HIMEM to its
+unaltered state by poking in the values that were originally there.
+(This is an attempt to prevent cold starts)
+F3 CLEAR256,MAXRAM
+F4 Kill LUCID's second paste buffer
+F5 Reset function keys for working in BASIC
+F6 Kill Cleauseau/ROM2
+F7 Kill SuperRom
+F8 Return to Main Menu
+
+Bank 1 Screen:
+-----------------------------------------
+           Memory Management
+
+* HIMEM IS 62960  **  27977 BYTES FREE *
+
+         3       Kill       1
+
+Bnk1 Bnk2 Bnk3 Bnk4 MyRm Cleu SpRm RAM+
+-----------------------------------------
+
+Bank 2's keys are accessed by holding down the CODE key and pressing
+a function key:
+
+CODE+F1 Goto PCSG RAM bank #1
+CODE+F2 Goto PCSG RAM bank #2
+CODE+F3 Goto PCSG RAM bank #3
+CODE+F4 Goto PCSG RAM bank #4
+CODE+F5 Load XR4 RAM bank #1 and install a set of function keys
+        to interface with it. I keep a bank of programs here.
+CODE+F6 Load Cleauseau/ROM2 from XR4
+CODE+F7 Load SuperRom from from XR4
+CODE+F8 Load RAM+ from XR4
+
+*****************************************
+
+As mentioned above, the program also performs a few other
+housekeeping chores on startup. It reports the number of bytes free
+and the value of HIMEM, resets the year to 1993, as a patch for the
+M100 date bug (you can change this in line 5 to suit the current
+year). It resets the BASIC function keys to call portions of the
+program code. This allows you to switch RAM banks from BASIC, print
+CALL63012 to call a ROM, the extRAM, or XR4, load the complete
+memory manager program or reset the function keys.
+
+Finally two numbers appear, one on each side of the sixth line of
+the screen. These numbers refer to the RAM/ROM banks which you are
+currently using. Both numbers will appear as '-16' until you have
+taken the steps described below.
+
+The number on the right refers to the number of the current XR4
+bank. The routine pokes the appropriate XR4 bank number after the
+ADDRESS entry on the main menu. I chose that spot because some other
+programs (e.g. TEXT+ and SUPERA alter the BASIC and TEXT entries.
+The correct bank number will be POKEd into place the first time you
+choose a new XR4 bank with a CODE+function key.
+
+Since as far as I know, the PCSG RAM banks do not leave any
+information in RAM identifying the current bank number, this number
+must be set manually using the routine contained in BANKID.BA (also
+available on this forum). BANKID.BA POKEs the bank number you select
+into the Main Menu, as an extension to TELCOM.
+
+My main menu looks like this when I've got it working and am running
+SUPERA in PCSG bank #3 ... from XR4 RAM bank #1:
+
+------------------------------------------
+Dec 25, 1992 Fri 12:12:12   (c) Microsoft
+ BASIC+    TEXT+    TELCOM.3    ADDRESS.1
+ SCHEDL    -.-      -.-         -.-
+
+Again, there are probably things in here that you don't need as they
+are written, but if you like the concept, it should be easy enough
+to replace whatever you don't need with something you do.
+
+Credits:
+
+The function key bank idea came from an article by Mike Wilson
+called "Multiple Self-Prompting Function Key Banks for the Model
+100," which appeared in the May, 1988 issue of Portable 100
+Magazine. I haven't seen many programs that have used the idea. Only
+one, other than mine, in fact: X-Tel. By the way, you must name this
+program 'MM.BA' unless you change all seven references to the
+filename within the program code.
+
+I got the utility for killing Lucid's second paste buffer somewhere
+on Compuserve. Sorry, I don't remember exactly where or who wrote
+it.
+
+The routine for resetting vectors and restore the critical segment
+of HIMEM to its unaltered state was supplied by Tony Anderson.
+
+Here is a basic outline of the program code, which is reproduced in
+lines 1-4 of the program. You can conserve memory by eliminating
+these four lines.
+
+Lines 5-15 set up the environment.
+Lines 20-50 set up the function key banks.
+Lines 50-95 are subroutines
+Bank #1 features start at 110.
+Bank#2 features start at 510
+

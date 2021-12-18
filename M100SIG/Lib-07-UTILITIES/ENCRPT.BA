@@ -1,0 +1,99 @@
+Program ENCRPT.BA - Kent Nickerson 71061,01650  Aug 13/90
+
+CHECKSUM = 54,966  (using DOWNCK.WM3)
+
+The following program is something I cooked up to scramble personal notes
+and so protect secrets from prying eyes.  The encryption method is very
+simple (as more complex methods would take painfully long to perform),
+but is sufficient to puzzle those who merely view the file.  Three
+features are incorporated:
+
+1) The encryption is reversible.  That is, this program is used to
+restore encrypted files as well as encrypt normal files.
+2) The program converts the file directly.  No other file or buffer is
+produced, allowing en/decryption of large files, and leaving no
+unencrypted versions.
+3) The program does not show its purpose when run, thereby giving anybody
+who may stumble upon it reason to use it.
+
+WARNINGS:  This program has not been tested on model 100 or 102.  Try the
+program first on a RAM bank which contains only material which may be
+destroyed!  Note the warning on program line 5.  The program is to be
+saved as a .BA file before running.
+
+INSTRUCTIONS:
+ - load the program into BASIC and save to a .BA format with a
+nondescriptive name (see warning above).  Erase the .DO file if desired.
+ - go out of BASIC.  From then on, you can run the program by placing the
+cursor on the .BA file and pressing RETURN.
+ - before running the program, note the time.  Enter at the "magic
+number" prompt a two digit number, with the first digit and second digit
+being the lower digit in the hour and minute, respectively.  You can try
+again if unsuccessful (the minute may have changed).
+ - enter the .DO file name you wish encrypted, without the extension
+(e.g. if you want FILE.DO processed, just enter FILE).
+ - you may wish to check that the "# of bytes processed" given at the end
+of the program matches the file size, especially at first.  Don't use the
+program if there is not a match.
+
+ - in order to decode an encrypted file, repeat the encryption procedure.
+
+
+DESCRIPTION:
+Line 20 forms a two-digit integer from the TANDY clock, the first digit
+being the lower hours digit and the second being the lower minutes digit. 
+For example, the numbers formed from the clock when it reads 12:38:59 and
+23:45:13 are respectively 28 and 35.  The user, who will note the time
+before the program is run, must enter this number to pass into the file
+encryption section.  An incorrect response will cause line 50 to do
+something inane.  The user may choose to make line 50 do something more
+convincing.
+
+Line 90 checks memory location 1.  If it contains 171, a TANDY 200 is
+detected.  Otherwise, a model 100 is assumed.  SL and KB are file
+directory and keyboard buffer addresses.
+
+Lines 100 to 150 accepts a file name from the user and searches the file
+directory.  If found, the file's starting address is obtained in line
+170.
+
+The remainder of the program encrypts the contents of each memory
+location following until an end-of-file mark (ASCII 26) is found. 
+Encryption simply reverses the order of characters from ASCII 33 to 126. 
+Spaces, control characters, and DEL (ASCII 127) are not affected. 
+Therefore, applying the process to a previously encrypted file will
+restore it.  The number of bytes processed is displayed to serve as a
+check for proper operation.
+
+
+5 'WARNING: Invoke this program ONLY directly from a "*.BA" form!
+10 W$=MID$(TIME$,2,4)
+20 M=VAL(LEFT$(W$,1)+RIGHT$(W$,1))
+30 INPUT "Enter magic number";N
+40 IF N=M GOTO 60
+50 FOR I=1 TO N MOD 10:PRINT N:NEXT:END
+60 INPUT "File to code";FF$:FN$=""
+70 FOR I=1 TO LEN(FF$):A=ASC(MID$(FF$,I,1)):IF A>96 AND A<123 THEN A=A-32
+80 FN$=FN$+CHR$(A):NEXT
+90 IFPEEK(1)=171THENSL=62122:KB=64798 ELSESL=63919:KB=65450
+100 Q=SL+3:F=PEEK(Q):IFF>48THENF=0
+110 F=F+1:RD=F*11+SL:S=PEEK(RD):IF S=255 THEN PRINT"File not found":END
+120 IF S=0 THEN 110
+130 F$="":FORM=RD+3TORD+10:F$=F$+CHR$(PEEK(M)):NEXT
+135 L=INSTR(F$," ")-1:IF L>6 OR L<0 THEN L=6
+140 FP$=LEFT$(F$,L):FS$=RIGHT$(F$,2)
+150 IF FP$<>FN$ OR S<>192 GOTO 110
+160 PRINT"Coding ";FP$+"."+FS$
+170 M=PEEK(RD+1)+256*PEEK(RD+2):OM=M
+180 A=PEEK(M):IF A=26 THEN PRINT "# of Bytes =";M-OM:END
+190 IF A>31 AND A<127 THEN POKE M,158-A
+200 M=M+1:GOTO 180
+210 END
+
+IN CLOSING:
+      Credit goes to James Yi (73327,1653) for his program BACKUP.200,
+from which I "lifted" the file directory interogation section.
+
+      Somebody may come up with a reliable .CO form of this program so
+that its workings cannot be easily deciphered.
+

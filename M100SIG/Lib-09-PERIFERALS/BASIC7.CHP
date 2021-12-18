@@ -1,0 +1,526 @@
+
+
+
+
+        RANDOM ACCESS BY INDEX FILES
+
+            The index file contains the key and the record number of
+        the associated record in the main file.  When the user enters
+        the search key, the program searches for a match in the index.
+        If we find a match to the search key in the index,  we also
+        find the location of the record in the main file.  To add a
+        record, put it in the next available location in the main
+        file, then add its key and record number to the index file.
+        To delete a record, just delete it from the index file, or
+        mark it in the index file as deleted.  In the second case, the
+        next add operation could use the record location of the
+        deleted record rather than the end of the main file.  This
+        conserves space on the disk.  To change a record, find out
+        where it is in the main file and put the new data there.  The
+        index file entry for that record remains unchanged.  Here's an
+        example using an in-RAM search of an ordered index file:
+
+            100 ' Initialization:
+            110 DEFINT A-Z  ' use integer numbers
+            120 ON ERROR GOTO 800  ' if no index file
+            130 OPEN "0:INDEX.DO" FOR INPUT AS 1  ' open index file
+            140 INPUT #1,TF  ' read number of entries in index file
+            150 DIM KY$(TF+20),RC$(TF+20)  ' arrays to hold index
+                file: key field and record number
+            160 C$=CHR$(44):CLS:PRINT:PRINT "Loading ..."
+            170 FOR N=1 TO TF  ' read index file into arrays
+            180   INPUT #1,KY$(N),RC$(N)  ' put in arrays
+            190 NEXT N
+            200 CLOSE #1:NT=TF  ' initialize new top
+            210 OPEN "0:DATA.DO" FOR RANDOM AS 1  ' random data file
+            220 FIELD#1,LN$:20,FN$:20,SE$:30,CI$:15,SA$:2,ZP$:5
+
+            300 ' User's selection:
+            310 CLS:PRINT  ' print choices
+            320 PRINT "1) Add a record"
+            330 PRINT "2) Change a record"
+            340 PRINT "3) Delete a record"
+            350 PRINT "4) Exit"
+            360 PRINT:PRINT "Your choice";  ' get choice
+            370 INPUT CH:IF CH<1 OR CH>4 THEN BEEP:GOTO 370
+                ' valid input?
+
+            400 ' Dispatch to routine:
+            410 CLS
+            420 ON CH GOSUB 1000,2000,3000,500
+            430 GOTO 310
+
+            500 ' Wrap up:
+            510 CLS:PRINT:CLOSE #1  ' close random file
+            520 PRINT "Sorting index ..."
+
+
+
+                                    - 36 -
+
+
+
+
+
+
+
+
+
+
+            530 GOSUB 7000  ' sort index file
+            540 OT=NT  ' set old top of file
+            550 FOR N=1 TO OT
+            560   IF LEFT$(KY$(N),1)=CHR$(138) THEN NT=N-1:
+                  N=OT+1  ' scan through the index for
+                  deleted records at top, set new top
+            570 NEXT N
+            580 OPEN "0:INDEX.DO" FOR OUTPUT AS 1  ' create new index
+                file
+            590 PRINT #1,NT  ' put new number of index entries
+            600 FOR N=NT
+            610   PRINT#1,KY$(N);C$;RC$(N)  ' put it in the
+                  sequential file
+            620 NEXT N
+            630 CLOSE #1
+
+            700 ' Finished:
+            710 MENU
+
+            800 ' Open new index file
+            810 TF=0  ' initialize top of files to zero
+            820 ON ERROR GOTO 0  ' cancel error trap
+            830 RESUME 200  ' skip reading in index file
+
+            1000 ' Add a new record:
+            1010 GOSUB 4000  ' get new data
+            1020 RN=LOF(1)+1  ' new record number one more than last
+                 in file
+            1030 PUT#1,RN  ' put it there
+            1040 GOSUB 5000  ' insert the key and record number in
+                 index
+            1050 RETURN
+
+            2000 ' Change a record:
+            2010 PRINT:INPUT "Last name of record to change";KE$
+                 ' get search key
+            2020 RN=0:GOSUB 6000  ' search for it
+            2030 IF RN=0 THEN RETURN  ' not found
+            2040 GOSUB 4000  ' get new data
+            2050 PUT #1,RN  ' put it back in the same place
+            2060 IF KE$=LN$ THEN RETURN  ' last name (search key)
+                 wasn't changed
+            2070 KY$(FK)=LN$  ' change the key
+            2080 RETURN
+
+            3000 ' Delete a record:
+            3010 PRINT:INPUT "Last name of record to delete";KE$
+                 ' get search key
+            3020 RN=0:GOSUB 6000  ' search for it
+            3030 IF RN=0 THEN RETURN  ' not found
+            3040 MID$(KY$(FK),1,1)=CHR$(138)  ' flag index entry as
+                 deleted
+
+
+
+                                    - 37 -
+
+
+
+
+
+
+
+
+
+
+
+            3050 PRINT "Deleted":GOSUB 8000:RETURN
+
+            4000 ' Get new data:
+            4010 PRINT "Enter new data:"
+            4020 INPUT "Last name";LN$
+            4030 INPUT "First name";FN$
+            4040 INPUT "Street";SE$
+            4050 INPUT "City";CI$
+            4060 INPUT "State";SA$
+            4070 INPUT "Zip code";ZP$
+            4080 RETURN
+
+            5000 ' Insert new key in index:
+            5010 NT=NT+1  ' increment top of index by one
+            5020 KY$(NT)=LN$:RC$(NT)=STR$(RN)  ' put new name key
+                 and record number there
+            5030 RETURN
+
+            6000 ' Binary search for key in index
+                 (except newly added keys):
+            6010 RN=0  ' set record number to "not found" default
+            6020 LL=1:UL=TF  ' set lower and upper search limits
+            6030 IF LL>UL THEN PRINT "Not found":GOSUB 8000:RETURN
+                 ' limits have crossed over, not found
+            6040 MD=INT((LL+UL)/2)  ' calculate midpoint of search
+                 range
+            6050 IF KE$=KY$(MD) THEN FK=MD:RN=VAL(RC$(FK)):RETURN
+                 ' found key here
+            6060 IF KE$<KY$(MD) THEN UL=MD-1:GOTO 6030  ' it's in
+                 the bottom half, reset upper limit
+            6070 LL=MD+1:GOTO 6030  ' it's in the top half, reset
+                 lower limit
+
+            7000 ' Shell-Metzner Sort of index file in RAM:
+            7010 GP=NT  ' set exchange interval to new top of index
+                 file
+            7020 IF GP<=1 THEN RETURN  ' no interval left, finished
+            7030 GP=INT(GP/2)  ' reduce interval by one half
+            7040 TP=NT-GP  ' top of scan
+            7050 EX=0  ' reset exchange flag
+            7060 FOR N=1 TO TP  ' scanning loop: compare two
+                 elements at top and bottom of interval up to
+                 top of scan
+            7070   IF KY$(N)<=KY$(N+GP) THEN 7120  ' these are
+                   already in order
+            7080   TK$=KY$(N):TR$=RC$(N)  ' exchange the two by
+                   putting one aside temporarily,
+            7090   KY$(N)=KY$(N+GP):RC$(N)=RC$(N+GP)  ' putting
+                   the other in its place,
+            7100   KY$(N+GP)=TK$:RC$(N+GP)=TR$  ' then putting the
+                   one put aside in the other's place
+
+
+
+                                    - 38 -
+
+
+
+
+
+
+
+
+
+
+
+            7110   EX=1  ' there was an exchange, set flag
+            7120 NEXT N
+            7130 IF EX=0 THEN 7020  ' there was no exchange, these
+                 are in order, go reduce interval
+            7140 GOTO 7050  ' exchange(s) made, go through the loop
+                 again
+
+            8000 ' Delay:
+            8010 FOR N=1 TO 500:NEXT N
+            8020 RETURN
+
+            Variable list:
+
+            C$    Character code for comma
+            CH    User's menu choice
+            CI$   City data
+            EX    Exchange flag
+            FK    Found key at this index entry
+            FN$   First name data
+            GP    Interval (gap) between top and bottom comparisons
+            KE$   Search key
+            KY$   Index file key field
+            LL    Lower limit of search range
+            LN$   Last name data
+            MD    Mid-point of search range
+            N     Loop counter
+            NT    New top of index file
+            OT    Old top of index file
+            RC$   Index file record number field
+            RN    Record number in data file
+            SA$   State data
+            SE$   Street data
+            TF    Initial top of index file
+            TK$   Temporary key
+            TP    Top of comparison scan loop starts here
+            TR$   Temporary record number
+            UL    Upper limit of search range
+            ZP$   Zip code data
+
+        contains the number of entries in the index.  This value is
+        read in line 130.  Since records may be added, be sure to
+        increment it enough in the DIM statement to handle them.  The
+        rest of the index file goes into arrays in RAM.  If the index
+        file has fixed-length fields, we can also find the number of
+        entries by opening it for random and finding LOF.  Then
+        sequential GETs read it into RAM.  (Any sequential file with
+        fixed-lenth fields can be handled as a random file, too.)
+
+            New records are added to the end of the main file in the
+        1000 routine, and the key and record number are added to the
+        end of the index array in the 5000 routine.
+
+
+
+                                    - 39 -
+
+
+
+
+
+
+
+
+
+
+
+
+            Records are deleted in the 3000 routine.  The index entry
+        is marked by changing the first character of the key.  The
+        main file entry is not touched, because if there's no entry in
+        the index, the record can't be found.  To undelete this
+        record, search the main file sequentially, and when it's
+        found, put it back in the index.
+
+            The 2000 routine handles changes.  The current record is
+        found, new data entered, and then put back in the same place.
+        If the key is changed, then the old key's index entry is
+        changed.
+
+            When the user finishes working with the file, the index
+        must be sorted.  This occurs in the 7000 routine.  A Shell-
+        Metzner sort provides fast sorting of lists that are already
+        partially ordered, as our index file is.  This sort splits the
+        list into two parts separated by an interval and compares an
+        element in the first part with a corresponding element in the
+        second part.  If they are not already in order, they are
+        exchanged.  It continues to go through the list using smaller
+        intervals until all elements are in order.  It's fast because
+        it doesn't have to compare each entry against the whole list
+        and it doesn't waste any time exchanging two elements that are
+        already in order with respect to each other.  When the key
+        field is exchanged its associated record number field is
+        exchanged, too.
+
+            Because the deleted index keys are marked with an ASCII
+        character above the letter "z", they come out on top of the
+        list.  In the 500 routine, the valid index entries are counted
+        to find the new index entry count.  Counting stops when a
+        deleted entry is encountered, since any remaining entries
+        above it will all be marked deleted, too.  Then the RAM index
+        entries are printed to a sequential disk file, with the count
+        of the number of entries in the file printed first.
+
+            The search routine in 6000 works only with an ordered
+        list.  The list is split into two halves.  (That's why it's
+        called "binary".)  If the key matches the entry at the mid-
+        point, it's been found.  If it's above the mid-point, the
+        lower limit is raised.  If it's below the mid-point, the upper
+        limit is lowered.  So each time through the loop the search
+        area is decreased by one-half until either the entry is found
+        or the upper and lower limits cross.  This search will find
+        exact matches only.
+
+            Unlike the previous sample programs for adding, changing,
+        and deleting records in a sequential file, this program can
+        handle multiple changes per session.  This advantage is
+        typical of random access files.
+
+
+
+                                    - 40 -
+
+
+
+
+
+
+
+
+
+
+
+
+            One concern when using an index file is handling program
+        crashes.  If the program is interrupted prior to the index
+        sort and save, records added to the data file during that
+        session lose their entries in the index.
+
+
+        TAGGED SORTS
+
+            A tagged sort exchanges tags or pointers instead of actual
+        file elements.  Initialize an array of numbers from 1 to the
+        size of the list (the file).  When a comparison calls for an
+        exchange, exchange the tag numbers instead of the list
+        elements (file records).  The list itself remains unsorted,
+        but the list of tags pointing to elements is sorted.  This is
+        much faster than exchanging several fields.  Here's our Shell-
+        Metzner sort using a disk file and an array of tags in
+        memory:
+
+            100 ' Tagged Shell-Metzner Sort
+            110 OPEN "0:PEOPLE.DO" FOR RANDOM AS 1
+            120 FIELD#1,LN$:10,FN$:10,AG%:2,SX$:1
+            130 NR=LOF(1)  ' number of records in file
+            140 ' Initialize tags:
+            150 DIM TG(NR)  ' array to hold tags
+            160 FOR N=1 TO NR
+            170   TG(N)=N  ' put 1 to R in tag array
+            180 NEXT N
+            190 ' Sort:
+            200 GP=NR
+            210 IF GP<=1 THEN 360
+            220 GP=INT(GP/2)
+            230 TP=NR-GP
+            240 EX=0
+            250 FOR J=1 TO TP
+            260   GET#1,TG(J):R1$=LN$  ' get the record pointed to
+                  by the tag at J, assign key field to temporary
+                  variable
+            270   GET#1,TG(J+GP):R2$=LN$  ' get the record pointed
+                  to by the tag at J+GP, key field in R2$
+            280   IF R1$<=R2$ THEN 330  ' comparison of key fields
+            290   TM=TG(J)  ' exchange tags
+            300   TG(J)=TG(J+GP)
+            310   TG(J+GP)=TM
+            320   EX=1
+            330 NEXT J
+            340 IF EX=0 THEN 210
+            350 GOTO 240
+            360 ' Tags sorted, print file in alphabetical order:
+                  (or put your search routine here)
+
+
+
+                                    - 41 -
+
+
+
+
+
+
+
+
+
+
+
+            370 FOR N=1 TO NR
+            380   GET#1,TG(N)  ' get the record the tag points to
+            390   PRINT LN$;" ";FN$;AG%;" ";SX$
+            400 NEXT N
+            410 CLOSE:END
+
+
+        SEARCHING ANY FIELD
+
+            The techniques discussed thus far produce a match on only
+        one field of the record: the key field; a field which is
+        designated prior to designing and implementing the program.
+        Finding a record by a match on the user's choice of any field
+        in the record is sometimes required.  Perhaps an index file
+        for each field could be maintained, but they will eat up
+        valuable disk space and create sorting headaches.  There are a
+        couple of other simpler ways to accomplish this feature.
+
+            One solution uses the indexing method not with an actual
+        index file, but with an index array in RAM.  The user
+        specifies which field he/she needs to search.  Then read each
+        record sequentially, storing the record number in one array
+        element and the subject field in another.  Re-order the arrays
+        by sorting on the field.  Now the user can enter a search key
+        and a match produces the record number of the desired record.
+
+            Or use a variation of the tagged sort.  Just run a tagged
+        sort on any field desired by using that field for the
+        comparison.  The tags are sorted with respect to the subject
+        field, providing fast lookup for a binary search.
+
+           Both methods are variations on the detached key sort, since
+        the desired key field is "detached" from the record for
+        sorting.  These techniques involve lengthy initializing
+        procedures, so make the most frequently searched field the key
+        field to be matched from a key transform, index, etc.  Don't
+        make the user wait every time.  Save detached key sorts for
+        occasionally-searched fields, and for repetitive searches on
+        one field.
+
+            Simple filing systems that allow multiple-field searches
+        generally use simple sequentiall search techniques.  The speed
+        penalty is compensated for by coding the search routine in
+        machine language.  However, doing this in BASIC would be a
+        real thumb-twiddler.  For fast access in BASIC, choose one key
+        field and use a key transform or a binary search of an ordered
+        file.
+
+        SEARCHING ORDERED FILES ON DISK
+
+            Anything that can be done to arrays in RAM can be done to
+
+
+
+                                    - 42 -
+
+
+
+
+
+
+
+
+
+
+
+        random files on disk.  Just think of the array elements
+        subscript as a random file record number.  Here's how the
+        binary search routine might look as done with an index file on
+        disk:
+
+            1000 ' Disk search subroutine
+            1010 CLS:PRINT:INPUT "Enter search key";KE$
+            1020 OPEN "0:KEYS.DO" FOR RANDOM AS 1
+            1030 FIELD #1,KY$:10,RC$:4
+            1040 LL=1:UL=LOF(1)
+            1050 IF LL>UL THEN PRINT "Not found":CLOSE#1:RETURN
+            1060 MD=INT((LL+UL)/2)
+            1070 GET#1,MD
+            1080 IF INSTR(1,KY$,KE$) THEN PRINT "Found":
+                 CLOSE#1:RETURN
+            1090 IF KE$<KY$ THEN UL=MD-1:GOTO 1050
+            1100 LL=MD+1:GOTO 1050
+
+            If only a few keys need to be looked up this may be faster
+        than setting up arrays and reading the whole thing into RAM.
+        And it's also suitable for large index files that won't fit
+        into RAM.  Incidentally, the test in line 1080 enables
+        matching of partial keys.  For example, if the file entry
+        desired is "Anderson" and the user enters "And" as the search
+        key, "Anderson" will be found.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                               - 43 -
+
+
+
+
+
+
+

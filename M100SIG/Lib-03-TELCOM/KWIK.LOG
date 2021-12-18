@@ -1,0 +1,114 @@
+KWIK.LOG
+
+Two "Rapid Logon Techniques" are described in this captured message thread.
+Ways to log on quickly to your most frequently used access number, whether
+it's CompuServe or your favorite BBS. The first can be used with 100/102
+or 200, a ROM CALL makes the second specific to the Model 100/102.
+
+Copyright 1990 Golden Triangle Corporation, All Rights Reserved
+
+
+#: 24482 S3/Telcom
+    22-Apr-90  18:37:37
+Sb: #Kwik Log on
+Fm: EARL BUSACKER 72300,2100
+To: All
+
+It's a simple thing but I think it's kinda neat. Until recently I would log on
+to Compuserve by typing CIS or ci at the TELCOM (F1) "Find" prompt.  It was
+quick and easy, but I discovered that by having the auto-log on sequence at
+the very beginning of the ADRS file it is even quicker.  (No blank line at the
+top. )  Now after selecting TELCOM it's just three key strokes: <F1> <ENTER>
+<F2>. This is not mentioned in any of the books I have on the subject so I
+thought that some of you may not be aware of this.
+
+
+Fm: Tony Anderson 76703,4062
+To: EARL BUSACKER 72300,2100 (X)
+
+Perhaps even quicker - for Model 100/102 users:  Put your most frequently used
+access phone number and logon/password string in the ADRS.DO file as the first
+line.  Then create and save a one-line BASIC program - call it "CIS.BA".  The
+program will consist of only one CALL, in the form:
+
+1 CALL 21067
+
+(You can remove the space between "CALL" and the number, it's there only for
+clarity.)  To call CIS, move the cursor over CIS.BA on the main menu and press
+the ENTER key twice.  The CALL will find the first ADRS entry and dial it
+automatically, then drop you into TELCOM when CIS connects.
+
+
+Fm: EARL BUSACKER 72300,2100
+To: Tony Anderson 76703,4062 (X)
+
+I now have on my M100's main menu your 12 byte CIS.BA one-liner and it works
+like a charm. Thanks, Tony
+
+
+Fm: Tony Anderson 76703,4062
+To: EARL BUSACKER 72300,2100 (X)
+
+Whatever works best...  (grin)
+
+
+Fm: Gene Nestro 73727,1015
+To: ALL
+
+SUPERA users - for what it's worth. Here's an extra tip on KWIK.LOG: Define a
+key, and after your appropriate CALL (for TELCOM) add two  GRPH e   this will
+completly log you on!
+
+
+Fm: Carmen Paone 72677,42
+To: Tony Anderson 76703,4062 (X)
+
+I have been playing around with the KWIK logon version for the 200. I have
+tried calls in the 24890 to 25020 range. Some of the calls open up Telcom, and
+one (24905) lists part of my logon script for CIS. However, can't seem to do
+what 21,067 does on the 100 for KWIK. Is there an equivilent call on the 200?
+                #Carmen# 
+
+
+Fm: Tony Anderson 76703,4062
+To: Carmen Paone 72677,42 (X)
+
+Well, I don't use KWIK, myself, so don't know what it shows on the screen, or
+what it looks like when it's working.  One problem with 21067, which wasn't
+mentioned in the previous exchanges, is that the STATus in TELCOM must already
+be set correctly when you run the CIS.BA program, and that it works only with
+the internal modem.  For example, if you had accessed the disk drive recently,
+the status might have been left at 98N1D or something similar - depending on
+what you had actually used the COM port for...  It has to be Mxxxx for it to
+work. (Mxxxxxx for the 200)
+
+The equivalent call for the 200 is 24905.  It's not a documented call in any of
+the ROM maps or books, as far as I can tell, so we have no documentation on how
+it _should_ work.  I have no idea of what differences there might be, if any.
+
+I tried CALL 24905 in my 200, and it works perfectly for me.  I had to dig out
+a 300 baud modem cable - and you'll never know how hard that was to find! -- 
+I set up CIS.BA, set up an ADRS.DO file, moved the cursor over CIS.BA, pressed
+ENTER twice, and it did it's thing, and got me into CompuServe at 300 baud, no
+problem.
+
+When you go into TELCOM, it displays the phone number and <>, but not any part
+of the logon string.  If you saw part of your logon string, something was
+wrong with something.  You should NEVER see any part of your logon string at
+that point.
+
+I tried dialing with both tone and pulse dial, and it worked fine with both.
+So I don't know what problem you encountered with the call.  Try it again - be
+patient, give it a minute to work.
+
+
+Fm: Carmen Paone 72677,42
+To: Tony Anderson 76703,4062 (X)
+
+As usual, Tony, you are correct. Call 24905 does put you atop your ADRS.DO
+file and it is a quick and easy way to log on to CIS or your favorite BBS with
+your Model 200. I tried the call several times in my experiments. I think my
+Telcom status was changed by PWR-DSK, and perhaps that why the simple 11-byte
+program didnt work.
+        #Carmen#
+

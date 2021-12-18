@@ -1,0 +1,215 @@
+
+        (c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Michael Klar
+To: ALL
+
+Got my Service Manual on Tuesday.  Interesting stuff... incomplete and hard to
+follow, but it's definately enough to be usable.  I wrote a hex-dump program
+to look through the memory and spent about six hours trying to figure out why
+it kept bombing (and when this machine bombs, it really bombs - had to turn
+off the protect switch and wait 5 minutes in order to get the thing to reset).
+Anyway, I was specifying the program length wrong in the header.  The format
+for program length is most-significant-byte-first, but for entry point is
+least-significant-byte-first.  If give it a length that is too big the WP-2
+does really weird things.
+
+I'll upload that program as soon as I clean it up and regain my sanity, but
+here are a few general observations on the programability of this machine: The
+BIOS design does not strike me as very flexible.  I wish the hook table was
+more extensive - it's too bad printer output got left out, as this will make
+any sort of routing (to the RS-232 port for example) imposible.  I didn't look
+at the TELECOM program yet, but it will probably require a total rewrite. The
+"debugger" mentioned in the manual doesn't exist.  What does exist is a quick
+entry provision for a debugger - restart 28H - which could be used as a
+breakpoint, or whatever.  I think these three priorities need to be worked on
+right now:  a debugger, a hex file editor, and an assembler.  One gets very
+tired very fast of downloading the program file every time a change needed to
+be made.  In the meantime, a better ascii file converter is needed.  That
+shouldn't be too difficult.
+
+		- 0 -
+
+Fm: Stan Wong
+To: Michael Klar
+
+Agreed that the WP-2 manual is not very good but it's all we got, and that's a
+lot more than Tandy is used to releasing this early in the game.  I've been
+itching to write a WP-2 program when I get a couple of projects complete.
+
+About the debugger, I interpret that hook as simply a way to get to a debugger
+that YOU supply.
+
+		- 0 -
+
+Fm: Michael Klar
+To: Stan Wong
+
+   You're right about the debugger hook.  Right now, the contents of that hook
+position is C9 C9 C9 (C9 is the op-code for RET - unconditional return).
+
+   Also, I got the HEXDUMP program uploaded, so you all can check for
+yourselves if you like.  I think I got all the bugs out of it, but if anyone
+has problems with it, please let me know.
+
+   And I fear I must take back what I said about specifying the program length
+in the ID header.  The size IS specified least-significant-byte first (which
+is normal format for a 16-bit word).  Also, if you specify a size greater than
+available memory, the WP-2 will not do really weird things; it will merely
+beep at you and say "no memory".
+
+   Anyway, HEXDUMP uses 15 of the ROM routines, and I had minor problems with
+about 10 of them due to inadequate documentation (and a typo in the
+explaination for WAIT: 1/100 sec should be 1/10 sec).  They were no big deal
+to figure out, but maybe I'll put something together and upload it for
+reference.  Can't wait to start in on file access... (did you see that C
+routine under LIST?  Jeez!)
+
+		- 0 -
+
+Fm: Denny Thomas
+To: Michael Klar
+
+  I tried out the program before it was merged into the libraries (to appear
+sometime after midnight). It seems to run ok, but you might want to add a DOC
+file that explains the addressing range (I had trouble listing more than 32K
+at a time) and how it is possible to access the other banks (dictionary
+speller and wordprocessor). I also had an interesting time with loading the
+program. It seems that if you load it directly into main ram you can excecute
+it from there, but if you store it anywhere, from then on it will only
+excecute from one of the external devices. It will excecute directly from disk
+or ramdisk. If you try to load it into main ram again, it makes it into a 288
+byte file that will cause a cold start if run. Strangely, the little program
+in the book will ONLY run from main ram and not from ramdisk or disk. I looked
+at the hex dump of your program and it seems you didn't use the "PR" header at
+8 bytes before AC00H. There wasn't a "PI" either, which would indicate a ROM
+image. Is there yet another header type that can be used?
+
+P.S. Above, when I said "if you load it directly into main ram" I meant
+download from a PC or directly from Compuserve.
+
+		- 0 -
+
+Fm: Michael Klar
+To: Denny Thomas
+
+   I hadn't originally thought to put in an option for accessing the other
+banks.  Now that I've been looking through the memory for a while, I regret
+the oversight.  It shouldn't be too hard to add it in, though.  I'll work on
+it.  I'll work on a DOC file, too, if you really think one is needed.
+
+   You're adventures with loading the thing probably have to do with the fact
+that there is an EOF character (1A hex) about 200 bytes into the program,
+which is either screwing up the copy command, or throwing off the file
+handler.  If I hadn't forgotten about the problems I had with the sample
+program in main memory, I would have said something.  As it is, I usually work
+from the RAM disk now, so if it crashes (during testing) I don't have to
+download the program again.
+
+   The header is there in the file (using 'PR'), but it wouldn't show in a hex
+dump of the loaded program, since the header itself isn't loaded at AC00, only
+the program.  As for address range specification, there should be no
+limitations with this exception: you can't make it do all 64K.  For exapmple,
+you can dump 0000 to FFEF, but not 0000 to FFFF.  This is due to a design flaw
+that never got worked out.
+
+		- 0 -
+
+Fm: Denny Thomas
+To: Michael Klar
+
+  Yes, adding bank capability would be nice. Also, while you're feeling
+energetic, you might think about an Intel hex dump option. It sure would be
+nice to be able to disassemble the ROM with one of the many available CP/M
+disassemblers.
+
+I think the problem with main ram excecution might be more than just an EOF
+sensed in the program - the example program is quite short and your program is
+around 1.3k - It could be that the file manager hacks any non-conforming file
+down to a default size. More testing is needed...
+
+BTW, the program will excecute directly from the TDD2.
+
+                - 0 -
+
+Fm: Carmen Paone
+To: Denny Thomas
+
+        The program can also be executed from the RAM chip as well as the
+TDD2.
+
+
+		- 0 -
+
+Fm: Denny Thomas
+To: Carmen Paone
+
+  That's true, and I just confirmed that it won't work from tape since you can
+only supply a filename for it to search the tape for an ASCII file. It also
+truncates any program with an EOF embedded in it. You will probably be able to
+execute directly from the removeable ram cards as well.
+
+		- 0 -
+
+Fm: Carmen Paone
+To: Denny Thomas
+
+        I also got a reserve video message of "Delete Y/N" when I ran the
+program.
+        If I pressed "Y", the program would run, and if I pressed " "No," it
+wouldn't.
+
+		- 0 -
+
+
+Fm: Michael Klar
+To: Denny Thomas
+
+   OK, I just uploaded HEX-DUMP 2 and a DOC file.  The addition wasn't that
+difficult.  Getting it to come out Intel format would be a pretty major
+revision, though, and I'm working on a few other things right now.  In the
+mean time, could you give me the specs on the format?  I'm unfamiliar with
+Intel format (and CP/M in general), as I use a TRS-80 for all developmental
+work (it's hardly ideal, but it works).
+
+   On the EOF character:  If I recall correctly, I had problems with the
+sample program because it DIDN'T have an EOF character in it, and I didn't
+stick one on at the end.  This resulted in the file handler tacking the next
+file in memory onto it.
+
+
+                        - 0 -
+
+Fm: Denny Thomas
+To: Michael Klar
+
+Mike,
+  Intel hex format is pretty easy. The first character is a colon (:), the
+next two are the number of actual bytes in the line (in the example below =
+28). Next comes the starting address. At the end is a checksum of the line.
+The method used is to subtract the *ASCII* value of each character (rather
+than the actual hex value of the byte) from an accumulator that starts at
+zero.
+
+:1CABF8005052150000AC0000CD1E01CD03017CCB452804FE08AFC9CDA30118EF73
+
+The reason I even mentioned it is that it seemed like a pretty easy change.
+You have 99% of what's needed already on the line. A few formatting changes
+and add the checksum and you're there.
+
+I think you're probably right about the EOF. I guess we'll just have to avoid
+the LDAX D instruction and use NOP's when addresses match 1A. Of course
+programs that are over 6656 bytes long will be a real problem!
+
+                        - 0 -
+
+Starting message #: 23906   Starting date: 05-Apr-90  18:04:49
+ Participants:
+Michael Klar 71311,3076
+Carmen Paone 72677,42
+Stan Wong 70346,1267
+Denny Thomas 76701,40
+Tony Anderson 76703,4062
+

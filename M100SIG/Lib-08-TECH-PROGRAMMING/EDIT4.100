@@ -1,0 +1,109 @@
+( File EDIT4.DO )
+CR ."   EDIT4, to edit within RAM4TH"
+CR ."    Copyright 1989  Bill Boyd"
+CR ."      CompuServe ID 75715,70"
+( This file may be distributed and used freely for non-commercial purposes. )
+
+CR
+CR ." Remove instructions for faster loading."
+( This file implements a Forth word, EDIT, which allows the user to access )
+( the Model 100/102 built-in TEXT editor from the RAM4TH environment.  The )
+( file must exist before it can be edited. )
+
+( USAGE: )
+( First, the user must be running RAM4TH, available on CompuServe as )
+( RAM4TH.RLC and described in file RAM4TH.DOC.  After loading EDIT4.100 into )
+( memory as EDIT4.DO, type )
+(   " EDIT4" LOADF )
+( exactly as above, only without the parentheses.  Then, to see how it works, )
+( type )
+(   " EDIT4" EDIT )
+( You will find yourself in TEXT, editing EDIT4.  When finished, press F8 to )
+( resume operation in Forth. )
+
+( Although the implementation results in a word that is in machine code, the )
+( file is written so that the user does not need an assembler to load the )
+( file.  The code is highly commented so that it may serve as a learning tool.)
+
+( The technique used in this definition is based on an algorithm described in )
+( Portable 100 magazine, December 1988, "Calling TEXT from BASIC", by Mo )
+( Budlong. )
+
+BASE @ HEX
+CR ." SP4"
+SP@ VARIABLE SP4 ( used to hold stack )
+ ( pointer for Forth while in TEXT )
+CR ." EDIT"
+CREATE EDIT ( adr n -- )
+ ( Enters editor from RAM4TH and )
+ ( returns to RAM4TH via F8 )
+ 0D1 C, ( POP D ;get number of bytes )
+ 0E1 C, ( POP H ;get addr of string )
+ 0C5 C, ( PUSH B ;save IP )
+ 0CD C,
+ 4C0B , ( CALL 4C0BH )
+ ( ;parse filename into FC93H )
+ 02A C,
+ 0FC99 , ( LHLD 0FC99H ;get file ext )
+ 011 C,
+ 2020 , ( LXI D,2020H ;two spaces )
+ 0DF C, ( RST 3 ;flags from HL-DE )
+ HERE ( remember addr on stack )
+ 0C2 C,
+ 0 ,    ( JNZ L1: ;if ext="  " then )
+  021 C,
+  4F44 , ( LXI H,'OD' ;..replace w/DO )
+  022 C,
+  0FC99 , ( SHLD 0FC99H )
+( L1: )
+ HERE SWAP 1+ ! ( ;endif )
+ 0CD C,
+ 20AF , ( CALL 20AF ;locate dir entry )
+ HERE ( remember addr on stack )
+ 0CA C,
+ 0 ,    ( JZ L2: ;if file found then )
+  021 C,
+  0 ,    ( LXI H,0 ; offset in file )
+  022 C,
+  0F6E7 , ( SHLD 0F6E7 )
+  039 C, ( DAD SP ;get SP value )
+  022 C,
+  SP4 ,  ( SHLD SP4 ;save value )
+  02A C,
+  0FB9D , ( LHLD 0FB9D ;get system top)
+          (  of stack address )
+  0F9 C, ( SPHL )
+  0D5 C, ( PUSH D ;addr of file start )
+  003E , ( MVI A,1 ;for std, not BASIC)
+         (  type of edit )
+  HERE   ( remember addr on stack )
+  021 C,
+  0 ,    ( LXI H,L3: ;ret addr in HL )
+  0C3 C,
+  5F71 , ( JMP 5F71H ;enter TEXT )
+( L3: )
+  HERE SWAP 1+ ! ( fix up LXI H,L3: )
+  02A C,
+  SP4 ,  ( LHLD SP4 )
+         (  ;restore Forth stack ptr )
+  0F9 C, ( SPHL )
+  0CD C,
+  2146 , ( CALL 2146H )
+         (  ;clean up directory ptrs )
+  0CD C,
+  6C9C , ( CALL 6C9CH ;restore fn keys)
+  0AF C, ( XRA A )
+  032 C,
+  0F650 , ( STA 0F650H ;special fn-key)
+          (  action off )
+  03D C, ( DCR A )
+  032 C,
+  0FAAD , ( STA 0FAADH ;enable label )
+          (  keys with 0FFH )
+( L2: ;endif file found )
+ HERE SWAP 1+ ! ( fix up JZ L2: )
+ 0C1 C, ( POP B ;restore Forth IP )
+ 0C3 C,
+ (NEXT) , ( JMP NEXT ;interpret next )
+SMUDGE ( end of definition )
+BASE ! CR

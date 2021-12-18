@@ -1,0 +1,79 @@
+1 'BACKRD' RAMDisk/Datapac backup utlty
+2 'requires POWR-DISK!!
+3 'By Tom Fitzpatrick [72237,2656]
+9 CALL17001:CLEAR256:MAXFILES=1:DEFINTT-Y:DEFSNGZ:DEFSTRA-C:ONERRORGOTO50
+11 Z=63013:C="":RESTORE:DATA128,136,160,168,192,200,0
+12 OPEN"QFQF"FORINPUTAS1:INPUT#1,V,W:CLOSE
+14 READX:IFX<>VTHEN14
+15 IFX=0THEN30ELSEPOKE-1,X:Y=0
+16 CALLZ,18,VARPTR(C):IFPEEK(-1)=0THENREADX:W=0:GOTO15
+17 Y=Y+1:IFY<WTHEN16
+18 CALLZ,12:CALLZ,13,VARPTR(C):CALLZ,23,VARPTR(C):C=LEFT$(C,6)+"."+RIGHT$(C,2)
+21 OPEN"QFQF"FOROUTPUTAS1:PRINT#1,X","Y+1:CLOSE:B=C:C="0:"+C
+22 PRINT@0,"Saving "C,SPACE$(120);:SAVEMC
+23 A="Run9"+CHR$(13):FORT=1TO5:POKE2*T-87,ASC(MID$(A,T)):POKE-86,0:NEXT
+24 POKE-86,5:KILLB:END
+30 CLS:PRINT,"Done":BEEP:KILL"qfqf.do":ONERRORGOTO31:KILLB
+31 END
+50 U=ERR:RESUME51
+51 IFU=52ANDERL=12THENCLS:OPEN"QFQF"FOROUTPUTAS1:PRINT#1,128","1:RUN9
+52 IFU<59ANDU<>55THENPRINT@80,"Error "U" in line "ERL:END
+53 PRINT@80,"DISK ERROR"U"- Press SPACE":BEEP:IFINKEY$=""THEN53
+54 IFU>58ANDU<68THENPRINT"?"MID$(" NRDNCNDAWPDFNDHTAE",(U-58)*2,2)" Error";
+55 IFU=55THENPRINT"Bad file name";
+56 PRINT"- Retry/Skip/Abort";
+57 ONINSTR("RrSsAa",INPUT$(1))GOTO22,22,23,23,30,30:GOTO57
+
+
+BACKRD- RAMDisk/DATAPAC backup utility
+By Tom Fitzpatrick
+
+BACKRD backs up files in the Node DATAPAC to the Tandy portable disk drive. 
+Acroatix' Power-Disk operating system is required.
+
+To load:
+o Put program above in the paste buffer using Select(F7) and Copy(F5).
+o Go into Basic, type NEW, press ENTER twice then press the PASTE key.
+o When the scrolling stops, press ENTER, type SAVE"BACKRD" and press ENTER.
+o COPY BACKRD to Datapac.
+
+To use:
+o COPY all main memory files to Datapac, then KILL all files from main memory.
+ (This includes RAMDSK. To kill, type KILL"RAMDSK and press ENTER in Basic.)
+o Install Power-Disk in main memory, plug in drive and insert a formatted, 
+empty disk.
+o CALL 63013,1 from Basic, place cursor over BACKRD.BA and press ENTER.
+
+BACKRD will procede to save all BAsic, COmmand and DOcument files to disk.
+
+If an error occurs, BACKRD will beep until it gets your attention. Press any 
+key to see the error it has found.
+
+Common errors are:
+DF Disk Full. Place another formatted, empty diskette in the drive and press R 
+to Retry.
+
+Bad file name. A Datapac file has an out-of-the-ordinary name Power-Disk 
+doesn't care for. Press S to Skip that file and continue saving the others.
+
+File too big. A file will not fit in main memory. Press S to Skip.
+
+Refer to your Power-Disk manual for information on other errors.
+
+General info:
+This program is by all accounts a hack; it was written to get me by until I 
+have the time to do the job justice. Power-Disk was used because of the 
+relative ease with which it saves CO and DO files. A BACKRD that also works 
+with TS-DOS and Disk Power is not only possible but probable.
+
+You are more than welcome to improve on this modest design. All I ask is that 
+you drop me a copy of any modifications you make.
+
+Tom Fitzpatrick, [72237,2656]
+
+ADDITIONAL NOTE:
+Removing Power-Disk(LFILESOFF) also removes hooks for wordcount, search-and-
+replace and overwrite in DO files. To fix, after removing Power-Disk go into 
+BASIC and type:
+Kill"RAMDSK<ENTER>
+Call 63013,1<ENTER>

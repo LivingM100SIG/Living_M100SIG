@@ -1,0 +1,191 @@
+      NDEXE+.CO (c) 1992  Randy Hess, James Yi
+      ----------------------------------------
+
+NDEXE.CO was written by James Yi and gave Node DATAPAC/RAMPAC users the
+ability to run .CO files directly from the DATAPAC without first copying the
+files into RAM.  NDEXE+.CO is written for the T200 and expands NDEXE.CO to
+include two new features:
+
+   1) NDEXE+ will automatically clear the correct memory area (HIMEM) for
+      DATAPAC .CO programs which operate in RAM locations below 61104.
+
+   2) NDEXE+.CO can restore HIMEM to 61104 if desired.
+
+This file contains both the instructions for using NDEXE+.CO and the Set-Up
+procedure and loader to create NDEXE+.CO.
+
+
+      Operation
+      ---------
+
+Like NDEXE.CO, there are two requirements for successful NDEXE+.CO use:
+
+   1) NDEXE+.CO must be on the T200 menu of the bank where run.
+
+   2) NDEXE+.CO must exist in memory as NDEXE+.CO and must NOT be renamed.
+
+
+Cursor select NDEXE+.CO and press <ENTER>: the prompt "NDexe:" will display.
+Enter the name of the DATAPAC .CO file to be run, with or without the ".CO"
+extension.  If the file is not found then NDEXE+.CO will repeat the prompt.
+<ENTER> alone at this prompt returns you to the Main Menu.
+
+If the correct running address for your selected program is already clear,
+then the program's running co-ordinates will display and the program will run.
+If memory must be cleared for the program, then the 'End' address of the
+program will briefly display under the prompt as it is loaded: then the
+program is run.  When your program finishes, it will return to the main menu.
+
+You can re-run your program by simply re-running NDEXE+.CO.
+
+You can restore HIMEM to 61104 by running NDEXE+.CO with the <SHIFT> key held
+down: NDEXE+.CO will clear HIMEM and return to the main menu.
+
+(NOTE: NDEXE+.CO can NOT be called from a BASIC program like NDEXE.CO: if
+program control from BASIC is needed, use NDEXE.CO and the appropriate BASIC
+CLEAR statement to prepare necessary HIMEM.)
+
+
+      Set-Up
+      ------
+
+ - Make sure that there is no text after the "END OF DATA" REM in Line 116
+   below.  Use TEXT's F7 and F5 keys to copy all the code after the dotted
+   line into the Paste Buffer.
+
+ - Enter BASIC and press <PASTE>.
+
+ - When the program is finished loading, type "run" (no quotes) and press
+   <ENTER>.  "Loading..." will display for about 10 seconds and you will
+   receive the BASIC "Ok" prompt.  Return to the Main Menu and NDEXE+.CO
+   will be there as a new file.  (If you receive a "chksum error..." message,
+   try the load again: if it repeats you will probably have to download the
+ file again as some data is corrupted.)
+
+ - Save NDEXE+.CO somewhere as a back-up and you're ready to go!
+
+
+Randy Hess
+May 1992
+Omaha, Ne
+CIS: 73267,552
+
+----------------------------------------------------------------
+0 'NDEXE+.CO/200 (c) 1992 James Yi, Randy Hess
+1 'Loader by CO2BA.BA (c) 1989 Paul Globman
+2 CLS:IFPEEK(1)-171THENBEEP:PRINT"NOT 200!":END:ELSEPRINT"Loading..."
+3 FORI=63408TO64185:READX:POKEI,X:SM=SM+X:NEXT:IFSM-103040THENBEEP:BEEP:PRINT"chksum error in data":CLEAR:NEW
+4 SAVEM"NDEXE+.CO",63408,64185,64027:CLEAR:NEW
+5 DATA 195,110,248,195,114,248,78
+6 DATA 68,69,88,69,43,46,67
+7 DATA 79,32,110,111,116,32,102
+8 DATA 111,117,110,100,0,0,0
+9 DATA 0,0,0,0,254,63,218
+10 DATA 223,247,254,194,210,223,247
+11 DATA 197,62,1,193,201,197,71
+12 DATA 230,7,254,6,202,248,247
+13 DATA 120,230,239,254,40,202,248
+14 DATA 247,120,230,247,254,211,194
+15 DATA 252,247,62,2,193,201,120
+16 DATA 254,237,202,219,247,230,207
+17 DATA 254,1,202,42,248,254,205
+18 DATA 202,42,248,120,230,231,254
+19 DATA 34,202,42,248,120,254,194
+20 DATA 218,219,247,254,195,202,42
+21 DATA 248,230,7,202,219,247,31
+22 DATA 218,219,247,62,3,193,201
+23 DATA 229,197,42,204,247,68,77
+24 DATA 235,8,34,202,247,225,209
+25 DATA 25,43,43,229,26,205,208
+26 DATA 247,19,254,3,218,98,248
+27 DATA 237,68,77,42,204,247,43
+28 DATA 8,210,97,248,42,206,247
+29 DATA 8,218,97,248,42,202,247
+30 DATA 9,217,19,254,2,218,104
+31 DATA 248,19,225,223,210,63,248
+32 DATA 201,33,7,0,175,229,245
+33 DATA 33,182,247,17,70,247,229
+34 DATA 205,165,50,205,98,44,205
+35 DATA 166,43,225,204,158,103,193
+36 DATA 225,202,247,18,229,197,33
+37 DATA 0,1,25,235,19,237,34
+38 DATA 204,247,1,112,1,9,34
+39 DATA 206,247,27,98,107,213,1
+40 DATA 86,1,195,46,248,1,6
+41 DATA 168,241,225,43,215,194,27
+42 DATA 168,33,112,169,205,158,103
+43 DATA 205,243,84,215,200,229,126
+44 DATA 167,202,40,168,35,254,46
+45 DATA 194,28,168,55,225,245,205
+46 DATA 67,45,205,202,90,241,218
+47 DATA 58,168,33,67,79,34,76
+48 DATA 247,205,213,168,218,16,168
+49 DATA 205,63,169,205,178,168,17
+50 DATA 251,244,6,3,197,205,30
+51 DATA 0,237,19,19,213,229,205
+52 DATA 11,71,225,209,193,5,194
+53 DATA 75,168,233,211,129,201,219
+54 DATA 131,201,175,211,129,229,36
+55 DATA 195,113,168,219,131,219,131
+56 DATA 37,194,109,168,225,201,205
+57 DATA 101,168,219,131,111,167,219
+58 DATA 131,103,201,38,0,195,138
+59 DATA 168,42,104,169,36,55,200
+60 DATA 229,205,119,168,34,92,169
+61 DATA 225,242,138,168,34,104,169
+62 DATA 229,197,124,205,95,168,14
+63 DATA 10,33,94,169,205,98,168
+64 DATA 119,35,13,194,166,168,193
+65 DATA 225,201,33,94,169,1,8
+66 DATA 6,126,231,35,5,62,46
+67 DATA 204,5,90,13,194,184,168
+68 DATA 201,205,178,168,42,102,169
+69 DATA 205,15,71,33,155,246,195
+70 DATA 204,17,205,130,168,195,222
+71 DATA 168,205,135,168,216,229,17
+72 DATA 70,247,33,94,169,14,8
+73 DATA 205,17,110,225,194,219,168
+74 DATA 125,201,229,213,33,6,22
+75 DATA 229,17,106,169,237,124,181
+76 DATA 55,200,43,217,19,19,237
+77 DATA 124,254,4,218,26,169,19
+78 DATA 19,237,205,119,168,217,124
+79 DATA 205,95,168,27,27,33,0
+80 DATA 0,35,217,205,98,168,167
+81 DATA 201,205,241,168,119,35,11
+82 DATA 120,177,194,33,169,201,229
+83 DATA 34,110,169,42,102,169,34
+84 DATA 106,169,33,10,0,34,108
+85 DATA 169,225,201,205,45,169,33
+86 DATA 251,244,229,1,6,0,205
+87 DATA 33,169,225,205,161,65,42
+88 DATA 180,238,43,223,212,85,255
+89 DATA 235,195,33,169,160,217,88
+90 DATA 80,84,69,82,77,67,79
+91 DATA 43,19,67,218,0,0,53
+92 DATA 3,32,183,78,68,101,120
+93 DATA 101,58,0,175,195,33,250
+94 DATA 62,1,50,69,250,58,22
+95 DATA 253,31,210,57,250,33,49
+96 DATA 250,195,20,78,48,44,183
+97 DATA 82,65,77,58,186,17,77
+98 DATA 250,33,85,255,6,107,205
+99 DATA 186,65,62,0,167,202,110
+100 DATA 248,195,114,248,56,0,1
+101 DATA 0,0,237,11,124,2,11
+102 DATA 19,19,125,2,180,194,90
+103 DATA 255,96,105,35,35,34,170
+104 DATA 255,42,105,246,1,244,1
+105 DATA 9,235,42,251,244,223,218
+106 DATA 61,76,205,11,71,17,156
+107 DATA 246,33,153,255,6,5,205
+108 DATA 186,65,33,159,255,34,52
+109 DATA 239,33,151,255,205,20,78
+110 DATA 48,44,48,48,48,48,48
+111 DATA 58,33,210,50,34,52,239
+112 DATA 42,80,246,249,17,0,0
+113 DATA 237,229,19,19,122,179,194
+114 DATA 172,255,33,251,244,205,161
+115 DATA 65,42,180,238,43,201,0,32
+116 REM  END OF DATA
+

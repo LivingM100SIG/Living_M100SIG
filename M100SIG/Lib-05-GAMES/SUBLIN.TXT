@@ -1,0 +1,125 @@
+        Model 100 Line Description for Sub Adventure
+
+Line       Description
+----       -----------
+110        Set screen, clear screen, clear buffer.
+150        Define variables, dimension arrays.
+190-200    Prints title.
+240-250    Test to see if object is valid object or not.
+290-320    Reads in adventure date. Commands, objects, rooms, and objects in 
+each room.
+360        Set location, "wearing" message, page number, and blank line for 
+erasing.
+400-440    Call random reseed routine. Set safe combination and antisub weapon 
+turn.
+520        Increment turn counter.
+530        Tests to see if enemy weapon has hit yet, and if so, beeps and sets 
+depth.
+570        Tests to see if battery has run down yet.
+610        Erase top of screen, for scrolling effect.
+650        Tests to see if crewmen are following, and if they are, doesn't let 
+them follow player into certain sections of the ship. Also increments # of 
+objects in room array.
+690        Print current location.
+730        Tests to see if lights have gone out.
+770-810    Prints visible objects.
+850-910    Prints allowable directions.
+950        Decrements # of objects in room array if crewmen are following.
+990        Prints dividing line.
+1030       Tests to see if player didn't make it to the surface quickly enough.
+
+1050       Tests to see if player starved to death.
+1070       Tests to see if person ig getting hungry.
+1090       Tests to see if reactor has had melt down. Tests to see if player 
+hears warning claxon.
+1110       Tests to see if player entered reactor room without wearing anti-
+radiation outfit.
+1130       Tests to see if player has made it to surface.
+1170       Get old room for proper scrolling.
+1210       Get input from player.
+1220       Tests to see if player's input was 1 letter, could be a direction 
+abbreviation.
+1230-1260  Separates verb and noun.
+1270-1290  Tests to see if verb is a valid command.
+1330       Using verb number, jump to appropriate line.
+1370-1510  GO COMMAND. Tests to see if player is moving in the dark. Sets L1 to
+last location. Tests to see if chosen direction is valid. If so, sets L to new 
+location. Tests to see if player is climbing in or out of a bunk. Tests to see 
+if player has fallen by going the wrong direction in the dark.
+1550-1650  GET COMMAND. Tests to see if object is a valid object. Tests to see 
+if object is present. Tests to see if object can be picked up. Tests to see if 
+player already has object. Tests to see if object is weights. Weights can be 
+lifted but not picked up. Tests to see if player is already carrying 5 objects.
+If player can pick up object, IN is incremented, IS(L) is decremented. 
+Appropriate message is printed. If object is one that can be placed in 
+something else, like the decoder, flag must be set back to 0.
+1690-1730  DROP COMMAND.  Tests to see if object is a valid object. Tests to 
+see if there is room to drop object. (A limit of 5 objects and the crewmen can 
+be in a room.) Gets rid of "Which you..." when player drops uniform or outfit. 
+Decrements IN and increments IS(L). Prints appropriate message.
+1770-2100  LOOK COMMAND. Tests to see if object is a valid object. Prints 
+appropriate message for each object.
+2140-2230  READ COMMAND. Makes sure player has object in possession, and prints
+appropriate message for each object. The book has two chapters, which when 
+read, alternates between chapter 1 and 2.
+2270-2630  OPEN COMMAND. Tests to see if object is valid. Tests to see if 
+object is safe. Tests to see if object is already open. Each object requires 
+tests to see if player is in right location, and in some cases, if player has 
+done certain tasks before. Like lifted weights, surfaced sub, or obtained 
+wrench. Appropriate actions are then taken when player opens door.
+2670-2800  CLOSE COMMAND. Tests to see if object is valid. Tests to see if 
+object is safe. Tests to see if object is already closed. Appropriate actions 
+are then taken when player closes object.
+2840-2850  EAT COMMAND. Tests to see if player is in right location, and if 
+food has been cooked, and if player has food. If all is true, appropriate 
+actions are taken.
+2890-2910  LIFT COMMAND. Tests to see if player in right location, and if 
+player has lifted the weights before. All appropriate actions are then taken.
+2950-2970  WEAR COMMAND. Tests to see if player has object in hand. tests to 
+see if player is already wearing object. Tests to see if object can be worn. 
+Then appropriate actions are taken.
+3010-3020  WAKE COMMAND. Tests to see if player holds object. Tests to see if 
+player is in right location. Then appropriate actions are taken.
+3060-3100  INVENTORY COMMAND. Gets player inventory. Routine tries to conserve 
+lines by putting 2 objects next to each other if the second object won't be 
+broken in two.
+3140-3190  PUSH COMMAND. Tests all conditions to see if player can push button.
+Then all appropriate actions are taken.
+3230-3330  SAY COMMAND. Takes appropriate action for all the things a player 
+can say. For some commands, certain things must have been done, and tests are 
+made for all these conditions.
+3370-3390  USE COMMAND. Several tests are made to see if player can use the 
+radio. If all conditions are met, the appropriate actions are taken.
+3440-3460  FIX COMMAND. Tests to see if player has met all conditions to use 
+the fix command. Then appropriate actions are taken.
+3500-3510  WATCH COMMAND. Tests to see if all conditions have been met by 
+player. Then appropriate actions are taken.
+3550-3560  COOK COMMAND. Tests to see if all conditions have been met by 
+player. Then appropriate actions are taken.
+3600-3690  PUT COMMAND. Tests are made to see if player has met all conditions.
+Then appropriate actions are taken.
+3730-3790  SAVE COMMAND. Save game file.
+3830-3880  LOAD COMMAND. Load old game.
+3920       Error detection routine. Recovers from I/O errors.
+3960-4030  If player used abbreviated commands, input string is set to full 
+command. Example F to GO FOR.
+4070       Displays lost game message.
+4110-4120  Does player want to play again ?
+4160       End of program.
+4200-4210  Congratulations message.
+4250       Command data.
+4260-4320  Object data. In the form :Full description, Abbreviated word, 
+original location. If original location is 0, then something must be done to 
+get object.
+4330-4420  Room data. In the form :Room description, room # if fore, room # if 
+aft, room # if port, room # if starboard, room # if up, room # if down. If # is
+0, no movement in that direction is allowed.
+4430       IS(L) array data. These numbers are the # of objects in each room at
+the beginning of the game.
+4470-4530  Prints decoded message after player uses radio, blows up radio and 
+takes the required actions.
+4570       Pause loop.
+65500      Random routine. This routine maintains a duplicate of the random 
+seed. Which is used to reseed the random number generator to avoid non-random 
+sequence.
+

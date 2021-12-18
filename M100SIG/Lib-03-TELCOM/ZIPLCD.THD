@@ -1,0 +1,254 @@
+ZIPLCD.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+There are a number of reasons for wanting to control the LCD in a special
+way from within machine language programs.  One is to increase the effective
+transfer speed by inhibiting screen scroll (as discussed here, and
+implemented in Basic programs such as Denny's X/Q-Hayes series).  Another
+would be to create special terminal features (e.g., a split screen
+capability for use during COnferences here).  These messages discuss M/L
+code for LCD control.
+
+Message range: 156113 to 156362
+Dates: 9/1/87 to 9/6/87
+
+
+Sb: #FAST SCREEN
+Fm: Wilson Van Alst 76576,2735
+To: Phil Wheeler 71266,125
+
+Phil, I caught some of the message traffic between you and Leonard.  I've had
+occasional strange behavior from XMDHAZ.  But I've also been playing a lot with
+the RST 6.5 hook; so I can't tell if the bugs are your'n or my'un.
+
+Here's the best that my "fast-screen" experiments have come up with so far:
+
+
+        PUSH    PSW
+        PUSH    H
+        LXI     H,F639H ;CURSOR ROW?
+        MOV     A,M
+        SUI     08H;    ;BOTTOM ROW?
+        JC      HERE
+        MVI     M,00H   ;FORCE TOP ROW HERE    POP     H
+        POP     PSW
+        ENI           <----------------------Error (see msgs below)
+        RET
+
+I have this installed just below XMDPW2, and I JMP to it from the UART
+interrupt vector at F5FCH.  Suddenly the LABEL key becomes the equivalent of a
+scroll on/off toggle.  With labels displayed, the cursor never reaches Row-8,
+and the screen operates normally.   Take down the labels, and you now get
+noscroll with a FULL-SCREEN overwrite, sted of the 1-line overwrite we're used
+to seeing.
+
+You get a better sense of the data flow, and my tests so far indicate it
+operates _just as fast_ as the previous no-scroll method!  (Supporting my
+theory that re-mapping the screen for the LCD drivers is the bottleneck that
+slows things down during scroll-on operation.) So far the technique hasn't
+produced any crashes, but I'd like to improve it before making it generally
+available.  If you have time to give it a try and offer comments, I'd be
+grateful.
+
+A WARNING: _Do not_ leave the RST 6.5 interrupt set to this feature.  It is DOS
+un-friendly.  And I haven't checked yet to see if it causes problems with
+Xmodem operation.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Denny Thomas 76701,40
+
+I think I've stumbled onto something useful, but can't test it beyond the speed
+limits of the computer where I work (faster than CIS, but still not a true 2400
+baud).
+
+You once mentioned access to a BBS that transfers at 2400 bps.  Wonder if you
+feel like testing some code to see if further refinements seem in order?
+
+PLEASE note the warnings about re-setting RST 6.5 (assume you guys know all
+about that stuff, but the warning makes my conscience feel better).
+
+
+Fm: Denny Thomas 76701,40
+To: Wilson Van Alst 76576,2735
+
+Van, Fancinating stuff! Looks like it's very straightforward. More importantly,
+it looks like you've found the key to the much sought after split screen
+option. (typing on the bottom line while the rest scrolls above it) I wasn't
+aware that the RST 6.5 gave an entry into telcom EXACTLY where I needed it. I
+can just make a check of the present line and adjust everything accordingly.
+(simple concept, probably complex in implementation.) I'll look at your routine
+and see what I can come up with.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Denny Thomas 76701,40
+
+Denny, Gulp.  There was an error in the code I sent to Phil: a meaningless ENI
+in the n ext to last line.  Just get rid of it.
+  Do not interpret it as an EI, please.  That will take you to the land where
+th e deer have red noses.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Phil Wheeler 71266,125
+
+Phil, Yoicks!  The listing I just sent you had an error.  The penultimate line,
+ENI, s hould not be there.  I should not be interpreted as an EI, or you'll
+freeze your bauds off.  The machine, in this case, knows when to re-set its own
+interrupt.
+
+
+Fm: Denny Thomas 76701,40
+To: Wilson Van Alst 76576,2735
+
+No problem, I haven't even gone offline yet. I probably would have asked you
+why you would be trying to enable a non-maskable interrupt.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Denny Thomas 76701,40
+
+Denny, I'm not sure I understand your "split screen" quest.  You want UART
+output on one part of the screen and keyboard output on the other?  Pardon my
+lack of imagination, but what would that be used for?
+
+As you'll see when you play with the "straightforward" code I sent, things
+aren't wonderfully simple.
+
+If the code worked as intended the LCD  printing would stop as soon as the
+cursor touched the 8th line, then the cursor would home and pinting would
+resume.  But the real world is cruel.  There's printing of some sort on line 8.
+It doesn't seem to affect in/out to RAM, but it's messy on the LCD.  (Still
+better, I feel, than the one-line writeover.)
+
+The complication results from a three-ball (at least three) juggle: 1) the
+"trigger" location for the RST 6.5 hook, 2) the routine for reading the UART
+circular buffer, and 3) the LCD plotter's in/out to F639 and F63A, where cursor
+position is read and controlled. All that stuff whizzes past me at far more
+than 2400 baud.
+
+So, I make no claims for the code I sent, except that it appears to avoid
+scrolling slowdown and it gives a better, if somewhat messier, idea of what's
+coming in from a high-speed host.
+
+
+Fm: Denny Thomas 76701,40
+To: Wilson Van Alst 76576,2735
+
+  Interesting results. I tried setting up the vector prior to entering telcom.
+Wrong. It seems to hang just about everywhere. I intended to make it simple,
+but it looks like you have to set the interrupt just prior to getting online.
+
+If you have ever been in a conference you'd appreciate split screen. Being able
+to compose text on line 8 while everyone else's lines are flying by on 1-7
+would really cut down on confusion. Programs like Procomm and Qmodem have this
+feature.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Denny Thomas 76701,40
+
+Denny, Don't understand why you're hanging.  The only time that happens to me
+is when the FAST code isn't resident where the vector expects it to be.  I've
+used the code with TELCOM and XMDPW2 with no unexpected effects.
+
+You are vectoring with a JMP, not a CALL, right?  And you've done whatever
+ORG'ing and END'ing your assembler requires, at the top and bottom of the FAST
+code?
+
+Can't think of what else might be going wrong.  But if you want to send me a
+step-by-step of what you're doing, I'll compare it with what I do, and maybe we
+can come up with something.
+
+
+Fm: Denny Thomas 76701,40
+To: Wilson Van Alst 76576,2735
+
+Oops, I was just storing the address and not the entire instruction. That would
+accound for it. For some strange reason, I always thought that the vector table
+was 2 bytes, not 3. I'll try it again.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Denny Thomas 76701,40
+
+Denny, It's getting better.  Replace the
+        MVI     00H     ;FORCE TOP ROW instruction with
+        MVI     01H and the display looks much cleaner.
+
+I did some comparative timings on a long download from work:
+
+                TELCOM   XMDPW2   FAST
+                 TERM     (#)      (*)
+                 ----     ----    ----
+ 300 BAUD        282s      n/a     n/a
+2400 scroll on   118s     118s    118s
+2400 scroll off   44s      44s     44s
+
+# using F6 to toggle scroll for one-line writeover. * using LABEL key to toggle
+scroll for full-screen writeover.
+
+Curiously, the speed improvement at 2400 bps, with scroll ON, was _greater_
+than anticipated (factor = 2.4, for a comparative baud rate of 720) and, with
+scroll OFF, was _less_ than anticipated (factor = 6.5, for a comparative rate
+of 1950).
+  Possible explanation: host machine at work uses separate ports for 300 and
+240 0 comm., and buffering may be different.
+
+Would still love to see whether FAST matches the F6 toggle at a true 2400 bps.
+
+Have you managed to get this thing working at all?
+
+
+Fm: Phil Wheeler 71266,125
+To: Wilson Van Alst 76576,2735
+
+Just started to make a THD out of the "fast screen" stuff.  But your last (or
+the one this replies to) msg looks a bit strange.  When I  move the stuff to
+the right over, I get that TELCOM/TERM, XMDPW2(#) & FAST(*) all give same
+speed.  Is this correct, and does this mean that FAST is not a worthwhile
+change?  Puzzled!
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Denny Thomas 76701,40
+
+Denny, I should have been more clear about the JMP instruction required at RST
+6.5's RAM vector.  Hope you didn't end up with a frostbitten UART.
+
+Efforts to improve the original code have stalled, dut to programmer's
+ignorance.  But the full-screen no/scroll option, I think, is worth making
+available.  I've written a shell to install the code at user's choice of memory
+location, and I'll be uploading that program -- ZIPLCD.LDR -- today.
+
+Maybe you'd be willing to road-test it, while I work on the DOC and DES stuff?
+
+So far, I've discovered that there's no apparent conflict with the Xmodem
+function of XMDPW2, or with TS-DOS on ROM -- except when using the SALL routine
+(RAM mapping to disc).  That'll get you sneezin' if the poke at F5FC is
+anything but a RET.
+
+
+Fm: Wilson Van Alst 76576,2735
+To: Phil Wheeler 71266,125
+
+And now that I look a the table again, it's clear that it was unclear.  It was
+intended to illustrate that the full-screen overwrite in FAST (now called
+ZIPLCD) is just as speedy as the one-line overwrite with F6.
+
+The important points:
+        1) ZIPLCD, with its better (though not perfect) display, apparently
+           offers the same speed improvement as the no/scroll feature we're
+           used to.
+        2) It works with both TELCOM and with XMDPW2.
+        3) The RST 6.5 detour to ZIPLCD, which happens whether you're
+           scrolling or not, doesn't measurably slow things down when the
+           feature is not in use.
+
+I've been tinkering with ways to improve the code, but it's a bug-swat every
+time I change things.  Even without refinements I find it a major improvement
+over the F6 routine.  Have u/l'd an install/remove .BA program for Denny, and
+hope he'll take it through a few curves while I work on DOC and DES.

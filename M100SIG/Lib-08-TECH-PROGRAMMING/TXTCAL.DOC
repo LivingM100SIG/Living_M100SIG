@@ -1,0 +1,39 @@
+
+
+TXTCAL.ASM and TXTCAL.100
+
+by Mo Budlong 76167,3310
+
+(c) 1988 Mo Budlong 
+May be freely used in any non-commercial application.
+
+The TXTCAL.ASM program allows TEXT to be called from within
+a BASIC program to edit a file, and to return to BASIC at
+the next line or statement.
+
+TXTCAL.BAS includes a loader and a sample call to the
+program. You do not need TXTCAL.ASM to make the program
+work. It is included for those who are interesed in how
+the technique works. All you need are the data statements
+and the loader in TXTCAL.BAS.  The TXTCAL.ASM routine has
+only one location dependent address and the loader takes
+care of adjusting it for you. To change the address of the
+TXTCAL routine, change the TX=value at line 320. Also
+ensure that you have cleared enough memory to load at that
+address as is shown in line 110 of the sample program.
+
+If you are used to using TXTJMP.200 there are a couple of
+differences. TXTJMP.200 passes the starting address of the
+DO file to the machine routine. TXTCAL passes a pointer to
+a variable containing the name of the file to edit.
+Locating the start of the file is taken care of within the
+assembly language routine. TXTJMP.200 restores BASIC keys
+in the BASIC code after returning from the editor. TXTCAL
+restores this within the machine code.
+
+TXTJMP and TXTCAL both ensure that the file to be edited
+exists by opening the file in append mode and closing it
+before calling their respective machine language routines.
+
+Mo.
+

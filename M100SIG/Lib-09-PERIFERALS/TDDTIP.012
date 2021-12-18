@@ -1,0 +1,67 @@
+Ches Looney [73016,1336]
+
+I have followed the furious action in building a better menu for POWR-DISK
+with interest and applause for the tighter and tighter code.  My own
+interests could be satisfied with just a better directory listing than
+LFILES since going to BASIC or TEXT for file transfer is not high on my list
+of irritations.  The following program puts the LFILES result in a holding
+file (DIR), and then formats the information for 40 character display on the
+screen.
+
+The program is shown first in a "pretty" listing and then in a more
+compressed form.  It can be made even shorter by combining lines 2 and 3 by
+simply replacing the "3 " with a colon.  In addition, lines 4 and 5 can be
+combined by replacing the "5 " with "ELSE".  I separated the lines in order
+to have no line longer than 80 characters.  Line 1 uses LFILES TO for
+putting the disk directory into a file (DIR), and then opens two files (DIR
+and LCD:) for input and output.  Lines 2 and 3 get the directory entries and
+place them into a 40 character format, eight lines at a time.  Each line is
+ended with a semicolon so that the eighth line will be displayed at the
+bottom of the screen while waiting for an ENTER before proceeding.  The
+screen is cleared for each set of eight lines for maximum display speed.
+Line 4 goes back for another eight (maximum) lines if the End-Of-File
+(EOF) mark is not present.  EOF is tested before each line input
+from DIR so that appropriate action can be taken.
+
+I use a slightly modified variation of this program for a hard copy of disk
+contents.  Adding an additional 'IF NOT EOF...PRINT#2,A$;"   ";' at the end
+of line 2, deleting 'LINEINPUT K$:CLS' , and changing 'LCD:' in line 1 to a
+file name of your choice or to 'LPT:' will convert it to store or print
+three directory inputs on each line of the output file or printer.
+
+For most convenient loading of the program, copy the compressed program at
+the end of this message and paste it into a separate file.  Do not try to
+load the pretty listing; it is for human use and will gag the computer.
+
+Pretty listing for program DSKDIR.BA
+
+    1 LFILES TO "DIR"
+     :MAXFILES=2
+     :OPEN"DIR"FOR INPUT AS 1
+     :OPEN"LCD:"FOR OUTPUT AS 2
+    2 CLS
+     :FOR X=1 TO 8
+     :PRINT#2,
+     :LINEINPUT#1,A$
+     :PRINT#2,A$;"   ";
+    3 IF NOT EOF(1)
+         THEN LINEINPUT#1,A$
+         :PRINT#2,A$;
+    4 IF NOT EOF(1)
+         THEN NEXT
+         :LINEINPUTK$
+         :GOTO 2
+    5 CLOSE
+     :MAXFILES=1
+     :KILL"DIR.DO"
+     :END
+
+Compressed listing for program DSKDIR.BA
+
+1 LFILESTO"DIR":MAXFILES=2:OPEN"DIR"FORINPUTAS1:OPEN"LCD:"FOROUTPUTAS2
+2 CLS:FORX=1TO8:PRINT#2,:LINEINPUT#1,A$:PRINT#2,A$;"   ";
+3 IFNOTEOF(1)THENLINEINPUT#1,A$:PRINT#2,A$;
+4 IFNOTEOF(1)THENNEXT:LINEINPUTK$:GOTO2
+5 CLOSE:MAXFILES=1:KILL"DIR.DO":END
+
+

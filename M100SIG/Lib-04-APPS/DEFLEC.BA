@@ -1,0 +1,26 @@
+deflec
+0 '"Deflection Analysis on Personal 	Computers", Robert W. Green, ref MD 3/6/86 p153 for R/S M100 Mark Stangl
+10 DEFSNGC-Z:DEFSTRC:CL=CHR$(13)+CHR$(10):PI=3.1416:CLS:PRINT"Deflection Analysis based on Theorum of Castigliano. ";
+20 PRINT"Calculate deflections of up to five series elements."CL
+30 INPUT"No. of elements";N:IFN>5THEN30
+40 'DIM I(N),F(N),G(N),E(X),J(N)
+50 FORX=1TON:CLS:A$="Enter value as prompted for element":PRINTA$X;CL:PRINT"Section Type"CL"1-Tube"CL"2-Square bar ":INPUTSE
+60 IF SE=1 THEN 70 ELSE 90
+70 INPUT"OD, ID, Lenght";OD,ID,L:IFID>=ODTHEN70
+80 I(X)=PI*(OD^4-ID^4)/64:GOTO100
+90 PRINT"Height is along line of max deflection":INPUT"Width, Height, and Lenght";B,H,L:I(X)=B*H^3/12
+100 INPUT"Material 1-AL 2-SS 3-CRS";M:ONMGOTO110,120,130:BEEP:GOTO100
+110 E(X)=1E7:G(X)=3.8E6:GOTO140
+120 E(X)=27E6:G(X)=10.6E6:GOTO140
+130 E(X)=30E6:G(X)=11.4E6
+140 CLS:PRINTA$X;CL
+150 PRINT"1-End loaded cantilever"CL"2-Uniformly loaded cantilever"CL"3-Intermediate loaded cantilever"CL"4-Torsion":INPUTY
+160 ON Y GOTO 170,180,190,200:BEEP:GOTO150
+170 K(X)=3*E(X)*I(X)/L^3:GOTO230
+180 K(X)=8*E(X)*I(X)/L^3:GOTO230
+190 INPUT" Center distance A from wall at which    force acts";A:K(X)=-6*E(X)*I(X)/(A^3-3*A*L):GOTO230
+200 INPUT" Perpendicular distance at which force   acts ";R:IFSE=2THEN210ELSEJ(X)=PI*(OD^4-ID^4)/32:GOTO220
+210 J(X)=(B*H*(B*B+H*H))/12
+220 K(X)=(J(X)*G(X))/(R*R*L)
+230 PRINT"K for member "X"="K(X):FORI=1TO200:NEXT I,X:FORK=1TON:NE=NE+1/K(K):NEXT:NE=1/NE:INPUT"Force acting on system";F
+240 YM=F/NE:PRINT"Ymax="YM"":PRINT"System spring constant is"NE

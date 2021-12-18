@@ -1,0 +1,104 @@
+
+        (c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Joe Sonneman
+To: Wilson Van Alst
+
+VAN--please explain more about scrolling rate limit on M100.  Does this mean,
+if you use an external 2400 bps modem, that the effective speed is 650 bps?
+How can one download/upload at 2400 and read the download later, at leisure,
+off-line?  Thanks, Joe
+
+
+		- 0 -
+
+Fm: Wilson Van Alst
+To: Joe Sonneman
+
+   You got it.  The incoming data rate maxes at about 650 Baud unless you
+disable scrolling on the M100/102, no matter what your modem is capable of.
+   What happens, in simple terms is: when the laptops feels the urge to print
+a new line at the bottom of the screen, it sends a ^S to the host computer,
+which stops transmission.  Then the screen does its scroll routine, moving a
+bunch of characters inside the memory allocated to the 'Prev' screen and the
+normal screen, re-painting the normal screen, clearing the bottom line, and
+finally sending a ^Q to the host to start receiving and displaying the
+incoming data once again.  The time needed for all that work is no problem at
+300 Baud, but it becomes a bottleneck when you're dealing with 1200 or 2400
+bps.
+   So, how to disable scrolling?  This program, run from the main menu, will
+take you into TELCOM with scrolling disabled:
+
+ 0 'SCROFF.BA  (c)1989 Wilson Van Alst
+ 1 printchr$(27)"V"chr$(27)"T";:call21069
+
+   Operating in the scroll-off mode takes some getting used to; but it does
+allow you to download stuff at a true 2400 bps.
+   BTW, the scroll speed isn't an issue for files you're uploading from the
+M100, because they don't display on the screen.
+
+		- 0 -
+
+Fm: Bill Boyd
+To: Wilson Van Alst
+
+   Your explanation of XON/XOFF was correct enough to be "in simple terms,"
+but it does not describe what happens inside the computer accurately.  In case
+someone wants to know, the printing to the screen and the reception from the
+host are independent.  The main task the computer is doing is checking whether
+any characters are in the receive buffer, and acting on what it finds there.
+When a character comes in from the host, the computer puts it in the receive
+buffer, if it is not full.  When the receive buffer is nearly full, it sends
+an XOFF (^S) to the host.  When it has nearly emptied the receive buffer, it
+sends an XON (^Q) to the host.  From the point of view of the main program the
+computer is running, these characters are showing up in the receive buffer out
+of nowhere.
+   Thought someone might like to know the details.
+
+                - 0 -
+
+Fm: Wilson Van Alst
+To: Bill Boyd
+
+   What you describe concerning the role of the receive buffer is quite
+accurate -- and certainly comes closer to what's really happening than my
+oversimplified analysis.  I can't quite agree, though, with your conclusion
+that "the printing to the screen and the reception from the host are
+independent."
+   Let's see if this is comports with your understanding:  As the computer
+plods through its routines for displaying characters on the screen, it
+temporarily stops "fetching" bytes from the receive buffer -- although new
+bytes may be arriving and accumulating there, thanks to the special
+"interrupt" status enjoyed by the RS232/modem port.
+   If the screen display routine is relatively slow (eg., when the LCD needs
+to scroll a line), or the incoming comm data is relatively fast (eg., 650+
+Baud), characters start to pile up in the receive buffer -- because they're
+not being "fetched" as quickly as they come in.
+   If the slow LCD routines allow the receive buffer to get nearly full, the
+computer sends an XOFF to the host ... etc.
+
+   'Zat make sense?  The ^S/^Q is, as you say, a function of the receive
+buffer's "fullness" -- but the latter is a product of (relatively) slow LCD
+display, especially when the computer has to sling all those bytes around
+during a scroll maneuver.
+
+                - 0 -
+
+Fm: Bill Boyd
+To: Wilson Van Alst
+
+   Yes, your explanation of the workings of the serial communications in
+conjunction with the display routines agrees with my understanding of how it
+works.  As I said, they are independent (maybe I should have said "they are
+handled independently"), but, as you said, the receive buffer's "fullness"
+depends on how quickly the characters are displayed relative to how quickly
+they come in.
+
+
+Starting message #: 191143  Starting date: 06-Dec-89  01:15:57
+ Participants:
+Joe Sonneman 73760,717
+Wilson Van Alst 76576,2735
+Bill Boyd 75715,70

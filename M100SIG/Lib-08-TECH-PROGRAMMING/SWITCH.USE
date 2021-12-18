@@ -1,0 +1,171 @@
+This series of captured messages indicates several methods of sampling an
+external event via a switch, an on-off closure of a set of contact points,
+that can be monitored and interpreted by the computer; and getting that
+information into the computer via the printer, serial, or bar-code reader
+ports.
+
+Copyright 1991 Golden Triangle Corporation and Model 100 Forum.
+For informational use only.
+
+
+#: 36372 S8/Tech/Programming
+    20-Jul-91  14:32:15
+Sb: #Data events into M100
+Fm: David Spoelstra 76256,3161
+To: ALL
+
+I've started on a new programming project.  I'm writing a ML program so that
+we can time cars in an autocross.  I want to keep the whole thing battery
+powered, hence the use of the M100 to time the cars.  I can supply a switch
+closure to the M100, or any other type of stimulus that will work well.  My
+question is this:  What type of stimulus works well, and where is the best
+place to bring it in??   Should I toggle lines on the serial port?  I'm all
+ears.  I will make the program public domain, and post it here when I'm done.
+
+
+#: 36373 S8/Tech/Programming
+    20-Jul-91  17:03:29
+Sb: #36372-Data events into M100
+Fm: Alan Rowberg 76703,4421
+To: David Spoelstra 76256,3161 (X)
+
+I think you better decide on the requirements a little better before you
+design the system.  Will there only be one switch for all cars?  How long will
+the switch closure be and how fast must you respond to it?.  How soon must it
+be ready to respond again?  Will the switch have a latch to hold it on until
+the M100 turns it off -- for positive acknowledgement?
+
+
+#: 36376 S8/Tech/Programming
+    20-Jul-91  23:25:59
+Sb: #36372-#Data events into M100
+Fm: Wilson Van Alst 76576,2735
+To: David Spoelstra 76256,3161 (X)
+
+David,
+   Your project might make use of the bar code interface.  Grounding Pin 2 at
+the BCR socket (i.e., shorting it to Pin 7) does two things: sets bit 3 at
+input port BBh, and triggers an RST5.5 hardware interrupt (with a vector at
+F5F9h) if the interrupt mask is set to acknowledge 5.5.
+   The port interface is pretty straightforward:
+
+wait:          in BBh
+               ani 8
+               jz wait
+               di ;      ...start timing...
+
+   You could throw a <BREAK> or other keyboard check into the 'wait:' routine,
+to get you out of the program if the switch fails.  Also, note the 'di'
+instruction in front of the timing section: if you don't shut off interrupts,
+your timing loops will be erratic as the computer performs background tasks
+like polling the keyboard and updating clock/calendar information.
+   I look forward to seeing your program when it's done!
+       Regards,
+        Van
+
+
+
+
+#: 37027 S8/Tech/Programming
+    23-Aug-91  23:30:37
+Sb: #36372-Data events into M100
+Fm: Scott Griepentrog 72427,335
+To: David Spoelstra 76256,3161
+
+I'm currently designing a bike speed/distance logging program, and have found
+that the serial port is the best place for input in my instance.  The reason
+is I can 'trip' the input signal rather quickly and not loose the count into
+the basic program.  The drawback is that the trip signal cannot exceed about
+50-100 ms or so, depending on the baud you use.  To test this yourself, use
+the following example program:
+
+ 10 open "com:38n1d" for input as 1
+ 20 print asc(input$(1,1))
+ 30 sound 600,1
+ 40 goto 20
+
+Then take two wires, one from pin 3, the other from pin 20 of the serial port
+and touch them together quickly.  Every time you do, the program receives one
+input 'garbage' character, usually 255.  By hooking up a hall effect switch
+(or you could just use a normal momentary) to trigger once per wheel rotation,
+I can get the speed and distance traveled while I ride.  I even though of
+trying this on my car, but the input speed might be a bit too fast.
+
+Another input option would of course be the BCR input, but you'd have to write
+a ML routine to get the interrupt signal from it (polling it would be too
+slow).
+
+Hope this helps!
+
+StG
+
+
+#: 36915 S8/Tech/Programming
+    18-Aug-91  15:27:49
+Sb: #INTERF W/SWITCH
+Fm: Gary King 74156,275
+To: ALL
+
+I need to detect whether an external switch is open or closed from a basic
+program running on a M100.  Anyone have any ideas? Gary
+
+
+#: 36916 S8/Tech/Programming
+    18-Aug-91  16:02:40
+Sb: #36915-#INTERF W/SWITCH
+Fm: Tony Anderson 76703,4062
+To: Gary King 74156,275 (X)
+
+See the file PORTS.USE in Library 8.
+
+
+#: 36925 S8/Tech/Programming
+    19-Aug-91  07:34:51
+Sb: #PORT.USE
+Fm: Gary King 74156,275
+To:  76703,4062 (X)
+
+Tony, The info in PORTS.USE (lib8) looks exactly like what I need to interface
+the M100 with an external switch through the printer port.  However, I don't
+get the expected results; when I jumper pin 25 with a data line, nothing
+happens.  Have you tried this routine?  Any ideas?  Any help will be much
+appreciated. Gary.
+
+
+#: 36979 S8/Tech/Programming
+    20-Aug-91  21:25:29
+Sb: #36925-PORT.USE
+Fm: TRACY ALLEN 76670,326
+To: Gary King 74156,275
+
+Dear Gary,
+  I think you probably want to tie the printer status line to common, not to
+the DATA lines.
+
+The printer status lines have pullup resistors to +5 volts, thus, when you
+external switch pulls either of them to common the value you see at port 187
+will change.  
+
+    10 ?INP(187)AND6
+    20 GOTO 10
+
+The printer DATA lines hop up and down like crazy!
+
+
+#: 37016 S8/Tech/Programming
+    23-Aug-91  18:32:47
+Sb: #36925-PORT.USE
+Fm: Wilson Van Alst 76576,2735
+To: Gary King 74156,275
+
+Gary,
+   As an alternative to the printer port, you might try connecting your switch
+between pins 2 and 5 of the bar code reader socket.  The status of the switch
+can be read from bit 3 at Port 187:
+
+ 10 if inp(187) and 8 then s$="Closed" else s$="Open  "
+ 20 print @90,s$;:goto 10
+
+   Have fun!
+    Van
+

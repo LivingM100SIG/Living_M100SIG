@@ -1,0 +1,28 @@
+
+PDSK07.200
+
+Converted, transcribed and tweaked as necessary by Tony Anderson, 76703,4062.
+September 1988
+
+      (C) 1985 Acroatix Inc.
+Released for exclusive distribution on CompuServe's Model 100 Forum.  All other
+rights reserved.
+
+
+This program runs a copy of FLOPPY.CO directly from disk, assuming you have
+previously saved FLOPPY.CO to the disk.  Although since POWR-DISK is inherently
+superior to FLOPPY.CO, I don't know why anyone would want to do so.  The only function that FLOPPY can perform that
+POWR-DISK can't, is to copy files from disk to disk. (backups)
+
+Program requires that a copy of FLOPPY.CO and PD-FLP.CO (PDSK09.200) be on the
+disk that's loaded in the disk drive.  PD-FLP loads a version of POWR-DISK into
+RAM below FLOPPY.CO so that they can both be in RAM at the same time.
+
+
+0 ' FLOPPY.BA
+2 'Runs FLOPPY from disk.  Relocates POWR-DISK if necessary (C) 1985 Acroatix Inc.
+5 IFMAXRAM<=55356THENRUNM":floppy"
+10 ONERRORGOTO40:LOADM":pd-flp.co",F
+20 CLEAR100,55356:LFILESOFF:RUNM"pd-flp"
+30 KILL"pd-flp.co":RUNM":floppy"
+40 IFERR=67THENRESUME20

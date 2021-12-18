@@ -1,0 +1,279 @@
+Format:	.#	occurs in line #
+	=#	has value assigned in line #
+	p#	passed as parameter in line #
+
+  1	.9	.10	.11	.19	.22	.30
+
+  2	.2
+
+  3	.33	.82
+
+  6	.3	.42	.57
+
+  7	.41	.45
+
+  9	.9	.12	.13	.14
+
+ 10	.10	.11
+
+ 11	.13	.16
+
+ 12	.10
+
+ 13	.12
+
+ 17	.8
+
+ 18	.19
+
+ 19	.22
+
+ 20	.19
+
+ 21	.23
+
+ 22	.22
+
+ 23	.19
+
+ 24	.17	.23
+
+ 27	.12	.23
+
+ 28	.8
+
+ 29	.10	.11	.12	.13	.19
+
+ 30	.30
+
+ 31	.27	.81
+
+ 32	.43	.46	.77	.83
+
+ 33	.41
+
+ 34	.35
+
+ 36	.34
+
+ 37	.34
+
+ 38	.34
+
+ 39	.34
+
+ 41	.39
+
+ 42	.34
+
+ 44	.32
+
+ 45	.34
+
+ 46	.46
+
+ 47	.46
+
+ 49	.45	.47
+
+ 50	.51
+
+ 53	.8	.45
+
+ 54	.32	.41
+
+ 55	.7	.31	.71	.72	.77	.83
+
+ 56	.34
+
+ 58	.68
+
+ 60	.34
+
+ 61	.6	.33	.43	.49	.51	.60
+
+ 63	.34
+
+ 64	.34
+
+ 65	.34
+
+ 66	start of program
+	.0
+
+ 68	main command loop
+	.68	.69	.70	.74	.75	.76	.102
+
+ 69	search "ADRS" file loop (something other than "MENU", "DIAL" or "FILES"
+	 typed at the Find: prompt)
+	.69	.70
+
+ 71	MDM dialing routine loop ("M" or "m" typed while a ADRS entry is
+	 displayed)
+	.70
+
+ 72	MDM dialing
+	.75
+
+ 73	MDM carrier detect loop
+	.73
+
+ 75	pause between MDM dialing attempts (and check for abort)
+	.75
+
+ 76	"DIAL" routine (DIAL typed at Find: prompt)
+	.68
+
+ 77	go online using internal modem/acoustic cups
+	.73	.76
+
+ 78	setup external modem
+	.70
+
+ 81	setup COM parameters
+	.76
+
+ 92	.41	.45
+
+ 93	.39	.57	.93
+
+ 99	.82	.99	.100	.102	.103
+
+100	.99
+
+101	.99
+
+102	.99
+
+103	.99
+
+104	.99
+
+105	.99
+
+
+A	block # for xmodem upload/download?
+	=8	.13	=16	p21	=24
+	scratch variable
+	=34
+
+A$	used in general CALL routine (line 55)
+	string to be pointed to by HL
+	=7	=31	=32	=41	=53	p55	=71	=77	=82
+	"Use XMODEM protocol?" (gosub 92)
+	.39	.45	.57
+	"Y" or "N" response (gosub 93)
+	.41	=93
+	scratch variable
+	=34	=68	p69
+
+B	2s complement of block # for xmodem upload/download?
+	=8	.13	=16
+
+B$	"scratch" variable
+	=69	=73	.74	=78
+
+C	column count for non-xmodem upload
+	=45	=47
+
+D	flag variable.	0 (false)= ?, -1 (true)= ??
+	.3	=32	.36	.37	=41	=42	.57	=82
+
+E	flag variable.	0 (false)= ?, -1 (true)= ??
+	.8	.24	=25	=41	=45
+
+F$	contains f-key string (chr$ 248-255)
+	p34	=67
+
+FI$	contains name of current "ADRS" file
+	=66	=68
+
+G$	char sent by f8 key after POKE 63056,64.
+	.10	.11	.19	.46	=67
+
+I	points to start of phone number
+	=69	.71	p72	.82
+
+J	scratch variable
+	=6	=21	=47	=49
+	points to start of autolog sequence
+	=69	p70	.71	=76	p77	p82
+
+K	mode?	0=?	1=?	2=?	3=?	4=?
+	.34	.56	.58
+	K=0
+	=33
+	K=2
+	=37
+	K=3
+	=38	=66
+	K=4
+	=36
+
+L	a flag variable. 0 (false)=internal modem, -1 (true)= external modem.
+	.7	.31	.58	=71	=76	=77	=82
+
+M(#)	array containing various machine language routines
+	M(0)	carrier detect routine
+		=66	p73
+	M(3)	convert to UPPERCASE routine
+		=66	p68	p69	p93
+	M(16)	check COM/MDM queue for received characters
+		p2	=66
+	M(21)	get chars for COM/MDM queue
+		p3	=66	p99
+	M(24)	timed read of 131 chars from COM/MDM queue
+		p13	=66
+	M(59)	delay A*2 milliseconds
+		p61	=66
+
+N	scratch variable?
+	=3	=6	=14	=15	.21	.23	=24	=25	=41
+	.42	.46	.47	=49	=50	.51	.57	=66	=72
+	=73	=74	=75
+
+N$	contains a null [chr$(0)]
+	.7	.31	p34	=67	.71	.77	.82
+
+P$	contains the "filename" for 7-bit COM
+	.31	=68	=81	.82
+
+Q	used in modem result code handler
+	contains number of dialing attempts
+	=100	.101	=102	=103	.104	.105
+
+Q$	contains the "filename" for 8-bit COM
+	.7	=68	=81
+
+R	address to be CALLed by general CALL routine (line 55)
+	=7	=31	=54	.55	=71	=72	=77	=83
+
+S	.2	=6	=9	=10	=11	=19	=22	=30	=33
+	=43	=45	=60	=61
+
+T	used as counter
+	=1	=2
+	used for finding "breakpoints" in non-xmodem upload width routine
+	always width-9
+	=45	.47
+
+U$	contains escape sequence to move cursor up one line [chr$(27)+"A"
+	=67	.82	.100	.102	.103	.104
+V	used by general CALL routine.
+	points to the address of the address of A$
+	=55
+
+W	width for upload
+	=45	.47
+
+X	.2	p3	.9	.10	.11	.12	=14	.19	=21
+	.22	.30	.66	p73	p99
+
+Y$	=39	.40	=45	=69	p70	p71	p72	=76	p77
+	.81	p82
+
+Z	.3	.6	.13	.14	.15	.21	.25	.47	.50
+	.66
+
+Z$	single char from INPUT$/INKEY$ (scratch variable)
+	=70	=76	.78	.81	=103

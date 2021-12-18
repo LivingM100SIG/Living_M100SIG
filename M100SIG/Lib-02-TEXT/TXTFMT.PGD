@@ -1,0 +1,25 @@
+0 '"TXT-PG.BA" TXTFMT patch for 0MENU       from P.G. Designs -- Phil Wheeler       [71266,125] --- 6/12/87
+1 'Running this program creates a new      version of TXTFMT called TXT-PG.CO.      When run it "unhooks" 0MENU, and at     exit it re-hooks 0MENU.
+2 '***YOU MUST HAVE 0MENU (vers 2.01 or    1.1) IN PLACE TO USE THIS PROGRAM**
+3 'Start with TXTFMT.CO on your menu.      Then run this program.  After it is     finished do:                               SAVEM"TXTPG<",60378,60378,60378      to create a 7-byte calling program.
+4 'Or run it from a Basic Driver:          10 CLEAR 256,60378:RUNM"TXT-PG"
+5 'DO NOT USE THE OLD TXTFMT DRIVER TO     RUN THE PROGRAM; CALLING ADDRESS HAS    CHANGED!
+6 'After saving TXT-PG.CO & TXTPG<.CO to   disk, you can kill TXTFMT.CO,           TXT-PG.CO & TXT-PG.BA -- and run the    HIMEM-resident copy of TXT-PG.CO        via the calling program.
+6 '
+7 '
+10 CLEAR 0,60378:LOADM "TXTFMT"
+20 'poke code for exit to 0MENU
+22 IF PEEK(32816)=50 THEN 30 '0MENU V. 2.0+
+24 IF PEEK(32824)=49 THEN 32 '0MENU V. 1.0
+26 BEEP:CLS:PRINT@80,"0MENU not loaded or wrong version":stop
+30 POKE 60406,195:POKE 60407,57:POKE 60408,128:GOTO 34
+32 POKE 60406,195:POKE 60407,130:POKE 60408,129
+34 FOR I=60409 TO 60415:POKE I,0:NEXT
+36 POKE 62413,246:POKE 62414,235 'new exit address (to patch area)
+38 POKE 62837,219 'new TXTFMT checksum
+40 'load new front end for TXTFMT
+50 FOR I = 60378 TO 60405
+60 READ A: POKE I,A: NEXT
+70 SAVEM"TXT-PG",60378,62952,60378
+80 DATA 33,243,127,58,162,255,15,218,231,235,195,240,235
+90 DATA 34,12,251,34,12,251,34,228,250,34,224,250,195,121,245

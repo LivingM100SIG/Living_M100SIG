@@ -1,0 +1,45 @@
+ 
+             Graphics Programming for the WP-2
+ 
+   Graphics programming on the WP-2 is relatively simple and
+easy.  The video RAM for the LCD screen is directly accessed as
+memory locations 9900 to A7FF (hex) and each byte of memory
+corresponds with eight pixels on the screen.  Two I/O ports, 60H
+and 61H, are also available for LCD control, but are not
+necessary to access the video RAM.
+   The screen is 480 pixels wide and 64 pixels high.  Each byte
+of video RAM is displayed as 8 horizontal dots, black or blank
+depending on the corresponding bit (1 for black, 0 for blank). 
+Bytes are arranged sequentially from left to right, and top to
+bottom on the screen.  Thus, the video RAM consists of 64 rows
+of 60 bytes.
+   The most significant bit (bit 7) of each byte corresponds
+with the leftmost pixel in that byte's group of 8 pixels, and
+the least significant bit (bit 0) corresponds with the rightmost
+pixel.  For example, suppose memory location 9B4F contained the
+value 4.  9B4F is 9900 + 24F in hex.  Converting 24F to decimal,
+we find that this location is byte 591 of video RAM, making it
+byte 51 of row 9 (591 = 9*60 +51).  Remember, however, that this
+is counting 0 as the first byte and first row, so row 9 refers
+to the 10th line from the top of the screen, and byte 51 refers
+to the 52nd byte from the left.  Because each byte represents 8
+pixels, byte 51 translates into pixels 408 to 415, or the 409th
+to the 416th pixels from the left.  Since the value in our
+memory location is 4, or 00000100 in binary, only one pixel will
+be set (black).  The rest will be reset (blank).  Counting in
+from the left of the byte, the pixel to be set will be the 6th
+pixel.  That makes it pixel 413, or the 414th pixel from the
+left.  The XY coordinates of this pixel would be (413,9).
+   Don't let the wordiness of this example mislead.  The set-up
+of the WP-2's video memory is quite straightforward, and since
+it is direct memory accessed, quite fast as well.  Recommended
+Z-80 instructions to be used include LDIR; the rotate group of
+instructions; BIT, SET, and RESET; and the 8-bit logic
+instructions such as OR, AND, and XOR.  The graphics demo
+program Exempli Graphia (which can be found in library 15)
+relies heavily on LDIR for displaying blocks of memory, and
+RR (HL) for moving an image a single pixel to the right.
+ 
+ 
+   Michael F. Klar - 4 Fleetwood Dr. - Somerville, NJ 08876
+ 

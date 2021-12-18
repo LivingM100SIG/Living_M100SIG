@@ -1,0 +1,154 @@
+
+	(c)1990 Golden Triangle, Inc.
+	(c)1990 Wilson Van Alst
+	  All rights reserved.
+
+Fm: Stan Wong
+To: Paul Globman
+
+Paul (and James),
+
+I started out to build the budget banks project.  Got most of it assembled but
+go so messed up that I had to scrap the whole thing. The hard part was hooking
+into pin 1 (+5V) of the option rom socket.
+
+I got to thinking that the regular 24K module gets it's power from the option
+ram socket.  So I hauled out my data sheets and looked at the wiring diagram
+for the option ram socket.
+
+As near as I can figure out all I need to do is 1) clip pin 22 and wire it to
+pin 14.  Exchange pins 1 and 27.
+
+Which is what I did.  I plugged it in and it works.  I don't know what the
+long-term implications are but can you explain why you have that complicated
+circuit between pin 20 of the IC and the socket?
+
+		- 0 -
+
+Fm: Paul Globman
+To: Stan Wong
+
+Stan - What you did will work, but it will kill your batteries.  Pin 20 of the
+chip is the chip enable (not) line, while pin 20 of the socket is bank select
+(not).
+
+The purpose of the transistor is to act like a switch, so when T200 power is
+off, the bank is not selected and when the T200 is on then pin 20 connects to
+the socket and allows the bank select gating circuit to determine if the chip
+should be enabled.  Power to the option RAM is always available, but the 5v
+for the ROM goes off with power off.
+
+Failure to use the transistor circuit will result in both of the chips being
+enabled with power off, and will drain your AA cells quickly.  Remember, the
+level CE/not means you need a voltage to unselect the chip.
+
+The 5v at pin 1 of the option ROM is turned on/off with POWER ON/OFF.  That 5v
+at the base of the transistor makes the transistor a "switch", and when "off"
+there would be no voltage drop across the 4.7K resistor in the collector
+circuit.  With no voltage drop, the Vbb at pin 28 is applied to pin 20 of the
+chip (deselects that bank when power is off).
+
+When the T200 is on and the transistor switch is "on" then pin 20 of the chip
+is effectively connected to pin 20 of the socket, via the emitter/collector
+path of the "on" transistor (allowing T200 circuitry to deselect the chip as
+required).
+
+		- 0 -
+
+Fm: James Yi
+To: Stan Wong
+
+ The transistor switch is supposed to pull up chip pin 20 High when the power
+goes down(0v on option rom pin 1)..
+When the 200 powers down, all the signal pins from the socket go Low - I at
+first didn't know that, so I just tied chip pin 20 directly to socket pin 20,
+and guess what happened - it's ok as long as the power is on, but when it
+powered down, pin 20 went Low, enabling the chip, causing the memory backup
+battery to drain faster - about three days to zip.
+
+		- 0 -
+
+Fm: Stan Wong
+To: Paul Globman
+
+I understand your explanation of the circuit.  After much studying I finally
+convinced myself that yours was the only practical solution. Congratulations
+for figuring it out.
+
+I built one bank, and tested it.  The new bank kept crashing but I discovered
+a loose wire in the circuit.  Now if works fine.  Only I have to trust that my
+batteries aren't being drained too quickly.
+
+My main problem at first was getting to pin 1 of the option rom socket. I
+finally opened the machine up and soldered a wire to pin one on the pin side
+and snuck the wire next to the plastic clip that holds the memory board in
+place.  All the resistors, wires, and transistor make a very ugly installation
+but at least it works.  I need to go replace a transistor whose lead I broke
+and I'll be able to have a three bank machine!
+
+		- 0 -
+
+Fm: Paul Globman
+To: Stan Wong
+
+Stan - James gets the credit for the original idea and the design of the
+transistor circuit.  I wrote the article and tried to articulate the
+technicals to lay people, in an understandable manner.
+
+I have some background in electronics, so I had a pretty good understanding of
+the circuit just by looking at the schematic.  And of course, YOUR knowledge
+of electronics helped make my explanation somewhat understandable.
+
+The actual components and resistor values are not "critical", and if you are a
+tinkerer, "approximate" components found in the "old parts" box could be
+used.
+
+                - 0 -
+
+Fm: Stan Wong
+To: James Yi
+
+James,
+
+I finally convinced myself that the additional circuitry is really required
+unless ones machine lives on AC most of the time. I got bank #2 up and
+running.  I'll get bank #3 going once I get replacement parts for the ones I
+broke.  Since I have a supply of 32K chips sitting around thanks for
+developing the original idea and publishing it.  It's saved my a lot of money
+in upgrading my "new" T200.
+
+		- 0 -
+
+Fm: James Yi
+To: Stan Wong
+
+  Somebody a while ago said that he experienced the Low Battery light coming on
+even when the computer is turned off, because of the connection to the
+printer...  I wondered about how that might affect the transistor operation -
+the low voltage presented to the computer through the printer port could turn
+it on, pulling pin 20 low..  So in case someone wants to take up mass producing
+printed circuit board for it, this possibility should be checked out first..  I
+haven't used the transistor method long enough to be sure there aren't possible
+problems - I replaced the transistors and resistors with two small ICs, so I
+could access the unused 8K portions..  The 2 transistors and 4 resistors can be
+replaced with a single CMOS Quad NAND(or NOR) gates chip, and using a chip
+eliminates the possible problem caused by the printer port, since it doesn't
+need the connection to 5v pin..
+
+
+		- 0 -
+
+Fm: Stan Wong
+To: James Yi
+
+I don't leave a printer hooked up to any of my notebooks so it won't be a
+problem for me.  Sounds like you've got some useful material for a Budget
+Banks Update Update.
+
+		- 0 -
+
+Starting message #: 31121   Starting date: 05-Nov-90  21:23:43
+ Participants:
+Stan Wong 70346,1267
+Paul Globman 72227,1661
+James Yi 73327,1653

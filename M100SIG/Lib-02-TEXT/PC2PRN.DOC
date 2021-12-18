@@ -1,0 +1,127 @@
+                       DOCUMENTATION FOR PC2PRN.LDR
+
+
+Program PC2PRN.LDR provides a means for sharing a printer between a
+personal computer and the Model 100 laptop computer.  This is a machine-
+language program, and I have no way of testing whether it works with the
+Tandy 102 or 200.  First, I will describe the way it is used.
+
+The hardware requirements are:  a personal computer with a serial
+communications port, a cable connecting it to the serial communications
+port of the Model 100, the Model 100 (of course), and a printer connected
+to the parallel port of the Model 100.  Any connection between the Model
+100 and the parallel printer that works for printing with the Model 100
+should work for printing with the PC and this program.
+
+Serial cable connections (assuming a serial port with a 25-pin connector on
+the PC):
+
+        Model 100      PC
+        ---------      --
+        GND   1........1   GND
+         TX   2........3   RX
+         RX   3........2   TX
+        RTS   4........5   CTS
+        CTS   5........4   RTS
+        DSR   6.......20   DTR
+        GND   7........7   GND
+        DTR  20........6   DTR
+
+Note that this was the standard cable sold by the Portable Computer Support
+Group for use with Disk+ when I bought it in 1985 (the rest of the pins are
+connected straight through, but are not internally connected in the Model
+100, so they don't matter).
+
+Here's a picture, for clarification:
+
++------+     +-------+     +-----+
+|  PC  |.....| Model |.....| LPT |
+|      |     |  100  |     |     |
++------+ ser +-------+ par +-----+
+
+Back to operation of the program:
+
+When this program is running, the Model 100 acts as a serial-to-parallel
+converter for the data being sent out by the PC.  Any (yes, any) characters
+sent out the serial port of the PC are sent to the parallel printer
+attached to the Model 100.  There is no translation of tabs, nulls,
+controlZ's, or any special characters, so that even graphics may be sent
+through this program.  To print directly from the Model 100, simply
+terminate the program (using F8) and print as you normally would from the
+Model 100.  There is one small catch:  printers connected to PC's normally
+do not generate a linefeed when a carriage return is sent, whereas the
+Model 100 expects a printer attached to it to generate this linefeed.  I
+deal with this by setting up the printer in the normal fashion for use with
+a PC, and then I use a program on the Model 100 that accompanies all CR's
+(carriage returns) sent to the printer with a linefeed (such as LPTLF).
+
+
+                          DETAILED INSTRUCTIONS:
+
+Download the program PC2PRN.LDR to your Model 100, naming it PC2PRN.DO.
+Enter BASIC, and type
+  CLEAR 256,MAXRAM-1000
+  LOAD "PC2PRN.DO"
+  SAVE "PC2PRN"
+  KILL "PC2PRN.DO"
+  RUN
+The program presents you for a range of end addresses that are possible,
+given your current values of HIMEM and MAXRAM.  You may enter the address
+that you like, or you may just press <ENTER> and it will create it at the
+highest address you have available.  When the program is done, you will
+have a new program, PC2PRN.CO, in your list of files, as well as PC2PRN.BA.
+At this point, you may wish to store PC2PRN.BA to cassette tape or disk;
+you won't need it again unless you decide you want to change the loading
+address of PC2PRN.CO or PC2PRN.CO gets wiped out of your memory.
+
+To run PC2PRN.CO, simply move the widebar cursor over it and press return.
+The screen clears, except for the row of function key labels at the bottom.
+They are:  F1: RTS, F2: DTR, F3: LPT, F4: LCD, F5: DSR, F6: CTS, and F8:
+MENU.  Any that are currently "ON" are in inverse video.
+
+Now, you need to set up your PC.  Type in the commands
+  MODE COM1:9600,n,8,1,P
+  MODE LPT1=COM1
+assuming that the serial port on your PC that is connected to your Model
+100 is COM1.
+
+Make sure your printer is on.  Now, print a short file from the PC, for
+test purposes.  You should see the characters going across the screen, and
+they should also appear on your printer.  Notice that the characters on the
+LCD of the Model 100 do not scroll, but output returns to the top line
+after the bottom line is filled.  Also notice that control characters are
+made visible by a caret (^) in front of the control key that would generate
+them.  (You should see frequent ^M^J combinations, indicating the carriage
+return/linefeed pairs.)  You should also see the labels for RTS and DTR
+going on and off.  This indicates the hardware handshaking going on between
+your Model 100 and PC.
+
+For higher printing speeds, you may turn off the output to the Model 100
+screen by pressing F4, indicating LCD.  Pressing the active function keys
+F1 through F4 toggle their respective functions ON and OFF.  Likewise,
+press F4 again to turn on screen display and press F3 to turn off
+transmission to the printer.  Now, you have a way of displaying the
+characters coming out of the serial port of your PC.
+
+One other thing to note:  characters typed at the keyboard of the Model 100
+are sent to the PC.  One way to have some fun with this is to turn
+everything on (press F3 again to turn on LPT transmission).  Now, type
+  CTTY COM1:
+at the keyboard of your PC.  Note that the PC does not give another prompt
+on the screen; instead, there it is on your Model 100!  Type a command at
+the keyboard of your Model 100; what you type is printed in inverse video,
+and the PC echoes each character.  When you press ENTER, the PC should
+execute your command.  The information from the PC should also be appearing
+on your printer.  Keep this in mind in case your PC monitor dies (mine has,
+twice).  To terminate this insanity, type
+  CTTY CON
+at the keyboard of the Model 100; a new prompt should appear on the screen
+of your PC.
+
+Before turning anything off, terminate the program by pressing F8 (MENU).
+Occasionally, it does seem to get "hung up" if something is turned off
+while the program is running.  Pressing SHIFT-BREAK usually will get you
+out, but it is better to remember to terminate the program first.
+
+Bill Boyd
+75715,70

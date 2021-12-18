@@ -1,0 +1,327 @@
+
+SMTKEY.DOC [8-31-89]
+Copyright (c)1989 by James Yi [73327,1653]
+
+
+-- Description --
+
+SMTKEY (smart key) is a macro program.
+It can be accessed from anywhere in the system, whether you are editing text,
+ writing a Basic program, online with modem, or using MSPLAN.
+
+Besides generating string of characters, it has built in and programmable
+ functions, by which you can generate logon sequences to CIS with time
+ delay in between user id and passwords, send formfeeds to printer, jump to Menu or jump forward or backward to next
+ bank without dropping carrier, jump back into Term mode, and automate just
+ about any procedure, such as opening a text file, initiating download, or
+ running a program.
+
+
+-- Installation --
+
+SMTKEY.200 is a basic loader that creates the following CO files:
+Before running the loader, about 5K of free RAM is needed.
+Since the loader is about 9K, you may have to either save the text listing
+ to disk or cassette and load it from there, or use DO2BA.200(in LIB 10)
+ to convert it diretly into Basic.
+
+MACINS.CO	program installer
+MACRO .CO	main program
+MDFLDR.CO	macro definition loader
+MACODE.CO	encodes machine language routine into macro string.
+MACDEF.CO	sample macro definition
+
+MACINS is relocatable as you specify the loading address.  The HIMEM is not
+ automatically cleared for it, so before running it, clear proper HIMEM by
+ going to Basic and LOADM the file, then CLEAR 255,Top, where Top is the first
+ address displayed when it's LOADMed.  MDFLDR and MACODE run in AltLcd, so
+ HIMEM doesn't have to be cleared for them.  The other two CO files are not
+ executable.
+
+If you have DVORAK.200 or TEXTE.200 installed, remove them, and reinstall
+ them after macro program has been installed.
+The reason for that is that the macro installs in LOMEM and any change in
+ LOMEM moves Basic files around and can cause a cold start if the files are
+ being used as spaces to run machine language codes in.
+
+To install Smart Key, RUNM"MACINS" after CLEARing proper HIMEM for it.
+  It automatically deletes itself and MACRO.CO, unless you hold down SHIFT
+ while it's running.  Install it in each bank that you want to use macro in,
+ but doesn't have to be installed in all banks.  When installed, it takes up
+ 768 bytes in LOMEM.  It also reserves the last 27 file directory slots for
+ macro buffer, leaving 19 usable slots.  Using the directory slots for buffer
+ was neccessary in order to eliminate some of the problems that running ML
+ routines creates, and also it seemed more efficient than using the file
+ space, saving 256 bytes, since you are much more likely to run out of memory
+ space than directory slots in a Tandy 200.
+
+The macro program needs a macro definition file, MACDEF.DO.
+  To create a sample MACDEF, RUNM"MDFLDR".  MACDEF has to be kept in
+ only one of the banks, any one of them.
+
+Smart Key can be removed by running MACINS again.  It deletes itself
+ after running, unless SHIFT is held down. 
+
+
+-- How to use it --
+
+To activate a macro, press and release either the GRPH or CODE key.  Then
+ press the key for the macro.  To deactivate it, press and release
+ GRPH/CODE once more.  It sounds a short beep when it's deactivated.  Different
+ pitched beeps are heard when other errors occurr, such as when the key is not in the definition file, the file
+ doesn't exist, a macro is too long(255 max), or the "group" is not found.
+  More on group later.
+
+The following are some of the macros in the sample MACDEF.DO:
+
+<SPACE> : Jump to Menu, without dropping modem carrier.
+/ : Jump into Term mode of TELCOM.
+: : Jump into TELCOM.
++ : Jump to TEXT's "File to.."
+_ : Jump into Basic Ok prompt.
+- : Jump to previous bank, without dropping carrier.
+= : Jump to next bank, without dropping carrier.
+? : Display files.
+GRPH-F : Formfeed to printer.
+GRPH-L : Linefeed.
+GRPH-S : 8 linefeeds.
+8 : Set printer line spacing to 8 per inch. (Note: Epson compatible commands)
+6 : 6 per inch.
+l : Open capture file (Down) as L?.DO, ? is 0 to 9, one that does not already
+ exist.
+Arrows: 8 in each direction.
+
+There are more in the file, some of them commented.
+
+
+-- Defining your own macro --
+
+The macro definition file, MACDEF.DO, is subdivided into groups.  Each group
+ begins with a heading, "MaCrO", followed by one character identifying the group.  As default, it is "1", so
+ the sample MACDEF.DO has "MaCrO1" as heading for one of the groups.  You
+ could, for example, use group 1 macro when programming in Basic, and group 2
+ when telecommunicating, same key having different meaning depending on which
+ group is selected.  In the sample definition file, group 2 is used for
+ telecommunication, group 1 for all other occasions.  Notice "Global" at
+ the end, which is not actually a seperate group, but comes after the
+ other two groups.  Since "global" macros come after both groups, it is
+ accessible by both groups 1 and 2.  Any group that comes after other groups is
+ accessible by the preceding groups, as long as there is not a macro with same
+ key in the preceding groups.  Group can be changed by using "1" and "2"
+ macros..  If you add more groups, add /c[GRPH-SHIFT-G]? macro.  See end of
+ sample MACDEF.DO, the global section, to see how group 1 and 2 macros are
+ setup.
+
+A macro entry consists of a key followed by the data string, and the
+ end-of-line character, CR+LF(small triangle lying on its side) ends it.
+  You can use any character 1 to 255, for both key and data.  But do not use
+ CHR$(0), which is ^@ control code, and likely, you will never need to.  It has
+ a special meaning that you will find out later.
+
+Control characters can be represented by "^" and the letter corresponding to
+ the character.  Or you can imbed it directly by using the CTRL-P sequence.
+  Any character can be represented by "%" followed by its two digit
+ hexadecimal value.  To insert "^", "%", or "/" symbols by themselves, precede
+ them with "/".  A single "/" denotes a built-in function.  The built-in
+ functions are:
+
+---------------------------------------
+/C? - Insert ? macro into current macro.  If you had the following in your
+ MACDEF file:
+
+pPrint"/ch"^M
+hHello
+
+p macro would generate [ Print"Hello" ] followed by a carriage return, and h
+ macro would generate just [ Hello ].
+
+---------------------------------------
+/L? - Link to ? macro.  Continues with ? macro after current one ends.  There
+ is a 255 character limit for a macro, but by linking them up, there is
+ virtually no limit.
+
+---------------------------------------
+/X or ^@ - Execute the following machine language routine.  By executing ML
+ routines, you can program a macro to do just about anything.  Since macros can
+ be linked up and inserted into anywhere, the location of the ML code
+ will be unpredictable, therefore, it is important to make the ML codes
+ position independent.  There are 3 subroutines in the macro buffer in file
+ directory that can be called up to make this task easier.  Plus all flags and
+ pointers that control macros are also up there in the directory slots for the
+ ML codes to control.  More about /X function later on.
+
+---------------------------------------
+/T? - Time delay.  Use hexadecimal representation(%dd) for ?.  ? ranges
+ from 0 to 255, 1 being shortest, and 0, actually equal to 256, longest.  The
+ longest period is equal to the duration of the cursor blinking once.
+
+---------------------------------------
+/R?? - Repeat the following ? characters, ? times.  Example:
+ [ /r%05%03Hello ] would repeat the word "Hello" 3 times.  [ /r%01%05/t%00 ]
+ would cause a time delay until the cursor blinks 5 times.
+
+---------------------------------------
+/K - Wait for a keypress.  Macro suspends, waits for you to press a key,
+ and resumes.
+
+---------------------------------------
+/I - Similar to /K, except /I waits for a string of characters to be typed
+ followed by ENTER.
+
+
+-- Miscellaneous --
+
+GRPH+CODE aborts an executing macro.
+
+GRPH+CODE+SHIFT resets the system, similar to pressing the reset button in
+ the back.
+
+
+
+The following is information on how to program your own macro functions.  Some
+ familiarity with machine language programming will be neccessary.
+
+
+-- Programmable functions (/X) --
+
+Characters that follow /X or ^@ are treated as ML codes.  Use CODMAC to
+ convert a CO file into text string that can be inserted into MACDEF file.  The
+ converted data is stored in the paste buffer.
+
+The 3 subroutines mentioned previoulsly are:
+
+F387H - MACLHL
+	Function: Points HL to a relative location.
+	Entry: DE is the offset from the return address of MACLHL to the
+ location.
+	Exit: HL is the location.
+
+F38DH - MACJMP
+	Function: Jumps to a relative location.
+	Entry: DE is the offset from the return address of MACJMP to the
+ location.
+
+F393H - MACCAL
+	Function: Calls a relative location.
+	Entry: DE is the offset from the return address of MACCAL to the
+ location.
+
+
+This is an example of a position dependent code:
+
+	JMP	L2
+	MVI	A,1
+L2	NOP
+
+Since L2 is an absolute address, the above code will not run properly if it
+ is executed at a different address than it was originally intended at.
+
+This is the equivalent of the above, except that it's now position
+ independent:
+
+	LXI	D,L2-L1
+	CALL	MACJMP
+L1	MVI	A,1
+L2	NOP
+
+It jumps to L2, and will always do so regardless of where it is executed.
+
+
+Here's an example that uses all 3 subroutines.  It prints "Hello there",
+ the two words seperately.
+
+;--------------------------------------
+	LXI	D,L2-L1	;Get "Hello "
+	CALL	MACLHL
+L1	LXI	D,L4-L3	;Call Print
+	CALL	MACCAL
+L3	LXI	D,L6-L4	;Get "there"
+	CALL	MACLHL
+;Print string in HL
+L4	MOV	A,M
+	ANA	A
+	RZ		;end of string
+	RST	4	;print chr
+	INX	H
+	LXI	D,L4-L7	;Loop L4
+	CALL	MACJMP
+L7
+
+L2	DB	'Hello ',0
+L6	DB	'there',0
+
+	END
+;--------------------------------------
+
+
+-- Macro Buffer --
+
+Macro buffer resides in file directory, taking up the last 27 slots.  It holds
+ various flags, counters, and pointers that control macro and also is the
+ space for the 255 bytes macro data buffer.
+
+It's organizied as follows:
+
+MacRtn Equ	F386h	;Begin of macro buffer.  Holds byte $FF, end of
+ directory marker.
+MacLHL Equ	MacRtn+1
+MacJMP Equ	MacRtn+7
+MacCAL Equ	MacRtn+13
+MacBuf Equ	MacRtn+24 ;flags and pointers area.
+Macgroup Equ	MacBuf ;group.
+MacRpt_Loc Equ	MacBuf+1 ;repeat string begin location.
+MacRpt_Cnt Equ	MacBuf+3 ;repeat count.
+MacRpt_Ptr Equ	MacBuf+4 ;repeat string's character pointer.
+MacRpt_Len Equ	MacBuf+5 ;repeat string length.
+MacSet Equ	MacBuf+6 ;set to $FF when GRPH/CODE pressed and released
+ once.
+MacSetEn Equ	MacBuf+7 ;enable macset - disabled when a graphic character
+ pressed.
+MacDelay Equ	MacBuf+8 ;time delay count down.
+MacStat Equ	MacBuf+9 ;macro status - 0=inactive, FC-FF active.
+;FF=string mode
+;FE=paste mode/function key mode (wait for paste or function key to deactivate
+ when set to FE)
+;FD=line input mode
+;FC=key press mode
+MacPtr Equ	MacBuf+10 ;buffer pointer.
+MacDat Equ	MacBuf+12 ;255 bytes buffer.
+
+MacStat and MacPtr will be of most use.  When CHR$(0) is encountered and ML
+ routine executes(see below), MacStat is set to 0, indicating that macro is
+ inactive.  To reactivate macro within the ML routien, to resume generating
+ character string, the ML routine would poke MacStat with $FF and load MacPtr
+ with location of the string to be resumed.  There is already a macro that
+ does this in MACDEF: GRPH-"'"
+
+
+-- How Smart Key works --
+
+The GRPH and CODE key position is scanned through RST 7.5 vector routine.
+  RST 7,04 vector, at F507H+4 is used to intercept a character when exiting
+ CHGET, the keypress getting routine.  The character is ignored, replaced with
+ another character, or processed as a macro key, according to the various
+ flags in the macro buffer.  When it's a macro key, it finds the macro string
+ and loads it into the macro buffer, and adds CHR$(0) and CHR$(201) to the end
+ of the buffer.  After the data is loaded, the MacStat flag is set to
+ indicate there is data in the buffer.  Whenever the flag is set, RST 7.5
+ vector routine signals the keyboard buffer($FD1E) constantly to fake a
+ keypress.  When the keyboard buffer is signaled, the CHGET routine is called
+ and through the RST 7,04 vector there the macro program fetches the next
+ macro character, until a CHR$(0) is encountered.  Remember that 0 and 201
+ is automatically added to the end of buffer.  0 signals the end of string,
+ and begin of a ML routine(/X is converted to 0 as the data is loaded
+ into the buffer).  The ML routine terminates with 201(RET).  This RETurn
+ takes it to 1604h in ROM, to pop all registers, and RETurns once more from
+ there, exiting CHGET routine.  So ML routine executions take place within
+ the CHGET routine($12F7), and what went on will be transparent to whatever
+ called it.
+
+
+
+At this time, there is no 100/102 version of SMTKEY, due to difficulty of
+ finding a fixed memory location for the buffer(100 has fewer than 27 directory
+ slots).  But if enough inquiries are made, I will try to do one.
+
+If you have questions, feel free to ask:  James Yi 73327,1653.
+

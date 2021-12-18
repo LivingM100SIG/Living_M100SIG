@@ -1,0 +1,34 @@
+Bombproofing for DIRACC
+-----------------------
+
+One of the hazards of using DIRACC (DL1) is that you can get into
+TELCOM with it unloaded, without knowing it, and get unpredictable
+results when you try to access TEXT or BASIC via F6 or F7 while in
+TELCOM.  Another pitfall is that the Basic definition of F6
+installed with DIRACC may have been changed by another program --
+not allowing you to get back to Term from Basic.  The following
+approach to running DIRACC should avoid these problems.
+
+1) Install DIRACC per one of the programs (e.g., with my loader
+versions DIRACC.PW*).
+
+2) Install the following Basic program on your menu:
+
+0 '"RUNDAC.BA" - DIRACC Telcom Access
+1 IF (PEEK(HIMEM)=225 AND PEEK(63587)=72) THEN CALL 20806 ELSE BEEP:MENU
+
+This tests to see if the first byte of DIRACC is where it should
+be and checks the 10th byte in the Basic Key 6 definition area, to
+make sure it has not been changed from "H", the value loaded in
+when DIRACC was installed.  Note that the spaces in this program
+are for clarity and can be removed.
+
+3) Now when you go into TELCOM, do it by running RUNDAC.BA.  If
+you get into TELCOM, the tests have been passed; othewise DIRACC
+is not present and/or the Basic F6 key definition is faulty -- and
+you will end up back at the Model 100 main menu.
+
+This is pretty bombproof, barring some corruption of upper parts
+of DIRACC.
+
+Phil Wheeler [71266,125]

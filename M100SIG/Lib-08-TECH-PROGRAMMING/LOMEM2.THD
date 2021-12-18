@@ -1,0 +1,321 @@
+
+LOMEM2.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+This is one of a series of THD files relating to adapting James Yi's 
+LOMEM.200 for use on the Model 100.  They include general comments on the 
+use/value of the program, some intitial attempts to adapt it the the Model 
+100, and some more refined approaches provided by Michael Nugent.  This 
+file relates to the value and application of the program, including how it 
+might work with low-memory resident programs (Supera, 0MENU, etc.). The 
+first in this series is LOMEM.THD.
+
+Message range: 158123 to 158235
+Dates: 10/11/87 to 10/14/87
+
+
+Sb: #LOMEM.100???
+Fm: James Yi 73327,1653
+To: RANDY HESS 73267,552 
+
+Randy, I built this from the addrs Phil gave me. [See LOMEM.THD]
+See if it works.
+The Basic program will create Setlow.Co , and run that from the Menu.
+If the amount of free ram shrinks after running it, it's probably working.
+The space made is at 32769, and upto however much you entered.
+For example if you entered 1, 255 bytes are available at 32769-33023,
+ and notice how free ram shrinks by 256 bytes.
+
+
+10 FOR L=64704TO64704+86:READD:POKEL,D:NEXT:SAVEM"setlow.co",64704,64704+
+86,64704
+20 NEW
+100 DATA 
+33,165,234,205,162,17,205,62,70,215,200,43,205,236,8,42,192,250,62,160,131,87,1
+48,71,14,0,105,210,234,252,197,124,146,71
+110 DATA 
+98,205,159,107,193,195,241,252,205,109,107,218,192,252,9,58,175,251,128,50,175,
+251,124,50,193,250,214,160,50,0,128,201,195
+120 DATA 70,33,76,111,109,101,109,32,115,105,122,101,32,40,120,50,53,54,41,0
+
+
+Fm: RANDY HESS 73267,552
+To: James Yi 73327,1653 
+
+James, Thank You! The only thing that keeps me from running it is haunting
+concern about where my PGD 0MENU bank switch programis living at the moment and
+if so where (I'll look), and if it's in the "basement" as I suspect, will be
+back to you and Phil to see if we can set some other programs down there (ever
+so gently!) with it. Sure do have a great bunch on this SIG. Really appreciate
+your help! Regards, Randy
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+I'm using a macro program in a Tandy 200, which operates much the same as the
+0MENU program, as the first program in RAM, etc.  When I ran the LOMEM program,
+it simply moved the file pointers, and did not disturb the macro program at
+all.  From then on, it was effectively hidden, but still operational.  If the
+addresses are right, you should be able to do the same thing in the Model 100,
+without problem.
+
+
+Fm: RANDY HESS 73267,552
+To: Tony Anderson 76703,4062 
+
+Tony, Phil & James,
+ 0MENU (my PGD bank switch/transfer program) is, as I suspected, living at a
+start address of 32769 and is 1434 bytes long. I think the "basement" is being
+used more and more; along with the ALT/LCD "attic" @ 64704. 0MENU is a .BA
+program that runs and looks like an M/L program.(If it sounds like a duck,
+looks like a duck, and smells like a duck is it a duck??). Can we carefully
+stack things like DSKMGR down there and not have to worry about corrupting them
+by mistake? 0MENU probably has some self-defense system built in as would any
+DOS or other LoMem prgs like ULTRASCREEN. Do you simply load an M/L prog.
+immediately above anything already there and call it at it's new EXE? Phil
+mentioned that earlier tries at this were unstable? With all the M/L prgs from
+folks like you it's hard to know which is compatible with which. (And winter
+nights in Nebraska are cold enough without help from my M100). Your work would
+seem to have some definite merit. Looking forward to your comments! Regards,
+Randy
+
+p.s. Tony, when you add other prgs above your macro do you simply calculate the
+new END and put it the size of the program +-?bytes above the END of the
+program below?
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+As far as I know, you can "stack" ML programs down there, as long as they don't
+set up conflicting hooks into the operating system.  Non-conflicting programs
+should live there with no problem. I've never added anything above the macro
+program, but in theory, you just add more code, and increase your lowmem
+reserve to cover it.  We did add the macro routines to a couple of other
+programs in that area, including 0MENU, and got them all to work without
+conflict.  It merely increased tghe size of 0MENU by 255 bytes.
+
+The key may be in how you "load" the program at the lower address... I've done
+it by poking the data into those addresses, much like a BASIC loader would. I
+believe that's safer than trying to relocate existing code, and then LOADM it
+to where you want it to live.
+
+The macros program is really two programs, with separate entry points, sharing
+some common routines.  In effect, two programs, loaded one on top of the other.
+
+With Lomem, you reserve "blocks" of 256K in the low RAM area.  As you increase
+the number of programs resident in that area, you'd just reserve more blocks to
+accomodate them.  It's hard to understand James' Source Code, but it appears
+that it moves all existing files up in RAM to accomodate the area it's going to
+reserve, then fixes the pointers.  I found the various RAM files moved as
+needed, and didn't even have to empty my RAM in order to reserve a block to
+hold the macro program.  Just ran it, and it was done.
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552 
+
+I never tested LOWMEM.100 -- only came up with the addresses.  It was James who
+said that LOWMEM.200 was unstable, so he developed LOMEM.200, a new version. 
+My reasons for not testing were like your own: 0MENU & SUPERA live down there
+already.
+
+Based on Tony's results, why not go for it?
+
+
+Fm: James Yi 73327,1653
+To: RANDY HESS 73267,552 
+
+Randy, like Phil says, and based on Tony's result, give it a try.
+  Save all important files, be ready for the worst, hope, and run it.
+What's so bad about a cold start anyway? Should you end up with an empty
+ machine, you can always refill it, which I do all the time. (grin)
+
+Just make sure that you add to the size you want to reserve what's already 
+there.  If you would enter 1, like the example, it would wipe out 0MENU as a 
+result of shrinking lomem to 255 bytes.
+Good luck..   james
+
+
+Fm: RANDY HESS 73267,552
+To: James Yi 73327,1653 
+
+James,(Tony & Phil) Thank you all! (have your hands
+
+ever tremored while trying something new?) Well, like James says, it may be a
+good way to clean out all the extra stuff wasting RAM space. Let's see, where
+did I put that cassette with 0MENU and DSKMGR? I'll let you know how I do.
+Best, Randy p.s. Tony, did you mean 256bytes? I assume you did. When you load a
+prg above 0MENU do you reserve the space first and then load at the new lower
+addresses, like CLEARING256,START when loading into HIMEM, or reserve AFTER
+loading. On another subject, what macros have you added to 0MENU? Thanks again.
+Randy
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+Hmmmm.... Well, James' program reserves 256 bytes by changing the "Lowest
+Address of Available RAM".  My MACROS program sits in 255 bytes, so I may have
+inadvertently said 255 when I meant 256.
+
+You do not have to clear space, as you would with HIMEM... in fact, most likely
+the operating system probably wouldn't know what to do with that sort of
+command. Since I, too, was unsure of what would happen when using Jame's
+program (in a 200, remember), I copied everything to a second bank (the
+equivalent of saving everything in RAM), then loaded and ran the program.  I
+did no special precautions, no clearing, nothing; just RAN the program.  I
+noted that "nothing happened".  So I loaded and ran RAMDIR.200 (100 version in
+DL7), and found that all the programs and files on the menu had been moved up
+by 256 bytes.
+
+I have a program that verifies that my macros program is "alive and well",
+properly loaded and reday to execute, and when I ran that, I found that my
+machine language code, which was already resident starting at the lowest RAM
+address was still there and operational.  I also verified that it was ALSO
+loaded and ready to operate at it's new location; which wouldn't work, but it
+was THERE!.  So I "killed" the image program that had been "slid up" 256 bytes,
+and tested once again, and the program was still loaded and operational in the
+protected LOMEM area.
+
+I don't know if that will work for you or not, in exactly the same way, since I
+don't know if it's even going to work in the 100.
+
+My macros program is a machine language program that allows you to send ascii
+text macros in TELCOM from a prepared text file, allowing you to change the
+macros at will.  Up to 255 macros can be stored in the file, assuming you have
+sufficient RAM space.  It also allows
+ certain uses in BASIC, and can be coupled with 0MENU (100), DIRACC and X-TEL,
+thanks to Phil Wheeler and Denny Thomas.  See the file MACROS.DOC in DL3 for a
+description.
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+I don't know how 0MENU is loaded.  From what I DO know about it, it's machine
+language code, hiding in the form of a BASIC program.  That's the exact same
+approach taken by the Macros program, so you can add the macros routine to
+0MENU, protecting it as the "first program in RAM space" by simply adding a
+BASIC line number to the 0MENU program, and filling it with the macro code by
+poking it in place.  I have the loader to do it available.  The same thing can
+be done when (if) 0MENU is protected by moving LOMEM, by allowing an extra 256
+bytes for the macros code. If you're interested in pursuing that, we'd have to
+work on it a bit, to get it loaded just right.
+
+
+Sb: LOMEM.200
+Fm: Tony Anderson 76703,4062
+To: James Yi 73327,1653 
+
+You know, with all this discussion going around about LOMEM, I haven't taken
+the time to thank you for developing the concept and uploading the file.  On a
+purely personal basis, LOMEM.200 has saved me at least 1K of RAM space by being
+able to leave the functional part of my macros program in RAM, and doing away
+with the extra code of the loader program, which formerly had to stay resident,
+in order to "reload" it if needed.  Well, maybe I hadn't thought that through
+far enough, but after running your LOMEM program, i deleted the program, and
+have still been able to use the macros capability without problem.
+
+So thanks for your efforts, I appreciate it.
+
+
+Fm: RANDY HESS 73267,552
+To: Tony Anderson 76703,4062 
+
+I'll follow up with your info. I downloaded your original macro thoughts and
+will go back and look again now that I have a better appreciation for what they
+accomplish. Thanks On another subject: did you or Phil once give someone on the
+SIG the pokes to make F8 in TEXT do a RETURN instead of MENU? JUMPTXT jumps to
+mind but I'm working on a program for the SIG that would benefit mightily from
+that routine. Really appreciate your help! Best regards, Randy
+
+
+Fm: RANDY HESS 73267,552
+To: Tony Anderson 76703,4062 
+
+Tony; After rereading your message am I correct in thinking that,because you
+found all the programs moved up that the M100 normally loads things like water
+going in a glass? from the bottom up? Is LOMEM really a higher floor on which
+you stack files etc.? Admittedly a rather crude analogy but if true it helps me
+understand better the way the LOMEM idea works. Is protection of the programs
+there the only (certainly important) reason for commercial use of the
+"basement" or are there certain operations you can uniquely perform from that
+area? Regards, Randy
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+Yes, BASIC programs are generally loaded, "from the bottom up", with the
+peculiar exception that the FIRST program loaded will stay at the bottom, and
+others will be loaded on top of it.  Lomem can be likened to "raising the
+bottom".  What it actually is, is this: there is a flag in the Reserved RAM
+area that tells the system what the "lowest" address is, that's available for
+use by the OS.  This is normally used to deal with how much RAM is installed in
+the machine.  Remember the Model 100 first came out as an 8K machine, which you
+could expand in 8K steps by adding more RAM modules. So the flag would tell the
+OS how much RAM was available; and where to start loading programs.  In a 32K
+machine (which almost everyone uses), the flag is set to 32769.  By using
+LOMEM, you've simply told the operating system that the first address available
+is slightly higher, thus "reserving" a small block at the bottom for other
+uses.
+
+Protection of a program, making it "resident", and keeping it from getting
+wiped out by loading another ML program, is the main reason for putting it down
+there.  Machine language code can execute from anywhere in the RAM area where
+it's loaded, so there is no importance to actually placing a ML program at that
+address, in that respect.
+
+Incidently, there are some commercial programs that use that area, but like
+0MENU seem to just "hide" a machine language program in what "appears" to be a
+BASIC program.  I don't know of any that actually move the LOMEM address,
+unless perhaps Disk-Power by UltraSoft is one.  Once loaded, you have to cold
+start the machine to get rid of it.
+
+
+Fm: RANDY HESS 73267,552
+To: Tony Anderson 76703,4062 
+
+Some how I feel a THD coming on, don't you. Thanks. I'm really interested in
+your MACRO program and I'll study your MACROS.DOC tomorrow. Regards, Randy p.s.
+in another message to Phil I asked him about one or two pokes to change the
+MENU call of F8 in TEXT to return to a program from which you called TEXT. Hugo
+Ferrerya changes F8 in TEXT to return to TELCOM but phil opined that the return
+idea might need some suppoting M/L. DIRACC seems to use M/L to do it cause if
+it was as easy as a poke or two why not just poke instead of create a
+CO program? Do you know of any prgs that have discovered the pokes. (DIRACC
+would become a 5 line program??) r.h.
+
+
+Fm: Tony Anderson 76703,4062
+To: RANDY HESS 73267,552 
+
+No, I don't think I ever knew of any simple POKE that would change F8 in TEXT
+from MENU to anything else.  In fact, I recall we were looking for that for
+some time, in additon to being able to include any other function key actions
+in TEXT.  It seemed pretty well hard-coded at the time.  As far as I know,
+DIRACC is the only approach that seems to work reliably, and my impression is
+that the author had grabbed a system hook somewhere, and created a re-route in
+order to accomplish it.  I admit, I haven't gotten into that much, because
+moving around from BASIC to TEXT to TELCOM is no problem for me... I use an
+external modem that holds the line while I go off and do whatever I want to do,
+so there has never been any need to find a way to "Return" from TEXT to
+wherever it was called from.  I don't recall the JUMPTX file, will have to go
+take a look at it.
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552 
+
+You may have in mind TXTJMP.THD (DL8).  But I don't think it has what you want.
+
+
+Fm: Phil Wheeler 71266,125
+To: RANDY HESS 73267,552 
+
+Actually, there is a THD uploaded last weekend (LOMEM.THD).  It will, of
+course, get bigger!

@@ -1,0 +1,442 @@
+EPROM4.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+More on the continuing EPROM saga.  This is a continuing theme of
+considerable interest here.  See EPROM.DOC, as well as other EPROMn.THD
+files in Lib 8.  This THD emphasizes the software development system
+required to support EPROM programming, but covers other issues as well.
+Includes (at the end) the promise (?) of a more capable BAsic compiler for
+the Model 100!
+
+Message range: 171084 to 171306
+Dates: 7/3/88 to 7/7/88
+
+
+Sb: EPROM equipment
+Fm: C. Davey Utter 70055,522
+To: Stan Wong 70346,1267
+
+I'm still interested in any progress you make on the ROM project....Dave
+
+
+Fm: Stan Wong 70346,1267
+To: C. Davey Utter 70055,522 
+
+Good to hear from you again.  Actually I have already "finished" a rom project
+last year but have never released it since there were a few "kludges" that need
+to be cleaned up.  What I have done was to create a rom-disk for .CO programs. 
+A Basic program presents a menu of choices, then swaps in the selected program.
+Programs are brought in just below MAXRAM (or was it HIMEM?). This way you
+didn't use up a lot of memory storing all your favorite
+COs.
+
+The big drawback was the Basic program (aside from the kludges). After a
+coldstart, you had to load it in from tape or disk.  It was too large to type
+in.  What I have recently figured out how to do, but not yet implemented, was a
+way of typing in a very short Basic program which bootstraps the Basic program
+from the rom.
+
+This is only for .COs.  I have figured out how to store TEXT and BASIC programs
+also but have not tested it.  If you and others think that the .CO-only
+rom-disk would be sufficient, I'll try and get the Basic program cleaned up,
+documentation written, and released. It's just that I'd be somewhat embarrassed
+to do so until I get "everything" together (which may be never).
+
+Right now I am working on how to produce a commercial grade rom for the DIYers.
+
+
+Fm: Stan Wong 70346,1267
+To: Ran Talbott 70506,60
+
+In the latest issue of DDJ there is an ad for a "Professional" version of Aztec
+C (Manx) for Z80 machines.  On closer reading it doesn't look too impressive
+(cost about $500). I will be trying to write a small program using either
+Aztec-C or Turbo Pascal for CP/M machines.  There will be a lot of overhead but
+since I am targeting the stuff for the option rom it shouldn't be too bad.
+
+For the PC Turbo Pascal, someone sells a product which goes in and analyzes
+what library routines aren't used and rips them out of your executable file.  I
+presume I could do the same and generate useful ram-based programs.
+
+
+Fm: Paul Globman 72227,1661
+To: Stan Wong 70346,1267
+
+Stan - are you developing code to run in OPTION ROM, or just using OPTION ROM
+as storage to load and run in RAM?
+
+If you are running M/L code directly from OPTION ROM, are you using ROM2 for
+development, or another development system?
+
+
+Fm: C. Davey Utter 70055,522
+To: Stan Wong 70346,1267
+
+
+Fm: Tony Anderson 76703,4062
+To: C. Davey Utter 70055,522
+
+Well.... the only two "operating systems" that can read and execute programs
+right out of the ROM are proprietary... Traveling Software and PCSG; although I
+suspect they were originally developed by Polar Engineering.
+
+It might be possible, if you had one of their ROM's, to leave their "small OS
+program" in RAM, load your own EPROM, with your own programs, and use their
+program to access and run your stuff.
+
+
+Fm: Paul Globman 72227,1661
+To: C. Davey Utter 70055,522
+
+Basic programs cannot run directly from option ROM.  The best you can do is
+bring tokenized line to RAM and execute one line at a time (easiest is to load
+entire program to RAM and run).  M/L code can run directly from option ROM
+using standard ROM calls when needed ( tricky stuff).
+
+TravSoft uses the Polar Engineering techniques.  PCSG has their own approach
+but the Polar techniques are easier to deal with, especially if you have ROM2.
+
+
+Fm: Stan Wong 70346,1267
+To: C. Davey Utter 70055,522
+
+What kind of programs do you want to run out of the option rom? If it is a m/l
+program, then there should be little problem converting it, even if it makes
+well-behaved calls to the system rom. I fully intend to do one some day (like
+XMDPW6?).
+
+Anyway, one thought that I haven't pursued is possibly using a Basic
+compiler for a .BA program.  There is quite a bit of extraneous overhead
+involved (Phil Wheeler's [Ed note: Not me!!] tried it but for RAM) but there
+are techniques to excise some of the overhead. Interesting topic once I get
+around to solving some other issues (like how to get enough time to work on
+this stuff).  Let me know your ideas and desires.
+
+
+Fm: Stan Wong 70346,1267
+To: Paul Globman 72227,1661
+
+Both.  I have already figured out how to load multiple .CO programs into the
+option rom and read them into ram -- a ram disk, if you will. I have already
+done it.  I know how to do the same for Basic and Text but have not implemented
+it.  As soon as I got it to work I dropped it favor of what I'm REALLY after :
+option rom programs.
+
+I have already written small m/l programs which run in the option rom. These
+are able to make calls to routines in the system rom.  I used an IBM PC-based
+cross assembler rather than the ROM2 since it had a feature to let me burn roms
+easier.
+
+What I am pursing now is using a high-level language to do the programming.
+This means the use of an IBM PC.  I am using the Small-C compiler and a Z80
+software emulator, both PD programs.  I intend to try Aztec-C and Turbo Pascal
+for CP/M machines also.
+
+
+Fm: Paul Globman 72227,1661
+To: Stan Wong 70346,1267
+
+Considering that ROM2 has the ability to develop option ROM programs, I'm
+surprised you are developing on another system.  Of course, if you are using a
+high level language then I can understand, but I am assuming that ou are aware
+of the CSR op-code that ROM2 uses.  This is not an INTEL opcode and is only
+used by ROM2, specifically for option ROM development.
+
+
+Fm: C. Davey Utter 70055,522
+To: Stan Wong 70346,1267
+
+Stan,
+
+I wish I knew more about where M/L programs come from.  I'd like the current
+programs that I always have loaded to all be in ROM.  Stuff like a calendar
+program, text formatter (I use TP100), MENU, a Utility, a sort program, stuff
+like that.  How big a ROM are we talking here at this point?  Guess there might
+some day be enough ROMs to fill up the mutliple ROM Bank...Dave
+
+
+Fm: Stan Wong 70346,1267
+To: Paul Globman 72227,1661
+
+I wasn't aware of the CSR op-code.  My ROM2 docs don't show it either (they
+show others such as HLMBC, etc.). Perhaps my ROM2 is of an older variety.  The
+documentation is dated September 1, 1985.  The version is 5.2.  There is
+nothing that I can find that talks about the option rom.  It would be useful
+except now I am pursing, perhaps foolishly, using a high-level programming
+language.
+
+
+Fm: Stan Wong 70346,1267
+To: C. Davey Utter 70055,522
+
+You don't know where M/L programs come from?  Didn't your parents teach you the
+facts of (M100) life?
+
+Anyway, the rom project I finished was for CO programs only.  I know how to do
+it for Basic programs but have not tried it.  With CO programs you just have to
+copy the program into the correct starting memory address. With a Basic program
+you have to find out where free (Basic) space starts, read the program into
+ram, then adjust all the line number addresses.  There are system rom routines
+that do this.
+
+The option rom is 32K !  Lots of room for your programs. I use the TSI 8-Rom
+Bank.  Lets me use 4-Tandy style roms and three EPROMs.  My unit came with a
+TS-DOS rom in an EPROM which allowed me to make a change to it to access banks
+6-8 which are normally reserved for the Sardine (which I don't have).
+
+
+Fm: Paul Globman 72227,1661
+To: Stan Wong 70346,1267
+
+Stan - My docs are the same as yours, same version and date.  The CSR opcode is
+not documented and this is the first time I ever told anyone about it.  It is
+for ROM development only.  You will not find any rite-up about it.   It has
+been kept "under wraps" all this time, but I thought it would help you.
+
+As Emily Latella (Gilda Radner) would say..."Never Mind"!!
+
+
+Fm: Mo Budlong 76167,3310
+To: Stan Wong 70346,1267
+
+Hi Stan, I was interested to see your messages about Option ROM programming. I
+am about to release a book on the subject that describes (and provides source
+code) on writing m/l programs that run in Option ROMs. One chapter will be
+devoted to listing out all the resources software and hardware that a person
+needs to do the work. I have worked with various ROM burner's and use RMAC,
+Small-C and QC8080 for the work. I would be very interested in including your
+list of equipment and software. I'm hoping to be able to point the reader to
+inexpensive hardware and Public Domain or inexpensive software that can be used
+to get the job done ie low-budget, Roll your own ROM development. Can you drop
+me a line letting me know what equipment and software you have worked with.
+Also I am at a loss to locate an Assembler that will run on the Model 100 that
+will allow the assembly of file that is intended to be ORGed at address 0 as is
+required for Option ROMs. Any tips or pointers on that. Mo Budlong. 76167,3310
+
+
+Fm: Bill Brandon [DPTRAIN] 76701,256
+To: Mo Budlong 76167,3310
+
+Mo, I'd be very interested in your book. Who is publishing, when, and where may
+orders be sent for copies? Do you know whether it would be practical to do ROM
+development on a Model 4 with Misosys' PRO-MC compiler?
+
+
+Fm: Paul Globman 72227,1661
+To: Mo Budlong 76167,3310
+
+Mo - You can use ANY assembler to write assembly code in RAM, that will produce
+object code geared for ROM locations ( ORG 0).   I presented insight into this
+technique in the March issue of Portable 100, except my example was geared for
+LOMEM instead of ROM locations, but the technique will work as you wish.
+
+
+Fm: Mo Budlong 76167,3310
+To: Paul Globman 72227,1661
+
+Hi Paul, I dont have that issue of Portable 100. My subscription keeps getting
+lost in there computer. The problem I have experienced is that assemblers for
+the 100 tend to poke bytes into memory starting at the specfied ORG address. If
+you could give me a hint of the technique you mention, I am pretty fas fast on
+the uptake. I don't want to eat up your time but a couple of words (or lines)
+of wisdom would get me on the right track. Thanks, By the way. If you do ROM
+development, what assemblers, tools and equipment do you use? BEst, Mo
+
+
+Fm: C. Davey Utter 70055,522
+To: Stan Wong 70346,1267
+
+That sounds good to me!  My parents, however, knew nought of computers and the
+facts of life thereof.  I fear I'm a first generation hackette....Dave
+
+
+Fm: Mo Budlong 76167,3310
+To: Bill Brandon [DPTRAIN] 76701,256
+
+
+I publish all my own books (this is the fourth). If you want to place an order,
+you should drop me a line on E-mail.
+
+I only have two chapters left to go.
+
+One on what equipment is available and where to get it and the other is the
+source code for an EPROM m/l program that does search and replace on text
+files.
+
+It's not too long and I am just about to finish it up. It really is intended to
+illustrate all of the ROM programming principles covered in the book rather
+than to be a full blown search and replace utility.
+
+The book should be out in about two weeks, and I will upload an announcement in
+lib 13 Products/Reviews (with Tony and Deny's permission of course) once it is
+back from printing.
+
+Thanks for your interest.
+
+
+Fm: Mo Budlong 76167,3310
+To: Bill Brandon [DPTRAIN] 76701,256
+
+Hi again Bill, I just reread your message d realized I left it half unanswered.
+I'm not familiar with the Misosys PRO-MC. The only Misosys product I ever used
+was a cassette tape based disassembler for my Radio Shack Model I (wow does
+that date me) back when 4k of memory was the standard issue on machines.
+
+I use an RMAC CP/M based assembler running on an IBM PC that runs a UNIDOS
+board that does a hardware CP/M emulation.
+
+I also have about 4 or 5 software CP/M emulators.
+
+I suspect that the Misosys System will be Z-80 based and the 80C85 only has a
+subset of the instructions available for a Z-80.
+
+Probably some of the base rquirements would be.
+
+1. The ability to develop using 8080 mnemonics, or some way of processing a Z80
+source code file to ensure that only 8080 compatible instructions are used.
+
+2. Most ROM burners require their input files to be one of industry standards
+such as INTEL Hex or Motorola S format. So the assembler would need to be able
+to output in that format, or some method of creating that format is needed.
+
+Some assemblers (Microsofts MACRO-80 for example) gratutously rearrange your
+code for you. The Microsoft default is to arrange all data first, all code
+second and to then place a jump just before the data to jump over it into the
+code. Assembler's that do this are a real pain because the Option ROM code from
+address 0 to about 90H is critical and must be firmly located at addresses that
+you can control.
+
+4. Without knowing your system I'm not sure I can be clearer. If you know your
+equipment and software well, there is almost always some way around a hitch.
+(I'm sure even MACRO-80 has some switch that can be thrown that prevents the
+random rearrangement but I leave the deciphering of their manual to hardier
+souls).
+
+
+Fm: Paul Globman 72227,1661
+To: Mo Budlong 76167,3310
+
+Mo - I do not do ROM development per se, as I lack a ROM burner and do not
+use a PC.  I can write option ROM code because I understand the basic
+techniques used by POLAR and TravSoft, and I can disassemble ROMs using ROM2
+and my own way of approaching the situation.
+
+The following is an example of source that will assemble at 60000, but the
+actual object code will be for ORG 0.
+
+
+X:     equ 60000
+       org 60000
+       call sub1-x
+       call sub2-x
+       jmp done-x
+sub1:  xra a
+        .
+        .
+       ret
+sub2:  mov d,e
+        .
+        .
+       ret
+done:  lxi h,0
+        .
+        .
+        .
+
+So although this is ORGed at 60000 the calls and jumps will assemble as if
+it was ORGed at 0.  Then all you have to  do is move the object code, as it
+WILL  NOT run at 60000 unless you delete the  offset X before assembly.
+
+You can test the code in RAM by setting X equ 0 (no offset) and after it's
+debugged, reset X to the ORG address  for object code ORGed at 0.
+
+
+Fm: Ran Talbott 70506,60
+To: Mo Budlong 76167,3310
+
+I haven't done any ROM development for the M100,  but firmware is a big part of
+my consulting business.  In _general_,  the most economical way to develop
+ROM-based programs is with an XT clone.  Obviously,  individuals can often
+adapt their existing systems,  or perhaps scrounge something,  at a lower cost,
+but you can't beat the XT for repeatable results.
+
+
+Fm: Stan Wong 70346,1267
+To: Mo Budlong 76167,3310
+
+I am anxious to see your book when it is published.  I've put a lot of energy
+into decoding the mysteries of the option rom.  Now that I've done it, I'm not
+quite sure what to do with it.  Anyway, here is a brief outline of what I use:
+
+ROM Inspection: I have written a m/l program which reads the option rom and
+dumps it out as a hex file.  I transfer this to an IBM PC. There I convert it
+to a binary file with a Turbo Pascal program that I wrote.  I then run an 8085
+disassembler that I wrote, also in Turbo Pascal, that gives me a nice long
+listing (about 2-3 inch stack of paper per rom).  Although I haven't tried it I
+wrote the disassembler to operate on binary files because I thought I might
+want to disassemble 8085 CP/M programs.
+
+ROM Development: I have been using the ROM2 on the M100 to generate small test
+cases.  Final code is developed on the IBM PC using the TASM assembler
+(available here on CIS in IBMSW - gotta remember to send in my $30 since it's
+shareware).  It has a nice feature that lets you fill unused memory locations
+with a data pattern.  I use $FF since my disassembler skips long $FF sequences.
+On commercial roms $FF is the unprogrammed state.
+
+I use a MCT Eprom Programmer purchased thru JDR.  It reads a binary file. If
+your input is Intel Hex there is a utility that converts it to binary. For
+testing, I have modified a TSI 8-Rombank so that I can use one of the three
+available EPROM sockets normally reserved for the Sardine.
+
+At the present I am playing with higher-level languages for ROM development. I
+am using the Z80MU emulator and Small-C.  I plan to try a friend's copy of
+Turbo Pascal and Aztec-C.  Another possibility would be a CP/M Basic compiler
+for all those wonderful SIG programs.
+
+I have no knowledge of a M100 assembler that helps you will option rom
+programming (e.g. ORG 0).
+
+
+Fm: Phil Wheeler 71266,125
+To: Stan Wong 70346,1267
+
+RE ORG 0 comment:  I would have to read back along the messages, and I will.
+But ADSM.CO (DL 8) should allow org at 0000h -- since it creates a menu file,
+rather than assembling to the RAM running addresse.  The Custom Software
+assembler has been used (by me) to assemble at ORG 0.  Will test ADSM in that
+mode and let you know (IF that was the question!).
+
+
+Fm: Mo Budlong 76167,3310
+To: Ran Talbott 70506,60
+
+Ran, Yes I tend to agree. The amount of developer's software available for the
+XT/AT family make it an almost unbeatable choice.
+
+I'm not sure that large projects or commercial ROMs could be developed
+effectively on the Model 100, ( I suppose they could) but data storage and
+retrieval of source and HEX files would consume 90% of your time.
+
+I am hoping to be able to give those who want to develop on the Model 100 at
+least some starting point (although I would never try it myself). Thanks again,
+
+
+Fm: Mo Budlong 76167,3310
+To: Stan Wong 70346,1267
+
+Stan, My other three books are do to with COBOL and the Wang Mini-Computer and
+selling well I might add.
+
+In keeping with the non-commercial nature of the forum, I'm dropping you a line
+privately on E-Mail re the Option ROM book.
+
+Thanks for the list of equipment and software you use.
+
+Yes I have been scrounging around on CP/M BBS's for a while now looking for a
+BASIC compiler that I could modifiy for the 100.
+
+No luck, so in desperation I have started writing my own. Besides that way I
+can have it way I like it. TCOMP is nice, but I want all the features. And darn
+it all I'm 'a gonna get 'em.

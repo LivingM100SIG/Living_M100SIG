@@ -1,0 +1,100 @@
+10 ' THREE WAY  By Tim Ekdom
+30 DIM HX$(15),DC%(22),BN%(7):BL$="                                       "
+40 FOR N=0 TO 15:READ HX$(N):NEXT N
+50 FOR N=0 TO 22:READ DC%(N):NEXT N
+60 FOR N=0 TO 7:READ BN%(N):NEXT N
+70 CLS:KEY(1)ON:KEY(2)ON:KEY(3)ON:KEY(8)ON
+80 PRINT CHR$(27)+"p":PRINT@51," ** THREE WAY ** ":PRINT CHR$(27)+"q":PRINT@133,"By Tim Ekdom"
+100 ' Select input
+110 PRINT@200," Select desired input:":PRINT@280," Dec  Hex  Bin                     Exit";
+120 ON KEY GOSUB 200,300,400,,,,,900:GOTO 110
+200 'Decimal input
+210 CLS
+220 PRINT@80,BL$:PRINT@80," Enter decimal number: ";:LINEINPUT DE$:DE=VAL(DE$):IF DE$="" THEN CLS:RETURN
+230 IF (DE<0 OR DE>65535) OR (INT(DE)<>DE) THEN GOSUB 800:GOTO 220
+240 FOR N=1 TO LEN(DE$):IF MID$(DE$,N,1)<"0" OR MID$(DE$,N,1)>"9" THEN GOSUB 800:GOTO 220
+250 NEXT N
+260 GOSUB 1100:GOSUB 1200:DE$=" "+DE$:GOSUB 600:RETURN
+300 ' Hex Input
+310 CLS
+320 PRINT@80,BL$:PRINT@80," Input hexadecimal number: $";:LINEINPUT HE$:IF HE$=""THEN CLS:RETURN
+330 IF LEN(HE$)>4 THEN GOSUB 800:GOTO 320
+340 FOR N=1 TO LEN(HE$):T=ASC(MID$(HE$,N,1))
+350 IF (T<48 OR T>70) OR (T>58 AND T<65) THEN GOSUB 800:GOTO 320
+360 NEXT N
+370 GOSUB 1000:GOSUB 1200:GOSUB 600:RETURN
+400 ' Binary input
+410 CLS:PRINT@40," Enter binary number:":PRINT@120," Bit  7 6 5 4 3 2 1 0"
+420 BI$="":PRINT@200,BL$:PRINT@200,"      ";CHR$(239);
+430 B$=INKEY$:IF B$="" THEN 430
+440 IF B$=CHR$(127) OR B$=CHR$(8) THEN GOSUB 700:GOTO 430
+450 IF B$=CHR$(13) THEN 490
+460 IF B$<"0" OR B$>"1" THEN BEEP:GOTO 430
+470 IF LEN(BI$)=8 THEN 430
+480 PRINT CHR$(127);:PRINT B$;" ";CHR$(239);:BI$=BI$+B$:GOTO 430
+490 IF LEN(BI$)=0 THEN CLS:RETURN
+500 IF LEN(BI$)<>8 THEN BEEP:PRINT@280," Enter all digits.";:GOTO 420
+510 GOSUB 1300:GOSUB 1100:GOSUB 600:RETURN
+600 ' Display
+610 CLS:PRINT:PRINT " Decimal =  ";DE$
+620 PRINT " Hex     =  $";HE$
+630 PRINT " Binary  =   ";BI$:RETURN
+700 ' Handle backspace
+710 IF LEN(BI$)=0 THEN RETURN
+720 PRINT CHR$(127);CHR$(127);CHR$(127);CHR$(239);
+730 BI$=LEFT$(BI$,LEN(BI$)-1):RETURN
+800 ' Error message
+810 BEEP:PRINT@280," Value out of range. (Press RETURN)";
+820 A$=INKEY$:IF A$="" THEN 820
+830 PRINT@280,BL$;:RETURN
+900 ' Exit
+910 MENU
+1000 ' Hex to Dec
+1010 A=0:DE$=""
+1020 FOR N=1 TO LEN(HE$):A=A*16+DC%(ASC(MID$(HE$,N,1))-48):NEXT N
+1030 DE$=STR$(A):RETURN
+1100 ' Dec to Hex
+1110 MX=4096:HE$=""
+1120 FOR N=1 TO 4
+1130 A=INT(DE/MX):HE$=HE$+HX$(A):DE=DE-MX*A:MX=MX/16
+1140 NEXT N:RETURN
+1200 ' Dec to Bin
+1210 BI$="":DE=VAL(DE$)
+1220 IF DE>255 THEN BI$="........":RETURN
+1230 FOR N=7 TO 0 STEP -1
+1240 A=2^N:IF INT(DE/A)=1 THEN BI$=BI$+"1" ELSE BI$=BI$+"0":GOTO 1260
+1250 DE=DE-A
+1260 NEXT N:RETURN
+1300 ' Bin to Dec
+1310 DE=0
+1320 FOR N=0 TO 7:IF MID$(BI$,N+1,1)="1" THEN DE=DE+BN%(N)
+1330 NEXT N
+1340 DE$=STR$(DE):RETURN
+2000 DATA 0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F
+2010 DATA 0,1,2,3,4,5,6,7,8,9,99,99,99,99,99,99,99,10,11,12,13,14,15
+2020 DATA 128,64,32,16,8,4,2,1
+3000 ' THREE WAY      By Tim Ekdom
+3010 ' Public domain
+3020 ' Three Way is a binary-decimal-
+3030 ' hexadecimal number conversion
+3040 ' program. Use the function keys
+3050 ' to select which base to use for
+3060 ' input, enter the number, and it
+3070 ' will be converted to the other
+3080 ' two bases. Three Way accepts
+3090 ' decimal numbers of 0 - 65535,
+3100 ' hexadecimal $0 - $FFFF, and
+3110 ' binary 0 - 11111111 (128 dec.)
+3120 ' Inappropriate keypresses will be
+3130 ' rejected. A null entry returns
+3140 ' you to the select
+3150 ' entries should be in uppercase.
+3160 ' The binary entry screen presents
+3170 ' an entry mask for eight bits.
+3180 ' All eight must be typed. After
+3190 ' the remark statements in lines
+3200 ' 3000-3240 are deleted, the
+3210 ' program is a litt
+3220 ' 2300 bytes. Don't delete remarks
+3230 ' in the program, as they are
+3240 ' referenced by gosubs.

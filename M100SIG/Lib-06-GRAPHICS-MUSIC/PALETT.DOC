@@ -1,0 +1,208 @@
+                        PALETTE
+           A graphics program for the M100
+               -----------------------
+        PALETTE combines the abilities and concepts of three outstanding M100 
+SIG programs: CANVAS.BA by Seth Kaplan, CIRCLE.CO by Jon Diercks and QIKDMP.BA 
+by George Flanders. These programs integrate to provide a powerful, 
+comprehensive and EASY TO USE graphics program which:
+-
+        -DRAWS lines, boxes, triangles, frames and circles automatically 
+anywhere on the entire screen.(CANVAS/CIRCLE)
+-
+        -SAVES instantly and storably ALL 15360 pixel addresses for immediate 
+recall or future use in 1932 byte .CO files. (QIKDMP)
+-
+        -PRINTS out current or saved graphics in under a minute. (QIKDMP)
+-
+        Please read ALL these instructions before you use PALETTE. They're not 
+complicated and they are logical but PALETTE is a comprehensive program and 
+you'll be lost if you don't know what's going on. Refer to these instructions 
+often.
+-
+SETUP:
+        To use the program you'll need three files; PALETT.DOC (this file), 
+PALETT.100 and PALLDR.100. Download the files and edit all the garbage. 
+Checksum them as .DO files using the checksums in the file DES. SAVE a .BA 
+version of PALETT. Split PALLDR.100 at line 259 into two programs and run each 
+to create QIKDMP.CO & CIRCLE.CO. (Save the loaders for future use. These are 
+the same programs available elsewhere on the SIG.) 
+        QIKDMP.CO runs from addresses 54000 to 54239 and uses 54245 to 56164 as
+a storage buffer. I use 56165 to 56170 for storage of information relative to 
+PALETTE's use of each graphic file.
+        CIRCLE.CO runs in the ALT/LCD buffer so should not conflict with 
+anything (other than displacing another ALT/LCD program).
+        PALETTE therefore uses addresses 54000 to 56170 and needs 1932 bytes of
+space for each saved graphic so give it some RAM running space and be sure to 
+eliminate any M/L conflicts before you run it. PALETTE will let you know if you
+are out of additional graphic file storage space when you run it. All stored 
+graphics files use a ] as the last character and ONLY those files will display 
+on the directory of loadable files when you run PALETTE. Be sure and have all 
+three files: PALETT.BA, QIKDMP.CO and CIRCLE.CO in RAM when running PALETTE; 
+you'll use them all. (Of course you would ALSO need in RAM whatever screen 
+print program you use if NOT QIKDMP. See below.)
+-
+Using PALETTE:
+        When you run PALETTE you will first come to it's main menu. Press <N> 
+to begin a new graphic; enter a new name, 1 to 5 characters, and PALETTE will 
+add the final ] for you. <P> will display all suitable graphics files currently
+in RAM and prompt for a filename. The first time you run PALETTE, the space 
+after the "Graphic name" prompt will be blank; type in your title. Each 
+subsequent use will show the name of the LAST used graphic. Press ENTER to load
+that file or type your choice (ALWAYS include the ].)
+        If you've selected <N>ew then you'll see a blank screen and the built-
+in pixel finder will flash at location 120,32. If you've chosen a <P>revious 
+graphic it will display immediately with the pixel finder at your last drawing 
+location.
+-
+        To DRAW you'll use keys W E R, S D, Z X C to move the pixel. You can 
+press Q anytime for the Quick reference chart or use the one below for their 
+directions: they're fairly ergonomic.
+        You can move the drawing pixel around the screen three ways:
+        -You can draw with it by dribbling it across the screen leaving a trail
+of set pixels in your chosen design.
+        -You can press TAB and leave a trail of "reversed" pixels until you've
+stepped your way to your desired location where you'll press TAB again and do 
+something at the new location.
+        -You can do a "pixel jump" to pre-chosen coordinates by pressing O and 
+typing in the new X,Y coordinates.
+-
+        (NOTE: keys  shown with a (t) in front of the description are TOGGLES; 
+just press the key again to turn the attribute on or off. Use UPPER-CASE 
+letters for all control sequences; ANY character when in PALLETTE's TEXT mode. 
+If you try to do something that won't work PALETTE will flash "OUT OF RANGE!, 
+beep and resume. I suppose it is possible to frustrate the error routine and if
+that happens see the remarks under CTRL X for saving your work.)
+-
+    (t) TAB toggles between "white" and black pixels. This works on all 
+routines. If you press TAB BEFORE you leave a desired design it will erase the 
+last location. (This is useful when "jumping" from a location where you DON'T 
+want to leave a dot behind.)  Use it also to erase entries.
+        Creative use of BLACK/WHITE pixels and shapes will let you do all kinds
+of overlays and effects; black circles inside white shapes, white letters on 
+black designs etc. Use your imagination!
+-
+        UP/DOWN arrow keys (above DEL/BKSP) control the size of your "pixel 
+brush". Sizes are 1 pixel wide to 43, in increments of 2, operationally limited
+only by the distance from the brush's center pixel to the closest screen edge 
+parallel to your brush movement axis. (huh?)
+        When using the diagonal pixel movement keys, W R Z C, the orientation 
+of a thickened brush will match the last direction of vertical or horizontal 
+movement. (Try it, you'll see.)  Brush width will remain at the chosen 
+thickness when doing frames, lines and circles; the center line of the pixel 
+brush is the coordinate used by the drawing routines. Triangles are one pixel 
+wide; manually thicken them to taste.
+-
+        P - will show you where the drawing pixel is at any time by flashing
+ circles at your last pixel location and displaying it's coordinates.
+-
+    (t) Q - will display a mini help screen to remind you of key functions.
+-
+        O - Use to jump directly to a new location. (Pixel locations run in X,Y
+format from 0,0 which is the upper left corner to 239,63 at the lower right.) 
+At the X prompt enter THREE characters; 002, 02sp or 2spsp are all OK. At the Y
+prompt enter TWO characters. (X<240 and Y<64!). Confirm your choice with Y or N
+and away you go.
+        Note: When drawing Lines, Boxes and Frames a reminder of the routine 
+you're using will display on the left side of your screen and "dribbles", 
+although they show your path to the other coordinate if you don't "jump" 
+directly, will not be recorded.
+-
+        L - Press L when at one end of a desired LINE. Dribble or jump to the 
+other end, press L and there's your line. You'll then HEAR a reminder to press 
+Y (yes) or N (no) about keeping what you just drew.
+-
+        B - To draw a solid box locate one corner, press B, move to the 
+opposite corner, press B, and behold; a box. Respond Y or N and continue.
+-
+        F - Frame is drawn the same way: locate a corner, press F, locate the 
+other corner, press F, then Y or N.
+-
+        T or K - Press to draw an open (T) or closed (K) triangle. Choose the 
+location for the center and press T or K. You'll be prompted for a size: enter 
+TWO digits from 1 (0n or Nsp OK) to 62 pixels high (at Y=32); then press Y or 
+N.
+-
+    (t) I - Reverses all pixels and switches pixel color.
+-
+        H - This will draw a circle and/or fill it in. Answer the r? with a TWO
+digit radius (again 0n or Nsp OK): at the audio prompt you have THREE choices; 
+Y/N/F (to Fill in the circle).  When you're satisfied, press Y.
+-
+    (t) CTRL T - You can enter text and ANY graphics characters directly on 
+your graphic at the cursor location nearest your drawing pixel. Choose pixel 
+color, press CTRL T, verify the location (CTRL T out and try another location 
+if you need to), and type. Only DEL/BKSP and CR will work as usual. Press CTRL 
+T when done.
+-
+        NOTE: The Border and Guide routines described below can work together 
+but they set their pixel colors independently. Keep toggling them until you 
+achieve the desired effect.
+-
+    (t) CTRL B - This will place a solid Border around the screen with reversed
+pixels. Keep in mind that graphics along the edges will be lost if you toggle 
+in and out of the border.
+-
+    (t) CTRL G - This will display a reference Guide frame with pixels reversed
+beginning at 0,10 / 10,0 and at 10 pixel intervals to X250,Y60. When used with 
+Border described above you can serrate a solid border.
+-
+        CTRL K - This will SAVE your graphic to a 1932 byte .CO file for future
+use and return you to PALETTE's main menu. USE IT OFTEN! Although PALETTE is 
+constantly writing your graphic to it's screen buffer, YOU must save the buffer
+to a discrete .CO file. You can quickly return to your graphic by pressing <P> 
+at the main menu then <ENTER>; voila'.
+-
+        CTRL X - This takes you directly to PALETTE's main menu WITHOUT saving 
+your screen to a file. If you should press it by accident DONT'T PANIC! To save
+the graphic to a file, go to BASIC and type SAVEM"name ]",54245,56170 <ENTER>. 
+(remember the last ] .)
+-
+        GRPH C - This will reload your current file AS STORED at the last CTRL 
+K. It's useful if you just want to start over with a graphic.
+-
+        CTRL P - This calls the printer dump of QIKDMP.CO on line 202 of 
+PALETT.BA. Verify edge of screen attributes (Border or Guide) BEFORE you print.
+What you see is what you print!
+        You MUST read George Flander's complete discussion of setting up QIKDMP
+for YOUR printer which is contained in QIKDMP.100/DL6. The loader I've included
+in this package has all of George's codes as supplied, so find the setup codes 
+he discusses and change whatever you need to. (Line 360 of PALLDR.BA)
+        The printer routine operates INDEPENDENTLY of the LCD routine so you 
+can use PALETTE right away while working to make your printer compatable. If 
+you use another graphic dump routine you can call it at line 202. (e.g.Users of
+Gene Nestro's XCOPY.CO (DMPDMP.BA/DL7), substitute RUNM"XCOPY" for CALL54053.)
+-
+                          KEY MOVES
+                          ---------
+                            <E> up
+                    <W> up/L     <R> up/R
+               <S> Left               <D> Right
+                    <Z> dn/L     <C> dn/R
+                            <X> down
+-
+-
+                         Control Keys
+                         ------------
+TAB - B/W pixels              UP/DN arrows - Brush width    P - Pixel loc.
+O - Pixel jump                Q - Query/help                L - Line
+B - Box                       F - Frame                     T/K - Triangle
+I - Inverse                   H - Circle                    CTRL T - Text
+CTRL B - Border               CTRL G - Guide                CTRL K - SAVE
+CTRL X - PALLETTE Menu        GRPH C - reload graphic       CTRL P - Print
+-
+                ------------------------------------------------
+-
+CREDITS:
+        Seth Kaplan wrote the original CANVAS.BA in 1985 and it's been a 
+popular program on this SIG. I've heavily modified it for PALETTE and added 
+bells and whistles. I've made extensive use of George Flander's advice and 
+QIKDMP screen routines in addition to John Dierck's CIRCLE.CO. Any credit goes 
+to them. THANK YOU!
+        Send comments and problems to me at 73267,552. HAVE FUN!
+-
+Randy Hess
+73267,552
+3/88
+Omaha, Ne.
+DAY:800-228-3309
+

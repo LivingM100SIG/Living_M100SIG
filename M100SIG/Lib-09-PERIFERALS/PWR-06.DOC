@@ -1,0 +1,302 @@
+
+
+
+                                    Chapter 4
+
+                               Formats and Backups
+
+
+          The two primary headaches of dealing with any disk-storage
+          system are formatting and backing up.  This chapter presents
+          three application programs for dealing with these headaches.
+
+
+                                Basic Procedures
+
+
+                                   Formatting
+
+          A new disk straight from the box cannot be used at all until
+          certain timing marks and divisions are put onto it.  This
+          process is called formatting.  Before you format a diskette,
+          any attempt to read it or write to it will result in an ?IO
+          error.
+
+          Formatting with POWR-DOS is simple.  All it takes is a single
+          BASIC command:
+
+
+          LFILES FORMAT[ENTER]     <--- (You type this)
+
+
+          Once a diskette has been formatted, it can be read or written
+          to using POWR-DOS.  After formatting, you have an "empty"
+          disk, which will show no files on it and 79 sectors free.
+
+          The best way to format is to have a "formatting party" as
+          soon as you buy a new box of diskettes.  This habit minimizes
+          the risk of formatting an old diskette.  Once the drive
+          begins to format, it is too late to stop it.  The very first
+          part of the disk to be formatted is the "directory", where
+          the names and locations of all the other files are stored. 
+          Further, the drive cannot be stopped once the format begins
+          unless you actually turn off its power.  If you realize two
+          seconds too late that you are re-formatting a disk containing
+          valuable data, your only hope is to turn off the drive, hit
+          BREAK, and refer to Chapter 6.
+
+
+
+
+
+
+                                     Page 24
+          Chapter 4            Formats and Backups            Page 25
+
+
+                                     Backups
+
+          A backup is nothing more than a copy of a diskette onto
+          another diskette,  Backups are a nuisance.  They take time
+          and effort, and they require you to use more diskettes (or
+          cassettes).  However, backups of any important data are
+          essential.  If you accidentally spill coffee on a first-draft
+          report (written on paper), the paper is stained, but it is
+          still readable.  If you spill coffee on a diskette containing
+          your only draft, the entire contents of the diskette are
+          lost.  If there is no backup, many hours of your work can be
+          lost.  The drive itself can destroy diskettes if it is not in
+          good mechanical repair (see Chapter 6 for more details). 
+          Losing the only copy of valuable data feels rather like
+          stepping on your pet hamster.
+
+          Some computers boast two separate drives.  This hardware
+          arrangement is ideal for copying, since the computer can move
+          the disk contents in pieces.  However, the PDD is arranged so
+          that no such convenience is possible; there can be only one
+          PDD connected to your computer at once.  There are two
+          alternatives:
+
+
+             * Back diskettes up to cassette.  This procedure is
+               relatively slow and unreliable (because of the
+               cassette).  Just how unreliable it is depends on the
+               luck you have had with tapes.  However, it has the
+               advantage of being able to occur unattended by you. 
+               Once you begin a backup to cassette, you can leave your
+               computer and do something else.
+
+             * Swap diskettes in the drive.  Using this technique, you
+               load as much of the source diskette (the one you are
+               backing up) into computer memory as possible, then put
+               in the destination diskette and copy the memory contents
+               into it.  Since the computer's memory is not usually
+               enough to hold the entire diskette's contents, you may
+               have to perform several swaps before completing the
+               backup.
+          Chapter 4            Formats and Backups            Page 26
+
+
+                               Copying to Cassette
+
+          POWR-DOS comes with a program called COPY-C.BA to move the
+          contents of a diskette to cassette.  To use it, load in
+          COPY-C from a disk and run it.  It will present the following
+          screen:
+
+
+
+                     ----------------------------------------
+                    |   Disk-to Cassette Backup              |
+                    |                                        |
+                    |         1.  Create Tape from Diskette  |
+                    |         2.  Verify Tape                |
+                    |         3.  Create disk from cassette  |
+                    |         4.  MENU                       |
+                    |                                        |
+                    |   Press Key...                         |
+                     ----------------------------------------
+
+
+          The first step in a backup is to create a tape, so press the
+          "1" key.  (NOTE: not [F1], but the numeral 1).  The following
+          exchange will take place:
+
+
+          Insert diskette to copy...press key
+          Backup will take 10.85 minutes
+          Proceed (y/n)? y[ENTER]
+          Set up tape to record...press key
+          Skipping Leader
+
+
+          (Note:Each time the "press key" message appears, the program
+          stops and waits for you to press a key on the keyboard). 
+          Notice the time estimate.  COPY-C will copy only the sectors
+          of the diskette that are being used, so that an empty
+          diskette will take very little time to copy, and a full
+          diskette will take about 28 minutes.  The program gives you a
+          chance to change your mind once you see how long it will
+          take.  Notice also that the program automatically skips the
+          tape leader when recording, so you can start the tape at the
+          very beginning.
+
+          COPY-C proceeds by copying the diskette sectors "in use" to
+          tape, one sector per tape file.  It prints a message such
+          as, "Create sector 0 (1 or 31)" for each sector it is making,
+          so you always know how far to go.  Once the tape has been
+          recorded, you return to the initial screen.
+          Chapter 4            Formats and Backups            Page 27
+
+
+          Once you have created a tape, you will probably want to
+          verify it.  Once your tapes have verified OK consistently,
+          you could probably skip this step.  Until then, verify
+          everything.  What good is an unreadable backup?
+
+          When you press "2" from the COPY-C menu, the following
+          exchange takes place:
+
+
+          Insert diskette and tape to be
+          verified...press key
+          Set up tape to play back...
+          press key
+          Loading directory (Sector 0)
+          Disk verification will take 10.85 minutes
+
+
+          After this, the sectors will verify one by one.  If there are
+          no problems, COPY-C will return to its main menu when
+          verification is complete.
+
+          When it is time to restore a diskette from tape, press "3" on
+          the COPY-C menu.  The following prompts appear:
+
+
+          Insert a blank formatted diskette
+          FORMAT.BA works best...press key
+          Set up tape to play back...press key
+          Loading directory (Sector 0)
+          Disk creation will take 10.85 minutes
+
+
+          For best results, you should use a diskette newly formatted
+          using FORMAT.BA (see the section on FORMAT.BA below for more
+          details).
+          Chapter 4            Formats and Backups            Page 28
+
+
+                               Copying to Diskette
+
+          Another POWR-DOS application program, COPY, allows you to
+          backup diskettes to other diskettes.  Diskette backups are
+          faster and more reliable, but you menus swap the source and
+          destination diskettes, perhaps several times.
+
+          Before running COPY, it is best to empty your memory of all
+          unnecessary programs.  COPY uses your free memory as a
+          temporary holding area for disk files, so the more free
+          memory there is, the fewer swaps that you must make.
+
+          When you run COPY, it first asks you to insert a destination
+          diskette.  COPY needs a blank, formatted diskette to begin
+          with; it looks at your proposed destination diskette and does
+          one of the following:
+
+
+             * If the diskette is already formatted and blank, it
+               automatically proceeds to the next step.
+
+             * If the diskette needs to be formatted, it will print a
+               message, "diskette unreadable format (y/n)?"  You can
+               then decide to format the diskette or abort the copy.
+
+             * If the diskette already contains readable files, it will
+               print a message, "diskette contains 15 files. Delete
+               them (y/n)?"  You can then decide whether to delete the
+               existing files or abort the copy.
+
+
+          Once the destination diskette is formatted and blank, COPY
+          prompts you to insert the source diskette.  It reads the
+          directory and tells you how many swaps will be needed to copy
+          all the files.  (Each time you remove the source diskette and
+          insert the destination diskette is one "swap").  Then, it
+          begins a list of files that it is copying.
+
+          At this point, all you need to do is to put in the
+          destination and source diskettes as prompted by the program. 
+          Eventually, COPY will print, "Done", and return to your
+          computer's menu.
+          Chapter 4            Formats and Backups            Page 29
+
+
+                                Notes and Options
+
+
+                                 Using FORMAT.BA
+
+          In addition to the LFILES FORMAT command, you can use the
+          utility FORMAT.BA to format diskettes.  There are three
+          reasons why you might want to:
+
+
+             * FORMAT.BA will warn you before re-formatting a diskette
+               that contains files.
+
+             * You can optionally omit the "check" during format, which
+               speed up the format by about 45%
+
+             * FORMAT.BA produces diskettes which accept sector writes
+               almost 20 times faster than LFILES FORMAT.  This
+               increase will only matter for specialized sector-based
+               programs like COPY-C.  Writing to the disk with any of
+               the file-based commands will nullify this advantage,
+               however.
+
+          FORMAT.BA is simple to use.  When you run it, it first asks
+          if you want a "check" during format.  Answer "n" unless you
+          have been having problems with diskettes going "bad".  After
+          that, simply insert the diskette to format; if there are
+          files, FORMAT will ask you if you want them deleted.  If you
+          answer "y", then formatting will begin.
+
+          Formatting is a convenient way to completely remove all
+          files from a diskette.  Also, if a diskette has been
+          "trashed", and gives only ?IO errors when you use it,
+          formatting will often make the diskette usable again,
+          although all data will be permanently lost.  If you have a
+          "trashed" diskette containing valuable files, try using
+          RECOVR.BA (see Chapter 6) before re-formatting.
+          Chapter 4            Formats and Backups            Page 30
+
+
+                               Errors and Recovery
+
+
+                                Formatting Errors
+
+          There are two possible errors from LFILES FORMAT or
+          FORMAT.BA:
+
+
+             * You might get a "?WP Error" message.  This message means
+               that the write-protect tab on the diskette is open. 
+               Remove the diskette, close the tab, and try again.
+
+             * You might get an "?IO Error" message.  Whenever you get
+               this message during formatting, you should discard the
+               diskette or return it for a refund.  If a diskette
+               cannot be formatted, you cannot use it.  Before
+               discarding it, you might try to format it once more, or
+               use a bulk eraser on the disk and try again.
+
+
+
+                              Errors while Copying
+
+          Both COPY and COPY-C will abort with a simple message if
+          there are errors.  The only possible errors arise from
+          problems with reading or writing to the diskettes or tape.
+

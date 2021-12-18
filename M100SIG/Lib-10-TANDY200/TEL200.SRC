@@ -1,0 +1,516 @@
+;Source code for TELCOM.200
+;Revised - 11/13/87
+;Disassembly of TELCOM (24573-26530)
+;Modified for "Split-Screen"
+;The codes that are part of SS routine are noted by '*'or boxed in by dashed lines.
+
+
+;BEGIN - TELCOM entry
+
+/.122
+CALL 20323:HL=24667:CALL 20420:JMP .1
+
+/.2
+CALL 20293:HL=24667:CALL 28192
+/.5
+CALL 29003:HL=.2:SHL 61236:HL=24627:CALL 26526:CALL 21750:RST 2:AND A:JZ .5
+DE=.6:CALL 33773:JZ .2
+RET
+
+/.6;Telcom hook table
+/['STAT' .125
+/['TERM' .126
+/['CALL' .127
+/['FIND' .128
+/['MENU' 26532
+RST 7
+
+
+/.125;Stat
+DEC HL:RST 2:INC A:DEC A:JNZ .7
+
+/.1
+HL=61244:B=#7
+/.8
+A=M:RST 4:INC HL:DEC B:JNZ .8
+A=#44:RST 4:LDA 61252:AND A:A=#79:JZ .9
+A=#65
+/.9
+RST 4:A=#44:RST 4:LDA 61172:AND A:JNZ .10
+A=#84:RST 4:JMP .5
+
+/.10
+RRA:A=#50:SBC B:RST 4:HL=24759:CALL 13591:JMP .5
+
+/.7
+JC .12
+CMP #44:JZ .13
+CALL 4116:CMP #77:JNZ .2
+INC HL
+/.12
+CALL 6429:CALL 34741:DEC HL:RST 2:AND A:JZ .5
+
+/.13
+RST 1:INC L:DEC HL:RST 2:CMP #44:JZ .14
+CALL 4116:CMP #65:JZ .15
+SUB #79:JNZ .2
+
+/.15
+STA 61252:RST 2:AND A:JZ .5
+
+/.14
+RST 1:INC L:DEC HL:RST 2:JC .16
+CALL 4116:SUB #84:JNZ .2
+JMP .17
+
+/.16
+CALL 4440:CMP #20:JZ .17
+SUB #10:JNZ .2
+INC A
+/.17
+STA 61172:JMP .5
+
+/.23
+HL=24898:CALL 28150:POP DE:CALL .19:JZ .2
+XCHG:ORA #55
+
+/b1:/.127:/f1;Call
+PUSH HL:HL=24898:CC 28150:POP HL:CALL 25131:JC .2
+JNZ .5
+JMP .21
+
+
+/.128;Find
+SUB A:CALL 29020:PUSH HL:CALL 28234:JZ .2
+CALL 28300:XCHG:POP HL
+/.24
+CALL 28738:JNC .5
+PUSH HL:PUSH DE:CALL 29044:CALL .19:CNZ .22:CALL 20286:CALL 28808:JZ .5
+CMP #67:JZ .23
+POP DE:CALL 28790:POP HL:JMP .24
+
+/.19
+CALL .25:RZ
+RST 4:CMP #58:INC DE:JNZ .19
+JMP .26
+
+/.22
+CALL .25:RZ
+CMP #60:JZ 24993
+CMP #58:RZ
+RST 4:INC DE:JMP .22
+
+
+/.25
+CALL 28797:DEC DE:A=[DE:RZ
+
+/.26
+CMP #26:JZ .2
+RET
+
+
+/.51
+lda 64781:sta .32:sra:jc 25046;Shift-F4
+jmp 25063
+
+
+/.66;Term label
+/['Pre' 246
+/['Dow' 238
+/[' U' 240
+/[128
+/[128
+/[128
+/[128
+/['By' 229
+
+/.126;Term
+HL=61243:RST 2:CNC 16808:PUSH AF:CALL 6429:POP AF:CMC:CC .51:JC .65
+
+
+/.21;Entry point for DIRACC
+A=#64:STA 61234:STA 61286:XOR A:sta .251;*:sta .225;*:STA 62704:STA 62705:STA 64749:STA 64751
+dec a:sta .30
+CALL 21499:HL=.66:CALL 28192:CALL 25790:CALL 25808:CALL 25820:CALL 20423:CALL 20328
+;turn SS on
+call .33;*
+
+/.79;Term loop
+CALL 29013:HL=.70:SHL 61236
+CALL 34412:CC .71;no carrier
+LDA 64754:AND A:JZ .72
+LDA 64752:HL=61636:XOR M:RRA:CC 25820
+/.72
+CALL 5154:CALL 26437:JNZ .74
+CALL 5124:JZ .75
+CALL 4855
+/.74;key pressed
+B=A:JC .76
+
+;intercept key
+;------------------------------------
+lda 61194:and a:jz .252;label is off
+lda .251:sra:jnc .252;SS is off
+;call SS routine
+push bc:a=b:call .206:pop bc:jmp .253
+;------------------------------------
+
+/.252
+a=b;*:AND A:CNZ 26402:JC .78
+/.253
+LDA 61241:AND A:A=B:CZ 23045;Half dupx
+/.75
+CALL 34056:JZ .79
+CALL 34073:B=A:JC .79
+CMP #127:JNZ .80
+LDA 61244:CMP #58:JNC .79
+A=B
+/.80
+RST 4:HL=64749:A=M:M=B:CMP #27:A=B:JNZ .81
+CMP #73:JNZ .81
+LDA 62704:AND A:JNZ .81
+HL=25674:B=#8
+/.83
+A=M:CALL 34371:INC HL:DEC B:JNZ .83
+A=#73
+/.81
+CALL 25682;Echo to LPT
+CALL .85:JMP .79
+
+
+/.78
+XOR A:STA 64752:STA 64751
+/.86
+CALL 35689:JC .86
+JMP .79
+
+/.70
+CALL 20293:XOR A:STA 61242:CALL 25808:JMP .79
+
+/.76
+E=A:D=#255:HL=.87:+DE:+DE:A=M:INC HL:H=M:L=A:DE=.79:PUSH DE:PCHL
+
+;Term hook table
+/[.129;Prev
+/[.130;Down
+/[.131;Up
+/[25784;Full/Half
+/[25802;Echo
+/[25754;?
+/[.133;?
+/[.136;Bye
+/.87
+/.133:a=#58:sta 62711:jmp 40084;do RST 7
+
+
+/.129;Prev
+;toggle SS
+;--------------------------------
+lda 61194:and a:jz 25757;goto Prev if label is off
+lda 64781:sra:jnc 25757;or no shift
+/.33:hl=.251:inc m:a=m:sra
+jnc 20423;SS off
+call .250:jmp .215;SS on
+;--------------------------------
+
+
+/.131;Up
+HL=.95:jmp 25882
+
+
+/.130;Down
+CALL 11362:lda 62704:xor #255:sta 62704:JZ 26188
+HL=.107:jmp 26137
+
+
+/.85
+C=A:LDA 62704:AND A:A=C:RZ
+CALL 26274:RZ
+JNC .112
+CALL .112:A=#10
+/.112
+LHL 62706:CALL 30583:SHL 62706:RNC
+call 20293;beep if DL aborted
+/.107
+xor a:sta 62704:CALL 28226:HL=26485:JMP .114
+
+/.95
+HL=26470
+/.114
+CALL 26526:HL=26494:CALL 13591:XOR A:STA 62705:STA 62704:JMP .79
+
+
+/.136;Bye
+HL=26515:CALL 26526:a='?':rst 4
+CALL 4855:rst 4
+push af:call 20286:pop af
+CALL 4116:CMP #89:JZ .65
+HL=26494:CALL 4556:JMP .79
+
+/.71;carrier lost
+lda .32:sra:rc;do not detect carrier
+HL=26445:CALL 26526
+/.65
+CALL 25018:CALL 34741
+/.119
+XOR A:STA 61234:L=A:H=A:LDA 62704:PUSH AF:SHL 62704:CALL 20333:CALL 30545:POP AF:AND A:CNZ .121:JMP .122
+
+
+
+;---------------------------
+;Split Screen routine
+
+;Use Ramdir for SS buffer
+/.30=62485;ramdir end
+/.32=62486;Lost Carr enable
+/.251=62487;toggle
+/.225=62488;macro status
+/.200=62489;cursor's column pos
+/.202=62490;cursor addr
+/.204=62492;buffer end pntr
+/.201=62494;key buffer - 133 bytes
+;Use Input buffer for display buffer
+/.239=61296;40 bytes
+
+
+
+/.206;subroutine begins here
+call .3;store key or do macro
+
+
+;Format and output to the display buffer
+/.215:lhl .202
+/.29:DE=.201:LDA .200
+/.238:ORA A:JZ .237
+DEC A:C=A:DEC HL:A=M:CMP #9:A=C:JNZ .238
+SUB #7:JNC .238
+
+/.237
+ADD #8:B=A:DE=.239:PUSH DE:C=#40
+/.245
+A=M:ORA A:JNZ .240
+INC HL:a=#40:SUB C:B=A:LDA .200:CMP B:A=B:B=C:JC .241
+STA .200:JMP .241
+
+/.240
+INC HL:CMP #9:JNZ .242
+
+/.241;Simulate TAB with spaces
+A=#32
+/.244
+[DE=A:INC DE:DEC C:JZ .243
+DEC B:JNZ .244
+DEC DE:INC C
+/.242
+B=#8:[DE=A:INC DE:DEC C:JNZ .245
+/.243
+POP HL;hl=display buffer
+
+
+;Display it
+call 20333;cursor off
+DE=64864;LCD buffer for writing one line
+b=#40;40 chrs in a line
+
+/.249:PUSH HL:PUSH DE
+;Chk for non-viewable chr
+a=m:SUB #32:JNC .247
+XOR A
+
+/.247;get bit pattern of the Ascii chr
+L=A:h=#0:+HL:+HL:+HL:DE=36963:+DE
+
+POP DE:PUSH DE:C=#7
+/.248;store the bit pattern to LCD buffer
+A=M:[DE=A:INC HL:A=E:ADD #40:E=A:A=D:ADC #0:D=A:DEC C:jnz .248
+
+;Underline if at cursor
+LDA .200:SUB #40:ADD b:A=M:JNZ .246
+cma
+/.246:[de=a
+POP DE:INC DE:POP HL:INC HL:DEC b:JNZ .249;next chr
+
+;write the bit pattern info to LCD
+xor a;ZF on = write
+L=#16;on line 16
+call 36468;call write
+jmp 20328;cursor back on and exit
+
+
+
+/.3;Check for macro mode
+b=a:hl=.225:dec m:jz .226;Do macro
+inc m
+;Activate Macro if- 
+cmp #27;ESC?:jz .34
+cmp #31;Down Arrow?:jz .34
+
+
+
+/.46;Do its function or store it.
+;HL=cursor addr, DE=buffer end, BC=buffer start, A=key pressed
+A=B:LHL .204:XCHG:LHL .202:BC=.201
+
+CMP #127;DEL?:JZ .208
+CMP #32;CTRL code?:JNC .209;store
+CMP #9;TAB?:JZ .209;store
+
+
+CMP #8;BKSP?:JNZ .232
+
+;backspace, delete
+-BC:jZ 26402:+BC
+/.220;
+B=H:C=L:DEC BC
+/.36
+A=[BC:PUSH AF:PUSH BC
+/.211;
+A=M:[BC=A:RST 3:INC BC:INC HL:JNZ .211
+h=b:l=c:dec hl:SHL .204:POP HL:POP AF:JC .212
+/.219;
+C=#8:CMP #9:JZ .213
+C=#1
+/.213;
+LDA .200:SUB C:JNC .214
+/.222;
+XOR A
+/.214;
+STA .200
+/.212;
+SHL .202:ret
+
+
+/.208;delete
+RST 3:rz
+INC HL:JMP .220
+
+
+/.232:cmp #2;CTRL-B?:jnz .210
+
+;delete left side of cursor
+-bc:jz 26402:+bc:xor a:sta .200:jmp .36
+
+
+/.210:CMP #28;Right Arrow?:JNZ .216
+
+;move cursor right
+RST 3:rZ
+JMP .217
+
+/.216:CMP #29;Left Arrow?:JNZ .218
+
+;cursor left
+-bc:rZ:+bc
+/.27:DEC HL:A=M:JMP .219
+
+
+/.218:CMP #1;SH-Left Arrow?:JNZ .227
+
+;back a word
+d=b:e=c:C=#0
+/.228;
+RST 3:JZ .222
+INC C:DEC HL:A=M:CMP #48:JNC .228
+CMP #9:JNZ .213
+A=C:ADD #7:C=A:JMP .213
+
+
+/.227:CMP #6;SH-Right Arrow?:JNZ .229
+
+;advance a word
+C=#0
+/.231;
+RST 3:JZ .236
+inc c:A=M:CMP #9:JNZ .230
+A=C:ADD #7:C=A
+/.230;
+INC HL:A=M:CMP #48:JNC .231
+/.236;
+LDA .200:ADD C:CMP #40:JC .214
+A=#39:JMP .214
+
+
+/.229:CMP #21;CTRL-U?:JNZ .38
+
+;clear buffer
+xchg:-bc:jz 26402;already empty
+/.250;
+XOR A:STA .200:hl=.201
+/.233;
+SHL .204:M=#0:JMP .212
+
+
+/.38:CMP #14;CTRL-N?:JNZ .224
+;clear buffer on the right side of cursor
+b=a:rst 3:a=b:jz 26402
+jmp .233
+
+
+/.224
+cmp #13;CR?:jz .203
+cmp #30;UP Arrow?:jnz 26402
+and a
+
+
+/.203;Xmit buffer content
+push af:d=b:e=c:rst 3:jz .28;empty
+/.31:push bc:call .27:pop bc:and a:jnz .31
+
+/.28:push bc:b=h:c=l:pop hl
+/.254:push bc:push hl:-bc:+bc:cnc .29:pop hl:pop bc
+a=m:and a:jz .255;done
+call 26402:call 26108:inc hl:jmp .254
+
+
+;Attach CR if CR was pressed, and exit
+/.255:pop af:cz 26402:jmp .250
+
+
+
+/.209;Store a chr in buffer
+xchg:b=a:a=l:sub c:adc #1
+cmp #134:jnc 20293;full
+cmp #79:cz 20293
+PUSH bc:B=H:C=L:INC HL:SHL .204
+/.234;
+A=[BC:M=A:DEC BC:DEC HL:RST 3:JNZ .234
+POP bc:M=b
+/.217;
+A=M:C=#8:CMP #9:inc hl:JZ .236
+C=#1:JMP .236
+
+
+/.34:inc m:ret;activate macro
+
+
+/.226;get macro
+push bc:call 11362;reset fl pntrs
+hl=.47;macro file name
+de=63302;move file name here
+c=#6:call 15445;move
+call 11197;find the file
+pop bc:rz;MACROS.DO not found
+
+;Find the macro string and put it in buffer
+/.48;find macro name
+a=[de:cmp b:jnz .223
+;found
+inc de
+/.45:a=[de:inc de:b=a:cmp #26:rz;end of file
+cmp #13:jnz .49
+a=[de:cmp #10:rz
+/.49;load macro
+push de:call .46:pop de:jmp .45;next chr
+
+/.223;try next line
+a=[de:inc de:cmp #26:rz;end of file, exit
+cmp #13:jnz .223
+a=[de:cmp #10:jnz .223
+inc de:jmp .48
+
+
+/.47:/['MACROS';macro text file name
+;-----------------------------------
+
+;END
+

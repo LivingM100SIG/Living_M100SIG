@@ -1,0 +1,38 @@
+Another GW-BASIC tip:
+
+Copyright 1990 Tony B. Anderson, All Rights Reserved
+
+
+If you're attempting to convert Model 100 family BASIC programs to run under
+GW-BASIC, and find cases of Integer division in the Model 100 programs
+expressed by the backslash character "\" (GRPH-hyphen), you should be aware
+that it doesn't work exactly the same as it does in Model 100 BASIC.
+
+For purposes of illustration, let's use the example:
+
+	A = 7.5\4	or  A = X\Y
+
+In Model 100 BASIC, this returns an integer in A, which is equal to "how many
+times will 4 go into 7.5 evenly, or Y into X, disregarding any leftover".
+
+In GW-BASIC, Both values are rounded UP or DOWN to the nearest integer first,
+THEN the division is made.  In the case of the above example, 7.5 would be
+rounded UP to the whole number 8, then the formula becomes:
+
+	A = 8\4
+
+which sets A to a value of 2.  If 7.5 were 7.4, then it is rounded DOWN to
+the whole number 7, which sets the value of A to 1.
+
+Likewise, if the number 4 were 4.3, it would be rounded down to 4.0, and if it
+were 4.5 or greater, it would be rounded up to 5.0, causing other division
+problems.
+
+This might cause some problems in calculations, in getting accurate results in
+programs which are converted from Model 100 BASIC to GW-BASIC.  Converting such
+statements to the equivalent
+
+	A = INT(7.5/4)	or  A = INT(X/Y)
+
+provides the expected result.
+

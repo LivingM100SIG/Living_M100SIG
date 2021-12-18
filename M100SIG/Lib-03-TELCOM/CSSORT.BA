@@ -1,0 +1,155 @@
+10 REM	  CSSORT.BA  (c) 1987
+20 REM  by Bill Heiman (72300,3072)
+30 REM
+40 REM
+100 CLS:FI$="C-TIME":PC$="$###.##":DEFINTA-Z:DEFSNGC
+102 CLS:PRINT:PRINT"   CSSORT (c) written by Bill Heiman":PRINTSTRING$(39,239)
+104 PRINT@162,"Enter filename   or <CR> for C-TIME
+106 PRINT@245,"";:INPUTFI$
+108 IFRIGHT$(FI$,3)<>".do"THENFI$=FI$+".DO"
+110 GOTO228
+112 CLS:C6=0:T#=0:LC=0
+114 PRINT@50,"Service choices are:":PRINTSTRING$(39,231):PRINT" ";IT$
+116 PRINT@240," Choose  a  service  or <CR> for (all)
+118 PO$="ALL":INPUT" or <9> for Menu    enter here >";PO$
+120 IFPO$="9"THENCLOSE:GOTO252
+122 IFPO$="ALL"ORPO$="all"THEN134
+124 PO$=PO$+" ":CK=0:AK=LEN(IT$):FORAL=1TOAKSTEP3
+126 IFCK=0THENPP$=LEFT$(IT$,3):CK=1:GOTO130
+128 PP$=MID$(IT$,AL,3)
+130 IFPO$=PP$THEN134
+132 NEXTAL:CLS:BEEP:PRINT@166,PO$;" is a Non-existent CATEGORY":FORX=1TO3000:NEXT:GOTO112
+134 CLS:REM   CHOICE
+136 PRINT@43,"Enter  <1>  for screen readout
+138 PRINT"   Enter  <2>  for printer readout
+140 C1$=INKEY$:IFC1$=""THEN140ELSEC1=VAL(C1$)
+142 CLS:GOSUB196
+144 OPENFI$FORINPUTAS1
+146 IFEOF(1)THENCLOSE:GOTO210
+148 LINEINPUT#1,FR$
+150 REM
+152 S5$=LEFT$(FR$,3):D5$=MID$(FR$,4,9):M5$=MID$(FR$,29,4):M5=VAL(M5$):C5=M5*.104166
+154 IFPO$<>"ALL"THEN184
+156 CLOSE:AK=LEN(IT$):FORAL=1TOAKSTEP3
+158 IFCK=0THENPO$=LEFT$(IT$,3):CK=1:GOTO162
+160 PO$=MID$(IT$,AL,3)
+162 OPENFI$FORINPUTAS1
+164 IFEOF(1)THEN178
+166 LINEINPUT#1,FR$
+168 S5$=LEFT$(FR$,3):IFS5$<>PO$THEN164
+170 D5$=MID$(FR$,4,9):M5$=MID$(FR$,29,4):M5=VAL(M5$):C5=M5*.104166
+172 C8=C8+C5:LI=LI+1
+174 GOSUB202
+176 GOTO164
+178 GOSUB218
+180 CLOSE:NEXTAL
+182 GOTO210
+184 IFS5$=PO$THENGOSUB202
+186 GOTO146
+188 END
+190 IFC1=2THENCLS:PRINT@130,"Push <CR> to continue
+192 A$=INKEY$:IFA$=""THEN192ELSE112
+194 END
+196 IFC1=2THENCLS:PRINT@10,"Please Stand by":PRINT"   while I give the Printer a workout
+198 IFC1=2THENLPRINT:LPRINT"    	 LIST OF ";PO$;" CALLS ON ";FI$;" FILE":LPRINT:RETURN
+200 CLS:PRINT"   List of ";PO$;" calls on ";FI$;" file":PRINT:RETURN
+202 IFC1=2THENLPRINTFR$;"   cost ";:LPRINTUSINGPC$;C5:C6=C6+C5:IFM5>0THENLC=LC+1
+204 IFC1=2THENRETURN
+206 PRINT" ";S5$;" ";D5$;M5$;" min.  cost ";:PRINTUSINGPC$;C5:C6=C6+C5:IFM5>0THENLC=LC+1
+208 RETURN
+210 CLOSE:IFC1=2THENLPRINT:LPRINT"	";LC;"Calls     Total cost ";:LPRINTUSINGPC$;C6
+212  IFC1=2THENLPRINT:LPRINT:LPRINT:BEEP:GOTO190
+214 PRINT:PRINT"    ";LC;"calls   < Totals >    ";
+216 PRINTUSINGPC$;C6;:BEEP:GOTO190
+218 IFC1=2THENLPRINTTAB(10)"Subtotal-";LI;PO$;"calls = ";:LPRINTUSINGPC$;C8
+220 IFC1=2THENC8=0:LI=0:RETURN
+222 PRINTTAB(3)"Subtotal-";LI;PO$;"calls = ";:PRINTUSINGPC$;C8
+224 C8=0:LI=0:RETURN
+226 END
+228 CLS:PRINT@10,"File opened ";FI$
+230 PRINT"The following Services are in this file":PRINTSTRING$(39,230):PRINT:OPENFI$FORINPUTAS1:T#=0:PRINT" ";
+232 IFEOF(1)THEN244
+234 LINEINPUT#1,D$
+236 CK$=LEFT$(D$,3):T#=T#+1:D1$=MID$(D$,4,8):IFVAL(MID$(D$,29,5))<1THENT#=T#-1
+238 A=INSTR(IT$,CK$):IFA>0THEN232ELSEIT$=IT$+CK$
+240 PRINTCK$;:IFLEN(IT$)=39THENPRINT" ";
+242 GOTO232
+244 CLOSE1:PRINT@280,"File of";T#;"calls logged thru ";D1$;
+246 GOTO190
+248 REM
+250 A=INSTR(IT$,CK$):IFA>0THEN240ELSEIT$=IT$+CK$:GOTO238
+252 MENU
+254 END
+------------------------------------------------------------------------------
+     < CSSORT.BA   INFORMATION >
+
+You may enter any two characters in the
+main program to designate where you
+spent most of the time each particular
+logon. You are not restricted to the
+designations indicated on the main
+program (CSTIME.BA) menu.
+
+This version of  CSSORT.BA   recognizes
+upper and lower case, therefore you can
+enter one forum as co, dl, etc. and
+another   forum as CO, DL, etc. and the
+program will sort them into different
+categories.
+
+The total cost line may differ a cent
+or two from what you get if you add the
+column because each line is rounds down
+to the nearest cent but the total is
+adding a longer figure, such as $1.0625
+The line may show the call as $1.06
+when it is really $1.0625
+
+If you don't choose - The DEFAULTS are:
+
+ 1. 	C-TIME.DO
+ 2.	Print to screen  (not printer)
+ 3.	[At the end of each print run
+	 a <CR> returns you to the
+	 program menu where you can
+	 enter <9> to return to the
+	 main computer menu.]
+ 4.	IF -- and only IF -- you store
+	the DO files in a safe place,
+	you can change the following
+	line in the program which on
+	command will KILL the DO file
+	from your main menu when you
+	return to the main menu.
+ <note> If you store the DO files in
+	main ram DO-NOT change this
+	line in the program or you may
+	loose the DO files.
+-------------------------------------------------------------------------------
+252 CLS:X$="N":PRINT@210,"Kill ";FI$;" Y-<N> ";:INPUTX$:IFX$="Y"ORX$="y"THENKILLFI$:menuELSEMENU
+-------------------------------------------------------------------------------
+
+    ***  LOADING INSTRUCTIONS ***
+
+1)	Strip off the CSSORT.BA INST.
+	from the bottom of this DO file
+	and save it to a CSDOC.DO file
+	using the F7, F6 keys plus the
+	PASTE key as per the Owners
+	manual.
+2)	Go into BASIC.
+	Push F2 (load) and enter
+	CSSORT or whatever the filename
+	is that the program is stored
+	in. (you do not have to type in
+	the .DO part (the extention).
+	After the wait stops flashing
+	and you get the Ok prompt. Then
+	push F3 (save) and give your
+	new BA file a name like CSSORT
+
+  GOOD LUCK -  HAVE FUN WITH IT.
+
+
+
+

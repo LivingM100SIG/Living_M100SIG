@@ -1,0 +1,166 @@
+
+      CRDFIL.DOC
+      ----------
+
+
+Copyright 1987 Tony B. Anderson
+All Rights Reserved
+
+
+A Cardfile program for the Model 100/102 and Tandy 200. Program creates
+custom-prompted screens and data files in response to prompted input which
+resemble "card files". A "card" consists of a screen-full of data. Files can
+be displayed completely, "card after card", or selectively with a "Search"
+mode. Data can be added to existing files in the same prompted mode, or by
+simply entering it in the proper form in the data file.
+
+
+The program, CRDFIL.BAS, which becomes CRDFIL.BA in your computer, is written
+in BASIC, and operates interchangeably in the Model 100, 102 and Tandy 200.
+Data files created by the program can be moved from machine to machine without
+problems, except that files created on the 200 which utilize more than 8 lines
+for display, will not display properly on the Model 100/102 screen due to the
+differences in display capability.
+
+The program is developed as a sort-of "universal" card file program, which will
+create datafiles with almost any specification you need, input and display data
+according to the specs saved with each file.  You can thus have one program and
+several data files, all of which can be displayed in a uniform format, using
+the single program approach.
+
+
+Operation:
+----------
+
+The opening program menu gives the choice of Creating a new file, Displaying
+"cards" from an existing file, or adding new data to an existing file.  The
+existing file must be in RAM as the program only supports RAM files.  Files
+could be on disk, assuming the use of a DOS which can append to existing files,
+and the minor changes to the file opening statements that are required for the
+particular disk/DOS available.  All file access is sequential which is also
+commonly used for disk access.
+
+Program functions can usually be selected with a single keystroke, and in those
+cases, an indication is given in the prompt what characters will be accepted.
+In the case of the opening menu, the program will accept a C, D, or A for
+Create, Display, or Add.  The program will also accept E for "End" or M for
+"Menu".  F8 will provide "Menu" which will be acted upon to return you to the
+main computer menu.  Input can be either upper or lower case.
+
+In most cases, you will be moved through the program with "Help Screens" that
+tell you where you are, what is coming up next, what options you have, and what
+sort of input is expected from prompts.
+
+
+Create Mode:
+
+To create a new file, type the letter C at the opening menu.  You will then be
+asked for a filename which is to be created to hold the data, and the number of
+entries (prompts) which will be associated with the card, and therefore the
+ultimate screen display.  You can create as many entries (prompts) as you wish,
+but keep in mind the size of the screen on your machine, and how much data it
+can display.  You can use more than 8 entries on the 100/102 screen, or more
+than 16 on the Tandy 200 by putting more than one entry on a single line on the
+final screen display.  The program will allow you to position your prompts on
+the screen, and the position data is also saved to the data file.
+
+Once you have specified the number of entries for your "card", you will be
+prompted for the entry title, or "prompt" that will be printed during the input
+mode and also on the final card display.  You can type as long a prompt as you
+want, but keep in mind that long prompts use up display space on the screen.
+"Name" is more sensible for a prompt than "Name of Applicant".
+
+After you have given the entry prompt, you will be asked to specify the screen
+location where you will want the prompt printed.  First indicate the line that
+the prompt is to appear on, from 1 to 16, and second, indicate the column on
+the line where you want the prompt to start, from 1 to 40.  These numbers are
+manipulated to yield a PRINT@ position for the prompt.  You can specify more
+than one prompt per line, assuming there is sufficient space for the prompt and
+the data you will be entering.
+
+If you want to have blank lines on your screen display "card", it is not
+necessary to create a blank entry in the data file.  Since each prompt is
+stored with it's print position, blank lines are simply unspecified print
+locations.  i.e. specifying first entry on line 1, and second entry on line 3
+will automatically leave a blank line between 1 and 3.
+
+Automatic word wrap will allow you to enter data which wraps from one line to
+the next.  If you expect to have a long entry, leave space on the following
+line or lines for the data display.  Remember your "card" is geared to screen
+display.  The program does no error checking on entry length or screen display
+positions.  It is possible to have prompts overwrite displayed data if you do
+not watch your available space.  Output (Display) will look the same as input.
+
+The program will go through a loop, allowing you to enter similar data for each
+prompt you have planned for.  After all prompts have been entered, you will be
+given a chance to review your prompts as they will appear on the screen display
+during output mode.  After looking at the screen display, and pressing the
+ENTER key, you will be given an opportunity to fix any incorrect entries.  You
+can change the prompts, or their location; but not the total number of prompts
+which you specified at the beginning.
+
+Once you are satisfied with the prompts, their locations and the final screen
+display, the data will be saved to your data file for future reference, and you
+will then be in the data input mode.
+
+Each prompt will be displayed on the screen in it's proper location, and you
+can type in the data that goes with the prompt at that location.  Each prompt
+is brought up in turn, and placed in the proper location on the screen.  When
+you have answered all the prompts, your "card" will be completely filled out,
+and you will see how it looks.  After the final entry, ENTER will take you to
+a "Is the data correct" prompt.  A "Y" will write the data to the file, and go
+back for another.  A "N" will delete that data and let you start fresh on that
+card.  Typing END at any input prompt will terminate input mode and return you
+to the program's opening menu.
+
+
+Add Mode:
+
+To add new data to an existing file, select the Add mode at the opening menu.
+(Type the letter A)  You will be asked for the name of the file you wish to
+add data to, and the program will abort if the file is not resident in RAM.  If
+it is located, the file will be opened, and the record of prompts will be
+retrieved for use in the "Add" mode.  These will be the same prompts that were
+originally used with the data already in the file.  You will then proceed to
+the "Input mode" where you are prompted for data input, just as you were when
+creating the original file.  Each "card-full of data" will be displayed for
+correctness, and you can change incorrect data by re-doing the entire card.  If
+the data is correct, it will be appended to the end of the file.
+
+Typing END at any input prompt will return you to the opening menu.  Whenever
+END is used to exit a program mode, you can type it in three convenient forms;
+END, End, or end.
+
+
+Display Mode:
+
+Selecting Display Mode at the opening menu (type D), will give you a further
+option, displaying the entire card file, a "card" at a time; or displaying only
+selected cards via a "Search Mode", where any card with a word match to your
+specified input will be displayed on the screen.  Specifying "1984" for example
+will show you all cards where "1984" appears in any of the data fields on the
+card, one at a time.
+
+
+Data File Structure:
+
+The data file is constructed of your keyboard input, and is straight-forward.
+The first line tells how many entries make up each "card".  The following two-
+times the number of entries give the actual entry prompts, and the PRINT@
+location for screen display. Ten entries would have 20 lines; two per entry.
+
+Following this initialization group, the rest of the file contains the card
+data, one line per entry.  If you have specified 10 entries per card, each data
+group will consist of ten lines.  There is no physical indication in the file
+where each data group starts or ends so be careful if you do any manual editing
+in the data file.
+
+
+Applications:
+
+Card files, receipts, phone lists, record/tape files, or any data that lends
+itself to storage on identical 3x5 type cards.
+
+Want a hard copy of your card file?  Simply press the PRINT button on your
+computer when the data you want is displaying on your screen.
+

@@ -1,0 +1,44 @@
+1 ' FOOLEM.200   (For Tandy 200 only)
+2 ' By Steve Zimmerman 73226,3504; Based on FOOLEM.100 by Tony Anderson;
+3 ' Based (in turn) on the program USEFUL.100 by Don Zeikel
+4 '
+5 ' This program simulates an empty Tandy 200, with a blank menu screen.
+6 ' Run this program to shut your computer off, and then, when the computer is
+7 ' turned on, this program runs, and it looks like there are no programs or
+8 ' files in RAM.  Meanwhile, a password has been set up, and any keyboard
+9 ' input becomes part of a temporary string, which is checked against the
+10 ' actual password.  If the length of this string exceeds the length of the
+11 ' password, the program branches to check the string against the password.
+12 ' If they match, you get the real menu.  If they don't match, your Tandy
+13 ' shuts off!  On the screen, however, the big cursor over BASIC doesn't move
+14 ' so it looks like the computer won't take any input.  Likewise, pressing
+15 ' <Enter> shuts the computer off - unless you press <Enter> at the end of
+16 ' the password!  This may well (as Tony said) Fool'em!
+17 ' Put your six-character password in the last line of the program.  To
+18 ' change the length of the password, change P=6 (line 210) to the length you
+19 ' need.  By the way, if you forget your password, <shift> <break> will let
+20 ' you in. <ctrl> C will do the same.  I didn't try to make this program THAT
+21 ' secure - just secure enough to keep those who like to play with the keys
+22 ' from doing so.  This could be enhanced to provide greater security, so
+23 ' feel free to do so if you wish.  Also feel free to delete these remarks
+24 ' if you wish to save bytes.  Thanks to Tony Anderson for the idea here - 
+25 ' this program was FUN to work on!
+26 ' 
+100 SCREEN0,0:CLS:POWEROFF,RESUME
+110 DATA"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
+120 D=VAL(LEFT$(DATE$,2)):FORA=1TOD:READD$:NEXT
+130 PRINT@0,D$" "MID$(DATE$,4,2)",19"RIGHT$(DATE$,2)" "DAY$" "TIME$" #1 (C)Microsoft"
+140 PRINT@40,CHR$(27)"p BASIC    "CHR$(27)"q TEXT      TELCOM    ADDRSS    SCHEDL    MSPLAN    ";
+150 FORA%=1TO46:PRINT"-.-";SPACE$(7);:NEXT
+160 PRINT@600,"Bank";
+170 PRINT@615,"Copy Kill";
+180 PRINT@583,"19590 Bytes free"
+190 PRINT@16,TIME$
+200 A$=INKEY$:IFA$=""THEN190
+210 IFP=6THEN270
+220 IFA$=CHR$(13)THEN270
+230 IFA$=CHR$(8)ORA$=CHR$(127)THEN260
+240 IFASC(A$)>96ANDASC(A$)<123THENA$=CHR$(ASC(A$)-32)
+250 P=P+1:B$=B$+A$:GOTO190
+260 P=P-1:GOTO190
+270 IFB$="FOOLEM"THENMENUELSEB$="":P=0:RESTORE:GOTO100

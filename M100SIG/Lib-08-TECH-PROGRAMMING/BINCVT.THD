@@ -1,0 +1,141 @@
+BINCVT.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The Model 100/102/200 ROM routines include significant math routines, made
+somewhat difficult to use due to binary-coded decimal (BCD) being used --
+vs. the double-precision binary in the NEC.  These messages deal with using
+these ROM routines for a specific need -- and have some info which may be of
+use to adventuresome machine language programmers.
+
+Message range: 154656 to 155285
+Dates: 8/21/87 to 8/21/87
+
+
+Sb: #CONVERT BINARY #'S
+Fm: Paul Papanek Stork 75515,1651
+To: ALL
+
+Does anybody know the location of a ROM routine in the 100 which will convert a
+binary number in one of the registers and store it in buffer space.  There is a
+routine which will convert and display a number in HL, but I just want to use
+the ASCII equivalent, not display it. Any ideas?  PAUL
+
+
+Fm: Phil Wheeler 71266,125
+To: Paul Papanek Stork 75515,1651
+
+Both 39E8 & 39EC will convert a binary number in the Basic accumulator (FAC1)
+and put it in the buffer pointed to by HL.  The latter formats it according to
+'Print using', but apparently does not print it -- except to the buffer.
+
+Hasten to add that I have not used these.  They are from the Covington ROM
+series (100ROM.RD?, or such) in DL8.  I think these are the only converters in
+ROM for binary --> ascii, but I may have missed one or more.
+
+
+Fm: Paul Papanek Stork 75515,1651
+To: Phil Wheeler 71266,125
+
+I've also been through the ROM listings in the DL, and found those.  The
+problem is getting a 16 bit integer into FAC1.  What I need it for need
+something that will handle numbers up to 65000, not 37000.  PAUL
+
+
+Fm: Phil Wheeler 71266,125
+To: Paul Papanek Stork 75515,1651
+
+Yeah, dealing with FAC1 is a pain. Too bad they went BCD in the M100, instead
+of DBL bianry, as in the NEC 8201a.  Makes it hard on us M/L kooks!!
+
+
+Fm: Phil Wheeler 71266,125
+To: Paul Papanek Stork 75515,1651
+
+Ummm, but theere is some code in QKRCHK.ASM you may want to borrow (I got it
+from CHECK2.ASM -- both in DL7).  It converts a 3-byte hex sequence, in
+lo-mid-hi format, to ascii.  It's part of a program that fits in a total size
+of 286 bytes -- so it may be small enough for your purposes. If so, thank Jim
+Moore (well, if you can find him!).
+
+
+Fm: Paul Papanek Stork 75515,1651
+To: Phil Wheeler 71266,125
+
+THANKS PHIL, Actually I've got some code in the 100 that will do the job, the
+only problem is that it flashes the ascii equivalent to the LCD before I c
+  Somewhat Inelegent of a solution, but it works.  PAUL
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Paul Papanek Stork 75515,1651
+
+Paul, call 101D to shove A (0-255) into FAC1 (located at FC18H).  Or call 3510
+to stuff it with HL.  Then 39E8 puts the ASCII equivalent at FBE8, with a
+leading space for the sign (only '-' shows; '+' is left blank), and terminated
+by a null.
+
+Don't bother entering 39E8 with HL pointing to your desired buffer, since the
+ASCII winds up at FBE8, regardless (docs are mistaken).  Before the call, FB65
+must contain a 2 (type = integer), which it will immediately after 101DH or
+3510.  (Otherwise, slam a 2 into FB65 just before calling 39E8.)
+
+convrt: lxi     h,12345    ;hl = signed integer
+        call    3510h      ;hl -> FAC1
+        call    39e8h      ;ASCII -> fbe8h
+moveit: lxi     h,fbe8h    ;source
+        lxi     d,mybuf    ;destination
+loop:   mov     a,m        ;get byte
+        stax    d          ;copy it
+        inx     h          ;bump the pointers
+        inx     d
+        ora     a          ;is it 0 terminator?
+        jnz     loop
+done:   open    beer       ;Miller time!
+
+mybuf:  ds      7          ;sign + 5 possible digits + 0 terminator
+
+If signed integers don't quite "get it" for you, the situation can get rather
+hairy and hard to explain here, so I hope this helps enough!  Good luck!
+
+************  See the following message! *************
+
+
+Fm: Mike Nugent (TMN East) 71426,1201
+To: Mike Nugent (TMN East) 71426,1201
+
+Paul, I was going to upload the previous message a day or two ago, until I
+noticed that signed integers wouldn't suffice.  Still, there's some useful info
+there.  You'll just need to do it in single or double precision, that's all. So
+try something like this:
+
+;On entry, HL=desired #
+
+start:   call 3543h     ;move HL->FAC1 (& make single prec.)
+         rst  6         ;get sign of (FAC1)
+         cm   flip      ;if negative, add 65536
+         call 39e8h     ;ASCII->FBE8h as prev. described
+cont:    (do what you want, e.g. 'moveit' rtn in prev msg)
+
+flip:    lxi  h,bufr    ;get 65536
+         call 3461h     ;move it to FAC2
+         call 37f7h     ;FAC1=FAC1+FAC2
+         ret
+
+bufr:    db   45h,65h,53h,60h  ;65536 in single prec BCD form
+         end
+
+That should work (haven't tried it).  Now that it's single precision, FB65 must
+contain 4 (sng prec) instead of 2.  It's automatically set to 4 by the call to
+3543 and stays that way, if you don't do anything before the following
+instructions.  Let me know how you make out, okay?
+
+
+Fm: Paul Papanek Stork 75515,1651
+To: Mike Nugent (TMN East) 71426,1201
+
+Signed integers are a problem.  I will be using this routine to evaluate binary
+line #'s in a basic program.  Since line numbers can go ,00
+ and signed integers will only go up to + or - 37,000 (approx.) this routine is
+a problem.  Thanks anyway.  PAUL

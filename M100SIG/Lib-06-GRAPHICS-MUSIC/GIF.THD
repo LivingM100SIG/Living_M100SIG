@@ -1,0 +1,170 @@
+GIF.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Compuserve has introduced a new graphics protocol, GIF.  Can it be used in
+the Model 100, et al?  These messages report "progress" along these lines.
+Watch for futher developments.
+
+Message range: 154278 to 155319
+Dates: 8/6/87 to 8/21/87
+
+
+Sb: #GIF progress report:
+Fm: Neil Wick 71056,613
+To: ALL
+
+First the good news.
+Important routines written in C have been translated to 8080 assembly language
+so there's no problem there.
+The bad news is that the expand suroutine uses a code table of 20-25K.  Unless
+there is some more compact way of doing it the M100 RAM seems a little tight
+for space.  I still hoping for a solution.
+
+
+Fm: Denny Thomas 76701,40
+To: Neil Wick 71056,613
+
+  You might try contacting Traveling Software about the way they pack the
+Sardine dictionary. 30,000 words in 100,00 bytes. They certainly wouldn't
+disclose trade secrets, but you might get a good enough description of the
+theory to duplicate the process.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Neil Wick 71056,613
+
+Could you make it happen by accessing the code table from, say, a Munk disk?
+
+(tongue hanging WAY out!)
+
+
+Fm: Neil Wick 71056,613
+To: Denny Thomas 76701,40
+
+  It's been mentioned before that Sardine uses a method where only the
+different letters from the the previous word need to be stored.  The GIF
+compressor already uses something of this sort.  I don't think TS would give
+out any more details anyway.
+
+
+Fm: Neil Wick 71056,613
+To: Doug Pratt (ModelNet) 76703,3041
+
+  I had thought about putting the code table on a DVI disk.  The Munk may be
+harder since I don't have one, but I will certainly keep it in mind if I don't
+find a way to do it in RAM.  I think the actual GIF file will have to be on
+some peripheral (Disk or Tape or maybe RAM bank) to give room for the program
+to operate.
+
+
+Fm: Doug Pratt (ModelNet) 76703,3041
+To: Neil Wick 71056,613
+
+Tape, huh? A classic example of Steam Radio!
+
+I like the idea of putting the file in another RAM bank. Lets us folks who
+can't afford the contiguous RAMs use the memory anyway. Any of the other
+options seem fine, and a real challenge to the programmer as well. Are you into
+challenges? I'm not, but they keep coming anyway.
+
+
+Fm: Neil Wick 71056,613
+To: Doug Pratt (ModelNet) 76703,3041
+
+  I must admit I like challenges, but this may be just a little too
+challenging!
+
+
+Fm: James Yi 73327,1653
+To: Neil Wick 71056,613
+
+How about decoding the GIF file on line?
+That way the actual file doesn't have to be stored anywhere.
+
+
+Fm: Neil Wick 71056,613
+To: James Yi 73327,1653
+
+  Online display is supposed to use CIS B protocol, so that's yet another
+consideration that I haven't really looked into yet.  A binary download is
+really necessary if a file is to be downloaded, yet another thing that's never
+been done on the 100/102.
+  Anyway, before considering any of this is the question of the code table. GIF
+files have up to 4028 codes.  Current programs use 5 bytes per entry which
+equals 20140+ bytes of stack space, not to mention the program, etc.  GIF was
+really designed with 16-bit computers in mind.  I don't think any 8-bit
+programs are available yet (though some are in the works), and I don't think
+any computer has online viewing capabilities yet.
+
+
+Fm: Tony Anderson 76703,4062
+To: Neil Wick 71056,613
+
+There are a series of files in DL3 (5 to be exact) which support the CompuServe
+B protocol on the Model 100 - all named CISTRN, with different extensions.  No
+compatible programs are available for the 200 or other computers supported here
+though.
+
+Binary downloads come in two flavors... the first is really just the extended
+ASCII character set, where the 8-th bit is included to allow characters between
+128 and 255.  Some files of this type have been available here, but usually
+causes such confusion among members who have their parameters set for 7-bit
+that we avoid it like the plague. It can be done, however, with proper training
+(or re-training) of the members.
+
+"True" binary uploads and downloads of tokenized BASIC files, and .CO programs
+is possible with the use of the commercial TELCOM enhancement program X-TEL. It
+is not in general usage, but the various members of the forum staff, and some
+members who are working on special projects, do use that capability.
+
+So if the GIF files require "True Binary", it is available, although not as a
+public-access program.
+
+
+Fm: Leonard Erickson 70465,203
+To: Tony Anderson 76703,4062
+
+        Tony, I *wish* those files supported CIS B. They support CIS A
+protocol,which is older, and not useful for the advanced stuff.
+        I've got docs on CIS B, but it is rather messy. *IF* anyone ever
+implemented it for the 100, you'd almost have to use external storage. Either
+that, or have the program in ROM. (Do you get the impression that I think it'd
+be big? Wrong, I suspect it would be *huge*!)
+        CIS B on a Model 3 takes around 16k.... On the 100 it could be bigger.
+
+
+Fm: Tony Anderson 76703,4062
+To: Leonard Erickson 70465,203 
+
+Now that's interesting... I didn't know that.  Wonder where I got the idea that
+it supported B.  Sorry about that, but you've added to my knowledge about it.
+Thanks.
+
+
+Fm: Mel Snyder 70136,1007
+To: Denny Thomas 76701,40
+
+The secret is the new method of daisy-chaining ROMs developed by PG Designs.
+See my submission SAFE.REV.
+
+
+Fm: Neil Wick 71056,613
+To: Tony Anderson 76703,4062
+
+  It does need a "true" binary download in the sense that all ASCII codes from
+0 to 255 can occur.  Regular DO files can't have (0) or (26) or (127) in them.
+This problem even comes with some RLE files.  Thoses encoded on the C64 usually
+contain (127) which is delete and do not download properly.  My UR2 in View80
+mode doesn't have these restrictions in download mode, which usually leads to a
+cold reset after certain illegal characters have been downloaded into DO files.
+  I have an 8080 listing of CIS B, but I haven't had time to analyse it yet, so
+I don't know what the size restrictions are for sure.
+
+
+Fm: Phil Wheeler 71266,125
+To: Neil Wick 71056,613
+
+Neil, there has been some interest in the 8080 version of CIS-B.  How can we
+get a copy? Would like to take a look!

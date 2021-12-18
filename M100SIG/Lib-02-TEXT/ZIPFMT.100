@@ -1,0 +1,40 @@
+===============================
+This file contains two programs: ZIPFMT.100 and ZIPFIX.100.  See ZIPFMT.DOC for full instructions:
+===============================
+The following program will checksum at 101,169 with this line removed.
+
+0 'ZIPFMT.100	(c)1989	Wilson Van Alst	v100/2.0	 All rights reserved.
+1 'Run this to create a 142-byte TEXT
+2 ' formatter.  Later, the formatter
+3 ' can be customized -- or new ones
+4 ' can be created -- with ZIPFIX.BA.
+5 ' See ZIPFMT.DOC for instructions.
+6 '
+7 READT,E:FORR=TTOE:PRINT@90,R;:READY:POKER,Y:C=C+Y:NEXT:IFC-17208THENPRINT"Data Error":END:DATA64704,64844,205,58,31,33,21,94,205,88,90,205,62,70,215,200,205,6,34,208,62,3,205,48,253,62,0,205,48,253,50,154,246,14,5,205,65,253,19,223,62,32
+8 DATA65,220,11,79,14,34,235,205,116,92,235,202,27,253,254,26,200,254,32,194,1,253,34,153,246,13,194,238,252,58,154,246,167,202,15,253,42,153,246,204,97,107,43,54,13,35,62,10,205,97,107,1,59,0,4,120,50,29,253,145,194,215,252,50,29,253,62,4
+9 DATA 17,210,252,213,135,200,79,205,65,253,54,13,35,54,10,223,35,194,54,253,201,205,118,118,6,0,205,109,107,208,195,167,96
+10 DEFSTRA-H:DEFINTI-Z:E=CHR$(27):FORI=1TO6:READF(I),Z(I):V(I)=PEEK(Z(I)):GOSUB22:NEXT
+12 FORI=1TO6
+13 PRINT@0,E"p "FSTRING$(2,9)E"KLinSiz:"V(1)+V(2)" PgSiz:"V(3)+V(4)+V(6)+V(5)*V(6)E"q";
+14 GOSUB22:LINEINPUTA:IFLEN(A)THENIFVAL(A)=0AND(I=2ORI=6)THENBEEP:GOTO14ELSEV(I)=VAL(A):POKEZ(I),V(I):GOTO13
+16 NEXT:PRINTCHR$(9)"Ok? (Y/N)";:IFINSTR("Yy",INPUT$(1))=0THENPRINTE"M";:GOTO12ELSEPRINTCHR$(13)"Save as ";:GOSUB20:FORT=83TO85:READY:POKENOTT,Y:NEXT:SAVEMF,64704,64844,64704
+20 G=CHR$(175):PRINTGSTRING$(5,"_")".CO"STRING$(8,8);:LINEINPUTF:IFLEN(F)THENF=G+F:RETURNELSEMENU
+22 PRINT@I*40,F(I)CHR$(9)EUSING"K[###]:";V(I);:RETURN:DATALeft Margin,-800,Printed Chars,-787,Top Margin,-813,Bottom Margin,-725,Spc Btw Lines,-808,Printed Lines,-740,255,7,1
+===============================
+The next program will checksum at 70,904 with this line removed:
+
+0 'ZIPFIX.100 (c)1989 Wilson Van Alst 	v2.0		All rights reserved.
+1 'This will customize a ZIPFMT .CO
+2 ' file or create new ones, using
+3 ' an existing file as the "seed."
+4 'See ZIPFMT.DOC for further help.
+5 '
+10 CLS:DEFSTRA-H:FILES:PRINT"Source";:GOSUB20:LOADMF:DEFSTRA-H:DEFINTI-Z:E=CHR$(27):FORI=1TO6:READF(I),Z(I):V(I)=PEEK(Z(I)):GOSUB22:F=F+CHR$(PEEK(64658+I)):NEXT
+12 FORI=1TO6
+13 PRINT@0,E"p "FSTRING$(2,9)E"KLinSiz:"V(1)+V(2)" PgSiz:"V(3)+V(4)+V(6)+V(5)*V(6)E"q";
+14 GOSUB22:LINEINPUTA:IFLEN(A)THENIFVAL(A)=0AND(I=2ORI=6)THENBEEP:GOTO14ELSEV(I)=VAL(A):POKEZ(I),V(I):GOTO13
+16 NEXT:PRINTCHR$(9)"Ok? (Y/N)";:IFINSTR("Yy",INPUT$(1))=0THENPRINTE"M";:GOTO12ELSEPRINTCHR$(13)"Save as ";:GOSUB20:FORT=83TO85:READY:POKENOTT,Y:NEXT:SAVEMF,64704,64844,64704
+20 G=CHR$(175):PRINTGSTRING$(5,"_")".CO"STRING$(8,8);:LINEINPUTF:IFLEN(F)THENF=G+F:RETURNELSEMENU
+22 PRINT@I*40,F(I)CHR$(9)EUSING"K[###]:";V(I);:RETURN:DATALeft Margin,-800,Printed Chars,-787,Top Margin,-813,Bottom Margin,-725,Spc Btw Lines,-808,Printed Lines,-740,255,7,1
+
+==============J=================

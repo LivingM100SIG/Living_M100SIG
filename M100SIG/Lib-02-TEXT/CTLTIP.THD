@@ -1,0 +1,60 @@
+        (c)1990 Golden Triangle, Inc.
+        (c)1990 Wilson Van Alst
+          All rights reserved.
+
+
+[WVA note: Previous discussion talked about embedding printer control
+codes in a .DO file.  These codes, if they involve some ASCII characters
+less than 32 (for example, chr$(27), the ESC character), will not be
+sent to the printer when you use the <SHIFT><PRINT> key combination.
+Various files in Lib 2 suggest that the <F2> key (Save to:), followed by
+LPT:, =will= pass these characters -- but you lose the ability, in the
+T200, to set margins and, in the M100, to specify a 'Width:' for
+right-margin control.  Here's the work-around that some printers will
+accept:]
+
+    =+=+=+=+=+=
+
+Fm: Jeremy Nichols
+
+The trick (according to the files) is using the "save to LPT:" command
+rather than the PRINT or SHIFT-PRINT command;  then the embedded
+commands will work.
+
+Going back to read the Diconix manual, I discovered a paragraph that
+said, "...some software uses the ESC code for other functions ... in
+that case use the "cents" sign (ASCII 155)."  On the T200 display ASCII
+155 is GRPH-k and displays as a left-arrow.  I tried it and it works
+with the printer.  Even better, it works with SHIFT-PRINT!  So now I can
+have normal print formatting _and_ the embedded print strings.
+
+I have one puzzle yet to solve:  the PRINT command alone (print the
+screen contents, I mean) puts the printer in condensed mode.  The
+Diconix manual says the printer will do this in response to an SI code
+(Shift In) which is CTRL-O, ASCII 15.  Don't know why that happens for
+PRINT and not for SHIFT-PRINT.
+
+    =+=+=+=+=+=
+
+Fm: Tony Anderson
+To: Jeremy Nichols
+
+The left-pointing triangle at the end of lines on the LCD screen, which
+is used to represent a carriage return, is ascii character 143.  When
+this gets sent to the printer, the 8th bit is stripped off the
+character, leaving it as CHR$(15), which puts many printers that use the
+Epson-compatible command set into compressed mode.
+
+Solutions: Either 1) don't do that!, or 2) set the printer to receive
+the 8th bit all the time.  On some printers, setting it for the IBM
+character set as defaults eliminates the problem; on some, setting the
+printer to Elite mode will keep it from going into compressed when
+receiving the CHR$(15).  I haven't used the Diconix printer, or seen the
+manual, so it would be interesting to find out which solution works.
+
+    =+=+=+=+=+=
+
+
+Starting message#: 187342  Starting date: 04-Sep-89  22:03:24
+Participants:   Jeremy Nichols 73527,2164
+                Tony Anderson 76703,4062

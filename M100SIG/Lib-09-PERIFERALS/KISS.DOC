@@ -1,0 +1,97 @@
+>>DOCUMENTATION FOR KISS (KEEP IT SIMPLE START-UP) - DVI AND CASSETTE<<
+
+Richard K. Helman 70536,1061
+
+Keep It Simple Start-up is two programs designed to run consecutively
+after a Cold-Start in order to reload up to three Basic files and as many
+ASCII files as desired.  Names are KISS1 AND KISS2.  Loading and saving of
+Basic programs is accomplished through the use of the Function Keys on the
+Model 100 (numbers 1-7).  KISS1 redefines the function keys to enable loading
+and saving of the Basic programs.  Key 7 runs KISS2 which loads ASCII files
+and redefines the function keys to either their Cold-Start value (Cassette) or
+to DVI useful functions as an option (Disk users).
+
+--CASSETTE--INSTRUCTIONS--
+1.  Download KISS.CAS, separating the two files using M100 text-editing
+capabilities at line 600.
+2.  Convert to Basic files called "KISS1" and "KISS2"
+3.  Edit lines 40 through 50 in KISS1 for the names of your particular
+programs.  IMPORTANT: The name of the Cassette file in lines 40, 44 and 48
+cannot be longer than 5 characters with no extension (.ba).  This is due
+to the fact that the maximum for the Key definition has been reached.
+However, the name of the RAM file in lines 42, 46 and 50 can be up to 6
+characters (no extension).
+4.  Csave KISS1 to cassette.
+5.  Csave each of the Basic programs called for in lines 40, 44 and 48 on the
+same tape after saving KISS1.  Be sure they are saved in the same sequence as
+called for in the program.
+6.  Edit lines 100-190 in KISS2 for your particular application.  Length of
+the filename may be up to 6 characters in this program.  You may enter as many
+.DO files as you wish using lines 100-190.  Three examples are given in the
+original program which may be changed or deleted.  If you wish to retain the
+examples for reference, use a REM statement at the beginning of lines 110-180.
+For example, you may wish to add line 130.
+         130 DO$="CAS:MYFILE.DO":DD$="MYFILE.DO":GOSUB500
+7.  Csave your edited KISS2 to the same cassette following your other saves.
+8.  Csave each of the .DO files on the same cassette in the same sequence as
+they are called for in lines 100-190.  Rewind tape.
+9.  After a Cold-Start or as a test, run KISS doing the following:
+    A. Type---RUN"CAS:KISS1 <ENTER>
+    B. When the program requests it, press Function Keys F1 through F7 in that
+       order.  Cassette users must press all of them before the second BEEP is
+       heard.
+    C. After the second Beep, KISS will begin executing.  Sit back or go
+       have a cup of coffee while it does its work (saves you a lot of work)!
+    D. You will be prompted for Date/Day/Time but can ignore the prompt by
+       pressing "y" or <ENTER>.
+
+--DVI--INSTRUCTIONS--
+1.  Download KISS.DVI, separating the two files using M100 text-editing
+capabilities at line 600.
+2.  Convert to Basic files called "KISS1" and "KISS2"
+3.  Edit lines 40 through 50 in KISS1 for the names of your particular
+programs.  Names may be up to 6 characters in length with no extensions (.BA).
+4.  Save KISS1 on disk.
+5.  Edit lines 100-190 in KISS2 for your particular application.  Length of
+the filename may be up to 6 characters.  Three examples are given in the 
+original program which may be changed or deleted.  If you wish to retain
+the examples for reference, use a REM statement at the beginning of lines
+110-180.  For example, you may wish to add line 130.
+           130 DO$="0:MYFILE.DO":DD$="MYFILE.DO":GOSUB500
+6.  If you do not desire the KEY definitions in lines 200 and 210, you may
+remove them or "REM" them and remove the "REM" in line 230...or make your
+own definitions.
+7.  Save KISS2 to disk using the name "KISS2" with no extension.
+8.  Save all files called for in the two programs to disk.  Basic files
+called for in KISS1 should have no extension.  DO files called for in KISS2
+should have a .DO extension.  Order is not important, just so they are all
+available on drive 0.
+9.  After a Cold-Start first load Disk Basic into the M100 then procede as
+described below.  You can also test the program by performing the following
+steps.
+    A. Type---RUN"0:KISS1 <ENTER>
+    B. When the program requests it, press Function Keys F1 through F7 in that
+       order.
+    C. Sit back and watch it work (takes just a short time using disk).
+    D. You will be prompted for Date/Day/Time but can ignore the prompt by
+       pressing "y" or <ENTER>.
+
+--OTHER INFORMATION--
+Don't be overly concerned about program length as each program is discarded
+after it is run.
+
+The program allows you to load and save 3 Basic files.  If you only want to
+load 2, for example, I suggest you modify lines 48 and 50 in KISS1 as follows:
+   48 KEY 5,CHR$(13)
+   50 KEY 6,CHR$(13)
+Don't disturb line 52!
+
+Don't let line 400 in KISS2 stop you.  Use it to run another program if you
+wish.  For example, use it to run a machine language program loader.  I use it
+to run a program that will make certain files invisible to the Menu.  I am
+sure there are all kinds of uses that could be made by calling another
+program at line 400.
+
+Hopefully, KISS will make Cold-Starts much less annoying.  Have fun!
+RKH
+

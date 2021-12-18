@@ -1,0 +1,169 @@
+                   ----------PLP100.PRG Documentation---------- REV 1.04
+
+
+What is PLP100?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+PLP100 is a [P]resentation [L]evel [P]rotocol for the Model 100 computer.  It 
+offers the ability to display specially coded data files as graphics and text. 
+Each data file contains instructions that tell PLP100 what type of graphic to 
+display; lines, boxes, circles, text, etc.
+
+
+Why use PLP100?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+The major advantage that PLP100 has over other methods of displaying downloaded
+graphics is speed and relatively short data files.  A full screen image in 
+PLP100 could be from 1K to 2K, or even smaller!  Quite a difference when 
+compared to the size of an RLE/graph file displayed via PIXTEL.  PLP100 is also
+much faster than an RLE/graph file, since it uses the entire screen, and does 
+not have to scroll the entire graphic screen.  This allows PLP100 to display an
+entire graphics screen in, perhaps, the time needed to display 10 lines of an 
+RLE/graph file.
+
+
+The Future of PLP100
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+The PLP100 program has been designed to allow new "commands" to easily be added
+to the decoder.  PLP100's structure already allows for a fairly easy 
+modification to become an on-line terminal with the PLP100 graphics 
+capabilities.  Any new ideas that you get for increasing the graphics power of 
+PLP100, please send them to me at 72757,3076, I'm eager to hear your ideas.  
+The rest in your hands, to create the data files on this SIG for ALL users of 
+PLP100 to use, the future of Model 100 on-line graphics is is your hands, and 
+PLP100!
+
+
+Description of PLP100 Operation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+The PLP100 software allows significant amounts of graphics information to be 
+store in a compact efficient format.  This format is similiar to NAPLPS and 
+TELIDON(Telidon is a Canadian system that uses NAPLPS).  What is NAPLPS?  
+NAPLPS is [N]orth [A]merican [P]resentation [L]evel [P]rotocol (S)omething (
+check ARTSIG for details), anyhow, it draws an image using commands on a full 
+screen, as an example, a car would probably be created by drawing a couple of 
+boxes for the frame, some circles for the wheels, and some lines for the 
+windows.  Each section (boxes, circles, and lines) would each be a command.  
+The commands 'take' much less space in a data file then would storing 
+information about EACH pixel.  An RLE/graph file to fill the Model 100's screen
+with black would be enormous compared to the equivalent in PLP100; 8 bytes in 
+PLP100!
+Essentially, each command; line, circle, box, etc. is "shifted" in and out of 
+an "ACTIVE" state.  That is, once, say line drawing mode was "activated", it 
+remains "active" and only a stream of data follows until another different 
+command mode is activated.  There are some modes, however, that are only 
+temporary, and after execution of these, PLP100 returns to the previous 
+"active" state.
+
+****** I M P O R T A N T ******
+
+To display a downloaded file, add (MERGE) the following line to PLP100.PRG.
+
+20 INPUT "FILE NAME";F$:OPEN F$ FOR INPUT AS 1
+
+Actually, any modifications to PLP100 would open whatever the input file is 
+destined to be (COM: MDM:) here.
+
+
+PLP100 Commands
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+!!Important!!   All commands are preceded by the PLP100 shift code ~ CHR$(126)
+
+*  -Enter PLP Mode
+   -Sets drawing on, and activates ASCII Mode, also zeros all cursors
+
+!  -Exit PLP Mode
+   -Exits and displays incoming characters exactly as recieved until recieving
+    the "Enter PLP" command
+
+A  -ASCII Mode
+   -The following data bytes are displayed "as is"
+
+D  -Line Drawing Mode
+   -Data format XXY
+   -Draws line from the XY cursor to the provided XY coordinates, sets cursor
+    to XXY
+
+.  -Point Set Mode
+   -Data format XXY
+   -Sets the point at the provided XY coordinates, sets cursor to XXY
+
+B  -Box Draw Mode
+   -Data format XXYXXY
+   -Draws box with corners indicated by the set of XY coordinates, sets cursor
+    to the first XY coordinates of the box
+
+R  -Box Fill Mode
+   -Data format XXYXXY
+   -Same as "Box Draw Mode" except draws box and fills it
+
+C  -Circle Mode
+   -Data format XXYRSSEE
+   -Draws cicle with centre coordinates XXY, radius R, starting at SS degrees
+     and ending at EE degrees.  Circles larger than the screen can be drawn,
+     the portions that do not 'fit' are not drawn.  (This is the slowest 
+command mode, but still faster than RLE!)
+
+L  -Locate Cursor **Temporary**
+   -Data format in ASCII mode: RC
+   -Sets ASCII cursor to row R and column C
+   -Data format in graphics modes: XXY
+   -Sets graphics (XY) cursor to XXY
+
+W  -Wait Mode **Temporary**
+   -Data format DD
+   -Loops for a delay of DD
+
+#  -Draw/Erase Select **Temporary**
+   -Toggles between draw and erase for graphics
+
+%  -Clear Screen **Temporary**
+   -Clears the screen, but does not change any cursors
+
+M  -Musical Note Mode
+   -Data format SSSDD
+   -Generates sound SSS for duration DD, limited to BASIC's range of values
+    for the SOUND statement
+
+I  -Inverse Video Mode **Temporary**
+   -Prints ESCp to the screen to enable inverse (white on black) ASCII text
+
+N  -Normal Video Mode **Temporary**
+   -Prints ESCq to the screen to enable normal (black on white) ASCII text
+
+Note: when data is described as XX, DD, EE, SS, etc. this represents a LObyte-
+HIbyte format.  In PLP100, the HIbyte is worth 93, so for an example, in 
+PLP100, a value of 100 is coded as 7,1 (that is 7+1*93=100) and 23 is coded as 
+23,0 (23+0*93=23).  In the case of the Musical Note Mode, there is a third S 
+ie. SSS; this still follows the LObyte-HIbyte format, except the trird byte has
+a value of 8650.
+Each data byte is therefore a character value from 0 to 93, however, the first 
+0-31 are NOT transmittable via CompuServe and other networks, we thusly add 32 
+to all codes (except the shift code, and ASCII charcter data in ASCII mode) to 
+allow for transmission, this sets the values between 32-125.  PLP100 subtracts 
+32 from all codes (except those noted above) for decoding.  As an example, 100 
+is coded 7,1 as previously described, in the data file these would appear as 
+39,33 or (actually) '! in the data file.
+
+Additional Information/Comments/Ideas
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+If you require any additional assistance with PLP100.PRG, don't hesitate to 
+leave a message for me, Martin Zimmerman, on the SIG (SP it to my ID#72757,3076
+)
+
+If you have any new ideas, or comments concerning PLP100, I'd be glad to hear 
+them, just message them or even EasyPlex me.
+Enjoy the future of Model 100 graphics....PLP100!
+

@@ -1,0 +1,53 @@
+Dear X-TEL 2.1 owners:
+
+There is a bug in this version of X-TEL which can cause .DO files
+downloaded with XMODEM to be placed in a file other than the
+intended one, or in the paste buffer.  Fortunately, this can be
+remedied with the following handy patch program.
+
+This patch program will alter your X-TEL.CO file to remove the
+bug.  In order for the patch to work, your X-TEL.BA and X-TEL.CO
+files must be in RAM (as opposed to disk or cassette).  This
+means that you must already have performed the loading process;
+the loading program X-TEL.DO cannot be patched.
+
+Before you attempt these patches, you must first start X-TEL on
+your computer by selecting X-TEL.BA from the Main Menu.  This is
+also a handy opportunity to make sure that you have X-TEL 2.1 and
+not some earlier or later version.
+
+After starting X-TEL and verifying the version number, exit
+immediately to the Main Menu by hitting [F8]:Menu.  Then, go into
+BASIC, type "NEW" and press [Enter], and then key in one of the
+two following programs depending on which computer you own.
+Don't use the wrong one... a cold start could be the result!
+
+For the Model 100:
+
+    10 LOADM"X-TEL"
+    20 T=PEEK(64206)+256*PEEK(64207)
+    30 E=PEEK(64208)+256*PEEK(64209)+T-1
+    40 X=PEEK(64210)+256*PEEK(64211)
+    50 POKE T+550,165
+    60 POKE T+551,249
+    70 POKE T+552,0
+    80 POKE T+34,50
+    90 SAVEM"X-TEL",T,E,X
+
+
+For the Model 200:
+
+    10 LOADM"X-TEL"
+    20 T=PEEK(62715)+256*PEEK(62716)
+    30 E=PEEK(62717)+256*PEEK(62718)+T-1
+    40 X=PEEK(62719)+256*PEEK(62720)
+    50 POKE T+549,160
+    60 POKE T+550,242
+    70 POKE T+551,0
+    80 POKE T+34,50
+    90 SAVEM"X-TEL",T,E,X
+
+
+After performing the patch, restart X-TEL from the Main menu to
+verify that no errors have occurred.  The version number should
+now read 2.2, to let you know that the patch has been performed.

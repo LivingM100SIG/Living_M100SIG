@@ -1,0 +1,102 @@
+0 REM REQUIRES 3434 bytes to download
+10 REM LOGCOM -- Keep a brief record of CIS (or other TELCOM) accesses
+20 REM JGBender [70375,1070]  03 Feb 84
+25 '
+30 DEFINT A-Z: FI$="COMUSE.DO"
+40 CLS: PRINT STRING$(13," ");"TELCOM  Logger":PRINT
+100 REM  see if this is 1st or 2nd call
+110 OPEN FI$ FOR APPEND AS 1: CLOSE 1 ' make sure file exists
+120 OPEN FI$ FOR INPUT AS 1
+130 FOR I=1 TO 1:IF EOF(1) THEN 140 ELSE LINE INPUT #1, LI$: I=0 ' scan to end
+140 NEXT
+150 IF LEN(LI$)>14 THEN SE=0 ELSE SE=-1 ' if > 14, this is 2nd call
+190 '
+200 CLOSE 1: OPEN FI$ FOR APPEND AS 1
+210 GOSUB 1000 ' get date, time
+220 IF SE THEN 300
+230  LI$="On:"+DA$+TI$
+240  PRINT LI$: PRINT #1, LI$;
+250  CLOSE 1
+260  CALL 20806,0,0	' call TELCOM
+280 '
+300 REM write the Logoff record
+310 PRINT LI$,
+320 GOSUB 1000
+330 LI$="Off:"+DA$+TI$
+340 PRINT LI$
+350 PRINT "Enter optional 50 character comment:"
+360 CO$="": LINE INPUT CO$: CO$=LEFT$(CO$,50)
+380 PRINT #1, LI$+CO$
+390 CLOSE 1
+400 MENU
+999 '
+1000 REM convert date time to interger
+1010 DA=VAL(LEFT$(DATE$,2))*100+VAL(MID$(DATE$,4,2))
+1020 TI=VAL(LEFT$(TIME$,2))*100+VAL(MID$(TIME$,4,2))
+1030 DA$=" "+RIGHT$(STR$(10000+DA),4)+" "
+1040 TI$=RIGHT$(STR$(10000+TI),4)+" "
+1050 RETURN
+60000 '    Brief Documentation
+60010 'Purpose:
+60020 '  Maintains a file of logon
+60030 '& logoff times with an optional
+60040 'comment.  Since CIS' bill lacks
+60050 'detail, this can serve to record
+60060 'your actual CIS (or other
+60070 'TELCOM) activity.
+60080 '
+60100 'Use:
+60110 '  Instead of executing TELCOM,
+60120 'execute LOGCOM.BA.  The program
+60130 'will write a record (without a
+60135 'carriage return)
+60140 '  "ON:  mmdd hhmm " to file
+60150 'COMUSE.DO and execute TELCOM for
+60160 'you.  You then use TELCOM as you
+60170 'normally do.  After you log off,
+60180 'return to the "Menu" and execute
+60190 'LOGCOM.BA again.  It will ask
+60200 'for an optional comment and
+60210 'write another record (this time
+60215 'with a carriage return)to COMUSE
+60220 '  "OFF: mmdd hhmm comment ...."
+60230 '
+60300 'For most purposes, the COMUSE.DO
+60310 'is enough as it is.  You can use
+60320 'TEXT to remove old/erroneous
+60330 'records.  When you get your CIS
+60340 'bill (or phone bill, if you use
+60350 'LD like I do!) you can print the
+60360 'portion of COMUSE.DO that
+60370 'applies to the billing period.
+60380 'Your info should agree within a
+60390 'minute or two per login.  If it
+60400 'is much more than that, you may
+60410 'have a problem.  Either you
+60420 'forgot to use LOGCOM.BA, or
+60430 'someone stole your password,
+60435 'or ....
+60440 'A program to print a nice report
+60450 'from COMUSE.DO will total times
+60460 'would be easy to write.  I might
+60470 'do one myself.  Right now, the
+60480 'file itself is enough.
+60490 '
+60500 'You should delete these 60000-
+60510 'comments after you understand
+60520 'them and pack the program.
+60530 'When packed it is less than 600
+60540 'bytes long.  The COMUSE.DO file
+60550 'size will vary with the number
+60560 'of records and comments.
+60562 'The 50 char comment length was
+60564 'chosen to allow printing the
+60566 'file directly in 80 columns
+60570 '
+60580 'Remember, this program is only
+60590 'semi-automatic.  You must
+60600 'remember to run it both BEFORE
+60610 'and AFTER using TELCOM, or your
+60620 'log in COMUSE.DO will be not be
+60630 'complete.
+

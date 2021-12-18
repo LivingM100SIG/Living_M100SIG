@@ -1,0 +1,172 @@
+;**************************************
+;*        XTLCM3.CO                   *
+;*           by Paul Globman          *
+;*        Copyright (C) 1988          *
+;**************************************
+;
+BEEP:	EQU 4F45H
+BYTES:	EQU 9AFDH
+CLS:	EQU 20301
+CRLF:	EQU 4F3EH
+FILES:	EQU 2A2AH
+FRAME:	EQU 65196
+GONE:	EQU 9CA8H
+HOOK28:	EQU F53DH
+INSERT:	EQU 82A8H
+NEWBNK:	EQU EEF5H
+POINT:	EQU 4F96H
+POKE:	EQU 9BB0H
+STAT:	EQU EF3CH
+TEL6:	EQU F53FH
+TEL7:	EQU F541H
+TERM:	EQU 638BH
+TLCOM:	EQU 24573
+TRAP:	EQU EF34H
+X:	EQU 63600-62474
+;
+	ORG 63600	;ALT LCD buffer
+;==================
+FLAG:	DB 255		;end of dir flg
+F6:	call crlf
+	lda 64790	;shift?
+	rar
+	jnc shofil-x	;no shift=FILES
+;
+	LXI H,GETFIL-x	;set error trap
+	SHLD TRAP	;for TEXT entry
+;
+GETFIL:	CNZ BEEP
+	CALL 29003
+	LXI H,29124	;'FILE TO EDIT'
+	CALL 13591	;PRINT IT
+	CALL 21744	;'?' & GET LINE
+	RST 2		;GOOD FILENAME?
+	JZ PRETRM-x	;NO, GO TO TERM
+	CALL 11635
+	PUSH H
+	LXI H,0
+	SHLD 61394
+	MVI A,1
+	LXI H,PRETRM-x
+	JMP 29479	;TO TEXT
+;
+PRETRM:	CALL POINT	;POSITION CURSR
+	JMP TERM	;TO TELCOM/TERM
+;==================
+SHOFIL:	CALL FILES	;display files
+	CALL BYTES	;and bytes free
+	JMP CRLF	;CRLF and ret.
+;======================================
+F7:	di		;BANK SWITCHING
+	lda 64790	;shift?
+	rar
+	in d8h		;get this bank
+	cc nxt-x	;backward
+	lxi h,cont-x	;continue after
+	push h		;next return!
+;
+nxt:	adi 4		;forward
+	ani 0ch
+	cpi 0ch
+	jz nxt-x	;ret withdest
+	ret		;bank in Acc
+;
+cont:	sta bm-x+2	;set dest bank
+	lxi h,newbnk	;and poke bank
+	mvi b,0		;#1 with new
+	mov d,a		;active bank
+	call poke
+;
+	lxi h,stat	;copy stat to
+	mov d,h		;destination
+	mov e,l		;bank
+	lxi b,7
+	call bm-x	;move it!
+;
+	lhld frame
+	lda bm+2-x	;switch
+	out d8h		;banks
+;
+	shld frame	;adj frame shft
+	lxi sp,63900
+	call 4c47h	;reset sp
+	call cls
+;
+	xra a		;clear keyboard
+	sta 64798	;buffer
+	JMP tlcom
+;======================================
+;The following code will move a block
+;of memory in current bank to any
+;location in destination bank.
+;Destination bank poked to bm+2 by
+;earlier code.
+;BC=len, HL=source adrs, DE=dest adrs
+;
+bm:	push b		;save counter
+	mvi b,0		;dest bank in B
+	push d		;store dest adr
+	mov d,m		;data byte in D
+	xthl		;dest adr in HL
+	call poke	;POKE it!
+	pop d		;restore DE and
+	xchg		;HL registers
+	pop b		;restore BC:len
+;
+	inx h		;increment ptrs
+	inx d		;to do next.
+	dcx b		;decrement len
+	mov a,c		;and test if B
+	ora b		;and C are 0
+	jnz bm-x	;done if BC = 0
+	ret
+;======================================
+	ENTRY		;load prev code
+begin:	di
+	xra a		;do bank 1
+	call b1
+	mvi a,4		;do bank 2
+	call b1
+	mvi a,8		;do bank 3
+	call b1
+	jmp tlcom	;for immediate!
+;================
+data:	dw F6-x,F7-x	;Fkey hook data
+;==================
+b1:	sta blkmov+2	;set dest bank
+;
+	lxi h,data	;get hook data
+	lxi d,tel6	;get hook loc
+	lxi b,4		;put the 4 byte
+	call blkmov	;in dest bank
+;
+	lxi h,FLAG	;get hook code
+	lxi d,62474	;dest location
+	lxi b,begin-FLAG;len of code
+;	jmp blkmov	;move it!
+;======================================
+;The following code will move a block
+;of memory in current bank to any
+;location in destination bank.
+;Destination bank poked to blkmov+2 by
+;earlier code.
+;BC=len, HL=source adrs, DE=dest adrs
+;
+blkmov:	push b		;save counter
+	mvi b,0		;dest bank in B
+	push d		;store dest adr
+	mov d,m		;data byte in D
+	xthl		;dest adr in HL
+	call poke	;POKE it!
+	pop d		;restore DE and
+	xchg		;HL registers
+	pop b		;restore BC:len
+;
+	inx h		;increment ptrs
+	inx d		;to do next.
+	dcx b		;decrement len
+	mov a,c		;and test if B
+	ora b		;and C are 0
+	jnz blkmov	;done if BC = 0
+	ret
+;======================================

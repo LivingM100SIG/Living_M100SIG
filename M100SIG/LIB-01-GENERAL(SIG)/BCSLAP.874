@@ -1,0 +1,190 @@
+                Boston Computer Society
+                Laptop Group
+                Tuesday, April 28, 1987
+                Boston Globe, Boston Massachusetts
+
+        The meeting started at 7:00 p.m., Tuesday, April 28, 1987, at the 
+Boston Globe.  Despite the snowstorm(!!!) enough people showed up to take 
+every available chair in the room.  (Please note:  a snowstorm at the end 
+of April is abnormal even by Boston standards.)
+
+        Al Goldman introduced the meeting subject:  computer-to-computer 
+communications.  The model 100 and 102 work very well for communications 
+with their built-in modems; the desktop computers are a little more 
+difficult to use.  Al described a program available from Compuserve called 
+FLTIBM.DOC.  This program runs on the IBM PC or compatible computer and 
+allows easy file transfers.
+
+        You can connect your Model 100 to your PC either through a 
+telephone line or directly by using a "null modem cable."  Al passed out a 
+handout which included a wiring diagram for a null modem (also available 
+from Radio Shack, catalog number 26-1496).  A null modem has a male DB25 
+connector and a female DB 25 connector.  The pins are connected as 
+follows:  
+
+        MALE    Pin     Signal          Connected to (on Female)
+
+                 1      Common                          1
+        TX       2      Transmit Data                   3
+        RX       3      Receive Data                    2
+        RTS      4      Request to Send                 5
+        CTS      5      Clear to Send                   4
+        DSR      6      Data Set Ready                  8
+                 7      Signal Return                   7
+                 8                                      6, 20
+        DTR     20      Data Terminal Ready             8
+
+
+        Bill Gerber, the meeting moderator, introduced Scott Anderson of 
+Traveling Software who spoke about the TS products LAPDOS and MACDOS, with 
+which you can connect the Tandy Portable Disk Drive to the IBM PC or 
+compatible and the Macintosh, respectively.  He also showed Traveling 
+Software's "Laplink" -- this allows you to transfer data between two 
+MS-DOS machines, for instance machines that use different size disks.  
+("Brooklyn Bridge" is a similar program.)  Laplink comes with all the 
+necessary cables and program disks.  It transfers at 115,000 Baud, 
+connecting the serial ports of the two machines.  Each end of the cable 
+has a DB-25 and a DB-9 plug so that you can plug it into any machine.  
+LAPDOS and MACDOS are $95 apiece, and LAPLINK is $125.
+
+        Bill Gerber then introduced Ted Rider of RCA to speak about 
+uploading and downloading data from the DEC VAX.  Ted handed out a 
+simple-to-follow recipe for transferring files to the VAX and back using 
+the VMS operating system on the VAX.  Here it is:
+
+MODEL 100 TO VAX COMMUNICATION
+
+TURN ON
+        GET MENU
+RIGHT ARROR TO TELCOM, CR
+        GET TELCOM
+F1
+        FIND:
+VAX, OR ?
+        VAX IDENT AND TELEPHONE NUMBER FROM ADRS
+CR
+        CALLING -- WAIT FOR CURSOR
+CR, CR
+        NTS1 (OR WHATEVER YOUR VAX SAYS)
+CALL (NODE NAME)
+        CONNECTED TO (NODE NAME)
+CR
+        USERNAME?
+(YOUR APPROVED USER NAME)
+        PASSWORD?
+(YOUR APPROVED PASSWORD)
+        NOW YOU GET THE STANDARD LOGON MESSAGES,
+        TYPICALLY WITH AN ERROR INDICATION,
+        SINCE THE VAX DOESN'T RECOGNIZE A M100
+        $
+
+TO UPLOAD:
+CREATE
+        FILE:
+(NAME THE FILE)
+F3 (UPLOAD)
+        FILE NAME?
+XXXXXX.DO, CR
+        UPLOAD TAKES PLACE
+CONTROL C
+        INTERRUPT; YOU GET THE $ BACK
+LOGOFF, OR JUST LO
+        STANDARD LOGOFF MESSAGE
+DISCONNECT?
+        STANDARD TELCOM DISCONNECT
+
+TO DOWNLOAD:
+F2 (DOWNLOAD)
+        FILE NAME
+XXXXXX.DO
+TYPE (VAX FILE)
+        DOWNLOAD TAKES PLACE
+GO THROUGH DISCONNECT SERIES
+        $
+LO OR LOGOFF
+        NTS1, OR OTHER VAX STATEMENT
+F8 
+        DISCONNECT?
+Y, CR
+        TELCOM
+F8
+        MENU
+
+Question:  Do your files have to end with control-Z?  Answer:  Haven't 
+been doing that; someone suggested that this may be why the VAX requires a 
+Control-C at the end to get its attention.
+
+Note:  switches on side of Model 100 must be set to ORIG and DIR.
+
+
+        The next speaker (whose name I didn't catch) works with the BCS 
+Education group and spoke on transferring files from the Tandy 102 to the 
+Macintosh using Red Ryder.  Red Ryder is a "shareware" telecommunications 
+program for he Macintosh.  When a file is uploaded to the Macintosh, the 
+result is a TEXT file; MacWrite will automatically convert it to a 
+"MacWrite" file.  Question:  is there a limit to the buffer size?  Ans:  
+Probably limited to memory in Mac; a bigger problem is occasional garbled 
+characters.  The transfer is done without any error checking.  
+
+        Scott Anderson noted that you may get better results with the 
+Modem port; reason is that the printer port is not designed for lots of 
+characters coming in. The modem port is optimized for very fast character 
+input.
+
+        Seth Froelich told us about Disk+.  This is really 2 programs, one 
+of which you run on a desktop machine, the other of which is a ROM chip 
+for the model 100 or 102.  You install the ROM chip and CALL 63012 on the 
+Model 100; on the main menu you will now see DISK+.  This program 
+basically allows you to use the desktop's disk drive as your disk drive 
+for the Model 100.  Kind of the mirror image of Lapdos/Macdos.
+
+        You connect the two machines with a null-modem cable and run the 
+desktop program and DISK+.  You can look at the list of files in the Model 
+100 or on the desktop's disk, transferring files up and down.  The files 
+are stored in a special format; on the desktop machine you use utility 
+programs (supplied) to convert the files for use on the desktop computer.  
+Programs written in Basic for the Model 100 will often run on the IBM PC.
+
+        Question:  What desktop machines are supported?  Answer: Apple II, 
+TRS-80 model 1, 2, 4, MS-DOS machines (including IBM PC, Tandy 1000 etc.), 
+many others.  (It did not run on Seth's Hewlett Packard MS-DOS machine  -- 
+it crashed.)
+
+        Mr. Froelich also has an HP-110.  He has a special card inside his 
+IBM PC called a HP82973A HPIL Interface card.  Then he runs HPLINK on the 
+IBM; the portable machine appears to be disks D and E on the IBM.
+
+        Question:  After you send a file from the Model 100 to the IBM, is 
+it useable and editable on the IBM?  Ans:  Usually; it is in ASCII.  Note: 
+IBM Basic is a little different; requires spaces within lines where Model 
+100 doesn't.  A program on Compuserve, EXPAND.BA, will add the spaces.
+
+        Next speaker was Jim Franklin, our host (representing the Boston 
+Globe).  He has an Epson Geneva and uses public-domain programs; they are 
+cheap but sometimes flukey or hard to use.  He described programs similar 
+to FLTIBM for CP/M machines such as Kaypro, Osborne and Epson Geneva.
+
+        SIGEA Systems, scheduled to be present, unfortunately did not make 
+
+it, so Mark Lutton talked about their Telecommuter product (as a user; he 
+is not a representative of SIGEA).  First of all, this program provides a 
+word processor and telecommunications for the IBM PC that are as simple to 
+use as the ones on the Model 100.  As if that weren't enough, there is a 
+built-in, easy fast file transfer between the PC and the Model 100.  But 
+wait, there's more:  you get exactly the right kind of null modem cable.  
+AND you can set the PC up in Host Mode so you can call it with your Model 
+100 and transfer files or run DOS commands remotely.
+
+        The meeting was opened to questions and answers.  As usual someone 
+asked, "How do you get line feeds out of the Model 100?" so here is the 
+answer yet again:
+        To automatically add linefeeds when a file is uploaded through the 
+serial port or sent to a serial printer, in BASIC POKE 63066,1.  To reset 
+to normal, POKE 63066,0.
+        To add linefeeds for a parallel printer, use LFUTL.PW1, available 
+from the Model 100 SIG on Compuserve in DL7.
+
+        The meeting then degenerated into the usual free-for-all and 
+everyone went home through the snow.
+
+

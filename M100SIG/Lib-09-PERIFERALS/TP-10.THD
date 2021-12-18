@@ -1,0 +1,163 @@
+TP-10.THD  --- Copyright 1988 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+The TP-10 is a small Tandy printer, configured to interface with the Color
+Computer.  This thread deals with its use with the Model 100 family -- via
+the RS-232 port.  This short set of messages has stretched over a long
+period (indeed, may continue to stretch) , and the first one is missing.  I
+imagine it was in the vein of "How can I use a TP-10 printer with my Tandy
+102?".
+        <<Updated -- 5/6/88>>
+
+Message range: 166867 to 168353
+Dates: 4/2/88 to 4/30/88
+
+
+Sb: #TP-10 Printer
+Fm: bob scott 73125,1437
+To: Art Groll 72776,2625
+
+  I am not specifically familar with the TP-10, but I think it used the odd
+ball "color computer" serial interface ( a round DIN plug).  Is that what yours
+has?  Does it have a parallel input port? If it has a parallel port, just plug
+in that appropriate cable form RS and set the printer switches to select
+"paralel" and go.  If it uses the CoCo serial hook-up only, you'll have to wire
+up a cable (only three wires) between a DB-25 connector and a DIN connector
+(both available at RS).  You'll have to use a short (4 or 5 line) BASIC program
+to dump text files, etc. to the printer, since the M100 is hardwired for
+parallel printing in all it's PRINT functions. If you need the exact cable
+pinouts, drop me a line and I'll try to dig up my old CGP-115 serial cable.
+
+
+Fm: Art Groll 72776,2625
+To: bob scott 73125,1437 
+
+Yes, I sure could use the exact pin connections.  The TP-10 Printer has a small
+round 4-pin DIN on it and I'm trying to hook it to the RS-2
+
+
+Fm: bob scott 73125,1437
+To: Art Groll 72776,2625
+
+Art: will dig the stuff out and upload ASAP.  Bob
+
+
+Fm: bob scott 73125,1437
+To: Art Groll 72776,2625 
+
+Sorry to take so long. The pin out for the M100 to a DIN serial is:
+4 PIN DIN        DB-25
+---------        -----
+   4               2
+   3               7
+   2               6 and 5
+If you do an 
+OPEN COM:48n1d FOR OUTPUT AS #1
+in your program, you can send data to the printer using PRINT #1, whatever.
+If you're really ambitious, you can do handshaking by checking printer busy with
+  T% = INP(187) AND 32, T% will be 0 or 32 depending on whether the printer is 
+busy or free (forget which way it goes).  If you don't do this, you'll have to 
+use delay loops in the program to keep from overrunning the program.
+
+
+Fm: Art Groll 72776,2625
+To: bob scott 73125,1437
+
+        Got your info and am still trying to figure out how to get the TP-10 to
+print from the M102 serial port.  Got my cable wired the way you suggested and
+it seems to get the printer's attention.  However, all I get is Roman Numeral
+10's (crossed X's) with a couple of letters and graphics characters every
+once-in-a-while. Definitely not readable.  I'm using Scripsit since I'm not
+smart enough on the 102's Basic yet. I've got the output set for COM:48N1D and
+I've tried all combinations of that to no avail.
+
+        Sure appreciate your help and patience! Any other ideas?
+
+
+Fm: Alan Rowberg 76703,4421
+To: Art Groll 72776,2625
+
+Go into TELCOM and keep trying different STAT settings until it prints right,
+then use that with your program.  Your setting of COM:48N1D is 600 baud and is
+very unusual -- try 57I1E or 58N1E as two of your first choices.  Does your
+printer manual tell you the baud rate?
+
+
+Fm: Alan Rowberg 76703,4421
+To: Art Groll 72776,2625
+
+By the way, when you set STAT in TELCOM, then you press F4 to go online and
+type a word or two and press RETURN.  Then it goes right to the printer. Then
+look and the printer and use F8 and Y to go back and change the STAT if it is
+still not right. XXXX's are often a sign of baud rate mismatch, and a switch in
+your printer probably controls this.
+
+
+Fm: bob scott 73125,1437
+To: Art Groll 72776,2625
+
+Hmm, My CGP-115 uses 600 baud for the serial interface.  I have little
+knowledge of COCO's, but I'd be amazed if there were TWO standards. Accoridng
+to my manual, the CGP uses 600 baud, 7 bits and TWO stop bits. That would be
+(ummmm) STAT 47N2D, I think.  Anyway it has to be 47?2D, but I'm not sure if a
+"N" or a "I" would be better.  Try 47N2D first. If you're printing from Basic,
+You have to OPEN as "COM:47N2D". You can use STAT and TERM, as mentioned in the
+other message and type to the printer from TELCOM. Good Luck,  Bob
+
+
+Fm: Art Groll 72776,2625
+To: bob scott 73125,1437
+
+        OK!!
+
+        Telecom with STAT 47I2D works from the keyboard.  Now...when I try to
+upload, it seems that when the printer gets to the end of a line it loses track
+of the M100 and starts printing garbage.  So I guess I will have to learn Basic
+and figure out a program that puts in enough delay at the end of 32 characters
+(the width of the TP-10 page) to allow the printer to line feed and carriage
+return.
+
+        Many thanks for sticking with me on this one!!
+
+
+Fm: Alan Rowberg 76703,4421
+To: Art Groll 72776,2625
+
+What software are you using?  Some program are written in basic and you just
+need to add a wait.  All the software I have used honors XON/XOFF that the
+printers I use honor, except for one printer, where I needed a delay.  An easy
+fix was to drop the baud rate on the printer with DIP switches, and then drop
+the M100 rate.
+
+
+Fm: Phil Wheeler 71266,125
+To: Art Groll 72776,2625
+
+You might consider using one of the Basic print processing programs in DL2
+(e.g., PRINT.QIK, PRINT.BF, PRINT.100, PRINTR.100).  These will do some
+rudimentary for matting of the output -- and I think one (PRINT.100, as I
+recall) does support serial output as written.  The program may provide enough
+inherent delay for your purposes (one of the *advantages* of Basic!) or you may
+be able to modify it (add FOR I=0 TO 100: NEXT, with 100 an experimental value,
+to the right place in the code) to give an added delay.
+
+
+Fm: bob scott 73125,1437
+To: Alan Rowberg 76703,4421
+
+TP-10 doesn't support baud rate changes or XON/XOFF.....
+
+
+Fm: bob scott 73125,1437
+To: Art Groll 72776,2625
+
+Art: The TP-10 supports HARDWARE handshaking.  If you dig around the DL's
+there's a short program to dump text to a Brother electronic typewriter which
+works the same way.  I think I mentioned in an earlier message to you that you
+need to do an INPUT (187) to test if the printer was ready for more input.
+Doing a "blind" wait will work, but it's not terribly efficient.  Check out the
+Brother program, and consider modifiying one of the programs that Phil
+suggested using the INPUT (187)  technique that the Brother program uses. (If
+you managed to build the cable, the software is easy!)

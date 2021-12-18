@@ -1,0 +1,53 @@
+1000 'ROMDMP.100
+1005 'Adapted by Tom Price from Bob Burleson's CMDMP.TXT program
+1010 'This program will read the Model 100's
+1015 '32K ROM, convert it to Intel(R) Hex
+1020 'Format, offset it by 3000H, and transmit
+1025 'to a Model II/12/16 at 4800 baud.
+1030 'The Model II/12/16 must be set for
+1035 '4800 baud, 8 bits, No parity and 1
+1040 'Stop bit. The RECEIVE command is used
+1045 'to receive the data and load it into
+1050 'RAM from 3000H to AFFFH. After the
+1055 'transfer is complete, type:
+1060 'DUMP ROMDUMP {START=3000 END=AFFF TRA=3000}
+1065 'The resulting file in load module
+1070 'format, can be disassembled with the RACET
+1075 'DIS2 program or transferred to the
+1080 'Model III with the ALDS ALTRAN for
+1085 'disassembly with the APPARAT DISASSEM/CMD.
+1090 '
+1100 DEFINT A-Z:DEFSNGA,J:O=12288:CLS
+1110 PRINT@ 10,"ROM Dump to RS232"
+1120 PRINT@ 50,"Intel HEX Format"
+1125 OPEN "COM:78N1D" FOR OUTPUT AS 1
+1130 PRINT"Hit [ENTER] to start";
+1135 IFINKEY$<>CHR$(13)THEN1135
+1140 PRINT@ 80,"Dumping System ROM:   "
+1150 PRINT@ 100,"---- Hex"
+1170 '
+1180 FOR J=0 TO 32736 STEP 32
+1190   C$="":A$="":X=0:PRINT@ 260,"";
+1200   '
+1210   FOR I=0 TO 31
+1220     A=PEEK(I+J):GOSUB 1370
+1230     C$=C$+A$:X=X+A:NEXT I
+1240   '
+1250   A=INT((J+O)/256):X=X+A:GOSUB 1370
+1260   K$=A$:A=(J+O)-(INT((J+O)/256)*256):GOSUB1370
+1270   A$=K$+A$:X=X+A:PRINT@ 100,A$;
+1280   C$=":20"+A$+"00"+C$:X=X+32
+1290   X=256-(XMOD256):A=X:GOSUB 1370
+1300   C$=C$+A$:PRINT@ 260,"";
+1310   PRINT #1,C$;:PRINT@ 160,C$:NEXT J
+1320 PRINT#1,":0100001A"; 'EOF record
+1330 '
+1340 CLOSE 1:PRINT@ 240,"DONE":BEEP:END
+1350 '
+1360 'HEX TO ASCII CONVERSION ROUTINE
+1370 IF A<256 THEN 1390
+1380 A=0:A$="00":RETURN
+1390 A1=INT(A/16):A2=AMOD16
+1400 A1=A1+48:IF A1>57 THEN A1=A1+7
+1410 A2=A2+48:IF A2>57 THEN A2=A2+7
+1420 A$=CHR$(A1)+CHR$(A2):RETURN

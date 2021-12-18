@@ -1,0 +1,137 @@
+[Following is quoted verbatum from an unidentified Radio Shack memorandum 
+received in September 1983.
+Formatted for 80 column printout.]
+
+            A Special Note on Model 100 Escape Codes...
+
+The Model 100 supports certain Escape Codes that allow a host system to perform
+LCD control functions. These include cursor positioning and various other 
+operations (i.e., clearing the LCD, entering or ending reverse video, etc.). 
+Although the Escape Codes are primarily remote functions executed by the host, 
+you can also use them from a BASIC program or TELCOM's Terminal Mode (when 
+connected to another computer).
+
+The Escape Code for cursor positioning is:
+
+<ESC> <Y> line code character  column code character
+
+Where "line code" and "column code" are the following table:
+
+-------------------------------------------------------------------------------
+
+                    Cursor Positioning Codes
+-------------------------------------------------------------------------------
+
+Line Codes                          Column Codes
+Line  Char. Col. Char. Col. Char. Col. Char. Col. Char. Col. Char
+1    Space   1  Space   9    (    17      0    25    8    33    @
+2      !     2    !    10    )    18      1    26    9    34    A
+3      "     3    "    11    *    19      2    27    :    35    B
+4      #     4    #    12    +    20      3    28    ;    36    C
+5      $     5    $    13    ,    21      4    29    <    37    D
+6      %     6    %    14    -    22      5    30    =    38    E
+7      &     7    &    15    .    23      6    31    >    39    F
+8      '     8    '    16    /    24      7    32    ?    40    G
+-------------------------------------------------------------------------------
+
+
+While reasonable efforts have been taken in the preparation of this information
+to insure its accuracy, Tandy Corporation assumes no liability resulting from 
+errors or omissions in this information or from the use of the information 
+contained herein.
+
+The remaining Escape Codes are listed in the table below:
+-------------------------------------------------------------------------------
+
+           Esc.   Dec.                                                         
+
+ESC        Char.  Val.  Explanation                                            
+
+-------------------------------------------------------------------------------
+
+CHR$(27)    A      65   Moves the cursor up one line from its current position.
+
+CHR$(27)    B      66   Moves the cursor down on line from its current
+                        position
+CHR$(27)    C      67   Moves the cursor one space to the right.
+CHR$(27)    D      68   Moves the cursor one space to the left.
+CHR$(27)    H      72   Moves the cursor to the top left corner of the LCD.
+CHR$(27)    J      74   Erases from the cursor position to the end of the LCD.
+CHR$(27)    K      75   Erases from the cursor position to the end of the line.
+
+CHR$(27)    L      76   Inserts a line where the cursor is positioned.
+CHR$(27)    M      77   Deletes a line where the cursor is positioned.
+CHR$(27)    P      80   Turns the cursor ON.
+CHR$(27)    Q      81   Turns the cursor OFF.
+CHR$(27)    T      84   Sets the system line.
+CHR$(27)    U      85   Resets the system line.
+CHR$(27)    V      86   Disables the LCD.
+CHR$(27)    W      87   Enables the LCD.
+CHR$(27)    Y      89   Moves the cursor to a position specified by a two byte
+                        sequence consisting of line code character and
+                        column code character. See Cursor Positioning Codes.
+CHR$(27)    j     106   Clears the LCD.
+CHR$(27)    l     108   Erases entire line where cursor is positioned.
+CHR$(27)    p     112   Begins reverse video.
+CHR$(27)    q     113   Ends reverse video.
+
+If you intend to use these Escape Codes within a BASIC program, use this 
+general format:
+       escape code + character value
+where escape code is the expression CHR$(27) and character value is the ASCII 
+value of any of the above escape characters.  For example, CHR$(112) is the 
+character value for the character p:
+
+      Print CHR$(27);CHR$(112)
+
+You can also use the escape character in a simpler format:
+      
+      escape code + "character"
+
+escape code is still CHR$(27). The escape character can be any permissible 
+character as long as it is enclosed between quotation marks. For example, PRINT
+CHR$(27);"p" is the escape code for reverse video and is the same as PRINT CHR$
+(27);CHR$(112).
+
+To use Escape Codes from the Terminal Mode, it is only necessary to press <ESC>
+and then any permissible escape character. You must be careful, however, to 
+press the correct form of the character (either upper- or lowercase) for the 
+desired results.
+
+Remember...
+The Escape Codes are primarily used by a host system to control the Model 100's
+display and format the information you receive. However, if connected to 
+another computer (either directly, or through the modem), you can send escape 
+codes to control the display of the other computer.
+ ==============================
+ What follows is ESCAPE.DVI text contributed by Leonard Erickson 70465,203 
+which was appended to this file on 13-Oct-84.
+ NOTE: The following codes apply ONLY to the monitor/CRT used with Radio 
+Shack's Disk/Video Interface.
+ ====================
+DVI Escape & Ctrl sequences
+-----------------------------
+ESC I	Cursor up. (note: will scroll screen DOWN if you are at top of CRT)
+ESC N	Cursor left (will continue past start of line unlike ESC D)
+ESC R	Changes cursor from block 'o'(grph-X) to underline '_'
+ESC b	Erases from cursor to BEGINNING of screen
+ESC c	Clears screen, sets WIDTH 40
+ESC d	Clears screen, sets WIDTH 89
+ESC e	Begin FLASH mode (use like ESC p, except charcters FLASH!)
+ESC f	End FLASH mode
+ESC l	Clear line (clears ENTIRE line regardless of cursor position on line.
+ESC n	Prints 'ESCY' lc cc (where lc & cc are the line & column code for the
+	current cursor position)(example: if the cursor was on line2, column 5
+	you would get 'ESCY!$')
+ESC o	Erases to BEGINNING of line
+ESC z	Clears screen, sets WIDTH 40
+^\	Moves cursor right (right arrow key)
+^]	Moves cursor left (left arrow key)
+^^	Moves cursor up (up arrow key)
+^_	Moves cursor down (down arrow key)
+
+	Remember, these codes are only good if you are using SCREEN 1. (A 
+monitor or TV hooked to the DVI)
+	If you find any more ESC sequences for the DVI please leave Email for 
+Leonard Erickson 70465,203.
+

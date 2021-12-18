@@ -1,0 +1,23 @@
+4 '
+5 ' Initialization.  I holds ML, IP holds parameters, ID holds data.
+6 '
+10 DEFINT I:DIM I(7),IP(1),ID(127)
+20 FOR X=0 TO 7:READ I(X):NEXT
+30 T=0:S=0:L=0:C=0:RD=1:WR=2
+99 '
+100 ' Your code goes here.  I just read the disk and print it out.
+101 '
+110 FOR T=0 TO 79 ' all tracks
+120 FOR S=1 TO 18 ' all sectors
+130 C=RD:L=VARPTR(ID(0)):GOSUB 900
+140 CLS:PRINT"Track"T"Sector"S:FOR X=0 TO 255:PRINT CHR$(PEEK(X+L));:NEXT X,S,T
+150 END
+899 '
+900 ' Subroutine to read and write disk
+901 ' T=track, S=sector, L=location, C=command.
+902 '
+905 IP(0)=L:IP(1)=T*256+S
+910 CALL VARPTR(I(0)),C,VARPTR(IP(0))
+920 RETURN
+1000 DATA 9054,9046,24277,22051,20449,17151,24026,-14076
+

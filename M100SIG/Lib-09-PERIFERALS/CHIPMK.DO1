@@ -1,0 +1,414 @@
+     
+Compact Reference Guide CDOS Version 3.0             for the 
+   Holmes Engineering/PCSG "Chipmunk"          Portable Disk Drive.
+
+By: Portable Computer Support Group
+    (214) 351-0564
+
+Table of Contents:
+                                   Page
+Section 0.  Overview                1
+Section 1.  How to plug it in       3
+Section 2.  How to start it up      4
+Section 3.  List of RAM function keys 
+                                    5
+Section 4.  List of Disk function keys 
+                                    7
+Section 5.  How to save a file      8
+Section 6.  How to load a file      9
+Section 7.  How to back up a disk   10
+Section 8.  Moving from folder to folder                                    10
+Section 9.  How to load all files from a            folder                  11
+Section 10. Two drive systems       11
+Section 11. Running on battery power                                        12
+Section 12. Syntax additions to Basic                                       13
+Section 13. Disk BASIC messages     18
+Section 14. The fine print          19
+
+   (Note: sections 12-14 appear in CHIPMK.DO2 - app. 9K)
+
+***************************************
+                                 Page 1
+OVERVIEW OF THE ENHANCED CAPABILITIES OF HOLMES/PCSG'S CDOS OPERATING SYSTEM
+
+Your new Chipmunk is manufactured by Holmes Engineering of Murray, Utah.   
+Holmes Engineering has a long standing reputataion for producing hardware items
+of outstanding design and construction.  The operating system was the subject 
+of an intensive joint developmental effort by Holmes and Portable Computer 
+Support Group.   The result of this joint effort is a portable disk drive for 
+the Model 100/200 and related computers that performs in a fashion that can 
+only be characterized as excellent.
+
+Just like Main Menu -
+   Use your disk files menu exactly like the RAM files menu you are familiar 
+with.   Move the wide bar cursor to the file you want to work with and press 
+ENTER.
+
+But better ! -
+   Both the CDOS RAM files menu and the disk files menu let you kill, rename, 
+and size files at the touch of a function key.    Further, another function key
+tells you when you created a file and when you last updated it.
+
+No arbitrary limitations -
+   Record size is limited only by the number pf variables you can fit on a 
+single line of BASIC code.   If they were all strings you could have records of
+over 10,000 bytes in length.
+   File size is restricted only by disk space available.   Single files can be 
+up to 360K in size.
+   Up to the system limit of 15 files can be open at any given time.
+
+As fast as RAM - 
+   Disk BASIC writes a 10K sequential file (100 records of 100 bytes each) in 
+20 secs.   Exactly the same as RAM.
+   Saves or loads a 10K disk file from the CDOS menu in less than 3 seconds.
+
+***************************************
+                                 Page 2
+Dynamite BASIC -
+   PCSG's Disk BASIC gives you all you need to implement random access files.  
+The syntax is the epitome of simplicity.
+
+Use a normal OPEN statement, but if you leave off the access mode (APPEND, 
+OUTPUT or INPUT) it is assumed to be a random file.   Or you can specify 
+RANDOM.  It works the same way.
+
+Define your record with a FIELD statement.   Your variables are assigned to a 
+record and automatically padded or trimmed before a write, no need for "LSET" 
+type kluges.
+
+Integers and reals are automatically converted to packed string type before 
+being written.   No need for the complicated MKI$ or CVD type kluges you find 
+in IBM PC-DOS BASICA.   A single GET statement loads every variable in a 
+record.
+
+New BASIC keywords -
+   RANDOM, FIELD, GET, PUT, LOC, LOF, LFILES, DSKI$, DSKO$ plus extended 
+functionality in the existing BASIC syntax to allow totally consistent handling
+of disk files.   Note that DSKI$ and DSKO$ have been included simply for 100% 
+compatibility with the DVI, and are not needed for normal random access.
+
+Incredibly compact - 
+   Thanks to the use of sophisticated "overlay" techniques, all this power and 
+capability consumes a mere 5K of your precious RAM, whilst opening up hundreds 
+of thousands of bytes of storage on a single disk.
+
+Supports tree structed directories - 
+   Nest sub directories (folders) to any level.
+
+PCSG Disk BASIC.   Easy to use, sophistiocated, fast and very compact.   The 
+kind of product you have come to expect from the acknowledged leaders in 
+software for the Model 100.
+
+***************************************
+                                 Page 3
+
+COMPACT REFERENCE GUIDE FOR CHIPMUNK CDOS VERSION 3.0
+
+Section 1.  How to plug it in
+
+First, back up any files in your Model 100 that you do not already have copies 
+of.   This is simply a precaution.   Under normal circumstances no data will be
+lost.  Now, switch off your Model 100.
+
+Flip it over onto its back.  You will observe two small covers:
+     1) The battery compartment in the corner of the machine.
+     2) The expansion cover at the center edge of the machine.
+
+Pry open the expansion cover with a coin or screwdriver.   Now take the 
+Chipmunk cable from the shipping box.   This is the broad gray ribbon cable.  
+Unroll the cable.
+
+Then take from the shipping box the circuit board taped to a piece of black 
+plastic.   The black plastic is a replacement expansion cover with a cutout for
+the Chipmunk cable.   Untape the green circuit board from the black plastic 
+cover and remove the foam spacer.
+
+Inspect the circuit board very carefully.  You will observe two incomplete rows
+of silver pins on one side of the board.   Insure that none of these pins are 
+bent.   Plug this board into the expansion socket in the Model 100.  This will 
+only fit one way.  Be very careful not to bend or damage any pins as you are 
+inserting it.
+
+Plug one end of the gray ribbon cable into the socket on the expansion board.  
+Do not force it.  It will only go in one way since the plug is keyed.  Look 
+over the circuit board to insure that it is firmly plugged in, and that the 
+cable is plugged in and firmly attached.
+
+Carefully turn the computer over so that it is face up.   Take the Chipmunk 
+from the shipping box.  Place it behind the Model 100 on your desk.   Take the 
+power supply from the shipping box and plug it into an outlet and connect it to
+the Chipmunk.
+
+***************************************
+                                 Page 4
+
+Insure that the Chipmunk and the Model 100 are still both switched off.   
+Connect the other end of the gray ribbon cable to the Chipmunk.  It is also 
+keyed and will only go one way.
+
+YOU MUST NOW WAIT FIFTEEN MINUTES FOR THE CHIPMUNK TO CHARGE BEFORE IT WILL 
+WORK PROPERLY.
+
+
+Section 2.  How to start it up
+
+Switch on your Model 100 and switch on your Chipmunk (the Chipmunk ON-OFF 
+switch is at the back, by the power supply plug). 
+
+Pull the cardboard packing from the drive.
+
+Take the supplied diskette from the shipping box and remove the plastic 
+wrapper.  Insert the diskette into the drive slot with the label upwards and 
+the metal slider to the back.  Press it gently home until it clicks down.
+
+Now simply reach down the back of your Model 100, and firmly press the recessed
+"Reset" button by the RS-232 connector.   The lower red disk drive light will 
+illuminate briefly, and the Model 100 screen will show the CDOS menu.
+
+If this does not happen, check all connections and power switches and try 
+again.  If you still have no luck, call us at 214-351-0564.
+
+NOTE: Before using any disk you must first format it.   See RAM function key 
+F7.
+
+***************************************
+                                 Page 5
+
+SECTION 3.  LIST OF RAM FUNCTION KEYS
+
+F8 - Menu.
+     Will show you the prompt 
+      "Remove CDOS (Y/N)?"
+If you answer Y, you will go back to the standard Model 100 menu, and you will 
+not be able to use any of the features of CDOS until you press "RESET" again.  
+ALWAYS remove CDOS before shutting off your Model 100.
+
+F7 - Frmt.
+     No disk can be used by CDOS until you have formatted it.   On two drive 
+systems you can only format in drive 0:
+     After pressing F7, you will see the prompt:
+      "Format 0: (Y/N)?"
+If you answer Y, the drive will activate and the screen will show the progress 
+oif the formatting and checking.   When it is finished the screen will say :
+    "Format done.  Name disk as:"
+You can give the disk any name you wish up to eleven characters.  If you do not
+give it a name it will be called "*".
+     If you get an "OM" error, you must free up some RAM by killing some files 
+before formatting.
+
+F6 - Name.
+     Use this key to change the name of a file in RAM.   There is no need to 
+type in the extension. (eg .BA)
+
+F5 - Kill.
+     Use this key to kill the file that the widebar cursor is resting on.
+
+***************************************
+                                 Page 6
+
+F4 - Info.
+     If the widebar cursor is resting on a ROM program, this will show the 
+date, time and available RAM.   Otherwise it will show the size of the file 
+that the wide bar cursor is resting on.
+
+F3 - Save.
+     Use this key to save a file on the disk.   See Section 5 of this guide.
+
+F1 - Disk.
+     Pressing this key will show the disk files menu, provided the drive is 
+ready and has a disk in it.
+
+SHIFT/BREAK
+     Use this to get back to the RAM files menu from a situation you don't 
+like.
+
+ENTER
+     Works just like the standard Model 100 Menu, but enables you to run BASIC 
+programs containing Disk BASIC statements.
+
+***************************************
+                                 Page 7
+
+SECTION 4.  LIST OF DISK FUNCTION KEYS
+
+F8 - Menu
+     Same as on the RAM files menu.
+
+F7 -Drv1.
+     Changes the current drive.  If you only have one drive it will give the 
+message: "Drive not ready".
+
+F6 - Name.
+     Works the same way as on the RAM files menu, but changes the name for a 
+disk file.
+
+F5 - Kill.
+     Erases the disk file that the widebar cursor is resting on.
+
+F4 - Info.
+     Displays the size, the date created, and the date last updated of the disk
+file that the widebar cursor is resting on,
+
+F3 - All.
+     Loads all the files from the folder, see Section 9 of this guide.
+
+F2 - Load.
+     Loads the file that the widebar cursor is resting on into RAM.  See 
+Section 6 of this guide.
+
+F1 - RAM.
+     Shows the RAM files menu.
+
+SHIFT/BREAK
+     Works like in the RAM files menu.   Aborts current activity.
+
+ENTER
+     Loads and immediately executes the disk file that the cursor is resting 
+on.
+
+***************************************
+                                 Page 8
+
+SECTION 5.   HOW TO SAVE FILES TO DISK
+
+Saving a file is simply done by moving the widebar cursor to thefile you wish 
+to save to the disk, and pressing F3-Save.   You will be shown the disk files 
+menu, and the prompt "Saving:(filename)" will appear in the top left of the 
+screen.
+
+The function key labels will be changed as follows:
+F1 - RAM  : Returns you to the RAM files menu.
+F2 - Save : Saves the file into the displayed folder.
+F4 -Fold  : Allows you to create a new folder to save your file to.
+
+Simply press F3-Save a second time to save your file.   If a file of the same 
+name already exists on the disk, the screen wil check that you want to 
+overwrite it.
+
+To save your file to a different folder other than the one showing on the 
+screen, simply move into that folder before pressing F-3 Save for the second 
+time.   See Section 8 of this guide for how to move from one folder to another.
+
+
+To create a new folder for the file you are saving, press F4-Fold.   The screen
+prompts you for a name for the new folder.   Type in a name and press ENTER.   
+The new folder is created and displayed on the screen.  Press F3-Save to put 
+the file you are saving into that folder on the disk.
+
+***************************************
+                                 Page 9
+
+Section 5-1.  Saving all files
+     If the widebar cursor is resting on one of the built-in files of the Model
+100 when you press F-3 Save, CDOS assumes you wish to save your entire RAM.   
+The screen will ask "Save all (Y/N)?"   If you answer y for yes, you will be 
+shown the disk files menu just like for a regular save, but in the top left 
+corner, it will say "Saving: ALL".
+     Just like when you are saving a single file, you can move through your 
+folders to the one you want to save to, or you can create a fresh folder by 
+pressing F4-Fold.
+     When you are in the folder you want to save all your files to, just press 
+F3-Save a second time.
+
+
+SECTION 6.  HOW TO LOAD A FILE
+
+On the disk files menu, move the widebar cursor to the file you wish to load.  
+Then simply press F2-Load.
+
+If you wish to execute that file immediately, press ENTER to load and execute 
+automatically.
+
+Section 6-1.  Loading all files
+     On the disk files menu, simply press function key F3-All.   All the files 
+on the menu will be loaded one by one until your model 100 is full up.
+
+If a file being loaded has the same name as one already in RAM, the screen will
+verify that you want to overwrite the old copy.
+
+***************************************
+                                Page 10
+
+SECTION 7.  BACKING UP A DISKETTE
+
+1. Make sure that all your RAM files are saved to disk, then wipe your RAM (see
+note in Section 9 of this guide).
+
+2. Put your source disk into the drive, and load all files from the first 
+folder to be backed up.
+
+3. Put your destination (backup) disk into the drive and save all the files in 
+RAM to it (see Section 5-1 of this guide).
+
+Repeat the above three steps until all the files on your source disk have been 
+saved to the backup disk.
+
+
+SECTION 8.  MOVING FROM FOLDER TO FOLDER
+Access the folder you wish to save by placing the widebar cursor on its name 
+and pressing ENTER or F2-Load.
+
+To make another folder become the current folder, simply go the disk files menu
+by pressing F1-disk, move the widebar cursor to the folder you wish to access 
+and press ENTER or F2-Load.
+
+To exit from a folder to its parent folder, press the SHIFT and up arrow keys 
+simultaneously.
+
+To exit all the way to the root or main folder, press the CTRL and up arrow 
+keys simultaneously.
+
+***************************************
+                                Page 11
+
+SECTION 9.  HOW TO LOAD ALL FILES FROM A FOLDER
+
+Simply move to the disk files folder that you wish to load into RAM and press 
+F3-All.   The files will be loaded into your RAM one by one.
+
+If you wish to clear out your RAM before loading a folder, you can either kill 
+them one by one (F5-Kill), or you can wipe your RAM.
+
+NOTE: WIPING RAM -
+     First, make sure that your RAM files have all been saved, then wipe your 
+RAM by holding down the CTRL and PAUSE keys and either switch your M-100 off 
+and then on again, or press the recessed RESET button at the rear of the 
+machine.   Note that you must be holding down the PAUSE and CTRL keys as you 
+switch on the M-100 in order to wipe the memory.  If the drive is switched on 
+and connected to the M-100, you will not lose your date and time unless you are
+holding down extra keys other than CTRL and PAUSE.
+
+
+SECTION 10.  TWO DRIVE SYSTEMS
+
+CDOS version 3 supports two drives.  You need a two-drive adapter box available
+from PCSG at 214-351-0564.   When you order your second drive, don't forget to 
+order the adapter box as well.
+
+***************************************
+                                Page 12
+
+SECTION 11.  RUNNING ON BATTERY POWER
+
+The upper LED red light on the front of the drive is the "Power Low" indicator 
+light.   A power low condition also causes a message to appear on the bottom 
+line of the menu.   This message dissappears when you press any key, but 
+reappears whenever you access the disk while the power remains low.   A BASIC 
+program can detect a power low condition with the following expression - 
+   IF INP(130)AND1 THEN(low power light is on)
+
+The power low message and light appear after over an hour of continuous disk 
+access after the batteries have been fully charged.   You can continue to use 
+the drive for a further fifteen minutes or so.   But when the power drops even 
+further, the drive will cease to function.  The drive shuts down before the 
+power becomes so low that the data on the disk is corrupted.   This will cause 
+a not ready error in BASIC and can be detected like this:
+   IF INP(130)AND2THEN(drive is locked out from low power)
+
+To avoid that shut-down condition, simply plug the drive into an outlet when 
+the power low indicators show.
+
+
+         End of CHIPMK.DO1
+         Continues w/CHIPMK.DO2
+

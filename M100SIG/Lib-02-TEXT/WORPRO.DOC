@@ -1,0 +1,173 @@
+        WORPRO.EM3 Documentation
+
+
+Following control characters may be
+embedded in a text file.  Place each
+control character at the beginning of
+a line by itself:
+
+   [GRAPH][p] - Start a new page
+
+   [GRAPH][c] - Center a line of text
+                that follows
+                (line length must be
+                smaller than margin
+                width)
+
+   [GRAPH][w] - Turns on right
+                justification.
+
+   [GRAPH][q] - Turns off right
+                justification
+
+   [GRAPH][t] - Change single spacing
+                to double spacing, and
+                vice versa
+
+   [GRAPH][m](left margin value)[-]
+   (right margin value)[GRAPH][m]
+              - Reset side margins
+                (margins must be
+                integers; no space
+                between characters)
+
+* Control characters override the menu
+  settings.
+* In case you are reading this file
+  in upper case only, above control
+  characters should be [GRAPH]
+  (lower case letters).
+
+
+You may embed printer control codes as
+described on page 60 of Model 100
+manual (using CTRL-P).
+You may also define printer control
+codes in the program.  In order to
+define codes, you have to enter the
+number of control codes in line 132
+and add DATA after line 200 in form
+of:
+
+DATA (decimal value of the assigned
+character),(length of the control
+code),(decimal value(s) of the code),
+
+Example:
+ESC-X starts underlining and ESC-Y
+stops underlining on CITOH 8501A
+printer, and you assign GRAPH-X for
+underlining on and GRAPH-Y for off.
+Since GRAPH-X has a decimal value of
+239, ESC-X takes 2 character length,
+dec val of ESC is 27 and "X" is 88, and
+GRAPH-Y has a dec val of 254, ESC-Y
+takes 2 character length, dec val of
+ESC is 27 and "Y" is 89, line 132 and
+200 will look like this:
+
+132 ......:Z=2
+200 DATA 239,2,27,88,254,2,27,89
+
+* Be sure not to use those characters
+  used as control characters in WORPRO.
+
+* Both embedding codes using CTRL-P
+  and defining codes in the program
+  will affect right justification.
+
+If your memory permits, it is good idea
+to output a formatted file to RAM with
+right justification, then embed printer
+control codes using CTRL-P.  Then you
+print the file by using [F3], Save to:
+LPT: or etc.
+
+The program has a multiple copy
+feature, but outputting original file
+to RAM and printing copies of it takes
+much less time.
+
+
+To change initial menu defaults, edit
+line 132, which reads:
+
+  132 M(0)=10:M(1)=70:M(2)=6:M(3)=60:
+  F=66:S=1:A=0:C=0:D=0:E=0:R=0:P=1:
+  N=1:Z=0
+
+M(0-3):  Margins
+  Enter positive integers
+  Right margin must be bigger than left
+  margin, and bottom margin must be
+  bigger than top margin and smaller
+  than form length.
+    M(0) - left margin value
+    M(1) - right margin value
+    M(2) - top margin value
+    M(3) - bottom margin value
+
+F:  Form length
+  Enter positive integer bigger than
+  bottom margin
+
+S:  Line spacing
+  Enter 1 or 2
+
+A:  Output
+  Enter 0 for <P>arallel printer
+        1 for <S>erial printer
+        2 for LCD
+        3 for RAM file
+        4 for Cassette
+
+C:  Pause between pages
+  Enter 0 for no pause
+        1 for pause
+
+D:  Page numbering (1st page)
+  Enter 0 for no page numbering
+        1 for number at top
+        2 for number at bottom
+
+E:  Page numbering (Rest of pages)
+  Enter 0 for no page numbering
+        1 for number at top
+        2 for number at bottom
+
+R:  Right justification
+  Enter 0 for off
+        1 for on
+
+P:  Starting page number
+  Enter positive integer
+
+N:  Number of copies
+  Enter positive integer
+
+Z:  Number of printer control codes
+    you defined after line 200
+  Enter positive integer less than 255
+
+
+* For serial printer output, you must
+  enter your printer's configuration
+  in line 45.  See page 165 of M100
+  manual for detail.
+
+* Be sure to end a text file with
+  carriage return, or WORPRO will not
+  read the last line.
+
+
+Thanks to Sysop Dave Thomas and other
+SIG members who have given me good
+suggestions and support.
+
+
+Any comments on the program will be
+appreciated.
+
+09/08/84
+Eiji Miura  [71216,1564]
+

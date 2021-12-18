@@ -1,0 +1,89 @@
+	Upon downloading XMODEM.312, I discovered that the M100 ROM autolog
+routine was only used for calls that used the internal modem. And that the
+BASIC routine which attempted to replace it was slow and frequently inaccurate.
+(it assumes that all "^" are followed by "M").
+	I decided to try and fix this problem. My first attempt was to try
+using the same call that was being used for the internal modem. Result? I was
+disconnected. Upon using a disassembler to check out the routine, I obtained
+the following code:
+
+5390	cpi	'<'
+5392	stc		;set carry flag
+5393	jz	$539E
+5396	cpi	'='
+5398	cz	$5310	;2 second delay
+539B	jmp	$5370	;?
+539E*	push	af	;
+539F	lda	$F62B	;?
+53A2	rrc
+53A3	cnc	$531A	;1/2 second delay
+53A6	pop	af	;
+53A7	jnc	DISC	;hang up phone
+53AA	lda	$F65B	;rs232 parameter image (baud/mdm)
+53AD	cpi	'M'	;Checks for MDM!!!!
+53AF	stc
+53B0	rnz
+53B1	push	hl
+53B2	lxi	hl,$F65C	;rs232 (bits)
+53B5	ana	a
+53B6	call	SETSER
+53B9	mvi	a,$04
+53BB	call	$5316	;?
+53BE	pop	hl
+53BF	call	$52E4	;? jumps into middle of instruction!!
+53C2	rc
+53C3*	call	$5673	; **** proper place to jump into autolog****
+53C6	call	$5406
+53C9	rz
+53CA	cpi	'>'
+53CC	rz
+53CD	cpi	'='
+53CF	jz	$53E7
+53D2	cpi	'^'
+53D4	jz	$53FD
+53D7	cpi	'?'
+53D9	jz	$53ED
+53DC	cpi	'!'
+53DE	cz	$5406
+53E1	rz
+53E2*	call	SD232C
+53E4	mov	l,m
+53E5	xra	a
+53E6	inr	a
+53E7*	cz	$5310	;2 second delay
+53EA	jmp	$53C3
+53ED*	call	$5406
+53F0	rz
+53F1*	call	RV232C
+53F4	rc
+53F5	rst	4
+53F6	cmp	m
+53F7	jnz	$53F1
+53FA	jmp	$C353
+53FD*	call	$5406
+5400	rz
+5401	ani	$1F
+5403	jmp	$53E2
+5406*	inx	hl	;get next char in auto-log string
+5407	mov	a,m
+5408	ana	a
+5409	ret
+
+	So I found that the routine was setting STAT to M7etc! But there is an
+entry point a bit farther along ($53C3). This entry point leaves the STAT
+setting alone. It works well with both internal and external modem.
+	To use this you need the autolog string in a string variable. I'll use
+A$ in this example.
+
+A$="<=^C?U77770,101^M?:FREE-DEMO^M>:"
+A$=A$+CHR$(0)
+V=VARPTR(A$)
+CALL21443,0,PEEK(V+1)+256*PEEK(V+2)
+
+The beginning & ending <> may not be required, but I'd leave them in just in
+case. The CHR$(0) is required to left the routine know where the end of the
+string is.
+	If something goes wrong (ie you don't get the prompt you were expecting
+and the routine is still waiting for it) SHIFT-BREAK will exit the autolog
+routine (and nine times out of ten procede to the next statement in the
+program).

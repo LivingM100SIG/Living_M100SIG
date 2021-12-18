@@ -1,0 +1,339 @@
+TELTXT.THD  --- Copyright 1987 by Phil Wheeler
+
+An original compilation of Compuserve Model 100 Forum messages for use by
+Forum members only.
+
+Accessing TEXT (and BASIC) while on line in TELCOM, with the capability of
+returning to TELCOM, has value -- and was acheived for the Model 100 with
+the program DIRACC.100.  This thread discusses the technical aspects of the
+approach to doint this, and has led to the conversion of DIRACC for use on
+the Tandy 200 (DIRACC.200, DL 10).
+
+Message range: 158808 to 159255
+Dates: 10/20/87 to 10/27/87
+
+
+Sb: #TELCOM to TEXT and back
+Fm: Paul Globman 72227,1661
+To: All
+
+I have engaged the ram hooks that will allow F7 (Term) to enter TEXT for
+creating a new file or editing an old one, while remaining on-line.
+
+I have engaged the hook to allow F8 (TEXT) to return to TELCOM (Term) and
+continue the on-line communication.
+
+The problem I have encountered is after returning to TELCOM.  First, the LABEL
+line is locked on and is no longer affected by the label key
+
+Also, if a SECOND attempt to edit a file is made, a MEMORY FULL condition is
+detected and no characters can be typed.
+
+This does not affect the on-line operation once F8(TEXT) is used to return to
+TELCOM.
+
+I am working on a Tandy 200.  Any help would be appreciated.
+
+
+Fm: Don Zeikel 75775,1430
+To: Paul Globman 72227,1661
+
+I have a 100, but I hope this helps:  See the DIRACC files in the TELCOM DL.
+DIRACC lets you jump into TEXT or BASIC; it still locks the label when you go
+into and out of TEXT, but you can quickly unlock it by jumping into and out of
+BASIC. Also, with DIRACC, the Memory Full problem occurs, but ONLY if you are
+Downloading or Uploading at the same time you try to jump into the file.
+
+
+Fm: Tony Anderson 76703,4062
+To: Paul Globman 72227,1661
+
+Where did you engage the hook to have F8 in TEXT jump back to TELCOM's Term?
+Did you just poke it in, or copy out some of the code into a new ML section?
+
+
+Fm: Paul Globman 72227,1661
+To: Tony Anderson 76703,4062
+
+The routine that jumps to TEXT is preceeded by the code that prepares the TEXT
+F8 hook to jump back to telcom.
+
+The code that jumps back to TELCOM is precceded by the code that restores the
+TEXT F8 hook to normal.
+
+
+Fm: Tony Anderson 76703,4062
+To: Paul Globman 72227,1661
+
+That doesn't tell us much, Paul.  Can you upload a copy of the source code for
+study?  There have been a large number of questions about how (exactly) to do
+that, but you're the first to indicate you've got it working.  Commented Source
+would be REAL useful.
+
+
+Fm: Paul Globman 72227,1661
+To: Tony Anderson 76703,4062
+
+Tony - I don't understand...all those DIRACC files indicate someone did this
+before I came along.
+;Objective - TERM F7-> TEXT
+;            TEXT F8-> TERM
+PRETXT: LXI H,PRETRM-X
+        SHLD TEX8
+        CALL CRLF
+        JMP TEXT
+PRETRM: LXI H,GONE
+        SHLD TEX8
+        CALL POINT
+        CALL SCRL
+        CALL CRLF
+        JMP TERM
+
+TEX8=ram hook #32 TEXT=text entry point POINT=routine to put cursor at lower
+left corner of LCD SCRL=routine to enable scroll CRLF=print crlf to lcd
+TERM=term entry point
+
+Now I just grabbed that code into my paste buffer while on-line and pasted it
+into this message.
+
+Notice TEX8 hook is adjusted for the application I am jumping to.
+
+
+Fm: Tony Anderson 76703,4062
+To: Paul Globman 72227,1661
+
+Hmmm...  Folks have been asking for some time for a way to "Change" the F8 Menu
+function key in TEXT, and apparently couldn't dig it out of DIRACC in a form
+that was useful to them.  I don't remember that code existing in the DIRACC
+files, so guess I will have to go review them, myself.  Thanks for pointing me
+back to them, I'll look at them in a little while.
+
+
+Fm: Tony Anderson 76703,4062
+To: Paul Globman 72227,1661
+
+I couldn't find any source code listing in DIRACC which illustrates the code
+you sent in your last message; perhaps that's the reason folks are still asking
+about it.
+
+Below is my attempt at reconstructing your earlier message which the text
+formatter ran together.  Is this correct?  You say you grabbed the code while
+online and pasted it into your message.  From where?  Does this mean you have
+the source code in your RAM somewhere?
+
+ ;Objective - TERM F7-> TEXT
+ ;            TEXT F8-> TERM
+ ;
+ ;TEX8=ram hook #32
+ ;TEXT=text entry point
+ ;POINT=routine to put cursor at lower left corner of LCD
+ ;SCRL=routine to enable scroll
+ ;CRLF=print crlf to lcd
+ ;TERM=term entry point
+ ;
+ ; PRETXT:
+         LXI H,PRETRM-X
+         SHLD TEX8
+         CALL CRLF
+         JMP TEXT
+ ;
+ ; PRETRM:
+         LXI H,GONE
+         SHLD TEX8
+         CALL POINT
+         CALL SCRL
+         CALL CRLF
+         JMP TERM
+
+
+Fm: Paul Globman 72227,1661
+To: Tony Anderson 76703,4062
+
+I didn't find anything useful in the diracc files either.
+
+PRETXT AND PRETRM are labels...remove the ';' so your assembler puts them in
+the symbol table.  PRETXT is where the TELCOM (Term) function key hooks to.
+The refernce to -X (as in "PRETRM-X") is an offset.  I assembled the code in
+himem to run in lomem!!
+
+I happened to have the source code file in RAM when I called.  I use F6 to
+display RAM files (instead of jumping to BASIC) and when I read your message
+and saw the file was in RAM, I used F7 the enter the .DO file and copy that
+part of the code into my paste buffer.  I use semicolon (;) for blank lines
+(like REM) and the paste to my message didn't send them. That may be why those
+label seemed to appear as comments.
+
+
+Fm: Phil Wheeler 71266,125
+To: Paul Globman 72227,1661
+
+You may have already done this, but this is the source of DIRACC.  Perhaps
+it will be helpful in some way.  It is not commented -- because there are
+several ROM calls I was never able to identify when I was actively looking
+at the disassembly a couple of years ago.
+
+;DIRACC.SRC
+;
+;
+;With this program (ORG at 62000) the
+;following POKES to the TERM F6 and F7
+;vectors in high RAM are needed:
+;
+;   POKE 64268,57:POKE 64269,243
+;   POKE 64270,48:POKE 64271,242
+;
+;and the following F6 key definition
+;must be installed in Basic to return
+;to TERM:
+;
+;   KEY6,"Term"+CHR$(24)+"CALLHIMEM"+CHR$(13)
+;
+
+;Start of DIRACC source (from disassemly of loaded DIRACC)
+;This code Copyright 1986 by Hugo Ferreya
+;
+HILBL   POP     HL      ;start of DIRACC
+        CALL    $2C62
+        CALL    $4231
+        JMP     $5468
+F6LBL   CALL    IDLBL   ;F6 entry to Basic from TELCOM
+        CALL    $6C7F
+        LXI     HL,0000
+        SHLD    $F652
+        JMP     $6C4F
+F7LBL   CALL    IDLBL   ;F7 entry to Text from TELCOM
+        CALL    $4222
+        LXI     HL,FNLBL
+        SHLD    $F652
+        LXI     HL,$5E22
+        CALL    $5A7C
+        XRA     A
+        STA     $F650
+FNLBL   CNZ     $4229
+        CALL    $5D53
+        LXI     HL,$5E15
+        CALL    $27B1
+        CALL    $463E
+        RST     2
+        JZ      HILBL
+        CALL    $2206
+        PUSH    HL
+        LXI     HL,0000
+        SHLD    $F6E7
+        MVI     A,01
+        LXI     HL,HILBL
+        JMP     $5F71
+IDLBL   CALL    $4231
+        LXI     HL,CPLBL
+        CALL    $5A58
+        CALL    $5970
+        CALL    $4222
+        CALL    $7EAC
+        RET
+CPLBL   DB      13
+        DB      10
+        DM      DIRACC
+        DB      0
+        END
+ 
+
+Fm: Paul Globman 72227,1661
+To: Phil Wheeler 71266,125
+
+Phil, Without the comments it is difficult to see what this is doing.  To
+resolve this, I ususally put all the address into EQU statements with
+appropriate labels. This way uncommented source can be read with some
+understanding.
+
+I appreciate the code.  I must now figure out what the calls are and their 200
+equivalents.  A formidable task if you use undocumented ROM entry points.
+
+Any suggestions on converting this for the 200?
+
+
+[At this point, some effort was made to convert DIRACC for use on the Tandy
+ 200.  the conversion was successful, and is now available for downloading
+ in DL10]
+
+
+Fm: Paul Globman 72227,1661
+To: Phil Wheeler
+
+I checked out DIRACC.200 briefly and everything seems to work fine. The label
+line is locked upon return from TEXT (a familiar problem).
+
+I cannot use this in it's present form. I run utilities like this from LOMEM. I
+am sure that the 150 (Approx) bytes can be reduced to maybe 50 bytes if I
+choose to eliminate the jump to BASIC.
+
+I would also eliminate the CLS upon returning to Term from TEXT.  This way I
+can bring info into view and keep it in view after returning to Term.
+
+Just some thoughts, keep up the good work....Paul
+
+
+Fm: Phil Wheeler 71266,125
+To: Paul Globman 72227,1661
+
+Glad to hear it works on the 200!  To be sure, you can remove the BA code and
+just leave the TEXT stuff, though I find it handy to be able to run certain
+programs while on line (e.g., an M/L checksum program).  And reducing the code
+by a hundred bytes or so never seemed particularly important.
+
+I have not tried it without the CLS as you suggest.  But it would be easy to
+try it by just editing the loader to NOP the CLS in question.
+
+Funny about the lock up of the label line. Does that in the Model 100 version,
+too.  But I had never noticed it until now!  It clearly has to do with the TERM
+reentry point selected, because it not only locks the label line, but turns it
+on if it was previously disabled.  Oh, well -- not exactly a big problem!
+
+
+Fm: Paul Globman 72227,1661
+To: Phil Wheeler 71266,125
+
+Phil - after converting DIRACC.200 to assembler I was able extract the code I
+needed.  It saved me a bit of time (searching the rom).  I use F6 to display
+files instead of jumping to Basic.
+
+The only aspect of this utility that was over-looked was the fact the on the
+Tandy 200, F4 calls the LIST function.  From here F8 will go to the Menu
+instead of returning to TELCOM.  When in LIST, you press F4 (EDIT) and may then
+return to TELCOM via F8.
+
+The reason I am concerned about extra bytes is because I run the code in LOMEM.
+I have allocated 512 bytes for my code and it includes adding 4 function keys
+to the Menu as well as F6 and F7 in Term.
+
+Oh, I found some of the code in DIRACC was not necessary and trimmed quite a
+bit.
+
+Not just the text at the top of the screen, but a couple of calls too.  Not
+worth eliminating if your not squeezing for bytes.  I have used about 510 of my
+512.
+
+
+Fm: Paul Globman 72227,1661
+To: Phil Wheeler 71266,125
+
+Phil - I just compared the ML source of DIRACC to the M200 Std ROM, and it is
+identical with the exception that the code was copied up to the point where the
+ROM does LXI H, MENU and is replaced with LXI H, TERM in DIRACC.
+
+That explains all the undocument calls. Tandy used them...they were there...
+they were copied!
+
+The label lock upon return to TERM may not be a problem with the entry point. I
+believe that the TEXT exit routine sets up flags thinking it is returning to
+the MENU and it then sent to TERM before the MENU routines put everything in
+order....just a thought.
+
+
+Fm: Phil Wheeler 71266,125
+To: Paul Globman 72227,1661
+
+Paul, thanks for the very interesting insight!  Another program, by James Yi
+,NOWRAP.200 (DL10) -- see NOWRAP.SRC (DL8, I think) -- was developed by a
+similar ROM emulation trick.  Hmmmm...wonder haow many other utilities are
+waiting for us to develop by that trick?
+

@@ -1,0 +1,131 @@
+LUCID FILE FORMATS (VER 1.5)
+
+This is information gleaned by trial and error and many RAM dumps regarding the
+file structure for Lucid.  It is the basis for the program LUCNV which was 
+written to convert Lucid files for use with Lotus.  There are bound to be 
+errors in this, but I think it's pretty close.
+
+     bytes          contents
+     -----     ------------------------
+     0,1       65535
+     2,3       LSB,MSB of length,last
+               byte at start+length+2
+     4,5       36,246  ??
+     6-8       64,192,255   ??
+     9         Output file: RAM=0,MDM=249,
+               LPT=250,WAN=251,COM=252,CAS=253,
+               CRT=254,LCD=255
+     10-16     Output file name,ending in 13
+     17        Left Margin
+     18        Line Width
+     19        Bottom Margin
+     20        Top Margin
+     21        Page Length
+     22        Print Range -start col
+     23          "     "   -end col
+     24          "     "   -start row
+     25          "     "   -end row
+     26        Insert col width (9)
+     27-152    Col widths by col
+     153       9
+     154-156   0,0,3
+     157-      Cell Contents(see below)
+     last 3    255,128,0
+
+CELL FORMATS:
+
+     byte             contents
+     ----     --------------------------
+     1        Row ( row 1=1)
+     2        Col (col A=1)
+     3        Length of block from byte 1
+              If OR'd with $80, formula or numeric
+              If OR'd with $40, protected
+              Else character string
+
+     4        a) if character, ASCII  string 
+              ended by length of block
+              b) if numeric or formula, # of 
+              decimal places in format:
+              0=0 places, $20=1,$40=2,$60=3,
+              $80=4,$A0=5,$C0=6,$E0=7
+(NUMERIC AND FORMULA ONLY:)
+     5        Display format $80 OR'd with:
+              $04="###-",$10=""$###",
+              $40=",###"
+     6        If numeric, number in ASCII:
+              "+123.456..." ended with 13 and
+              block length
+              If formula, numeric value of cell 
+              in BCD. 1st byte=decimal place
+              ie 10^n, offset by $40,
+              followed by 14 place value
+              ".xxxxxxx etc".( ie floating point)
+     14       Start of cell formula, see
+              format below.
+     end      Block ended with 13 and block length
+
+CELL FORMULAS:
+
+Cell formulas are stored pretty much as written, except for tokens.  Each 
+starts with a formula code, giving an operator and what type of reference 
+follows. For example, $A5 means "divide by the function that follows".  The 
+table below shows the "system" used.
+
+             Cell    Number   Function
+Operator     Ref      Ref       Ref
+-------      ----    ------   --------
+Ref
+  follows    89        91       **
+   +         8A        92       A2
+   -         8B        93       A3
+   *         8C        94       A4
+   /         8D        95       A5
+   ^         8E        96       A6
+
+NOTES:  All codes are in HEX.
+        A cell ref is given in two 
+        bytes, row then col.  The 
+        reference is absolute if the
+        column reference is OR'd $80.
+        The operator followed by a negative
+        is indicated by the code above 
+        OR'd with $40.
+        ** There is no simple "function
+        follows", Lucid uses $A2.  There
+        is, however, a $E1 "negative function
+        follows" code.
+
+FUNCTION CODES: 
+
+Functions are referenced with tokens and certain arguments are expected. For 
+the list below, "N" indicates a numeric or formula with numeric result is 
+expected, RC means cell ref, Row/Col.  All argument lists end with an ASCII ")
+".
+
+Code
+(hex)   Function      Arguments
+----    --------      -----------------
+80      ( left        N 
+          paren
+81      RND(          N
+82      SQR(          N
+83      LOG(          N
+84      EXP(          N
+85      COS(          N
+86      SIN(          N
+87      TAN(          N
+88      ATN(          N
+89      INT(          N
+8A      REF(          "FILE NAME",RC
+8B      SUM(          RC:RC
+8C      CNT(          RC:RC
+8D      TBL(          RC,RC,RC:RC
+8E      MIN(          RC:RC
+8F      MAX(          RC:RC
+
+That's it.  I hope you find this helpful and can use it to create better 
+utilities for Lucid.
+
+Dave Lapinski
+

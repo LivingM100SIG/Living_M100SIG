@@ -1,0 +1,130 @@
+
+The Model 100 Subroutine Library is a 
+collection of machine language routines 
+combined in an easy-to-use .CO file. The
+functions provided are as follows:
+
+	* Sort a string array
+	* Search RAM for a string
+	* Compute CRC for a RAM segment
+	* Access the RAM file directory
+
+Installing SUBLIB.CO
+====================
+Go to BASIC and run SUBLDR.BA. This will
+take a few seconds. Once the program has
+been run it may be KILLed, as it will 
+not be needed again.
+
+Using SUBLIB.CO
+===============
+SUBLIB.CO occupies approximately 560 
+bytes beginning at address 62300. Before
+loading SUBLIB you must reserve the area
+of memory that it occupies. This is done
+using the following statement:
+
+	CLEAR 256,62299
+
+Note that this statement is executed in 
+the course of running SUBLDR.BA. The 
+memory above 62299 will be reserved 
+unless another CLEAR is executed using a
+different value for the second operand. 
+Single operand CLEAR statements will 
+have no effect on the memory reserved. 
+To check whether memory has been 
+reserved just check for HIMEM less than 
+62300.
+
+To load the Subroutine Library use the 
+following statment:
+
+	LOADM "SUBLIB"
+
+Once the subroutine has been loaded it 
+will stay in memory and need not be 
+reloaded unless it is overwritten, or 
+the reserved memory from 62300 is 
+released.
+
+All SUBLIB calls are made using the 
+BASIC CALL statement. The CALL must be 
+in the following form:
+
+	CALL 62300,E,VARPTR(PL%(0))
+
+'E' specifies the function to be 
+performed and may range from 0 to 3. PL%
+is an integer array, which may be named 
+with any name you wish, but MUST be 
+integer. It should be DIMensioned for at
+least 5, if the DIM statement is used. 
+The values placed in this array vary 
+depending on the function to be 
+performed. In all cases, however, PL%(0)
+is used to indicate the outcome of the 
+CALL. If PL%(0) is returned with a value
+of 0 it indicates that the function was 
+not performed due to errors. Successful 
+performance of the function is indicated
+by a return value of -1.
+
+Parameter Setups
+================
+
+Function 0 - String array sort
+PL%(0) - Always returned as -1.
+PL%(1) - Number of array items to sort.
+PL%(2) - VARPTR of first array item.
+
+Function 1 - RAM string search
+PL%(0) - 0 if no match found.
+         -1 if string matched.
+PL%(1) - Start RAM address to search.
+PL%(2) - VARPTR of string to match.
+PL%(3) - Length of RAM to search.
+
+Function 2 - Calculate CRC for RAM
+PL%(0) - Always returned as -1.
+PL%(1) - Start RAM address for CRC.
+PL%(2) - Length of memory for CRC.
+PL%(3) - Returned with CRC value.
+
+Function 3 - RAM directory access
+PL%(0) - Returned 0 at directory end.
+PL%(1) - Address of current entry.
+         (Initialize with -1705).
+PL%(2) - VARPTR of string variable to
+         contain file name on return.
+PL%(3) - File type code byte.
+           Bit  Usage
+            7   1=Active, 0=KILLed
+           6&5  File type code
+                00 = .BA file
+                01 = .CO file
+                10 = .DO file
+            4   May mean ROM file
+                (File skipped if on)
+            3   May mean alt. ROM file
+                (File skipped if on)
+            2   Unknown
+            1   Unknown
+            0   Unknown
+PL%(4) - File start address in RAM.
+PL%(5) - File length in bytes.
+
+Note concerning addresses
+=========================
+RAM in the Model 100 exists from address
+32768 to 65535, depending on how many 
+RAM chips are installed. Due to the 
+nature of integer variables it is 
+necessary for all addresses above 32767 
+to be stored as negative numbers in 
+integer variables. To convert a number 
+for integer use simply subtract 65536 
+from it. Likewise, to convert a negative
+address to a true address you must add 
+65536 to it.
+

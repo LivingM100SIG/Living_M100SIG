@@ -1,0 +1,24 @@
+0 ' S-TIME.BA is a very short byte-save   version of CSTIME.BA  It is only 430
+1 ' bytes as a BA prog with rems removed  compared to the 1500+ bytes of CSTIME
+
+2 'It is compatible with CSSORT and       writes the same format as CSTIME
+3 'What you loose  is  the starting time  of the logon and also the read 
+4 'features. The read can be done from    CSTIME, CSSORT or the DO file direct
+5 'You also loose the double check of     the line before entering to the file
+6 'Results from CSTIME and S-TIME can be  merged for reading and both programs
+7 'write to the same (C-TIME) file.	  S-TIME is best to use when on a trip
+8 ' when ram memory is so precious.		S-TIME  is  Short-TIME
+9 '------- CUT ON DOTTED LINE ------------------------------------------------
+10 FI$="C-TIME.DO":TI$=LEFT$(TIME$,5):CI$="###"
+12 CLS:PRINT@52,"Time Off > ";TI$:PRINT
+14 INPUT"    CSIS   Minutes   On-Line > ";MOL:S$="":PRINT
+16 INPUT"  SERVICE <5>=error <9>=menu > ";S$
+18 IFS$="5"THEN12ELSEIFVAL(S$)=9THENMENU
+20 IFS$=""THEN16ELSES$=S$+" ":S$=LEFT$(S$,2):S$=S$+CHR$(32)
+22 OPENFI$FORAPPENDAS1
+24 PRINT#1,S$;DATE$;" off at > ";:PRINT#1,TI$;" = ";
+26 PRINT#1,USINGCI$;MOL;:PRINT#1," min."
+28 CLOSE1
+30 PRINT@280," ENTERED TO FILES <CR>=rerun <9>=Menu";
+32 X$="":X$=INKEY$:IFX$=""THEN32ELSEIFX$="9"THENMENUELSEGOTO12
+

@@ -1,0 +1,54 @@
+This is a modification of "VIEW2" which allows up to 60 column output on the 
+M200 screen. It is compatible with the RESIDENT PORTION of TS-DOS and will not 
+interfere with files loading and saving via TEXT or BASIC
+For more information on VIEW , see the VIEW series on this DL
+
+HOW TO GET IT WORKING
+---------------------
+
+You need  : V60LDR.200 (loader)
+	    VIEW60.200 (basic source code)
+	    TCOMPL.200 (M200 version of TCOMP.121 needed to compile VIEW60)
+
+ALL THESE FILES SHOULD BE CONVERTED TO .BA FILES BEFORE USING.
+
+   1) load VIEW60.BA and type  RUN 1000 (this will create VDATA.CO)
+   2) delete lines 1000-1127 of VIEW60.BA as they are not to be compiled
+   3) make sure VIEW60.BA (less lines 1000-1127) is saved to ram (MENU)
+   4) load and run TCOMPL.BA  with these parameters :
+		start  = 56500
+		end    = 57999
+		source = VIEW60
+		object = (press ENTER)
+      TCOMPL will compile VIEW60 and will give various messages while 
+compiling.
+   5) after compile is complete, type NEW to kill TCOMPL.BA
+   6) type SAVEM"VIEW60",56500,58380,56500
+   7) go to MENU and kill VDATA.CO and VIEW60.BA as they are now included into
+      VIEW60.CO
+
+You now have a working copy of VIEW60.CO which can be saved with TS-DOS.
+
+
+To view any text (.DO) file run V60LDR.BA
+If you want to review the same .DO file again, just run V60LDR without 
+specifying any parameters. It remembers the last used.
+
+NOTE: V60LDR.BA, VIEW60.CO and any text (.DO) file should be saved to ram (MENU
+)
+      to be used.
+
+VIEW60.CO COMMANDS ARE :
+	UP-ARROW will restart display at top of file
+	M  will take you back to main menu
+	E  will jump to TEXT for any editing
+	ANY OTHER KEY will display next page of text or if at end jump to
+	main menu.
+
+
+NOTE: TCOMPL.200 is in DL10
+
+Enjoy a 60 column screen  on the M200 !
+
+LUC BOUCHARD  73327,2320
+

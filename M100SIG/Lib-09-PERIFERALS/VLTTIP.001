@@ -1,0 +1,67 @@
+PG Design's Vault & Ultrascreen
+-------------------------------
+
+
+I'm using a PG Design's Vault with my 102, and recently bought a copy of Ultrascreen... The initial results were disappointing: you can install Ultrascreen, but you can't get into 10x60 screen mode except in BASIC. It seems the Vault's OS resets the screen mode to normal every time you enter the 102's memory.
+
+It is possible to make the combination work, but it takes a little tweaking... Here are a couple of workarounds for this problem that allow the use of the 10x60 screen with TEXT and TELCOM (BASIC is no prob..., use SCREEN 1 / SCREEN 0 to toggle the screen mode):
+
+
+Installing Ultrascreen
+----------------------
+Ultrascreen comes with a ready-to-go version, USC102.CO, relocated to work with FLOPPY.CO. You can also create a custom version of USC102.CO, relocated anywhere you like in high memory. To load the ready-to-go version, copy USC102.CO from disk or cassette into the Vault, using the supplied directions.
+
+To relocate a version of USC102.CO, copy the following files into the Vault:
+
+		LOADER.DO
+		TXT102.DO
+
+Use the F2 key to move both of these files into the 102's memory, and enter BASIC. Give the command
+
+		LOAD "LOADER"
+		RUN
+
+and consult the supplied directions on how to relocate Ultrascreen. This process will create a USC102.CO file; after you have done this you no longer need the files you originally copied.
+
+In either case, you'll wind up with a copy of USC102.CO in the Vault. This file, in conjunction with a short BASIC program described below, is how you install Ultrascreen.
+
+Enter BASIC, and type in this program:
+
+		10 CLEAR 0,56610
+		20 RUNM"USC102"
+
+If you've custom relocated USC102.CO, you'll use the start address you specfied to LOADER.BA instead of 56610, which is the load address of the supplied copy of USC102.CO. Save this program as USCLDR.BA, and exit BASIC.
+
+Now use F2 to move "USC102.CO" into 102 memory from the Vault, place the widebar cursor over USCLDR.BA, and press ENTER. Ultrascreen is now installed.
+
+You can follow the supplied directions to uninstall Ultrascreen, and reinstall it with USCLDR.BA and USC102.CO at any time.
+
+
+TEXT in 10x60 Mode
+------------------
+Create a this BASIC program:
+
+		10 SCREEN 1
+		20 CALL 24046
+
+and save it as TEXT60.BA. Use F2 to move your text file into the 102's memory, place the widebar cursor over TEXT60.BA, and press ENTER, and... voila 10x60 text.
+
+
+TELCOM in 10x60 Mode
+------------------
+For TELCOM, create this program:
+
+		10 SCREEN 1
+		20 CALL 20806
+
+and save it as TELC60.BA. Just placing the widebar cursor over TELC60.BA and hitting ENTER will put you in TELCOM in 10x60 mode.
+
+
+Some final notes..
+------------------
+This approach can be extended to work with SCHEDL and ADDRSS as well; I didn't bother to set them up because I don't use these programs. There are several good sources of documentation of ROM entry points on the SIG that should contain entry addresses for these programs.
+
+Finally, if anyone has figured out how to get into 10x60 mode  while using SuperRom with the Vault, please drop me a note...
+
+Mike Aiello
+71066,155

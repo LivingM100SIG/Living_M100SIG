@@ -1,0 +1,280 @@
+
+                        ZIPFMT.100/200
+                   (c) 1989 Wilson Van Alst
+                      All rights reserved
+
+                           CONTENTS
+
+     I. GENERAL ... What's different about ZIPFMT.
+    II. FEATURES ... Why you might like it.
+   III. INSTALLATION ... The romance begins.
+    IV. STARTING OUT ... On a blissful honeymoon.
+     V. USING ZIPFIX.BA ... To add some variety.
+    VI. APPLICATIONS ... A versatile partner.
+   VII. TECHNICAL NOTES ... X-rated.
+  VIII. ACKNOWLEDGMENTS ... To the father.
+    IX. SUPPORT ... In case love sours.
+
+
+  I. GENERAL
+     A. While there are many TEXT formatters available for the
+        Tandy laptops, none of them works quite like ZIPFMT.  This
+        program's main advantages are: very small size, machine
+        language speed, and the creation of formatted documents =in
+        RAM=, for easy output to a printer or, via TELCOM, to
+        another computer, EMail service, or FAX receiver.
+     B. The significant difference between ZIPFMT and other
+        formatters: instead of using a large program that asks for
+        various options every time you run it, ZIPFMT creates small
+        .CO programs that are pre-set to a single "layout" --
+        meaning a user-defined combination of margins and
+        line-spacing.  Each of these .CO files is just 142 bytes;
+        yet each is a fully self-contained text formatter.  So, if
+        you normally use just one or two standard "layouts," you'll
+        need just one or two small .CO files to handle your
+        formatting chores.
+     C. Another important ZIPFMT feature is that it formats files
+        "in place" -- letting it handle much larger documents than
+        formatters that must copy the original file.
+
+ II. FEATURES
+     A. Formatting Options
+        1. ZIPFMT gives you control over the following elements:
+           a. Left margin
+           b. Maximum characters printed per line
+              1) the combination of (a) and (b) establish the Right
+                 Margin; so you have control over this also
+           c. Top margin
+           d. Bottom margin
+           e. Line spacing
+           f. Maximum lines printed per page
+              1) the combination of (c), (d), (e) and (f) establish
+                 Page Size; so you also control it
+     B. Machine Language
+        1. The formatter is fast.  It typically handles a 6K file
+           (5,000 words) in less than 30 seconds.
+     C. AltLCD Operation
+        1. Because ZIPFMT works in a "protected" area of system
+           memory, it does not conflict with other machine language
+           programs, and you don't have to CLEAR space or change
+           HIMEM.
+     D. Formatting "In Place"
+        1. Since ZIPFMT doesn't copy the document it's processing,
+           you can work with very large files.
+     E. Versatility
+        1. Rather than dumping output to an external device, ZIPFMT
+           creates a formatted TEXT file in the computer's memory.
+           This lets you:
+           a. send files to a printer with the "Save to: LPT:"
+              option in TEXT -- which (unlike SHIFT/PRINT) will
+              pass along printer control codes
+           b. send completely formatted files via TELCOM.
+     F. Size
+        1. Each of the .CO files is a self-contained TEXT formatter
+           --  but takes just 142 bytes of memory.
+
+III. INSTALLATION
+     A. You need to download either ZIPFMT.100 or ZIPFMT.200,
+        depending on which laptop you have.
+     B. Your new file contains listings for =two= programs:
+        ZIPFMT.BA and ZIPFIX.BA.  Separate these into individual
+        .DO files, then convert them to .BA programs.
+        1. ZIPFMT.BA is the program you'll use to create a new
+           formatter if you =don't= already have one on the menu.
+        2. Once you have made a formatter, you can use a shorter
+           program, ZIPFIX.BA, to change it -- or to create new
+           formatters as explained below.
+
+ IV. STARTING OUT
+     A. Whenever you want to make a ZIPFMT .CO file, but don't have
+        one in your computer, you need to use ZIPFMT.BA
+        1. Run it as you would run any BASIC program from the main
+           menu
+        2. The first display will show a rapidly changing number in
+           the middle of your screen, as the program loads machine
+           language data to the proper addresses
+        3. Next, you'll see the "layout" menu for a formatting file
+           a. it is the "default" file that ZIPFMT.BA just loaded,
+              and it is pre-set to a format of:
+
+              1)     Left Margin:   [  5]
+                     Printed Chrs:  [ 34]
+                     Top Margin:    [  3]
+                     Bottom Margin: [  4]
+                     Spc Btw Lines: [  0]
+                     Printed Lines: [ 59]
+
+        4. With these settings displayed on the screen, the cursor
+           will be flashing next to the first option, Left Margin:
+           a. to change the setting, enter a new number
+              1) the change appears on your screen
+           b. to accept the setting as shown, press <ENTER>
+        5. Continue, as in the previous step, through all the
+           formatting elements -- defined as:
+           a.  Margin - number of spaces before the first text
+              character in each line
+           b. Printed Chars - maximum number of text characters in
+              each line
+           c. Top Margin - number of carriage-return / linefeed
+              combinations at the top of each page
+           d. Bottom Margin - number of CR/LF's at the bottom of
+              each page
+           e. Spc Btw Lines - number of CR/LF's between each line
+              of printed text
+              1) this number will be 0 for single-spacing, 1 for
+                 double-spacing, and so forth
+           f. Printed Lines - maximum number of actual text lines
+              printed on each page
+        6. As you set various options, you'll see two important
+           numbers re-calculate on the first line of your screen.
+           a. LinSiz  - indicating the =total= size of a line,
+              including Left Margin and Printed Chars
+              1) this is equivalent to a Right Margin
+           b. PgSiz - indicating the =total= number of lines
+              printed on a page, including Top and Bottom Margins,
+              Printed Lines, and Spc Btw Lines:
+              1) final adjustments to Page Size should be made with
+                 the 'Printed Lines' setting.  PgSiz should total
+                 66 for most printers.  If your printer is set to
+                 'skip over perf,' or you're printing on special
+                 forms, you may have to experiment.
+        7. After you've finished with the range of format choices,
+           you'll be given an "OK? (Y/N)" prompt.  Answering with
+           anything other than 'Y' or 'y' at this point will take
+           you back through the settings for further changes;
+           otherwise ....
+        8. You'll see the final prompt:
+
+                Save to  #_____.CO
+
+                 NOTE:  Throughout this document, the symbol
+                 '#', as in #_____.CO, above, is used in place
+                 of a graphics character that will actually be
+                 shown on your computer (but will not transmit
+                 properly in this ASCII file).  The character
+                 will be a 'Paragraph' symbol, which looks like
+                 a 'P' in reverse.  It is used as a reminder of
+                 what the ZIPFMT files do.
+                    Also for the purposes of this document,
+                 the formatting files beginning with this
+                 character will be known interchangeably as
+                 "#files," or "layout files," or simply
+                 "formatters."
+
+        9. This is where you enter a name for the layout file
+           you've just customized:
+           a. any name of five characters or fewer will work,
+              though you should probably use something that reminds
+              you of what the layout is for: #FAX.CO, or #MEMO.CO,
+              for example
+           b. you might also want to use numbers, indicating the
+              left margin and line-length: #5/65.CO
+       10. If you enter a 'null string' (by just pressing <ENTER>)
+           at the "Save to:" prompt, nothing will happen; you'll
+           just return to the main menu, with no #file created.
+
+  V. USING ZIPFIX.BA
+     A. This program is about half the size of ZIPFMT.BA, and it's
+        intended for use when you already have a #file on the menu.
+        With ZIPFIX, you can change the settings of an existing
+        #file -- or create a brand new one by using one of the
+        existing formatters as a "seed."
+        1. These are the principles to keep in mind:
+           a. You change a seed file if you answer the "Save to:"
+              prompt with the file's own name
+           b. If you respond with any other name, you'll create a
+              new #file, and the seed file will remain unchanged
+     B. Run ZIPFIX.BA from the main menu
+        1. The first screen will show you a list of files and
+           prompt for the name of a "Source:"
+           a. this is what we've been calling a "seed file," and it
+              must be an existing formatter
+        2. When the screen changes, you'll see the seed file's
+           layout settings and you can change them to suit your new
+           format
+           a. See detailed instructions in Section IV.
+        3. If you respond with 'Y' or 'y' at the OK? prompt, you'll
+           get the "Save to:" prompt for naming a new layout or (by
+           saving the seed file to itself) changing the seed file
+           a. Again, a null entry at this prompt will take you back
+              to the main menu with no changes made
+
+ VI. APPLICATIONS
+     A. Because ZIPFMT creates formatted, .DO files =in RAM=, it
+        lets you do some things that weren't possible before:
+        1. Printer
+           a. Instead of using <SHIFT><PRINT> to send files to a
+              printer you can now use <F3>, designating "LPT:" as
+              the output device
+              1) this means you can send printer control codes --
+                 to underline, overstrike, or change fonts -- by
+                 embedding the controls as you write a document
+                 (see the TEXT section of your computer manual for
+                 more on this).
+        2. TEXT
+           a. You can use the left and right margins to configure
+              your .DO files for easiest reading, or to make room
+              for notes alongside the main body of the document.
+        3. TELCOM
+           a. while you could previously specify a right margin (at
+              the "Width:" prompt) when sending files to another
+              computer, there was no provision for left margins or
+              page sizes
+           b. ZIPFMT lets you add those elements to a file =before=
+              sending it
+              1) this is especially useful for sending professional
+                 looking documents via FAX
+
+VII. TECHNICAL NOTES
+     A. Size Limits
+        1. ZIPFMT's "in place" formatting technique lets it work
+           with larger files than most other formatters, but there
+           is a limit: when you add formatting to a file, the size
+           increases -- and it's possible to run out of RAM.
+           a. If this happens, the formatter will beep, flash a
+              "Memory full" message on the screen, and return to
+              the main menu.
+           b. With most layouts, you can avoid this problem by
+              allowing a 20% overhead for the file being formatted;
+              i.e., you would want 200 bytes of free memory to
+              format a 1,000 byte file.  If you're using a format
+              that calls for very wide left margins, this overhead
+              will increase.
+     B. Unformatting
+        1. DEFORM
+           a. A while ago, I wrote a machine language program that
+              strips left margins and most "soft" carriage returns
+              from formatted .DO files.  It's called DEFORM (in
+              different versions for the M100/102 and T200
+              laptops), and it works quite nicely on documents that
+              have been formatted with ZIPFMT -- in case you want
+              to convert them back to original form.
+     C. Tabs
+        1. ZIPFMT will not work properly on files that use the TAB
+           character to indent paragraphs or set up columns of
+           data.  If you need to format such files, you can use
+           another (100 byte) machine language routine, called
+           ZAPTAB, to replace TABs with an appropriate number of
+           spaces; then ZIPFMT will work as you'd expect.
+
+III. ACKNOWLEDGMENTS
+     A. Beta Testing
+        1. Randy Hess gets credit for suggesting (strongly) that a
+           program like ZIPSRT might be useful.  He was also kind
+           enough to invent problems that the earliest generations
+           of ZIPFMT couldn't solve.
+
+ IX. SUPPORT
+     A. Message Board vs. EPlex
+        1. For questions or suggestions concerning ZIPFMT, contact
+           me on the M100 Forum.  Rathern than EMail, I would
+           prefer open correspondence on the SIG message board
+           because it lets more people know -- more efficiently --
+           about the program's strong points and weaknesses.
+           Thanks.
+                     Wilson Van Alst  [76576,2735]
+
+
+
+
+

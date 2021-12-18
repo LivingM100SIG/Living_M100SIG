@@ -1,0 +1,74 @@
+INTERNAL MODEM (M-100, T-102):
+
+     For those who must rely on the internal modem of the Model 100 or Tandy
+102 the "Fast" log on sequence is stored in a text file in your computer
+named ADRS.DO.  Place your phone number, id#, and password in the proper
+place in the string.  The STATS settings (for CIS) are M7I1E, and the pps can
+be 10 or 20.
+
+     In this command string in the ADRS.DO file the GO:PLACE can be wherever
+you like to log on to, and bypasses the CIS main menu.  In this string it
+will take you directly to CIS MAIL.  GO:TANDYLAPTOP will take you directly to
+the M-100SIG.  This is the string that should be in the ADRS.DO file:
+
+ CIS:phone number<==^C?Uid###,####/GO:MAIL\pass word^M>:
+
+     For those interested in the characters and what they do in this one line
+command string,
+
+ The:   Means:
+ <>     let me talk to another computer
+ ==     pause 2 seconds for each =
+ ?      wait for the prompt (the U)
+ ^M     enter
+ ^C     ctrl-C key combination
+ !      send the next character
+
+EXTERNAL MODEM (M-100, T-102, M-200):
+
+     For use with an external modem attatched to a Model 100, Tandy 102, or
+a Model 200.  The exact parantage of this program is uncertain, and was
+received with an external Anchor Signalman MK XII (1200 baud) modem bought from
+Tony Anderson.
+
+NOTE:     To use with a 2400 baud external modem change line #11 -
+..."COM:57I..." to ..."COM:67I...", in both parts of that line.
+          To use Pulse dialing instead of Tone change line 13 "ATDT" to
+"ATDP".
+
+0 ' Small Modem Driver
+1 '
+2 ' Put your local CIS phone number, ID number, and password in line 13
+3 '
+10 CLS:MAXFILES=2
+11 IFPEEK(1)=171THENF$="COM:57I1ENI"ELSEF$="COM:57I1E"
+12 OPENF$FORINPUTAS1:OPENF$FOROUTPUTAS2
+13 F$="=ATS0!=0^M?K=ATDTcisphone^M?0=^C?Did###,####\pass word^M>"
+14 V=VARPTR(F$)
+15 IFPEEK(1)=171 THEN CALL25301,,PEEK(V+1)+256*PEEK(V+2):GOTO17
+16 CALL21443,,PEEK(V+1)+256*PEEK(V+2)
+17 MAXFILES=1
+18 IF PEEK(1)=171 THEN CALL25454 ELSE CALL21589
+
+     For those who prefer a shorter version and have a Model 100 or Tandy
+102 here is the MODEM.BA program that I refer to as *MY* MODEM.BA.  Tho I
+refer to it only as such because it resides in my Model 100.  I asked Mike
+Kelton for assistance with a problem related to the internal modem of the
+Model 100 and disk access after using the modem.  While we where discussing
+the problem the "new" External Modem showed up from Tony Anderson, with its
+attendent program.  Tony and Mike exchanged several quick messages on the
+forum with the net result of my possesion of this condensed version of
+MODEM.BA for my Model 100.
+
+
+10 MAXFILES=1:OPEN "COM:57I1E" FOR INPUT AS 1:CLOSE
+14 F$="=ATS0!=0^M?K=ATDT(cisphone)^M?0=^C?Did###,####\pass word^M>"
+16 V=VARPTR(F$):CALL 21443,,PEEK(V+1)+256*PEEK(V+2):CALL21589
+
+     Be sure to place the cis phone number, your id number, and password in
+line 14. See notes above for changing baud rates and tone or pulse dial.
+
+     To use with Mike Keltons SWEEP program change the last call in line 16
+from CALL21589, to the start address you select(ed) for SWEEP.  If you select(
+ed) 62660 as the start of SWEEP then the last call would be CALL62660, and 
+not CALL21589 as in this example.

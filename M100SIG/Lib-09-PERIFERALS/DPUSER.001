@@ -1,0 +1,76 @@
+DPUSER.001  by Phil Wheeler [71266,125]
+---------------------------------------
+
+Disk Power 100 is about the cleverest and most full-featured of
+the operating systems supporting the TDD.  Because of the way it
+is implemented, it has some advantages over the others; but some
+unique compatibility problems also result.
+
+The following are some of my observations after a few days of
+DP100 experience.  My biggest negative reactions are: 1) The
+loading process is not quick and easy (assumes you won't do it too
+often); and 2) You cannot remove it gracefully (needs a
+cold-start; see below).  This should not be an issue under normal
+usage, since it is intended to be kept in the computer
+permanently; but I like to "fiddle", so it is a nuisance to me.
+
+A. How DP-100 is Loaded
+
+These are guesses on my part.  I suspect that only Hugo Ferreyra
+knows for sure!
+
+1. Apparently LOADER.BA puts a machine language program in the
+   very lowest part of RAM (32768d = 8000h as the starting
+   address).  I surmise this based on the fact that SOMETHING
+   stays resident while MAXRAM=HIMEM=62960 (it seems) -- and from
+   the discussion in the manual (and the DPTIP files) of when CAS:
+   and FLOPPY will work and when they will not.
+
+2. FLOPPY.CO will always put it there, whatever else is loaded at
+   the time.  Cassette and other OS's (DSKPWR, POWR-DISK, TS-DOS)
+   will not put it there unless there are no *Basic* programs on
+   the menu.  Note that UR-2 when on the menu acts like a Basic
+   program in this regard.
+
+3. This implies that only Basic files (and UR-2) need be removed
+   prior to booting with CAS:, TS-DOS or DSKPWR.  It also suggests
+   that using FLOPPY after loading DP100 will push the resident
+   portion of DP100 out of its (necessary!) low RAM location.
+
+4. If my conclusions re the location of the resident portion of
+   DP100 are correct, it is ABSOLUTELY incompatible with the MENU
+   utility of the PG Designs RAM expansions, and maybe with SUPERA
+   -- as they now stand.  That is because these programs need to
+   grab the same fixed location in low RAM.
+
+B. Cautionary Notes
+
+1. Don't ever kill DP100.SY.  You will probably need a cold start
+   to set things right.  The only safe method IS a cold start.  It
+   turns out that it can be killed, using some of the utilities
+   with menu-type Kill functions.  That is unfortunate, because
+   it's all too easy to do (fickle fingers, and all of that).
+
+2. If you have the urge to save DP100.SY to a disk, don't bother.
+   It messes up the directory and serves no useful purpose, unless
+   you get your kicks from formatting disks!
+
+3. Once you have installed DP100, do not use FLOPPY!  See above
+   notes.  You may be able to use other stuff such as DSKPWR, but
+   if you are committed to Disk Power 100, why bother?
+
+   Actually, this is a bit unfortunate, because DP100 has no
+   Backup function.  When using DSKPWR, I usually load FLOPPY for
+   formatting and Backup.  I guess you can do a back-up with DP100
+   by mass saves and loads, but that is not too convenient.
+
+   There is a bright side.  I think, with DP100, you safely can
+   use a version of FLOPPY which has been modified for use with
+   the PG Designs MENU.BA utility  (see DL5; TDDTIP.00#).  This
+   would allow backups with DP100 installed.  If anyone tries
+   this, let us know the result!
+
+4. Do not use the DP100 resident functions to save files from
+   within Ultimate ROM II.  I had one bad experience the only time
+   I tried it while editing within T-WORD.  This may be unique to
+   UR-2, or may be true for Super ROM as well.
