@@ -20,4 +20,4 @@ The difference here is, this is not a web site, even though you may conveniently
 
 I do not wish or intend to be the only gatekeeper to updates. I would like at least a few other people to request commit access to this repo so that updates do all have to come ion the form of PR's that I have to review and merge. Updates would still have to come in that form, but there is no reason a fairly large number of people can't share the job of accepting the updates.
 
-The original archival version of this archive is always available from [releases](../../releases) in the first release, or the archive.org link above.
+The original archival version of this archive is always available from the [initial release](../../releases/tag/v0) here, or the archive.org link above.
