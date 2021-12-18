@@ -1,6 +1,6 @@
 = The M100SIG
 
-This is a "living" version of the great [M100SIG archive](https://archive.org/details/M100SIG)
+This is a "living" version of the great [M100SIG archive](https://archive.org/details/M100SIG)  
 
 The M100SIG archive is a zip file containing much of the files section of the Model 100 Special Interest Group from Compuserve.
 
@@ -19,3 +19,5 @@ There have been other instances of hosting the M100SIG on web sites in an un-pac
 The difference here is, this is not a web site, even though you may conveniently access it from a web browser. The content is in fact a generic and perfectly portable set of files that may be cloned in it's entirety just as easily as downloading a zip file, and put up on any other similar web site, if some day github.com becomes unavailable or otherwise unsuitable. And either here or on any other git/hg/svn/etc host, people can resume contributing updates to a common library of knowledge and software, which then outlive any current custodian of the moment.
 
 I do not wish or intend to be the only gatekeeper to updates. I would like at least a few other people to request commit access to this repo so that updates do all have to come ion the form of PR's that I have to review and merge. Updates would still have to come in that form, but there is no reason a fairly large number of people can't share the job of accepting the updates.
+
+The original archival version of this archive is always available from [releases](../../releases) in the first release, or the archive.org link above.
