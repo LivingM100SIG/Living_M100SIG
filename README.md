@@ -1,4 +1,4 @@
-= The M100SIG
+# The Living M100SIG
 
 This is a "living" version of the great [M100SIG archive](https://archive.org/details/M100SIG)  
 
