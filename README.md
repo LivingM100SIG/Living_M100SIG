@@ -1,5 +1,5 @@
+![](living_m100sig.png)
 # The Living M100SIG
-
 This is a "living" version of the great [M100SIG archive](https://archive.org/details/M100SIG)  
 
 The M100SIG archive is a zip file containing much of the files section of the Model 100 Special Interest Group from Compuserve, which was a collection of discussion forums and files on topics relating to the TRS-80 Model 100 computer and it's various clones and accessories.
