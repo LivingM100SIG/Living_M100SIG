@@ -1,0 +1,570 @@
+
+PDD.EXE Version 2.10            USER MANUAL                    April 6, 1991
+
+(C) Copyright 1991 by Tim Palmquist
+
+
+
+QUICK REFERENCE LIST OF COMMONLY USED PDD COMMANDS
+
+/BANK1  
+/DIR  [/FULL | /WIDE]
+/FORMAT                 
+/KILL [filename]
+/LOAD [filename]
+/READ [filename]
+/SAVE [filename]
+/WRITE [filename]
+
+
+
+
+           CONTENTS
+
+           Quick Reference........................1
+           Why use PDD.EXE?.......................2
+           Acknowledgements.......................2
+           Required Hardware......................3
+           Atari Portfolios.......................3
+           Distribution and Registration..........3
+           Features...............................4
+           List PDD files.........................4
+           Loading PDD files......................4
+           Saving PDD files.......................5
+           Killing PDD files......................5
+           Formatting PDD diskettes...............5
+           Duplicating or backing up diskettes....6
+           Default configuration..................6
+           Complete list of PDD commands..........7
+           How it happened........................8
+
+
+
+
+PDD.EXE is available from:
+  Tim Palmquist
+  6005 Chandler Way
+  Bakersfield, CA 93307-5509
+  (805) 837-8730
+  CompuServe 76517,1546
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PDD.EXE Version 2.10       USER MANUAL - Page 2 of 9           April 6, 1991
+
+(C) Copyright 1991 by Tim Palmquist
+
+
+
+WHY USE PDD.EXE?
+
+If you use a Tandy "PDD" (Tandy Portable Disk Drive or Tandy Portable 
+Disk Drive 2) and you own a PC compatible computer, you probably already 
+know why it would be convenient for you to be able to access your PDD data 
+files from your PC.  But why use PDD.EXE?  Why not use one of the other PDD
+access programs, such as LapDOS?
+
+Although both programs accomplish many of the same tasks, the concept behind
+PDD.EXE is quite different from the design of LapDOS.  (In fact, it was my
+own experience of difficulties with LapDOS which motivated me to create 
+PDD.EXE.)  Most importantly, PDD.EXE is command-line-driven.  (In other words,
+all commands for accessing the PDD must be entered from the DOS prompt.)  
+Some users are irritated by this fact.  However, because of this feature, 
+PDD.EXE functions may be transparently integrated into other applications, 
+or you may setup batch files to handle PDD operations.  Such tasks could not 
+be accomplished with LapDOS.
+
+In addition, PDD.EXE is completely flexible regarding filename access, while
+LapDOS does not allow filenames with such common extensions such as ".CA" 
+to be saved to a PDD.
+
+LapDOS does include some capabilities which are not a part of PDD.EXE.  Data
+format exchanges with Thinktank and Idea! are supported, as well as renaming
+of PDD files and viewing PDD files on screen.  If you value these 
+capabilities, you may wish to use LapDOS instead of PDD.EXE.
+
+PDD.EXE allows full PDD "disk-image" files to be loaded and saved, providing
+an easy method for PDD disks to be duplicated or backed up.  This "disk-image"
+may even contain files such as the PDD2 system file, which cannot normally be
+accessed from a PC.  LapDOS does not include any disk-image handling functions.
+
+In spite of LapDOS's menu-driven approach, I actually find PDD.EXE easier and 
+more convenient to use (though I am sure that some may disagree on this 
+point).  Due to PDD.EXE's design, I can now easily access my PDD files 
+without the interruption which is created by loading and running LapDOS.
+
+In summary, LapDOS and PDD.EXE are two different approaches to PDD data 
+access.  Depending upon your situation, you may decide to use only LapDOS or
+only PDD.EXE, or both.
+
+
+
+ACKNOWLEDGEMENTS
+
+Without the patient assistance of several beta testers, especially Bill 
+Huffman, PDD.EXE would not have operated well when accessing PDD1 disks
+from some types of 386 PCs.  Many thanks to Bill Huffman, Jim Scheef, 
+Gene Nestro, and the others!
+
+
+
+
+
+
+
+
+
+
+
+PDD.EXE Version 2.10       USER MANUAL - Page 3 of 9           April 6, 1991
+
+(C) Copyright 1991 by Tim Palmquist
+
+
+
+REQUIRED HARDWARE
+
+PDD.EXE is designed for accessing a diskette in a Tandy Portable Disk Drive
+or a Tandy Portable Disk Drive 2, from an IBM PC/XT/AT or compatible computer.
+You must attach the PDD cable to your PC's COM1 or COM2 port connector.  Most 
+computers will require a gender changer (Female-to-Female); some computers 
+may require an adapter to fit the 25-pin PDD cable to the 9-pin PC COM port.
+Because of potential voltage incompatibilities, it is possible that some PCs 
+may not be able to access the PDD without a special converter (such as the 
+"cable converter" included with LapDos).  However, none of the PCs tested 
+have been found to require such a converter.  (If your computer requires the 
+converter, please notify Tim Palmquist at the address listed below.)  You
+must assume all responsibility for determining that PDD.EXE will function
+properly on your computer, with or without a converter.
+
+
+
+
+PDD.EXE AND ATARI PORTFOLIOS
+
+Many users have expressed interest in using PDD.EXE with an Atari Portfolio.
+Please note that at this time PDD.EXE will NOT work with Atari Portfolios.
+
+
+
+
+DISTRIBUTION AND REGISTRATION
+
+You may freely distribute PDD.EXE in any manner, as long as you do not
+charge anything.  PDD.EXE is shareware, not public domain or freeware.
+You may use PDD.EXE for 30 days without registering, so that you may
+evaluate its usefulness.  However, if you continue to use PDD.EXE over 30
+days after you have acquired it, you must register.  When you register
+PDD.EXE, you will be notified of any future projects or updates, when
+available.  (A menu-driven interface is among the projects being considered.)
+You are welcome to call or write if you have any questions or comments.
+
+To register your copy of PDD, please send $10.00 to:
+                     Tim Palmquist
+                     6005 Chandler Way
+                     Bakersfield CA 93307-5509
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PDD.EXE Version 2.10       USER MANUAL - Page 4 of 9           April 6, 1991
+
+(C) Copyright 1991 by Tim Palmquist
+
+
+
+Features of PDD.EXE Version 2.10 include:
+
+     - List PDD diskette files
+     - Load files from PDD diskettes into PC
+     - Save files to PDD diskettes from PC
+     - Overwrite existing files on PDD diskettes (optional)
+     - Kill PDD diskette files
+     - Format PDD diskettes
+     - Duplicate or backup PDD diskettes
+     - Flexible default configuration for COM port and baud rate
+
+
+
+
+LIST PDD FILES
+
+To list PDD diskette files, type option "/D" or "/DIR" after the PDD command.
+Optionally, you may enter file specifications following "/DIR".  File
+specifications may include wildcard match characters "*" or "?".  A question
+mark "?" character will match any character in a filename, and an asterisk "*"
+character will match any group of characters in a filename.
+
+PDD includes two directory options: wide and full.  If you type option "/F"
+or "/FULL", the directory will list one filename on each line, with file size
+and file type information displayed.  If you type option "/W" or "/WIDE", the
+directory will list several filenames on each line, but no file sizes or file
+types will be displayed.  The default directory option is "/FULL".
+
+Examples:
+       To list all files on a PDD1:   PDD /D
+       To list all files on a PDD2:   PDD /B0D /B1D
+       To list all .DO files:         PDD /DIR *.DO
+       To list all .DO and .CO files: PDD /D *.DO *.CO
+       To see a "wide" directory:     PDD /DIR /WIDE
+       To see a "full" directory:     PDD /DIR /FULL
+
+
+
+LOADING FILES FROM PDD
+
+To load PDD diskette files, type option "/L" or "/LOAD" after the PDD command,
+followed by file specifications for the files you wish to load.  File
+specifications may include wildcard match characters "*" or "?".  A question
+mark "?" character will match any character in a filename, and an asterisk "*"
+character will match any group of characters in a filename.
+
+Examples:
+       To load all files from a PDD1:   PDD /L *
+       To load all files from a PDD2:   PDD /B0L * /B1L *
+       To load all .DO files:           PDD /LOAD *.DO
+       To load a file called "TEST.BA": PDD /L TEST.BA
+
+
+
+
+
+
+
+
+
+PDD.EXE Version 2.10       USER MANUAL - Page 5 of 9           April 6, 1991
+
+(C) Copyright 1991 by Tim Palmquist
+
+
+
+SAVING FILES TO PDD
+
+To save files to a PDD diskette, type option "/S" or "/SAVE" after the PDD
+command, followed by file specifications for the files you wish to save.
+File specifications may include DOS wildcard match characters "*" or "?".
+Please note that the DOS "*" wildcard does not function in exactly the same
+manner as the PDD "*" wildcard.  (However, DOS-style wildcards may be used 
+without difficulty when accessing PDD files.)
+
+If you attempt to save a file which already exists on the PDD diskette, PDD
+will display an error message: "File already exists".  If you are sure you
+want to overwrite the existing files, you must enter the "/KILL" or "/K"
+option before you enter "/SAVE".  If you never want to see the error message
+"File already exists", you may set the default configuration to overwrite
+existing files by including "/KILL" in the PDD environment variable (see
+the section below on "defaults").
+
+Examples:
+  To save all files in the current directory to the PDD: PDD /SAVE *.*
+  To save all .DO files from the \LETTERS directory:     PDD /S \LETTERS\*.DO
+  To overwrite PDD's "TEST.BA" with DOS file "TEST.BA":  PDD /KS TEST.BA
+
+
+
+
+KILLING PDD FILES
+
+To kill PDD diskette files, type option "/K" or "/KILL" after the PDD
+command, followed by file specifications for the files you wish to kill.
+File specifications may include wildcard match characters "*" or "?".
+
+Examples:
+       To kill all files in bank 0 of the PDD:     PDD /BANK0 /KILL *.*
+       To kill all .DO files in bank 1 of a PDD2:  PDD /B1 /K *.DO
+       To kill PDD file "TEST.BA":                 PDD /K TEST.BA
+
+
+
+
+FORMATTING PDD DISKETTES
+
+To format a PDD diskette, type option "/FORMAT" after the PDD command.
+The format command may be followed by any other command, such as commands to
+save files to the newly formatted diskette.  PDD.EXE will automatically format
+unformatted diskettes when disk images are being saved.
+
+Examples:
+  To format a PDD diskette:                             PDD /FORMAT
+  To format a PDD diskette, then save "TEST.BA" to PDD: PDD /FORMAT /S TEST.BA
+
+
+
+
+
+
+
+
+
+
+
+PDD.EXE Version 2.10       USER MANUAL - Page 6 of 9           April 6, 1991
+
+(C) Copyright 1991 by Tim Palmquist
+
+
+
+DUPLICATING OR BACKING UP PDD DISKETTES
+
+To backup PDD diskettes to your PC, type option "/READ" after the PDD
+command.  All data on the PDD diskette will be loaded into a disk image file
+on your PC.
+
+To duplicate a PDD diskette, you must first "/READ" the original diskette's
+image, then put in the target diskette, and "/WRITE" the diskette image to
+the target diskette.
+
+Examples:
+       To load diskette image into "ACCOUNTS.IMG":    PDD /READ ACCOUNTS.IMG
+       To duplicate a diskette:
+                           1) Type:   PDD /READ
+                           2) Insert new diskette.
+                           3) Type:   PDD /WRITE
+
+
+
+
+DEFAULT CONFIGURATION
+
+PDD.EXE may be easily configured for your system's needs.  Before PDD.EXE
+processes any commands you have entered on the command line, it first
+processes all commands which have been entered into the "PDD" environment
+variable.  In this way, you may easily setup PDD to default to the correct
+COM port and baud rate which you use.  Other defaults may also be entered,
+such as "/K" to force existing files to be overwritten by "/SAVE"s.
+
+Examples:
+     To setup PDD on COM2 at 9600 baud:         SET PDD=/COM2 /BAUD9600
+     To setup PDD to overwrite existing files:  SET PDD=/K /L
+
+For best results, you should include "SET PDD=" (followed by the options
+which are appropriate for your system) in your computer's "\AUTOEXEC.BAT"
+file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PDD.EXE Version 2.10       USER MANUAL - Page 7 of 9           April 6, 1991
+
+(C) Copyright 1991 by Tim Palmquist
+
+
+
+
+COMPLETE LIST OF PDD OPTIONS
+
+Option   Abbreviation   Function
+/BANK1      /B1         Access files on PDD2 diskette Bank 1
+/BANK0      /B0         Access files on PDD2 diskette Bank 0
+/BAUD9600               Communicate with PDD at 9600 baud
+/BAUD19200              Communicate with PDD at 19200 baud
+/CASE       /C          Set PDD to case-sensitive (for advanced use only)
+/COM1                   Communicate with PDD on COM1
+/COM2                   Communicate with PDD on COM2
+/DIR        /D          Display filenames from PDD diskette directory
+/FULL       /F          Set directory display to "full" format
+/FORMAT                 Format PDD diskette
+/HELP       /H          Display PDD options
+/INFO       /I          Display PDD program information
+/KILL       /K          Kill files on PDD diskette and set to overwrite files
+/LOAD       /L          Load files from PDD diskette
+/READ       /R          Read entire PDD disk image
+/RETRY3                 Set to retry 3 times after communications errors
+/SAVE       /S          Save files to PDD diskette
+/TYPEx      /Tx         Set PDD file type to 'x' (for advanced use only)
+/WIDE       /W          Set directory display to "wide" format
+/WRITE                  Write entire PDD disk image
+/1                      Set disk image read to load PDD-1 compatible image
+                            from PDD2 diskette
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PDD.EXE Version 2.10       USER MANUAL - Page 8 of 9           April 6, 1991
+
+(C) Copyright 1991 by Tim Palmquist
+
+
+
+
+HOW IT HAPPENED
+
+I am not the author of PDD.EXE.  In fact, as far as I can tell, nobody
+created PDD.EXE.  No source code for PDD.EXE has ever existed.  Allow me 
+to explain.
+
+A few years ago, one of my clients requested a program to communicate with 
+a Portable Disk Drive from his PC.  I tried LapDOS, but it could not be 
+successfully integrated with my client's existing system.  I needed something
+more flexible, preferably source code.  A few days later, I was doing some 
+routine maintenance on my PC's hard disk, when I discovered a file that I 
+hadn't noticed before: "PDD.EXE".  Curious, I tried it out.  Imagine my 
+surprise when I discovered that this program would actually communicate with 
+my Portable Disk Drive!  What a coincidence!  But where did PDD.EXE come 
+from?  I was sure I hadn't copied it from any diskettes or downloaded it 
+from a BBS, so how did it get on my hard disk?
+
+At once I began an investigation into the background of my uninvited visitor,
+trying to locate its author, with the hope that I could persuade her or him
+to provide me with the source code.  During the course of my investigation,
+I discovered several older versions of PDD.EXE, with obvious bugs which did
+not exist in the latest version.  After analyzing these programs and comparing
+them with each other, I came to an incredible conclusion: PDD.EXE was a 
+different kind of program than had ever been seen before.  It appeared to be
+the result of some strange kind of self-mutating code, which, over time, 
+had actually succeeded in adding additional features to itself while 
+eliminating its own bugs!
+
+It was then that I realized that if I could trace this code down to its 
+origin, I could make a breakthrough discovery: self-debugging, 
+self-maintaining code!  I'd never need to debug another program.  I could 
+give up programming and take up fishing.
+
+Over the next few months, I discovered several more older versions of PDD.EXE:
+more links in the chain toward the elusive origin of this program.  One day,
+I discovered a small utility program PDDTEST.EXE, which simply checked
+to see if the PDD was currently available on the COM port.  I knew when
+I found PDDTEST.EXE that I was getting close to the beginning.  After
+years of research, I finally traced the origins of PDD.EXE all the way
+through the most primitive utilities, until I found the origin: a single
+bit, sitting in my root directory.  I stared in awe.  That single bit had 
+the potential of becoming the Mother of all programs!
+
+I went out and bought the fastest 486 computer I could find, with a 400MB
+hard drive.  Then I copied the Mother bit to the root directory.  As I
+watched in amazement, that one Mother bit transformed itself, through a 
+process of random mutation, into a complete family of full-featured,
+bug-free programs for handling every need imaginable.
+
+I had discovered the Source of all code.
+
+
+
+
+
+
+
+
+
+PDD.EXE Version 2.10       USER MANUAL - Page 9 of 9           April 6, 1991
+
+(C) Copyright 1991 by Tim Palmquist
+
+
+
+
+HOW IT HAPPENED (continued)
+
+                               *  *  *
+
+Back to reality.  As we all know, computer programs don't create 
+themselves from a Mother bit.  It is fantasy at best, and foolishness 
+at worst, to even consider the thought.  (Even the most sophisticated 
+"artificial intelligence" programs can all be traced back to an 
+intelligent HUMAN source.)
+
+How, then, could we ever entertain the concept that human life, and all
+of the other life which surrounds us, just "evolved" from a long series 
+of random mutations?  Look at the trees, the mountains, the animals; look
+in the mirror!  Everywhere you look, the work of a loving Creator is
+evident.
+
+Just as PDD.EXE was carefully created by me, you were carefully created
+by God.  Acknowledge Him today as your Source, realize your own inadequacy
+and accept His gift of permanent life through Jesus Christ.  
+
+If you want to know more about God, read the book of John in the Bible.  
+Or, contact me; I'd be glad to help.
+
+Have a nice life!
+
+
+
+Tim Palmquist
+6005 Chandler Way
+Bakersfield CA 93307-5509
+(805) 837-8730
+CIS 76517,1546
+
+
