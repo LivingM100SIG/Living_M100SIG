@@ -1,0 +1,287 @@
+TWPKIT10.DOC
+
+Copyright (c) 1990
+
+Gene Wilburn
+91 Inglewood Drive
+Port Credit, Ontario
+Canada L5G 1X9
+
+Voice: (416) 278-7242
+
+CompuServe: 72435,732
+
+---------------------------------------------------
+
+This ZIP file contains a toolkit of MS-DOS programs that allow you to
+convert Tandy WP-2 DO files to and from Ascii, WordStar, or
+WordPerfect. Release 1.0 of the toolkit includes the following
+programs:
+
+
+T2WP.EXE	      (Tandy DO file to word processing conversion program,
+               V1.1)
+
+T2WP.DOC       (Documentation for T2WP.EXE)
+
+WP2T.EXE       (Word Processing to Tandy DO file conversion program,
+               V1.0)
+
+WP2T.DOC	      (Documentation for WP2T.EXE)
+
+LASCII.EXE     (ASCII to Long ASCII file conversion program, V1.2)
+
+LASCII.DOC     (Documentation for LASCII.EXE)
+
+TWPKIT10.DOC   (This file)
+
+
+---------------------------------------------------
+
+Background:
+
+I thoroughly enjoy the freedom and convenience of using a lightweight
+electronic notebook I can carry in my briefcase and use nearly
+anywhere. I recently purchased a Tandy WP-2 for this purpose.
+
+As a part-time freelance writer (I manage computer systems in my day
+job), I require good file exchange options between my notebook
+computer and my desktop system. I wrote the programs in the TWP
+toolkit to make file transfers between the WP-2 and my desktop PC
+cleaner and more synergistic than the built-in WP-2 functions permit.
+
+I created these programs because the otherwise nifty Tandy WP-2 does a
+poor job of file conversion. Its ASCII files do not contain the
+Carriage Return/Linefeed (CRLF) line endings required by DOS. Its
+ASCII upload facility inserts superfluous, highly undesirable, CRs at
+every 80th character, and there is no built-in facility for preserving
+underline or boldface attributes. Furthermore, the WP-2 does not clean
+out the DOS LFs from a transferred DOS ASCII file.
+
+The TWP Toolkit has turned my WP-2 into the writing/editing instrument
+I have been looking for as a replacement to my well-worn, 1983-
+vintage, Tandy Model 100 portable.
+
+I am making the toolkit available to other WP-2 owners in the hope
+they might also find it useful. There is no charge or shareware fee
+attached to these programs for personal use. If you distribute the
+programs to others, please include the DOC files. (Reasonable
+corporate site licences are available for the commercial use of these
+programs.)
+
+If you find the toolkit useful, please drop me a note or email
+message. I'm interested in your feedback in terms of likes, dislikes,
+suggestions for improvement, and, of course, any bugs you discover. I
+will base any future releases on the feedback I receive.
+
+
+----------------------------------------------------------------
+
+Considerations and Limitations:
+
+Each program in the toolkit has its own doc file that explains how it
+works. The following is a more general description of the underlying
+assumptions of the toolkit.
+
+
+     Conversion philosophy:
+
+If you wish to exchange files between your WP-2 and your desktop word-
+processing system, you will find this works well if you do not expect
+the WP-2 to be more than it is -- a simple electronic notebook. To
+gain maximum synergy out of your two systems all you have to do is
+follow one basic rule: KEEP THINGS SIMPLE!
+
+The Tandy WP-2 DO file format is a very basic format that offers a few
+text and printer attributes. It does not begin to match a full-scale
+desktop word processor in richness or complexity.
+
+The only special text attributes this toolkit attempts to preserve, in
+both transfer directions (upload and download), is boldface and
+underlining. It also preserves TAB characters and the extended
+characters used for foreign-language characters, symbols, and
+graphics.
+
+It makes no attempt to preserve page breaks, soft returns, margin
+settings, tab settings, or centering. These are matters that have more
+to do with printing than with text creation or editing.
+
+There are also built-in physical limits. You cannot, for instance,
+transfer a file to the WP-2 that exceeds the amount of memory
+available for that file. You can, however, break larger word-
+processing documents into small, logical chunks such as chapters or
+sections that you can transfer into the WP-2 for editing.
+
+Here are some general observations about exchanging word-processing
+files and WP-2 files:
+
+
+     ASCII
+
+ASCII files, or DOS text files, are the simplest to convert because
+they are the most "plain vanilla" -- that is, they don't contain any
+native text attributes such as boldface or underline, or word-
+processing attributes such as margin information, tab settings, etc.
+
+Furthermore, nearly everything in an ASCII file is visible. There are
+only two fundamental considerations to take into account: line endings
+and file endings.
+
+DOS native text files end each line with a carriage return (CR) plus a
+line feed (LF) character. In contrast, Macintoshes end each text line
+with a CR only. Unix text file lines end in LF only. Sharing a CP/M
+heritage, DOS text files sometimes end in a CTRL-Z. DOS, however, does
+not need this archaism, nor do Unix or Mac.
+
+When converting files from the WP-2 DO format to ASCII, the T2WP
+program strips the Tandy 128-byte header, strips the Tandy CTRL-Z from
+the end of the file, and changes all line endings to CRLFs.
+
+When converting DOS ASCII files to the WP-2 DO format, the WP2T
+program adds the Tandy header, adds a CTRL-Z at the end of the file,
+and changes all line endings to CR only.
+
+The T2WP program preserves WP-2 underling and boldface attributes by
+exporting them with the following ASCII notation:
+
+     <i>  Begin italic (underlining)
+     </i> End italic
+     <b>  Begin boldface
+     </b> End boldface
+
+This notation is based on the text markup scheme suggested by the
+Chicago Guide to Preparing Electronic Manuscripts (University of
+Chicago Press, 1987).
+
+There is currently no provision for converting this notation back to
+internal WP-2 DO codes.
+
+The simplest way to move files from word processors other than
+WordStar or WordPerfect to the WP-2 is to save them as ASCII first and
+then convert them to DO files using WP2T. Some word processors, like
+WordPerfect [see CTRL-F5], offer you two ASCII options: DOS text and
+Generic. Choose generic. It outputs a complete paragraph in each line
+of ASCII text, perfectly preserving paragraphs for use in your WP-2.
+
+If your word processor only creates ASCII files with paragraphs broken
+into several lines with a hard return on each line (line-by-line
+format), you may use another program in this toolkit, LASCII, to first
+groom the file into "Long ASCII", or paragraph-per-line format and
+then convert the file to DO format using WP2T.
+
+When converting DO files to ASCII, T2WP gives you the option of
+exporting the file on a line-by-line or paragraph-per-line basis. The
+line-by-line option is best if you are going to use the file in a DOS
+or Unix ASCII text editor, while the paragraph option is preferable if
+you intend to transfer the file into a word processor.
+
+The line-by-line option allows you to choose a line length between 10
+and 127 characters. There is a 10,000-character limit on the length of
+a line with paragraph-per-line option. (I can always increase this
+limit if I discover any Faulkners out there who write paragraphs
+larger than 10K.)
+
+
+     WordStar
+
+Converting DO files into WordStar 4.0 files with T2WP is a
+straightforward process. WP-2 underline pairs are turned into WordStar
+^S pairs and WP-2 boldface pairs are turned into WordStar ^B pairs.
+Each paragraph in the DO file becomes a paragraph in WordStar. You
+must reformat each paragraph once the file is in WordStar.
+
+Extended graphics and foreign-language characters are preserved in
+WordStar 4.0 notation. This notation will be honored by WordStar 4.0,
+NewWord, and, I think, Galaxy.
+
+TAB characters remain as tabs, even though WordStar does not use them
+directly. Inside WordStar they can be expanded into spaces with a
+search and replace.
+
+Converting WordStar files to DO format is more complicated. WP2T
+unsets WordStar "high" bits and removes WordStar soft carriage
+returns, soft hyphens, and soft spaces. WordStar paragraphs are
+preserved as WP-2 paragraphs. WordStar 4.0 extended characters are
+preserved in the DO file.
+
+One of the useful things about good old-fashioned WordStar is its use
+of "dot commands" for complex formatting instructions. To remove this
+complexity from a file, all you have to do is strip out the dot
+commands -- the default option for WP2T WordStar conversions.
+
+On the other hand, WordStar's use of visible dot commands allows them
+to travel well back and forth between WordStar and the WP-2 if you
+wish to retain them.
+
+At this time there is support only for "classic" WordStar -- versions
+up to and including 4.0. Higher versions of WordStar files must first
+be saved as WordStar 4.0 files before they can be converted into DO
+files.
+
+
+     WordPerfect
+
+As with WordStar, converting DO files into WordPerfect 4.2 format is
+simple. WP2T turns WP-2 underlining into WordPerfect underlining and
+WP-2 boldface into WordPerfect boldface. Language and graphics
+characters are converted into WordPerfect internal notation and WP-2
+hyphens are converted into WordPerfect hyphens.
+
+WordPerfect 5.0 and 5.1 will read the converted WordPerfect 4.2 format
+files directly with no additional conversion required.
+
+Converting WordPerfect 4.2 files into DO format is, to say the least,
+challenging. WordPerfect is an extremely rich and complex word
+processor and one should exercise a certain caution in trying to bring
+any WordPerfect files into the WP-2. I do it all the time with
+WordPerfect 5.1, but I carefully limit my use of WordPerfect
+attributes to boldface, underline, and foreign-language characters.
+
+As mentioned, WP2T only converts WordPerfect files that are in
+WordPerfect 4.2 format. From version 5.0 and up, WordPerfect has
+become an extremely complex file format. WordPerfect 5.0 and 5.1 files
+must first be saved as 4.2-format files through the CTRL-F5
+WordPerfect conversion functions. In practice, this presents few
+inconveniences.
+
+The only WordPerfect attributes that are converted are underline,
+boldface, and line endings. WordPerfect paragraphs are preserved as
+WP-2 paragraphs. WordPerfect soft carriage returns are discarded and
+WordPerfect Indent characters are converted to tabs. WordPerfect
+hyphens are converted to standard ASCII hyphens, and extended
+characters are preserved. NOTHING else is converted, so be careful.
+
+If you control your own WordPerfect files, as I do, the conversion
+works well. However, if you wish to load someone else's WordPerfect
+file and you're not sure what's in it, I suggest you use the
+WordPerfect CONVERT program and convert it to WordStar format first
+and bring that into the WP-2 instead.
+
+The reason for the conversion to WordStar is that it eliminates a pile
+of embedded WordPerfect instructions that might otherwise make editing
+the file rather messy. At the same time, it preserves the basic
+boldface and underline attributes and any extended characters.
+
+
+Final note:
+
+Although I have made every attempt to test the programs in the toolkit
+against real-life files, there are so many possible variations that it
+is quite probable I have overlooked some potential problems or have
+simply programmed some features incorrectly. If you experience any
+anomalies, please drop me a note describing what happened so I can try
+to duplicate the problem and correct it in a future release.
+
+The programs in the toolkit are written in Turbo C 2.0. They are
+based, loosely, on some of my previous programs: WSA (WordStar to
+Ascii), ASW (Ascii to WordStar), and WS2SGML (WordStar to SGML).
+
+Writing this toolkit has been fun and the programs have boosted my
+enjoyment of my WP-2. I hope they do the same for you.
+
+
+Gene Wilburn
+July 4, 1990
+
+-30-
+
