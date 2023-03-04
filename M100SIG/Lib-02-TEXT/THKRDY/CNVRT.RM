@@ -1,0 +1,12 @@
+0 'Final step of conversion to Think.it file - Ron Marcy 
+5 CLEAR2000,HIMEM:DIML$(501)
+10 CLS:FILES:PRINT:INPUT"File name";F$:OPENF$FORINPUTAS1:I=0
+25 I=I+1
+26 INPUT#1,L$(I):IFNOTEOF(1)THENGOTO25
+30 CLOSE#1:N=I
+35 OPENF$FOROUTPUTAS#1:PRINT#1,0
+45 FOR I=1TON:A$=CHR$(ASC(L$(I))-64):PRINT#1,A$;MID$(L$(I),2,LEN(L$(I))-1):NEXT
+50 PRINT#1, "end"
+60 CLOSE#1: PRINT"Conversion finished."
+
+

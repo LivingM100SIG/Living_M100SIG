@@ -1,0 +1,97 @@
+                              REMOTE
+
+    Remote is a collection of programs and batchfiles that allow you to 
+control your PC remotely from your Tandy Model 100, 102 or 200, or for that 
+matter, from any terminal having a modem and telecommunications software, 
+using the DOS CTTY command. It is perfect for transferring material between 
+your PC and your portable.
+
+    The CTTY command redirects the DOS standard input and output to devices 
+other than the keyboard and screen. Remote directs input and output to the 
+modem attached to your PC.
+
+    Remote is called by a batchfile called OFF.BAT (for reasons that will 
+become apparent later).
+    
+    To transfer control to your M100, M102 or M200 portable,
+
+    Connect the pink line from your portable's direct-connect cable to the 
+modem.
+
+    Select TELCOM from your portable's menu.
+
+    On your PC, type OFF (enter) from the DOS prompt.
+
+    You'll be given the option of pressing a key to continue, or of pressing 
+Control-C to abort.
+    
+    If you press a key to continue, your PC's modem will sound a tone.
+
+    Press the F4 key on your portable for Term mode. The modems shake hands, 
+and you'll see the DOS prompt on your portable's screen.
+
+    From this point, all the DOS commands are available to you from your 
+portable, as though you were sitting at your PC keyboard.
+
+    To end the session, type OFF. This returns control to your PC's keyboard 
+and screen. If you hangup your portable without first typing off, you'll have 
+to do a warm boot to regain control of your PC.
+
+    Besides the basic REMOTE and OFF programs, I've included a couple of other 
+routines that make life easier when transferring files between your portable 
+and your PC.
+
+    To upload files from your portable to your PC, from the DOS prompt on your 
+portable type UPL (filespec) (enter), and upload as usual using the portable's 
+F3 key.
+
+    To download files from your PC to your portable, type DOW (filespec) 
+(enter), begin capturing using the F2 key on your portable, and then hit 
+(enter) to begin the dowload.
+ 
+    The programs in this archive file are:
+    REMOTE.EXE: Opens a channel to your modem and, using the Hayes command 
+ATA, forces it to give a tone. Used by OFF.BAT.
+    RFILTER.EXE: Reads characters from the modem and writes them to a disk 
+file on your PC using DOS I/O redirection. Used by UPL.BAT.
+    OFF.BAT: The main batchfile, which runs in a loop between CTTY CON 
+(control by the keyboard and screen) and CTTY COM1 (control via modem).
+    UPL.BAT: A batchfile that performs some housekeeping and calls RFILTER.EXE 
+for uploading from your portable to your PC.
+    DOW.BAT: A batchfile that performs some housekeeping and uses the TYPE 
+internal DOS command to send a file from your PC to your portable.
+    For the program to work, you must also have MODE.COM from your DOS disk in 
+your current path.
+
+    The batchfiles can be modified to meet your needs. In OFF.BAT, the 
+parameters after REMOTE set the communications parameters, which if no 
+parameters are given default to COM1:, 300 baud, Even parity, 7-bit word, 1 
+stop bit. Add parameters, and REMOTE will use them instead of the defaults. 
+However, the defaults work beautifully with the Tandy portables.
+    The RFILTER defaults may be overridden in an identical fashion.
+
+    The formats:
+
+    REMOTE [port speed parity bits stop-bit]
+
+    RFILTER >/>> filespec [port speed parity bits stop-bit] 
+
+    UPL filespec
+
+    DOW filespec
+
+    Or, you can modify the source code REMOTE.PAS and RFILTER.PAS and 
+recompile using Turbo Pascal 4.0 and up. Note these two files use the 
+ASYNC.PAS package of asynchronous communications routines, which may be 
+downloaded from the Borland Pascal forum and, probably, elsewhere.
+
+    People using the PCjr or any other PC lacking DMA must upload to a RAM 
+disk to avoid lost characters, since REMOTE lacks any sort of protocol.
+
+    Enjoy!
+
+    Tim Bovee
+    CompuServe 72157,677
+    Herndon, Va.
+    Dec. 28, 1988
+    

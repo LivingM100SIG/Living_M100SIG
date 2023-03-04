@@ -1,0 +1,230 @@
+
+
+
+
+             Documentation for TRANSFER.COM, laptop to IBM file transfer
+                                      program.
+
+
+               This program is designed to quickly and efficiently transfer
+          text files between a Radio Shack Model 100/102 laptop computer
+          and an IBM or Sanyo MBC-555 computer.  (There are two versions of
+          this program, one which runs on an IBM PC or true compatible, and
+          another which runs on the Sanyo MBC-555.)  In addition to
+          transferring files between the two computers, this program will
+          convert the text files to Word Perfect, WordStar, standard Ascii,
+          or unformatted format when transferring from the Model 100/102 to
+          the IBM/Sanyo.  The advantage of this is that the ability to edit
+          and reformat paragraphs is retained when moving from the laptop
+          to the IBM/Sanyo.  (For those more technically minded, the
+          transfer process retains the distinction between "hard" and
+          "soft" carriage returns.)  In addition, it is possible to change
+          the right margin during the transfer process to whatever value is
+          desired.  Since the program runs at 9600 baud, it is also faster
+          than most other methods for transferring text files between the
+          two machines.
+               In order to use this program, you will need a Sanyo or IBM
+          and a Radio Shack Model 100 or 102 laptop.  (The Kyocera laptop
+          also works beautifully.  I do not know if the Tandy Model 200
+          will work properly or not, but I think that it might.  I also do
+          not know if the NEC 8201 or 8401 will work.  If anyone tries this
+          program and finds out, let me know.)  You will also need a null
+          modem cable to connect the two machines.  (For the technically
+          minded, this means that pins 2 and 3 have to be crossed.  I have
+          used this program successfully with only pins 2 and 3 crossed,
+          and with pin 7 (ground) runs straight through.  Thus you may only
+          need a cable with three wires.  For greater security, and a more
+          versatile null modem cable, you will want to run pin 1 straight
+          through, and cross pins 4 and 5.  Pin 6 on each side should cross
+          to both pin 8 and 20 on the other side.  This is a "full-
+          handshake" null modem cable.)
+
+               The operation of the program is, I hope, very simple.  Call
+          up the program by typing "transfer" and pressing the carriage
+          return key (CR).  A menu will appear which gives you a number of
+          options:
+               -Download a file from the Model 100 to this computer
+               -Upload a file from this computer to the model 100
+               -List the directory
+               -File utilities
+               -Change the Word Processing format used
+               -Change the right margin
+          A discussion of each of these options follows.
+
+
+
+
+
+                                          1
+
+
+
+          -Download a file from the Model 100 to this computer
+               This is probably the function you will use the most.  It is
+          used from transferring files from the laptop to the IBM/Sanyo. 
+          When you press "D", you will prompted for a name for the file. 
+          This is the name by which the file will be called on the
+          IBM/Sanyo, and does not need to be the same as the file's name on
+          the laptop (although using the same name can sometimes avoid
+          confusion later.)  If that file already exists, you will be asked
+          whether it is OK to delete the old file.  If you answer "N" here,
+          you be prompted for another file name.
+               After entering the file name, the program will instruct you
+          regarding your action on the laptop.  Follw these directions, and
+          the program will inform you of its rogress.
+               If the program does not receive any characters from the
+          laptop in about 1 minute, it will inform you, and ask if it
+          should wait (W) or abort(A).  If you press "W", the program will
+          wait another minute.  If you press "A", you will be returned to
+          DOS.  If you get this message, either your cable is not properly
+          wired, or you have not entered COM:88N1E at the "Save to:" prompt
+          on the Model 100/102.
+               During the file transfer itself, pressing the break key will
+          abort the transfer process, and return you to DOS.
+               After the file has been received in the IBM/Sanyo, it must
+          be reformatted in memory and written to disk.  This can take a
+          little bit, so don't worry if the response isn't instantaneous.
+
+          -Upload from the IBM/Sanyo to the laptop
+               When you press "U", you will prompted as to the action you
+          should take on both the IBM/Sanyo and the laptop.  Follow these
+          direction precisely.  The characters will appear on the laptop as
+          they are being transferred.  When the file is finished
+          transferring, you will need to press function #2 on the laptop to
+          save the file there.
+               The upload procedure tries to filter out all special
+          formatting characters, but may miss some.  Perhaps a future
+          version of this program will do a better job of this.  The
+          procedure will transfer ascii files perfectly.
+
+          -List the files directory.
+               After pressing "L", you will see an Options prompt. 
+          Usually, you will want to simply press the carriage return here. 
+          Then you will prompted for a directory mask.  Simply pressing
+          return will give a list of the files in the current directory. 
+          You can optionally list a path to another directory, or use wild
+          cards like *.TXT to list only certain files.
+
+          -File Utilities
+               This is simply a collection of functions to help you manage
+          files.  You can make a new directory, change directories, find
+          out what drive you are logged on to, find out the free space on a
+          drive, or delete a file.  These procedures should be relatively
+          self-explanatory.
+
+                                          2
+
+
+
+          -Change the Word processing format used.
+               This program will convert laptop text files to WordStar,
+          Word Perfect, standard ascii or unformatted files.  The format
+          listed at "Currently:" is the format which will be used when you
+          use the upload or download procedures.  The format listed at
+          "Default: " is the format which will automatically be used
+          whenever you start the program, unless you call the "Change"
+          procedure to change it.  When you call this option, you will
+          first be prompted for the new format to use.  Then you will be
+          asked if you want to make this the default format.  If you answer
+          yes, the TRANSFER.COM file will be altered so that the new format
+          always comes up as the default.  If you answer no to the
+          question, the new format will be used in that particular file
+          transfer session, until you exit TRANSFER, or until you call the
+          change procedure again, but the default format will remain what
+          it was before.  You should set the default format to whatever
+          Word processing program you use.  Then, under normal
+          circumstances, you should never have to call the "Change"
+          procedure.
+               A few words of explanation about the difference between the
+          standard ascii option and the "unmodified" option are in order. 
+          The standard ascii option will filter out all non-standard
+          control sequences, and all characters with the high bit set.  It
+          will also format the lines to the right margin length.  When the
+          "unmodified" option is used, the file is transferred directly
+          from one computer to the other with no formatting or modification
+          at all.  This option may enable some other word processors to use
+          files from the Mod100 and still preserve the distinction between
+          hard and soft carriage returns.  Note, however, that this will
+          not work well for transfer of binary files, since the program
+          stops transfer whenever the EOF character (ascii #26) is
+          encountered, which may occur before the end of a binary file.
+               There are several additional improvements added to the Word
+          Perfect formatting option.  This option will now convert all the
+          foreign language characters which are displayed on the Mod100
+          with the "graph" and "code" keys to proper IBM display in
+          WordPerfect when transferring to the IBM.  (It will not, as yet,
+          do the same conversion when moving from the IBM to the Mod100.) 
+          In addition, it will also enable you to enter boldface and
+          underlining commands on the Mod100 and transfer those codes to
+          the IBM when transferring the file.  To underline a sentence,
+          place a control-U (press control-p and then control-U) before the
+          material you wish to underline, and then another control-U after
+          that material.  Everything between the two control-U's will be
+          underlined in WordPerfect when the file is transferred.  To do
+          boldfacing, simply use the same procedure, except using a
+          control-B rather than a control-U.
+
+          -Right Margin change.
+               This procedure works similarly to the format change
+          procedure, using both a current setting and a default setting. 
+          Set the default setting to whatever length line you normally use. 
+
+                                          3
+
+
+
+          Then, you can change it temporarily whenever needed by calling
+          this procedure, and answering no to the question about making the
+          new setting the default.  Both the default and the current
+          setting can be changed as often as desired.
+               Note that this option is not listed when the "unmodified"
+          format is selected, since the "unmodified" format does not format
+          the right margin.
+
+          Credits:
+               This program is the result of the labors of several
+          different people who have been gracious enough to contribute
+          their efforts to the public domain.  The routines for the serial
+          port were written by Philip Burns for the IBM and Wayne Conrad
+          for the Sanyo.  The file utilities were written mainly by Michael
+          A. Covington.  The rest of the program was written by Jim
+          Brownson.  I would welcome feedback from your use of the program. 
+          I can be reached on Compuserve #73170-726, or at 207 Loetscher
+          Place, #5B, Princeton, N.J.  08540.  This program was written and
+          compiled in Turbo Pascal version 3.02A.  If you would like the
+          source code, send me $10.00 to cover postage and handling, and I
+          will send it to you.  Feel free to copy this program and share it
+          with friends, but do not alter either the program or this
+          documentation file.  Please include the documentation file when
+          you share the program.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                          4
+

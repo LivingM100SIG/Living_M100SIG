@@ -1,0 +1,626 @@
+Cls
+Clear
+Alert 3,"Make sure RS232 port is set to|19,200 baud",1,"Continue|Abort",Z
+If Z=2
+  End
+Endif
+@Init
+@Get_status
+@Get_dir_pdd
+@Print_dir_pdd
+@Get_dir_st
+@Print_dir_st
+'
+Start:
+On Menu  Gosub Handle_menu
+On Menu Message Gosub Handle_message
+On Menu Button 1,1,1 Gosub Handle_button
+'
+Do
+  On Menu
+Loop
+'
+End
+'
+'
+Procedure Init
+  If Exist("pddos.inf")
+    Open "I",#1,"pddos.inf"
+    Line Input #1,Path$
+    Close #1
+  Else
+    Path$=Dir$(0)+"\"
+  Endif
+  Dim Menu$(40)
+  For N=0 To 40
+    Read A$
+    Exit If A$="999"
+    If A$=" rename"
+      Rename_slot=N
+    Endif
+    Menu$(N)=A$
+  Next N
+  Data "Desk"," About PDDos",----------------,"1","2","3","4","5","6",""
+  Data "File"," copy"," copy & rename"," new path (ST)"," refresh display"," quit",""
+  Data "options"," rename"," erase"," format"," print directory",""
+  Data "999"
+  '
+  Attr=Windtab+2
+  Xpos=Windtab+4
+  Ypos=Windtab+6
+  Width=Windtab+8
+  Height=Windtab+10
+  Dpoke Attr,19
+  Dpoke Xpos,0
+  Dpoke Ypos,19
+  Dpoke Width,384
+  Dpoke Height,380
+  Titlew 1,"ST - Path="+Path$
+  Infow 1,"free space = "
+  '
+  '
+  Dpoke Attr+12,19
+  Dpoke Xpos+12,385
+  Dpoke Ypos+12,19
+  Dpoke Width+12,254
+  Dpoke Height+12,380
+  Titlew 2,"PDD"
+  Infow 2,"free space = "
+  '
+  Menu Menu$()
+  Openw 1
+  Clearw 1
+  Openw 2
+  Clearw 2
+  Active_wind=2
+  @Change_menu
+  '
+  Close$="ZZ"+Chr$(2)+Chr$(0)+Chr$(253)
+  Dir1$="ZZ"+Chr$(0)+Chr$(26)+Space$(24)+"F"+Chr$(1)+Chr$(158)
+  Dir2$="ZZ"+Chr$(0)+Chr$(26)+Space$(24)+"F"+Chr$(2)+Chr$(157)
+  Status$="ZZ"+Chr$(7)+Chr$(0)+Chr$(248)+Chr$(13)
+  Format$="ZZ"+Chr$(6)+Chr$(0)+Chr$(249)+Chr$(13)
+  Erase$="ZZ"+Chr$(5)+Chr$(0)+Chr$(250)
+  Dim Pdd_dir$(40)
+  Dim Pdd_size(40)
+  Dim St_dir$(60)
+  Dim St_size(60)
+  Dim Seek$(3)
+  Seek$(1)="ZZ"+Chr$(1)+Chr$(1)+Chr$(1)+Chr$(252)
+  Seek$(2)="ZZ"+Chr$(1)+Chr$(1)+Chr$(2)+Chr$(251)
+  Seek$(3)="ZZ"+Chr$(1)+Chr$(1)+Chr$(3)+Chr$(250)
+  '
+  ' turn off accessories
+  Menu 2,2
+  Menu 3,2
+  Menu 4,2
+  Menu 5,2
+  Menu 6,2
+  Menu 7,2
+Return
+'
+Procedure Handle_menu
+  Local Sel
+  '
+  ' menu(0) holds the value of the pull-down menu item selected
+  '
+  Menu Off
+  '
+  Choice=Menu(0)
+  If Menu$(Choice)=" About PDDos"
+    A$="  PDDos - copyright 1991     "
+    A$=A$+"|      by E. Sakara           "
+    A$=A$+"|Utility to read and write to "
+    A$=A$+"|a Tandy Portable Disk Drive. "
+    Alert 0,A$,1,"Ok",X
+  Endif
+  '
+  If Menu$(Choice)=" copy"
+    Ask%=False
+    @Do_copy
+  Endif
+  If Menu$(Choice)=" copy & rename"
+    Ask%=True
+    @Do_copy
+  Endif
+  If Menu$(Choice)=" rename"
+    ' rename file
+    Alert 2,"Do you really want to RENAME?",1,"Yes|No",X
+    If X=1
+      For Sel=1 To St_slots
+        If Selected(Sel)
+          Stfn$=St_dir$(Sel)
+          A$="Rename "+Stfn$+" as:"
+          @Do_a_box(5,50,380,150,A$,True)
+          Newst$=Ret$
+          Infow Active_wind," renaming "+Path$+Stfn$+" as "+Path$+Newst$
+          Name Path$+Stfn$ As Path$+Newst$
+        Endif
+      Next Sel
+      @Get_dir_st
+      @Print_dir_st
+    Endif
+  Endif
+  If Menu$(Choice)=" erase"
+    ' erase file
+    Alert 2,"Do you really want to ERASE?",1,"Yes|No",X
+    If X=1
+      If Active_wind=1
+        For Sel=1 To St_slots
+          If Selected(Sel)
+            Stfn$=St_dir$(Sel)
+            Infow Active_wind," now erasing "+Path$+Stfn$
+            Kill Path$+Stfn$
+          Endif
+        Next Sel
+        @Get_dir_st
+        @Print_dir_st
+      Endif
+      If Active_wind=2
+        For Sel=1 To Pdd_slots
+          If Selected(Sel)
+            Pdfn$=Pdd_dir$(Sel)
+            Infow Active_wind," now erasing "+Pdfn$
+            @Open_file
+            @Send_msg(Erase$)
+            @Get_reply
+          Endif
+        Next Sel
+        @Get_dir_pdd
+        @Print_dir_pdd
+      Endif
+    Endif
+  Endif
+  If Menu$(Choice)=" quit"
+    '    Alert 2,"Do you really want to quit?",1,"Yes|No",X
+    '    If X=1
+    Closew 1
+    Closew 2
+    Edit
+    '  Endif
+  Endif
+  If Menu$(Choice)=" new path (ST)"
+    ' get new path
+    A$="Enter new path:       "
+    @Do_a_box(5,50,380,150,A$,True)
+    Path$=Upper$(Ret$)
+    Titlew 1,"ST - Path="+Path$
+    @Get_dir_st
+    @Print_dir_st
+  Endif
+  If Menu$(Choice)=" print directory"
+    ' print active directory to printer
+  Endif
+  If Menu$(Choice)=" format"
+    ' format tandy or st floppy disk
+  Endif
+  If Menu$(Choice)=" refresh display"
+    If Active_wind=1
+      @Get_dir_st
+      @Print_dir_st
+    Else
+      @Get_dir_pdd
+      @Print_dir_pdd
+    Endif
+  Endif
+Return
+'
+Procedure Handle_message
+  If Menu(1)=21
+    If Menu(4)<>Active_wind
+      If Active_wind=1
+        @Print_dir_st
+      Else
+        @Print_dir_pdd
+      Endif
+      Active_wind=Menu(4)
+      Openw Active_wind
+      @Change_menu
+    Endif
+  Endif
+  If Menu(1)=22
+    Alert 2,"Do you really want to quit?",1,"Yes|No",X
+    If X=1
+      Closew 1
+      Closew 2
+      Edit
+    Endif
+  Endif
+Return
+'
+Procedure Handle_button
+  Row=Int(Mousey/16)+1
+  Column=Int((Mousex/8+1)/16)+1
+  If Active_wind=1
+    Num_row=3
+  Else
+    Num_row=2
+  Endif
+  Item=(Column+(Row*Num_row-Num_row))
+  If Not Selected(Item)
+    Text_type=1
+    Selected(Item)=True
+  Else
+    Text_type=0
+    Selected(Item)=False
+  Endif
+  Deftext ,Text_type
+  If Active_wind=1
+    Name$=St_dir$(Item)
+  Else
+    Name$=Pdd_dir$(Item)
+  Endif
+  Print At(Column*16-15,Row);Left$(Name$,9)
+  Deftext ,0
+Return
+'
+Procedure Handle_error(My_err)
+  If My_err=0
+    Goto End_return
+  Endif
+  Temp$=" Unknown error|error = "+Str$(My_err)
+  If My_err=16
+    Temp$=" ERROR |File not found"
+  Endif
+  If My_err=48
+    Temp$=" ERROR |Duplicate file name"
+  Endif
+  If My_err=64
+    Temp$=" ERROR |I/O error on disk"
+  Endif
+  If My_err=80
+    Temp$=" ERROR |disk is write protected"
+  Endif
+  If My_err=96
+    Temp$=" ERROR |no more space on the disk"
+  Endif
+  If My_err=113
+    Temp$=" ERROR |No disk in drive"
+  Endif
+  '  If My_err=999
+  '  Temp$=" ERROR |Checksum error"
+  ' Endif
+  Alert 3,Temp$,1,"okay",Z
+  End_return:
+Return
+'
+Procedure Do_copy
+  If Active_wind=1
+    Alert 1,"Copy from ST to PDD?",1,"Okay|Abort",X
+    If X=1
+      For Sel=1 To St_slots
+        If Selected(Sel)
+          Stfn$=St_dir$(Sel)
+          If Ask%
+            A$="Rename "+Stfn$+" as:"
+            @Do_a_box(5,50,380,150,A$,True)
+            Pdfn$=Ret$
+            If Ret$=""
+              Pdfn$=Stfn$
+            Else
+              Pdfn$=Ret$
+            Endif
+          Else
+            Pdfn$=Stfn$
+          Endif
+          @Format_name_pdd
+          Infow Active_wind," now saving "+Stfn$
+          @Save_file
+        Endif
+      Next Sel
+      @Get_dir_pdd
+      @Print_dir_pdd
+      @Print_dir_st
+    Endif
+  Endif
+  If Active_wind=2
+    Alert 1,"Copy from PDD to ST?",1,"Okay|Abort",X
+    If X=1
+      For Sel=1 To Pdd_slots
+        If Selected(Sel)
+          Pdfn$=Pdd_dir$(Sel)
+          If Ask%
+            A$="Rename "+Pdfn$+" as:"
+            @Do_a_box(2,50,250,150,A$,True)
+            If Ret$=""
+              Stfn$=Pdfn$
+            Else
+              Stfn$=Ret$
+            Endif
+          Else
+            Stfn$=Pdfn$
+          Endif
+          @Format_name_st
+          Infow Active_wind," now loading "+Pdfn$
+          @Load_file
+        Endif
+      Next Sel
+      @Get_dir_st
+      @Print_dir_st
+      @Print_dir_pdd
+    Endif
+  Endif
+Return
+'
+Procedure Open_file
+  Local Ofn$,Openf$
+  Ofn$=Pdfn$+Space$(24-Len(Pdfn$))+"F"+Chr$(0)
+  Openf$=Chr$(0)+Chr$(Len(Ofn$))+Ofn$
+  @Check_sum(Openf$)
+  Openf$="ZZ"+Openf$+Chr$(Chk_sum)
+  @Send_msg(Openf$)
+  @Get_reply
+Return
+'
+Procedure Seek(Type)
+  ' seek type determines how a file is accessed
+  '  type = 1  write new file
+  '       = 2  append to existing file
+  '       = 3  read existing file
+  '
+  @Send_msg(Seek$(Type))
+  @Get_reply
+Return
+'
+Procedure Get_status
+  @Send_msg(Status$)
+  @Get_reply
+Return
+'
+Procedure Send_msg(Msg$)
+  Local N
+  If Out?(1)=0
+    Goto Leave_send
+  Endif
+  For N=1 To Len(Msg$)
+    Out 1,Asc(Mid$(Msg$,N,1))
+  Next N
+  Leave_send:
+Return
+'
+Procedure Get_reply
+  Local A,Hi,Lo,Msg$
+  Reply$=""
+  Do
+    Exit If Inp?(1)
+  Loop
+  Do
+    A=Inp(1)
+    Reply$=Reply$+Chr$(A)
+    Exit If Not Inp?(1)
+  Loop
+  Resp=Asc(Reply$)
+  Rchk=Asc(Right$(Reply$,1))
+  Lo=Asc(Right$(Reply$,3))
+  Hi=Asc(Right$(Reply$,4))
+  Rsize=Hi*256+Lo
+  Rfn$=Mid$(Reply$,3,9)
+  Rdata$=Mid$(Reply$,3,Asc(Mid$(Reply$,2)))
+  If Resp=18
+    @Handle_error(Asc(Rdata$))
+    Rdata$=Chr$(0)
+    Goto End_get_reply
+  Endif
+  '  Msg$=Left$(Reply$,Len(Reply$)-1)
+  '  @Check_sum(Msg$)
+  '  If Check_sum<>Rchk
+  '  @Handle_error(999)
+  ' Endif
+  End_get_reply:
+Return
+'
+Procedure Check_sum(Msg$)
+  Local Sum,N
+  Sum=0
+  Chk_sum=0
+  For N=1 To Len(Msg$)
+    Sum=Sum+Asc(Mid$(Msg$,N,1))
+  Next N
+  Chk_sum=(Sum Mod 256) Xor 255
+Return
+'
+Procedure Load_file
+  @Open_file
+  Num_bytes=Rsize
+  Num_blks=Int(Num_bytes/128)+1
+  Last_blk=Num_bytes-((Num_blks-1)*128)
+  @Seek(3)
+  Readf$="ZZ"+Chr$(3)+Chr$(0)+Chr$(252)
+  Open "O",#1,Path$+Stfn$
+  For S=1 To Num_blks
+    @Send_msg(Readf$)
+    @Get_reply
+    If S=Num_blks
+      Rdata$=Left$(Rdata$,Last_blk)
+    Endif
+    Print #1,Rdata$;
+  Next S
+  @Send_msg(Close$)
+  @Get_reply
+  Close #1
+Return
+'
+Procedure Save_file
+  Open "I",#1,Path$+Stfn$
+  @Open_file
+  @Seek(1)
+  Do
+    Smsg$=""
+    For N=1 To 128
+      A$=Input$(1,#1)
+      Smsg$=Smsg$+A$
+      Exit If Eof(#1)
+    Next N
+    Wfile$=Chr$(4)+Chr$(Len(Smsg$))+Smsg$
+    @Check_sum(Wfile$)
+    Wfile$="ZZ"+Wfile$+Chr$(Chk_sum)
+    @Send_msg(Wfile$)
+    @Get_reply
+    Exit If Resp<>18
+    Exit If Eof(#1)
+  Loop
+  @Send_msg(Close$)
+  @Get_reply
+  Close #1
+Return
+'
+Procedure Get_dir_pdd
+  Local N
+  @Send_msg(Dir1$)
+  For N=1 To 40
+    @Get_reply
+    Exit If Len(Reply$)<>31
+    Exit If Asc(Rfn$)=0
+    Pdd_dir$(N)=Rfn$
+    Pdd_size(N)=Rsize
+    @Send_msg(Dir2$)
+  Next N
+  Pdd_free=(Asc(Right$(Reply$,2)))*1280
+  Pdd_slots=N-1
+Return
+'
+Procedure Print_dir_pdd
+  Local N,M
+  If Active_wind<>2
+    Active_wind=2
+    Openw Active_wind
+  Endif
+  @Change_menu
+  Clearw Active_wind
+  If Pdd_slots>0
+    For N=1 To Pdd_slots Step 2
+      For M=0 To 1
+        Exit If N+M>Pdd_slots
+        Print Pdd_dir$(N+M);
+        Print Using "#####",Pdd_size(N+M);
+        If M<>1
+          Print ;"  ";
+        Endif
+      Next M
+      Print
+    Next N
+  Endif
+  Infow Active_wind,"free space="+Str$(Pdd_free)
+Return
+'
+Procedure Get_dir_st
+  Files Path$+"*.*" To Path$+"$$TEMP$$.DIR"
+  Open "I",#1,Path$+"$$TEMP$$.DIR"
+  N=0
+  Do
+    Line Input #1,A$
+    If Left$(A$,13)=" $$TEMP$$.DIR"
+      Goto Skip
+    Endif
+    If Val(Mid$(A$,18,6))=0
+      Goto Skip
+    Endif
+    Inc N
+    St_dir$(N)=Mid$(A$,2,12)
+    St_size(N)=Val(Mid$(A$,18,6))
+    Skip:
+    Exit If Eof(#1)
+    Exit If N=60
+  Loop
+  Close #1
+  Kill Path$+"$$temp$$.dir"
+  St_free=Dfree(0)
+  St_slots=N
+Return
+'
+Procedure Print_dir_st
+  Local N,M
+  If Active_wind<>1
+    Active_wind=1
+    Openw Active_wind
+  Endif
+  @Change_menu
+  Clearw Active_wind
+  If St_slots>0
+    For N=1 To St_slots Step 3
+      For M=0 To 2
+        Exit If N+M>St_slots
+        Print Left$(St_dir$(N+M),9);
+        Print Using "######",St_size(N+M);
+        If M<>2
+          Print ;" ";
+        Endif
+      Next M
+      Print
+    Next N
+  Endif
+  Infow Active_wind,"free space="+Str$(St_free)
+Return
+'
+Procedure Format_name_pdd
+  Local Period,Root$,Ext$
+  Pdfn$=Upper$(Pdfn$)
+  Period=Instr(Pdfn$,".")
+  Root$=Left$(Mid$(Pdfn$,1,Period-1)+"      ",6)
+  Ext$=Left$(Mid$(Pdfn$,Period+1)+"  ",2)
+  Pdfn$=Root$+"."+Ext$
+Return
+'
+Procedure Format_name_st
+  Local Period,Root$,Ext$,Blnk
+  Stfn$=Upper$(Stfn$)
+  Period=Instr(Stfn$,".")
+  Root$=Mid$(Stfn$,1,Period-1)
+  Blnk=Instr(Root$," ")
+  If Blnk<>0
+    Root$=Left$(Root$,Blnk-1)
+  Endif
+  Ext$=Mid$(Stfn$,Period+1)
+  Blnk=Instr(Ext$," ")
+  If Blnk<>0
+    Ext$=Left$(Ext$,Blnk-1)
+  Endif
+  Stfn$=Root$+"."+Ext$
+Return
+'
+Procedure Change_menu
+  Menu Rename_slot,2
+  If Active_wind=1
+    Menu Rename_slot,3
+  Endif
+  Erase Selected()
+  Dim Selected(60)
+Return
+'
+Procedure Do_a_box(Tx,Ty,Bx,By,Title$,Indata%)
+  Width=Bx-Tx
+  Height=By-Ty
+  Length=Len(Title$)*8
+  Startx=Int((Width-Length)/2)-1
+  Starty=Int(Height/2)-1
+  Ttx=Tx+Startx
+  Tty=Ty+Starty
+  Itx=Int(Tx/8)+3
+  Ity=Int(Tty/16)+2
+  Sget Tempuse$
+  Deffill 0,2,8
+  Defline 1,1
+  Deftext 1,0,0,13
+  Pbox Tx+1,Ty+1,Bx+1,By+1
+  Print At(Itx,Ity);"";
+  Defline 1,2
+  Box Tx,Ty,Bx,By
+  Box Tx+3,Ty+3,Bx-3,By-3
+  Text Ttx,Tty,Title$
+  Deffill 1,2,8
+  If Indata%
+    Input "";Ret$
+  Else
+    Deftext 1,0,0,6
+    Text Tx+8,By-8,"(left click to continue)"
+    Deftext 1,0,0,13
+    Repeat
+      K=Mousek
+      X=Mousex
+      Y=Mousey
+    Until K=1
+  Endif
+  Sput Tempuse$
+  Clr Tempuse$
+Return
+'

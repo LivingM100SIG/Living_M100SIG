@@ -1,0 +1,213 @@
+            ASMPC -- MODEL 100 ASSEMBLER FOR PERSONAL COMPUTERS
+
+                      Copyright 1988, 1989  Bill Boyd
+
+
+ASMPC is an assembler for the Radio Shack Model 100, 102, and any other
+computer that uses the 8085 or 80C85 microprocessor (I believe this
+includes the Tandy 200).  The output is in machine code, and can be
+directly loaded into the Model 100/102 using a disk operating system for
+the Tandy Disk Drive (such as POWR-DOS, available on the Compu$erve
+M100SIG) and a Tandy Disk Drive emulator (such as M100CO.EXE on
+Compu$erve).  The special features of this assembler are its expression-
+handling capability, the provisions for long labels (up to 31 characters),
+and the cross-reference.
+
+I wrote this program primarily to meet my own wishes to have a PC-hosted
+assembler for programs for the Model 100.  I am making ASMPC available for
+others to use and distribute freely, so long as no one sells it for profit.
+Use it at your own risk; I occasionally fix errors that come up, and I am
+not aware of any serious ones, but I won't be held liable if this program
+causes you grief for some reason.  I certainly make no claims to any
+machine-language 8085 programs that another person develops using this as a
+tool.
+
+
+INPUT FORMAT:
+
+Input to this assembler is a text file residing on the PC's disk.  The
+instructions in the file consist of opcodes (using the official Intel
+mnemonics for the 8085) and pseudo-ops, which are instructions to the
+assembler.  This assembler also supports the undocumented instructions that
+the Intel 8085 executes.
+
+There are some general rules that apply to all statements:
+
+1.  Tabs and spaces may be used interchangeably to separate parts of the
+    statement.  Because they take up less space and tend to facilitate
+    column alignment, tab characters are preferred, but spaces provide more
+    precise control, where desired.
+
+2.  Uppercase and lowercase letters may be used as desired.  They are
+    echoed as entered to the listing file, but they are internally shifted
+    to uppercase by the assembler.  The only time that the case is
+    significant is in strings, between quotation marks.
+
+3.  Each line may have only one statement, and each statement must be
+    completely contained on one line.  There are no provisions for
+    continuation lines or for multi-statement lines.
+
+The instructions have the form:
+
+[<LABEL>]   [[<OPCODE>]  [<OPERAND>[,<OPERAND>]]]   [;<COMMENT>]
+
+The brackets ([]) indicate optional parts of the statement.  As you can
+see, all parts of the statement are optional; a blank line is an acceptable
+statement.
+
+If there is a LABEL, then it must start in column 1.  If column 1 is a
+space or tab character, then the line is considered to have no label.
+Label names may contain any of the following characters:  'A' through 'Z',
+'a' through 'z', '0' through '9', '_', '@','$', '?', and ':'.  The first
+character should not be a numeric digit, or it will be impossible to
+reference the label in the operand field (it will be considered to be a
+number).  The label '$' should not be used in the label field; see the
+discussion on operands below for its special meaning.  Labels may be up to
+31 characters long, with all characters significant.  Remember that case is
+NOT significant, so Identifer and identifier refer to the same label.
+
+If there is an OPCODE, it is separated from the label by one or more spaces
+or tabs.  It may not start in column 1.  There is a limited list of valid
+opcodes.  The opcode may be either a mnemonic for an 8085 instruction (such
+as MOV or ADD), or it may be a directive for the assembler (such as DB or
+EQU).  A list of assembler directives is given near the end of this
+document.
+
+The requirement for an OPERAND depends on the OPCODE in the statement.  If
+there is no opcode, then there is no operand.  Some opcodes are self-
+sufficient (such as XTHL), some opcodes require one operand (such as ADI),
+and some opcodes require two operands (such as MOV).
+
+In many cases, the operand is a number (such as ORI n).  In these cases,
+the assembler evaluates the expression given, and generates either an 8-bit
+number or a 16-bit number for the instruction.  The simplest form of
+expression is a number.  Numbers are integers from -32768 to 65536.
+Hexadecimal numbers begin with a digit (insert a '0' if the first character
+is not "naturally" between '1' and '9') and end with 'h' or 'H'.
+Expressions may include labels, numbers, the arithmetic operators
+(+,-,*,/), parentheses to force order of evaluation, and the special
+reserved label $.  When no parentheses are used, expression evaluation
+follows the mathematical convention of doing multiplies and divides before
+additions and subtractions.  When '$' is used in an expression, it refers
+to the value of the program counter at the beginning of the statement.  For
+example, the statement 'JMP $' would generate code which would put the
+processor in an infinite loop, because the processor would jump back to the
+beginning of this statement each time it executed the statement.  The ASCII
+value of printable characters can also be referenced by enclosing the
+character in single quotes ('A'-30H, for example).
+
+COMMENTs must always begin with a semicolon.  If the comment is the only
+thing on the line, then the semicolon may be in column 1.  Any characters
+on the line after the semicolon are ignored by the assembler.
+
+
+RUNNING THE ASSEMBLER
+
+After preparing a text file of source code to be assembled, the next step
+is to run the assembler.  There are several ways to run this assembler.
+
+1.  Type
+    
+        ASMPC
+    
+    and press the return key.  You will be prompted for the names of the
+    source, listing, and destination file, in turn.  If either a listing
+    file or an object file is not desired, then enter NUL or simply press
+    the return key when requested for the appropriate file name.
+
+2.  Type
+    
+        ASMPC <name1>
+    
+    where <name1> is the name of the source file.  A listing file with an
+    extension of .LST and an object file with an extension of .CO will be
+    generated.  If <name1> has no extension, an extension of .DO is
+    assumed.
+
+3.  Type
+    
+        ASMPC <name1> <name2>
+    
+    where <name1> is the name of the source file, and <name2> is the name
+    of the object file.  No listing file will be generated in this case.
+
+4.  Type
+    
+        ASMPC <name1> <name2> <name3>
+    
+    where <name1> is the name of the source file, <name2> is the name of
+    the listing file, and <name3> is the name of the object file.
+
+The names of the files will be displayed, and then the words "Pass 0".
+During this phase, the output files are opened, but no output is written.
+All the label names are found during pass 0, and values are assigned where
+possible.
+
+Next, the words "Pass 1" are displayed.  During this pass, it should be
+possible to determine the values of all labels.  Both the listing file and
+object file are written during this pass, if they are requested.
+
+When Pass 1 is complete (really, the second pass), the number of errors
+found by the assembler is displayed on the screen, and all files are
+closed.  The program terminates.
+
+To use the assembled output, the file must be transferred from the PC to
+the Model 100.  If you have specified an output file with a .CO extension,
+and if you are using POWR-DOS with the PC emulating a TDD via M100CO, you
+can simply type LOADM "<filename> to load the file.
+
+
+OPCODES
+
+This assembler supports the Intel mnemonics for the opcodes for the 8085
+microprocessor.  These may be found in books on the 8085, or in the manual
+for the Custom Software assembler.  Note that the Custom Software assembler
+for the Model 100 does not stick strictly to the Intel mnemonics:  THIS
+assembler expects PUSH PSW rather than PUSH AF (a Zilog Z80 mnemonic), for
+example.
+
+The following undocumented opcodes are implemented, with the mnemonics
+suggested by Wilson Van Alst (76576,2735):
+
+        mnem   oprnd   HEX             descrip
+
+        DSUB   B       0Bh     HL = HL - BC
+        LHLX           0EDh    HL = (DE)  load HL from address in DE
+        SHLX           0D9h    (DE) = HL  store val in HL at address in DE
+        DEHL   byte    28h     DE = HL + unsigned byte
+        DESP   byte    38h     DE = SP + unsigned byte
+        RHR            10h     HL arithmetic right shift (MSB unchanged)
+        RDL            18h     DE rotate left through carry
+        JD     word    0FDh    jump if flag bit-5 is set
+        JND    word    0DDh    jump if flag bit-5 is clear
+
+
+The following pseudo-ops are available:
+
+        DB      <byte>[,<byte>...]  ;places byte constants into the object
+        DB      'char string'       ;generates ASCII representation of str
+        DS      <count>           ;reserves count bytes (setting them to 0)
+        DW      <word>[,<word>...]  ;generates 16-bit constants
+        END     [<addr>]            ;last statement; addr is entry address
+<label> EQU     <word>  ;defines the value of a label (may also be byte)
+        ORG     <addr>  ;should precede any code-generating statements
+                        ;initializes the program counter
+        PAGE            ;generates FormFeed character in listing file
+
+
+SYSTEM REQUIREMENTS, ETC.
+
+This assembler was written in Turbo Pascal 3.0 (from Borland International)
+and compiled to run on an IBM PC or compatible computer.  Although the
+testing was done on a PC with 640K of memory, I believe the program should
+run on a PC with 256K; I often run it with a RAM disk emulator, which takes
+up at least 368K, in memory.  Only one floppy drive is required, although
+it is certainly helpful to have two, or to have a hard disk.
+
+Please notify me by EasyPlex of any problems that you discover with this
+assembler.  I do not feel it is as "finished" as I would like, but it may
+never be, and it is quite functional now.  I will also consider
+incorporating any improvements people would like to suggest.
+
+Bill Boyd
+CIS 75715,70

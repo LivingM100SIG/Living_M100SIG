@@ -1,0 +1,125 @@
+
+                     PDDos  version 0.1
+                 copyright 1991 - E. Sakara
+
+This is a preliminary release of my PDDOS program for the ATARI ST and the
+Tandy Portable Disk drive model 1.  This program and supporting files are
+Copyrighted 1991 by Eric Sakara.  They may be freely distributed as long as
+all files are left intact and the copyright notice is left in place.
+
+This is an experimental program and no guarantees are made as to its
+usefullness or correctness.  To the best of my knowledge the program works
+(as detailed below) and has not caused any problems on my ST or my M102 and
+associated disks and drives.  None the less, as with any new program, you
+are urged to use caution.  I suggest you use a floppy disk version until
+you are satisfied it works on your system.  I run mine from a hard drive
+with no problems.
+
+PURPOSE:-  The IBM world has a number of programs for reading and writing
+to the Tandy Portable Disk drives (PDD) but none exist for other computers.
+I saw an article in a back issue of PICO magazine outlining the commands
+to be used to access the disk drive from a BASIC program so I decided to
+write my own version.  This is the result.  This version is written using
+GFA BASIC v2.  The source code (.LST) and a compiled version (.PRG) are
+included.  The source code is NOT complete and there are some bugs that
+still need to be chased down (see below) but it DOES work.
+
+HOW TO USE:- 
+  1) connect your PDD to the ST serial port directly.  DO NOT use any null
+     modem adapter or cable.  Mine is connected into a switch box so I can 
+     switch the drive between the ST and M102 easily.
+  2) Boot your ST and make sure you have the control panel ACC installed.
+  3) using the control panel, change your RS232 setting to 19200
+  4) if you want, set up an ASCII file called PDDOS.INF with a line
+     specifying your default disk path.  e.g. D:\M102\  (final \ required)
+     (the default is the current path you are running from).
+  4) double click on the PDDOS program.
+  5) the start procedure goes throught the following steps
+     a. alert box to remind you about setting the RS232 speed
+     b. check for default path for ST disk
+     c. get directory from PDD and display
+     d. get directory from ST and display
+     e. wait for selections
+  6) all the options work on the "active window" (i.e. the one with the
+     shaded title line.  Always make sure you are in the correct window
+     before you make your selections.
+  7) use the mouse to click on any file names, to select them.  If they
+     are already selected (in BOLD type) then another click will un-select
+     them.
+  8) after your files are chosen, select the menu option to perform.
+
+MENU OPTIONS:-
+   Desk  - due to problems with GFA BASIC, all ACCessories are turned off
+           (including the control panel).
+     About PDDos - copyright notice
+   File
+     copy - copy from active window to the other window
+     copy & rename - same as copy but you are given a chance to change the
+            output name of each file.
+     new path (ST) - change current ST path
+     refresh display - rebuild directory and redisplay
+     quit - exit the program (you can also click on the 'close box' of the
+            active window)
+   options
+     rename - rename ST file (doesn't work on PDD)
+     erase - erase selected files in the active window
+     format - (not implemented yet) format PDD disk
+     print directory - (not implemented yet) print active window
+
+RESTRICTIONS:-
+    - currently only works on MONO monitor.  Should be easy to change it to
+      work on medium rez but not a priority, for me.
+    - only works with PDD Model 1 drive (100k).
+    - GFA BASIC seems to have a bug in the FILES TO command.  If you erase
+      the last member on the disk (or folder) it seems to have trouble
+      displaying the empty directory.  It keeps showing the last file as 
+      still being there.  It's not a problem, just ignore it or keep the
+      PDDOS program in the same disk (or folder) and therefore it is never
+      empty and this error doesn't show up.
+    - can't format disks (yet) so make sure you have enough ready.
+    - The ST disk is restricted to a maximum of 60 members and the PDD to
+      a max 40 members (a hardware restriction, enforced by the drive).
+    - I enforce the Tandy name convention of 6 characters for the name and
+      2 for the extension and padded with blanks.  On the ST I strip the
+      blanks off, so you will get slightly different names on the two
+      disks.
+    - I do NOT enforce any restrictions on the EXTENSION names; they do not
+      have to be DO, BA or CO.  This might cause you problems if you later
+      try to load them into your M102 without renaming them.
+    - to display all the ST members and their respective sizes, I truncate
+      the display to the above mentioned 6 and 2 characters.  The true file
+      names are preserved and used for the copy, erase or rename functions.
+      Again, this might cause confusion when it gets copied to the PDD,
+      since I throw away any extra characters.
+    - error handling is very limited.  Many errors give no response at all
+      (prime one, if speed is wrong, it just hangs waiting for the PDD to
+      respond).
+ 
+FUTURE PLANS:-
+    
+  minor changes
+    - finished the options 'FORMAT' and 'PRINT DIR'
+    - make resolution independent (won't work on low rez, due to amount of
+      data that has to be displayed).
+    - allow it to work with accessories
+    - cleanup error responses and messages
+    - add scolling window on ST side and increase number of files.
+    - check output disk to ensure room for all files to be copied
+    - sort ST directory display
+  major changes
+    - add support for PDD model 2
+    - set the RS232 speed from within the program.
+    - allow rename on PDD
+    - find better way of building the ST directory (I don't like the way
+      the FILES TO works).  It should be possible to do it all in memory
+      without writing a temp file to the disk.
+
+Anyone using this program is encourage to leave me comments and
+suggestions.  The program was written for my own use and is not intended
+for major distribution.  I reserve the right to ignore your suggestions.
+
+I would be especially interested in hearing from anyone that can help with
+the 'major changes' in the 'future plans'.
+
+eric sakara
+73347,201
