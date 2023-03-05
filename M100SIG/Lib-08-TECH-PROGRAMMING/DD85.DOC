@@ -1,0 +1,650 @@
+
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          DD85.COM  is an  MS-DOS  program to  permit  the examination  and
+          modification of 8080/8085 object files. It has a reportoire of 19
+          commands  that  are similar  to the  various DEBUG  utilities and
+          programs  that   run  under  a  variety   of  operating  systems,
+          specfifically, it is designed to mimic the  DEBUG program I wrote
+          for  the  TANDY Model  100/102  and  OLIVETTI  M10  machines.  It
+          requires DOS 2.0  or higher, and at least 128K  of free memory in
+          order to execute. It  has the facility to deal  with several file
+          formats, to send its output to the screen, printer or  a file, as
+          well as  providing most of the usual debugging commands including
+          assemble  and dis-assemble.  This  version, 3.80  corrects a  few
+          minor bugs, and further optimises the code.
+
+          The program can be executed with the following command syntax:-
+
+          DD85 [filespec] [/Mn] [/Onnnn] [/H]
+
+          If no command  tail is given,  DD85 simply starts and  clears the
+          screen, displays  a copyright message, and the command prompt. If
+          the first command  argument is a filespec, this is expected to be
+          a normal  DOS drive -  path -  name.ext specification of  a valid
+          input  file.  The  optional  second  argument  is  the file  MODE
+          description,  with the current  legal values being  M0 to M5. See
+          the later MODE command for  an explanation of the various  modes.
+          The optional third argument specifies the OFFSETT to be used, and
+          must be followed with a HEX number between 0 and FFFF. Again, see
+          the  later MODE  command for  an explanation  of the  meaning and
+          usage of this option. The  /H option will cause the on-line  HELP
+          facility to be invoked.
+
+          When in  the command  mode, DD85  commands are of  the form  of a
+          command  letter followed  by a  space  delimiter, and  a variable
+          number  of  hex  numeric  arguments, dependant  upon  the  actual
+          command.  The command  line  is terminated  with  the ENTER  key.
+          Several  commands may be  entered on  the command  line, provided
+          only that they are separated  by the semi-colon symbol -  ; Thus,
+          for example,  to fill  a section  of memory  with zeros, enter  a
+          string of  characters, replicate  the string at  another address,
+          and display the result, could all be accomplised with the command
+          line:-
+
+          F 1000 2000 0;E 1000 'ABCDEFG';M 1000 1100 7;D 1000 1107
+
+
+
+
+
+
+
+
+
+                                       Page - 1
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          COMMANDS
+
+          [A]ssemble     addr1
+          [C]alculate    arg1      [arg2]
+          [D]ump         addr1     [addr2]
+          [E]nter        addr1     argstring
+          [F]ill         addr1     addr2     fillbyte
+          [H]elp
+          [H]ex          arg1      [arg2]
+          [L]oad         [arg1]
+          [M]ode         [I arg1 | O arg1]
+          [M]ove         addr1     addr2     numbytes
+          [N]ame         [I filespec | O filespec]
+          [O]ffset       [addr1]
+          [P]rinter      [filespec]
+          [Q]uit
+          [S]earch       addr1     addr2     searchstring
+          [U]nassemble   addr1     [addr2]
+          [V]erify       addr1     addr2     numbytes
+          [W]idth        [arg1]
+          [W]rite        addr1     addr2
+
+          ASSEMBLE
+          A addr1
+          Example:  A 12FA
+
+          This is a line oriented assembler. The addr1 specifies an address
+          in the 64K segment of memory reserved for the 8080/8085 code. The
+          normal user prompt disappears, and  the program waits for a  line
+          of  text to be entered. A maximum of 16 characters are permitted,
+          and the  program will  attempt to assemble  the line in  the code
+          buffer.  If successful, the  line is erased,  and the unassembler
+          invoked to display the actual address and  code bytes entered. If
+          an error occured, the program beeps, ignores  the line, and waits
+          for more input. The command is terminated with the ENTER key.
+
+          With one exception, all numeric operand information is entered as
+          HEX, and  must be preceded by  the '$' symbol. Leading  zeros are
+          not  significant, neither is  the case of  the input letters. The
+          only exception is the RST command, where the numeric specifier is
+          considered to be part of the command. Thus:-
+
+          MOV A,B
+          CPI $FF
+          ADI $12
+          LXI H,$1234
+          JMP $5678
+          CNC $ABCD
+
+
+
+                                       Page - 2
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          but:-
+
+          RST 4
+
+          The  mnemonics used  are generally  compatible with  the standard
+          INTEL mnemonics, with the following exceptions.
+
+          (a)  PUSH/POP  PSW has been  changed to  PUSH/POP AF.  This saves
+               space in  the mnemonic  op-code table, but  more importantly
+               brings it into line with my Model 100 DEBUG program.
+
+          (b)  The following illegal 8085 op-codes are recognised:-
+
+          $08  DSUB B      [HL] = [HL] - [BC]
+          $10  RHR         [HL] = [HL->] HL arithmetic right shift
+          $18  RDL         Rotate DE left through Carry
+          $28  DMOV H,$nn  [DE] = [HL] + $nn (unsigned)
+          $38  DMOV S,$nn  [DE] = [SP] + $nn (unsigned)
+          $CB  _??         Invalid. CALL $0040 if V flag set
+          $D9  SHLX        Store [HL] at address in [DE]
+          $DD  JND $nnnn   Jump to $nnnn if flag bit 5 is clear
+          $ED  LHLX        Load [HL] from address in [DE]
+          $FD  JD $nnnn    Jump to $nnnn if flag bit 5 is set
+
+          CALCULATE
+          C arg1 [arg2]
+          Example:  C 1234 5678
+
+          This  is a  HEX/ASCII calculator.  If only  a single  argument is
+          given, then the command will display the HEX, DECIMAL, BINARY and
+          ASCII  equivalents.  If  two  arguments  are  given  the  sum  is
+          displayed prefixed  with  a  +  symbol,  and  the  difference  is
+          displayed, prefixed with a -  symbol. The numbers are treated  as
+          unsigned 16 bit quantities unless prefixed with the - symbol.
+
+          DUMP
+          D addr1 [addr2]
+          Example:  D 1000 1100
+
+          This command will  dump to the  screen or other output  device or
+          file the  HEX  bytes and  ASCII  equivalents  from address  1  to
+          address 2.  If only a single  argument is given then  the first 8
+          bytes  at the  address are  dumped and  the program  waits for  a
+          keystroke.  If  the up  arrow is  pressed, the  next 8  bytes are
+          dumped,  if the down arrow is  pressed, then the previous 8 bytes
+          are dumped. The command is aborted in either mode with the  ENTER
+          key.
+
+
+
+
+                                       Page - 3
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          ENTER
+          E addr1 argstring
+          Example:  E 1000 0D 0A 'abcefg' 0D 0A
+
+          This  command permits entering  a string into  memory starting at
+          address 1.  The argstring  can contain  delimited HEX digits  and
+          delimited  ASCII  characters  up  to   a  maximum  length  of  72
+          characters. If  an  ASCII string  is  desired,  then it  must  be
+          delimited with the single quote character. Both  an opening and a
+          closing delimiter must be present!
+
+          FILL
+          F addr1 addr2 fillbyte
+          Example:  F 1000 2000 0
+
+          This command  will fill the  memory from  address 1 to  address 2
+          inclusive  with the fillbyte.  The fillbyte  may be  specified as
+          either  a  HEX digit,  or  as a  delimted  ASCII symbol.  Only an
+          opening  delimiter  is  necessary. Thus  to  fill  the  memory as
+          specified above with the ASCII symbol *, the command could be:-
+
+          F 1000 2000 '*
+
+          HELP
+          H
+
+          This  command  invokes the  on-line  help facility.  At  the main
+          command menu screen, topics may  be selected either by using  the
+          initial letter of the subject, or by using the UP and DOWN cursor
+          keys to sequentially move  through the pages of  information. The
+          information is  a  condensed  version  of the  contents  of  this
+          documentation file. Invoking HELP  does not destroy your existing
+          display screen.
+
+          N.B. This is only true if you are not using an MDA adaptor.
+
+          HEX CONVERSION CALCULATOR
+          H arg1 [arg2]
+          Example:  H 65535 12345
+
+          This  is exactly the same  command as the  C command, except that
+          the arguments are expected to be in DECIMAL rather than HEX.
+
+          LOAD
+          L [addr1]
+          Example:  L 1000
+
+          This command will load the file specified  with the NAME command,
+          using the access mode specified  with the MODE command, into  the
+
+
+                                       Page - 4
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          code buffer,  at  the address  specified with  address  1. If  no
+          address  is  specified,  the  file will  be  loaded  at  its load
+          address, or  at address $0000. The load address is only valid for
+          those  access modes  that can  utilise such  a feature.  See also
+          NAME, MODE, and WRITE.
+
+          MODE
+          M [I arg1] or [O arg1]
+          Example:  M I 3
+
+          This command will display or alter the  current file access mode.
+          If  the command is  entered with  no trailing argument,  then the
+          current input  and  output  access  modes are  displayed.  If  an
+          argument  is given,  then the  selected mode  is changed  to that
+          requested,  and the new mode  displayed. If the trailing argument
+          is invalid or only  the letter I or O, then the  current Input or
+          Output  mode number  is displayed.  Currently the  following mode
+          specifications are recognised.
+
+          MODE 0 BINARY Default
+
+          The file  is  expected to  contain  binary  bytes, and  no  input
+          translation occurs. A maximum of  65535 bytes can be loaded.  The
+          address  will  be that  specified  with the  OFFSET  command, the
+          default being  address $0000.  Since no translation  occurs, this
+          mode is equally suitable for text files as well as binary files.
+
+          MODE 1 MODEL 100 BINARY
+
+          This format is that used by the Tandy Model 100 computer, as well
+          as the Olivetti M10, Kyocera KC-85, and NEC 8201. The format is:-
+
+          Start LO Start HI End LO End HI Entry LO Entry HI code bytes
+
+          In this mode,  the file will be loaded  at the specified address,
+          otherwise no input translation will occur. The addresses will  be
+          examined,  and provided that  the start address  is less than the
+          end address, and that the entry address is equal to the start and
+          less  than the end  address, no  error will occur.  Otherwise, an
+          error message will be generated. Similarly, if End Of File occurs
+          before  all the  expected code  bytes  have been  loaded, another
+          error message will be given.
+
+          MODE 2 ASCII HEX
+
+          This format  is an  ASCII HEX representation  of a  MODE 0  file.
+          Apart  from translating the  ASCII HEX digit  pairs to binary, no
+          other  processing  occurs.   The  address  offset  parameter   is
+          applicable to  this mode. If  an attempt is  made to load  a file
+
+
+                                       Page - 5
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          that is  not ASCII HEX, then  a Bad Format error  message will be
+          displayed, and the load operation aborted.
+
+          MODE 3 MODEL 100 ASCII HEX Hex Address
+
+          This mode is analogus to a MODE 1 file except that the start, end
+          and entry  point  addresses are  specified in  ASCII  HEX in  the
+          format Start LO Start HI End LO End HI Entry LO Entry HI followed
+          by ASCII hex  digit pairs of code  bytes. An invalid  file format
+          will abort the load.
+
+          MODE 4 MODEL 100 ASCII HEX Decimal Address
+
+          This mode is analogus to a MODE 1 file except that the start, end
+          and  entry  point  addresses   are  specified  in  ASCII  decimal
+          separated  by spaces  or commas,  and terminated  with a  newline
+          symbol, and  the  code bytes  are specified  in  ASCII HEX  digit
+          pairs, each  line terminated in a newline.  The final line of the
+          file is a  checksum of all the code bytes plus the start, end and
+          entry addresses specified as an  ASCII decimal number. An invalid
+          file format will abort the load.
+
+          MODE 5 INTEL HEX
+
+          An  INTEL HEX file  consists of  records terminated in  a newline
+          symbol with the following format:-
+
+          :LL AA AA 00 DD DD DD ....... CC cr/lf
+
+          where  LL is  an ASCII  HEX digit pair  specifying the  number of
+          actual code bytes in this record, AA AA specifies the address, in
+          HI byte-LO byte  order, at  which to  load  these code  bytes, an
+          ASCII 00  nul byte, DD are  ASCII HEX digit pairs  of data bytes,
+          and CC is the ASCII HEX checksum byte. The checksum is calculated
+          by summing all the bytes  of the record as an 8 bit quantity, and
+          complementing it, thus by adding  the real checksum to this  byte
+          the result should be zero.
+
+          The last line of  the file can be nothing, a line  of zeros, or a
+          line specifying the actual entry point of  the code. Although the
+          record is shown  above with separating spaces, in  practice these
+          are not present in the file.
+
+
+
+
+
+
+
+
+
+                                       Page - 6
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          An example of a file is:-
+
+          1234 7E        MOV A,B
+          1235 B7        ORA A
+          1236 C8        RZ
+          1237 E7        RST 4
+          1238 23        INX H
+          1239 C3 34 12  JMP $1234
+
+          :081234007EB7C8E723C33412A2
+          :00123400BA
+
+          DD85 is tolerant enough to be case insensitive of the data in the
+          file. An invalid file format  will abort the load. If  a checksum
+          error  occurs, then you  will be  prompted and asked  whether you
+          wish to  Abort, Ignore, or  Continue the operation.  Entering 'A'
+          will abort the load. Entering 'I' will set the ignore error flag,
+          and  any further errors  will be  both ignored and  not reported.
+          Entering  a  'C'  will  ignore  the  error  for  this  line,  but
+          subsequent errors will be recognised and reported.
+
+          MOVE
+          M addr1 addr2 numbytes
+          Example:  M 1000 2000 100
+
+          This command will copy the  data from address 1 to address  2 for
+          the number of bytes specified. Overlapping moves are permissible,
+          and are correctly handled. For example:-
+
+          M 1000 1001 FF
+
+          will move the contents of memory up 1 byte for 255 bytes.
+
+          NAME
+          N [I filespec | O filespec]
+          Example:  N I A:\TEST.BIN
+
+          This command permits naming the input and output files. The files
+          so named are used by the LOAD and WRITE commands. If no selection
+          is specified, or if an  illegal selection is specified, the  NAME
+          command simply  displays the current input  and output filespecs,
+          if  any. The I spec selects the  INPUT, whilst the O spec selects
+          the OUTPUT. If a filespec was entered on the initial command line
+          invoking  DD85,  then  the   INPUT  filespec  will  receive  this
+          specification.
+
+
+
+
+
+
+                                       Page - 7
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          OFFSET
+          O [arg1]
+          Example:  O 1000
+
+          This command  will  display or  modify  the offset  address.  The
+          offset address is used with Mode 0 and Mode 2  files to re-locate
+          the file whilst it is being loaded. Ordinarily the offset address
+          defaults to $0000, and thus the file will be loaded at the lowest
+          address in  the  code buffer,  $0000. If  the  offset address  is
+          changed, the file will load at that address. Entering the command
+          letter with no  following argument will display  the current load
+          offset.
+
+          PRINTER
+          P [filespec]
+          Example:  P A:\TEST
+
+          This command will display or modify the current output device for
+          the  D, S,  U, and  V commands.  The P  command will  display the
+          current output  device or file,  and each invocation  will toggle
+          the active/inactive  status. Normally  the default device  is the
+          printer, signified by the PRN: prompt. If  a filespec is entered,
+          then the  output  device is  changed to  that  filespec, and  the
+          status is set to active. The next operation of the P command will
+          toggle the  status to inactive.  This process will  continue with
+          each invocation  of the  P command.  To reset  the output to  the
+          printer, use the command with the filespec PRN:. Note that when a
+          filespec is  given, the new  data is appended  to the file  if it
+          already exists, or else the file is created.
+
+          QUIT
+
+          This  command  will quit  the  program, flushing  all  the output
+          buffers, and de-allocating the memory space used.
+
+          SEARCH
+          S addr1 addr2 argstring
+          Example:  S 1000 A000 0D 0A 'Adrian Ryan' 0D 0A
+
+          This command will examine all memory locations  from address 1 to
+          address 2 searching for argstring. As with the ENTER command, the
+          argstring  can be  composed of  ASCII HEX  digits,  and delimited
+          ASCII strings. All occurences will be reported, and the addresses
+          displayed will be  the address at which  the start of the  string
+          was  found. If no  occurences were  found, then only  the command
+          prompt is  returned. The command  can search the  entire 64K-byte
+          segment, unlike the MS-DOS DEBUG,  which cannot search to address
+          $FFFF. If you wish to abort the search whilst it  is in progress,
+          hit the ENTER key.
+
+
+                                       Page - 8
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          UNASSEMBLE
+          U addr1 [addr2]
+          Example:  U 1000 1100
+
+          This command will unassemble the contents of  the code buffer. If
+          only  a single address  argument is given then  the first line is
+          displayed and the  program will wait  for a keystroke. If  the up
+          arrow  is pressed, then  the next  line will be  unassembled. The
+          process  will  continue  until  the  ENTER  key  is  pressed. The
+          mnemonics used are the same as for the ASSEMBLE command.
+
+          VERIFY
+          V addr1 addr2 numbytes
+          Example:  V 1000 2000 100
+
+          This command  will examine the bytes  at address 1 and  address 2
+          for  equality, and increment  the addresses  for numbytes.  If no
+          differences are found,  only the command  prompt is returned.  If
+          any differences are found then the program will display a line of
+          the form:-
+
+          SRC: 100A 0F DST: 200A FF
+
+          WIDTH
+          W [arg1]
+
+          This  routine will display  or modify the  default width used for
+          writing  ASCII files.  The  minimum value  is  $10/16 whilst  the
+          maximum is $FF/255. The default is $10/16. This is the value used
+          to write an ASCII HEX file, and specifies the number of bytes per
+          line. Each byte is converted to  a pair of U/C ASCII symbols, and
+          written  to the  current line.  The line  is terminated  with the
+          CR/LF  newline sequence.  Entering the  command with  no trailing
+          argument will simply display the current setting.
+
+          WRITE
+          W addr1 addr2 addr3
+          Example:  W 1000 2000 1234
+
+          This  routine will  write the  contents of  the code  buffer from
+          address   1  to  address  2  inclusive  using  the  current  mode
+          specification.  The file name  used for  the output file  is that
+          specified with the  NAME command. The file will be  created if it
+          does  not exist,  or over-written  if it  does. When  the command
+          terminates, the DOS buffer will be flushed, and the  file will be
+          closed. It is not necessary that the input and output file  modes
+          are  the same,  nor that they  have the same  filespec. The third
+          address  argument  is  the  entry point  address.  If  it  is not
+          specified,  then  addr1  is  used. Note  that  the  Model  100 is
+
+
+                                       Page - 9
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          slightly quirky with respect to this parameter.  If the file does
+          not  contain an entry  point address, then  it cannot be selected
+          from the main menu, and can only be CALLED from BASIC.
+
+          GENERAL NOTES
+
+          DD85 was written entirely in  assembler using the Microsoft Macro
+          Assembler  Version 5.10. Although it is a .COM file, I have tried
+          to make it well behaved. It first gets the current video mode and
+          screen attributes, and checks the DOS version. If not acceptable,
+          then it will  gracefully abort with an  error message. If all  is
+          OK,  then it will  shrink its  current memory allocation  to only
+          that required for the internal code and data, and then request  a
+          64K  segment for the  8085 code  buffer. Provided all  goes well,
+          then  the  initial MS-DOS  command  line  tail  is  examined  for
+          options.  The  options are  analysed,  and  the appropriate  DD85
+          commands  to  invoke  those  options are  stuffed  into  the DD85
+          internal command  buffer, and control is transferred  to the main
+          execution  loop. If you  are interested in  the source code, then
+          send me a 5-1/4 or 3-1/2 inch disc, and sufficient funds to cover
+          return postage and packaging  ($15), and the latest  version will
+          be returned to you.
+
+          You  may well ask why I wrote  such an esoteric piece of software
+          as  DD85. I  found that  I was  translating sufficient  Model 100
+          machine code for other machines,  notably the OLIVETTI M10,  that
+          it was  becoming a real  chore to  have to translate  my debugger
+          first and  then use it  to examine the  ROM looking for  the same
+          code as in the Model 100. Furthermore, even when the addreses had
+          been identified, there  was still the  problem of assembling  the
+          new  version. This latter  problem was solved  by writing an 8085
+          cross   assembler,  but  there  was  still  the  problem  of  the
+          inconvenience of using the target machine. In  some cases I could
+          not  obtain  the  target  machine,  and  could  only use  a  file
+          containing the  ROM code. Thus was  born the idea of  DD85. It is
+          fast, convenient,  and permits  rapid cross checking  between the
+          Model 100 and the target ROM code. It is quite convenient to have
+          my  DEBUG running  on the  Model 100  and DD85  on my  laptop and
+          compare the two ROMs.
+
+          If  you prefer a colour  display, then set  the screen colours to
+          your choice via ANSI.SYS, and then  execute DD85. If you wish  to
+          do this  from a  batch file,  make sure  that in  your CONFIG.SYS
+          files there is a line that loads the ANSI.SYS device driver, then
+          rename  DD85.EXE  to, for  example,  _DD85.EXE,  and execute  the
+          following batch file:
+
+          @ECHO OFF
+          ECHO esc[1;33m
+
+
+                                      Page - 10
+
+
+
+
+
+                         DD85 - MS-DOS 8080/8085 FILE UTILITY          
+
+          CLS
+          _DD85
+
+          This  files assumes  that the  file _DD85.EXE  is on  the current
+          search  path.  The  abbreviation  'esc' means  the  ASCII  Escape
+          symbol, $1B,  Decimal 27.  Naturally, this  batch file should  be
+          created with an  editor. It can  of course be  created with  DD85
+          itself.
+
+
+          A. Ryan
+          15 August 1992
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                      Page - 11

@@ -1,0 +1,61 @@
+This package contains the complete suite of files for the DEBUG program for the
+OLIVETTI M-10-M computer system.  The following files should be present in this
+archive:-
+
+OVDBG413.HEX	The ASCII hex file for DEBUG.CO;
+OBMAKE.DO	A BASIC program to regenerate DEBUG.CO from DEBUG413.HEX;
+OVDBG413.ASM	The assembly language source file for DEBUG;
+OVDBG413.DOC	The formatted documentation for DEBUG;
+OBCFG.DO	The BASIC program to re-locate the DEBUG.CO file;
+README		This file.
+
+In order to use these files, you will need to download OVDBG413.HEX, OBMAKE.DO,
+and OBCFG.DO into your OLIVETTI, and perform the necessary conversions.  The
+first step is that of recovering the DEBUG.CO file.  Since the OLIVETTI does
+not support a binary file transfer, then you must download the .HEX file and
+the OBMAKE.DO program.  Execute OBMAKE and follow the screen instructions. To
+avoid a memory conflict, execute the command:-
+
+CLEAR 512,58075
+
+and then RUN OBMAKE.  The program will read the data file and poke the values
+in memory.  At the conclusion you will be asked if you wish to save the file,
+if you answer YES, then the program will save DEBUG as a .CO file for you. The
+OBMAKE and OVDBG413.HEX files are not needed after this conversion.  The OBCFG
+program is used to re-locate the DEBUG.CO file so that it can be used at an
+address that is different from its base address.  It does so by locating the
+DEBUG.CO file already saved to memory and modifying all the absolute address
+references to those required at the new location.  It is sufficiently defensive
+that it will only work for the file called DEBUG.CO, and only for the version
+for which it was generated.  UNDER NO CIRCUMSTANCES ARE YOU TO MODIFY EITHER
+OBCFG.BA OR DEBUG.CO IF YOU WISH THIS PROGRAM TO PERFORM CORRECTLY! FAILURE TO
+HEED THIS ADVICE WILL DEFINITELY RESULT IN SEVERE AND IRRECOVERABLE CORRUPTION
+OF DEBUG!
+
+As an aid, I have included the source file of DEBUG for your information. Note
+however, that because of its size, it will only assemble on an IBM or other
+machine with sufficient memory, and only with a compatible cross assembler. I
+used my own assembler, and the file will almost certainly require at least some
+minor "adjustments" in order to assemble correctly in your environment.
+
+The DEBUG documentation file OVDBG413.DOC is already formatted with margins,
+page breaks, etc, and can be printed (at least under MS-DOS) with the command:-
+
+COPY OVDBG413.DOC LPT1:
+
+Note however, that on one page there are some IBM Extended ASCII graphics
+symbols, and thus your printer must be IBM compatible to print these correctly.
+Even if it is not compatible, the rest of the document uses only the ASCII
+printable characters, SPACE, TAB, CR, LF, and does not attempt to use BOLD,
+EXPANDED, or any other printer dependant function.
+
+This program is also available for the TANDY Model 100, and can be found in
+the appropriate library under the file name DEBUG413.EXE.
+
+Adrian Ryan 72007,1743
+P.O. Box 222,
+Carp,
+Ontario,
+Canada, K0A-1L0
+(613) 256-2487
+

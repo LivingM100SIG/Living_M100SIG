@@ -1,0 +1,2951 @@
+
+
+
+
+
+
+                           DEBUG for the OLIVETTI M-10
+                           Version: 4.13  21/June/1990
+                 Copyright: 1986,1987,1988,1989,1990 Adrian Ryan
+                           P.O. Box 222, Carp, Ontario
+                                 Canada, K0A-1L0
+
+          DISCLAIMER
+
+               This  software  is  provide  to you on an "as-is" basis.
+          You are entirely responsible for its  use.   The author makes
+          no  warranties   as  to   the  suitability,  functioning,  or
+          correctness, nor accepts any  liability  for  loss  or damage
+          however caused.
+
+               This is  not intended to convey the impression that this
+          software  will  not  be  supported,  rather,  since  it  is a
+          powerful tool  whose use is entirely outside of my control, I
+          wish  it  to  be  clearly  understood  that  since  DEBUG can
+          operate upon  any memory  location, any  I/O port, etc, it is
+          quite possible for you to wipe  out  files  and  lock  up the
+          machine.    If  all  else  fails,  turn  all  the  power OFF,
+          including the memory power and start again.
+
+          GENERAL
+
+               DEBUG is a  machine  language  program  that  contains a
+          number of  tools to  simplify the  production of machine code
+          for the OLIVETTI M-10 computer system.  The code is  user re-
+          locatable  so  that  it  can  co-exist  with almost any other
+          machine language program.
+
+               The facilities provided in this program  will permit you
+          to:-
+
+               [1]  Examine   and   modify   the   contents  of  memory
+                    locations,
+
+               [2]  Compare  blocks  of  memory  for  similarities  and
+                    differences,
+
+               [3]  Move  the  contents  of  a block of memory from one
+                    location to another,
+
+               [4]  Assemble programs,
+
+               [5]  Dis-assemble code,
+
+               [6]  Execute  code  either   at   full   speed   or  one
+                    instruction  at  a  time,  as  well  as a number of
+                    other useful functions.
+
+
+
+                                         Page - 1
+
+
+
+
+
+               Each function is executed  by means  of a  single letter
+          command,  plus  in  some  cases,  a  set of data values.  The
+          design  of  DEBUG  is   such  as   to  follow   the  mnemonic
+          conventions  in  general  usage  for  this type of program as
+          used on many machines,  and  in  particular,  is deliberately
+          designed to  be similar to the same named program used in the
+          MS-DOS series of machines.   Consequently,  if you  have some
+          familiarity  with,  for  example,  MICROMON  as  used  on the
+          COMMODORE 64, DDT generally used in the CP/M  environment, or
+          DEBUG as  used under  MS-DOS, then  you will be familiar with
+          the usage of DEBUG.
+
+               In all cases it is  assumed  that  the  reader  has some
+          familiarity  with   assembly  language   programming  on  the
+          8080/8085 series of machines.  If this is not the  case, then
+          consult one  of the many books available on this subject, for
+          example:-
+
+               MCS-85  User's  Manual,  INTEL  Corp.  3065  Bowers Ave,
+               Santa Clara, CA 95051. (408) 987-8080
+
+               8080A-8085  Assembly  Language  Programming  by Lance A.
+               Leventhal, Osborne/McGraw-Hill, 2600 Tenth  St. Berkley,
+               CA. 94710. ISBN 0-931988-10-1
+
+               8080/8085  Assembly  Language  Subroutines  by  Lance A.
+               Leventhal, Winthrop  Saville,  Osborne/McGraw-Hill, 2600
+               Tenth St. Berkley, CA 94710. ISBN 0-931988-58-6.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                         Page - 2
+
+
+
+
+
+          CONTENTS
+
+               This package consists of the following files:-
+
+          [1]  OVDBG413.HEX,  an  ASCII  hex  file containing the DEBUG
+               program;
+
+          [2]  OBMAKE.DO  a  BASIC  program   to  recover   DEBUG  from
+               OVDBG413.HEX.
+
+          [3]  OBCFG.DO a  BASIC program to re-locate the DEBUG.CO file
+               to any desired address;
+
+          [4]  OVDBG413.ASM the assembly language source file;
+
+          [5]  OVDBG413.DOC, this file.
+
+          CONFIGURATION
+
+               DEBUG can be configured  to  run  at  almost  any memory
+          location  with  the  aid  of  the  utility  package OBCFG.DO.
+          Initially, DEBUG.CO is assembled  to  load  into  memory from
+          address  58075  through  to  62822,  with  an  entry point at
+          58075.   If  you  do  not  have  any  other  machine language
+          programs that  use this  address space, DEBUG can run at this
+          location, and you will  not need  to re-locate  it.  However,
+          if  you  have  software  that  uses  this  address space, for
+          example the DSKMGR.CO Disk  Operating  System  for  the TANDY
+          PDD, then DEBUG must be re-located to avoid conflict.
+
+               In  order  to  perform  this re-location, load the DBCFG
+          program.  Enter BASIC  and clear  memory (save  any important
+          files first) with the command:-
+
+               CLEAR 0,58075
+
+          Now load the configuration program with the command:-
+
+               CLOAD "DBCFG" {Assumes DBCFG.BA is on cassette}
+
+          Then, if  DEBUG.CO is not already saved as a RAM memory file,
+          load DEBUG with the command:-
+
+               CLOADM "DEBUG" {Assumes DEBUG.CO is on cassette}
+
+               The machine will load the DEBUG.CO file and  should show
+          the following display:-
+
+               Top: 58075
+               End: 62822
+               Exe: 58075
+
+
+                                         Page - 3
+
+
+
+
+
+          Save the file with the command:-
+
+               SAVEM "DEBUG" 58075,62822,58075
+
+               DEBUG needs  4884 bytes  of memory  in order to run, and
+          thus the highest address  at which  you can  load it  is 4885
+          bytes lower  than the  TOP address  of any program with which
+          it must  co-exist.    Set  the  HIMEM  pointer  for  this co-
+          resident software,  and load it into memory.  Now enter BASIC
+          and enter the instruction:-
+
+               PRINT HIMEM - 4885
+
+               The value printed is  the highest  address at  which you
+          can  load  DEBUG  in  order  that  it  may  co-exist with the
+          existing software.  Note that DEBUG uses 137  bytes of memory
+          above the End address for internal buffers and variables.
+
+               Execute the  configuration program just as you would any
+          other BASIC file.  OBCFG will  examine the  directory looking
+          for DEBUG.CO.   If  it is missing, or if the wrong version of
+          DEBUG is found,  OBCFG  will  display  an  error  message and
+          abort.   Assuming that the correct version is found, you will
+          be prompted with the current address  information of DEBUG.CO
+          and  queried  for  a  new  starting address.  Enter the value
+          that was calculated earlier.  You will be  asked if  you wish
+          to proceed.
+
+               If  you  answer  anything  other  then 'Y' or 'y', OBCFG
+          will exit without making any changes.  If  you continue, then
+          the display  will blank for a few seconds, then the message:-
+
+               Address Offset: xxxx
+
+          will be displayed, where  'xxxx' will  be a  rapidly changing
+          number.    At  the  end  of the process, DEBUG will have been
+          modified in its directory  file  slot  to  exist  at  the new
+          target location.   Load  and execute as for any other machine
+          language program.
+
+               Note  that   the  re-location   process  is  reversible.
+          DEBUG.CO can  be re-located  as many  times as  you wish.  In
+          order for this to occur correctly,  it is  VITAL that neither
+          DEBUG.CO nor  OBCFG.DO are  modified in  any way!  Failure to
+          heed this warning will result in severe corruption  of DEBUG,
+          with unpredictable results.
+
+
+
+
+
+
+
+                                         Page - 4
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          DEBUG COMMAND SYNTAX
+
+          [A]ssemble         addr1
+          [B]reakpoint       [addr1]
+          [C]alculate        arg1      [arg2]
+          [D]isplay          addr1     [addr2]
+          [E]nter            addr1     arglist
+          [F]ill             addr1     addr2     num/char
+          [G]o               addr1
+          [H]ex Conversion   arg1      [arg2]
+          [L]ength           [num]
+          [M]ove             addr1     addr2     numbytes
+          [P]rinter
+          [Q]uit
+          [R]egister         [arglist]
+          [S]earch           addr1     addr2     arglist
+          [U]nassemble       addr1     [addr2]
+          [V]erify           addr1     addr2     numbytes
+          [W]alk             addr1
+          [X]pand Flags      [arglist]
+
+               The following syntactic conventions apply:-
+
+               [1]  All numeric quantities are in HEX
+
+               [2]  Leading zeros are not significant
+
+               [3]  Parameters   enclosed   in   square   brackets  are
+                    optional
+
+          ASSEMBLE
+
+          Syntax :  A addr1
+          Example:  A C000
+
+               This command is a line oriented assembler for  the 8085,
+          which  will   start  the  assembly  at  addr1.  The  standard
+          mnemonics are used, with a minor restriction.
+
+               In order to minimise the  amount  of  space  occupied by
+          the mnemonic  op-code table,  the op-codes  PUSH/POP PSW have
+          been changed to PUSH/POP AF.
+
+               All  numeric  data  must   be   entered   as   pairs  of
+          HEXADECIMAL  digits,  and  must  be preceded by the $ symbol.
+          Note however,  that the  RST command  operands are considered
+          part of  the op-code,  and therefore  are entered as a single
+          digit without the $ prefix.  Thus, for example:-
+
+               MVI  A,$6
+
+                                         Page - 5
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+               LXI  H,$1234
+               JMP  $C000
+
+          but:-
+
+               RST  4
+
+               A legal statement can consist of  any number  of leading
+          spaces,  a  2,  3,  or  4 character mnemonic op-code, a legal
+          separator,  and  the  legal  operand  field  for  the  chosen
+          mnemonic.    Legal  separator  characters are the tab, comma,
+          and space symbols.
+
+               Thus the following lines are all legal:-
+
+          MVI  A     $FF
+          MVI A,$FF
+          MVI,A,$FF
+
+          or any combination of the above.  All lower case  entries are
+          converted to upper case prior to being processed.
+
+               The  command   will  terminate  when  a  blank  line  is
+          entered. Illegal mnemonics/operations will cause a  beep, and
+          will be ignored.
+
+               When  the   ENTER  key  is  pressed,  if  the  line  was
+          acceptable, it  is  immediately  assembled  and  entered into
+          memory.    Then  the  dis-assembler  routine will examine the
+          code and  display exactly  what was  entered so  that you may
+          verify that your intentions have been correctly interpreted.
+
+          See GENERAL NOTE [7] for illegal op-code recognition.
+
+          BREAKPOINT
+
+          Syntax :  B [addr1]
+          Example:  B C025
+
+               This  command  will  set  or  clear  a breakpoint at the
+          specified address.  When  a  breakpoint  is  encountered, the
+          original  code  at  that  address  will  be restored, and the
+          program will halt and display the  dis-assembled code  at the
+          breakpoint, as well as the current register contents.
+
+               If  the  address  specification  is  omitted,  then  the
+          breakpoint will be cleared if it  was set,  or if  it was not
+          set, the  command will  be ignored.   Note  that the WALK and
+          QUIT  commands  will  restore  any  set   breakpoints  before
+          executing.   Furthermore, breakpoints may only be set in RAM,
+
+                                         Page - 6
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          and if an attempt is  made  to  specify  a  ROM  address, the
+          routine will beep and return to the command line.
+
+          CALCULATE
+
+          Syntax :  C arg1 [arg2]
+          Example:  C 34 FE11
+
+               This  command,  if  followed  by  two  parameters,  will
+          calculate  their  sum  and  difference,  if   only  a  single
+          argument is  specified, the  ASCII 2-byte  equivalent will be
+          displayed, along with the binary and decimal equivalents.
+
+          See also the DECIMAL to HEX conversion command.
+
+          DISPLAY
+
+          Syntax :  D addr1 [addr2]
+          Example:  D C000 C123
+
+               This command displays the contents of  memory from addr1
+          to addr2  in HEX  and ASCII,  either on the printer or on the
+          current video screen.   If  only  one  argument  is supplied,
+          then the  8 bytes  at that address will be displayed, and the
+          program will wait.  If the  cursor  up  key  is  pressed, the
+          next 8  bytes of memory will be displayed, if the cursor down
+          key is pressed, the previous 8 bytes will be displayed.   The
+          ENTER key terminates the command.
+
+               If  both  address  arguments  are  given,  a  continuous
+          memory  dump  occurs,  in  ascending  address  order,  on the
+          currently  selected  output  device.  (Screen or Printer)  If
+          the device is the screen,  the  display  will  pause  after a
+          certain  number  of  lines  have  been  displayed,  and  will
+          continue when the SPACE  bar  is  pressed.    The  printer is
+          assumed to  be a  continuous display  device, and no pause is
+          made.
+
+               Whilst a continuous dump  is  in  progress,  hitting any
+          alphanumeric  key   will  temporarily   suspend  the  output.
+          Hitting the SPACE bar will cause  the dump  to resume.   This
+          facility is  applicable to  both screen and printer.  See the
+          P and L commands.
+
+
+
+
+
+
+
+
+                                         Page - 7
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          ENTER
+
+          Syntax :  E addr1 arglist
+          Example:  E C000 AB F0 'abcdef' 0D 0A
+
+               This  command  will  permit   entering   HEX   or  ASCII
+          characters  into  memory  from  addr1.    To specify that the
+          characters are ASCII, the  string  must  be  enclosed  in the
+          single quote  character, (').  The arglist may be composed of
+          any  combination  of  HEX  digit  pairs  or  delimited  ASCII
+          strings  up  to  a  maximum  composite  string  length  of 64
+          characters.
+
+          FILL
+
+          Syntax :  F addr1 addr2 num/char
+          Example:  F C000 CFFF E0
+
+               This command will fill  the memory  from addr1  to addr2
+          with  the  value  of  num,  or  the ASCII character char.  An
+          ASCII character is specified by preceding it with  the single
+          quote character, (').
+
+          GO
+
+          Syntax :  G addr1
+          Example:  G C000
+
+               The code  pointed to  by addr1 will be executed by means
+          of a  CALL  instruction,  using  the  current pseudo-register
+          contents.   To ensure that control is returned to DEBUG, your
+          code  must  end  with  either  a  RET  or  a  conditional RET
+          instruction.    When  control  returns, the register contents
+          are displayed, and DEBUG  will restore  the stack  pointer to
+          its default setting.
+
+          See GENERAL NOTE [3] regarding use of stack.
+
+          LENGTH
+
+          Syntax :  L [num]
+          Example:  L 5
+
+               This  command  sets  the  number  of lines on the active
+          display  screen.    In  the  case  of  the  LCD,  the maximum
+          practical number  is 8,  although the command will accept all
+          values from  1 to  FF.   The effect  is to  pause the current
+          display after  num lines  have been  displayed.  Pressing the
+          SPACE key will continue the display for a  further num lines.
+          This command  has no  effect on the printer.  If the optional
+
+                                         Page - 8
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          argument  is  omitted,   the   current   length   setting  is
+          displayed.
+
+          MOVE
+
+          Syntax :  M addr1 addr2 numbytes
+          Example:  M C000 E000 1F4
+
+               The memory  contents pointed  to by  addr1 will be moved
+          to addr2 for  the  number  of  bytes  specified  by numbytes.
+          Overlapping source and destinations are permitted.
+
+          PRINTER
+
+          Syntax :  P
+
+               This command  will alternately  toggle the output of the
+          D, S,  U and  V commands  between the  current display device
+          and the  printer.   If a printer is not connected or is busy,
+          the program  will wait  indefinitely.   The L  command has no
+          effect on the length of the printer output.
+
+          QUIT
+
+          Syntax :  Q
+
+               This  command  will  quit  DEBUG  and  return you to the
+          MENU, restoring any set breakpoints in the process.
+
+          REGISTER
+
+          Syntax :  R [arglist]
+          Example:  R E3 FFFF 1234 A000
+
+               This command displays  the  pseudo-register  contents if
+          there is  no arglist, or, if the optional arglist is present,
+          will set the pseudo-registers  to  the  values  specified and
+          then display the contents.
+
+               Registers are specified in the order:-
+
+               AF BC DE HL
+
+               A comma  must be used to skip over a register. Thus, for
+          example, if you wish to set  the  HL  register  pair  to C000
+          without  disturbing  the  other  registers  the command would
+          be:-
+
+               R ,,,C000
+
+
+                                         Page - 9
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+               Should  you  wish  to  set  only  the  AF  register, for
+          example, then the command:-
+
+               R E800
+
+          would set  the A register to the value E8, and the F register
+          to 00, leaving the other register settings undisturbed.
+
+          See GENERAL NOTE [8] regarding illegal flags.
+
+          SEARCH
+
+          Syntax :  S addr1 addr2 string
+          Example:  S C000 E000 'abcdef' AD BC 0
+
+               This command will  search  memory  from  addr1  to addr2
+          examining  each  byte  trying  to  match  the string of ASCII
+          characters or HEX digits  specified  in  the  third argument.
+          In the  example given,  the search  will be from C000 to E000
+          for the text string abcdef followed by the  HEX digits  AD BC
+          00.
+
+               To specify  that the  characters are ASCII, they must be
+          enclosed by the single quote (') delimiter.   Both delimiters
+          must be  present!   Any other  characters will  be treated as
+          pairs of HEX digits.
+
+               If an illegal character  is specified,  the command line
+          will be  ignored.   The search  will find  all occurrences of
+          the target string, and the addresses  displayed correspond to
+          the location  of the  first character.  Only the command line
+          prompt will be displayed if the  target string  is not found.
+          Note that  for a  search operation to be successful, an exact
+          match  must  occur.  Upper  and  lower  case  letters   in  a
+          delimited  ASCII  string  do  not  match.  The maximum search
+          string length is 64 bytes.
+
+               The output of this command  may  be  re-directed  to the
+          printer  with  the  'P'  command, and can be suspended during
+          execution by hitting any  alpha-numeric key.   Output  can be
+          resumed  by  hitting  the  SPACE  bar.   The execution can be
+          aborted by hitting the ENTER key.
+
+
+
+
+
+
+
+
+
+                                         Page - 10
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          UN-ASSEMBLE
+
+          Syntax :  U addr1 [addr2]
+          Example:  U C000 C123
+
+               This command  will dis-assemble  the code  from addr1 to
+          addr2 and  display the  results on  the current  screen.  The
+          mnemonics are consistent  with  those  used  by  the ASSEMBLE
+          command.
+
+               If  the  second  argument  is  omitted, only one line of
+          code will  be unassembled.   The  program will  then wait for
+          either the  cursor up key to be pressed, which will cause the
+          next line to be  displayed,  or  the  ENTER  key,  which will
+          terminate the unassembly.
+
+               The  same  SUSPEND,  LENGTH,  and  ABORT  facilities are
+          available as for the D, S, and V commands.
+
+          See GENERAL NOTE [7] for illegal op-code recognition.
+
+          VERIFY
+
+          Syntax :  V addr1 addr2 numbytes
+          Example:  V C000 D000 1000
+
+               This  command  will  compare  the  contents   of  memory
+          between  addr1  and  addr1  +  numbytes  with the contents of
+          memory from  addr2 to  addr2 +  numbytes.   If no differences
+          are  found,  then  only  the  command  line  prompt  will  be
+          returned.
+
+               If a  difference  is  found  the  address  of  the first
+          section  and  the  contents  as  well  as  the  corresponding
+          address/contents of the  second  section  will  be displayed.
+          This command  will also  allow output  to be  diverted to the
+          printer, and will pause at the  end of  the currently defined
+          screen, as  well as  responding to the ENTER key to abort the
+          output.
+
+          WALK
+
+          Syntax :  W addr1
+          Example:  W C000
+
+               This command permits single  stepping the  code starting
+          at  addr1.    Prior  to executing the next instruction, DEBUG
+          will display the current  register contents  and dis-assemble
+          the instruction. WALK has four sub-commands:-
+
+
+                                         Page - 11
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          Single Step
+
+               Pressing  the  cursor  up-arrow  key will cause DEBUG to
+          execute the currently displayed instruction.   At the  end of
+          the execution,  the new  register contents will be displayed,
+          and the next instruction dis-assembled.
+
+          Execute Sub-Routine
+
+               Pressing the 'X' key  will allow  you to  execute a sub-
+          routine CALL/RST  at full  speed and return control to DEBUG.
+          This facility saves you  having to  single step  through code
+          in a  sub-routine that  is already well behaved, for example,
+          the ROM routines.  Note that DEBUG will check to  verify that
+          the  code  byte  is  actually  that  of  a  CALL,  RST  or  a
+          conditional CALL.  All other op-codes are ignored.
+
+          Execute Code
+
+               Pressing  the  'G'  key  will  cause  DEBUG  to transfer
+          control to  the code  at the  current address.  It is exactly
+          the same  as exiting  from WALK  and entering  the GO command
+          using the  current address.  As with the GO command, in order
+          for control to be returned to DEBUG, your code must  end with
+          a RET or conditional RET op-code.
+
+          Quit
+
+               Depressing  the   ENTER  key  will  terminate  the  WALK
+          command  without  executing  the  currently  displayed  code.
+          DEBUG  will  restore  the  default  stack  pointer setting on
+          exit.
+
+          Note that both RAM and ROM code can be walked.
+
+          See GENERAL NOTE [7] for illegal op-code recognition.
+
+          XPAND FLAGS
+
+          Syntax :  X [arglist]
+          Example:  X E3
+
+               This command  will  display  the  current  flag register
+          contents in  an expanded  form.   If the  command is followed
+          with an argument  then  the  flag  settings  corresponding to
+          this HEX  byte value  will be  displayed.   The existing flag
+          register settings will not be altered.  See REGISTER.
+
+          See GENERAL NOTE [8] regarding illegal flags.
+
+
+                                         Page - 12
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          GENERAL NOTES
+
+          [1]  Multiple Commands
+
+               Multiple commands may be combined on the same  line. For
+          example, to  set the  registers to  a particular value and to
+          execute the code at a certain address the command line:-
+
+               R FFE3 F123 1234 FFFF:G C000
+
+          can be executed.  The  maximum  command  line  length  is 254
+          characters,  and  is  stored  in the input buffer starting at
+          $F685.
+
+               Each  command  must  be  separated  by   the  colon  (:)
+          character,  and  spaces  are  ignored  except  when part of a
+          delimited ASCII string.    When  a  sequence  of  commands is
+          given, if  DEBUG detects any errors whilst either parsing the
+          command string,  or attempting  to execute  the command, then
+          it will  abort without  executing any following commands.  If
+          a major error is discovered, then DEBUG will  complain with a
+          two-tone beep,  whilst if  a minor error was discovered, only
+          a single tone beep will occur.  A  major error,  for example,
+          would  be  attempting  to  execute  a  command  that  is  not
+          implemented.  A minor error would be the  presence of invalid
+          characters in an argument, or an illegal address.
+
+               Note that  the 'A',  'G' and 'W' commands are considered
+          to be self-terminating, that  is,  they  should  be  the last
+          command on a multiple command line.
+
+          [2]  Case/Range Sensitivity
+
+               Commands may  be entered  in upper  or lower  case.  All
+          commands and command  line  HEX  arguments  are  converted to
+          uppercase internally before processing.
+
+               For  any   commands  that  can  have  an  address  range
+          specification, note that it is immaterial in which  order the
+          address references  are given.   For the D and U commands the
+          range will be from the lowest to the  highest address, whilst
+          the  F,  S,  and  V  commands will always perform their tasks
+          from the highest location downward.
+
+          [3]  DEBUG Stack
+
+               DEBUG maintains its  own  stack,  which  is  set  to 256
+          bytes, and  is located immediately in front of the main code.
+          Since the  code  that  is  being  debugged  may  mutilate the
+          stack, the  actual initial  stack pointer setting is 32 bytes
+
+                                         Page - 13
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          lower than the top of the  stack,  thus  your  code  can mis-
+          manage the  stack for  at least  16 pops  too many before any
+          corruption of DEBUG occurs.   Every  time either  the WALK or
+          the GO  commands terminate, after saving the current register
+          contents  in  the  pseudo-registers,  the  stack  pointer  is
+          restored to  its initial  setting 32 bytes lower than the end
+          of the stack space.
+
+               If the code that  you are  examining uses  its own local
+          stack, then  prior to using either the GO command or the WALK
+          'G' sub-command you must  ensure that  the return  address to
+          DEBUG is preserved at the top of the new local stack.
+
+          A section of code thus:-
+
+               SHLD TEMP      ;Save current contents of HL
+               POP  H         ;Recover return address to DEBUG
+               SHLD RETADDR   ;Save return address
+               LHLD TEMP      ;Restore old contents of HL
+
+               {your code section goes here}
+
+               SHLD TEMP      ;Save current contents of HL
+               LHLD RETADDR   ;Recover DEBUG return address
+               PUSH H         ;and put on top of stack.
+               LHLD TEMP      ;Recover old HL contents,
+               RET            ;and return to DEBUG.
+
+          will ensure  that you  will return  to DEBUG.  Note that only
+          the  'G'  command  suffers  from  this  restriction,  the 'W'
+          single step  command is not affected by any local user change
+          of stack, except insofar as the  user stack  must have enough
+          room to  accommodate DEBUG's requirements.  Typically, if you
+          allow at least 72 bytes for DEBUG, then  there should  not be
+          any stack  over-run problem.  Note also that on return from a
+          'W' or a 'G' command DEBUG will restore  the original default
+          stack that was used on entry to the program.
+
+          [4]  Pseudo-Register Contents
+
+               The contents  of the  pseudo-PC are  only updated during
+          the WALK  command,  and  when  a  breakpoint  is encountered.
+          This register  is not  restored to the machine when a GO/WALK
+          command is executed, for obvious  reasons.    Thus  the value
+          displayed in  this register  represents the place in the code
+          at which either  the  WALK  was  terminated,  or  at  which a
+          breakpoint was encountered.
+
+               The  Pseudo-SP  register  correctly  reflects either the
+          current contents of the SP  register  during  a  WALK  or the
+
+                                         Page - 14
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          last  contents  of  the  SP  register  prior  to exiting from
+          either the 'W' or 'G' commands.
+
+          [5]  Cautions using the E/F Commands
+
+               Exercise caution  when  using  the  ENTER/FILL commands.
+          Even if  DEBUG is  entered from  the main menu, the operating
+          system  maintains  a  stack  somewhere  in   memory,  and  an
+          inadvertent  alteration  of  this  memory with either the E/F
+          commands will cause unpredictable  results.   In general, the
+          computer  will  execute  a  cold  start  if  you accidentally
+          overwrite a vital location.
+
+          [6]  ROM/RAM Usage
+
+               DEBUG makes  considerable use  of the  M-10 internal ROM
+          routines,  regrettably  largely  undocumented.   As an aid to
+          your further understanding of the  ROM,  at  the  end  of the
+          tutorial section  of this  manual you will find a list of ROM
+          routines and their usage.
+
+               DEBUG also uses 137  bytes of  memory located  above the
+          End address.   When re-locating DEBUG ensure that your target
+          program does not attempt to use  this address  space.  Follow
+          the  instructions  given  earlier  to  ensure  that no memory
+          conflicts occur.
+
+          [7]  Illegal Op-Code Recognition and Usage
+
+               This revision of  DEBUG  now  recognises  9  illegal op-
+          codes:-
+
+          $08/DSUB B,  $10/RHR, $18/RDL, $28/DMOV H,$nn  $38/DMOV S,$nn
+          $D9/SHLX, $DD/JND $nnnn, $ED/LHLX, $FD/JD $nnnn.
+
+               The code represented by HEX  $CB  is  still  regarded as
+          illegal since  it is  useless on  an M100.  Note however that
+          these  codes  will  only  execute  correctly  if  your  80C85
+          behaves  like  most  others.    You  must  test  these  codes
+          yourself on  your  machine.    The  ASSEMBLE/DIS-ASSEMBLE and
+          WALK   routines   will   recognise   these   codes   and  act
+          appropriately.
+
+               DEBUG itself makes no  use  of  these  illegal op-codes.
+          However,  it  is  obvious  that some commercial software does
+          use them, and even  Microsoft  uses  them  in  the  ROM, thus
+          despite   my   inherent   dislike   and   distrust  of  these
+          "features", I felt obligated to include them in this tool.
+
+
+
+                                         Page - 15
+
+
+
+
+
+                                  DEBUG COMMAND REFERENCE
+
+          $08  DSUB B         [HL] = [HL] - [BC]
+          $10  RHR            [HL] = [HL->] HL arithmetic right shift
+          $18  RDL            Rotate DE left through Carry
+          $28  DMOV H,$nn     [DE] = [HL] + $nn (unsigned)
+          $38  DMOV S,$nn     [DE] = [SP] + $nn (unsigned)
+          $CB  ???            Invalid. CALL $0040 if V flag set
+          $D9  SHLX           Store [HL] at address pointed to by [DE]
+          $DD  JND  $nnnn     Jump to $nnnn if flag bit 5 is clear
+          $ED  LHLX           Load  [HL]  from  address  pointed  to by
+          [DE]
+          $FD  JD   $nnnn     Jump to $nnnn if flag bit 5 is set
+
+          [8]  Illegal Flags
+
+               In this  version of  DEBUG the register display will now
+          reflect the state  of  the  two  "unmarked"  flag  bits.   To
+          remind you  that they  are not "legal", they are displayed in
+          lower case, thus a typical flag register display will be:-
+
+               SZdA PvC
+               10110101
+
+          where the 'v' flag, bit 1,  is a  conventional overflow flag,
+          that is,  it is set when the carry into the sign bit does not
+          equal the carry out.  It  signifies  that  the  result  of an
+          operation on  two signed  bytes was  too big  to fit into one
+          signed byte.  The 'd' flag, bit 5, is a  "true" sign  bit. It
+          is what  would be in bit 8 if the CPU were doing 9 bit signed
+          arithmetic.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                         Page - 16
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          TUTORIAL
+
+               This  section  is  devoted  to  a  demonstration  of the
+          features and  facilities of  the DEBUG program.  It is mainly
+          of interest to the  relative  newcomer  to  assembly language
+          programming who  is seeking  an easy  way to explore the uses
+          of this  tool.   It assumes  that you  are generally familiar
+          with the  instruction set of the 8080/8085 processor, as well
+          as the elementary  concepts  of  looping,  branching, calling
+          sub-routines, as  well as  moving data  between registers and
+          memory.
+
+               To begin, ensure that DEBUG is  loaded into  memory, and
+          exists  in  the  directory  of  your machine as a file called
+          DEBUG.CO.    Moreover,  in  order  that  the  later  examples
+          provide the  displays as described in this section, use DEBUG
+          at its base address location  as  supplied.    From  the main
+          menu, select  DEBUG.CO and  press the  ENTER key.   The title
+          screen should  display the  program title,  authors name, and
+          revision number and date, and a ? prompt.
+
+               To  refresh   your  memory,  recall  that  the  8085  is
+          provided with a number of registers thus:-
+
+                                 ÚÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+                                 ³     PC      ³
+                                 ÃÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+                                 ³     SP      ³
+                                 ÃÄÄÄÄÄÄÂÄÄÄÄÄÄ´
+                                 ³  H   ³   L  ³
+                                 ÃÄÄÄÄÄÄÅÄÄÄÄÄÄ´
+                                 ³  D   ³   E  ³
+                                 ÃÄÄÄÄÄÄÅÄÄÄÄÄÄ´
+                                 ³  B   ³   C  ³
+                                 ÃÄÄÄÄÄÄÅÄÄÄÄÄÄ´
+                                 ³  A   ³   F  ³
+                                 ÀÄÄÄÄÄÄÁÄÄÄÄÄÄÙ
+
+                                8085 Register Set
+
+               The AF register pair consists of  the A  register, often
+          called the  Accumulator, and the F register, often called the
+          Flag register.    (The  INTEL  documentation  refers  to this
+          latter register  as the  Processor Status Word, PSW)  Both of
+          these registers are 8 bits in  length.   The B,  C, D,  E, H,
+          and  L  registers  are  general  purpose 8-bit registers.  In
+          addition, the BC, DE,  and HL  register pairs  can be treated
+          as 16-bit general purpose registers.
+
+
+
+                                         Page - 17
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+               The first  example of  the use of DEBUG shows how we can
+          preset these registers to  various values  using the Register
+          command.
+
+               Enter the  letter R and press the ENTER key, the machine
+          should display:-
+
+                PC   AF   BC   DE   HL   SP
+               0000 0000 0000 0000 0000 E29A
+
+               This displays the  current  contents  of  the registers.
+          The PC  register represents  the machine Program Counter, and
+          will only be updated  after a  'G' or  during a  'W' command.
+          The SP  register indicates the Stack Pointer, and is shown as
+          pointing to a location  within the  DEBUG program  work area.
+          When a  'G' or 'W' command is executed the AF, BC, DE, and HL
+          registers will be set to the values indicated,  in this case,
+          all will be set to 0000.
+
+               Now  let  us  set  the  BC register to contain the value
+          1234.    (Throughout  this   section,  all   numbers  are  in
+          HEXADECIMAL  unless  otherwise  identified.)  Since we cannot
+          explicitly alter the contents  of  the  PC  register,  and we
+          wish to  skip over  the AF register pair, we do so by putting
+          a  comma  in  the  command  to  indicate  to  DEBUG  that the
+          register  is  to  be  skipped.    Thus,  when  we execute the
+          command:-
+
+               R,1234
+
+          we will obtain the display:-
+
+                PC   AF   BC   DE   HL   SP
+               0000 0000 1234 0000 0000 E2BB
+
+          This shows that we set the  register to  the value indicated.
+          Try entering the command:-
+
+               R FF00
+
+          The display should be:-
+
+                PC   AF   BC   DE   HL   SP
+               0000 FF00 1234 0000 0000 E2BB
+
+          Now try  setting the  HL register to 4321 and the BC register
+          to FFFF.  You will need  a comma  to skip  over the  AF pair,
+          then the  value FFFF  for the  BC pair, another comma to skip
+          the DE pair, and finally the  value  4321  for  the  HL pair.
+
+
+                                         Page - 18
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          Try  entering  several  spaces  between the commas and values
+          and observe the result, thus:-
+
+               R     ,   FFFF     ,  4321
+
+          The display should now show:-
+
+                PC   AF   BC   DE   HL   SP
+               0000 FF00 FFFF 0000 4321 E2BB
+
+          Try for yourself setting  all  the  registers  back  to their
+          initial  values.    Notice  that  DEBUG  ignored the spurious
+          spaces   between   the   various   parameters   we   entered.
+          Similarly, repeat  the experiment by using lower case letters
+          and observe that DEBUG is  case  insensitive.    As  we shall
+          see, the  only time  that a distinction is made between upper
+          and lower case is when the letter(s) are part of  a quoted or
+          delimited string.
+
+               Having  seen  the  use  of  the  'R' command, let us now
+          examine the contents of memory.   For this  we shall  need to
+          master the use of the Display command.  Enter the command:-
+
+               D 7EF0
+
+          the display should be:-
+
+               7EF0 4F 4C 49 56 45 54 54 49 OLIVETTI
+
+          Notice first  of all that the '?' prompt has disappeared, and
+          has been replaced with the blinking cursor.   This means that
+          DEBUG  is  waiting  for  a  sub-command  to continue or quit.
+          There are a number of commands that behave in this  way.  All
+          the commands  that can have a range of address' will wait for
+          further instructions if only a single address is given.
+
+               In this case, first  field of  data is  the address 7EF0
+          the  address  at  which  the  data  dump started.  The next 8
+          fields represents the  HEX  contents  of  the  address' 7EF0,
+          7EF1, 7EF2, 7EF3, 7EF4, 7EF5, 7EF6, and 7EF7.  The right hand
+          field displays the ASCII equivalents of the HEX  contents, in
+          this case  the letters  O, L, I, V, E, T, T, and I.  In fact,
+          this is  the  place  in  the  M-10  ROM  where  the copyright
+          message is  located.  By pressing the cursor UP ARROW key you
+          can display the contents of the next 8 bytes of  memory.  The
+          display should show:-
+
+               7EF8 20 4D 31 30 20 42 41 53  M10 BAS
+
+
+
+                                         Page - 19
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+               By pressing  the UP ARROW again the contents of the next
+          8 bytes can be displayed.    Similarly,  pressing  the cursor
+          DOWN  ARROW  the  contents  of  the  previous  8 bytes can be
+          displayed.  If the contents of the memory  is not  text, then
+          the  ASCII  field  of  the  dump,  as  the right hand side is
+          called, will display the  graphic symbol  that corresponds to
+          the data  at that  memory location, or a blank if there is no
+          symbol that can be displayed.  To exit  this mode,  press the
+          ENTER key.   Observe the return of the '?' prompt, signifying
+          that you are returned to the command mode of DEBUG.
+
+               Now let us  display  these  same  memory  locations, but
+          this  time  using  a  range  of  address  values.   Enter the
+          command:-
+
+               D 7EF0 7EFA
+
+          The display should be:-
+
+               7EF0 4F 4C 49 56 45 54 54 49 OLIVETTI
+               7EF8 20 4D 31 30 20 42 41 53  M10 BAS
+
+          Notice  that  we  have  been  returned  to  the  command mode
+          immediately  after  the  command  executed.    Also note that
+          although we specified the  range  of  address  as  being from
+          7EF0  to  7EFA,  DEBUG  has  displayed the nearest range that
+          will include the specified  address.   If the  higher address
+          is  not  exactly  on  an  8  byte  boundary,  then DEBUG will
+          display the complete 8  bytes in  which it  is located.   Try
+          entering the command:-
+
+               D 7EFA 7EF0
+
+          You should  have obtained exactly the same display as before.
+          This shows that for a range of address'  DEBUG is insensitive
+          to the  order in  which they are entered.  The 'D' command is
+          generally  the  first  command   that  you   would  try  when
+          attempting  to  "unpick"  some  strange code.  You would look
+          for the display messages and  note  the  starting  address as
+          well as  the string termination bytes.  Knowing this data you
+          can then proceed to examine the code in rather more detail.
+
+               Now let  us  examine  the  Length  command.    Enter the
+          command:-
+
+               L
+
+          DEBUG should respond with the message:-
+
+               Screen length: 7 lines
+
+                                         Page - 20
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          In this  case, this  means that for any command that can take
+          a range of address, the display will be  7 lines,  then DEBUG
+          will pause with the message:-
+
+               Press SPACE to continue...
+
+          Pressing the  SPACE bar  will cause  a further  7 lines to be
+          displayed, and then DEBUG will pause again.   The display can
+          be terminated  by pressing  the ENTER  key whilst the display
+          is in progress.  Try entering  the 'D'  command with  a large
+          range of address, for example:-
+
+               D 1000 2000
+
+          and observe  the results.  When the display is scrolling, hit
+          an alpha key or the  SPACE  bar.    Notice  that  the display
+          immediately  paused  with  the  previous  message.    This is
+          useful if you wish to temporarily  suspend the  output whilst
+          you examine  the display.   Press the space bar to resume the
+          display, and press the  ENTER key  to abort.   Now  enter the
+          command:-
+
+               L 05
+
+          DEBUG should respond with the message:-
+
+               Screen length: 5 lines
+
+          By  this  means  it  is  possible  to  alter  the  amount  of
+          information that  is presented  during a  lengthy display, to
+          that which  best suits  your immediate  needs.  Now enter the
+          commands:-
+
+               L 5:L 6:L 7
+
+          DEBUG should respond:-
+
+               Screen length: 5 lines
+               Screen length: 6 lines
+               Screen length: 7 lines
+
+          This  demonstrates  that  DEBUG  can  execute  a  sequence of
+          commands,  provided  that  they  are  separated  with the ':'
+          symbol.  Note however that the 'A', 'G' and 'W'  commands are
+          self-terminating, that  is, they  should be the LAST command,
+          because DEBUG will ignore any command  sequence entered after
+          one of  these commands  if it  is entered on the same command
+          line.
+
+
+
+                                         Page - 21
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+               Now  let  us  use  the  Move  command  to  transfer  the
+          contents of  the ROM memory to a place in RAM.  It is assumed
+          for this tutorial that  only DEBUG.CO  is present  in memory.
+          If  this  is  not  so,  then  the  following operations could
+          destroy files.  For this reason,  you may  wish to  quit this
+          session  and  save  the  files  and  then  erase  them before
+          continuing.  The Quit command is simply the letter 'Q'
+
+               To move the memory contents, enter the command:-
+
+               M 7EF0 C000 2D
+
+          DEBUG should respond with the message:-
+
+                Done
+
+          Now examine the memory from C000 to C02D with the command:-
+
+               D C000 C02C
+
+          The display should be:-
+
+               C000 4F 4C 49 56 45 54 54 49 OLIVETTI
+               C008 20 4D 31 30 20 42 41 53  M10 BAS
+               C010 49 43 20 31 2E 30 0D 0A IC 1.0
+               C018 28 43 29 20 31 39 38 33 (C) 1983
+               C020 20 4D 69 63 72 6F 73 6F  Microso
+               C028 66 74 OD OA 00 00 00 00 ft
+
+               What we  did was  to copy  the contents  of address 7EF0
+          through 7F1D  to address  C000 to  C02C.   You may be asking,
+          "Why, when  we specified  2D bytes  to copy,  did the address
+          stop  at  7F1D  rather  than  7F1E?"    This  is  because  we
+          specified that we must copy 2D  or 45  decimal bytes starting
+          at 7EF0.   Thus  the last  address will be 7F1D.  Display the
+          memory contents from 7EF0 to 7F1D and count out the  45 bytes
+          starting  at  7EF0.    You  will  find  that the last byte is
+          address 7F1D.  It  is  most  important  to  remember  that we
+          NUMBER from  0, 1,  2, 3  etc, but  we COUNT from 1, 2, 3 ...
+          etc.
+
+               The move  command  is  useful  for  moving  fairly large
+          blocks of data from one place in memory to another.
+
+               How can  we be  sure that the contents of memory at C000
+          is the same as that  at  7EF0?    This  is  where  the Verify
+          command comes in useful.  Enter the command:-
+
+               V 7EFO C000 2C
+
+
+                                         Page - 22
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          DEBUG  will  respond  with  only  the  '?'  prompt.   This is
+          because there were no differences found.  Why did we  use the
+          value  2C  instead  of  2D?    This  is  again because of the
+          difference in the way we NUMBER  and the  way we  COUNT.  The
+          verify  command  adds  the  last  argument  to  the first two
+          arguments in order to arrive at the last  address to compare.
+
+               To demonstrate  what happens when a difference is found,
+          let  us  alter  the  byte  at  address  C010  with  the Enter
+          command.  Enter the following command:-
+
+               E C010 0
+
+          DEBUG responds with the message:-
+
+                Done
+
+          Now repeat the previous command:-
+
+               V 7EF0 C000 2C
+
+          DEBUG will display:-
+
+               7F00 49 C010 00
+
+          thus  showing  that  at  7F00  the contents are 49 but at the
+          corresponding address  of  C010  there  is  00.    The verify
+          command will  list all  the differences between two blocks of
+          memory from the highest address downward.
+
+               Suppose we now wish to simply Fill memory  with a value.
+          We would  use the F command.  Let us now use the F command to
+          fill the memory we  just used  with zero's,  and at  the same
+          time use  the display  command to verify that we did do as we
+          wished.  Enter the commands:-
+
+               F C000 C02D 0:D C000 C02D
+
+          Did you obtain the display:-
+
+                Done
+               C000 00 00 00 00 00 00 00 00
+               C008 00 00 00 00 00 00 00 00
+               C010 00 00 00 00 00 00 00 00
+               C018 00 00 00 00 00 00 00 00
+               C020 00 00 00 00 00 00 00 00
+               C028 00 00 00 00 00 00 00 00
+
+               This command permits you  to fill  memory with  either a
+
+
+                                         Page - 23
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          HEX byte,  or an ASCII character.  For example, the command:-
+
+
+               F C000 C006 '#:D C000 C006
+
+          will produce the display:-
+
+                Done
+               C000 23 23 23 23 23 23 23 00 #######
+
+               The 'F' command is  useful for  clearing large  areas of
+          memory or  otherwise setting  a block  of memory to a defined
+          state.  Be careful, however,  that  you  do  not accidentally
+          over write  the reserved  RAM of the system or you will cause
+          the operating system to crash.
+
+               Sometimes it is necessary  to  enter  specific sequences
+          of data  into memory,  for example, a text message.  For this
+          job we can use the Enter command.  Enter the commands:-
+
+               E C000 'ABCDEF':D C000 C007
+
+          DEBUG should respond:-
+
+                Done
+               C000 41 42 43 44 45 46 23 00 ABCDEF#
+
+          The enter command can also use HEX arguments thus:-
+
+               E C000 0 1 2 3 4 5:D C000 C007
+
+          to produce the result:-
+
+                Done
+               C000 00 01 02 03 04 05 23 00
+
+          In fact, any sequence of HEX digit pairs  and delimited ASCII
+          strings up  to a  maximum composite length of 64 bytes can be
+          entered in  this way.   Experiment  with various combinations
+          to demonstrate the use of this feature.
+
+               Many  times  we  need  to  perform address calculations.
+          The Calculate command will allow  us  this  facility.   Enter
+          the command:-
+
+               C 7EF0 2D
+
+          DEBUG will display:-
+
+               7EF0 002D +7F1D -7EC3
+
+                                         Page - 24
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          to  indicate  that  the  SUM  (+)  of  these numbers is 7F1D,
+          whilst the DIFFERENCE (-) is 7EC3.   We  can also  obtain the
+          DECIMAL and  ASCII equivalents  of a  16 bit  number by using
+          only a single argument thus:-
+
+               C 4142
+
+          DEBUG will display:-
+
+               4142 16706 AB 0100 0001 0100 0010
+
+          This shows that the HEX  NUMBER  4142  is  equivalent  to the
+          DECIMAL  NUMBER  16706,  that  the  HEX  DIGIT  pairs  41  42
+          represent the ASCII characters  'A'  and  'B',  and  that the
+          binary  representation  consists  of  4  nibbles  having  the
+          pattern:- 0100 0001 0100 0010
+
+               Similarly, the H command can be used to  convert decimal
+          arguments to hex.  It operates in exactly the same way as the
+          C command, except that the arguments are decimal.   Enter the
+          commad:-
+
+               H 65535
+
+          DEBUG will display:-
+
+               FFFF 65535    1111 1111  1111 1111
+
+          showing that the hexadecimal equivalent of the decimal number
+          65535  is   FFFF   and   also   the   binary   equivalent  is
+          1111111111111111.   Calculations can  also be performed, just
+          as with the C command.
+
+               Now enter the command:-
+
+               P
+
+          DEBUG will respond:-
+
+               D/S/U/V re-directed to printer.
+
+          If you have a  printer connected,  then the  Display, Search,
+          Unassemble, and  Verify command output will now be printed as
+          a permanent record.  This can  make "reverse  engineering" of
+          code  much  easier.    Bear  in mind however that since DEBUG
+          uses the  ROM  routines  to  print,  if  the  printer  is not
+          connected or  busy, then  DEBUG will  simply wait.   To clear
+          this problem you will  need to  press the  RESET button.   To
+          restore output to the screen, enter the command:-
+
+
+                                         Page - 25
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+               P
+
+          and DEBUG will respond:-
+
+               D/S/U/V re-directed to screen.
+
+               On many  occasions it  is necessary to locate a sequence
+          of bytes in memory.  This  can  be  performed  by  the Search
+          command.  Enter the command:-
+
+               S 0 7FFF 'OLIVETTI'
+
+          DEBUG will respond:-
+
+               7EF0
+
+          Note that  there will  be a  delay of  about 4  seconds or so
+          before the command prompt returns, this is because  DEBUG has
+          been  instructed  to  search  the  entire  ROM  for this text
+          string.
+
+               The only place in the ROM where the string 'OLIVETTI' is
+          found is  at address  7EF0.   As we  have seen, this is where
+          the copyright message displayed in  BASIC  is  located.   The
+          search  command  will  also  find  multiple  occurrences of a
+          string.  Enter the command:-
+
+               S 0 7FFF 'MENU'
+
+          DEBUG will display:-
+
+               5D03
+               51A5
+               0003
+
+          indicating  that  the  string  'MENU'  is  found  at  these 3
+          locations  in  the  ROM.    Try  another  example.  Enter the
+          command:-
+
+               S 0 7FFF 'Ok'
+
+          DEBUG responds:-
+
+               03F9
+
+          This, of course, is the place  in  the  ROM  where  the BASIC
+          'Ok'  prompt  is  located,  but  where  is it referenced?  In
+          other words, where in the ROM do we refer to  this address in
+          order to  print this  message?  Address references are stored
+
+
+                                         Page - 26
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          in HI-LO byte order, so we must search  for the  bytes F9 03.
+          Enter the command:-
+
+               S 0 7FFF F9 3
+
+          DEBUG will respond:-
+
+               050F
+
+          Thus, at  address 050F  the pattern  F9 03 was located.  This
+          is likely to be  the immediate  data of  an extended register
+          load command,  so let us use the Unassemble command to see if
+          this is so.  The  op-code  byte  would  be  located  one byte
+          ahead  of  its  immediate  data,  so  we  must start the dis-
+          assembly at address 050E.  Enter the command:-
+
+               U 50E
+
+          You should obtain the display:-
+
+               050E 21 F6 03 LXI  H,$03F9
+
+          This shows that at address  050E  there  is  the  HEX op-code
+          byte  21,  which  is  indeed  the  op-code  for  an  extended
+          immediate load command.  The instruction requires 3  bytes of
+          memory,  and  the  immediate  data corresponds to the address
+          03F9.  The unassemble  command  will  attempt  to reconstruct
+          the  original  assembly  language  instruction  which in this
+          case seems to be  the command  to load  the HL  register pair
+          with the  immediate data  03F9.   Press the UP ARROW key, and
+          you should display the line:-
+
+               0511 CD B1 27 CALL $27CB
+
+          In other words, it  would appear  that at  address 27CB there
+          is a  routine that  would print the message pointed to by the
+          contents of the HL register pair.  Perhaps we could  make use
+          of this  routine.   Let us  display the full message, and see
+          if we can determine the message  structure.   Press the ENTER
+          key  to  terminate  the  unassemble  command,  then enter the
+          command:-
+
+               D 3F9 3FC
+
+          and observe the display:-
+
+               03F9 4F 6B 0D 0A 00 42 72 65 Ok   Bre
+
+          Notice  that  the  message  'Ok'  is  followed  by  the CR/LF
+          sequence, and  then a  NULL byte.   Then follows the start of
+
+                                         Page - 27
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          the 'Break'  message.    So,  we  have  determined  that text
+          messages in  the ROM  consist of  the text,  followed, in all
+          probability, by the CR/LF  sequence,  and  terminated  with a
+          NULL  byte.    It  would  seem  that in order to print a text
+          message all we need to do  is load  the HL  register with the
+          start address  of the  message and  call the routine at 27CB.
+          With this knowledge, let us now  use DEBUG  to write  a small
+          assembly language program to demonstrate this concept.
+
+               In this  program we  shall load the HL register with the
+          address of the copyright message  (7EF0)  and  then  call the
+          routine at  27CB to  print it.   Finally we must use a RETurn
+          instruction to allow DEBUG to recover control.
+
+               Enter the command:-
+
+               A C000
+
+          Notice that you have lost the '?' prompt.   DEBUG  is waiting
+          for you  to enter  assembly language statements, or the ENTER
+          key to terminate the command.
+
+               Enter the following:-
+
+               LXI  H,$7EF0
+               CALL $27CB
+               RET
+
+          Use the ENTER key to terminate the assemble command, then use
+          the Go command to execute this code.  Enter the command:-
+
+               G C000
+
+          You should see the following display:-
+
+               OLIVETTI M10 BASIC 1.0
+               (C) 1983 Microsoft
+                PC   AF   BC   DE   HL   SP
+               0000 0A55 7F1C 00EF FB74 E2BB
+
+          Now let  us assemble  a program to do the same job, but to do
+          so a character at a time.  It turns out that the  ROM routine
+          invoked  by  RST  4  actually  prints  the character in the A
+          register.  We shall use this  fact to  write a  small program
+          that loads  the HL register with the start address of the ROM
+          message, gets a character, compares it with a NULL to  see if
+          we  have  reached  the  end,  if  not  print  the  character,
+          increment the pointer and do it again.  Enter the command:-
+
+               A C000
+
+                                         Page - 28
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          and then the following lines of code:-
+
+               LXI H,$7EF0    ;Point to start of message
+               MOV A,M        ;Get character
+               CPI $0         ;Is it a NULL?
+               RZ             ;If so, we are done
+               RST 4          ;Not a NULL, so print the character
+               INX H          ;Point to next character
+               JMP $C003      ;and do it again
+
+               Do not  enter  the  comments,  they  are  only  for your
+          information.   Do not forget to terminate the assembly with a
+          blank line!  Now  use the  unassemble command  to verify that
+          you have  indeed entered the correct code.  (Obviously, since
+          the assemble command invokes  the unassembler  to display the
+          result, this  has already  happened, but  just to familiarise
+          yourself, try the command U C000 C009)  Assuming you  did not
+          make any  errors, invoke  the Go command to try the code out.
+          Enter the command:-
+
+               G C000
+
+          You should have obtained:-
+
+               OLIVETTI M10 BASIC 1.0
+               (C) 1983 Microsoft
+                PC   AF   BC   DE   HL   SP
+               0000 0054 7F1C 00EF 7F1C E2BB
+
+          Now let us try using a break point to see  what happens.   We
+          shall set  a break  point at address C009, where we loop back
+          to get another character.  Enter the command:-
+
+               B C009
+
+          whereupon you will obtain the message:-
+
+               Breakpoint set
+
+          If you unassemble address C009 you will see:-
+
+               C009 C3 78 E3 JMP  $E378
+
+          this is because the  breakpoint  replaces  the  code  at this
+          address with  an unconditional jump into the DEBUG breakpoint
+          handler.  Now execute the command:-
+
+               G C000
+
+
+
+                                         Page - 29
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          you should have obtained the display:-
+
+               OBreakpoint reached
+               Breakpoint cleared
+               C009 C3 03 C0 JMP  $C003
+                PC   AF   BC   DE   HL   SP
+               C009 4F10 7F1C 00EF 7EF1 E2B9
+
+          Pause for a moment and digest the information.   Notice first
+          that the  breakpoint handler  has restored  the code that was
+          at address C009.  Also note the presence of the  'O' in front
+          of  the  first  Breakpoint  ....  message.    Remember we are
+          displaying the copyright message,  and thus  the first letter
+          would have been displayed, the 'O' of 'OLIVETTI ....'  Notice
+          that the A register contains 4F, this is  the ASCII  HEX code
+          for  the  letter  'O'.    Notice  that  the  HL  register was
+          originally loaded with the value 7EF0  but now  contains 7EF1
+          as a  result of  the INX  H instruction.  Finally notice that
+          the stack point, SP,  now  contains  E2B9  rather  than E2BB.
+          This is  because we  entered the  code via a CALL instruction
+          in the Go command, and thus the return address for  DEBUG was
+          placed on  the stack.  This would automatically decrement the
+          stack pointer.
+
+               To see all of these things as they occur, let  us single
+          step the  code by  means of  the Walk  instruction.  We shall
+          reset all the registers  to zero,  and then  commence to walk
+          the code at address C000.  Enter the commands:-
+
+               R 0 0 0 0:W C000
+
+          the display should show:-
+
+                PC   AF   BC   DE   HL   SP
+               C009 0000 0000 0000 0000 E2B9
+               C000 21 F0 7E LXI  H,$7EF0
+                PC   AF   BC   DE   HL   SP
+               C009 0000 0000 0000 0000 E2BB
+
+          The  first  line  shows  you  that  the 'R' command correctly
+          changed the register contents,  the  second  line  shows what
+          the instruction  is at address C000, and the current register
+          contents.  The walk command is now waiting for you  to either
+          execute  the  current  instruction  or  abort by pressing the
+          ENTER  key.    Press  the  UP   ARROW  key   to  execute  the
+          instruction.  The new display should be:-
+
+
+
+
+
+                                         Page - 30
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+               C003 7E       MOV  A,M
+                PC   AF   BC   DE   HL   SP
+               C003 0000 0000 0000 7EF0 E2BB
+
+          This shows  that the next instruction is MOV A,M and that the
+          result of having  executed  the  previous  instruction  is to
+          have placed  in the  HL register  the value  7EF0.  Now press
+          the UP ARROW  again,  and  observe  that  the  letter  '0' is
+          fetched from  memory and  placed into  the A register, recall
+          that the HEX equivalent is 4F.  You should have the display:-
+
+
+               C004 FE 00    CPI  $00
+                PC   AF   BC   DE   HL   SP
+               C004 4F00 0000 0000 7EF0 E2BB
+
+          The  next  instruction  will  compare  the  contents of the A
+          register with NULL.    Press  the  UP  ARROW  to  execute and
+          obtain the display:-
+
+               C006 C8       RZ
+                PC   AF   BC   DE   HL   SP
+               C006 4F10 0000 0000 7EF0 E2BB
+
+          To display  what the  new flag  setting represents, press the
+          ENTER key to terminate the walk, and enter the command:-
+
+               X
+
+          to obtain the eXpanded flags display:-
+
+               SZdA PvC
+               00010000
+
+          This shows that as a result  of the  comparison process, only
+          the  Auxiliary  Carry  flag  was  set.  The Zero flag was not
+          set, which indicates that the contents of the  accumulator is
+          not zero.
+
+          Now re-enter the walk mode with the command:-
+
+               W C006
+
+          and obtain the display:-
+
+               C006 C8       RZ
+                PC   AF   BC   DE   HL   SP
+               C006 4F10 0000 0000 7EF0 E2BB
+
+
+
+                                         Page - 31
+
+
+
+
+
+                                      DEBUG TUTORIAL
+
+          Press  the  UP  ARROW  key,  and observe that the conditional
+          return instruction is NOT taken.  The display will be:-
+
+               C007 E7       RST  4
+                PC   AF   BC   DE   HL   SP
+               C007 4F10 0000 0000 7EF0 E2BB
+
+          It would  be  rather  tedious  to  have  to  single  step all
+          through  the  print  routine  in  ROM, so DEBUG gives you the
+          option of  executing  just  the  sub-routine  at  full speed.
+          Press the 'X' key and obtain the display:-
+
+               OC008 23       INX  H
+                PC   AF   BC   DE   HL   SP
+               C008 4F10 0000 0000 7EF0 E2BB
+
+          Notice that  the 'O'  has been  printed, displacing the DEBUG
+          display.  By pressing the UP  ARROW key  you can  examine the
+          effects of  the remainder of the instructions.  Take care not
+          to single step the final return to DEBUG.   Whilst  this will
+          not  cause  any  harm,  it  will  not do anything very useful
+          either.
+
+               Also take  care that  when actually  single stepping the
+          ROM routines  to avoid  using the  'G' sub-command, except at
+          known ROM routine entry points.    It  is  very  dangerous to
+          'Go' into  the middle  of a  ROM routine, and in general, the
+          results  are  unpredictable.    The  Go   command  is  really
+          intended to  execute code  by calling it at a predictable and
+          known entry point.   However,  feel  free  to  experiment, at
+          worst executing  an unknown section of code will simply cause
+          a cold start.
+
+               This concludes the tutorial section of DEBUG.   You have
+          now seen  all of  the commands  at work,  and, hopefully, you
+          will be able to use the tool to its fullest  extent with only
+          a little more practice.
+
+               For advice  on the  use of  some of  the more useful ROM
+          routines, examine the ROM Routines section of this  book, and
+          try unassembling  and single  stepping these routines to gain
+          an insight into their operation.    Start  with  some  of the
+          simpler routines  such as  GETUPR at  address FEB  and see if
+          you can puzzle out how they perform their tasks.
+
+
+
+
+
+
+
+                                         Page - 32
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+               This represents the best information I  can offer  as to
+          the contents  of the M-10M ROM, US Version.  All the routines
+          presented herein have been exercised, and have been  found to
+          perform in  a way  that is  similar or  identical to the same
+          routines in an Model 100.  Note however  that in  many cases,
+          particularly  those  routines  that manipulate the ports, the
+          M10 code differs considerably from its Model 100 counterpart.
+
+               The most significant differences  are in  the serial I/O
+          routines, and  translating software  from the  Model 100 that
+          makes use  of these  routines can  prove to  be a frustrating
+          exercise.   Note also  that the Model 100 Serial I/O routines
+          ignore the CTS line, but the OLIVETTI routines  do not.   Any
+          serial routines  that attempt  to use the RS-232 port via the
+          ROM MUST take this into account.
+
+               The  address  references  in  parentheses  refer  to the
+          Model 100 ROM equivalent routine.
+
+          LCD FUNCTIONS
+          ------------------------------------------------------------
+          CRLF      423F    Send newline to display.
+          (4222)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          HOME      424A    Move cursor to 1,1
+          (422D)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          CLS       424E    Clear display.
+          (4231)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          SETSYS    4252    Set (Lock) system label line. Equivalent to
+                            ESC T.
+          (4235)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          RSTSYS    4257    Reset   (Unlock)    system    label   line.
+                            Equivalent to ESC U.
+          (423A)
+                            Entry: None
+
+                                         Page - 33
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+                            Exit:  None
+                            Registers Used: A
+
+          LOCK      425C    Inhibit screen scroll. Equivalent to ESC Y.
+          (423F)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          UNLOCK    4261    Enable screen scroll. Equivalent to ESC W.
+          (4244)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          CURSON    4266    Enable screen cursor. Equivalent to ESC P
+          (4249)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          CUROFF    426B    Inhibit screen cursor Equivalent to ESC Q
+          (424E)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          DELLIN    4270    Delete  line  at  current  cursor location.
+                            Equivalent to ESC M.
+          (4253)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          INSLIN    4275    Insert  a  blank  line  at  current  cursor
+                            location. Equivalent to ESC L.
+          (4258)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          ERAEOL    427A    Erase   from   cursor   to   end  of  line.
+                            Equivalent to ESC K.
+          (425D)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          ENTREV    4286    Enable reverse video. Equivalent to ESC p.
+          (4269)
+
+                                         Page - 34
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          EXTREV    428B    Disable reverse video. Equivalent to ESC q.
+          (426E)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A
+
+          ESCA      428D    Send specified escape code sequence.
+          (4270)
+                            Entry: [A] = code
+                            Exit:  None
+                            Registers Used: A,F
+
+          POSIT     4299    Set cursor position.
+          (427C)
+                            Entry: [H] = column (1-40)
+                                   [L] = row    (1-8)
+                            Exit:  None
+                            Registers Used: A,F,H,L
+
+          LCD       4B53    Displays a character on LCD at  the current
+                            cursor  location  and  updates  the  cursor
+                            position. (Also RST 4)
+          (4B44)
+                            Entry: [A] character to be displayed
+                            Exit:  None
+                            Registers Used: All registers preserved
+
+          SETCUR    7483    Move cursor to specified location
+          (7440)
+                            Entry: [D] = column (1-40)
+                                   [E] = row    (1-8)
+                            Exit : None
+                            Registers Used: A,F,D,E,H,L
+
+          PLOT      748F    Turn pixel ON at specified location.
+          (744C)
+                            Entry: [D] = x location (0-239)
+                                   [E] = y location (0-63)
+                            Exit:  None
+                            Registers Used: All
+
+          UNPLOT    7490    Turn pixel OFF at specified location.
+          (744D)
+                            Entry: [D] = x location (0-239)
+                                   [E] = y location (0-63)
+                            Exit:  None
+
+                                         Page - 35
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+                            Registers Used: All
+
+          KEYBOARD FUNCTIONS
+          ------------------------------------------------------------
+          CHGET     12D0    Wait and get a character from keyboard.
+          (12CB)
+                            Entry: None
+                            Exit:  [A]  contains  ASCII  character,  or
+                                   code if  special character. Function
+                                   keys  F1-F8   return  pre-programmed
+                                   strings.
+                                   C  flag  set  if  special character,
+                                   otherwise reset.
+                            Registers Used: A,F
+
+          CHSNS     13E0    Check keyboard queue for characters.
+          (13DB)
+                            Entry: None
+                            Exit:  Z  flag  set  if  queue  was  empty,
+                                   otherwise    reset   if   keystrokes
+                                   pending.
+                            Registers Used: A,F
+
+          GETLN     4633    Get line from keyboard  with a  '?' prompt.
+                            Line is  terminated with the ENTER key, and
+                            is placed in the buffer at F688 (F685).
+          (463E)
+                            Entry: None
+                            Exit:  ASCII characters in  INBUF  at F688,
+                                   [DE] points to $0D terminator byte.
+                            Registers Used: All
+
+          INLIN     4639    Get  line  from  keyboard without a prompt.
+                            Line is terminated with  the ENTER  key and
+                            placed in the buffer at F688 (F685).
+          (4644)
+                            Entry: None
+                            Exit:  ASCII  characters  in INBUF at F688,
+                                   [DE] points to $0D terminator byte.
+                            Registers Used: All
+
+          WAITSPC   5F34    Wait for a SPACE from keyboard
+          (5F2F)
+                            Entry: None
+                            Exit:  [A] = SPC
+                            Registers Used: A,F
+
+
+
+
+
+                                         Page - 36
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          KYREAD    7275    Scan keyboard for a key.  No wait.
+          (7242)
+                            Entry: None
+                            Exit:  [A] register contains character.
+                                   Z flag set if no key waiting *
+                                   Z reset if key was waiting
+                                   C reset if normal character
+                                   C set if special character
+
+                            If Carry set, [A] will contain a code.
+                                   0        F1
+                                   1        F2
+                                   2        F3
+                                   3        F4
+                                   4        F5
+                                   5        F6
+                                   6        F7
+                                   7        F8
+                                   8        LABEL
+                                   9        PRINT
+                                   0A       SHIFT-PRINT
+                                   0B       PASTE
+                            Registers Used: A,F,C,D,E,H,L
+
+                            NB.  There is a minor  bug in  the OLIVETTI
+                            version.   If the  F1 key was pressed, then
+                            the  function  returns  with   the  C  flag
+                            correctly set,  but in  addition the Z flag
+                            is also set, and [A] contains 0.  Thus code
+                            that  simply  checks  the  Z  flag  for the
+                            presence of a character  will fail  on this
+                            machine.
+
+          KEYX      72A7    Check  keyboard  queue  for  characters  or
+                            BREAK condition.
+          (7270)
+                            Entry: None
+                            Extit: Z  flag  set  if  queue  was  empty,
+                                   otherwise reset if keys pending.
+                                   C   flag   set  if  BREAK  detected,
+                                   otherwise reset.
+                            Registers Used: A,F
+
+          BRKCHK    72BA    Check for BREAK/PAUSE characters only.
+          (7283)
+                            Entry: None
+                            Exit:  C  flag  set  if  BREAK  (CTRL-C) or
+                                   PAUSE  (CTRL-S)  detected, otherwise
+                                   reset.
+                            Registers Used: A,F
+
+                                         Page - 37
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          FUNCTION KEY ROUTINES
+          ------------------------------------------------------------
+          ERAFNK    42A7    Erase function key display.
+          (428A)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F
+
+          STDSPF    42C2    Set & Display function keys.
+          (42A5)
+                            Entry: [HL] points to function key table.
+                            Exit:  None
+                            Registers Used: All
+
+          DSPFNK    42C5    Display function keys.
+          (42A8)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: All
+
+          CLRFNK    5A81    Clear  function  key  definitions.    Fills
+                            table with $80.
+          (5A79)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: All
+
+          SETFNK    5A84    Set function key definitions.
+          (5A7C)
+                            Entry: [HL] points to function key table.
+                            Exit:  None
+                            Registers Used: All
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                         Page - 38
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          FNKSB     5AA6    Display function key table.
+          (5A9E)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F
+
+          PRINTING ROUTINES
+          ------------------------------------------------------------
+          PRTSTR    11A5    Print  a  NUL  terminated string to current
+                            display device.  This routine is replicated
+                            at 5A60 (5A58).  The routine at 27CB (27B1)
+                            also  performs  the  same   function  in  a
+                            roundabout way.
+          (11A2)
+                            Entry: [HL] points to ASCIIZ string.
+                            Exit:  [HL] points to NULL byte.
+                            Registers Used: A,F,H,L
+
+          PNOTAB    1480    Print a character without expanding tabs to
+                            spaces.  Code is not the same as TANDY 100.
+          (1470)
+                            Entry: [A] = character to be printed.
+                            Exit:  [C]  set  if  cancelled   by  BREAK,
+                                   otherwise reset.
+                            Registers Used: A,F
+
+          PRTLCD    1E6A    Print contents of LCD screen.
+          (1E5E)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F,D,E
+
+          PRTTAB    4B64    Print a character expanding tabs to spaces.
+          (4B55)
+                            Entry: [A] = character to be printed.
+                            Exit:  [C]  set   if  cancelled  by  BREAK,
+                                   otherwise reset.
+                            Registers Used: A,F
+
+          PRINTR    6D44    Send a character to printer.
+          (6D3F)
+                            Entry: [A] = character to be printed.
+                            Exit:  [C] is set  if  cancelled  by BREAK,
+                                   otherwise reset.
+                            Registers Used: A,F
+
+
+
+
+
+
+                                         Page - 39
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          RS-232-C/MODEM FUNCTIONS
+          ------------------------------------------------------------
+          SETSER    17F0    Set   serial   interface   parameters   and
+                            activate RS-232/MODEM.
+          (17E6)
+                            Entry: [HL]  =  start  address   of  ASCIIZ
+                                   string containing parameters. Syntax
+                                   is the same as TELCOM STAT command.
+                                   C flag  set  for  RS-232,  reset for
+                                   MODEM.  Error out to BASIC.
+                            Exit:  None
+                            Registers Used: All
+
+          DISC      52C3    Disconnect phone line.
+          (52BB)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F
+
+          CONN      52D8    Connect phone line.
+          (52D0)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F
+
+          DIAL      5332    Dial a specified phone number.
+          (532D)
+                            Entry: [HL]  points  to  address  of  phone
+                                   number. (ASCIIZ string)
+                            Exit:  None
+                            Registers Used: All
+
+          RCVX      6D74    Check RS-232 queue for characters.
+          (6D6D)
+                            Entry: None
+                            Exit:  [A] = number of chars pending
+                                   Z flag  set  if  no  data, otherwise
+                                   reset.
+                            Registers Used: A,F
+
+
+
+
+
+
+
+
+
+
+
+
+                                         Page - 40
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          RV232C    6D85    Get a character from RS-232 receive queue.
+          (6D7E)
+                            Entry: None
+                            Exit:  [A] = char
+                                   Z flag  set if  no errors, otherwise
+                                   reset   if   Parity,   Framing,   or
+                                   Overflow detected.
+                                   C   flag   set   if  BREAK  pressed,
+                                   otherwise reset.
+                            Registers Used: A,F
+
+          SENSCQ    6E12    Send XON resume character, CTRL-Q.
+          (6E0B)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F
+
+          SENDCS    6E25    Send XOFF pause character, CTRL-S.
+          (6E1E)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F
+
+          SD232C    6E39    Send  a  character  to  RS-232/MODEM  under
+                            XON/XOFF control.
+          (6E32)
+                            Entry: [A] = character
+                            Exit:  None
+                            Registers Used: A,F
+
+          SNDCOM    6E47    Send  character   to  RS-232/MODEM  without
+                            XON/XOFF control.
+          (6E3A)
+                            Entry: [C] = character
+                            Exit:  None
+                            Registers Used: A,F
+
+          BAUDST    6E97    Set BAUD rate for RS-232
+          (6E75)
+                            Entry: [H] = BAUD rate, ASCII 1-9,M
+                            Exit:  None
+                            Registers Used: A,F,D,E,H,L
+
+
+
+
+
+
+
+
+
+                                         Page - 41
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          INZCOM    6EC8    Initialise RS-232/MODEM
+          (6EA6)
+                            Entry: [H] = BAUD rate, ASCII 1-9,M
+                                   [L] = UART configuration code
+                                   C  flag  set  if  RS-232,  reset  if
+                                   MODEM.
+                            Exit:  None
+                            Registers Used: H,L
+
+          CARDET    6F06    Detect carrier.
+          (6EEF)
+                            Entry: None
+                            Exit:  [A] = 0 if carrier, else $FF
+                                   Z flag set if carrier, else reset.
+                            Registers Used: A,F
+
+          CLSCOM    6F63    Deactivate RS-232/MODEM
+          (6ECB)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F
+
+          CASSETTE ROUTINES
+          ------------------------------------------------------------
+
+          CTON      14B0    Turn motor ON.
+          (14A8)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F,D,E
+
+          CTOFF     14B2    Turn motor OFF.
+          (14AA)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F,E
+
+          CASIN     14B8    Read   char   from   cassette   and  update
+                            checksum.
+          (14B0)
+                            Entry: [C] = current checksum
+                            Exit:  [A] = character
+                                   [C] = updated checksum
+                            Registers Used:
+
+
+
+
+
+
+
+                                         Page - 42
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          CSOUT     14C9    Send  character  to  cassette   and  update
+                            checksum.
+          (14C1)
+                            Entry: [A] = character
+                                   [C] = current checksum
+                            Exit:  [C] = updated checksum
+                            Registers Used: A,F,C
+
+          SYNCW     6F6E    Write cassette header and sync byte only.
+          (6F46)
+                            Entry: None
+                            Exit:  None
+                            Registers Used: A,F,B,C,D
+
+          DATAW     6F83    Write  a   character  to  cassette  without
+                            updating checksum.
+          (6F5B)
+                            Entry: [A] = character
+                            Exit:  None
+                            Registers Used: A,F,B,E
+
+          SYNCR     6FAD    Read cassette header and control byte only.
+          (6F85)
+                            Entry: None
+                            Exit:  None
+                            Registers Used:
+
+          DATAR     7052    Read char from cassette, no checksum.
+          (702A)
+                            Entry: None
+                            Exit:  [D] = character
+                            Registers Used:
+
+          RAM FILES ROUTINES
+          ------------------------------------------------------------
+          KILASC    1FD0    Delete a text file.   (NB,  Seems to return
+                            to main menu.)
+          (1FBE)
+                            Entry: [DE] = TOP address of file.
+                                   [HL] = directory address
+                            Exit:  None
+                            Registers Used:
+
+
+
+
+
+
+
+
+
+                                         Page - 43
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          MAKTXT    2228    Create a text (.DO) file.
+          (220F)
+                            Entry: Filename must be in FILNM1 buffer at
+                                   FC99 (max 8 Bytes) .DO extention not
+                                   required.
+                            Exit:  [HL] = TOP address of new file.
+                                   [DE] = Address of directory entry.
+                                   C flag  set if  file already exists,
+                                   otherwise reset.
+                            Registers Used:
+
+          CHKDC     5AB3    Search for file in directory.
+          (5AAB)
+                            Entry: [A] contains number of characters in
+                                   filename  plus  period  symbol  plus
+                                   extension.
+                                   [DE] Address of U/C  ASCIIZ filename
+                                   string.
+                            Exit:  [HL]  =  start  address of directory
+                                   entry of the file.
+                                   Z  flag  set  if   file  not  found,
+                                   otherwise reset.
+                            Registers Used: All
+
+          GTXTTB    5AEB    Get TOP address of file.
+          (5AE3)
+                            Entry: [HL] = directory address
+                            Exit:  [HL] = TOP address of file.
+                            Registers Used: F,D,E,H,L
+
+          INSCHR    6B66    Insert a character in a text file.
+          (6B61)
+                            Entry: [A] = character to insert.
+                                   [HL]  =  address  at which to insert
+                                   character.
+                            Exit:  [HL] = [HL] + 1
+                                   C flag set if out of memory.
+
+          MAKHOL    6B72    Insert specified  number of  spaces in text
+                            file.
+
+                            Entry: [BC] = number of spaces to insert.
+                                   [HL]  =  address  at which to insert
+                                   spaces.
+                            Exit:  [HL] and [BC] preserved.
+                                   C flag set if out of memory.
+
+
+
+
+
+                                         Page - 44
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          MASDEL    6BA4    Delete specified number of characters.  NB,
+                            [HL] MUST point to a valid text file!
+
+                            Entry: [BC]  =   number  of  characters  to
+                                   delete.
+                                   [HL] =  address  at  which  to start
+                                   delete.
+                            Exit:  [BC] and [HL] preserved.
+                            Registers Used: A,F,D,E
+
+          MISCELLANEOUS ROUTINES
+          ------------------------------------------------------------
+          UCOMP     0018    Compare [DE] and [HL].  Also RST 3.
+          (0018)
+                            Entry: [HL] &  [DE] contain 16 bit unsigned
+                                   integers.
+                            Exit:  [HL] < [DE] C set, and Z clear
+                                   [HL] = [DE] Z set
+                                   [HL] > [DE] C and Z clear
+
+          GETUPR    0FEB    Get character and convert to U/C.
+          (0FE8)
+                            Entry: [HL] points to character.
+                            Exit:  [A] Contains U/C character.
+                            Registers Used: A,F
+
+          TOUPER    0FEC    Convert Character to U/C.
+          (0FE9)
+                            Entry: [A] Contains character.
+                            Exit:  [A] contains U/C character.
+                            Registers Used: A,F
+
+          TIME      1919    Read system time.
+          (190F)
+                            Entry: [HL] = address of 8 byte  buffer for
+                                   time.
+                            Exit:  [HL]  points  to  last ASCII byte of
+                                   time     hh:mm:ss.     String    not
+                                   terminated.
+                            Registers Used: All
+
+          DATE      1939    Read System date.
+          (192F)
+                            Entry: [HL] =  address of 8 byte buffer for
+                                   date.
+                            Exit:  [HL] points to  last  ASCII  byte of
+                                   date    mm/dd/yy.       String   not
+                                   terminated.
+                            Registers Used: All
+
+
+                                         Page - 45
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          DAY       196C    Read system day.
+          (1962)
+                            Entry: [HL] = address of 3 byte  buffer for
+                                   day.
+                            Exit:  None
+                            Registers Used: All
+
+          LENSTR    2213    Count   number   of   characters   in   NUL
+                            terminated string.  NB.  String length must
+                            be less than 256 bytes.
+          (21FA)
+                            Entry: [HL] points to start of string.
+                            Exit:  [E] contains number of characters.
+                                   [HL] preserved.
+                                   [A] contains NUL byte.
+                            Registers Used: A,F,E
+
+          BLKUP     3483    Move specified number of bytes in ascending
+                            sequence.
+          (3469)
+                            Entry: [B] = number of bytes to move
+                                   [DE] = source address
+                                   [HL] = target address
+                            Exit:  None
+                            Registers Used: A,F,B,D,E,H,L
+
+          BLKDN     348C    Move   specified   number   of   bytes   in
+                            descending sequence.
+          (3472)
+                            Entry: [B] = number of bytes to move
+                                   [DE] = source address
+                                   [HL] = target address
+                            Exit:  None
+                            Registers Used: A,F,B,D,E,H,L
+
+          SCOMP     34DC    Signed Integer Comparison.
+          (34C2)
+                            Entry: [HL] & [DE] contain signed integers.
+                            Exit:  [HL] < [DE] [A] = FF (-1)
+                                   [HL] = [DE] [A] = 0, & Z flag set
+                                   [HL] > [DE] [A] = 1
+
+          PRNTINT   39EE    Print ASCII decimal contents of [HL].
+          (39D4)
+                            Entry: [HL] contains unsigned integer.
+                            Exit:  None
+                            Registers Used: All.
+
+
+
+
+                                         Page - 46
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          CHKMUC    410E    Check if [HL] points to U/C character.
+          (40F1)
+                            Entry: [HL] = address of character.
+                            Exit:  C  flag   is  set   if  lower  case,
+                                   otherwise reset.
+                            Registers Used: A,F,H,L
+
+          CHKAUC    410F    Check if [A] contains U/C character.
+          (40F2)
+                            Entry: [A] = character to check.
+                            Exit:  C  flag   is  set   if  lower  case,
+                                   otherwise reset.
+                            Registers Used: A,F
+
+          NULFILL   4F12    Fill memory with NUL
+          (4F0A)
+                            Entry: [HL] points to start of memory
+                                   [B] contains number of bytes to fill
+                            Exit:  [HL] points to last byte + 1
+                                   [A] = 0
+                                   [B] = 0
+                            Registers Used: A,F,B,H,L
+
+          CHRFILL   4F13    Fill memory with character.
+          (4F0B)
+                            Entry: [HL] points to start of memory
+                                   [A] contains fill byte
+                                   [B] contains number of bytes to fill
+                            Exit:  [HL] points to last byte + 1
+                                   [B] = 0
+                            Registers Used: A,F,B,H,L
+
+          MENU      57A2    Go to main menu.
+          (5797)
+                            No entry or exit conditions.
+
+          MOVUP     6BE0    Move specified number of bytes in ascending
+                            sequence.
+          (6BDB)
+                            Entry: [HL] = source address
+                                   [DE] = target address
+                                   [BC] = number of bytes
+                            Exit:  None
+                            Registers Used: All
+
+
+
+
+
+
+
+                                         Page - 47
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          MOVDN     6BEB    Move   specified   number   of   bytes   in
+                            descending sequence.
+          (6BE6)
+                            Entry: [HL] = source address
+                                   [DE] = target address
+                                   [BC] = number of bytes
+                            Exit:  None
+                            Registers Used: All
+
+          INITIO    6CDB    Cold start reset.
+          (6CD6)
+                            No Entry/Exit conditions.
+
+          IOINIT    6CE5    Warm start reset.
+          (6CE0)
+                            No Entry/Exit conditions.
+
+          MUSIC     72FB    Make   tone   of  specified  frequency  and
+                            duration.
+          (72C5)
+                            Entry: [DE] = frequency
+                                   [B] = duration
+                            Exit:  [DE] preserved.
+                            Registers Used: A,F,B,C
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                         Page - 48
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          SYSTEM INFORMATION
+          ------------------------------------------------------------
+          RESERVED RAM LOCATIONS
+
+          HIMEM     F5F4  (F5F4) HIMEM Pointer
+          CURY      F63C  (F639) Cursor row location  (0-7)
+          CURX      F63D  (F63A) Cursor column location  (0-39)
+          ACTLIN    F63E  (F63B) Number of active lines  (0-7)
+          ACTCOL    F63D  (F63C) Number of active columns  (0-39)
+          LBLFLG    F640  (F63D) Label line flag. 0 = unused, 1 = used.
+          REVFLG    F64B  (F648) Reverse video flag.  0 = Normal
+          LFFLAG    F65D  (F65A) Linefeed switch. 0 = LF, Non-Zero = LF
+          STATBF    F65E  (F65B) Current STAT image, eg M7E1D
+          PRTPOS    F677  (F674) Line Printer head position
+          LCDFLG    F678  (F675) LCD flag.  0 = Screen, 1 = Printer.
+          INBUF     F688  (F685) 256 byte input buffer.
+          CURLOC    F78B  (F788) Current horizontal location of cursor
+          DIRTBL    F965  (F692) Start of directory table.
+          DOBAFL    FBB4  (FBAE) Pointer to start of  DO and  end of BA
+                                 files
+          COFILE    FBB6  (FBB0) Pointer to start of CO files
+          VARTAB    FBB8  (FBB2) Pointer to start of variable table
+          ARRYTB    FBBA  (FBB4) Pointer to start od array table
+          FRERAM    FBBC  (FBB6) Pointer  to  start  of  system  unused
+                                 memory.
+          FILNM1    FC99  (FC93) Filename buffer #1
+          FILNM2    FCA2  (FC9C) Filename buffer #2
+          LCDMEM    FE00  (FE00) Start of LCD RAM.  Extends to FF40.
+          SNDFLG    FF44  (FF44) Sound flag.  0 = ON, $AF = OFF
+          NUMCHR    FF6D  (FFAA) Number of characters in KB buffer
+          KYBUFF    FF6E  (FFAB) 64 byte keyboard  buffer.    Odd bytes
+                                 contain ASCII,  an $FF in an even byte
+                                 indicates a function key.
+          CURIMG    FF8F  (FFEC) 5 bytes that contain  a  bit  image of
+                                 the  character  underneath the current
+                                 cursor location.
+
+          Address  references  in  parentheses   are   the   Model  100
+          equivalents.
+
+
+
+
+
+
+
+
+
+
+
+
+                                         Page - 49
+
+
+
+
+
+                              OLIVETTI M-10 ROM/RAM
+
+          UART CONFIGURATION CODE
+
+          Bit 0     Specifies number of stop bits. 0 = 1, 1 = 2
+          Bits 1/2  Parity.  00 = None, 01 = Even, 10 = Odd.
+          Bits 3/4  Word Length.  00 = 6, 01 = 7, 10 = 8.
+                    The configuration  code byte  is ANDed  with $1F to
+                    ignore bits  5-7.   The text  string containing the
+                    current  STAT  setting  is  located  in  the STATBF
+                    location  at  F65E,  in  the  order  Baud,  Length,
+                    Parity, Stop Bits, and XON/XOFF switch.
+
+          DIRECTORY ORGANIZATION
+
+          Each file is managed by an 11 byte directory entry.
+
+          Byte 1    Directory Flag for file type and status.
+          Byte 2-3  Address of file in RAM.
+          Byte 4-11 8 Byte file name and extension.
+
+          Directory Flag is organised thus:-
+
+          Bit 7     1 if valid entry
+          Bit 6     1 if ASCII text file (.DO)
+          Bit 5     1 if machine language file (.CO)
+          Bit 4     1 if file is in ROM
+          Bit 3     1 if file is invisible
+          Bit 2     Reserved for future use
+          Bit 1     Reserved for future use
+          Bit 0     Internal use.
+
+          Document Revision date: 21 June 1990
+          DEBUG Version: 4.13 21/June/1990
+          A. Ryan [72007,1743]
+          P.O. Box 222
+          Carp,
+          Ontario,
+          Canada, K0A-1L0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                         Page - 50
+
