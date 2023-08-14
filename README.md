@@ -14,7 +14,7 @@ Meanwhile the M100SIG remained and still remains a single huge resource like a l
 
 But also unlike a web site, a zip file is a static thing, and nothing new has been added to it almost since inception.
 
-However in the intervening time, several forms of revision-controlled repositories have been invented and become standard, and today, a repository is essentially as handy and portable as a zip or tar file, in that it's a single simple command to download or upload the whole thing, yet it's also published abd publicly browsable like a web site, and the live copy is updatable like a web site.
+However in the intervening time, several forms of revision-controlled repositories have been invented and become standard, and today, a repository is essentially as handy and portable as a zip or tar file, in that it's a single simple command to download or upload the whole thing, yet it's also published and publicly browsable like a web site, and the live copy is updatable like a web site.
 
 There have been other instances of hosting the M100SIG and similar material on web sites in an un-packed browseable form, but those were all web sites, each operated by an individual for some finite period of time. They are always either broken, annoyingly unlinkable, [outdated](http://club100.org), [limited and haphazard](http://tandy.wiki), or the most tragic, simply [no longer exist at all](https://www.mail-archive.com/m100@lists.bitchin100.com/msg15407.html).
 
