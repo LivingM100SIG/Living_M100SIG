@@ -2,7 +2,7 @@
 # The Living M100SIG
 This is a "living" version of the great [M100SIG archive](https://archive.org/details/M100SIG)  
 
-The M100SIG archive is a zip file containing much of the files section of the Model 100 Special Interest Group from CompuServe from the 80's and 90's, which was a collection of discussion forums and files on topics relating to the TRS-80 Model 100 computer and it's various clones and accessories.
+The M100SIG archive is a zip file containing much of the files section of the Model 100 Special Interest Group from CompuServe (hence the design of the logo) from the 80's and 90's, which was a collection of discussion forums and files on topics relating to the TRS-80 Model 100 computer and it's various clones and accessories.
 
 It contains a wealth of software and info assembled over many years, but also has been stagnant for decades since it was created.
 
