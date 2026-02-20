@@ -1,167 +1,167 @@
-		      TANDY 200 ROM INFORMATION
-			  USA/CANADA VERSION
-			  
-	      Excerpted and reformatted by hackerb9 from
-	   Tandy 200 Technical Reference Manual, Appendix D
-			      (26-3861)
-				   
+                      TANDY 200 ROM INFORMATION
+                         USA / CANADA VERSION
+
+              Excerpted and reformatted by hackerb9 from
+           Tandy 200 Technical Reference Manual, Appendix D
+                              (26-3861)
+
 These pages provide essential information for using ROM functions.
 
 LCD Functions
 =============================================================================
-| Function | Entry |	Entry/ |					    |
-| Name	   | Addr  |	  Exit | Description				    |
-|	   |	   | Condition |					    |
+| Function | Entry |    Entry/ |                                            |
+| Name     | Addr  |      Exit | Description                                |
+|          |       | Condition |                                            |
 |----------|-------|----------:|--------------------------------------------|
-| LCDPUT   | 503C  |	       | Displays a character on the LCD at current |
-|	   |	   |	       | cursor position. (Also RST 4)		    |
-|	   |	   |	Entry: |					    |
-|	   |	   |	     A | = character to be displayed		    |
-|	   |	   |	 Exit: | none					    |
+| LCDPUT   | 503C  |           | Displays a character on the LCD at current |
+|          |       |           | cursor position. (Also RST 4)              |
+|          |       |    Entry: |                                            |
+|          |       |         A | = character to be displayed                |
+|          |       |     Exit: | none                                       |
 |----------|-------|----------:|--------------------------------------------|
-| SETCUR   | 8D6A  |	       | Move cursor to specified location.	    |
-|	   |	   |	Entry: |					    |
-|	   |	   |	     D | = x coordinate (1-40)			    |
-|	   |	   |	     E | = y coordinate (1-16)			    |
-|	   |	   |	 Exit: | none					    |
+| SETCUR   | 8D6A  |           | Move cursor to specified location.         |
+|          |       |    Entry: |                                            |
+|          |       |         D | = x coordinate (1-40)                      |
+|          |       |         E | = y coordinate (1-16)                      |
+|          |       |     Exit: | none                                       |
 |----------|-------|----------:|--------------------------------------------|
-| PLOT	   | 8D76  |	       | Turn on pixel at specified location.	    |
-|	   |	   |	Entry: |					    |
-|	   |	   |	     D | = x coordinate (0-239)			    |
-|	   |	   |	     E | = y coordinate (0-127)			    |
-|	   |	   |	 Exit: | none					    |
+| PLOT     | 8D76  |           | Turn on pixel at specified location.       |
+|          |       |    Entry: |                                            |
+|          |       |         D | = x coordinate (0-239)                     |
+|          |       |         E | = y coordinate (0-127)                     |
+|          |       |     Exit: | none                                       |
 |----------|-------|----------:|--------------------------------------------|
-| UNPLOT   | 8D77  |	       | Turn off pixel at specified location.	    |
-|	   |	   |	Entry: |					    |
-|	   |	   |	     D | = x coordinate (0-239)			    |
-|	   |	   |	     E | = y coordinate (0-127)			    |
-|	   |	   |	 Exit: | none					    |
+| UNPLOT   | 8D77  |           | Turn off pixel at specified location.      |
+|          |       |    Entry: |                                            |
+|          |       |         D | = x coordinate (0-239)                     |
+|          |       |         E | = y coordinate (0-127)                     |
+|          |       |     Exit: | none                                       |
 |----------|-------|----------:|--------------------------------------------|
-| POSIT	   | 4F9B  |	       | Set cursor position.			    |
-|	   |	   |	       | [? Same as SETCUR, but HL instead of DE ?] |
-|	   |	   |	Entry: |					    |
-|	   |	   |	     H | = column number (1-40)			    |
-|	   |	   |	     L | = row number (1-16)			    |
-|	   |	   |	 Exit: | none					    |
+| POSIT    | 4F9B  |           | Set cursor position.                       |
+|          |       |           | [? Same as SETCUR, but HL instead of DE ?] |
+|          |       |    Entry: |                                            |
+|          |       |         H | = column number (1-40)                     |
+|          |       |         L | = row number (1-16)                        |
+|          |       |     Exit: | none                                       |
 |----------|-------|----------:|--------------------------------------------|
-| ESCA	   | 4F8F  |	       | Send specified Escape Code Sequence.	    |
-|	   |	   |	Entry: |					    |
-|	   |	   |	     A | = escape code (see table below)	    |
-|	   |	   |	 Exit: | none					    |
+| ESCA     | 4F8F  |           | Send specified Escape Code Sequence.       |
+|          |       |    Entry: |                                            |
+|          |       |         A | = escape code (see table below)            |
+|          |       |     Exit: | none                                       |
 |----------|-------|----------:|--------------------------------------------|
 
 
 Routines for Generating Common LCD Functions and Escape Codes
 ---------------------------------------------------------------------------
-| Function |					       | Entry	 | Equiv. |
-| Name	   | Description			       | Address | ESC	  |
-|	   |					       | (Hex.)	 |	  |
+| Function |                                           | Entry   | Equiv. |
+| Name     | Description                               | Address | ESC    |
+|          |                                           | (Hex.)  |        |
 |----------|-------------------------------------------|---------|--------|
-| CRLF	   | Generate a Carriage Return and	       | 4F3E	 | -	  |
-|	   | Line Feed on LCD			       |	 |	  |
+| CRLF     | Generate a Carriage Return and            | 4F3E    | -      |
+|          | Line Feed on LCD                          |         |        |
 |----------|-------------------------------------------|---------|--------|
-| HOME	   | Move cursor to Home position (1,1)	       | 4F49	 | - [H?] |
+| HOME     | Move cursor to Home position (1,1)        | 4F49    | - [H?] |
 |----------|-------------------------------------------|---------|--------|
-| CLS	   | Clear display			       | 4F4D	 | -	  |
+| CLS      | Clear display                             | 4F4D    | -      |
 |----------|-------------------------------------------|---------|--------|
-| SETSYS   | Set system line (lock line 16, LABEL)     | 4F54	 | T	  |
+| SETSYS   | Set system line (lock line 16, LABEL)     | 4F54    | T      |
 |----------|-------------------------------------------|---------|--------|
-| RSTSYS   | RESET system line (unlock line 16, LABEL) | 4F59	 | U	  |
+| RSTSYS   | RESET system line (unlock line 16, LABEL) | 4F59    | U      |
 |----------|-------------------------------------------|---------|--------|
-| LOCK	   | Lock display (no scrolling)	       | 4F5E	 | V	  |
+| LOCK     | Lock display (no scrolling)               | 4F5E    | V      |
 |----------|-------------------------------------------|---------|--------|
-| UNLOCK   | unlock display (scrolling)		       | 4F63	 | W	  |
+| UNLOCK   | unlock display (scrolling)                | 4F63    | W      |
 |----------|-------------------------------------------|---------|--------|
-| CURSON   | Turn cursor on			       | 4F68	 | P	  |
+| CURSON   | Turn cursor on                            | 4F68    | P      |
 |----------|-------------------------------------------|---------|--------|
-| CURSOF   | Turn cursor off			       | 4F6D	 | Q	  |
+| CURSOF   | Turn cursor off                           | 4F6D    | Q      |
 |----------|-------------------------------------------|---------|--------|
-| DELLIN   | Delete line at current cursor position    | 4F72	 | M	  |
+| DELLIN   | Delete line at current cursor position    | 4F72    | M      |
 |----------|-------------------------------------------|---------|--------|
-| INSLIN   | Insert a blank line at cursor position    | 4F77	 | L	  |
+| INSLIN   | Insert a blank line at cursor position    | 4F77    | L      |
 |----------|-------------------------------------------|---------|--------|
-| ERAEOL   | Erase from cursor to end of line	       | 4F7C	 | K	  |
+| ERAEOL   | Erase from cursor to end of line          | 4F7C    | K      |
 |----------|-------------------------------------------|---------|--------|
-| ENTREV   | Enter Reverse character mode	       | 4F88	 | p	  |
+| ENTREV   | Enter Reverse character mode              | 4F88    | p      |
 |----------|-------------------------------------------|---------|--------|
-| EXTREV   | Exit Reverse character mode	       | 4F8D	 | q	  |
+| EXTREV   | Exit Reverse character mode               | 4F8D    | q      |
 |----------|-------------------------------------------|---------|--------|
 
 
 Variable and Status Locations
 -----------------------------------------------
-| Name	 | Contents		    | Address |
+| Name   | Contents                 | Address |
 |--------|--------------------------|---------|
-| CSRY	 | Cursor Position (ROW)    | EF06    |
-| CSRX	 | Cursor Position (Column) | EF07    |
-| BEGLCD | Start of LCD memory	    | FA30    |
-| ENDLCD | End of LCD memory	    | FCAF    |
+| CSRY   | Cursor Position (ROW)    | EF06    |
+| CSRX   | Cursor Position (Column) | EF07    |
+| BEGLCD | Start of LCD memory      | FA30    |
+| ENDLCD | End of LCD memory        | FCAF    |
 |--------|--------------------------|---------|
 
 
 Keyboard Functions
 =========================================================================
-| Function | Entry |   Entry / |					|
-| Name	   | Addr  |	  Exit | Description				|
-|	   |	   | Condition |					|
+| Function | Entry |   Entry / |                                        |
+| Name     | Addr  |      Exit | Description                            |
+|          |       | Condition |                                        |
 |----------|-------|----------:|----------------------------------------|
-| KYREAD   | 8B08  |	       | Scan keyboard for a key,		|
-|	   |	   |	       | return with or without one.		|
-|	   |	   |	Entry: | none					|
-|	   |	   |	 Exit: |					|
-|	   |	   |	     A | = Character, if any			|
-|	   |	   |	Z flag | = set if no key found			|
-|	   |	   |	     " | = reset if key found			|
-|	   |	   |	 Carry | = set (character in code table below)	|
-|	   |	   |	     " | = reset (normal character code)	|
-|	   |	   | If Carry: |					|
-|	   |	   |	   A=0 | F1					|
-|	   |	   |	   A=1 | F2					|
-|	   |	   |	   A=2 | F3					|
-|	   |	   |	   A=3 | F4					|
-|	   |	   |	   A=4 | F5					|
-|	   |	   |	   A=5 | F6					|
-|	   |	   |	   A=6 | F7					|
-|	   |	   |	   A=7 | F8					|
-|	   |	   |	   A=8 | LABEL					|
-|	   |	   |	   A=9 | PRINT					|
-|	   |	   |	  A=0A | SHIFT-PRINT				|
-|	   |	   |	  A=0B | PASTE					|
+| KYREAD   | 8B08  |           | Scan keyboard for a key,               |
+|          |       |           | return with or without one.            |
+|          |       |    Entry: | none                                   |
+|          |       |     Exit: |                                        |
+|          |       |         A | = Character, if any                    |
+|          |       |    Z flag | = set if no key found                  |
+|          |       |         " | = reset if key found                   |
+|          |       |     Carry | = set (character in code table below)  |
+|          |       |         " | = reset (normal character code)        |
+|          |       | If Carry: |                                        |
+|          |       |       A=0 | F1                                     |
+|          |       |       A=1 | F2                                     |
+|          |       |       A=2 | F3                                     |
+|          |       |       A=3 | F4                                     |
+|          |       |       A=4 | F5                                     |
+|          |       |       A=5 | F6                                     |
+|          |       |       A=6 | F7                                     |
+|          |       |       A=7 | F8                                     |
+|          |       |       A=8 | LABEL                                  |
+|          |       |       A=9 | PRINT                                  |
+|          |       |      A=0A | SHIFT-PRINT                            |
+|          |       |      A=0B | PASTE                                  |
 |----------|-------|----------:|----------------------------------------|
-| CHGET	   | 12F7  |	       | Wait and get character from keyboard	|
-|	   |	   |	Entry: | none					|
-|	   |	   |	 Exit: |					|
-|	   |	   |	     A | = character code			|
-|	   |	   |	 Carry | = set if special character (see above) |
-|	   |	   |	     " | = reset if normal character		|
-|	   |	   |	       | (F1 - F8 return preprogrammed strings) |
+| CHGET    | 12F7  |           | Wait and get character from keyboard   |
+|          |       |    Entry: | none                                   |
+|          |       |     Exit: |                                        |
+|          |       |         A | = character code                       |
+|          |       |     Carry | = set if special character (see above) |
+|          |       |         " | = reset if normal character            |
+|          |       |           | (F1 - F8 return preprogrammed strings) |
 |----------|-------|----------:|----------------------------------------|
-| CHSNS	   | 1404  |	       | Check keyboard queue for characters	|
-|	   |	   |	Entry: | none					|
-|	   |	   |	 Exit: |					|
-|	   |	   |	Z flag | = set if queue empty,			|
-|	   |	   |	     " | = reset if keys pending		|
+| CHSNS    | 1404  |           | Check keyboard queue for characters    |
+|          |       |    Entry: | none                                   |
+|          |       |     Exit: |                                        |
+|          |       |    Z flag | = set if queue empty,                  |
+|          |       |         " | = reset if keys pending                |
 |----------|-------|----------:|----------------------------------------|
-| KEYX	   | 8B31  |	       | Check keyboard queue for		|
-|	   |	   |	       | character or BREAK.			|
-|	   |	   |	Entry: | none					|
-|	   |	   |	 Exit: |					|
-|	   |	   |	Z flag | = set if queue empty,			|
-|	   |	   |	       | = reset if keys pending		|
-|	   |	   |	 Carry | = Set when BREAK entered		|
-|	   |	   |	       | = Reset with any other key		|
+| KEYX     | 8B31  |           | Check keyboard queue for               |
+|          |       |           | character or BREAK.                    |
+|          |       |    Entry: | none                                   |
+|          |       |     Exit: |                                        |
+|          |       |    Z flag | = set if queue empty,                  |
+|          |       |           | = reset if keys pending                |
+|          |       |     Carry | = Set when BREAK entered               |
+|          |       |           | = Reset with any other key             |
 |----------|-------|----------:|----------------------------------------|
-| BRKCHK   | 8B4D  |	       | Check for BREAK characters only	|
-|	   |	   |	       | (CTRL-C or -S)				|
-|	   |	   |	Entry: | none					|
-|	   |	   |	 Exit: |					|
-|	   |	   |	 Carry | = set if BREAK or PAUSE entered	|
-|	   |	   |	     " | = reset if no BREAK characters		|
+| BRKCHK   | 8B4D  |           | Check for BREAK characters only        |
+|          |       |           | (CTRL-C or -S)                         |
+|          |       |    Entry: | none                                   |
+|          |       |     Exit: |                                        |
+|          |       |     Carry | = set if BREAK or PAUSE entered        |
+|          |       |         " | = reset if no BREAK characters         |
 |----------|-------|----------:|----------------------------------------|
-| INLIN	   | 54F6  |	       | Get line from keyboard			|
-|	   |	   |	       | (terminated by ENTER)			|
-|	   |	   |	Entry: | none					|
-|	   |	   |	 Exit: | data stored at location F685		|
+| INLIN    | 54F6  |           | Get line from keyboard                 |
+|          |       |           | (terminated by ENTER)                  |
+|          |       |    Entry: | none                                   |
+|          |       |     Exit: | data stored at location F685           |
 |----------|-------|----------:|----------------------------------------|
 
 
@@ -170,272 +170,279 @@ Using Function Keys Routines
 
 The function table consists of character strings to be used by the keyboard
 driver when processing F1 - F8 keys. The strings have maximum length of 16
-characters and are terminated by a “80” (Hex.) code. If the last character of the
-string is OR’ed with 80, the character will also serve as a terminator. The entire
-string will be placed in the keyboard buffer when the appropriate strings for all 8
-keys are pressed. You must specify character strings for all 8 function keys (use
-the terminator bytes for any you wish to ignore).
+characters and are terminated by a “80” (Hex.) code. If the last character of
+the string is OR’ed with 80, the character will also serve as a terminator.
+The entire string will be placed in the keyboard buffer when the appropriate
+strings for all 8 keys are pressed. You must specify character strings for
+all 8 function keys (use the terminator bytes for any you wish to ignore).
 
 Example of function table:
 --------------------------
-FCTAB	DEFM	'Files'		; F1
-	DEFW	0D80
-	DEFM	'Load'		; F2
-	DEFB	80
-	DEFM	'Save'		; F3
-	DEFB	80
-	DEFM	'Run'		; F4
-	DEFW	0D80
-	DEFM	'list'		; F5
-	DEFW	0D80
-	DEFB	80		; Ignore F6
-	DEFB	80		; Ignore F7
-	DEFM	'Menu'		; F8
-	DEFW	0D80
+FCTAB   DEFM    'Files'     ; F1
+    DEFW    0D80
+    DEFM    'Load'      ; F2
+    DEFB    80
+    DEFM    'Save'      ; F3
+    DEFB    80
+    DEFM    'Run'       ; F4
+    DEFW    0D80
+    DEFM    'list'      ; F5
+    DEFW    0D80
+    DEFB    80      ; Ignore F6
+    DEFB    80      ; Ignore F7
+    DEFM    'Menu'      ; F8
+    DEFW    0D80
 
 -----------------------------------------------------------------------
-| Function | Entry | Entry/Exit |				      |
-| Name	   | Addr  |  Condition | Description			      |
+| Function | Entry | Entry/Exit |                                     |
+| Name     | Addr  |  Condition | Description                         |
 |----------|-------|-----------:|-------------------------------------|
-| STFNK	   | 6E20  |		| Set function key definitions	      |
-|	   |	   |	 Entry: |				      |
-|	   |	   |	     HL | = Address of function table (above) |
-|	   |	   |	  Exit: | none				      |
+| STFNK    | 6E20  |            | Set function key definitions        |
+|          |       |     Entry: |                                     |
+|          |       |         HL | = Address of function table (above) |
+|          |       |      Exit: | none                                |
 |----------|-------|-----------:|-------------------------------------|
-| CLFNK	   | 6E1D  |		| Clear function key definition table |
-|	   |	   |		| (fills with 80's)		      |
-|	   |	   |	 Entry: | none				      |
-|	   |	   |	  Exit: | none				      |
+| CLFNK    | 6E1D  |            | Clear function key definition table |
+|          |       |            | (fills with 80's)                   |
+|          |       |     Entry: | none                                |
+|          |       |      Exit: | none                                |
 |----------|-------|-----------:|-------------------------------------|
-| DSPFNK   | 4FC7  |		| Display function keys		      |
-|	   |	   |	 Entry: | none				      |
-|	   |	   |	  Exit: | none				      |
+| DSPFNK   | 4FC7  |            | Display function keys               |
+|          |       |     Entry: | none                                |
+|          |       |      Exit: | none                                |
 |----------|-------|-----------:|-------------------------------------|
-| STDSPF   | 4FC4  |		| Set and display function keys:      |
-|	   |	   |	 Entry: |				      |
-|	   |	   |	     HL | = Start address of function table   |
-|	   |	   |	  Exit: | none				      |
+| STDSPF   | 4FC4  |            | Set and display function keys:      |
+|          |       |     Entry: |                                     |
+|          |       |         HL | = Start address of function table   |
+|          |       |      Exit: | none                                |
 |----------|-------|-----------:|-------------------------------------|
-| ERAFNK   | 4FA9  |		| Erase function key display	      |
-|	   |	   |	 Entry: | none				      |
-|	   |	   |	  Exit: | none				      |
+| ERAFNK   | 4FA9  |            | Erase function key display          |
+|          |       |     Entry: | none                                |
+|          |       |      Exit: | none                                |
 |----------|-------|-----------:|-------------------------------------|
-| FNKSB	   | 6E42  |		| Display function table (if enabled) |
-|	   |	   |	 Entry: | none				      |
-|	   |	   |	  Exit: | none				      |
+| FNKSB    | 6E42  |            | Display function table (if enabled) |
+|          |       |     Entry: | none                                |
+|          |       |      Exit: | none                                |
 |----------|-------|-----------:|-------------------------------------|
 
 
 Printing Routines
 ========================================================================
-| Function | Entry | Entry/Exit |				       |
-| Name	   | Addr  |   Conditon | Description			       |
+| Function | Entry | Entry/Exit |                                      |
+| Name     | Addr  |   Conditon | Description                          |
 |----------|-------|-----------:|--------------------------------------|
-| PRINTER  | 84C9  |		| Send a character to the line printer |
-|	   |	   |	 Entry: |				       |
-|	   |	   |	      A | = character to be printed	       |
-|	   |	   |	  Exit: |				       |
-|	   |	   |	  Carry | = set if cancelled by BREAK	       |
-|	   |	   |		| = reset if normal return	       |
+| PRINTER  | 84C9  |            | Send a character to the line printer |
+|          |       |     Entry: |                                      |
+|          |       |          A | = character to be printed            |
+|          |       |      Exit: |                                      |
+|          |       |      Carry | = set if cancelled by BREAK          |
+|          |       |            | = reset if normal return             |
 |----------|-------|-----------:|--------------------------------------|
-| CHPLPT   | 1590  |		| Print character		       |
-|	   |	   |		| (without expanding tab characters)   |
-|	   |	   |	 Entry: |				       |
-|	   |	   |	      A | = character to be printed	       |
-|	   |	   |	  Exit: | [unspecified in manual]	       |
+| CHPLPT   | 1590  |            | Print character                      |
+|          |       |            | (without expanding tab characters)   |
+|          |       |     Entry: |                                      |
+|          |       |          A | = character to be printed            |
+|          |       |      Exit: | [unspecified in manual]              |
 |----------|-------|-----------:|--------------------------------------|
-| OUTDLP   | 5A14  |		| Print a character		       |
-|	   |	   |		| (expanding tabs to spaces)	       |
-|	   |	   |	 Entry: |				       |
-|	   |	   |	      A | = character to be printed	       |
-|	   |	   |	  Exit: | [unspecified in manual]	       |
+| OUTDLP   | 5A14  |            | Print a character                    |
+|          |       |            | (expanding tabs to spaces)           |
+|          |       |     Entry: |                                      |
+|          |       |          A | = character to be printed            |
+|          |       |      Exit: | [unspecified in manual]              |
 |----------|-------|-----------:|--------------------------------------|
-| LCOPY	   | 2946  |		| Print contents of LCD		       |
-|	   |	   |	 Entry: | none				       |
-|	   |	   |	  Exit: | none				       |
+| LCOPY    | 2946  |            | Print contents of LCD                |
+|          |       |     Entry: | none                                 |
+|          |       |      Exit: | none                                 |
 |----------|-------|-----------:|--------------------------------------|
 
 
 RS232-C and MODEM Routines
 ==============================================================================
-| Function | Entry |	  Entry |					     |
-| Name	   | Addr  |	 / Exit | Description				     |
-|	   |	   |  Condition |					     |
+| Function | Entry |      Entry |                                            |
+| Name     | Addr  |     / Exit | Description                                |
+|          |       |  Condition |                                            |
 |----------|-------|-----------:|--------------------------------------------|
-| DISHHC   | 61BA  |		| Disconnect Phone Line			     |
-|	   |	   |	 Entry: | none					     |
-|	   |	   |	  Exit: | none					     |
+| DISHHC   | 61BA  |            | Disconnect Phone Line                      |
+|          |       |     Entry: | none                                       |
+|          |       |      Exit: | none                                       |
 |----------|-------|-----------:|--------------------------------------------|
-| CONHHC   | 61D0  |		| Connect phone line			     |
-|	   |	   |	 Entry: | none					     |
-|	   |	   |	  Exit: | none					     |
+| CONHHC   | 61D0  |            | Connect phone line                         |
+|          |       |     Entry: | none                                       |
+|          |       |      Exit: | none                                       |
 |----------|-------|-----------:|--------------------------------------------|
-| ATDIAL   | 622B  |		| Dial a specified phone number		     |
-|	   |	   |	 Entry: |					     |
-|	   |	   |	     HL | = ph. number address			     |
-|	   |	   |	  Exit: | none					     |
+| ATDIAL   | 622B  |            | Dial a specified phone number              |
+|          |       |     Entry: |                                            |
+|          |       |         HL | = ph. number address                       |
+|          |       |      Exit: | none                                       |
 |----------|-------|-----------:|--------------------------------------------|
-| RCVX	   | 8508  |		| Check RS232C queue for characters	     |
-|	   |	   |	 Entry: | none					     |
-|	   |	   |	  Exit: |					     |
-|	   |	   |	      A | = number of characters in queue	     |
-|	   |	   |	 Z flag | = set if no data			     |
-|	   |	   |	      " | = reset if characters pending		     |
+| RCVX     | 8508  |            | Check RS232C queue for characters          |
+|          |       |     Entry: | none                                       |
+|          |       |      Exit: |                                            |
+|          |       |          A | = number of characters in queue            |
+|          |       |     Z flag | = set if no data                           |
+|          |       |          " | = reset if characters pending              |
 |----------|-------|-----------:|--------------------------------------------|
-| RV232C   | 8519  |		| Get a character from RS232 receive queue   |
-|	   |	   |	 Entry: | none					     |
-|	   |	   |	  Exit: |					     |
-|	   |	   |	      A | = character received			     |
-|	   |	   |	 Z flag | = set if O.K.				     |
-|	   |	   |	      " | = reset if error (PE,FF, or OF)	     |
-|	   |	   |	  Carry | = set if BREAK pressed, else reset	     |
+| RV232C   | 8519  |            | Get a character from RS232 receive queue   |
+|          |       |     Entry: | none                                       |
+|          |       |      Exit: |                                            |
+|          |       |          A | = character received                       |
+|          |       |     Z flag | = set if O.K.                              |
+|          |       |          " | = reset if error (PE,FF, or OF)            |
+|          |       |      Carry | = set if BREAK pressed, else reset         |
 |----------|-------|-----------:|--------------------------------------------|
-| SNDCQ	   | 8608  |		| Send an XON resume character (CTL-Q)	     |
-|	   |	   |	 Entry: | none					     |
-|	   |	   |	  Exit: | none					     |
+| SNDCQ    | 8608  |            | Send an XON resume character (CTL-Q)       |
+|          |       |     Entry: | none                                       |
+|          |       |      Exit: | none                                       |
 |----------|-------|-----------:|--------------------------------------------|
-| SNDCS	   | 8617  |		| Send an XOFF pause character (CTL-S)	     |
-|	   |	   |	 Entry: | none					     |
-|	   |	   |	  Exit: | none					     |
+| SNDCS    | 8617  |            | Send an XOFF pause character (CTL-S)       |
+|          |       |     Entry: | none                                       |
+|          |       |      Exit: | none                                       |
 |----------|-------|-----------:|--------------------------------------------|
-| SD232C   | 8643  |		| Send a character to the R232 or Modem	     |
-|	   |	   |		| (with XON/XOFF flow control)		     |
-|	   |	   |	 Entry: |					     |
-|	   |	   |	      A | = character to be sent		     |
-|	   |	   |	  Exit: |					     |
-|	   |	   |	  Carry | = set if BREAK pressed, else reset	     |
+| SD232C   | 8643  |            | Send a character to the R232 or Modem      |
+|          |       |            | (with XON/XOFF flow control)               |
+|          |       |     Entry: |                                            |
+|          |       |          A | = character to be sent                     |
+|          |       |      Exit: |                                            |
+|          |       |      Carry | = set if BREAK pressed, else reset         |
 |----------|-------|-----------:|--------------------------------------------|
-| CARDET   | 874A  |		| Detect carrier			     |
-|	   |	   |	 Entry: | none					     |
-|	   |	   |	  Exit: |					     |
-|	   |	   |	 Z flag | = set if carrier, else reset		     |
+| CARDET   | 874A  |            | Detect carrier                             |
+|          |       |     Entry: | none                                       |
+|          |       |      Exit: |                                            |
+|          |       |     Z flag | = set if carrier, else reset               |
 |----------|-------|-----------:|--------------------------------------------|
-| SNDCOM   | 8629  |		| Send a charactar to RS232-C or modem	     |
-|	   |	   |		| (without XON/XOFF flow control)	     |
-|	   |	   |	 Entry: |					     |
-|	   |	   |	      C | = character to be sent		     |
-|	   |	   |	  Exit: |					     |
-|	   |	   |	  Carry | = set if BREAK pressed, else reset	     |
+| SNDCOM   | 8629  |            | Send a charactar to RS232-C or modem       |
+|          |       |            | (waits for CTS then calls SD232C)          |
+|          |       |     Entry: |                                            |
+|          |       |          C | = character to be sent                     |
+|          |       |      Exit: |                                            |
+|          |       |      Carry | = set if BREAK pressed, else reset         |
 |----------|-------|-----------:|--------------------------------------------|
-| BAUDST   | 86AD  |		| Set Baud rate for RS232-C		     |
-|	   |	   |	 Entry: |					     |
-|	   |	   |	      H | = Baud rate (1-9, M)			     |
-|	   |	   |	  Exit: | none					     |
-|	   |	   |		|					     |
-|	   |	   |	  H='1' | [??? baud?]				     |
-|	   |	   |	  H='2' | 110 baud				     |
-|	   |	   |	  H='3' | 300 baud				     |
-|	   |	   |	  H='4' | 600 baud				     |
-|	   |	   |	  H='5' | 1200 baud				     |
-|	   |	   |	  H='6' | 2400 baud				     |
-|	   |	   |	  H='7' | 4800 baud				     |
-|	   |	   |	  H='8' | 9600 baud				     |
-|	   |	   |	  H='9' | 19200 baud				     |
-|	   |	   |	  H='M' | [?Is this an error in the manual?]	     |
-|	   |	   |		| [?Is H an ASCII character or integer?]     |
+| BAUDST   | 86AD  |            | Set Baud rate for RS232-C                  |
+|          |       |     Entry: |                                            |
+|          |       |          H | = Baud rate (1-9, M)                       |
+|          |       |      Exit: | none                                       |
+|          |       |            |                                            |
+|          |       |      H='1' | [??? baud?]                                |
+|          |       |      H='2' | 110 baud                                   |
+|          |       |      H='3' | 300 baud                                   |
+|          |       |      H='4' | 600 baud                                   |
+|          |       |      H='5' | 1200 baud                                  |
+|          |       |      H='6' | 2400 baud                                  |
+|          |       |      H='7' | 4800 baud                                  |
+|          |       |      H='8' | 9600 baud                                  |
+|          |       |      H='9' | 19200 baud                                 |
+|          |       |      H='M' | [?Is this an error in the manual?]         |
+|          |       |            | [?Is H an ASCII character or integer?]     |
 |----------|-------|-----------:|--------------------------------------------|
-| INZCOM   | 86DE  |		| Initialize RS232-C and Modem		     |
-|	   |	   |	 Entry: |					     |
-|	   |	   |	      H | = Baud rate (1-9)			     |
-|	   |	   |	      L | = USART (8251) configuration code (below)  |
-|	   |	   |	  Carry | = set if RS232-C, reset if modem	     |
-|	   |	   |	  Exit: | none					     |
-|	   |	   |		|					     |
-|	   |	   | L bits 0-1 | = baudrate				     |
-|	   |	   |	   " 00 | None					     |
-|	   |	   |	   " 10 | X1					     |
-|	   |	   |	   " 01 | X16 (fix)				     |
-|	   |	   |	   " 11 | X64					     |
-|	   |	   | L bits 2-3 | = Word length				     |
-|	   |	   |	   " 00 | 5					     |
-|	   |	   |	   " 10 | 6					     |
-|	   |	   |	   " 01 | 7					     |
-|	   |	   |	   " 11 | 8					     |
-|	   |	   |	L bit 4 | = Parity enable: 0=disable, 1=enable	     |
-|	   |	   |	L bit 5 | = Parity settings: 0=ODD, 1=EVEN	     |
-|	   |	   | L bits 6-7 | = Specifies number of Stop Bits	     |
-|	   |	   |	   " 00 | None					     |
-|	   |	   |	   " 10 | 1					     |
-|	   |	   |	   " 01 | 1.5					     |
-|	   |	   |	   " 11 | 2					     |
-|	   |	   |		| The text string containing the current     |
-|	   |	   |		| STAT setting is located at EF3C (7 bytes)  |
-|	   |	   |	   EF3C | Baud					     |
-|	   |	   |	   EF3D | Length				     |
-|	   |	   |	   EF3E | Parity				     |
-|	   |	   |	   EF3F | Stop bits				     |
-|	   |	   |	   EF40 | XON/XOFF switch			     |
-|	   |	   |	   EF41 | Ignore control			     |
-|	   |	   |	   EF42 | Ignore LF				     |
+| INZCOM   | 86DE  |            | Initialize RS232-C and Modem               |
+|          |       |            | (Temporary, does not set STAT string)      |
+|          |       |     Entry: |                                            |
+|          |       |          H | = Baud rate (1-9)                          |
+|          |       |          L | = USART (8251) configuration code (below)  |
+|          |       |      Carry | = set if RS232-C, reset if modem           |
+|          |       |      Exit: | none                                       |
+|          |       |            |                                            |
+|          |       | L bits 1,0 | = Baudrate                                 |
+|          |       |   ......00 | " none                                     |
+|          |       |   ......01 | " X1                                       |
+|          |       |   ......10 | " X16 (fix)                                |
+|          |       |   ......11 | " X64                                      |
+|          |       | L bits 3,2 | = Word length                              |
+|          |       |   ....00.. | " 5-bits                                   |
+|          |       |   ....01.. | " 6-bits                                   |
+|          |       |   ....10.. | " 7-bits                                   |
+|          |       |   ....11.. | " 8-bits                                   |
+|          |       | L bits 5,4 | = Parity                                   |
+|          |       |   ..00.... | " disable parity                           |
+|          |       |   ..01.... | " odd parity                               |
+|          |       |   ..10.... | " disable parity                           |
+|          |       |   ..11.... | " even parity                              |
+|          |       | L bits 7,6 | = Specifies number of Stop Bits            |
+|          |       |   00...... | " No stop bits                             |
+|          |       |   01...... | " 1 stop bits                              |
+|          |       |   10...... | " 1.5 stop bits                            |
+|          |       |   11...... | " 2 stop bits                              |
 |----------|-------|-----------:|--------------------------------------------|
-| SETSER   | 191D  |		| Set serial interface parameters	     |
-|	   |	   |		| and activate RS232-C/Modem		     |
-|	   |	   |	 Entry: |					     |
-|	   |	   |	     HL | = start address of ASCII string containing |
-|	   |	   |	      " | parameters terminated by a binary zero.    |
-|	   |	   |	      " | Syntax same as Telecom's STAT (78E1ENN,0)  |
-|	   |	   |		|					     |
-|	   |	   |	  Carry | = set for RS232-C, reset for Modem	     |
-|	   |	   |	  Exit: | none					     |
+| SETSER   | 191D  |            | Set serial interface parameters            |
+|          |       |            | and activate RS232-C/Modem                 |
+|          |       |     Entry: |                                            |
+|          |       |         HL | = start address of ASCII string containing |
+|          |       |          " | parameters terminated by a binary zero.    |
+|          |       |          " | Syntax same as Telecom's STAT (78E1ENN,0)  |
+|          |       |            |                                            |
+|          |       |      Carry | = set for RS232-C, reset for Modem         |
+|          |       |      Exit: | none                                       |
 |----------|-------|-----------:|--------------------------------------------|
-| CLSCOM   | 87B5  |		| Deactivate RS232-C/Modem		     |
-|	   |	   |	 Entry: | none					     |
-|	   |	   |	  Exit: | none					     |
+| CLSCOM   | 87B5  |            | Deactivate RS232-C/Modem                   |
+|          |       |     Entry: | none                                       |
+|          |       |      Exit: | none                                       |
 |----------|-------|-----------:|--------------------------------------------|
+
+|------|------|----------------:|-------------------------------------------|
+| STAT |      |                 | The text string containing the current    |
+|      |      |                 | STAT setting is located at EF3C (7 bytes) |
+|      | EF3C |            Baud | = "8" for 9600, "9" for 19200             |
+|      | EF3D |          Length | = "6"-, "7"-, or "8"-bit words            |
+|      | EF3E |          Parity | = "I"gnore, "E"ven, "O"dd, or "N"one      |
+|      | EF3F |       Stop bits | = "1" or "2"                              |
+|      | EF40 | XON/XOFF switch | = "E"nabled or "D"isabled                 |
+|      | EF41 |   Control chars | = "N"ormal or "I"gnore (filter) controls  |
+|      | EF42 |       Insert LF | = "N"ormal or "I"nsert after CR           |
+|------|------|----------------:|-------------------------------------------|
 
 
 Cassette Recorder Routines
 ===========================================================================
-| Function | Entry |	 Entry |					  |
-| Name	   | Addr  |	/ Exit | Description				  |
-|	   |	   | Condition |					  |
+| Function | Entry |     Entry |                                          |
+| Name     | Addr  |    / Exit | Description                              |
+|          |       | Condition |                                          |
 |----------|-------|----------:|------------------------------------------|
-| DATAR	   | 88B3  |	       | Read character from cassette		  |
-|	   |	   |	       | (no checksum)				  |
-|	   |	   |	Entry: | none					  |
-|	   |	   |	 Exit: |					  |
-|	   |	   |	     D | = character from cassette		  |
-|	   |	   |	 Carry | = Set if BREAK pressed, else reset	  |
+| DATAR    | 88B3  |           | Read character from cassette             |
+|          |       |           | (no checksum)                            |
+|          |       |    Entry: | none                                     |
+|          |       |     Exit: |                                          |
+|          |       |         D | = character from cassette                |
+|          |       |     Carry | = Set if BREAK pressed, else reset       |
 |----------|-------|----------:|------------------------------------------|
-| CTON	   | 15C0  |	       | Turn motor on				  |
-|	   |	   |	Entry: | none					  |
-|	   |	   |	 Exit: | none					  |
+| CTON     | 15C0  |           | Turn motor on                            |
+|          |       |    Entry: | none                                     |
+|          |       |     Exit: | none                                     |
 |----------|-------|----------:|------------------------------------------|
-| CTOFF	   | 15C2  |	       | Turn motor off				  |
-|	   |	   |	Entry: | none					  |
-|	   |	   |	 Exit: | none					  |
+| CTOFF    | 15C2  |           | Turn motor off                           |
+|          |       |    Entry: | none                                     |
+|          |       |     Exit: | none                                     |
 |----------|-------|----------:|------------------------------------------|
-| CASIN	   | 15C8  |	       | Read a character from cassette		  |
-|	   |	   |	       | and update checksum.			  |
-|	   |	   |	Entry: |					  |
-|	   |	   |	     C | = current checksum			  |
-|	   |	   |	 Exit: |					  |
-|	   |	   |	     A | = character				  |
-|	   |	   |	     C | = contains the updated checksum	  |
+| CASIN    | 15C8  |           | Read a character from cassette           |
+|          |       |           | and update checksum.                     |
+|          |       |    Entry: |                                          |
+|          |       |         C | = current checksum                       |
+|          |       |     Exit: |                                          |
+|          |       |         A | = character                              |
+|          |       |         C | = contains the updated checksum          |
 |----------|-------|----------:|------------------------------------------|
-| CASOUT   | 15D9  |	       | Send characters to cassette		  |
-|	   |	   |	       | and update checksum.			  |
-|	   |	   |	Entry: |					  |
-|	   |	   |	     A | = character to be sent			  |
-|	   |	   |	     C | = current checksum			  |
-|	   |	   |	 Exit: |					  |
-|	   |	   |	     C | = updated checksum			  |
+| CASOUT   | 15D9  |           | Send characters to cassette              |
+|          |       |           | and update checksum.                     |
+|          |       |    Entry: |                                          |
+|          |       |         A | = character to be sent                   |
+|          |       |         C | = current checksum                       |
+|          |       |     Exit: |                                          |
+|          |       |         C | = updated checksum                       |
 |----------|-------|----------:|------------------------------------------|
-| SYNCW	   | 87D1  |	       | Write cassette header and sync byte only |
-|	   |	   |	Entry: | none					  |
-|	   |	   |	 Exit: |					  |
-|	   |	   |	 Carry | = Set if BREAK pressed, else reset	  |
+| SYNCW    | 87D1  |           | Write cassette header and sync byte only |
+|          |       |    Entry: | none                                     |
+|          |       |     Exit: |                                          |
+|          |       |     Carry | = Set if BREAK pressed, else reset       |
 |----------|-------|----------:|------------------------------------------|
-| SYNCR	   | 8810  |	       | Read cassette header and sync byte only  |
-|	   |	   |	 Exit: |					  |
-|	   |	   |	 Carry | = Set if BREAK pressed, else reset	  |
+| SYNCR    | 8810  |           | Read cassette header and sync byte only  |
+|          |       |     Exit: |                                          |
+|          |       |     Carry | = Set if BREAK pressed, else reset       |
 |----------|-------|----------:|------------------------------------------|
-| DATAW	   | 87E6  |	       | Write a character to cassette		  |
-|	   |	   |	       | (no checksum)				  |
-|	   |	   |	Entry: |					  |
-|	   |	   |	     A | = character to be sent			  |
-|	   |	   |	 Exit: |					  |
-|	   |	   |	 Carry | = set if BREAK pressed, else reset	  |
+| DATAW    | 87E6  |           | Write a character to cassette            |
+|          |       |           | (no checksum)                            |
+|          |       |    Entry: |                                          |
+|          |       |         A | = character to be sent                   |
+|          |       |     Exit: |                                          |
+|          |       |     Carry | = set if BREAK pressed, else reset       |
 |----------|-------|----------:|------------------------------------------|
 
 
@@ -449,125 +456,125 @@ type, and status information.
 Each file is managed by an 11-bytes directory entry in the format:
 
 | Byte 1    | Directory Flag (see below) |
-| Byte 2-3  | Address of file		 |
-| Byte 4-11 | 8 Byte filename		 |
-								 
+| Byte 2-3  | Address of file            |
+| Byte 4-11 | 8 Byte filename            |
+
 The Directory Flag byte contains the file type and status:
 
-| Bit 7 (MSB) | 1 if a valid entry	    |
-| Bit 6	      | 1 for ASCII text file (DO)  |
-| Bit 5	      | 1 for Machine Language (CO) |
-| Bit 4	      | 1 for ROM fle		    |
-| Bit 3	      | 1 for invisibie file	    |
-| Bit 2	      | reserved for future use	    |
-| Bit 1	      | reserved for future use	    |
-| Bit 0	      | internal use only	    |
+| Bit 7 (MSB) | 1 if a valid entry          |
+| Bit 6       | 1 for ASCII text file (DO)  |
+| Bit 5       | 1 for Machine Language (CO) |
+| Bit 4       | 1 for ROM fle               |
+| Bit 3       | 1 for invisibie file        |
+| Bit 2       | reserved for future use     |
+| Bit 1       | reserved for future use     |
+| Bit 0       | internal use only           |
 
 ---------------------------------------------------------------------------
-| Function | Entry | Entry / Exit |					  |
-| Name	   | Addr  |	Condition | Description				  |
+| Function | Entry | Entry / Exit |                                       |
+| Name     | Addr  |    Condition | Description                           |
 |----------|-------|-------------:|---------------------------------------|
-| MAKTXT   | 2D7C  |		  | Create a text file			  |
-|	   |	   |	   Entry: |					  |
-|	   |	   |	     F746 | filename (max. 8 bytes) must be	  |
-|	   |	   |		  | stored in FILNAM (F746).		  |
-|	   |	   |		  | '.DO' extension not required	  |
-|	   |	   |	    Exit: |					  |
-|	   |	   |	       HL | = TOP address of new file		  |
-|	   |	   |	       DE | = address of Directory entry (Flag)	  |
-|	   |	   |	    Carry | = set if file already exists,	  |
-|	   |	   |		" | = reset if new file			  |
+| MAKTXT   | 2D7C  |              | Create a text file                    |
+|          |       |       Entry: |                                       |
+|          |       |         F746 | filename (max. 8 bytes) must be       |
+|          |       |              | stored in FILNAM (F746).              |
+|          |       |              | '.DO' extension not required          |
+|          |       |        Exit: |                                       |
+|          |       |           HL | = TOP address of new file             |
+|          |       |           DE | = address of Directory entry (Flag)   |
+|          |       |        Carry | = set if file already exists,         |
+|          |       |            " | = reset if new file                   |
 |----------|-------|-------------:|---------------------------------------|
-| CHKDC	   | 6E4D  |		  | Search for file in directory	  |
-|	   |	   |	   Entry: |					  |
-|	   |	   |	       DE | = address of filename to find	  |
-|	   |	   |		" | (ASCII filename + 0 byte terminator)  |
-|	   |	   |	    Exit: |					  |
-|	   |	   |	       HL | = start address (TOP) of file	  |
-|	   |	   |	   Z Flag | = 0: file found			  |
-|	   |	   |		" | = 1: file not found			  |
+| CHKDC    | 6E4D  |              | Search for file in directory          |
+|          |       |       Entry: |                                       |
+|          |       |           DE | = address of filename to find         |
+|          |       |            " | (ASCII filename + 0 byte terminator)  |
+|          |       |        Exit: |                                       |
+|          |       |           HL | = start address (TOP) of file         |
+|          |       |       Z Flag | = 0: file found                       |
+|          |       |            " | = 1: file not found                   |
 |----------|-------|-------------:|---------------------------------------|
-| GTXTTB   | 6E8C  |		  | Get top address of file		  |
-|	   |	   |	   Entry: |					  |
-|	   |	   |	       HL | = address of directory entry for file |
-|	   |	   |	    Exit: |					  |
-|	   |	   |	       HL | = TOP start address of file		  |
+| GTXTTB   | 6E8C  |              | Get top address of file               |
+|          |       |       Entry: |                                       |
+|          |       |           HL | = address of directory entry for file |
+|          |       |        Exit: |                                       |
+|          |       |           HL | = TOP start address of file           |
 |----------|-------|-------------:|---------------------------------------|
-| KILASC   | 2AB5  |		  | Kill a text (DO) file		  |
-|	   |	   |	   Entry: |					  |
-|	   |	   |	       DE | = file TOP start address		  |
-|	   |	   |	       HL | = address of directory entry (flag)	  |
-|	   |	   |	    Exit: | none				  |
+| KILASC   | 2AB5  |              | Kill a text (DO) file                 |
+|          |       |       Entry: |                                       |
+|          |       |           DE | = file TOP start address              |
+|          |       |           HL | = address of directory entry (flag)   |
+|          |       |        Exit: | none                                  |
 |----------|-------|-------------:|---------------------------------------|
-| INSCHR   | 829C  |		  | Insert a character in a file	  |
-|	   |	   |	   Entry: |					  |
-|	   |	   |		A | = character to insert		  |
-|	   |	   |	       HL | = address to insert character	  |
-|	   |	   |	    Exit: |					  |
-|	   |	   |	       HL | = +1				  |
-|	   |	   |	    Carry | = set if out of memory		  |
+| INSCHR   | 829C  |              | Insert a character in a file          |
+|          |       |       Entry: |                                       |
+|          |       |            A | = character to insert                 |
+|          |       |           HL | = address to insert character         |
+|          |       |        Exit: |                                       |
+|          |       |           HL | = +1                                  |
+|          |       |        Carry | = set if out of memory                |
 |----------|-------|-------------:|---------------------------------------|
-| MAKHOL   | 82A8  |		  | Insert a specified number of	  |
-|	   |	   |		  | spaces in a file			  |
-|	   |	   |	   Entry: |					  |
-|	   |	   |	       BC | = number of spaces to insert	  |
-|	   |	   |	       HL | = address to insert spaces		  |
-|	   |	   |	    Exit: | HL & BC are preserved		  |
-|	   |	   |	    Carry | = set if out of memory		  |
+| MAKHOL   | 82A8  |              | Insert a specified number of          |
+|          |       |              | spaces in a file                      |
+|          |       |       Entry: |                                       |
+|          |       |           BC | = number of spaces to insert          |
+|          |       |           HL | = address to insert spaces            |
+|          |       |        Exit: | HL & BC are preserved                 |
+|          |       |        Carry | = set if out of memory                |
 |----------|-------|-------------:|---------------------------------------|
-| MASDEL   | 82DA  |		  | Delete specified number of characters |
-|	   |	   |	   Entry: |					  |
-|	   |	   |	       BC | = number of characters to delete	  |
-|	   |	   |	       HL | = address of deletion		  |
-|	   |	   |	    Exit: | HL & BC are preserved		  |
+| MASDEL   | 82DA  |              | Delete specified number of characters |
+|          |       |       Entry: |                                       |
+|          |       |           BC | = number of characters to delete      |
+|          |       |           HL | = address of deletion                 |
+|          |       |        Exit: | HL & BC are preserved                 |
 |----------|-------|-------------:|---------------------------------------|
 
 
 Other Routines
 ============================================================================
-| Function | Entry | Entry/Exit |					   |
-| Name	   | Addr  |  Condition | Description				   |
+| Function | Entry | Entry/Exit |                                          |
+| Name     | Addr  |  Condition | Description                              |
 |----------|-------|-----------:|------------------------------------------|
-| INITIO   | 841C  |		| Cold start reset			   |
-|	   |	   |	 Entry: | none					   |
-|	   |	   |	  Exit: | none					   |
+| INITIO   | 841C  |            | Cold start reset                         |
+|          |       |     Entry: | none                                     |
+|          |       |      Exit: | none                                     |
 |----------|-------|-----------:|------------------------------------------|
-| IOINIT   | 8439  |		| Warm start Menu			   |
-|	   |	   |	 Entry: | none					   |
-|	   |	   |	  Exit: | none					   |
+| IOINIT   | 8439  |            | Warm start Menu                          |
+|          |       |     Entry: | none                                     |
+|          |       |      Exit: | none                                     |
 |----------|-------|-----------:|------------------------------------------|
-| MENU	   | 67A4  |		| Go to Main Menu			   |
-|	   |	   |	 Entry: | none					   |
-|	   |	   |	  Exit: | none					   |
+| MENU     | 67A4  |            | Go to Main Menu                          |
+|          |       |     Entry: | none                                     |
+|          |       |      Exit: | none                                     |
 |----------|-------|-----------:|------------------------------------------|
-| TIME	   | 1A9E  |		| Read system TIME			   |
-|	   |	   |	 Entry: |					   |
-|	   |	   |	     HL | = address of 8 byte area for TIME	   |
-|	   |	   |	  Exit: |					   |
-|	   |	   |	     HL | = TIME (hh:mm:ss)			   |
+| TIME     | 1A9E  |            | Read system TIME                         |
+|          |       |     Entry: |                                          |
+|          |       |         HL | = address of 8 byte area for TIME        |
+|          |       |      Exit: |                                          |
+|          |       |         HL | = TIME (hh:mm:ss)                        |
 |----------|-------|-----------:|------------------------------------------|
-| DATE	   | 1A9E  |		| Read system DATE			   |
-|	   |	   |	 Entry: |					   |
-|	   |	   |	     HL | = address of 8 byte area for DATE	   |
-|	   |	   |	  Exit: |					   |
-|	   |	   |	     HL | = DATE (mm/dd/yy)			   |
+| DATE     | 1A9E  |            | Read system DATE                         |
+|          |       |     Entry: |                                          |
+|          |       |         HL | = address of 8 byte area for DATE        |
+|          |       |      Exit: |                                          |
+|          |       |         HL | = DATE (mm/dd/yy)                        |
 |----------|-------|-----------:|------------------------------------------|
-| DAY	   | 1AC5  |		| Read system DAY of the week		   |
-|	   |	   |	 Entry: |					   |
-|	   |	   |	     HL | = address of 3 byte area for DAY	   |
-|	   |	   |	  Exit: |					   |
-|	   |	   |	     HL | = DAY (add)				   |
+| DAY      | 1AC5  |            | Read system DAY of the week              |
+|          |       |     Entry: |                                          |
+|          |       |         HL | = address of 3 byte area for DAY         |
+|          |       |      Exit: |                                          |
+|          |       |         HL | = DAY (add)                              |
 |----------|-------|-----------:|------------------------------------------|
-| MUSIC	   | 8BC0  |		| Make tone				   |
-|	   |	   |		| (see below for frequency information)	   |
-|	   |	   |	 Entry: |					   |
-|	   |	   |	     DE | = frequency (0-16383)			   |
-|	   |	   |	      B | = duration  (0-255) in 50ths of a second |
-|	   |	   |	  Exit: | none					   |
+| MUSIC    | 8BC0  |            | Make tone                                |
+|          |       |            | (see below for frequency information)    |
+|          |       |     Entry: |                                          |
+|          |       |         DE | = frequency (0-16383)                    |
+|          |       |          B | = duration  (0-255) in 50ths of a second |
+|          |       |      Exit: | none                                     |
 |----------|-------|-----------:|------------------------------------------|
 
 Table of Frequencies for MUSIC
-
+==============================================
 | Note | Octave 1 |    2 |    3 |    4 |   5 |
 |------|---------:|-----:|-----:|-----:|----:|
 | G    |    12538 | 6269 | 3134 | 1567 | 783 |
@@ -582,5 +589,3 @@ Table of Frequencies for MUSIC
 | E    |     7456 | 3728 | 1864 |  932 | 466 |
 | F    |     7032 | 3516 | 1758 |  879 | 439 |
 | F#   |     6642 | 3321 | 1660 |  830 | 415 |
-
-
